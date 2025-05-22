@@ -36,7 +36,7 @@ export default function PedidosPage() {
       setLoading(true);
       try {
         const res = await pb.collection("pedidos").getList<Pedido>(pagina, 10, {
-          expand: "campo,criado_por",
+          expand: "campo",
           sort: `${ordem === "desc" ? "-" : ""}created`,
         });
         setPedidos(res.items);
@@ -60,8 +60,7 @@ export default function PedidosPage() {
       buscaGlobal === "" ||
       p.produto.toLowerCase().includes(buscaGlobal.toLowerCase()) ||
       p.email.toLowerCase().includes(buscaGlobal.toLowerCase()) ||
-      p.expand?.campo?.nome?.toLowerCase().includes(buscaGlobal.toLowerCase()) ||
-      p.expand?.criado_por?.nome?.toLowerCase().includes(buscaGlobal.toLowerCase());
+      p.expand?.campo?.nome?.toLowerCase().includes(buscaGlobal.toLowerCase());
 
     return matchStatus && matchCampo && matchBuscaGlobal;
   });
@@ -74,7 +73,6 @@ export default function PedidosPage() {
       "Cor",
       "Status",
       "Campo",
-      "Criado por",
       "ID Pagamento",
       "Data",
     ];
@@ -86,7 +84,6 @@ export default function PedidosPage() {
       p.cor || "",
       p.status,
       p.expand?.campo?.nome || "",
-      p.expand?.criado_por?.nome || "",
       p.id_pagamento || "",
       p.created?.split("T")[0] || "",
     ]);
@@ -160,7 +157,6 @@ export default function PedidosPage() {
                 <th className="p-2 border">Cor</th>
                 <th className="p-2 border">Status</th>
                 <th className="p-2 border">Campo</th>
-                <th className="p-2 border">Criado por</th>
                 <th className="p-2 border">ID Pagamento</th>
                 <th className="p-2 border">Ação</th>
               </tr>
@@ -174,7 +170,6 @@ export default function PedidosPage() {
                   <td className="p-2 border">{pedido.cor || "—"}</td>
                   <td className="p-2 border capitalize">{pedido.status}</td>
                   <td className="p-2 border">{pedido.expand?.campo?.nome || "—"}</td>
-                  <td className="p-2 border">{pedido.expand?.criado_por?.nome || "—"}</td>
                   <td className="p-2 border text-xs">{pedido.id_pagamento || "—"}</td>
                   <td className="p-2 border space-x-2 text-right">
                     <button

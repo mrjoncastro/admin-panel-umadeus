@@ -46,31 +46,45 @@ export default function Footer() {
           <h4 className="font-semibold mb-2">Redes Sociais</h4>
           <ul className="space-y-1">
             <li>
-              <a
+              <Link
                 href="https://instagram.com/umadeusoficial"
+                className="hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:underline"
               >
                 @umadeusoficial
-              </a>
+              </Link>
             </li>
             <li>
-              <a
+              <Link
                 href="https://wa.me/55XXXXXXXXXXX"
+                className="hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:underline"
               >
                 Fale conosco no WhatsApp
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
       </div>
 
-      <div className="text-center text-xs text-platinum mt-6">
-        &copy; {new Date().getFullYear()} UMADEUS. Todos os direitos reservados.
+      <div className="text-center text-xs text-platinum mt-6 space-y-1">
+        <p>
+          &copy; {new Date().getFullYear()} UMADEUS. Todos os direitos
+          reservados.
+        </p>
+        <p>
+          Desenvolvido por{" "}
+          <Link
+            href="https://qg3.com.br"
+            className="underline hover:text-white"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            QG3 Tecnologia
+          </Link>
+        </p>
       </div>
     </footer>
   );

@@ -82,7 +82,6 @@ export default function InscricaoPage() {
     setLoading(true);
 
     try {
-      // 1. Cria a inscrição e o pedido
       const resposta = await fetch("/api/inscricoes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -93,22 +92,20 @@ export default function InscricaoPage() {
 
       if (!resposta.ok) {
         setMensagem(`❌ ${result.erro || "Erro ao salvar inscrição."}`);
-        setLoading(false);
         return;
       }
 
-      // 2. Gera o link de pagamento via Mercado Pago
+      if (!result.pedidoId || !result.valor) {
+        setMensagem("❌ Erro interno: pedido não criado corretamente.");
+        return;
+      }
+
       const checkout = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          produto: "Kit UMADEUS",
-          valor: "39.90",
-          tamanho: result.tamanho,
-          cor: result.genero === "masculino" ? "Preto" : "Roxo",
-          email: result.email,
-          nome: result.nome,
-          responsavel: result.responsavel,
+          pedidoId: result.pedidoId,
+          valor: result.valor,
         }),
       });
 
@@ -123,10 +120,11 @@ export default function InscricaoPage() {
           window.location.href = data.url;
         }, 2000);
       } else {
-        setMensagem("❌ Falha ao gerar link de pagamento.");
+        setMensagem(
+          `❌ Falha ao gerar link de pagamento. ${data?.error || ""}`
+        );
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
       setMensagem("❌ Erro ao processar inscrição.");
     } finally {
       setLoading(false);

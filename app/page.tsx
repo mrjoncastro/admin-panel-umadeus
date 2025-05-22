@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -53,39 +54,101 @@ export default function LoginPage() {
     );
   }
 
+
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100 px-4">
-      <div className="w-full max-w-sm bg-white rounded shadow p-6 space-y-4">
-        <h1 className="text-xl font-bold text-center">Login - UMADEUS</h1>
+    <div className="min-h-screen flex flex-col md:flex-row bg-[#1e2019]">
+      {/* Imagem – visível apenas no desktop */}
+      <div className="hidden md:block md:w-[62%] bg-black">
+        <div className="relative h-screen w-full">
+          <Image
+            src="/img/qg3_tech.png"
+            alt="Imagem de fundo"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+      </div>
 
-        {erro && <p className="text-red-600 text-sm text-center">{erro}</p>}
+      {/* Formulário – visível sempre */}
+      <div
+        className="w-full md:w-[38%] flex items-start justify-center min-h-screen p-6"
+        style={{ backgroundColor: "#2f2f2f" }}
+      >
+        <div className="w-full max-w-sm mt-12" style={{ color: "#DCDCDD" }}>
+          <div className="flex justify-center">
+            <Image
+              src="/img/logo_umadeus_branco.png"
+              alt="Logo UMADEUS"
+              width={120}
+              height={120}
+              className="mb-4"
+              priority
+            />
+          </div>
 
-        <input
-          type="email"
-          placeholder="E-mail"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full border p-2 rounded"
-        />
-        <input
-          type="password"
-          placeholder="Senha"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          className="w-full border p-2 rounded"
-        />
+          <h1 className="text-2xl font-bold text-center mb-6">UMADEUS</h1>
 
-        <button
-          onClick={handleLogin}
-          disabled={isSubmitting}
-          className={`w-full py-2 rounded transition cursor-pointer ${
-            isSubmitting
-              ? "bg-gray-400 text-white"
-              : "bg-red-600 text-white hover:bg-red-700"
-          }`}
-        >
-          {isSubmitting ? "Entrando..." : "Entrar"}
-        </button>
+          {erro && (
+            <p
+              className="text-sm text-center mb-4"
+              style={{ color: "#e81920" }}
+            >
+              {erro}
+            </p>
+          )}
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleLogin();
+            }}
+            className="space-y-4"
+          >
+            <input
+              type="email"
+              placeholder="E-mail"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2"
+              style={{
+                backgroundColor: "#DCDCDD",
+                color: "#000000",
+                borderColor: "#ababab",
+                outlineColor: "#e81920",
+              }}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Senha"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2"
+              style={{
+                backgroundColor: "#DCDCDD",
+                color: "#000000",
+                borderColor: "#ababab",
+                outlineColor: "#e81920",
+              }}
+              required
+            />
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className={`w-full py-2 rounded font-semibold transition ${
+                isSubmitting ? "cursor-not-allowed" : "cursor-pointer"
+              }`}
+              style={{
+                backgroundColor: isSubmitting ? "#ababab" : "#e81920",
+                color: "#ffffff",
+              }}
+            >
+              {isSubmitting ? "Entrando..." : "Entrar"}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

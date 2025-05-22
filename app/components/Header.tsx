@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import pb from "@/lib/pocketbase";
 import Image from "next/image";
@@ -16,14 +16,13 @@ const navLinks = [
 
 export default function Header() {
   const pathname = usePathname();
-  const router = useRouter();
   const { isLoggedIn } = useAuthContext();
 
   const handleLogout = () => {
     pb.authStore.clear();
     localStorage.removeItem("pb_token");
     localStorage.removeItem("pb_user");
-    router.push("/");
+    window.location.href = "/"; // 🔁 redireciona e recarrega
   };
 
   return (

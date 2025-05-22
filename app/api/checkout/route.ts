@@ -1,48 +1,84 @@
 import { NextRequest, NextResponse } from "next/server";
 import mercadopago from "mercadopago";
+import PocketBase from "pocketbase";
+
+const pb = new PocketBase("https://umadeus-production.up.railway.app");
+pb.autoCancellation(false);
 
 export async function POST(req: NextRequest) {
-  mercadopago.configure({
-    access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN!,
-  });
-  try {
-    const body = await req.json();
-    const { produto, valor, tamanho, cor, email, nome } = body;
+  const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
-    if (!email || !valor || !produto || !tamanho || !cor || !nome) {
+  if (!accessToken) {
+    return NextResponse.json(
+      { error: "Token de acesso ausente" },
+      { status: 500 }
+    );
+  }
+
+  mercadopago.configure({ access_token: accessToken });
+
+  try {
+    const { pedidoId, valor } = await req.json();
+
+    if (!pedidoId || valor === undefined || valor === null) {
       return NextResponse.json(
-        { error: "Dados incompletos para criar o pagamento." },
+        { error: "pedidoId e valor são obrigatórios" },
         { status: 400 }
       );
     }
 
+    const parsedValor = Number(valor);
+    if (!isFinite(parsedValor) || parsedValor <= 0) {
+      return NextResponse.json(
+        { error: "Valor deve ser numérico e positivo" },
+        { status: 400 }
+      );
+    }
+
+    const pedido = await pb.collection("pedidos").getOne(pedidoId);
+
     const preference = await mercadopago.preferences.create({
       items: [
         {
-          title: `${produto} - ${cor} - ${tamanho}`,
+          title: `${pedido.produto || "Produto"} - ${pedido.cor || "Cor"} - ${
+            pedido.tamanho || "Tamanho"
+          }`,
           quantity: 1,
-          unit_price: parseFloat(valor),
+          unit_price: parsedValor,
           currency_id: "BRL",
         },
       ],
       payer: {
-        name: nome,
-        email: email,
+        name: (pedido.responsavel || "Cliente").toString().substring(0, 100),
+        email: pedido.email || "sememail@teste.com",
       },
-      external_reference: `${email}-${Date.now()}`, // 🔑 chave para rastreamento no webhook
+      external_reference: `${pedido.email || "anonimo"}-${pedido.id}`,
       back_urls: {
-        success: `${process.env.NEXT_PUBLIC_SITE_URL}/obrigado`,
-        failure: `${process.env.NEXT_PUBLIC_SITE_URL}/erro`,
-        pending: `${process.env.NEXT_PUBLIC_SITE_URL}/pendente`,
+        success: `${siteUrl}/obrigado`,
+        failure: `${siteUrl}/erro`,
+        pending: `${siteUrl}/pendente`,
       },
       auto_return: "approved",
-      notification_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/webhook`,
+      notification_url: `${siteUrl}/api/checkout/webhook`,
+    });
+
+    if (!pb.authStore.isValid) {
+      await pb.admins.authWithPassword(
+        process.env.PB_ADMIN_EMAIL!,
+        process.env.PB_ADMIN_PASSWORD!
+      );
+    }
+
+    await pb.collection("pedidos").update(pedido.id, {
+      id_pagamento: preference.body.id,
     });
 
     return NextResponse.json({ url: preference.body.init_point });
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("❌ Erro no checkout:", error.message);
-    }
+  } catch {
+    return NextResponse.json(
+      { error: "Erro ao gerar link de pagamento" },
+      { status: 500 }
+    );
   }
 }

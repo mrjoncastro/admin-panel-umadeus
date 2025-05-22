@@ -18,10 +18,8 @@ export async function POST(req: NextRequest) {
       liderId,
     } = body;
 
-    // Sanitiza o CPF
     const cpfNumerico = cpf.replace(/\D/g, "");
 
-    // Valida campos obrigatórios
     const camposObrigatorios = [
       nome,
       email,
@@ -47,7 +45,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Busca campo vinculado ao líder
     const lider = await pb.collection("usuarios").getOne(liderId, {
       expand: "campo",
     });
@@ -61,7 +58,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Verifica duplicidade por telefone ou CPF
     try {
       await pb
         .collection("inscricoes")
@@ -71,22 +67,24 @@ export async function POST(req: NextRequest) {
         { status: 409 }
       );
     } catch {
-      // OK se não encontrar (erro esperado)
+      // OK
     }
 
-    // Cria o pedido (status: pendente)
+    // 💰 Valor fixo ou calculado
+    const valor = 39.9;
+
     const pedido = await pb.collection("pedidos").create({
       status: "pendente",
       produto: "Kit Camisa + Pulseira",
-      cor: genero.toLowerCase() === "masculino" ? "Preto" : "Roxo",
+      cor: "Roxo",
       tamanho,
       genero,
       email,
       campo: campoId,
       responsavel: liderId,
+      valor,
     });
 
-    // Cria a inscrição vinculada ao pedido e ao campo
     const inscricao = await pb.collection("inscricoes").create({
       nome,
       email,
@@ -102,11 +100,11 @@ export async function POST(req: NextRequest) {
       pedido: pedido.id,
     });
 
-    // Retorna dados necessários para o checkout
     return NextResponse.json({
       sucesso: true,
       inscricaoId: inscricao.id,
       pedidoId: pedido.id,
+      valor: pedido.valor,
       nome,
       email,
       tamanho,
