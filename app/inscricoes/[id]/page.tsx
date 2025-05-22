@@ -1,0 +1,277 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+
+interface FormFields {
+  nome: string;
+  email: string;
+  telefone: string;
+  cpf: string;
+  data_nascimento: string;
+  tamanho: string;
+  genero: string;
+}
+
+export default function InscricaoPage() {
+  const params = useParams();
+  const lid = params.id as string;
+
+  const [form, setForm] = useState<FormFields>({
+    nome: "",
+    email: "",
+    telefone: "",
+    cpf: "",
+    data_nascimento: "",
+    tamanho: "",
+    genero: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [mensagem, setMensagem] = useState("");
+  const [campoNome, setCampoNome] = useState("");
+  const [confirmado, setConfirmado] = useState(false);
+
+  useEffect(() => {
+    if (!lid) return;
+
+    fetch(`/api/lider/${lid}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.campo) {
+          setCampoNome(data.campo);
+        } else {
+          setMensagem("❌ Link inválido ou expirado.");
+        }
+      })
+      .catch(() => setMensagem("❌ Erro ao buscar dados do líder."));
+  }, [lid]);
+
+  const maskCPF = (value: string) =>
+    value
+      .replace(/\D/g, "")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+
+  const maskTelefone = (value: string) =>
+    value
+      .replace(/\D/g, "")
+      .replace(/(\d{2})(\d)/, "($1) $2")
+      .replace(/(\d{5})(\d)/, "$1-$2")
+      .replace(/(-\d{4})\d+?$/, "$1");
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    let newValue = value;
+
+    if (name === "cpf") newValue = maskCPF(value);
+    if (name === "telefone") newValue = maskTelefone(value);
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: newValue,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setMensagem("");
+    setLoading(true);
+
+    try {
+      // 1. Cria a inscrição e o pedido
+      const resposta = await fetch("/api/inscricoes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, liderId: lid }),
+      });
+
+      const result = await resposta.json();
+
+      if (!resposta.ok) {
+        setMensagem(`❌ ${result.erro || "Erro ao salvar inscrição."}`);
+        setLoading(false);
+        return;
+      }
+
+      // 2. Gera o link de pagamento via Mercado Pago
+      const checkout = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          produto: "Kit UMADEUS",
+          valor: "39.90",
+          tamanho: result.tamanho,
+          cor: result.genero === "masculino" ? "Preto" : "Roxo",
+          email: result.email,
+          nome: result.nome,
+          responsavel: result.responsavel,
+        }),
+      });
+
+      const data = await checkout.json();
+
+      if (checkout.ok && data.url) {
+        setMensagem(
+          "✅ Inscrição realizada com sucesso! Redirecionando para pagamento..."
+        );
+        setConfirmado(true);
+        setTimeout(() => {
+          window.location.href = data.url;
+        }, 2000);
+      } else {
+        setMensagem("❌ Falha ao gerar link de pagamento.");
+      }
+    } catch (error) {
+      console.error(error);
+      setMensagem("❌ Erro ao processar inscrição.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-lg mx-auto p-6 mt-10 bg-white rounded-2xl shadow-2xl font-sans">
+      <h1 className="text-2xl font-extrabold text-purple-700 mb-3 text-center">
+        Inscrição para o Congresso UMADEUS 2K25
+      </h1>
+
+      {campoNome && (
+        <p className="mb-6 text-center text-sm text-gray-600">
+          Campo responsável: <span className="font-medium">{campoNome}</span>
+        </p>
+      )}
+
+      {!mensagem.startsWith("❌") && (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="text"
+            name="nome"
+            placeholder="Nome completo"
+            value={form.nome}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+          />
+
+          <input
+            type="email"
+            name="email"
+            placeholder="E-mail"
+            value={form.email}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+          />
+
+          <input
+            type="text"
+            name="telefone"
+            placeholder="Telefone"
+            value={form.telefone}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+          />
+
+          <input
+            type="text"
+            name="cpf"
+            placeholder="CPF"
+            value={form.cpf}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+          />
+
+          <div>
+            <label className="block font-medium text-sm text-gray-700 mb-1">
+              Gênero
+            </label>
+            <select
+              name="genero"
+              value={form.genero}
+              onChange={handleChange}
+              required
+              className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+            >
+              <option value="">Selecione seu gênero</option>
+              <option value="masculino">Masculino</option>
+              <option value="feminino">Feminino</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block font-medium text-sm text-gray-700 mb-1">
+              Data de Nascimento
+            </label>
+            <input
+              type="date"
+              name="data_nascimento"
+              value={form.data_nascimento}
+              onChange={handleChange}
+              required
+              className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+            />
+          </div>
+
+          <div>
+            <label className="block font-medium text-sm text-gray-700 mb-1">
+              Tamanho da camisa
+            </label>
+            <select
+              name="tamanho"
+              value={form.tamanho}
+              onChange={handleChange}
+              required
+              className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+            >
+              <option value="">Selecione o tamanho da camisa</option>
+              {["PP", "P", "M", "G", "GG"].map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-start mt-4">
+            <input
+              type="checkbox"
+              required
+              id="confirmacao"
+              className="mt-1 mr-2 accent-purple-600"
+            />
+            <label htmlFor="confirmacao" className="text-sm text-gray-600">
+              Estou ciente de que minha inscrição só será confirmada após a
+              confirmação do pagamento.
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          >
+            {loading ? "Enviando..." : "Finalizar inscrição"}
+          </button>
+        </form>
+      )}
+
+      {mensagem && (
+        <div className="mt-6 text-sm text-center text-gray-800 space-y-2">
+          <p>{mensagem}</p>
+          {confirmado && (
+            <p className="text-xs text-gray-500 italic">
+              Você será redirecionado automaticamente para a página de
+              pagamento.
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
