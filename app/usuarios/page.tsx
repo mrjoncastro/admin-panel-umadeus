@@ -54,52 +54,59 @@ export default function UsuariosPage() {
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Usuários Cadastrados</h1>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <h1 className="text-2xl font-bold text-black_bean">
+          Usuários Cadastrados
+        </h1>
         <Link
           href="/usuarios/novo"
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 text-sm transition"
+          className="bg-cornell_red text-white px-4 py-2 rounded-md hover:bg-red-700 text-sm font-medium transition-colors"
         >
           + Adicionar Novo Usuário
         </Link>
       </div>
 
       {mensagem && (
-        <div className="mb-4 text-sm text-red-600 text-center">{mensagem}</div>
+        <div className="mb-4 text-sm text-cornell_red text-center">
+          {mensagem}
+        </div>
       )}
 
       {loading ? (
-        <p>Carregando usuários...</p>
+        <p className="text-center text-gray-600">Carregando usuários...</p>
       ) : (
-        <div className="overflow-auto rounded-lg shadow border border-gray-200">
-          <table className="min-w-full bg-white">
-            <thead className="bg-gray-100 text-gray-700 text-left">
+        <div className="overflow-auto rounded-lg border border-gray-200 shadow-sm">
+          <table className="min-w-full divide-y divide-gray-200 bg-white">
+            <thead className="bg-gray-100 text-gray-700 text-sm uppercase tracking-wider">
               <tr>
-                <th className="p-3">Nome</th>
-                <th className="p-3">E-mail</th>
-                <th className="p-3">Função</th>
-                <th className="p-3">Campo</th>
-                <th className="p-3">Link de Inscrição</th>
+                <th className="p-4 text-left">Nome</th>
+                <th className="p-4 text-left">E-mail</th>
+                <th className="p-4 text-left">Função</th>
+                <th className="p-4 text-left">Campo</th>
+                <th className="p-4 text-left">Link de Inscrição</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="text-sm text-gray-700 divide-y divide-gray-100">
               {usuarios.map((usuario) => (
-                <tr key={usuario.id} className="border-t hover:bg-gray-50">
-                  <td className="p-3">{usuario.nome}</td>
-                  <td className="p-3">{usuario.email}</td>
-                  <td className="p-3 capitalize">{usuario.role}</td>
-                  <td className="p-3">{usuario.expand?.campo?.nome ?? "—"}</td>
-                  <td className="p-3">
+                <tr
+                  key={usuario.id}
+                  className="hover:bg-gray-50 transition-colors"
+                >
+                  <td className="p-4 font-medium">{usuario.nome}</td>
+                  <td className="p-4">{usuario.email}</td>
+                  <td className="p-4 capitalize">{usuario.role}</td>
+                  <td className="p-4">{usuario.expand?.campo?.nome ?? "—"}</td>
+                  <td className="p-4">
                     {usuario.role === "lider" ? (
                       <Link
                         href={`/inscricoes/${usuario.id}`}
-                        className="text-blue-600 hover:underline text-sm"
+                        className="text-blue-600 hover:underline"
                         target="_blank"
                       >
                         Ver link
                       </Link>
                     ) : (
-                      "—"
+                      <span className="text-gray-400">—</span>
                     )}
                   </td>
                 </tr>

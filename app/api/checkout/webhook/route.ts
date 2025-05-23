@@ -1,52 +1,58 @@
 import { NextRequest, NextResponse } from "next/server";
 import mercadopago from "mercadopago";
+import pb from "@/lib/pocketbase"; // ajuste se seu path for diferente
+
+mercadopago.configure({
+  access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN!,
+});
 
 export async function POST(req: NextRequest) {
-  mercadopago.configure({
-    access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN!,
-  });
   try {
     const body = await req.json();
-    const { produto, valor, tamanho, cor, email, nome } = body;
 
-    if (!email || !valor || !produto || !tamanho || !cor || !nome) {
-      return NextResponse.json(
-        { error: "Dados incompletos para criar o pagamento." },
-        { status: 400 }
-      );
+    const paymentId = body?.data?.id;
+    const eventType = body?.type;
+
+    if (eventType !== "payment.updated" && eventType !== "payment.created") {
+      return NextResponse.json({ status: "Ignorado" });
     }
 
-    const preference = await mercadopago.preferences.create({
-      items: [
-        {
-          title: `${produto} - ${cor} - ${tamanho}`,
-          quantity: 1,
-          unit_price: parseFloat(valor),
-          currency_id: "BRL",
-        },
-      ],
-      payer: {
-        name: nome,
-        email: email,
-      },
-      external_reference: `${email}-${Date.now()}`,
-      back_urls: {
-        success: `${process.env.NEXT_PUBLIC_SITE_URL}/obrigado`,
-        failure: `${process.env.NEXT_PUBLIC_SITE_URL}/erro`,
-        pending: `${process.env.NEXT_PUBLIC_SITE_URL}/pendente`,
-      },
-      auto_return: "approved",
-      notification_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/webhook`,
-    });
+    const payment = await mercadopago.payment.findById(paymentId);
 
-    return NextResponse.json({ url: preference.body.init_point });
+    const status = payment.body.status; // 'approved', 'pending', etc.
+    const externalReference = payment.body.external_reference;
+
+    if (status === "approved") {
+      // Aqui você pode fazer algo como:
+      // externalReference = "email-timestamp"
+      const email = externalReference.split("-")[0];
+
+      // Buscar o pedido correspondente
+      const pedidos = await pb.collection("pedidos").getFullList({
+        filter: `email = "${email}"`,
+      });
+
+      if (pedidos.length === 0) {
+        return NextResponse.json(
+          { error: "Pedido não encontrado" },
+          { status: 404 }
+        );
+      }
+
+      const pedido = pedidos[0];
+
+      // Atualiza o status para pago
+      await pb.collection("pedidos").update(pedido.id, { status: "pago" });
+
+      console.log(`✅ Pagamento confirmado para: ${email}`);
+    }
+
+    return NextResponse.json({ status: "Processado" });
   } catch (err: unknown) {
-    if (err instanceof Error) {
-      console.error("❌ Erro no webhook:", err.message);
-    } else {
-      console.error("❌ Erro desconhecido no webhook.");
-    }
-
-    return NextResponse.json({ error: "Erro no webhook." }, { status: 500 });
+    console.error("❌ Erro no webhook:", err);
+    return NextResponse.json(
+      { error: "Erro no processamento" },
+      { status: 500 }
+    );
   }
 }

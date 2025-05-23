@@ -153,51 +153,56 @@ export default function ListaInscricoesPage() {
     return <p className="p-6 text-center text-sm">Carregando inscrições...</p>;
 
   return (
-    <main className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Inscrições Recebidas</h1>
+    <main className="max-w-7xl mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold text-black_bean mb-6">
+        Inscrições Recebidas
+      </h1>
 
+      {/* Link público */}
       {role === "lider" && (
-        <div className="mb-6 bg-gray-100 p-4 rounded-md text-sm flex flex-col gap-2">
-          <p className="font-semibold">📎 Link de inscrição pública:</p>
-          <div className="flex items-center gap-2">
+        <div className="mb-6 bg-gray-50 border border-gray-200 p-4 rounded-lg text-sm shadow-sm">
+          <p className="font-semibold mb-2">📎 Link de inscrição pública:</p>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
             <input
               readOnly
               value={linkPublico}
-              className="w-full p-2 border rounded bg-white text-gray-700 font-mono text-xs"
+              className="w-full p-2 border rounded bg-white text-gray-700 font-mono text-xs shadow-sm"
             />
             <button
               onClick={copiarLink}
-              className="bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600"
+              className="bg-blue-600 text-white px-3 py-2 rounded text-xs hover:bg-blue-700 transition"
             >
               <Copy size={14} />
             </button>
           </div>
           {copiado && (
-            <span className="text-green-600 text-xs animate-pulse">
+            <span className="text-green-600 text-xs animate-pulse mt-1 block">
               ✅ Link copiado
             </span>
           )}
         </div>
       )}
 
+      {/* Erro */}
       {erro && (
-        <div className="bg-red-100 text-red-800 text-sm px-3 py-2 rounded mb-4 border border-red-300">
+        <div className="bg-red-50 border border-red-200 text-red-800 text-sm px-4 py-2 rounded mb-6">
           {erro}
         </div>
       )}
 
-      <div className="flex flex-wrap gap-4 mb-4 items-center">
+      {/* Filtros */}
+      <div className="flex flex-wrap gap-4 mb-6">
         <input
           type="text"
           placeholder="Buscar por campo"
-          className="border p-2 rounded text-sm w-full md:w-64"
-          onChange={(e) => setFiltroCampo(e.target.value)}
+          className="border rounded px-4 py-2 text-sm w-full md:w-64 shadow-sm"
           value={filtroCampo}
+          onChange={(e) => setFiltroCampo(e.target.value)}
         />
         <select
           value={filtroStatus}
           onChange={(e) => setFiltroStatus(e.target.value)}
-          className="border p-2 rounded text-sm"
+          className="border rounded px-4 py-2 text-sm bg-white shadow-sm"
         >
           <option value="">Todos os Status</option>
           <option value="pendente">Pendente</option>
@@ -206,37 +211,40 @@ export default function ListaInscricoesPage() {
         </select>
         <button
           onClick={exportarCSV}
-          className="text-sm border px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+          className="text-sm px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition"
         >
           Exportar CSV
         </button>
       </div>
 
+      {/* Tabela */}
       {inscricoesFiltradas.length === 0 ? (
         <p className="text-center text-gray-500">
           Nenhuma inscrição encontrada.
         </p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm border">
-            <thead>
-              <tr className="bg-gray-100 text-left">
-                <th className="p-2 border">Nome</th>
-                <th className="p-2 border">Telefone</th>
-                <th className="p-2 border">Evento</th>
-                <th className="p-2 border">Status</th>
-                <th className="p-2 border">Campo</th>
-                <th className="p-2 border">Criado em</th>
-                {role === "coordenador" && <th className="p-2 border">Ação</th>}
+        <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+          <table className="min-w-full divide-y divide-gray-200 text-sm bg-white">
+            <thead className="bg-gray-100 text-gray-700 uppercase text-xs tracking-wide">
+              <tr>
+                <th className="p-3 text-left">Nome</th>
+                <th className="p-3 text-left">Telefone</th>
+                <th className="p-3 text-left">Evento</th>
+                <th className="p-3 text-left">Status</th>
+                <th className="p-3 text-left">Campo</th>
+                <th className="p-3 text-left">Criado em</th>
+                {role === "coordenador" && (
+                  <th className="p-3 text-left">Ação</th>
+                )}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-100">
               {inscricoesFiltradas.map((i) => (
-                <tr key={i.id} className="hover:bg-gray-50">
-                  <td className="p-2 border font-medium">{i.nome}</td>
-                  <td className="p-2 border">{i.telefone}</td>
-                  <td className="p-2 border">{i.evento}</td>
-                  <td className="p-2 border capitalize">
+                <tr key={i.id} className="hover:bg-gray-50 transition">
+                  <td className="p-3 font-medium">{i.nome}</td>
+                  <td className="p-3">{i.telefone}</td>
+                  <td className="p-3">{i.evento}</td>
+                  <td className="p-3 capitalize">
                     <span
                       className={`px-2 py-1 rounded text-xs font-semibold ${
                         statusBadge[i.status]
@@ -245,26 +253,30 @@ export default function ListaInscricoesPage() {
                       {i.status}
                     </span>
                   </td>
-                  <td className="p-2 border">{i.campo}</td>
-                  <td className="p-2 border">
+                  <td className="p-3">{i.campo}</td>
+                  <td className="p-3">
                     {new Date(i.created).toLocaleDateString("pt-BR")}
                   </td>
-                  {role === "coordenador" && (
-                    <td className="p-2 border text-xs text-right space-x-2">
-                      <button
-                        onClick={() => setInscricaoEmEdicao(i)}
-                        className="text-blue-600 hover:underline"
-                      >
-                        Editar
-                      </button>
-                      <button
-                        onClick={() => deletarInscricao(i.id)}
-                        className="text-red-600 hover:underline"
-                      >
-                        Excluir
-                      </button>
-                    </td>
-                  )}
+                  <td className="p-3 text-right space-x-3 text-xs">
+                    {role === "coordenador" ? (
+                      <>
+                        <button
+                          onClick={() => setInscricaoEmEdicao(i)}
+                          className="text-blue-600 hover:underline"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          onClick={() => deletarInscricao(i.id)}
+                          className="text-red-600 hover:underline"
+                        >
+                          Excluir
+                        </button>
+                      </>
+                    ) : (
+                      <span className="text-gray-400">—</span>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -272,6 +284,7 @@ export default function ListaInscricoesPage() {
         </div>
       )}
 
+      {/* Modal */}
       {inscricaoEmEdicao && (
         <ModalEditarInscricao
           inscricao={inscricaoEmEdicao}
