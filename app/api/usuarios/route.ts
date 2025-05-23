@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     });
 
     console.log(`📦 ${usuarios.length} usuários encontrados.`);
-    return NextResponse.json(usuarios, { status: 200 });
+    return NextResponse.json(usuarios);
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error("❌ Erro em /api/usuarios:", err.message);

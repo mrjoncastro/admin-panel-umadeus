@@ -23,6 +23,7 @@ export function getUserFromHeaders(req: NextRequest): AuthOk | AuthError {
     const parsedUser = JSON.parse(rawUser) as RecordModel;
 
     pb.authStore.save(token, parsedUser);
+    pb.autoCancellation(false); 
 
     return { user: parsedUser, pbSafe: pb };
   } catch {
