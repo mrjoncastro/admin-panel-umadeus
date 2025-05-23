@@ -72,6 +72,7 @@ export async function POST(req: NextRequest) {
 
     await pb.collection("pedidos").update(pedido.id, {
       id_pagamento: preference.body.id,
+      link_pagamento: preference.body.init_point,
     });
 
     return NextResponse.json({ url: preference.body.init_point });

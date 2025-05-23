@@ -18,12 +18,14 @@ export async function POST(req: NextRequest) {
       liderId,
     } = body;
 
+    // Limpa CPF e Telefone
     const cpfNumerico = cpf.replace(/\D/g, "");
+    const telefoneNumerico = telefone.replace(/\D/g, "");
 
     const camposObrigatorios = [
       nome,
       email,
-      telefone,
+      telefoneNumerico,
       cpfNumerico,
       data_nascimento,
       tamanho,
@@ -61,16 +63,18 @@ export async function POST(req: NextRequest) {
     try {
       await pb
         .collection("inscricoes")
-        .getFirstListItem(`telefone="${telefone}" || cpf="${cpfNumerico}"`);
+        .getFirstListItem(
+          `telefone="${telefoneNumerico}" || cpf="${cpfNumerico}"`
+        );
       return NextResponse.json(
         { erro: "Telefone ou CPF já cadastrado." },
         { status: 409 }
       );
     } catch {
-      // OK
+      // OK - não encontrado
     }
 
-    // 💰 Valor fixo ou calculado
+    // 💰 Valor fixo
     const valor = 39.9;
 
     const pedido = await pb.collection("pedidos").create({
@@ -88,7 +92,7 @@ export async function POST(req: NextRequest) {
     const inscricao = await pb.collection("inscricoes").create({
       nome,
       email,
-      telefone,
+      telefone: telefoneNumerico,
       cpf: cpfNumerico,
       data_nascimento,
       genero,

@@ -7,15 +7,7 @@ export async function POST(req: NextRequest) {
   });
   try {
     const body = await req.json();
-    const {
-      produto,
-      valor,
-      tamanho,
-      cor,
-      email,
-      nome,
-      // ❌ removido: responsavel
-    } = body;
+    const { produto, valor, tamanho, cor, email, nome } = body;
 
     if (!email || !valor || !produto || !tamanho || !cor || !nome) {
       return NextResponse.json(

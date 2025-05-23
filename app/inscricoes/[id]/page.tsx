@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 
 interface FormFields {
   nome: string;
@@ -133,12 +134,21 @@ export default function InscricaoPage() {
 
   return (
     <div className="max-w-lg mx-auto p-6 mt-10 bg-white rounded-2xl shadow-2xl font-sans">
+      <div className="mb-6 p-3 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-600 text-center">
+        Já fez a inscrição?{" "}
+        <Link
+          href="/inscricoes/recuperar"
+          className="text-purple-700 font-medium underline hover:text-purple-900"
+        >
+          Clique aqui para concluir
+        </Link>
+      </div>
+
       <h1 className="text-2xl font-extrabold text-purple-700 mb-3 text-center">
         Inscrição para o Congresso UMADEUS 2K25
       </h1>
-
       {campoNome && (
-        <p className="mb-6 text-center text-sm text-gray-600">
+        <p className="mb-4 text-center text-sm text-gray-500">
           Campo responsável: <span className="font-medium">{campoNome}</span>
         </p>
       )}
