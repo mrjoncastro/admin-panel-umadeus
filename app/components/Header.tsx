@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import pb from "@/lib/pocketbase";
 import Image from "next/image";
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
 
 const navLinks = [
   { href: "/dashboard", label: "Painel" },
@@ -17,6 +19,7 @@ const navLinks = [
 export default function Header() {
   const pathname = usePathname();
   const { isLoggedIn } = useAuthContext();
+  const [menuAberto, setMenuAberto] = useState(false);
 
   const handleLogout = () => {
     pb.authStore.clear();
@@ -39,7 +42,17 @@ export default function Header() {
           />
         </Link>
 
-        <nav className="flex gap-4 text-sm font-semibold items-center">
+        {/* Botão hambúrguer */}
+        <button
+          className="md:hidden text-[#DCDCDC]"
+          onClick={() => setMenuAberto(!menuAberto)}
+          aria-label="Abrir menu"
+        >
+          {menuAberto ? <X size={28} /> : <Menu size={28} />}
+        </button>
+
+        {/* Navegação - desktop */}
+        <nav className="hidden md:flex gap-4 text-sm font-semibold items-center">
           {isLoggedIn &&
             navLinks.map(({ href, label }) => (
               <Link
@@ -70,6 +83,47 @@ export default function Header() {
           )}
         </nav>
       </div>
+
+      {/* Menu Mobile */}
+      {menuAberto && (
+        <div className="md:hidden bg-[#2A1A1C] px-6 pb-4">
+          <nav className="flex flex-col gap-2">
+            {isLoggedIn &&
+              navLinks.map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setMenuAberto(false)}
+                  className={`transition px-4 py-2 rounded-md text-sm hover:bg-[#DCDCDC] hover:text-[#2A1A1C] ${
+                    pathname === href ? "bg-[#DCDCDC] text-[#2A1A1C]" : ""
+                  }`}
+                >
+                  {label}
+                </Link>
+              ))}
+
+            {isLoggedIn ? (
+              <button
+                onClick={() => {
+                  setMenuAberto(false);
+                  handleLogout();
+                }}
+                className="text-left px-4 py-2 text-sm underline text-red-400 hover:text-red-600"
+              >
+                Sair
+              </button>
+            ) : (
+              <Link
+                href="/"
+                onClick={() => setMenuAberto(false)}
+                className="text-left px-4 py-2 text-sm underline text-[#DCDCDC] hover:text-white"
+              >
+                Entrar
+              </Link>
+            )}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
