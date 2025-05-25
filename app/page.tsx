@@ -20,7 +20,7 @@ export default function LoginPage() {
       if (user.role === "coordenador") {
         router.replace("/dashboard");
       } else if (user.role === "lider") {
-        router.replace("/painel-lider");
+        router.replace("/lider-painel");
       } else {
         setErro("Perfil de acesso não permitido.");
       }

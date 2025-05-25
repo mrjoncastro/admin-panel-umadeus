@@ -8,24 +8,37 @@ import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
-const navLinks = [
-  { href: "/dashboard", label: "Painel" },
-  { href: "/inscricoes", label: "Inscrições" },
-  { href: "/pedidos", label: "Pedidos" },
-  { href: "/usuarios", label: "Usuários" },
-  { href: "/campos", label: "Campos" },
-];
+// Retorna os links com base no papel do usuário
+const getNavLinks = (role?: string) => {
+  if (role === "lider") {
+    return [
+      { href: "/lider-painel", label: "Painel" },
+      { href: "/inscricoes", label: "Inscrições" },
+      { href: "/pedidos", label: "Pedidos" },
+    ];
+  }
+
+  return [
+    { href: "/dashboard", label: "Painel" },
+    { href: "/inscricoes", label: "Inscrições" },
+    { href: "/pedidos", label: "Pedidos" },
+    { href: "/usuarios", label: "Usuários" },
+    { href: "/campos", label: "Campos" },
+  ];
+};
 
 export default function Header() {
   const pathname = usePathname();
-  const { isLoggedIn } = useAuthContext();
+  const { isLoggedIn, user } = useAuthContext();
   const [menuAberto, setMenuAberto] = useState(false);
+
+  const navLinks = getNavLinks(user?.role);
 
   const handleLogout = () => {
     pb.authStore.clear();
     localStorage.removeItem("pb_token");
     localStorage.removeItem("pb_user");
-    window.location.href = "/"; // 🔁 redireciona e recarrega
+    window.location.href = "/";
   };
 
   return (

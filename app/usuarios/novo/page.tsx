@@ -7,11 +7,30 @@ interface Campo {
   nome: string;
 }
 
+function formatTelefone(value: string) {
+  return value
+    .replace(/\D/g, "")
+    .replace(/^(\d{2})(\d)/, "($1) $2")
+    .replace(/(\d{5})(\d)/, "$1-$2")
+    .replace(/(-\d{4})\d+?$/, "$1");
+}
+
+function formatCpf(value: string) {
+  return value
+    .replace(/\D/g, "")
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d)/, "$1.$2")
+    .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+}
+
 export default function NovoUsuarioPage() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [role, setRole] = useState("usuario");
+  const [telefone, setTelefone] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [dataNascimento, setDataNascimento] = useState("");
+  const [role, setRole] = useState("lider");
   const [campoId, setCampoId] = useState("");
   const [campos, setCampos] = useState<Campo[]>([]);
   const [mensagem, setMensagem] = useState("");
@@ -49,6 +68,9 @@ export default function NovoUsuarioPage() {
         email,
         password: senha,
         passwordConfirm: senha,
+        telefone,
+        cpf,
+        data_nascimento: dataNascimento,
         role,
         campo: campoId,
       }),
@@ -61,7 +83,10 @@ export default function NovoUsuarioPage() {
       setNome("");
       setEmail("");
       setSenha("");
-      setRole("usuario");
+      setTelefone("");
+      setCpf("");
+      setDataNascimento("");
+      setRole("lider");
       setCampoId("");
     } else {
       setMensagem("❌ Erro: " + (data?.error || "Erro desconhecido"));
@@ -71,6 +96,7 @@ export default function NovoUsuarioPage() {
   return (
     <main className="max-w-xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-4">Cadastrar Novo Usuário</h1>
+
       {mensagem && (
         <div
           className={`mb-4 text-sm ${
@@ -87,6 +113,34 @@ export default function NovoUsuarioPage() {
           placeholder="Nome"
           value={nome}
           onChange={(e) => setNome(e.target.value)}
+          className="w-full border rounded p-2"
+          required
+        />
+
+        <input
+          type="tel"
+          placeholder="Telefone"
+          value={telefone}
+          onChange={(e) => setTelefone(formatTelefone(e.target.value))}
+          className="w-full border rounded p-2"
+          maxLength={15}
+          required
+        />
+
+        <input
+          type="text"
+          placeholder="CPF"
+          value={cpf}
+          onChange={(e) => setCpf(formatCpf(e.target.value))}
+          className="w-full border rounded p-2"
+          maxLength={14}
+          required
+        />
+
+        <input
+          type="date"
+          value={dataNascimento}
+          onChange={(e) => setDataNascimento(e.target.value)}
           className="w-full border rounded p-2"
           required
         />
@@ -114,8 +168,8 @@ export default function NovoUsuarioPage() {
           onChange={(e) => setRole(e.target.value)}
           className="w-full border rounded p-2"
         >
-          <option value="usuario">Usuário</option>
           <option value="lider">Liderança</option>
+          <option value="coordenador">Coordenador</option>
         </select>
 
         <select

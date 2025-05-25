@@ -16,6 +16,7 @@ type Inscricao = {
   id: string;
   nome: string;
   telefone: string;
+  cpf: string;
   evento: string;
   status: keyof typeof statusBadge;
   created: string;
@@ -34,7 +35,7 @@ export default function ListaInscricoesPage() {
   const [erro, setErro] = useState("");
   const [copiado, setCopiado] = useState(false);
   const [filtroStatus, setFiltroStatus] = useState("");
-  const [filtroCampo, setFiltroCampo] = useState("");
+  const [filtroBusca, setFiltroBusca] = useState("");
   const [inscricaoEmEdicao, setInscricaoEmEdicao] = useState<Inscricao | null>(
     null
   );
@@ -53,16 +54,17 @@ export default function ListaInscricoesPage() {
     setRole(user.role);
     setLinkPublico(`${window.location.origin}/inscricoes/${user.id}`);
 
-    const filtro = user.role === "coordenador" ? "" : `criado_por='${user.id}'`;
+    const filtro = user.role === "coordenador" ? "" : `campo='${user.campo}'`;
 
     pb.collection("inscricoes")
-      .getFullList({ sort: "-created", filtro, expand: "campo" })
+      .getFullList({ sort: "-created", filter: filtro, expand: "campo" })
       .then((res) => {
         const lista = res.map((r) => ({
           id: r.id,
           nome: r.nome,
           telefone: r.telefone,
           evento: r.evento,
+          cpf: r.evento,
           status: r.status,
           created: r.created,
           campo: r.expand?.campo?.nome || "—",
@@ -142,11 +144,18 @@ export default function ListaInscricoesPage() {
   };
 
   const inscricoesFiltradas = inscricoes.filter((i) => {
+    const busca = filtroBusca.toLowerCase();
+
     const matchStatus = filtroStatus === "" || i.status === filtroStatus;
-    const matchCampo =
-      filtroCampo === "" ||
-      i.campo?.toLowerCase().includes(filtroCampo.toLowerCase());
-    return matchStatus && matchCampo;
+
+    const matchBusca =
+      filtroBusca === "" ||
+      i.nome.toLowerCase().includes(busca) ||
+      i.telefone?.toLowerCase().includes(busca) ||
+      i.cpf?.toLowerCase().includes(busca) ||
+      (role === "coordenador" && i.campo?.toLowerCase().includes(busca));
+
+    return matchStatus && matchBusca;
   });
 
   if (loading)
@@ -194,11 +203,12 @@ export default function ListaInscricoesPage() {
       <div className="flex flex-wrap gap-4 mb-6">
         <input
           type="text"
-          placeholder="Buscar por campo"
+          placeholder="Buscar por nome, telefone, CPF ou campo"
           className="border rounded px-4 py-2 text-sm w-full md:w-64 shadow-sm"
-          value={filtroCampo}
-          onChange={(e) => setFiltroCampo(e.target.value)}
+          value={filtroBusca}
+          onChange={(e) => setFiltroBusca(e.target.value)}
         />
+
         <select
           value={filtroStatus}
           onChange={(e) => setFiltroStatus(e.target.value)}

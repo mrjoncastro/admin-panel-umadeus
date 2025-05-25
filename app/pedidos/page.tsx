@@ -26,21 +26,26 @@ export default function PedidosPage() {
 
   // Redireciona se não for coordenador
   useEffect(() => {
-    if (!isLoggedIn || !user || user.role !== "coordenador") {
+    if (!isLoggedIn || !user) {
       router.replace("/");
     }
   }, [isLoggedIn, user, router]);
 
   useEffect(() => {
-    if (!user || user.role !== "coordenador") return;
+    if (!user) return;
 
     const fetchPedidos = async () => {
       setLoading(true);
       try {
+        const filtro =
+          user.role === "coordenador" ? "" : `campo = "${user.campo}"`;
+
         const res = await pb.collection("pedidos").getList<Pedido>(pagina, 10, {
+          filter: filtro,
           expand: "campo",
           sort: `${ordem === "desc" ? "-" : ""}created`,
         });
+
         setPedidos(res.items);
         setTotalPaginas(res.totalPages);
       } catch (err) {

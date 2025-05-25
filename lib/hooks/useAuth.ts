@@ -1,3 +1,5 @@
+// lib/hooks/useAuth
+
 "use client";
 
 import { useState, useEffect } from "react";

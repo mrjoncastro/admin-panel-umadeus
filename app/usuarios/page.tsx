@@ -60,7 +60,7 @@ export default function UsuariosPage() {
         </h1>
         <Link
           href="/usuarios/novo"
-          className="bg-cornell_red text-white px-4 py-2 rounded-md hover:bg-red-700 text-sm font-medium transition-colors"
+          className="bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-700 text-sm font-medium transition-colors"
         >
           + Adicionar Novo Usuário
         </Link>

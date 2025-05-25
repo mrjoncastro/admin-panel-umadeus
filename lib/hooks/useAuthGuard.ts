@@ -1,3 +1,5 @@
+// lib/hooks/useAuthGuard
+
 "use client";
 
 import { useEffect, useState } from "react";
