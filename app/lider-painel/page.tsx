@@ -70,7 +70,7 @@ export default function LiderDashboardPage() {
     };
 
     fetchDados();
-  }, [isLoggedIn, user]);
+  }, [isLoggedIn, user, router]);
 
   if (loading) {
     return <p className="p-6 text-center text-sm">Carregando dashboard...</p>;
