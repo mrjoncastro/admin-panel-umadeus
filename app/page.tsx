@@ -61,7 +61,7 @@ export default function LoginPage() {
       <div className="hidden md:block md:w-[62%] bg-black">
         <div className="relative h-screen w-full">
           <Image
-            src="/img/qg3_tech.png"
+            src="/img/qg3_tech.webp"
             alt="Imagem de fundo"
             fill
             className="object-cover"

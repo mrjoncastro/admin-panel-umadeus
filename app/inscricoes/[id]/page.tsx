@@ -83,6 +83,7 @@ export default function InscricaoPage() {
     setLoading(true);
 
     try {
+      // 🔹 Etapa 1: Criar inscrição
       const resposta = await fetch("/api/inscricoes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -101,6 +102,7 @@ export default function InscricaoPage() {
         return;
       }
 
+      // 🔹 Etapa 2: Gerar link de pagamento
       const checkout = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -117,6 +119,28 @@ export default function InscricaoPage() {
           "✅ Inscrição realizada com sucesso! Redirecionando para pagamento..."
         );
         setConfirmado(true);
+
+        // 🔸 Etapa 3 (Opcional): Enviar notificação para o n8n
+        try {
+          await fetch("/api/n8n", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              ...form,
+              liderId: lid,
+              pedidoId: result.pedidoId,
+              valor: result.valor,
+              url_pagamento: data.url,
+            }),
+          });
+        } catch (erro) {
+          console.warn(
+            "⚠️ Falha ao notificar o n8n (sem impacto no fluxo):",
+            erro
+          );
+        }
+
+        // 🔹 Etapa 4: Redirecionar para o checkout
         setTimeout(() => {
           window.location.href = data.url;
         }, 2000);
@@ -125,7 +149,8 @@ export default function InscricaoPage() {
           `❌ Falha ao gerar link de pagamento. ${data?.error || ""}`
         );
       }
-    } catch {
+    } catch (erro) {
+      console.error("❌ Erro no handleSubmit:", erro);
       setMensagem("❌ Erro ao processar inscrição.");
     } finally {
       setLoading(false);
