@@ -103,13 +103,17 @@ export default function InscricaoPage() {
       }
 
       // 🔹 Etapa 2: Gerar link de pagamento
+      const checkoutPayload = {
+        pedidoId: result.pedidoId,
+        valor: result.valor,
+      };
+
+      console.log("💳 Enviando para /api/checkout:", checkoutPayload);
+
       const checkout = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          pedidoId: result.pedidoId,
-          valor: result.valor,
-        }),
+        body: JSON.stringify(checkoutPayload),
       });
 
       const data = await checkout.json();
