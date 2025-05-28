@@ -5,6 +5,8 @@ import pb from "@/lib/pocketbase";
 import { Copy } from "lucide-react";
 import { saveAs } from "file-saver";
 import ModalEditarInscricao from "./componentes/ModalEdit";
+import { CheckCircle, XCircle, Pencil, Trash2 } from "lucide-react";
+import TooltipIcon from "../components/TooltipIcon";
 
 const statusBadge = {
   pendente: "bg-yellow-100 text-yellow-800",
@@ -23,8 +25,10 @@ type Inscricao = {
   campo?: string;
   tamanho?: string;
   genero?: string;
+  confirmado_por_lider?: boolean;
   data_nascimento?: string;
   criado_por?: string;
+  pedido_status?: string;
 };
 
 export default function ListaInscricoesPage() {
@@ -57,7 +61,7 @@ export default function ListaInscricoesPage() {
     const filtro = user.role === "coordenador" ? "" : `campo='${user.campo}'`;
 
     pb.collection("inscricoes")
-      .getFullList({ sort: "-created", filter: filtro, expand: "campo" })
+      .getFullList({ sort: "-created", filter: filtro, expand: "campo,pedido" })
       .then((res) => {
         const lista = res.map((r) => ({
           id: r.id,
@@ -72,6 +76,8 @@ export default function ListaInscricoesPage() {
           genero: r.genero,
           data_nascimento: r.data_nascimento,
           criado_por: r.criado_por,
+          confirmado_por_lider: r.confirmado_por_lider,
+          pedido_status: r.expand?.pedido?.status || null,
         }));
         setInscricoes(lista);
       })
@@ -115,6 +121,27 @@ export default function ListaInscricoesPage() {
       }
     }
   };
+
+  const confirmarInscricao = async (id: string) => {
+    try {
+      await pb.collection("inscricoes").update(id, {
+        confirmado_por_lider: true,
+        status: "confirmado", // ✅ atualiza o status também
+      });
+      setInscricoes((prev) =>
+        prev.map((i) =>
+          i.id === id
+            ? { ...i, confirmado_por_lider: true, status: "confirmado" }
+            : i
+        )
+      );
+    } catch {
+      setErro("Erro ao confirmar inscrição.");
+    }
+  };
+
+  const [inscricaoParaRecusar, setInscricaoParaRecusar] =
+    useState<Inscricao | null>(null);
 
   const exportarCSV = () => {
     const header = [
@@ -243,6 +270,7 @@ export default function ListaInscricoesPage() {
                 <th className="p-3 text-left">Status</th>
                 <th className="p-3 text-left">Campo</th>
                 <th className="p-3 text-left">Criado em</th>
+                <th className="p-3 text-left">Confirmação</th>
                 {role === "coordenador" && (
                   <th className="p-3 text-left">Ação</th>
                 )}
@@ -267,21 +295,58 @@ export default function ListaInscricoesPage() {
                   <td className="p-3">
                     {new Date(i.created).toLocaleDateString("pt-BR")}
                   </td>
+                  <td className="p-3 flex gap-3 items-center">
+                    {(role === "lider" || role === "coordenador") &&
+                    i.pedido_status === "pago" &&
+                    !i.confirmado_por_lider ? (
+                      <>
+                        <TooltipIcon label="Confirmar inscrição">
+                          <button
+                            onClick={() => confirmarInscricao(i.id)}
+                            className="text-green-600 hover:text-green-700 cursor-pointer"
+                          >
+                            <CheckCircle className="w-5 h-5" />
+                          </button>
+                        </TooltipIcon>
+
+                        <TooltipIcon label="Recusar inscrição">
+                          <button
+                            onClick={() => setInscricaoParaRecusar(i)}
+                            className="text-red-600 hover:text-red-700 cursor-pointer"
+                          >
+                            <XCircle className="w-5 h-5" />
+                          </button>
+                        </TooltipIcon>
+                      </>
+                    ) : i.confirmado_por_lider ? (
+                      <TooltipIcon label="Confirmado">
+                        <CheckCircle className="text-green-600 w-5 h-5" />
+                      </TooltipIcon>
+                    ) : (
+                      <span className="text-gray-400 text-xs">—</span>
+                    )}
+                  </td>
+
                   <td className="p-3 text-right space-x-3 text-xs">
                     {role === "coordenador" ? (
                       <>
-                        <button
-                          onClick={() => setInscricaoEmEdicao(i)}
-                          className="text-blue-600 hover:underline"
-                        >
-                          Editar
-                        </button>
-                        <button
-                          onClick={() => deletarInscricao(i.id)}
-                          className="text-red-600 hover:underline"
-                        >
-                          Excluir
-                        </button>
+                        <TooltipIcon label="Editar">
+                          <button
+                            onClick={() => setInscricaoEmEdicao(i)}
+                            className="text-blue-600 hover:text-blue-800 cursor-pointer"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </button>
+                        </TooltipIcon>
+
+                        <TooltipIcon label="Excluir">
+                          <button
+                            onClick={() => deletarInscricao(i.id)}
+                            className="text-red-600 hover:text-red-800 cursor-pointer"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </TooltipIcon>
                       </>
                     ) : (
                       <span className="text-gray-400">—</span>
@@ -313,6 +378,47 @@ export default function ListaInscricoesPage() {
             setInscricaoEmEdicao(null);
           }}
         />
+      )}
+
+      {inscricaoParaRecusar && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-30 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full">
+            <h2 className="text-lg font-semibold mb-4">Recusar Inscrição</h2>
+            <p className="text-sm text-gray-700 mb-4">
+              Tem certeza que deseja recusar a inscrição de{" "}
+              <strong>{inscricaoParaRecusar.nome}</strong>? Essa ação definirá o
+              status como <strong className="text-red-600">cancelado</strong>.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setInscricaoParaRecusar(null)}
+                className="px-3 py-1 text-sm border rounded hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={async () => {
+                  await pb
+                    .collection("inscricoes")
+                    .update(inscricaoParaRecusar.id, {
+                      status: "cancelado",
+                    });
+                  setInscricoes((prev) =>
+                    prev.map((i) =>
+                      i.id === inscricaoParaRecusar.id
+                        ? { ...i, status: "cancelado" }
+                        : i
+                    )
+                  );
+                  setInscricaoParaRecusar(null);
+                }}
+                className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 cursor-pointer"
+              >
+                Confirmar recusa
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </main>
   );

@@ -12,7 +12,16 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "UMADEUS",
-  description: "Plataforma oficial de inscrições e vendas UMADEUS",
+  description: "Sistema de inscrições e gestão UMADEUS",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icon0.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon1.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: "/apple-icon.png",
+  },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({

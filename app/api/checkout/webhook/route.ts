@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import PocketBase from "pocketbase";
 import mercadopago from "mercadopago";
-import pb from "@/lib/pocketbase"; // ajuste se seu path for diferente
+
+const pb = new PocketBase("https://umadeus-production.up.railway.app");
+pb.autoCancellation(false);
 
 mercadopago.configure({
   access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN!,
@@ -9,49 +12,58 @@ mercadopago.configure({
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-
     const paymentId = body?.data?.id;
-    const eventType = body?.type;
+    const action = body?.action;
+    const type = body?.type;
 
-    if (eventType !== "payment.updated" && eventType !== "payment.created") {
+    if (!paymentId || type !== "payment") {
+      return NextResponse.json({ status: "Ignorado" });
+    }
+
+    if (action !== "payment.created" && action !== "payment.updated") {
       return NextResponse.json({ status: "Ignorado" });
     }
 
     const payment = await mercadopago.payment.findById(paymentId);
+    const status = payment.body.status;
+    const pedidoId = payment.body.external_reference;
 
-    const status = payment.body.status; // 'approved', 'pending', etc.
-    const externalReference = payment.body.external_reference;
-
-    if (status === "approved") {
-      // Aqui você pode fazer algo como:
-      // externalReference = "email-timestamp"
-      const email = externalReference.split("-")[0];
-
-      // Buscar o pedido correspondente
-      const pedidos = await pb.collection("pedidos").getFullList({
-        filter: `email = "${email}"`,
-      });
-
-      if (pedidos.length === 0) {
-        return NextResponse.json(
-          { error: "Pedido não encontrado" },
-          { status: 404 }
-        );
-      }
-
-      const pedido = pedidos[0];
-
-      // Atualiza o status para pago
-      await pb.collection("pedidos").update(pedido.id, { status: "pago" });
-
-      console.log(`✅ Pagamento confirmado para: ${email}`);
+    if (!pedidoId) {
+      return NextResponse.json(
+        { error: "Referência externa ausente no pagamento" },
+        { status: 400 }
+      );
     }
 
-    return NextResponse.json({ status: "Processado" });
-  } catch (err: unknown) {
-    console.error("❌ Erro no webhook:", err);
+    if (status !== "approved") {
+      return NextResponse.json({ status: "Aguardando aprovação" });
+    }
+
+    if (!pb.authStore.isValid) {
+      await pb.admins.authWithPassword(
+        process.env.PB_ADMIN_EMAIL!,
+        process.env.PB_ADMIN_PASSWORD!
+      );
+    }
+
+    const pedido = await pb.collection("pedidos").getOne(pedidoId);
+
+    if (!pedido) {
+      return NextResponse.json(
+        { error: "Pedido não encontrado" },
+        { status: 404 }
+      );
+    }
+
+    await pb.collection("pedidos").update(pedido.id, {
+      status: "pago",
+      id_pagamento: paymentId,
+    });
+
+    return NextResponse.json({ status: "Pedido atualizado com sucesso" });
+  } catch {
     return NextResponse.json(
-      { error: "Erro no processamento" },
+      { error: "Erro no processamento do webhook" },
       { status: 500 }
     );
   }

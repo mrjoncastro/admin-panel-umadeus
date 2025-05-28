@@ -7,7 +7,6 @@ import type { Inscricao, Pedido } from "@/types";
 interface DashboardResumoProps {
   inscricoes: Inscricao[];
   pedidos: Pedido[];
-  valorTotal: number;
   filtroStatus: string;
   setFiltroStatus: (status: string) => void;
 }
@@ -15,10 +14,25 @@ interface DashboardResumoProps {
 export default function DashboardResumo({
   inscricoes,
   pedidos,
-  valorTotal,
   filtroStatus,
   setFiltroStatus,
 }: DashboardResumoProps) {
+  const valorTotalConfirmado = inscricoes.reduce((total, i) => {
+    const pedido = i.expand?.pedido;
+    const confirmado =
+      i.status === "confirmado" || i.confirmado_por_lider === true;
+    const pago = pedido?.status === "pago";
+    const valor = Number(pedido?.valor ?? 0);
+
+    if (confirmado && pago && !isNaN(valor)) {
+      return total + valor;
+    }
+
+    return total;
+  }, 0);
+
+  console.log("📦 Pedidos recebidos:", pedidos);
+
   const statusInscricoes = inscricoes.reduce<Record<string, number>>(
     (acc, i) => {
       acc[i.status] = (acc[i.status] || 0) + 1;
@@ -64,7 +78,6 @@ export default function DashboardResumo({
 
   return (
     <>
-      {/* Totais principais */}
       <div className="grid gap-4 md:grid-cols-3 mb-6">
         <div className="bg-white p-4 rounded shadow text-center">
           <div className="flex justify-center items-center gap-2 mb-1">
@@ -77,6 +90,7 @@ export default function DashboardResumo({
           </div>
           <p className="text-3xl font-bold">{inscricoes.length}</p>
         </div>
+
         <div className="bg-white p-4 rounded shadow text-center">
           <div className="flex justify-center items-center gap-2 mb-1">
             <h2 className="text-sm font-bold">Total de Pedidos</h2>
@@ -88,16 +102,19 @@ export default function DashboardResumo({
           </div>
           <p className="text-3xl font-bold">{pedidos.length}</p>
         </div>
+
         <div className="bg-white p-4 rounded shadow text-center">
           <div className="flex justify-center items-center gap-2 mb-1">
             <h2 className="text-sm font-bold">Valor Total</h2>
-            <Tippy content="Soma de todos os valores dos pedidos.">
+            <Tippy content="Soma dos pedidos pagos com inscrições confirmadas.">
               <span>
                 <Info className="w-4 h-4 text-cornell_red" />
               </span>
             </Tippy>
           </div>
-          <p className="text-3xl font-bold">R$ {valorTotal.toFixed(2)}</p>
+          <p className="text-3xl font-bold">
+            R$ {valorTotalConfirmado.toFixed(2)}
+          </p>
         </div>
       </div>
 
@@ -130,6 +147,7 @@ export default function DashboardResumo({
         ))}
       </div>
 
+      {/* Gráficos */}
       <div className="bg-[#F1F1F1] rounded-lg p-6 shadow-inner mb-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
           <label className="text-sm font-medium text-black_bean">Filtro:</label>

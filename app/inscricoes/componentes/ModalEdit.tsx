@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState, FormEvent } from "react";
+import { FormEvent } from "react";
 import { Inscricao } from "@/types";
-import pb from "@/lib/pocketbase";
 
 type Props = {
   inscricao: Inscricao;
@@ -10,35 +9,12 @@ type Props = {
   onSave: (inscricaoAtualizada: Partial<Inscricao>) => void;
 };
 
-type Lider = {
-  id: string;
-  nome: string;
-};
 
 export default function ModalEditarInscricao({
   inscricao,
   onClose,
   onSave,
 }: Props) {
-  const [lideres, setLideres] = useState<Lider[]>([]);
-
-  useEffect(() => {
-    const fetchLideres = async () => {
-      const res = await pb.collection("usuarios").getFullList(200, {
-        filter: 'role = "lider"',
-      });
-
-      const parsed = res.map((user) => ({
-        id: user.id,
-        nome: user.nome,
-      }));
-
-      setLideres(parsed);
-    };
-
-    fetchLideres();
-  }, []);
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -50,8 +26,6 @@ export default function ModalEditarInscricao({
       tamanho: formData.get("tamanho")?.toString(),
       genero: formData.get("genero")?.toString(),
       evento: formData.get("evento")?.toString(),
-      data_nascimento: formData.get("data_nascimento")?.toString(),
-      criado_por: formData.get("criado_por")?.toString(),
     };
 
     onSave(atualizada);
@@ -98,37 +72,17 @@ export default function ModalEditarInscricao({
 
           <Input name="evento" label="Evento" defaultValue={inscricao.evento} />
 
-          <Input
-            name="data_nascimento"
-            label="Data de Nascimento"
-            type="date"
-            defaultValue={inscricao.data_nascimento || ""}
-          />
-
-          <Select
-            name="criado_por"
-            label="Líder (ID)"
-            defaultValue={inscricao.criado_por || ""}
-          >
-            <option value="">Selecione um líder</option>
-            {lideres.map((lider) => (
-              <option key={lider.id} value={lider.id}>
-                {lider.nome}
-              </option>
-            ))}
-          </Select>
-
           <div className="flex justify-end gap-2 pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm rounded border"
+              className="px-4 py-2 text-sm rounded border cursor-pointer "
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm bg-blue-600 text-white rounded"
+              className="px-4 py-2 text-sm bg-blue-600 text-white rounded cursor-pointer"
             >
               Salvar
             </button>

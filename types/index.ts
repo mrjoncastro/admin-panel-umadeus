@@ -9,7 +9,8 @@ export type Inscricao = {
   data_nascimento?: string;
   criado_por?: string;
   campo?: string;
-  cpf?: string; 
+  cpf?: string;
+  confirmado_por_lider?: boolean;
   created?: string;
   expand?: {
     campo?: {
@@ -19,6 +20,11 @@ export type Inscricao = {
     criado_por?: {
       id: string;
       nome: string;
+    };
+    pedido?: {
+      id: string;
+      status: "pago" | "pendente" | "cancelado";
+      valor: number | string;
     };
   };
 };
@@ -43,6 +49,11 @@ export type Pedido = {
     criado_por?: {
       id: string;
       nome: string;
+    };
+    pedido?: {
+      id: string;
+      status: "pago" | "pendente" | "cancelado";
+      valor: number | string;
     };
   };
 };

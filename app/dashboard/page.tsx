@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Inscricao, Pedido } from "@/types";
 import {
   Chart as ChartJS,
@@ -48,7 +48,7 @@ export default function DashboardPage() {
         const [rawInscricoes, rawPedidos] = await Promise.all([
           pb
             .collection("inscricoes")
-            .getFullList({ expand: "campo,criado_por", signal }),
+            .getFullList({ expand: "campo,criado_por,pedido", signal }),
           pb
             .collection("pedidos")
             .getFullList({ expand: "campo,criado_por", signal }),
@@ -73,6 +73,7 @@ export default function DashboardPage() {
           expand: {
             campo: r.expand?.campo,
             criado_por: r.expand?.criado_por,
+            pedido: r.expand?.pedido,
           },
         }));
 
@@ -120,9 +121,7 @@ export default function DashboardPage() {
     };
   }, [authChecked, user?.id, user?.role, pb]);
 
-  const valorTotal = useMemo(() => {
-    return pedidos.reduce((soma, p) => soma + (parseFloat(p.valor) || 0), 0);
-  }, [pedidos]);
+
 
   return (
     <main className="min-h-screen bg-[#DCDCDC] text-[#2A1A1C] p-4 md:p-6">
@@ -145,7 +144,6 @@ export default function DashboardPage() {
           <DashboardResumo
             inscricoes={inscricoes}
             pedidos={pedidos}
-            valorTotal={valorTotal}
             filtroStatus={filtroStatus}
             setFiltroStatus={setFiltroStatus}
           />

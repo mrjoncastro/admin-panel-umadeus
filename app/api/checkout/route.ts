@@ -38,6 +38,13 @@ export async function POST(req: NextRequest) {
 
     const pedido = await pb.collection("pedidos").getOne(pedidoId);
 
+    if (!pedido) {
+      return NextResponse.json(
+        { error: "Pedido não encontrado" },
+        { status: 404 }
+      );
+    }
+
     const preference = await mercadopago.preferences.create({
       items: [
         {
@@ -53,7 +60,7 @@ export async function POST(req: NextRequest) {
         name: (pedido.responsavel || "Cliente").toString().substring(0, 100),
         email: pedido.email || "sememail@teste.com",
       },
-      external_reference: `${pedido.email || "anonimo"}-${pedido.id}`,
+      external_reference: pedido.id,
       back_urls: {
         success: `${siteUrl}/obrigado`,
         failure: `${siteUrl}/erro`,
@@ -63,6 +70,7 @@ export async function POST(req: NextRequest) {
       notification_url: `${siteUrl}/api/checkout/webhook`,
     });
 
+    // Autentica como admin caso necessário
     if (!pb.authStore.isValid) {
       await pb.admins.authWithPassword(
         process.env.PB_ADMIN_EMAIL!,
@@ -70,13 +78,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Atualiza o link de pagamento no pedido
     await pb.collection("pedidos").update(pedido.id, {
-      id_pagamento: preference.body.id,
       link_pagamento: preference.body.init_point,
     });
 
     return NextResponse.json({ url: preference.body.init_point });
-  } catch {
+  } catch (err: unknown) {
+    console.error("❌ Erro ao gerar link de pagamento:", err);
     return NextResponse.json(
       { error: "Erro ao gerar link de pagamento" },
       { status: 500 }
