@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import pb from "@/lib/pocketbase";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown, User, Lock, LogOut } from "lucide-react";
 import { useState } from "react";
+import RedefinirSenhaModal from "./RedefinirSenhaModal";
 
-// Retorna os links com base no papel do usuário
 const getNavLinks = (role?: string) => {
   if (role === "lider") {
     return [
@@ -31,6 +31,8 @@ export default function Header() {
   const pathname = usePathname();
   const { isLoggedIn, user } = useAuthContext();
   const [menuAberto, setMenuAberto] = useState(false);
+  const [perfilAberto, setPerfilAberto] = useState(false);
+  const [mostrarModalSenha, setMostrarModalSenha] = useState(false);
 
   const navLinks = getNavLinks(user?.role);
 
@@ -79,14 +81,54 @@ export default function Header() {
               </Link>
             ))}
 
-          {isLoggedIn ? (
-            <button
-              onClick={handleLogout}
-              className="ml-2 text-sm underline text-red-400 hover:text-red-600 cursor-pointer"
-            >
-              Sair
-            </button>
-          ) : (
+          {isLoggedIn && (
+            <div className="relative">
+              <button
+                onClick={() => setPerfilAberto((prev) => !prev)}
+                className="flex items-center gap-2 text-sm font-semibold hover:opacity-90"
+              >
+                <User size={18} />
+                <span className="cursor-pointer">
+                  Olá, {user?.nome?.split(" ")[0]}
+                </span>
+                <ChevronDown size={14} />
+              </button>
+
+              {perfilAberto && (
+                <ul className="absolute right-0 mt-2 w-52 bg-white text-[#2A1A1C] dark:bg-zinc-900 dark:text-white rounded-lg shadow z-50 text-sm py-2 space-y-2">
+                  <li>
+                    <Link
+                      href="/perfil"
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                    >
+                      <User size={16} /> Visualizar perfil
+                    </Link>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => {
+                        setMostrarModalSenha(true);
+                        setPerfilAberto(false);
+                      }}
+                      className="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                    >
+                      <Lock size={16} /> Redefinir senha
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left flex items-center gap-2 px-4 py-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-900 cursor-pointer"
+                    >
+                      <LogOut size={16} /> Sair
+                    </button>
+                  </li>
+                </ul>
+              )}
+            </div>
+          )}
+
+          {!isLoggedIn && (
             <Link
               href="/"
               className="text-sm underline text-[#DCDCDC] hover:text-white cursor-pointer"
@@ -115,17 +157,38 @@ export default function Header() {
                 </Link>
               ))}
 
-            {isLoggedIn ? (
-              <button
-                onClick={() => {
-                  setMenuAberto(false);
-                  handleLogout();
-                }}
-                className="text-left px-4 py-2 text-sm underline text-red-400 hover:text-red-600"
-              >
-                Sair
-              </button>
-            ) : (
+            {isLoggedIn && (
+              <>
+                <Link
+                  href="/perfil"
+                  onClick={() => setMenuAberto(false)}
+                  className="px-4 py-2 text-sm hover:bg-[#DCDCDC] hover:text-[#2A1A1C]"
+                >
+                  Perfil
+                </Link>
+                <button
+                  onClick={() => {
+                    setMenuAberto(false);
+                    setMostrarModalSenha(true);
+                  }}
+                  className="text-left px-4 py-2 text-sm hover:bg-[#DCDCDC] hover:text-[#2A1A1C]"
+                >
+                  Redefinir senha
+                </button>
+
+                <button
+                  onClick={() => {
+                    setMenuAberto(false);
+                    handleLogout();
+                  }}
+                  className="text-left px-4 py-2 text-sm underline text-red-400 hover:text-red-600"
+                >
+                  Sair
+                </button>
+              </>
+            )}
+
+            {!isLoggedIn && (
               <Link
                 href="/"
                 onClick={() => setMenuAberto(false)}
@@ -136,6 +199,10 @@ export default function Header() {
             )}
           </nav>
         </div>
+      )}
+
+      {mostrarModalSenha && (
+        <RedefinirSenhaModal onClose={() => setMostrarModalSenha(false)} />
       )}
     </header>
   );

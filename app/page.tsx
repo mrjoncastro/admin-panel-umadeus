@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import Image from "next/image";
+import RedefinirSenhaModal from "./components/RedefinirSenhaModal";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -13,6 +14,7 @@ export default function LoginPage() {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [mostrarModal, setMostrarModal] = useState(false);
 
   // Redirecionamento pós-login
   useEffect(() => {
@@ -53,7 +55,6 @@ export default function LoginPage() {
       </div>
     );
   }
-
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-[#1e2019]">
@@ -133,6 +134,15 @@ export default function LoginPage() {
               }}
               required
             />
+            <div className="text-right text-sm">
+              <button
+                type="button"
+                onClick={() => setMostrarModal(true)}
+                className="underline text-[#DCDCDD] hover:text-white transition"
+              >
+                Esqueci minha senha
+              </button>
+            </div>
 
             <button
               type="submit"
@@ -148,6 +158,9 @@ export default function LoginPage() {
               {isSubmitting ? "Entrando..." : "Entrar"}
             </button>
           </form>
+          {mostrarModal && (
+            <RedefinirSenhaModal onClose={() => setMostrarModal(false)} />
+          )}
         </div>
       </div>
     </div>
