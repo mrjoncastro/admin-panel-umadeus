@@ -46,7 +46,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const pedido = await pb.collection("pedidos").getOne(pedidoId);
+    // 🔹 1. Atualiza o pedido
+    const pedido = await pb.collection("pedidos").getOne(pedidoId, {
+      expand: "inscricao",
+    });
 
     if (!pedido) {
       return NextResponse.json(
@@ -60,8 +63,19 @@ export async function POST(req: NextRequest) {
       id_pagamento: paymentId,
     });
 
-    return NextResponse.json({ status: "Pedido atualizado com sucesso" });
-  } catch {
+    const inscricaoId = pedido.expand?.id_inscricao?.id;
+
+    if (inscricaoId) {
+      await pb.collection("inscricoes").update(inscricaoId, {
+        status: "confirmado", 
+      });
+    }
+
+    return NextResponse.json({
+      status: "Pedido e inscrição atualizados com sucesso",
+    });
+  } catch (err) {
+    console.error("❌ Erro no webhook:", err);
     return NextResponse.json(
       { error: "Erro no processamento do webhook" },
       { status: 500 }

@@ -18,10 +18,11 @@ export async function POST(req: NextRequest) {
       liderId,
     } = body;
 
-    // Limpa CPF e Telefone
+    // Limpa CPF e telefone
     const cpfNumerico = cpf.replace(/\D/g, "");
     const telefoneNumerico = telefone.replace(/\D/g, "");
 
+    // Validação de campos obrigatórios
     const camposObrigatorios = [
       nome,
       email,
@@ -60,6 +61,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Verifica duplicidade por telefone ou CPF
     try {
       await pb
         .collection("inscricoes")
@@ -74,21 +76,7 @@ export async function POST(req: NextRequest) {
       // OK - não encontrado
     }
 
-    // 💰 Valor fixo
-    const valor = 39.9;
-
-    const pedido = await pb.collection("pedidos").create({
-      status: "pendente",
-      produto: "Kit Camisa + Pulseira",
-      cor: "Roxo",
-      tamanho,
-      genero,
-      email,
-      campo: campoId,
-      responsavel: liderId,
-      valor,
-    });
-
+    // Cria inscrição SEM pedido
     const inscricao = await pb.collection("inscricoes").create({
       nome,
       email,
@@ -100,15 +88,12 @@ export async function POST(req: NextRequest) {
       evento: "Congresso UMADEUS 2K25",
       campo: campoId,
       criado_por: liderId,
-      status: "pendente",
-      pedido: pedido.id,
+      status: "pendente", // status inicial
     });
 
     return NextResponse.json({
       sucesso: true,
       inscricaoId: inscricao.id,
-      pedidoId: pedido.id,
-      valor: pedido.valor,
       nome,
       email,
       tamanho,
@@ -116,12 +101,7 @@ export async function POST(req: NextRequest) {
       responsavel: liderId,
     });
   } catch (err: unknown) {
-    if (err instanceof Error) {
-      console.error("❌ Erro ao criar inscrição:", err.message);
-    } else {
-      console.error("❌ Erro desconhecido ao criar inscrição.");
-    }
-
+    console.error("❌ Erro ao criar inscrição:", err);
     return NextResponse.json(
       { erro: "Erro ao processar a inscrição." },
       { status: 500 }

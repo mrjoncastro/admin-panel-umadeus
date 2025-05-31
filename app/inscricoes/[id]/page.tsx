@@ -83,7 +83,7 @@ export default function InscricaoPage() {
     setLoading(true);
 
     try {
-      // 🔹 Etapa 1: Criar inscrição
+      // 1. Envia os dados para a API de inscrição
       const resposta = await fetch("/api/inscricoes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -97,62 +97,29 @@ export default function InscricaoPage() {
         return;
       }
 
-      if (!result.pedidoId || !result.valor) {
-        setMensagem("❌ Erro interno: pedido não criado corretamente.");
-        return;
-      }
-
-      // 🔹 Etapa 2: Gerar link de pagamento
-      const checkoutPayload = {
-        pedidoId: result.pedidoId,
-        valor: result.valor,
-      };
-
-      console.log("💳 Enviando para /api/checkout:", checkoutPayload);
-
-      const checkout = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(checkoutPayload),
-      });
-
-      const data = await checkout.json();
-
-      if (checkout.ok && data.url) {
-        setMensagem(
-          "✅ Inscrição realizada com sucesso! Redirecionando para pagamento..."
-        );
-        setConfirmado(true);
-
-        // 🔸 Etapa 3 (Opcional): Enviar notificação para o n8n
-        try {
-          await fetch("/api/n8n", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              ...form,
-              liderId: lid,
-              pedidoId: result.pedidoId,
-              valor: result.valor,
-              url_pagamento: data.url,
-            }),
-          });
-        } catch (erro) {
-          console.warn(
-            "⚠️ Falha ao notificar o n8n (sem impacto no fluxo):",
-            erro
-          );
-        }
-
-        // 🔹 Etapa 4: Redirecionar para o checkout
-        setTimeout(() => {
-          window.location.href = data.url;
-        }, 2000);
-      } else {
-        setMensagem(
-          `❌ Falha ao gerar link de pagamento. ${data?.error || ""}`
+      // 2. Envia notificação para o n8n
+      try {
+        await fetch("/api/n8n", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...form,
+            liderId: lid,
+            inscricaoId: result.inscricaoId,
+          }),
+        });
+      } catch (erro) {
+        console.warn(
+          "⚠️ Falha ao notificar o n8n (sem impacto no usuário):",
+          erro
         );
       }
+
+      // 3. Exibe mensagem de sucesso
+      setMensagem(
+        "✅ Inscrição enviada com sucesso! Em breve você receberá o link de pagamento."
+      );
+      setConfirmado(true);
     } catch (erro) {
       console.error("❌ Erro no handleSubmit:", erro);
       setMensagem("❌ Erro ao processar inscrição.");
@@ -182,7 +149,7 @@ export default function InscricaoPage() {
         </p>
       )}
 
-      {!mensagem.startsWith("❌") && (
+      {!mensagem && (
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
@@ -284,7 +251,7 @@ export default function InscricaoPage() {
             />
             <label htmlFor="confirmacao" className="text-sm text-gray-600">
               Estou ciente de que minha inscrição só será confirmada após a
-              confirmação do pagamento.
+              liberação do pagamento pela liderança.
             </label>
           </div>
 
@@ -303,8 +270,8 @@ export default function InscricaoPage() {
           <p>{mensagem}</p>
           {confirmado && (
             <p className="text-xs text-gray-500 italic">
-              Você será redirecionado automaticamente para a página de
-              pagamento.
+              Você receberá o link de pagamento assim que sua inscrição for
+              validada.
             </p>
           )}
         </div>

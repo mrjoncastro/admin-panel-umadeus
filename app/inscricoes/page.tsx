@@ -10,9 +10,12 @@ import TooltipIcon from "../components/TooltipIcon";
 
 const statusBadge = {
   pendente: "bg-yellow-100 text-yellow-800",
+  aguardando_pagamento: "bg-blue-100 text-blue-800",
   confirmado: "bg-green-100 text-green-800",
   cancelado: "bg-red-100 text-red-800",
-};
+} as const;
+
+type StatusInscricao = keyof typeof statusBadge;
 
 type Inscricao = {
   id: string;
@@ -20,7 +23,7 @@ type Inscricao = {
   telefone: string;
   cpf: string;
   evento: string;
-  status: keyof typeof statusBadge;
+  status: StatusInscricao;
   created: string;
   campo?: string;
   tamanho?: string;
@@ -121,22 +124,88 @@ export default function ListaInscricoesPage() {
       }
     }
   };
+  const [confirmandoId, setConfirmandoId] = useState<string | null>(null);
 
   const confirmarInscricao = async (id: string) => {
     try {
-      await pb.collection("inscricoes").update(id, {
-        confirmado_por_lider: true,
-        status: "confirmado", // ✅ atualiza o status também
+      setConfirmandoId(id);
+
+      // 🔹 1. Buscar inscrição com expand do campo
+      const inscricao = await pb.collection("inscricoes").getOne(id, {
+        expand: "campo",
       });
+
+      const campo = inscricao.expand?.campo;
+
+      // 🔹 2. Criar pedido com os dados da inscrição
+      const pedido = await pb.collection("pedidos").create({
+        id_inscricao: id,
+        valor: 39.9,
+        status: "pendente",
+        produto: "Kit Camisa + Pulseira",
+        cor: "Roxo",
+        tamanho: inscricao.tamanho,
+        genero: inscricao.genero,
+        email: inscricao.email,
+        campo: campo.id,
+        responsavel: inscricao.criado_por,
+      });
+      console.log("🚀 Tamanho:", inscricao.tamanho);
+      console.log("📌 ID inscrição:", inscricao.id);
+
+      // 🔹 3. Gera link de pagamento
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pedidoId: pedido.id, valor: pedido.valor }),
+      });
+
+      const checkout = await res.json();
+      if (!res.ok || !checkout?.url) {
+        throw new Error("Erro ao gerar link de pagamento.");
+      }
+
+      // 4. Atualizar inscrição com o ID do pedido
+      await pb.collection("inscricoes").update(id, {
+        pedido: pedido.id, // ✅ atualiza campo pedido
+        status: "aguardando_pagamento",
+        confirmado_por_lider: true,
+      });
+
       setInscricoes((prev) =>
         prev.map((i) =>
           i.id === id
-            ? { ...i, confirmado_por_lider: true, status: "confirmado" }
+            ? {
+                ...i,
+                status: "aguardando_pagamento",
+                confirmado_por_lider: true,
+              }
             : i
         )
       );
-    } catch {
-      setErro("Erro ao confirmar inscrição.");
+
+      // 🔹 5. Notifica n8n
+      await fetch("/api/n8n", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nome: inscricao.nome,
+          telefone: inscricao.telefone,
+          cpf: inscricao.cpf,
+          evento: inscricao.evento,
+          liderId: campo.responsavel,
+          pedidoId: pedido.id,
+          valor: pedido.valor,
+          url_pagamento: checkout.url,
+        }),
+      });
+
+      alert("✅ Link de pagamento enviado com sucesso!");
+    } catch (err) {
+      console.error("Erro ao confirmar inscrição:", err);
+      setErro("Erro ao confirmar inscrição e gerar pedido.");
+    } finally {
+      setConfirmandoId(null);
     }
   };
 
@@ -297,15 +366,40 @@ export default function ListaInscricoesPage() {
                   </td>
                   <td className="p-3 flex gap-3 items-center">
                     {(role === "lider" || role === "coordenador") &&
-                    i.pedido_status === "pago" &&
+                    i.status === "pendente" &&
                     !i.confirmado_por_lider ? (
                       <>
                         <TooltipIcon label="Confirmar inscrição">
                           <button
                             onClick={() => confirmarInscricao(i.id)}
-                            className="text-green-600 hover:text-green-700 cursor-pointer"
+                            disabled={confirmandoId === i.id}
+                            className={`text-green-600 hover:text-green-700 cursor-pointer ${
+                              confirmandoId === i.id ? "opacity-50" : ""
+                            }`}
                           >
-                            <CheckCircle className="w-5 h-5" />
+                            {confirmandoId === i.id ? (
+                              <svg
+                                className="w-5 h-5 animate-spin text-green-600"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                              >
+                                <circle
+                                  className="opacity-25"
+                                  cx="12"
+                                  cy="12"
+                                  r="10"
+                                  stroke="currentColor"
+                                  strokeWidth="4"
+                                ></circle>
+                                <path
+                                  className="opacity-75"
+                                  fill="currentColor"
+                                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                ></path>
+                              </svg>
+                            ) : (
+                              <CheckCircle className="w-5 h-5" />
+                            )}
                           </button>
                         </TooltipIcon>
 

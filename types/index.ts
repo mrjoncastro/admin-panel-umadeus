@@ -2,7 +2,7 @@ export type Inscricao = {
   id: string;
   nome: string;
   telefone: string;
-  status: "pendente" | "confirmado" | "cancelado";
+  status?: "pendente" | "aguardando_pagamento" | "confirmado" | "cancelado";
   tamanho?: string;
   genero?: string;
   evento?: string;
@@ -32,6 +32,7 @@ export type Inscricao = {
 export type Pedido = {
   id: string;
   id_pagamento: string;
+  id_inscricao: string;
   produto: string;
   tamanho?: string;
   status: "pendente" | "pago" | "cancelado";

@@ -31,11 +31,12 @@ export default function DashboardResumo({
     return total;
   }, 0);
 
-  console.log("📦 Pedidos recebidos:", pedidos);
 
   const statusInscricoes = inscricoes.reduce<Record<string, number>>(
     (acc, i) => {
-      acc[i.status] = (acc[i.status] || 0) + 1;
+      if (i.status) {
+        acc[i.status] = (acc[i.status] || 0) + 1;
+      }
       return acc;
     },
     {}

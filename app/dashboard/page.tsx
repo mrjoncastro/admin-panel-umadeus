@@ -79,6 +79,7 @@ export default function DashboardPage() {
 
         const allPedidos: Pedido[] = rawPedidos.map((r) => ({
           id: r.id,
+          id_inscricao:r.id_inscricao,
           produto: r.produto,
           email: r.email,
           tamanho: r.tamanho,
