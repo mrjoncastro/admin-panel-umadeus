@@ -5,7 +5,8 @@ import pb from "@/lib/pocketbase";
 import { Copy } from "lucide-react";
 import { saveAs } from "file-saver";
 import ModalEditarInscricao from "./componentes/ModalEdit";
-import { CheckCircle, XCircle, Pencil, Trash2 } from "lucide-react";
+import ModalVisualizarPedido from "./componentes/ModalVisualizarPedido";
+import { CheckCircle, XCircle, Pencil, Trash2, Eye } from "lucide-react";
 import TooltipIcon from "../components/TooltipIcon";
 
 const statusBadge = {
@@ -31,7 +32,7 @@ type Inscricao = {
   confirmado_por_lider?: boolean;
   data_nascimento?: string;
   criado_por?: string;
-  pedido_status?: string;
+  pedido_id?: string | null;
 };
 
 export default function ListaInscricoesPage() {
@@ -81,6 +82,7 @@ export default function ListaInscricoesPage() {
           criado_por: r.criado_por,
           confirmado_por_lider: r.confirmado_por_lider,
           pedido_status: r.expand?.pedido?.status || null,
+          pedido_id: r.expand?.pedido?.id || null,
         }));
         setInscricoes(lista);
       })
@@ -150,8 +152,6 @@ export default function ListaInscricoesPage() {
         campo: campo.id,
         responsavel: inscricao.criado_por,
       });
-      console.log("🚀 Tamanho:", inscricao.tamanho);
-      console.log("📌 ID inscrição:", inscricao.id);
 
       // 🔹 3. Gera link de pagamento
       const res = await fetch("/api/checkout", {
@@ -253,6 +253,10 @@ export default function ListaInscricoesPage() {
 
     return matchStatus && matchBusca;
   });
+
+  const [pedidoSelecionado, setPedidoSelecionado] = useState<string | null>(
+    null
+  );
 
   if (loading)
     return <p className="p-6 text-center text-sm">Carregando inscrições...</p>;
@@ -364,87 +368,98 @@ export default function ListaInscricoesPage() {
                   <td className="p-3">
                     {new Date(i.created).toLocaleDateString("pt-BR")}
                   </td>
-                  <td className="p-3 flex gap-3 items-center">
-                    {(role === "lider" || role === "coordenador") &&
-                    i.status === "pendente" &&
-                    !i.confirmado_por_lider ? (
-                      <>
-                        <TooltipIcon label="Confirmar inscrição">
-                          <button
-                            onClick={() => confirmarInscricao(i.id)}
-                            disabled={confirmandoId === i.id}
-                            className={`text-green-600 hover:text-green-700 cursor-pointer ${
-                              confirmandoId === i.id ? "opacity-50" : ""
-                            }`}
-                          >
-                            {confirmandoId === i.id ? (
-                              <svg
-                                className="w-5 h-5 animate-spin text-green-600"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                              >
-                                <circle
-                                  className="opacity-25"
-                                  cx="12"
-                                  cy="12"
-                                  r="10"
-                                  stroke="currentColor"
-                                  strokeWidth="4"
-                                ></circle>
-                                <path
-                                  className="opacity-75"
-                                  fill="currentColor"
-                                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                                ></path>
-                              </svg>
-                            ) : (
-                              <CheckCircle className="w-5 h-5" />
-                            )}
-                          </button>
-                        </TooltipIcon>
+                  <td className="p-3 text-left text-xs">
+                    <div className="flex items-center gap-3">
+                      {(role === "lider" || role === "coordenador") &&
+                      i.status === "pendente" &&
+                      !i.confirmado_por_lider ? (
+                        <>
+                          <TooltipIcon label="Confirmar inscrição">
+                            <button
+                              onClick={() => confirmarInscricao(i.id)}
+                              disabled={confirmandoId === i.id}
+                              className={`text-green-600 hover:text-green-700 cursor-pointer ${
+                                confirmandoId === i.id ? "opacity-50" : ""
+                              }`}
+                            >
+                              {confirmandoId === i.id ? (
+                                <svg
+                                  className="w-5 h-5 animate-spin text-green-600"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                  ></circle>
+                                  <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                  ></path>
+                                </svg>
+                              ) : (
+                                <CheckCircle className="w-5 h-5" />
+                              )}
+                            </button>
+                          </TooltipIcon>
 
-                        <TooltipIcon label="Recusar inscrição">
-                          <button
-                            onClick={() => setInscricaoParaRecusar(i)}
-                            className="text-red-600 hover:text-red-700 cursor-pointer"
-                          >
-                            <XCircle className="w-5 h-5" />
-                          </button>
+                          <TooltipIcon label="Recusar inscrição">
+                            <button
+                              onClick={() => setInscricaoParaRecusar(i)}
+                              className="text-red-600 hover:text-red-700 cursor-pointer"
+                            >
+                              <XCircle className="w-5 h-5" />
+                            </button>
+                          </TooltipIcon>
+                        </>
+                      ) : i.confirmado_por_lider ? (
+                        <TooltipIcon label="Confirmado">
+                          <CheckCircle className="text-green-600 w-5 h-5" />
                         </TooltipIcon>
-                      </>
-                    ) : i.confirmado_por_lider ? (
-                      <TooltipIcon label="Confirmado">
-                        <CheckCircle className="text-green-600 w-5 h-5" />
-                      </TooltipIcon>
-                    ) : (
-                      <span className="text-gray-400 text-xs">—</span>
-                    )}
+                      ) : (
+                        <span className="text-gray-400 text-xs">—</span>
+                      )}
+                    </div>
                   </td>
 
-                  <td className="p-3 text-right space-x-3 text-xs">
-                    {role === "coordenador" ? (
-                      <>
-                        <TooltipIcon label="Editar">
-                          <button
-                            onClick={() => setInscricaoEmEdicao(i)}
-                            className="text-blue-600 hover:text-blue-800 cursor-pointer"
-                          >
-                            <Pencil className="w-4 h-4" />
-                          </button>
-                        </TooltipIcon>
+                  <td className="p-3 text-left text-xs">
+                    <div className="flex items-center gap-3">
+                      <TooltipIcon label="Editar">
+                        <button
+                          onClick={() => setInscricaoEmEdicao(i)}
+                          className="text-blue-600 hover:text-blue-800 cursor-pointer"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                      </TooltipIcon>
 
-                        <TooltipIcon label="Excluir">
+                      <TooltipIcon label="Excluir">
+                        <button
+                          onClick={() => deletarInscricao(i.id)}
+                          className="text-red-600 hover:text-red-800 cursor-pointer"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </TooltipIcon>
+
+                      {i.pedido_id ? (
+                        <TooltipIcon label="Visualizar pedido">
                           <button
-                            onClick={() => deletarInscricao(i.id)}
-                            className="text-red-600 hover:text-red-800 cursor-pointer"
+                            onClick={() => setPedidoSelecionado(i.pedido_id!)}
+                            className="text-purple-600 hover:text-purple-800 cursor-pointer"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Eye className="w-4 h-4" />
                           </button>
                         </TooltipIcon>
-                      </>
-                    ) : (
-                      <span className="text-gray-400">—</span>
-                    )}
+                      ) : (
+                        <span className="text-gray-300">—</span>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -513,6 +528,13 @@ export default function ListaInscricoesPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {pedidoSelecionado && (
+        <ModalVisualizarPedido
+          pedidoId={pedidoSelecionado}
+          onClose={() => setPedidoSelecionado(null)}
+        />
       )}
     </main>
   );
