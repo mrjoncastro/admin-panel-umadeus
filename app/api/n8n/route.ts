@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
     const payload = await req.json();
 
     const response = await fetch(
-      "https://primary-production-481f.up.railway.app/webhook-test/8c403ec1-5dc5-4b12-a0c4-ce4c4b1cecb2",
+      "https://primary-production-481f.up.railway.app/webhook-test/umadeus-qg3",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
