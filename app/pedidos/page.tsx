@@ -126,9 +126,7 @@ export default function PedidosPage() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-black_bean mb-6">
-        Pedidos Recebidos
-      </h1>
+      <h1 className="heading">Pedidos Recebidos</h1>
 
       {/* Filtros */}
       <div className="flex flex-wrap gap-4 mb-6">
@@ -160,13 +158,13 @@ export default function PedidosPage() {
         )}
         <button
           onClick={() => setOrdem(ordem === "desc" ? "asc" : "desc")}
-          className="text-sm border px-4 py-2 rounded bg-gray-100 hover:bg-gray-200 transition"
+          className="btn btn-secondary"
         >
           Ordenar por data ({ordem === "desc" ? "↓" : "↑"})
         </button>
         <button
           onClick={exportarCSV}
-          className="text-sm px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition"
+          className="btn btn-primary"
         >
           Exportar CSV
         </button>
@@ -177,29 +175,29 @@ export default function PedidosPage() {
         <p className="text-center text-gray-500">Nenhum pedido encontrado.</p>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
-          <table className="min-w-full divide-y divide-gray-200 text-sm bg-white">
-            <thead className="bg-gray-100 text-gray-700 uppercase text-xs tracking-wide">
+          <table className="table-base">
+            <thead>
               <tr>
-                <th className="p-3 text-left">Produto</th>
-                <th className="p-3 text-left">Nome</th>
-                <th className="p-3 text-left">Email</th>
-                <th className="p-3 text-left">Tamanho</th>
-                <th className="p-3 text-left">Cor</th>
-                <th className="p-3 text-left">Status</th>
-                <th className="p-3 text-left">Campo</th>
-                <th className="p-3 text-left">ID Pagamento</th>
-                <th className="p-3 text-left">Ação</th>
+                <th>Produto</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Tamanho</th>
+                <th>Cor</th>
+                <th>Status</th>
+                <th>Campo</th>
+                <th>ID Pagamento</th>
+                <th>Ação</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody>
               {pedidosFiltrados.map((pedido) => (
-                <tr key={pedido.id} className="hover:bg-gray-50 transition">
-                  <td className="p-3 font-medium">{pedido.produto}</td>
-                  <td className="p-3">{pedido.expand?.id_inscricao?.nome || "—"}</td>
-                  <td className="p-3">{pedido.email}</td>
-                  <td className="p-3">{pedido.tamanho || "—"}</td>
-                  <td className="p-3">{pedido.cor || "—"}</td>
-                  <td className="p-3 capitalize">
+                <tr key={pedido.id}>
+                  <td className="font-medium">{pedido.produto}</td>
+                  <td>{pedido.expand?.id_inscricao?.nome || "—"}</td>
+                  <td>{pedido.email}</td>
+                  <td>{pedido.tamanho || "—"}</td>
+                  <td>{pedido.cor || "—"}</td>
+                  <td className="capitalize">
                     <span
                       className={`px-2 py-1 rounded text-xs font-semibold ${
                         statusBadge[pedido.status]
@@ -208,9 +206,9 @@ export default function PedidosPage() {
                       {pedido.status}
                     </span>
                   </td>
-                  <td className="p-3">{pedido.expand?.campo?.nome || "—"}</td>
-                  <td className="p-3 text-xs">{pedido.id_pagamento || "—"}</td>
-                  <td className="p-3 space-x-3 text-right">
+                  <td>{pedido.expand?.campo?.nome || "—"}</td>
+                  <td className="text-xs">{pedido.id_pagamento || "—"}</td>
+                  <td className="space-x-3 text-right">
                     <button
                       onClick={() => setPedidoSelecionado(pedido)}
                       className="text-blue-600 hover:underline text-xs"
@@ -276,7 +274,7 @@ export default function PedidosPage() {
         <button
           disabled={pagina === 1}
           onClick={() => setPagina((p) => Math.max(1, p - 1))}
-          className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-50"
+          className="btn btn-secondary disabled:opacity-50"
         >
           Anterior
         </button>
@@ -286,7 +284,7 @@ export default function PedidosPage() {
         <button
           disabled={pagina === totalPaginas}
           onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
-          className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-50"
+          className="btn btn-secondary disabled:opacity-50"
         >
           Próxima
         </button>

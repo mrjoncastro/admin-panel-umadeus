@@ -133,7 +133,7 @@ export default function DashboardPage() {
       ) : (
         <>
           <div className="mb-6 text-center">
-            <h1 className="text-2xl font-bold text-black_bean">
+            <h1 className="heading">
               Painel de{" "}
               {user.role === "coordenador" ? "Coordenação" : "Liderança"}
             </h1>

@@ -269,9 +269,7 @@ export default function ListaInscricoesPage() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-black_bean mb-6">
-        Inscrições Recebidas
-      </h1>
+      <h1 className="heading">Inscrições Recebidas</h1>
 
       {/* Link público */}
       {role === "lider" && (
@@ -285,7 +283,7 @@ export default function ListaInscricoesPage() {
             />
             <button
               onClick={copiarLink}
-              className="bg-blue-600 text-white px-3 py-2 rounded text-xs hover:bg-blue-700 transition"
+              className="btn btn-primary text-xs"
             >
               <Copy size={14} />
             </button>
@@ -334,28 +332,28 @@ export default function ListaInscricoesPage() {
         </p>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
-          <table className="min-w-full divide-y divide-gray-200 text-sm bg-white">
-            <thead className="bg-gray-100 text-gray-700 uppercase text-xs tracking-wide">
+          <table className="table-base">
+            <thead>
               <tr>
-                <th className="p-3 text-left">Nome</th>
-                <th className="p-3 text-left">Telefone</th>
-                <th className="p-3 text-left">Evento</th>
-                <th className="p-3 text-left">Status</th>
-                <th className="p-3 text-left">Campo</th>
-                <th className="p-3 text-left">Criado em</th>
-                <th className="p-3 text-left">Confirmação</th>
+                <th>Nome</th>
+                <th>Telefone</th>
+                <th>Evento</th>
+                <th>Status</th>
+                <th>Campo</th>
+                <th>Criado em</th>
+                <th>Confirmação</th>
                 {role === "coordenador" && (
-                  <th className="p-3 text-left">Ação</th>
+                  <th>Ação</th>
                 )}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody>
               {inscricoesFiltradas.map((i) => (
-                <tr key={i.id} className="hover:bg-gray-50 transition">
-                  <td className="p-3 font-medium">{i.nome}</td>
-                  <td className="p-3">{i.telefone}</td>
-                  <td className="p-3">{i.evento}</td>
-                  <td className="p-3 capitalize">
+                <tr key={i.id}>
+                  <td className="font-medium">{i.nome}</td>
+                  <td>{i.telefone}</td>
+                  <td>{i.evento}</td>
+                  <td className="capitalize">
                     <span
                       className={`px-2 py-1 rounded text-xs font-semibold ${
                         statusBadge[i.status]
@@ -364,11 +362,11 @@ export default function ListaInscricoesPage() {
                       {i.status}
                     </span>
                   </td>
-                  <td className="p-3">{i.campo}</td>
-                  <td className="p-3">
+                  <td>{i.campo}</td>
+                  <td>
                     {new Date(i.created).toLocaleDateString("pt-BR")}
                   </td>
-                  <td className="p-3 text-left text-xs">
+                  <td className="text-left text-xs">
                     <div className="flex items-center gap-3">
                       {(role === "lider" || role === "coordenador") &&
                       i.status === "pendente" &&
@@ -501,7 +499,7 @@ export default function ListaInscricoesPage() {
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setInscricaoParaRecusar(null)}
-                className="px-3 py-1 text-sm border rounded hover:bg-gray-50"
+                className="btn btn-secondary text-sm"
               >
                 Cancelar
               </button>
@@ -521,7 +519,7 @@ export default function ListaInscricoesPage() {
                   );
                   setInscricaoParaRecusar(null);
                 }}
-                className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 cursor-pointer"
+                className="btn btn-danger text-sm"
               >
                 Confirmar recusa
               </button>

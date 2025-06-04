@@ -78,9 +78,7 @@ export default function LiderDashboardPage() {
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-black_bean mb-6">
-        Painel da Liderança
-      </h1>
+      <h1 className="heading mb-6">Painel da Liderança</h1>
 
       {/* Cards Resumo */}
       <div className="grid gap-6 md:grid-cols-3 mb-10">

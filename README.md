@@ -45,3 +45,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 - Authenticated users can change their password directly from the profile menu.
 - Users can switch between light and dark themes.
 - Toast notifications inform success or error of actions.
+- Minimalist tables and buttons for a consistent look.

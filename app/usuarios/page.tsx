@@ -55,19 +55,17 @@ export default function UsuariosPage() {
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold text-black_bean">
-          Usuários Cadastrados
-        </h1>
+        <h1 className="heading">Usuários Cadastrados</h1>
         <Link
           href="/usuarios/novo"
-          className="bg-red-700 text-white px-4 py-2 rounded-md hover:bg-red-700 text-sm font-medium transition-colors"
+          className="btn btn-primary bg-red-700 hover:bg-red-800"
         >
           + Adicionar Novo Usuário
         </Link>
       </div>
 
       {mensagem && (
-        <div className="mb-4 text-sm text-cornell_red text-center">
+        <div className="mb-4 text-sm text-red-600 text-center">
           {mensagem}
         </div>
       )}
@@ -76,27 +74,24 @@ export default function UsuariosPage() {
         <p className="text-center text-gray-600">Carregando usuários...</p>
       ) : (
         <div className="overflow-auto rounded-lg border border-gray-200 shadow-sm">
-          <table className="min-w-full divide-y divide-gray-200 bg-white">
-            <thead className="bg-gray-100 text-gray-700 text-sm uppercase tracking-wider">
+          <table className="table-base">
+            <thead>
               <tr>
-                <th className="p-4 text-left">Nome</th>
-                <th className="p-4 text-left">E-mail</th>
-                <th className="p-4 text-left">Função</th>
-                <th className="p-4 text-left">Campo</th>
-                <th className="p-4 text-left">Link de Inscrição</th>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Função</th>
+                <th>Campo</th>
+                <th>Link de Inscrição</th>
               </tr>
             </thead>
-            <tbody className="text-sm text-gray-700 divide-y divide-gray-100">
+            <tbody>
               {usuarios.map((usuario) => (
-                <tr
-                  key={usuario.id}
-                  className="hover:bg-gray-50 transition-colors"
-                >
-                  <td className="p-4 font-medium">{usuario.nome}</td>
-                  <td className="p-4">{usuario.email}</td>
-                  <td className="p-4 capitalize">{usuario.role}</td>
-                  <td className="p-4">{usuario.expand?.campo?.nome ?? "—"}</td>
-                  <td className="p-4">
+                <tr key={usuario.id}>
+                  <td className="font-medium">{usuario.nome}</td>
+                  <td>{usuario.email}</td>
+                  <td className="capitalize">{usuario.role}</td>
+                  <td>{usuario.expand?.campo?.nome ?? "—"}</td>
+                  <td>
                     {usuario.role === "lider" ? (
                       <Link
                         href={`/inscricoes/${usuario.id}`}

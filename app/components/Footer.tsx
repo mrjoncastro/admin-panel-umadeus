@@ -7,7 +7,7 @@ export default function Footer() {
   const { isLoggedIn } = useAuthContext();
 
   return (
-    <footer className="bg-eerie_black text-platinum py-8 mt-12">
+    <footer className="bg-gray-900 text-gray-300 py-8 mt-12">
       <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8 text-sm">
         <div>
           <h4 className="text-lg font-bold mb-2">UMADEUS</h4>
@@ -69,7 +69,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="text-center text-xs text-platinum mt-6 space-y-1">
+      <div className="text-center text-xs text-gray-400 mt-6 space-y-1">
         <p>
           &copy; {new Date().getFullYear()} UMADEUS. Todos os direitos
           reservados.

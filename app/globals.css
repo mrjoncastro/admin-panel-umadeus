@@ -24,3 +24,41 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Minimalist styling helpers */
+.heading {
+  @apply text-2xl font-semibold mb-6;
+}
+
+.btn {
+  @apply px-4 py-2 rounded text-sm font-medium transition-colors;
+}
+
+.btn-primary {
+  @apply bg-primary-600 text-white hover:bg-primary-700;
+}
+
+.btn-secondary {
+  @apply border border-gray-300 bg-white hover:bg-gray-50;
+}
+
+.btn-danger {
+  @apply bg-red-600 text-white hover:bg-red-700;
+}
+
+.table-base {
+  @apply min-w-full text-sm bg-white border border-gray-200;
+}
+
+.table-base thead {
+  @apply bg-gray-50 text-gray-700 uppercase text-xs tracking-wide;
+}
+
+.table-base th,
+.table-base td {
+  @apply px-4 py-2 text-left;
+}
+
+.table-base tbody tr {
+  @apply border-b border-gray-100 hover:bg-gray-50 transition-colors;
+}

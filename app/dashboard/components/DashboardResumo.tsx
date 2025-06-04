@@ -85,7 +85,7 @@ export default function DashboardResumo({
             <h2 className="text-sm font-bold">Total de Inscrições</h2>
             <Tippy content="Todas as inscrições feitas no sistema.">
               <span>
-                <Info className="w-4 h-4 text-cornell_red" />
+                <Info className="w-4 h-4 text-red-600" />
               </span>
             </Tippy>
           </div>
@@ -97,7 +97,7 @@ export default function DashboardResumo({
             <h2 className="text-sm font-bold">Total de Pedidos</h2>
             <Tippy content="Todos os pedidos gerados.">
               <span>
-                <Info className="w-4 h-4 text-cornell_red" />
+                <Info className="w-4 h-4 text-red-600" />
               </span>
             </Tippy>
           </div>
@@ -109,7 +109,7 @@ export default function DashboardResumo({
             <h2 className="text-sm font-bold">Valor Total</h2>
             <Tippy content="Soma dos pedidos pagos com inscrições confirmadas.">
               <span>
-                <Info className="w-4 h-4 text-cornell_red" />
+                <Info className="w-4 h-4 text-red-600" />
               </span>
             </Tippy>
           </div>
@@ -151,11 +151,11 @@ export default function DashboardResumo({
       {/* Gráficos */}
       <div className="bg-[#F1F1F1] rounded-lg p-6 shadow-inner mb-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-          <label className="text-sm font-medium text-black_bean">Filtro:</label>
+          <label className="text-sm font-medium text-gray-800 dark:text-gray-100">Filtro:</label>
           <select
             value={filtroStatus}
             onChange={(e) => setFiltroStatus(e.target.value)}
-            className="px-4 py-2 rounded-md bg-black_bean text-platinum border-none shadow-sm focus:outline-none focus:ring-2 focus:ring-cornell_red w-full md:w-64"
+            className="px-4 py-2 rounded-md bg-gray-800 text-gray-100 border-none shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 w-full md:w-64"
           >
             {["pago", "pendente", "cancelado"].map((status) => (
               <option key={status} value={status}>
@@ -168,12 +168,12 @@ export default function DashboardResumo({
         <div className="grid md:grid-cols-2 gap-6">
           <div className="bg-white p-5 rounded-lg shadow-md">
             <div className="flex justify-between items-center mb-3">
-              <h3 className="text-lg font-semibold text-black_bean">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                 Inscrições por Campo
               </h3>
               <Tippy content="Distribuição de inscrições por campo de atuação.">
                 <span>
-                  <Info className="w-4 h-4 text-cornell_red" />
+                  <Info className="w-4 h-4 text-red-600" />
                 </span>
               </Tippy>
             </div>
@@ -187,14 +187,14 @@ export default function DashboardResumo({
 
           <div className="bg-white p-5 rounded-lg shadow-md">
             <div className="flex justify-between items-center mb-3">
-              <h3 className="text-lg font-semibold text-black_bean">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                 Pedidos por Campo
               </h3>
               <Tippy
                 content={`Distribuição dos pedidos com status "${filtroStatus}" por campo.`}
               >
                 <span>
-                  <Info className="w-4 h-4 text-cornell_red" />
+                  <Info className="w-4 h-4 text-red-600" />
                 </span>
               </Tippy>
             </div>
