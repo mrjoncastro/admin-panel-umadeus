@@ -7,7 +7,7 @@ export default function Footer() {
   const { isLoggedIn } = useAuthContext();
 
   return (
-    <footer className="bg-gray-900 text-gray-300 py-8 mt-12">
+    <footer className="bg-gray-900 text-gray-300 py-8">
       <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8 text-sm">
         <div>
           <h4 className="text-lg font-bold mb-2">UMADEUS</h4>

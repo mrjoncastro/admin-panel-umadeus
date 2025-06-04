@@ -57,8 +57,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-gray-900 overflow-hidden">
-      <div className="absolute inset-0 bg-animated opacity-60" aria-hidden="true"></div>
+    <div className="relative h-screen flex items-center justify-center bg-gray-900 overflow-hidden">
+      <div
+        className="absolute inset-0 bg-animated opacity-60"
+        aria-hidden="true"
+      ></div>
       <div className="relative z-10 w-full max-w-sm p-6 bg-black/60 rounded-xl backdrop-blur-md text-gray-200">
         <div className="flex justify-center mb-4">
           <Image
@@ -69,83 +72,84 @@ export default function LoginPage() {
             priority
           />
         </div>
-        <h1 className="text-3xl font-bold text-center mb-2 fade-in-up">Bem-vindo!</h1>
-        <p className="text-center text-sm text-gray-300 mb-6 fade-in-up" style={{ animationDelay: "0.2s" }}>
+        <h1 className="text-3xl font-bold text-center mb-2 fade-in-up">
+          Bem-vindo!
+        </h1>
+        <p
+          className="text-center text-sm text-gray-300 mb-6 fade-in-up"
+          style={{ animationDelay: "0.2s" }}
+        >
           Acesse o painel
         </p>
 
-          {erro && (
-            <p
-              className="text-sm text-center mb-4"
-              style={{ color: "#e81920" }}
-            >
-              {erro}
-            </p>
-          )}
+        {erro && (
+          <p className="text-sm text-center mb-4" style={{ color: "#e81920" }}>
+            {erro}
+          </p>
+        )}
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleLogin();
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleLogin();
+          }}
+          className="space-y-4"
+        >
+          <input
+            type="email"
+            placeholder="E-mail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2"
+            style={{
+              backgroundColor: "#DCDCDD",
+              color: "#000000",
+              borderColor: "#ababab",
+              outlineColor: "#e81920",
             }}
-            className="space-y-4"
-          >
-            <input
-              type="email"
-              placeholder="E-mail"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2"
-              style={{
-                backgroundColor: "#DCDCDD",
-                color: "#000000",
-                borderColor: "#ababab",
-                outlineColor: "#e81920",
-              }}
-              required
-            />
-            <input
-              type="password"
-              placeholder="Senha"
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2"
-              style={{
-                backgroundColor: "#DCDCDD",
-                color: "#000000",
-                borderColor: "#ababab",
-                outlineColor: "#e81920",
-              }}
-              required
-            />
-            <div className="text-right text-sm">
-              <button
-                type="button"
-                onClick={() => setMostrarModal(true)}
-                className="underline text-[#DCDCDD] hover:text-white transition"
-              >
-                Esqueci minha senha
-              </button>
-            </div>
-
+            required
+          />
+          <input
+            type="password"
+            placeholder="Senha"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2"
+            style={{
+              backgroundColor: "#DCDCDD",
+              color: "#000000",
+              borderColor: "#ababab",
+              outlineColor: "#e81920",
+            }}
+            required
+          />
+          <div className="text-right text-sm">
             <button
-              type="submit"
-              disabled={isSubmitting}
-              className={`w-full py-2 rounded font-semibold transition ${
-                isSubmitting ? "cursor-not-allowed" : "cursor-pointer"
-              }`}
-              style={{
-                backgroundColor: isSubmitting ? "#ababab" : "#e81920",
-                color: "#ffffff",
-              }}
+              type="button"
+              onClick={() => setMostrarModal(true)}
+              className="underline text-[#DCDCDD] hover:text-white transition"
             >
-              {isSubmitting ? "Entrando..." : "Entrar"}
+              Esqueci minha senha
             </button>
-          </form>
-          {mostrarModal && (
-            <RedefinirSenhaModal onClose={() => setMostrarModal(false)} />
-          )}
-        </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className={`w-full py-2 rounded font-semibold transition ${
+              isSubmitting ? "cursor-not-allowed" : "cursor-pointer"
+            }`}
+            style={{
+              backgroundColor: isSubmitting ? "#ababab" : "#e81920",
+              color: "#ffffff",
+            }}
+          >
+            {isSubmitting ? "Entrando..." : "Entrar"}
+          </button>
+        </form>
+        {mostrarModal && (
+          <RedefinirSenhaModal onClose={() => setMostrarModal(false)} />
+        )}
       </div>
     </div>
   );
