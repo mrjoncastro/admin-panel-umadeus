@@ -8,17 +8,24 @@ import {
   CategoryScale,
   LinearScale,
   BarElement,
+  LineElement,
+  PointElement,
+  Filler,
   Title,
   Tooltip,
   Legend,
   ArcElement,
 } from "chart.js";
 import DashboardResumo from "./components/DashboardResumo";
+import DashboardAnalytics from "../components/DashboardAnalytics";
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  LineElement,
+  PointElement,
+  Filler,
   Title,
   Tooltip,
   Legend,
@@ -148,6 +155,7 @@ export default function DashboardPage() {
             filtroStatus={filtroStatus}
             setFiltroStatus={setFiltroStatus}
           />
+          <DashboardAnalytics inscricoes={inscricoes} pedidos={pedidos} />
         </>
       )}
     </main>

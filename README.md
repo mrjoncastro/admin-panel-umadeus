@@ -45,3 +45,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 - Users can switch between light and dark themes.
 - Toast notifications inform success or error of actions.
 - Minimalist tables and buttons for a consistent look.
+- Dashboard now includes temporal charts showing sign-up and order evolution,
+  along with average order value and revenue per field for coordinators and
+  leaders.
+- Analytics charts support date range filters and allow exporting the data as
+  CSV or XLSX spreadsheets.

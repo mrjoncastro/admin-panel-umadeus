@@ -80,7 +80,7 @@ export default function DashboardResumo({
   return (
     <>
       <div className="grid gap-4 md:grid-cols-3 mb-6">
-        <div className="bg-white p-4 rounded shadow text-center">
+        <div className="bg-white/90 backdrop-blur p-4 rounded-lg shadow text-center">
           <div className="flex justify-center items-center gap-2 mb-1">
             <h2 className="text-sm font-bold">Total de Inscrições</h2>
             <Tippy content="Todas as inscrições feitas no sistema.">
@@ -92,7 +92,7 @@ export default function DashboardResumo({
           <p className="text-3xl font-bold">{inscricoes.length}</p>
         </div>
 
-        <div className="bg-white p-4 rounded shadow text-center">
+        <div className="bg-white/90 backdrop-blur p-4 rounded-lg shadow text-center">
           <div className="flex justify-center items-center gap-2 mb-1">
             <h2 className="text-sm font-bold">Total de Pedidos</h2>
             <Tippy content="Todos os pedidos gerados.">
@@ -104,7 +104,7 @@ export default function DashboardResumo({
           <p className="text-3xl font-bold">{pedidos.length}</p>
         </div>
 
-        <div className="bg-white p-4 rounded shadow text-center">
+        <div className="bg-white/90 backdrop-blur p-4 rounded-lg shadow text-center">
           <div className="flex justify-center items-center gap-2 mb-1">
             <h2 className="text-sm font-bold">Valor Total</h2>
             <Tippy content="Soma dos pedidos pagos com inscrições confirmadas.">
@@ -124,7 +124,7 @@ export default function DashboardResumo({
         {["pendente", "confirmado", "cancelado"].map((status) => (
           <div
             key={status}
-            className="bg-[#F7F7F7] p-3 rounded-md shadow-sm text-center"
+            className="bg-white/70 backdrop-blur p-3 rounded-lg shadow text-center"
           >
             <h3 className="text-sm font-semibold">
               Inscrições {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -138,7 +138,7 @@ export default function DashboardResumo({
         {["pendente", "pago", "cancelado"].map((status) => (
           <div
             key={status}
-            className="bg-[#F7F7F7] p-3 rounded-md shadow-sm text-center"
+            className="bg-white/70 backdrop-blur p-3 rounded-lg shadow text-center"
           >
             <h3 className="text-sm font-semibold">
               Pedidos {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -149,7 +149,7 @@ export default function DashboardResumo({
       </div>
 
       {/* Gráficos */}
-      <div className="bg-[#F1F1F1] rounded-lg p-6 shadow-inner mb-8">
+      <div className="bg-white/70 backdrop-blur rounded-xl p-6 shadow-md mb-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
           <label className="text-sm font-medium text-gray-800 dark:text-gray-100">Filtro:</label>
           <select
@@ -166,7 +166,7 @@ export default function DashboardResumo({
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-white p-5 rounded-lg shadow-md">
+          <div className="bg-white/90 p-5 rounded-xl shadow">
             <div className="flex justify-between items-center mb-3">
               <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                 Inscrições por Campo
@@ -185,7 +185,7 @@ export default function DashboardResumo({
             </div>
           </div>
 
-          <div className="bg-white p-5 rounded-lg shadow-md">
+          <div className="bg-white/90 p-5 rounded-xl shadow">
             <div className="flex justify-between items-center mb-3">
               <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                 Pedidos por Campo
