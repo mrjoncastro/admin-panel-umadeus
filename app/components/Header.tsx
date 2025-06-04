@@ -9,7 +9,6 @@ import { Menu, X, ChevronDown, User, Lock, LogOut, Sun, Moon } from "lucide-reac
 import { useState } from "react";
 import { useTheme } from "@/lib/context/ThemeContext";
 import RedefinirSenhaModal from "./RedefinirSenhaModal";
-import ModalAlterarSenha from "./ModalAlterarSenha";
 
 const getNavLinks = (role?: string) => {
   if (role === "lider") {
@@ -35,7 +34,6 @@ export default function Header() {
   const [menuAberto, setMenuAberto] = useState(false);
   const [perfilAberto, setPerfilAberto] = useState(false);
   const [mostrarModalSenha, setMostrarModalSenha] = useState(false);
-  const [mostrarModalAlterar, setMostrarModalAlterar] = useState(false);
   const { theme, toggleTheme } = useTheme();
 
   const navLinks = getNavLinks(user?.role);
@@ -130,17 +128,6 @@ export default function Header() {
                 </li>
                 <li>
                   <button
-                    onClick={() => {
-                      setMostrarModalAlterar(true);
-                      setPerfilAberto(false);
-                    }}
-                    className="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
-                  >
-                    <Lock size={16} /> Alterar senha
-                  </button>
-                </li>
-                <li>
-                  <button
                     onClick={handleLogout}
                       className="w-full text-left flex items-center gap-2 px-4 py-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-900 cursor-pointer"
                     >
@@ -209,15 +196,6 @@ export default function Header() {
                 >
                   Redefinir senha
                 </button>
-                <button
-                  onClick={() => {
-                    setMenuAberto(false);
-                    setMostrarModalAlterar(true);
-                  }}
-                  className="text-left px-4 py-2 text-sm hover:bg-[#DCDCDC] hover:text-[#2A1A1C]"
-                >
-                  Alterar senha
-                </button>
 
                 <button
                   onClick={() => {
@@ -246,9 +224,6 @@ export default function Header() {
 
       {mostrarModalSenha && (
         <RedefinirSenhaModal onClose={() => setMostrarModalSenha(false)} />
-      )}
-      {mostrarModalAlterar && (
-        <ModalAlterarSenha onClose={() => setMostrarModalAlterar(false)} />
       )}
     </header>
   );

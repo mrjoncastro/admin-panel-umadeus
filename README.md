@@ -42,7 +42,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 - Mobile navigation includes a "back to top" button for easier scrolling.
 - Search forms for orders and registrations adapt to the user role and allow
   busca pelo nome do inscrito.
-- Authenticated users can change their password directly from the profile menu.
 - Users can switch between light and dark themes.
 - Toast notifications inform success or error of actions.
 - Minimalist tables and buttons for a consistent look.
