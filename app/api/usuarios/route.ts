@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       !password ||
       !passwordConfirm ||
       !campo ||
-      !["usuario", "lider"].includes(role)
+      !["usuario", "lider", "coordenador"].includes(role)
     ) {
       return NextResponse.json({ error: "Dados inválidos" }, { status: 400 });
     }

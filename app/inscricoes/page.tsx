@@ -76,7 +76,7 @@ export default function ListaInscricoesPage() {
           nome: r.nome,
           telefone: r.telefone,
           evento: r.evento,
-          cpf: r.evento,
+          cpf: r.cpf,
           status: r.status,
           created: r.created,
           campo: r.expand?.campo?.nome || "—",

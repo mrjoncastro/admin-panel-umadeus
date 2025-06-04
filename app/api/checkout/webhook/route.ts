@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
 
     // 🔹 1. Atualiza o pedido
     const pedido = await pb.collection("pedidos").getOne(pedidoId, {
-      expand: "inscricao",
+      expand: "id_inscricao",
     });
 
     if (!pedido) {
