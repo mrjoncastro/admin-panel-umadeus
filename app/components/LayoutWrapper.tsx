@@ -4,6 +4,8 @@ import { usePathname } from "next/navigation";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import BackToTopButton from "@/app/components/BackToTopButton";
+import NotificationBell from "@/app/components/NotificationBell";
+import { useAuthContext } from "@/lib/context/AuthContext";
 
 export default function LayoutWrapper({
   children,
@@ -12,6 +14,7 @@ export default function LayoutWrapper({
 }) {
   const pathname = usePathname();
   const isInscricaoPublica = /^\/inscricoes\/[^/]+$/.test(pathname);
+  const { isLoggedIn, user } = useAuthContext();
 
   return (
     <>
@@ -20,6 +23,7 @@ export default function LayoutWrapper({
         {children}
       </main>
       <Footer />
+      {isLoggedIn && user?.role === "coordenador" && <NotificationBell />}
       <BackToTopButton />
     </>
   );
