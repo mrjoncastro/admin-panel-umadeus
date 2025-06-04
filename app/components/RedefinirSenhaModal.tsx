@@ -2,22 +2,20 @@
 
 import { useState } from "react";
 import pb from "@/lib/pocketbase";
+import { useToast } from "@/lib/context/ToastContext";
 
 export default function RedefinirSenhaModal({ onClose }: { onClose: () => void }) {
   const [email, setEmail] = useState("");
-  const [mensagem, setMensagem] = useState("");
-  const [erro, setErro] = useState("");
+  const { showSuccess, showError } = useToast();
 
   const handleResetRequest = async () => {
-    setMensagem("");
-    setErro("");
-
     try {
       await pb.collection("usuarios").requestPasswordReset(email);
-      setMensagem("Enviamos um link de redefinição para seu e-mail.");
+      showSuccess("Enviamos um link de redefinição para seu e-mail.");
+      onClose();
     } catch (err) {
       console.error(err);
-      setErro("Não foi possível enviar o link. Verifique o e-mail.");
+      showError("Não foi possível enviar o link. Verifique o e-mail.");
     }
   };
 
@@ -34,8 +32,6 @@ export default function RedefinirSenhaModal({ onClose }: { onClose: () => void }
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        {mensagem && <p className="text-green-500 text-sm">{mensagem}</p>}
-        {erro && <p className="text-red-500 text-sm">{erro}</p>}
 
         <div className="flex justify-end gap-2">
           <button onClick={onClose} className="text-sm text-gray-600 dark:text-gray-300">Cancelar</button>

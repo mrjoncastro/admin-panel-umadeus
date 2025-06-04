@@ -7,6 +7,7 @@ import { Pedido } from "@/types";
 import pb from "@/lib/pocketbase";
 import { saveAs } from "file-saver";
 import ModalEditarPedido from "./componentes/ModalEditarPedido";
+import { useToast } from "@/lib/context/ToastContext";
 
 export default function PedidosPage() {
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function PedidosPage() {
   const [pedidoSelecionado, setPedidoSelecionado] = useState<Pedido | null>(
     null
   );
+  const { showError, showSuccess } = useToast();
   const placeholderBusca =
     user?.role === "coordenador"
       ? "Buscar por produto, email, nome ou campo"
@@ -54,6 +56,7 @@ export default function PedidosPage() {
         setTotalPaginas(res.totalPages);
       } catch (err) {
         console.error("Erro ao carregar pedidos", err);
+        showError("Erro ao carregar pedidos");
       } finally {
         setLoading(false);
       }
@@ -224,8 +227,10 @@ export default function PedidosPage() {
                             setPedidos((prev) =>
                               prev.filter((p) => p.id !== pedido.id)
                             );
+                            showSuccess("Pedido excluído");
                           } catch (e) {
                             console.error("Erro ao excluir:", e);
+                            showError("Erro ao excluir pedido");
                           }
                         }
                       }}
@@ -257,8 +262,10 @@ export default function PedidosPage() {
                 )
               );
               setPedidoSelecionado(null);
+              showSuccess("Pedido atualizado");
             } catch (e) {
               console.error("Erro ao salvar edição:", e);
+              showError("Erro ao salvar edição");
             }
           }}
         />

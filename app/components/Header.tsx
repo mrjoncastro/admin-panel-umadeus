@@ -5,8 +5,9 @@ import { usePathname } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import pb from "@/lib/pocketbase";
 import Image from "next/image";
-import { Menu, X, ChevronDown, User, Lock, LogOut } from "lucide-react";
+import { Menu, X, ChevronDown, User, Lock, LogOut, Sun, Moon } from "lucide-react";
 import { useState } from "react";
+import { useTheme } from "@/lib/context/ThemeContext";
 import RedefinirSenhaModal from "./RedefinirSenhaModal";
 import ModalAlterarSenha from "./ModalAlterarSenha";
 
@@ -35,6 +36,7 @@ export default function Header() {
   const [perfilAberto, setPerfilAberto] = useState(false);
   const [mostrarModalSenha, setMostrarModalSenha] = useState(false);
   const [mostrarModalAlterar, setMostrarModalAlterar] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   const navLinks = getNavLinks(user?.role);
 
@@ -82,6 +84,14 @@ export default function Header() {
                 {label}
               </Link>
             ))}
+
+          <button
+            onClick={toggleTheme}
+            aria-label="Alternar tema"
+            className="p-2 rounded hover:bg-[#DCDCDC] hover:text-[#2A1A1C]"
+          >
+            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
 
 
           {isLoggedIn && (
@@ -170,6 +180,15 @@ export default function Header() {
                   {label}
                 </Link>
               ))}
+
+            <button
+              onClick={() => {
+                toggleTheme();
+              }}
+              className="text-left px-4 py-2 text-sm hover:bg-[#DCDCDC] hover:text-[#2A1A1C]"
+            >
+              {theme === "dark" ? "Tema claro" : "Tema escuro"}
+            </button>
 
 
             {isLoggedIn && (

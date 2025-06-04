@@ -3,27 +3,24 @@
 import { useState } from "react";
 import pb from "@/lib/pocketbase";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import { useToast } from "@/lib/context/ToastContext";
 
 export default function ModalAlterarSenha({ onClose }: { onClose: () => void }) {
   const { user } = useAuthContext();
   const [senhaAtual, setSenhaAtual] = useState("");
   const [novaSenha, setNovaSenha] = useState("");
   const [confirmacao, setConfirmacao] = useState("");
-  const [mensagem, setMensagem] = useState("");
-  const [erro, setErro] = useState("");
   const [carregando, setCarregando] = useState(false);
+  const { showSuccess, showError } = useToast();
 
   const handleChange = async () => {
-    setMensagem("");
-    setErro("");
-
     if (!user?.id || !user?.email) {
-      setErro("Sessão inválida.");
+      showError("Sessão inválida.");
       return;
     }
 
     if (novaSenha !== confirmacao) {
-      setErro("As senhas não conferem.");
+      showError("As senhas não conferem.");
       return;
     }
 
@@ -34,10 +31,11 @@ export default function ModalAlterarSenha({ onClose }: { onClose: () => void }) 
         password: novaSenha,
         passwordConfirm: confirmacao,
       });
-      setMensagem("Senha alterada com sucesso.");
+      showSuccess("Senha alterada com sucesso.");
+      onClose();
     } catch (err) {
       console.error(err);
-      setErro("Erro ao alterar senha. Verifique os dados.");
+      showError("Erro ao alterar senha. Verifique os dados.");
     } finally {
       setCarregando(false);
     }
@@ -71,8 +69,6 @@ export default function ModalAlterarSenha({ onClose }: { onClose: () => void }) 
           value={confirmacao}
           onChange={(e) => setConfirmacao(e.target.value)}
         />
-        {mensagem && <p className="text-green-500 text-sm">{mensagem}</p>}
-        {erro && <p className="text-red-500 text-sm">{erro}</p>}
         <div className="flex justify-end gap-2">
           <button onClick={onClose} className="text-sm text-gray-600 dark:text-gray-300">
             Cancelar
