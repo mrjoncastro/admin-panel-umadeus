@@ -14,15 +14,15 @@ export default function NotificationBell() {
     const fetchData = async () => {
       try {
         const [insList, pedidos] = await Promise.all([
-          pb
-            .collection("inscricoes")
-            .getList<Inscricao>(1, 5, {
-              filter: 'status="pendente"',
-              expand: "campo",
-              sort: "-created",
-            }),
+          pb.collection("inscricoes").getList<Inscricao>(1, 5, {
+            filter: 'status="pendente"',
+            expand: "campo",
+            sort: "-created",
+            $autoCancel: false,
+          }),
           pb.collection("pedidos").getList(1, 1, {
             filter: 'status="pendente"',
+            $autoCancel: false,
           }),
         ]);
 
@@ -69,7 +69,8 @@ export default function NotificationBell() {
                 key={i.id}
                 className="border-b last:border-b-0 pb-1 mb-1 dark:border-zinc-700"
               >
-                <span className="font-medium">{i.nome}</span> - {i.expand?.campo?.nome || "—"}
+                <span className="font-medium">{i.nome}</span> -{" "}
+                {i.expand?.campo?.nome || "—"}
               </li>
             ))}
           </ul>
