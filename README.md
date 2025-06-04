@@ -39,3 +39,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 - Notification bell highlights pending sign-ups and orders for coordinators.
 - Mobile navigation includes a "back to top" button for easier scrolling.
+- Search forms for orders and registrations adapt to the user role and allow
+  busca pelo nome do inscrito.

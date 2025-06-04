@@ -26,6 +26,11 @@ export type Inscricao = {
       status: "pago" | "pendente" | "cancelado";
       valor: number | string;
     };
+    id_inscricao?: {
+      nome: string;
+      telefone?: string;
+      cpf?: string;
+    };
   };
 };
 
@@ -55,6 +60,11 @@ export type Pedido = {
       id: string;
       status: "pago" | "pendente" | "cancelado";
       valor: number | string;
+    };
+    id_inscricao?: {
+      nome: string;
+      telefone?: string;
+      cpf?: string;
     };
   };
 };

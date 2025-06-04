@@ -23,6 +23,10 @@ export default function PedidosPage() {
   const [pedidoSelecionado, setPedidoSelecionado] = useState<Pedido | null>(
     null
   );
+  const placeholderBusca =
+    user?.role === "coordenador"
+      ? "Buscar por produto, email, nome ou campo"
+      : "Buscar por nome ou email";
 
   // Redireciona se não for coordenador
   useEffect(() => {
@@ -42,7 +46,7 @@ export default function PedidosPage() {
 
         const res = await pb.collection("pedidos").getList<Pedido>(pagina, 10, {
           filter: filtro,
-          expand: "campo",
+          expand: "campo,id_inscricao",
           sort: `${ordem === "desc" ? "-" : ""}created`,
         });
 
@@ -67,7 +71,9 @@ export default function PedidosPage() {
       buscaGlobal === "" ||
       p.produto.toLowerCase().includes(buscaGlobal.toLowerCase()) ||
       p.email.toLowerCase().includes(buscaGlobal.toLowerCase()) ||
-      p.expand?.campo?.nome?.toLowerCase().includes(buscaGlobal.toLowerCase());
+      p.expand?.campo?.nome?.toLowerCase().includes(buscaGlobal.toLowerCase()) ||
+      p.expand?.id_inscricao?.nome?.toLowerCase().includes(buscaGlobal.toLowerCase()) ||
+      p.expand?.id_inscricao?.cpf?.toLowerCase().includes(buscaGlobal.toLowerCase());
 
     return matchStatus && matchCampo && matchBuscaGlobal;
   });
@@ -75,6 +81,7 @@ export default function PedidosPage() {
   const exportarCSV = () => {
     const header = [
       "Produto",
+      "Nome",
       "Email",
       "Tamanho",
       "Cor",
@@ -86,6 +93,7 @@ export default function PedidosPage() {
 
     const linhas = pedidosFiltrados.map((p) => [
       p.produto,
+      p.expand?.id_inscricao?.nome || "",
       p.email,
       p.tamanho || "",
       p.cor || "",
@@ -123,7 +131,7 @@ export default function PedidosPage() {
       <div className="flex flex-wrap gap-4 mb-6">
         <input
           type="text"
-          placeholder="Buscar em todos os campos"
+          placeholder={placeholderBusca}
           value={buscaGlobal}
           onChange={(e) => setBuscaGlobal(e.target.value)}
           className="flex-1 md:flex-none border rounded px-4 py-2 text-sm w-full md:w-64 shadow-sm"
@@ -138,13 +146,15 @@ export default function PedidosPage() {
           <option value="pago">Pago</option>
           <option value="cancelado">Cancelado</option>
         </select>
-        <input
-          type="text"
-          placeholder="Filtrar por campo"
-          value={filtroCampo}
-          onChange={(e) => setFiltroCampo(e.target.value)}
-          className="border rounded px-4 py-2 text-sm w-full md:w-60 shadow-sm"
-        />
+        {user?.role === "coordenador" && (
+          <input
+            type="text"
+            placeholder="Filtrar por campo"
+            value={filtroCampo}
+            onChange={(e) => setFiltroCampo(e.target.value)}
+            className="border rounded px-4 py-2 text-sm w-full md:w-60 shadow-sm"
+          />
+        )}
         <button
           onClick={() => setOrdem(ordem === "desc" ? "asc" : "desc")}
           className="text-sm border px-4 py-2 rounded bg-gray-100 hover:bg-gray-200 transition"
@@ -168,6 +178,7 @@ export default function PedidosPage() {
             <thead className="bg-gray-100 text-gray-700 uppercase text-xs tracking-wide">
               <tr>
                 <th className="p-3 text-left">Produto</th>
+                <th className="p-3 text-left">Nome</th>
                 <th className="p-3 text-left">Email</th>
                 <th className="p-3 text-left">Tamanho</th>
                 <th className="p-3 text-left">Cor</th>
@@ -181,6 +192,7 @@ export default function PedidosPage() {
               {pedidosFiltrados.map((pedido) => (
                 <tr key={pedido.id} className="hover:bg-gray-50 transition">
                   <td className="p-3 font-medium">{pedido.produto}</td>
+                  <td className="p-3">{pedido.expand?.id_inscricao?.nome || "—"}</td>
                   <td className="p-3">{pedido.email}</td>
                   <td className="p-3">{pedido.tamanho || "—"}</td>
                   <td className="p-3">{pedido.cor || "—"}</td>

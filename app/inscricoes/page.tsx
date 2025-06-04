@@ -47,6 +47,10 @@ export default function ListaInscricoesPage() {
   const [inscricaoEmEdicao, setInscricaoEmEdicao] = useState<Inscricao | null>(
     null
   );
+  const placeholderBusca =
+    role === "coordenador"
+      ? "Buscar por nome, telefone, CPF ou campo"
+      : "Buscar por nome, telefone ou CPF";
 
   useEffect(() => {
     const user = pb.authStore.model;
@@ -303,7 +307,7 @@ export default function ListaInscricoesPage() {
       <div className="flex flex-wrap gap-4 mb-6">
         <input
           type="text"
-          placeholder="Buscar por nome, telefone, CPF ou campo"
+          placeholder={placeholderBusca}
           className="border rounded px-4 py-2 text-sm w-full md:w-64 shadow-sm"
           value={filtroBusca}
           onChange={(e) => setFiltroBusca(e.target.value)}
