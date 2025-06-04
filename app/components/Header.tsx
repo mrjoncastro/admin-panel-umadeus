@@ -6,6 +6,7 @@ import { useAuthContext } from "@/lib/context/AuthContext";
 import pb from "@/lib/pocketbase";
 import Image from "next/image";
 import { Menu, X, ChevronDown, User, Lock, LogOut } from "lucide-react";
+import NotificationBell from "./NotificationBell";
 import { useState } from "react";
 import RedefinirSenhaModal from "./RedefinirSenhaModal";
 
@@ -80,6 +81,8 @@ export default function Header() {
                 {label}
               </Link>
             ))}
+
+          {isLoggedIn && user?.role === "coordenador" && <NotificationBell />}
 
           {isLoggedIn && (
             <div className="relative">
@@ -156,6 +159,12 @@ export default function Header() {
                   {label}
                 </Link>
               ))}
+
+            {isLoggedIn && user?.role === "coordenador" && (
+              <div className="px-4 py-2">
+                <NotificationBell />
+              </div>
+            )}
 
             {isLoggedIn && (
               <>

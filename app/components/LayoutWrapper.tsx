@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
+import BackToTopButton from "@/app/components/BackToTopButton";
 
 export default function LayoutWrapper({
   children,
@@ -19,6 +20,7 @@ export default function LayoutWrapper({
         {children}
       </main>
       <Footer />
+      <BackToTopButton />
     </>
   );
 }
