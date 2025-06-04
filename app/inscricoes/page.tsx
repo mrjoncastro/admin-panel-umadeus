@@ -8,6 +8,7 @@ import ModalEditarInscricao from "./componentes/ModalEdit";
 import ModalVisualizarPedido from "./componentes/ModalVisualizarPedido";
 import { CheckCircle, XCircle, Pencil, Trash2, Eye } from "lucide-react";
 import TooltipIcon from "../components/TooltipIcon";
+import { useToast } from "@/lib/context/ToastContext";
 
 const statusBadge = {
   pendente: "bg-yellow-100 text-yellow-800",
@@ -40,13 +41,13 @@ export default function ListaInscricoesPage() {
   const [role, setRole] = useState("");
   const [linkPublico, setLinkPublico] = useState("");
   const [loading, setLoading] = useState(true);
-  const [erro, setErro] = useState("");
   const [copiado, setCopiado] = useState(false);
   const [filtroStatus, setFiltroStatus] = useState("");
   const [filtroBusca, setFiltroBusca] = useState("");
   const [inscricaoEmEdicao, setInscricaoEmEdicao] = useState<Inscricao | null>(
     null
   );
+  const { showError, showSuccess } = useToast();
   const placeholderBusca =
     role === "coordenador"
       ? "Buscar por nome, telefone, CPF ou campo"
@@ -56,7 +57,7 @@ export default function ListaInscricoesPage() {
     const user = pb.authStore.model;
 
     if (!user?.id || !user?.role) {
-      setErro("Sessão expirada ou inválida.");
+      showError("Sessão expirada ou inválida.");
       setLoading(false);
       return;
     }
@@ -90,7 +91,7 @@ export default function ListaInscricoesPage() {
         }));
         setInscricoes(lista);
       })
-      .catch(() => setErro("Erro ao carregar inscrições."))
+      .catch(() => showError("Erro ao carregar inscrições."))
       .finally(() => setLoading(false));
 
     if (user.role === "coordenador") {
@@ -116,7 +117,7 @@ export default function ListaInscricoesPage() {
       setCopiado(true);
       setTimeout(() => setCopiado(false), 2000);
     } catch {
-      setErro("Não foi possível copiar o link.");
+      showError("Não foi possível copiar o link.");
     }
   };
 
@@ -125,8 +126,9 @@ export default function ListaInscricoesPage() {
       try {
         await pb.collection("inscricoes").delete(id);
         setInscricoes((prev) => prev.filter((i) => i.id !== id));
+        showSuccess("Inscrição excluída.");
       } catch {
-        setErro("Erro ao excluir inscrição.");
+        showError("Erro ao excluir inscrição.");
       }
     }
   };
@@ -204,10 +206,10 @@ export default function ListaInscricoesPage() {
         }),
       });
 
-      alert("✅ Link de pagamento enviado com sucesso!");
+      showSuccess("Link de pagamento enviado com sucesso!");
     } catch (err) {
       console.error("Erro ao confirmar inscrição:", err);
-      setErro("Erro ao confirmar inscrição e gerar pedido.");
+      showError("Erro ao confirmar inscrição e gerar pedido.");
     } finally {
       setConfirmandoId(null);
     }
@@ -296,12 +298,6 @@ export default function ListaInscricoesPage() {
         </div>
       )}
 
-      {/* Erro */}
-      {erro && (
-        <div className="bg-red-50 border border-red-200 text-red-800 text-sm px-4 py-2 rounded mb-6">
-          {erro}
-        </div>
-      )}
 
       {/* Filtros */}
       <div className="flex flex-wrap gap-4 mb-6">
