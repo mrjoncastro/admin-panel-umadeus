@@ -1,21 +1,25 @@
 {
-  "name": "MyWebSite",
-  "short_name": "MySite",
+  "name": "UMADEUS - Juventude em Missão",
+  "short_name": "UMADEUS",
   "icons": [
     {
-      "src": "/web-app-manifest-192x192.png",
+      "src": "/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     },
     {
-      "src": "/web-app-manifest-512x512.png",
+      "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
   ],
+  "start_url": "/",
+  "display": "standalone",
   "theme_color": "#ffffff",
   "background_color": "#ffffff",
-  "display": "standalone"
+  "orientation": "portrait-primary",
+  "description": "Participe dos eventos e apoie a missão da juventude evangélica da Bahia. Inscreva-se e adquira seu kit UMADEUS com facilidade.",
+  "lang": "pt-BR"
 }
