@@ -1,9 +1,6 @@
 // app/layout.tsx
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
-import { AuthProvider } from "@/lib/context/AuthContext";
-import { ThemeProvider } from "@/lib/context/ThemeContext";
-import { ToastProvider } from "@/lib/context/ToastContext";
 import LayoutWrapper from "./components/LayoutWrapper";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -32,18 +29,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ThemeProvider>
-          <AuthProvider>
-            <ToastProvider>
-              <LayoutWrapper>{children}</LayoutWrapper>
-            </ToastProvider>
-          </AuthProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+    <div className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <LayoutWrapper>{children}</LayoutWrapper>
+    </div>
   );
 }
