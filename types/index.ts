@@ -4,6 +4,7 @@ export type Inscricao = {
   telefone: string;
   status?: "pendente" | "aguardando_pagamento" | "confirmado" | "cancelado";
   tamanho?: string;
+  produto?: string;
   genero?: string;
   evento?: string;
   data_nascimento?: string;

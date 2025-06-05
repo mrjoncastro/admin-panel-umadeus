@@ -11,6 +11,7 @@ interface FormFields {
   cpf: string;
   data_nascimento: string;
   tamanho: string;
+  produto: string;
   genero: string;
 }
 
@@ -25,6 +26,7 @@ export default function InscricaoPage() {
     cpf: "",
     data_nascimento: "",
     tamanho: "",
+    produto: "Kit Camisa + Pulseira",
     genero: "",
   });
 
@@ -74,6 +76,9 @@ export default function InscricaoPage() {
     setForm((prev) => ({
       ...prev,
       [name]: newValue,
+      ...(name === "produto" && value === "Somente Pulseira"
+        ? { tamanho: "" }
+        : {}),
     }));
   };
 
@@ -185,11 +190,26 @@ export default function InscricaoPage() {
             type="text"
             name="cpf"
             placeholder="CPF"
-            value={form.cpf}
+          value={form.cpf}
+          onChange={handleChange}
+          required
+          className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+        />
+
+        <div>
+          <label className="block font-medium text-sm text-gray-700 mb-1">
+            Produto
+          </label>
+          <select
+            name="produto"
+            value={form.produto}
             onChange={handleChange}
-            required
             className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-          />
+          >
+            <option value="Kit Camisa + Pulseira">Kit Camisa + Pulseira</option>
+            <option value="Somente Pulseira">Somente Pulseira</option>
+          </select>
+        </div>
 
           <div>
             <label className="block font-medium text-sm text-gray-700 mb-1">
@@ -222,25 +242,26 @@ export default function InscricaoPage() {
             />
           </div>
 
-          <div>
-            <label className="block font-medium text-sm text-gray-700 mb-1">
-              Tamanho da camisa
-            </label>
-            <select
-              name="tamanho"
-              value={form.tamanho}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-            >
-              <option value="">Selecione o tamanho da camisa</option>
-              {["PP", "P", "M", "G", "GG"].map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-          </div>
+          {form.produto !== "Somente Pulseira" && (
+            <div>
+              <label className="block font-medium text-sm text-gray-700 mb-1">
+                Tamanho da camisa
+              </label>
+              <select
+                name="tamanho"
+                value={form.tamanho}
+                onChange={handleChange}
+                className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+              >
+                <option value="">Selecione o tamanho da camisa</option>
+                {["PP", "P", "M", "G", "GG"].map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className="flex items-start mt-4">
             <input

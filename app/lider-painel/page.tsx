@@ -80,6 +80,7 @@ export default function LiderDashboardPage() {
           created: r.created,
           campo: r.campo,
           tamanho: r.tamanho,
+          produto: r.produto,
           genero: r.genero,
           data_nascimento: r.data_nascimento,
           criado_por: r.criado_por,

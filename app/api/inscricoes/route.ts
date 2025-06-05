@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
       cpf,
       data_nascimento,
       tamanho,
+      produto,
       genero,
       liderId,
     } = body;
@@ -29,7 +30,6 @@ export async function POST(req: NextRequest) {
       telefoneNumerico,
       cpfNumerico,
       data_nascimento,
-      tamanho,
       genero,
       liderId,
     ];
@@ -77,19 +77,22 @@ export async function POST(req: NextRequest) {
     }
 
     // Cria inscrição SEM pedido
-    const inscricao = await pb.collection("inscricoes").create({
+    const dadosInscricao: Record<string, any> = {
       nome,
       email,
       telefone: telefoneNumerico,
       cpf: cpfNumerico,
       data_nascimento,
       genero,
-      tamanho,
       evento: "Congresso UMADEUS 2K25",
       campo: campoId,
       criado_por: liderId,
-      status: "pendente", // status inicial
-    });
+      status: "pendente",
+      produto,
+    };
+    if (tamanho) dadosInscricao.tamanho = tamanho;
+
+    const inscricao = await pb.collection("inscricoes").create(dadosInscricao);
 
     return NextResponse.json({
       sucesso: true,
@@ -97,6 +100,7 @@ export async function POST(req: NextRequest) {
       nome,
       email,
       tamanho,
+      produto,
       genero,
       responsavel: liderId,
     });
