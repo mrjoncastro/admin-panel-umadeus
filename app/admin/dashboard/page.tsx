@@ -3,34 +3,8 @@
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
 import { useEffect, useRef, useState } from "react";
 import type { Inscricao, Pedido } from "@/types";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement,
-  PointElement,
-  Filler,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-} from "chart.js";
 import DashboardResumo from "./components/DashboardResumo";
 import DashboardAnalytics from "../components/DashboardAnalytics";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement,
-  PointElement,
-  Filler,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
-);
 
 export default function DashboardPage() {
   const { user, pb, authChecked } = useAuthGuard(["coordenador", "lider"]);

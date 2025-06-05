@@ -1,10 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { Line, Bar } from "react-chartjs-2";
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
 import type { Inscricao, Pedido } from "@/types";
+
+const LineChart = dynamic(() => import("react-chartjs-2").then((m) => m.Line), {
+  ssr: false,
+});
+const BarChart = dynamic(() => import("react-chartjs-2").then((m) => m.Bar), {
+  ssr: false,
+});
 
 interface DashboardAnalyticsProps {
   inscricoes: Inscricao[];
@@ -35,6 +42,10 @@ function groupByDate(
 export default function DashboardAnalytics({ inscricoes, pedidos }: DashboardAnalyticsProps) {
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
+
+  useEffect(() => {
+    import("chart.js/auto");
+  }, []);
 
   const inscricoesData = groupByDate(inscricoes, startDate, endDate);
   const pedidosData = groupByDate(pedidos, startDate, endDate);
@@ -170,13 +181,13 @@ export default function DashboardAnalytics({ inscricoes, pedidos }: DashboardAna
         <div className="bg-white/90 p-4 rounded-lg shadow">
           <h4 className="font-medium mb-2">Evolução de Inscrições</h4>
           <div className="aspect-video">
-            <Line data={inscricoesChart} options={{ responsive: true, maintainAspectRatio: false }} />
+            <LineChart data={inscricoesChart} options={{ responsive: true, maintainAspectRatio: false }} />
           </div>
         </div>
         <div className="bg-white/90 p-4 rounded-lg shadow">
           <h4 className="font-medium mb-2">Evolução de Pedidos</h4>
           <div className="aspect-video">
-            <Line data={pedidosChart} options={{ responsive: true, maintainAspectRatio: false }} />
+            <LineChart data={pedidosChart} options={{ responsive: true, maintainAspectRatio: false }} />
           </div>
         </div>
       </div>
@@ -188,7 +199,7 @@ export default function DashboardAnalytics({ inscricoes, pedidos }: DashboardAna
         <div className="bg-white/90 p-4 rounded-lg shadow">
           <h4 className="font-medium mb-2">Arrecadação por Campo</h4>
           <div className="aspect-video">
-            <Bar data={arrecadacaoChart} options={{ responsive: true, maintainAspectRatio: false }} />
+            <BarChart data={arrecadacaoChart} options={{ responsive: true, maintainAspectRatio: false }} />
           </div>
         </div>
       </div>
