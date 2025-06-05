@@ -1,8 +1,6 @@
 import PocketBase from "pocketbase";
 
-const PB_URL =
-  process.env.NEXT_PUBLIC_PB_URL ||
-  "https://umadeus-production.up.railway.app";
+const PB_URL = process.env.NEXT_PUBLIC_PB_URL!;
 
 const basePb = new PocketBase(PB_URL);
 
