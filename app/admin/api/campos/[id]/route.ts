@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/apiAuth";
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const id = params.id;
+export async function PUT(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+  const id = pathname.split("/").pop() ?? "";
 
   if (!id) {
     return NextResponse.json({ error: "ID ausente." }, { status: 400 });
@@ -35,11 +33,9 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const id = params.id;
+export async function DELETE(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+  const id = pathname.split("/").pop() ?? "";
 
   if (!id) {
     return NextResponse.json({ error: "ID ausente." }, { status: 400 });
