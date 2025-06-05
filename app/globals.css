@@ -76,7 +76,7 @@ body {
 }
 
 .input-style {
-  @apply w-full px-4 py-3 rounded-lg border border-[#b3b3b3] bg-[#f0f0f0] text-sm text-eerie_black focus:outline-none focus:ring-2 focus:ring-red-600 transition;
+  @apply w-full px-4 py-3 rounded-lg border border-[#b3b3b3] bg-[#f0f0f0] text-sm text-[#1e2019] focus:outline-none focus:ring-2 focus:ring-red-600 transition;
 }
 
 .table-base {
