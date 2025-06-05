@@ -30,8 +30,8 @@ export default function RedefinirSenhaClient() {
       await pb
         .collection("usuarios")
         .confirmPasswordReset(token, novaSenha, confirmacao);
-      setMensagem("Senha redefinida com sucesso!");
-      setTimeout(() => router.push("/login"), 2000);
+        setMensagem("Senha redefinida com sucesso!");
+        setTimeout(() => router.push("/admin/login"), 2000);
     } catch {
       setErro("Não foi possível redefinir. O link pode ter expirado.");
     }

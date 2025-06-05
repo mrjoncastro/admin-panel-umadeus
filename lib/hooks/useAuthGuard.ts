@@ -21,7 +21,7 @@ export function useAuthGuard(
 
     if (!isLoggedIn || !temPermissao) {
       pb.authStore.clear();
-      router.replace("/");
+      router.replace("/admin/login");
     } else {
       setAuthChecked(true);
     }
