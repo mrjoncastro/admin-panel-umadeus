@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     if (!inscricoes.length) {
       console.warn("❌ Nenhuma inscrição encontrada.");
       return NextResponse.json(
-        { error: "Inscrição não encontrada." },
+        { error: "Inscrição não encontrada. Por favor faça a inscrição." },
         { status: 404 }
       );
     }
@@ -52,12 +52,14 @@ export async function POST(req: NextRequest) {
 
     console.log("🧾 Pedido expandido:", pedido);
 
-    if (!pedido) {
-      console.warn("❌ Pedido vinculado não encontrado.");
-      return NextResponse.json(
-        { error: "Pedido vinculado não encontrado." },
-        { status: 404 }
-      );
+    if (inscricao.status === "cancelado") {
+      console.log("❌ Inscrição recusada pela liderança.");
+      return NextResponse.json({ status: "recusado" });
+    }
+
+    if (!inscricao.confirmado_por_lider || !pedido) {
+      console.log("⏳ Inscrição aguardando confirmação da liderança.");
+      return NextResponse.json({ status: "aguardando_confirmacao" });
     }
 
     if (pedido.status === "pago") {

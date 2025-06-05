@@ -78,6 +78,14 @@ export default function RecuperarPagamentoPage() {
         setResultado("✅ Seu pagamento já foi confirmado.");
       } else if (data.status === "cancelado") {
         setResultado("❌ Esse pedido foi cancelado.");
+      } else if (data.status === "recusado") {
+        setResultado(
+          "🚫 Sua inscrição foi recusada. Entre em contato com a liderança local."
+        );
+      } else if (data.status === "aguardando_confirmacao") {
+        setResultado(
+          "⌛ Sua inscrição aguarda a confirmação da liderança. Assim que for validada você receberá o link de pagamento."
+        );
       } else if (data.status === "pendente" && data.link_pagamento) {
         setResultado("🔗 Clique no botão abaixo para finalizar o pagamento:");
         setLink(data.link_pagamento);
