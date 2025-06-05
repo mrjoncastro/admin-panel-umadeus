@@ -1,21 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUserFromHeaders } from "@/lib/getUserFromHeaders";
+import { requireRole } from "@/lib/apiAuth";
 
 export async function GET(req: NextRequest) {
-  const auth = await getUserFromHeaders(req);
+  const auth = requireRole(req, "coordenador");
 
   if ("error" in auth) {
-    return NextResponse.json({ error: auth.error }, { status: 401 });
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
-  const { user, pbSafe } = auth;
-
-  if (user.role !== "coordenador") {
-    return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
-  }
+  const { pb } = auth;
 
   try {
-    const campos = await pbSafe.collection("campos").getFullList({
+    const campos = await pb.collection("campos").getFullList({
       sort: "nome",
     });
 
@@ -35,17 +31,13 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const auth = await getUserFromHeaders(req);
+  const auth = requireRole(req, "coordenador");
 
   if ("error" in auth) {
-    return NextResponse.json({ error: auth.error }, { status: 401 });
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
-  const { user, pbSafe } = auth;
-
-  if (user.role !== "coordenador") {
-    return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
-  }
+  const { pb } = auth;
 
   try {
     const { nome } = await req.json();
@@ -55,7 +47,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Nome inválido" }, { status: 400 });
     }
 
-    const campo = await pbSafe.collection("campos").create({ nome });
+    const campo = await pb.collection("campos").create({ nome });
 
     console.log("✅ Campo criado:", campo);
 

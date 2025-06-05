@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUserFromHeaders } from "@/lib/getUserFromHeaders";
+import { requireRole } from "@/lib/apiAuth";
 
 export async function GET(req: NextRequest) {
   const url = new URL(req.nextUrl);
@@ -12,20 +12,16 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const result = await getUserFromHeaders(req);
+  const auth = requireRole(req, "coordenador");
 
-  if ("error" in result) {
-    return NextResponse.json({ error: result.error }, { status: 401 });
+  if ("error" in auth) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
-  const { user, pbSafe } = result;
-
-  if (user.role !== "coordenador") {
-    return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
-  }
+  const { pb } = auth;
 
   try {
-    const usuario = await pbSafe.collection("usuarios").getOne(id, {
+    const usuario = await pb.collection("usuarios").getOne(id, {
       expand: "campo",
     });
 
