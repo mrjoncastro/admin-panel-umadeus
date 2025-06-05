@@ -1,6 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import PocketBase from "pocketbase";
 
+interface DadosInscricao {
+  nome: string;
+  email: string;
+  telefone: string;
+  cpf: string;
+  data_nascimento: string;
+  genero: string;
+  evento: string;
+  campo: string;
+  criado_por: string;
+  status: "pendente";
+  produto: string;
+  tamanho?: string;
+}
+
 const pb = new PocketBase("https://umadeus-production.up.railway.app");
 pb.autoCancellation(false);
 
@@ -77,7 +92,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Cria inscrição SEM pedido
-    const dadosInscricao: Record<string, any> = {
+    const dadosInscricao: DadosInscricao = {
       nome,
       email,
       telefone: telefoneNumerico,

@@ -110,7 +110,7 @@ export default function ListaInscricoesPage() {
         })
         .catch(() => {});
     }
-  }, []);
+  }, [showError]);
 
   const copiarLink = async () => {
     try {
