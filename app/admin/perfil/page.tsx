@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import pb from "@/lib/pocketbase";
+import { useEffect, useState, useMemo } from "react";
+import createPocketBase from "@/lib/pocketbase";
 import { useRouter } from "next/navigation";
 import ModalEditarPerfil from "./components/ModalEditarPerfil";
 
@@ -23,6 +23,7 @@ interface UsuarioAuthModel {
 
 export default function PerfilPage() {
   const router = useRouter();
+  const pb = useMemo(() => createPocketBase(), []);
   const [usuario, setUsuario] = useState<UsuarioAuthModel | null>(null);
   const [mostrarModal, setMostrarModal] = useState(false);
 

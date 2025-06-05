@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import pb from "@/lib/pocketbase";
+import { useEffect, useState, useMemo } from "react";
+import createPocketBase from "@/lib/pocketbase";
 import { Copy } from "lucide-react";
 import { saveAs } from "file-saver";
 import ModalEditarInscricao from "./componentes/ModalEdit";
@@ -37,6 +37,7 @@ type Inscricao = {
 };
 
 export default function ListaInscricoesPage() {
+  const pb = useMemo(() => createPocketBase(), []);
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
   const [role, setRole] = useState("");
   const [linkPublico, setLinkPublico] = useState("");

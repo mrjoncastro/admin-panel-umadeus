@@ -16,10 +16,10 @@ interface DadosInscricao {
   tamanho?: string;
 }
 
-const pb = new PocketBase("https://umadeus-production.up.railway.app");
-pb.autoCancellation(false);
 
 export async function POST(req: NextRequest) {
+  const pb = new PocketBase("https://umadeus-production.up.railway.app");
+  pb.autoCancellation(false);
   try {
     const body = await req.json();
     const {

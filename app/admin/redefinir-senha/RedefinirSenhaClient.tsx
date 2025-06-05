@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import pb from "@/lib/pocketbase";
+import createPocketBase from "@/lib/pocketbase";
 
 export default function RedefinirSenhaClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const pb = useMemo(() => createPocketBase(), []);
   const token = searchParams.get("token") ?? "";
 
   const [novaSenha, setNovaSenha] = useState("");

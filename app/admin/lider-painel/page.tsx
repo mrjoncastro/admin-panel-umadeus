@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
-import pb from "@/lib/pocketbase";
+import createPocketBase from "@/lib/pocketbase";
 import DashboardAnalytics from "../components/DashboardAnalytics";
 import type { Inscricao, Pedido } from "@/types";
 import {
@@ -36,6 +36,7 @@ ChartJS.register(
 export default function LiderDashboardPage() {
   const router = useRouter();
   const { user, isLoggedIn } = useAuthContext();
+  const pb = useMemo(() => createPocketBase(), []);
 
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
   const [pedidos, setPedidos] = useState<Pedido[]>([]);

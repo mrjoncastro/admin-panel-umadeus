@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
-import pb from "@/lib/pocketbase";
+import { useMemo } from "react";
+import createPocketBase from "@/lib/pocketbase";
 import Image from "next/image";
 import { Menu, X, ChevronDown, User, Lock, LogOut, Sun, Moon } from "lucide-react";
 import { useState } from "react";
@@ -31,6 +32,7 @@ const getNavLinks = (role?: string) => {
 export default function Header() {
   const pathname = usePathname();
   const { isLoggedIn, user } = useAuthContext();
+  const pb = useMemo(() => createPocketBase(), []);
   const [menuAberto, setMenuAberto] = useState(false);
   const [perfilAberto, setPerfilAberto] = useState(false);
   const [mostrarModalSenha, setMostrarModalSenha] = useState(false);

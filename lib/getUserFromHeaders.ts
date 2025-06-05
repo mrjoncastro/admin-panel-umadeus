@@ -1,10 +1,10 @@
 import type { NextRequest } from "next/server";
-import pb from "@/lib/pocketbase";
+import createPocketBase from "@/lib/pocketbase";
 import type { RecordModel } from "pocketbase";
 
 type AuthOk = {
   user: RecordModel;
-  pbSafe: typeof pb;
+  pbSafe: ReturnType<typeof createPocketBase>;
 };
 
 type AuthError = {
@@ -22,8 +22,9 @@ export function getUserFromHeaders(req: NextRequest): AuthOk | AuthError {
   try {
     const parsedUser = JSON.parse(rawUser) as RecordModel;
 
+    const pb = createPocketBase();
     pb.authStore.save(token, parsedUser);
-    pb.autoCancellation(false); 
+    pb.autoCancellation(false);
 
     return { user: parsedUser, pbSafe: pb };
   } catch {

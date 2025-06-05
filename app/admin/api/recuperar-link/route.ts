@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import PocketBase from "pocketbase";
 
-const pb = new PocketBase(
-  process.env.PB_URL || "https://umadeus-production.up.railway.app"
-);
-pb.autoCancellation(false);
-
 export async function POST(req: NextRequest) {
+  const pb = new PocketBase(
+    process.env.PB_URL || "https://umadeus-production.up.railway.app"
+  );
+  pb.autoCancellation(false);
   try {
     const { cpf, telefone } = await req.json();
 

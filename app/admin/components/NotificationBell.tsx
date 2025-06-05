@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Bell, X } from "lucide-react";
-import pb from "@/lib/pocketbase";
+import createPocketBase from "@/lib/pocketbase";
 import type { Inscricao } from "@/types";
 
 export default function NotificationBell() {
+  const pb = useMemo(() => createPocketBase(), []);
   const [count, setCount] = useState(0);
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
   const [open, setOpen] = useState(false);

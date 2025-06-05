@@ -2,14 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import PocketBase from "pocketbase";
 import mercadopago from "mercadopago";
 
-const pb = new PocketBase("https://umadeus-production.up.railway.app");
-pb.autoCancellation(false);
-
 mercadopago.configure({
   access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN!,
 });
 
 export async function POST(req: NextRequest) {
+  const pb = new PocketBase("https://umadeus-production.up.railway.app");
+  pb.autoCancellation(false);
   try {
     const body = await req.json();
     const paymentId = body?.data?.id;

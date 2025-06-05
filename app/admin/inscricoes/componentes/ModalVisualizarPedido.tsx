@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { X, Copy } from "lucide-react";
-import pb from "@/lib/pocketbase";
+import createPocketBase from "@/lib/pocketbase";
 
 interface Props {
   pedidoId: string;
@@ -30,6 +30,7 @@ type PedidoExpandido = {
 };
 
 export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
+  const pb = useMemo(() => createPocketBase(), []);
   const [pedido, setPedido] = useState<PedidoExpandido | null>(null);
   const [loading, setLoading] = useState(true);
   const [reenviando, setReenviando] = useState(false);

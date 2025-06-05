@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import pb from "@/lib/pocketbase";
+import { useState, useMemo } from "react";
+import createPocketBase from "@/lib/pocketbase";
 import { useToast } from "@/lib/context/ToastContext";
 
 export default function RedefinirSenhaModal({ onClose }: { onClose: () => void }) {
   const [email, setEmail] = useState("");
+  const pb = useMemo(() => createPocketBase(), []);
   const { showSuccess, showError } = useToast();
 
   const handleResetRequest = async () => {

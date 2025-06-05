@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
-import pb from "@/lib/pocketbase";
+import createPocketBase from "@/lib/pocketbase";
 
 export default function ModalEditarPerfil({
   onClose,
@@ -10,6 +10,7 @@ export default function ModalEditarPerfil({
   onClose: () => void;
 }) {
   const { user } = useAuthContext();
+  const pb = useMemo(() => createPocketBase(), []);
   const [nome, setNome] = useState(String(user?.nome || ""));
   const [telefone, setTelefone] = useState(String(user?.telefone || ""));
   const [cpf, setCpf] = useState(String(user?.cpf || ""));

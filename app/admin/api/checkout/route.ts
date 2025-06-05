@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import mercadopago from "mercadopago";
 import PocketBase from "pocketbase";
 
-const pb = new PocketBase("https://umadeus-production.up.railway.app");
-pb.autoCancellation(false);
-
 export async function POST(req: NextRequest) {
+  const pb = new PocketBase("https://umadeus-production.up.railway.app");
+  pb.autoCancellation(false);
   const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 

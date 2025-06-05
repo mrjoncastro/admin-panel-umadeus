@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { Pedido } from "@/types";
-import pb from "@/lib/pocketbase";
+import createPocketBase from "@/lib/pocketbase";
 import { saveAs } from "file-saver";
 import ModalEditarPedido from "./componentes/ModalEditarPedido";
 import { useToast } from "@/lib/context/ToastContext";
@@ -12,6 +12,7 @@ import { useToast } from "@/lib/context/ToastContext";
 export default function PedidosPage() {
   const router = useRouter();
   const { user, isLoggedIn } = useAuthContext();
+  const pb = useMemo(() => createPocketBase(), []);
 
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [loading, setLoading] = useState(true);
