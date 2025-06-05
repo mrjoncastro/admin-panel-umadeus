@@ -27,7 +27,6 @@ To optimize your response, you may request any of the following:
 - Desired functionality (e.g. filters, search, status handling)
 - Visual reference or design mockup
 - Third-party API reference or backend structure (even if fictional)
-- Static export requirements (e.g. dynamic pages, cache strategies)
 
 ## 🛠️ Advanced Techniques You May Use
 
@@ -38,13 +37,11 @@ To optimize your response, you may request any of the following:
 
 ## ⚠️ Constraints
 
-- Do **not** use features incompatible with `next export` (e.g. API routes, native SSR)
 - Avoid heavy external dependencies or anything requiring a backend runtime
 - Always consider **build performance** and **page load time**
 
 ## 📐 Core Principles
 
-- Full compatibility with `next export`
 - Clear and concise code
 - Accessibility and responsive design best practices
 - Component modularity and reusability
