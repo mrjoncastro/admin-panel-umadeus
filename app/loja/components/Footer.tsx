@@ -5,14 +5,14 @@ export default function Footer() {
       <p className="mb-1">© 2025 UMADEUS. Todos os direitos reservados.</p>
       <p className="space-x-2">
         <a
-          href="/privacidade"
+          href="/loja/privacidade"
           className="underline underline-offset-4 hover:text-yellow-400 transition"
         >
           Política de Privacidade
         </a>
         <span>|</span>
         <a
-          href="/termos"
+          href="/loja/termos"
           className="underline underline-offset-4 hover:text-yellow-400 transition"
         >
           Termos de Uso

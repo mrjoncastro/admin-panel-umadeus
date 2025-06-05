@@ -227,7 +227,7 @@ export default function Home() {
             </p>
 
             <Link
-              href="/produtos"
+              href="/loja/produtos"
               className="inline-block mt-2 px-8 py-3 rounded-full font-semibold transition transform hover:scale-105 shadow-lg text-lg bg-cornell_red-600 text-white hover:bg-cornell_red-700"
             >
               {content.bannerButton}
