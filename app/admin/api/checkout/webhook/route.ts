@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import PocketBase from "pocketbase";
+import { createPocketBase } from "@/lib/pocketbase";
 import mercadopago from "mercadopago";
 
 mercadopago.configure({
@@ -7,8 +7,7 @@ mercadopago.configure({
 });
 
 export async function POST(req: NextRequest) {
-  const pb = new PocketBase("https://umadeus-production.up.railway.app");
-  pb.autoCancellation(false);
+  const pb = createPocketBase();
   try {
     const body = await req.json();
     const paymentId = body?.data?.id;
