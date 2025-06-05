@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { setupCharts } from "@/lib/chartSetup";
 import dynamic from "next/dynamic";
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
@@ -44,7 +45,7 @@ export default function DashboardAnalytics({ inscricoes, pedidos }: DashboardAna
   const [endDate, setEndDate] = useState<string>("");
 
   useEffect(() => {
-    import("chart.js/auto");
+    setupCharts();
   }, []);
 
   const inscricoesData = groupByDate(inscricoes, startDate, endDate);

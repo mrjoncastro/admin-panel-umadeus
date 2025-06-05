@@ -37,26 +37,6 @@ export default function Home() {
     },
   }[section as "mulher" | "homem"];
 
-  const congressSlides = [
-    {
-      img: "/img/congresso_slide1.jpg",
-      title: "Tema 2025: Atraídos pela Tua Presença",
-      description:
-        "Viva dias de avivamento, comunhão e inspiração no Congresso UMADEUS 2K25.",
-    },
-    {
-      img: "/img/congresso_slide2.jpg",
-      title: "Presenças confirmadas",
-      description:
-        "Louvores impactantes, ministrações ungidas e conexões com jovens de todo o estado.",
-    },
-    {
-      img: "/img/congresso_slide3.jpg",
-      title: "Garanta sua vaga!",
-      description:
-        "Inscrições abertas para caravanas e individuais. Lugares limitados.",
-    },
-  ];
 
   const scrollBy = (direction: "left" | "right") => {
     const el = carouselRef.current;
@@ -107,7 +87,7 @@ export default function Home() {
             {["mulher", "homem", "congresso"].map((s) => (
               <button
                 key={s}
-                onClick={() => setSection(s as any)}
+                onClick={() => setSection(s as "mulher" | "homem" | "congresso")}
                 className={`px-4 py-1 rounded-full transition font-bold ${
                   section === s
                     ? "bg-cornell_red-600 text-white"

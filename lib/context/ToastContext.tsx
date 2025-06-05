@@ -14,10 +14,10 @@ const ToastContext = createContext<ToastContextType>({
 });
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
-  const [toasts, setToasts] = useState<{ id: number; message: string; type: ToastType }[]>([]);
+  const [toasts, setToasts] = useState<{ id: string; message: string; type: ToastType }[]>([]);
 
   const addToast = (message: string, type: ToastType) => {
-    const id = Date.now();
+    const id = crypto.randomUUID();
     setToasts((t) => [...t, { id, message, type }]);
     setTimeout(() => {
       setToasts((t) => t.filter((toast) => toast.id !== id));

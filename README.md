@@ -73,3 +73,11 @@ Para rodar a suíte de testes utilize:
 ```bash
 npm run test
 ```
+
+## Build
+
+Para gerar o build de produção execute:
+
+```bash
+npm run build
+```

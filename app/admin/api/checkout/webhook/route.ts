@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { createPocketBase } from "@/lib/pocketbase";
 import mercadopago from "mercadopago";
 
-mercadopago.configure({
-  access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN!,
-});
+if (process.env.MERCADO_PAGO_ACCESS_TOKEN) {
+  mercadopago.configure({
+    access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN,
+  });
+}
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
