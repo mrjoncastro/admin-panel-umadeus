@@ -2,14 +2,132 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
-  .input-base {
-    @apply w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 bg-[#DCDCDD] text-black border-[#ababab] focus:ring-[#e81920];
+/* ==========================
+   🎨 Variáveis de cor customizadas
+   ========================== */
+:root {
+  --background: #1e2019;         /* eerie_black */
+  --foreground: #f9c5c7;         /* cornell_red-900 */
+  --text-primary: #dcdcdc;       /* Platinum */
+  --text-secondary: #ababab;     /* jet-800 */
+  --accent: #b11116;             /* cornell_red */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0c0d0a;       /* eerie_black-200 */
+    --foreground: #f9c5c7;
+    --text-primary: #dcdcdc;
+    --text-secondary: #8c8c8c;
+    --accent: #e81920;           /* cornell_red-600 */
   }
-  .btn-base {
-    @apply w-full py-2 rounded font-semibold transition text-white;
+}
+
+/* ==========================
+   🌐 Temas base via CSS variables
+   ========================== */
+html {
+  color-scheme: light dark;
+}
+
+body {
+  background: linear-gradient(
+    270deg,
+    #1e2019,
+    #2a1a1c,
+    #3b2a2b,
+    #1e2019,
+    #2a1a1c,
+    #1e2019
+  );
+  background-size: 500% 500%;
+  background-repeat: no-repeat;
+  animation: gradient-x 30s ease-in-out infinite;
+  color: var(--text-primary);
+  font-family: "Inter", Arial, Helvetica, sans-serif;
+  transition: background-color 0.5s ease, color 0.9s ease;
+}
+
+/* ==========================
+   📦 Utilitários reutilizáveis
+   ========================== */
+.heading {
+  @apply text-2xl font-semibold mb-6;
+}
+
+.btn {
+  @apply px-4 py-2 rounded text-sm font-medium transition-colors;
+}
+
+.btn-primary {
+  @apply bg-red-700 text-white hover:bg-red-800;
+}
+
+.btn-secondary {
+  @apply border border-gray-300 bg-white hover:bg-gray-50;
+}
+
+.btn-danger {
+  @apply bg-red-600 text-white hover:bg-red-700;
+}
+
+.card {
+  @apply bg-white/90 backdrop-blur rounded-lg shadow p-4;
+}
+
+.input-style {
+  @apply w-full px-4 py-3 rounded-lg border border-[#b3b3b3] bg-[#f0f0f0] text-sm text-eerie_black focus:outline-none focus:ring-2 focus:ring-red-600 transition;
+}
+
+.table-base {
+  @apply min-w-full text-sm bg-white border border-gray-200;
+}
+
+.table-base thead {
+  @apply bg-gray-50 text-gray-700 uppercase text-xs tracking-wide;
+}
+
+.table-base th,
+.table-base td {
+  @apply px-4 py-2 text-left;
+}
+
+.table-base tbody tr {
+  @apply border-b border-gray-100 hover:bg-gray-50 transition-colors;
+}
+
+/* ==========================
+   🎞️ Animações
+   ========================== */
+@keyframes gradient-x {
+  0% {
+    background-position: 0% 50%;
   }
-  .text-error {
-    @apply text-[#e81920];
+  50% {
+    background-position: 100% 50%;
   }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bg-animated {
+  background: linear-gradient(270deg, #1e3a8a, #7c3aed, #be123c);
+  background-size: 400% 400%;
+  animation: gradient-x 15s ease infinite;
+}
+
+.fade-in-up {
+  animation: fade-in-up 0.8s ease forwards;
 }
