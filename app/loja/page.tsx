@@ -37,26 +37,7 @@ export default function Home() {
     },
   }[section as "mulher" | "homem"];
 
-  const congressSlides = [
-    {
-      img: "/img/congresso_slide1.jpg",
-      title: "Tema 2025: Atraídos pela Tua Presença",
-      description:
-        "Viva dias de avivamento, comunhão e inspiração no Congresso UMADEUS 2K25.",
-    },
-    {
-      img: "/img/congresso_slide2.jpg",
-      title: "Presenças confirmadas",
-      description:
-        "Louvores impactantes, ministrações ungidas e conexões com jovens de todo o estado.",
-    },
-    {
-      img: "/img/congresso_slide3.jpg",
-      title: "Garanta sua vaga!",
-      description:
-        "Inscrições abertas para caravanas e individuais. Lugares limitados.",
-    },
-  ];
+  const sections = ["mulher", "homem", "congresso"] as const;
 
   const scrollBy = (direction: "left" | "right") => {
     const el = carouselRef.current;
@@ -104,10 +85,10 @@ export default function Home() {
       <header className="bg-transparent px-6 py-4 shadow-md rounded-2xl mx-4 my-6">
         <nav className="flex justify-center items-center text-sm font-semibold tracking-wide">
           <div className="flex gap-4">
-            {["mulher", "homem", "congresso"].map((s) => (
+            {sections.map((s) => (
               <button
                 key={s}
-                onClick={() => setSection(s as any)}
+                onClick={() => setSection(s)}
                 className={`px-4 py-1 rounded-full transition font-bold ${
                   section === s
                     ? "bg-cornell_red-600 text-white"
