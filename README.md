@@ -65,3 +65,11 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `PB_ADMIN_PASSWORD` - senha do administrador
 - `MERCADO_PAGO_ACCESS_TOKEN` - token do Mercado Pago
 - `NEXT_PUBLIC_SITE_URL` - endereço do site (opcional)
+
+## Testes
+
+Para rodar a suíte de testes utilize:
+
+```bash
+npm run test
+```
