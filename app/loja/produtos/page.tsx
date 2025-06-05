@@ -50,7 +50,7 @@ export default function ProdutoPage() {
   return (
     <main className="text-platinum font-sans px-4 md:px-16 py-10">
       <a
-        href="/"
+        href="/loja"
         className="text-sm text-platinum hover:text-yellow-400 mb-6 inline-block transition"
       >
         &lt; voltar
