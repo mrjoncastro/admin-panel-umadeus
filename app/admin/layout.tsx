@@ -3,6 +3,7 @@ import "../globals.css";
 import LayoutWrapper from "./components/LayoutWrapper";
 import { Geist, Geist_Mono } from "next/font/google";
 
+// Inicialize as fontes
 const geistSans = Geist({ subsets: ["latin"], variable: "--font-geist" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
 
