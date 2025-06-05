@@ -5,8 +5,8 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 
 const PRODUTOS = [
-  { nome: "Kit Camisa + Pulseira", valor: 50.00 },
-  { nome: "Somente Pulseira", valor: 10.00 },
+  { nome: "Kit Camisa + Pulseira", valor: 50.0 },
+  { nome: "Somente Pulseira", valor: 10.0 },
 ];
 
 interface FormFields {
@@ -203,6 +203,37 @@ export default function InscricaoPage() {
 
           <div>
             <label className="block font-medium text-sm text-gray-700 mb-1">
+              Gênero
+            </label>
+            <select
+              name="genero"
+              value={form.genero}
+              onChange={handleChange}
+              required
+              className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+            >
+              <option value="">Selecione seu gênero</option>
+              <option value="masculino">Masculino</option>
+              <option value="feminino">Feminino</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block font-medium text-sm text-gray-700 mb-1">
+              Data de Nascimento
+            </label>
+            <input
+              type="date"
+              name="data_nascimento"
+              value={form.data_nascimento}
+              onChange={handleChange}
+              required
+              className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+            />
+          </div>
+
+          <div>
+            <label className="block font-medium text-sm text-gray-700 mb-1">
               Produto
             </label>
             <select
@@ -245,37 +276,6 @@ export default function InscricaoPage() {
               </select>
             </div>
           )}
-
-          <div>
-            <label className="block font-medium text-sm text-gray-700 mb-1">
-              Gênero
-            </label>
-            <select
-              name="genero"
-              value={form.genero}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-            >
-              <option value="">Selecione seu gênero</option>
-              <option value="masculino">Masculino</option>
-              <option value="feminino">Feminino</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block font-medium text-sm text-gray-700 mb-1">
-              Data de Nascimento
-            </label>
-            <input
-              type="date"
-              name="data_nascimento"
-              value={form.data_nascimento}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-            />
-          </div>
 
           <div className="flex items-start mt-4">
             <input
