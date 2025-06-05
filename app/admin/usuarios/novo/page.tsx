@@ -36,15 +36,7 @@ export default function NovoUsuarioPage() {
   const [mensagem, setMensagem] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("pb_token");
-    const user = localStorage.getItem("pb_user");
-
-    fetch("/api/campos", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "X-PB-User": user ?? "",
-      },
-    })
+    fetch("/api/campos")
       .then((res) => res.json())
       .then((data) => setCampos(data))
       .catch(() => setMensagem("❌ Erro ao carregar os campos."));
@@ -53,15 +45,10 @@ export default function NovoUsuarioPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const token = localStorage.getItem("pb_token");
-    const user = localStorage.getItem("pb_user");
-
     const res = await fetch("/api/usuarios", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-        "X-PB-User": user ?? "",
       },
       body: JSON.stringify({
         nome,

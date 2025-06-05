@@ -10,7 +10,15 @@ import { useState } from "react";
 import { useTheme } from "@/lib/context/ThemeContext";
 import RedefinirSenhaModal from "./RedefinirSenhaModal";
 
-const getNavLinks = (role?: string) => {
+const lojaLinks = [
+  { href: "/loja", label: "Início" },
+  { href: "/loja/eventos", label: "Eventos" },
+  { href: "/loja/faq", label: "FAQ" },
+  { href: "/loja/contato", label: "Contato" },
+];
+
+const getNavLinks = (logged: boolean, role?: string) => {
+  if (!logged) return lojaLinks;
   if (role === "lider") {
     return [
       { href: "/lider-painel", label: "Painel" },
@@ -36,12 +44,12 @@ export default function Header() {
   const [mostrarModalSenha, setMostrarModalSenha] = useState(false);
   const { theme, toggleTheme } = useTheme();
 
-  const navLinks = getNavLinks(user?.role);
+  const navLinks = getNavLinks(isLoggedIn, user?.role);
 
   const handleLogout = () => {
     pb.authStore.clear();
-    localStorage.removeItem("pb_token");
-    localStorage.removeItem("pb_user");
+    document.cookie = "pb_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "pb_user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     window.location.href = "/";
   };
 

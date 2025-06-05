@@ -1,8 +1,7 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import Header from "@/app/admin/components/Header";
-import Footer from "@/app/admin/components/Footer";
+import Header from "./Header";
+import Footer from "./Footer";
 import BackToTopButton from "@/app/admin/components/BackToTopButton";
 import NotificationBell from "@/app/admin/components/NotificationBell";
 import { useAuthContext } from "@/lib/context/AuthContext";
@@ -12,13 +11,11 @@ export default function LayoutWrapper({
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const isInscricaoPublica = /^\/inscricoes\/[^/]+$/.test(pathname);
   const { isLoggedIn, user } = useAuthContext();
 
   return (
     <>
-      {!isInscricaoPublica && <Header />}
+      <Header />
       <main className="min-h-screen">
         {children}
       </main>

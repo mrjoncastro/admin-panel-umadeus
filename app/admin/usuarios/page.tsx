@@ -23,15 +23,7 @@ export default function UsuariosPage() {
   useEffect(() => {
     async function fetchUsuarios() {
       try {
-        const token = localStorage.getItem("pb_token");
-        const user = localStorage.getItem("pb_user");
-
-        const res = await fetch("/api/usuarios", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "X-PB-User": user ?? "",
-          },
-        });
+        const res = await fetch("/api/usuarios");
 
         if (!res.ok) {
           const erro = await res.json();

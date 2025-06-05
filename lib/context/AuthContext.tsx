@@ -33,9 +33,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const getCookie = (name: string) =>
+      document.cookie
+        .split("; ")
+        .find((row) => row.startsWith(`${name}=`))
+        ?.split("=")[1];
     try {
-      const token = localStorage.getItem("pb_token");
-      const rawUser = localStorage.getItem("pb_user");
+      const token = getCookie("pb_token");
+      const rawUser = getCookie("pb_user");
 
       if (token && rawUser) {
         const parsedRecord = JSON.parse(rawUser) as RecordModel;
@@ -49,15 +54,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error("Erro ao carregar auth:", err.message);
       }
       pb.authStore.clear();
-      localStorage.removeItem("pb_token");
-      localStorage.removeItem("pb_user");
+      document.cookie =
+        "pb_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      document.cookie =
+        "pb_user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
       setUser(null);
       setIsLoggedIn(false);
     }
 
     const unsubscribe = pb.authStore.onChange(() => {
-      localStorage.setItem("pb_token", pb.authStore.token);
-      localStorage.setItem("pb_user", JSON.stringify(pb.authStore.model));
+      document.cookie = `pb_token=${pb.authStore.token}; path=/`;
+      document.cookie = `pb_user=${encodeURIComponent(
+        JSON.stringify(pb.authStore.model)
+      )}; path=/`;
     });
 
     setIsLoading(false);
@@ -72,8 +81,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const model = pb.authStore.model as unknown as UserModel;
 
-    localStorage.setItem("pb_token", pb.authStore.token);
-    localStorage.setItem("pb_user", JSON.stringify(model));
+    document.cookie = `pb_token=${pb.authStore.token}; path=/`;
+    document.cookie = `pb_user=${encodeURIComponent(
+      JSON.stringify(model)
+    )}; path=/`;
 
     setUser(model);
     setIsLoggedIn(true);
@@ -81,8 +92,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     pb.authStore.clear();
-    localStorage.removeItem("pb_token");
-    localStorage.removeItem("pb_user");
+    document.cookie = "pb_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "pb_user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     setUser(null);
     setIsLoggedIn(false);
   };

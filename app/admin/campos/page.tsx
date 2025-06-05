@@ -14,28 +14,14 @@ export default function GerenciarCamposPage() {
   const [mensagem, setMensagem] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
-  const userRaw =
-    typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
-  const user = userRaw ? JSON.parse(userRaw) : null;
 
   useEffect(() => {
     async function carregarCampos() {
       console.log("🔐 Iniciando carregamento de campos...");
-      if (!token || !user) {
-        console.warn("⚠️ Usuário ou token ausente.");
-        setMensagem("Usuário não autenticado.");
-        return;
-      }
 
       try {
         const res = await fetch("/api/campos", {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "X-PB-User": JSON.stringify(user),
-          },
         });
 
         const data = await res.json();
@@ -62,17 +48,13 @@ export default function GerenciarCamposPage() {
     }
 
     carregarCampos();
-  }, [token, user]);
+  }, []);
 
   async function handleCriarOuAtualizar(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setMensagem("");
 
-    if (!token || !user) {
-      setMensagem("Usuário não autenticado.");
-      return;
-    }
 
     const metodo = editandoId ? "PUT" : "POST";
     const url = editandoId ? `/api/campos/${editandoId}` : "/api/campos";
@@ -82,8 +64,6 @@ export default function GerenciarCamposPage() {
         method: metodo,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          "X-PB-User": JSON.stringify(user),
         },
         body: JSON.stringify({ nome }),
       });
@@ -109,15 +89,9 @@ export default function GerenciarCamposPage() {
   }
 
   const fetchCampos = async () => {
-    if (!token || !user) return;
 
     try {
-      const res = await fetch("/api/campos", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "X-PB-User": JSON.stringify(user),
-        },
-      });
+      const res = await fetch("/api/campos");
       const data = await res.json();
       if (res.ok) setCampos(data);
     } catch (err: unknown) {
@@ -128,18 +102,10 @@ export default function GerenciarCamposPage() {
   async function handleExcluir(id: string) {
     if (!confirm("Tem certeza que deseja excluir este campo?")) return;
 
-    if (!token || !user) {
-      setMensagem("Usuário não autenticado.");
-      return;
-    }
 
     try {
       const res = await fetch(`/api/campos/${id}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "X-PB-User": JSON.stringify(user),
-        },
       });
 
       const data = await res.json();
