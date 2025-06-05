@@ -14,18 +14,18 @@ import RedefinirSenhaModal from "./RedefinirSenhaModal";
 const getNavLinks = (role?: string) => {
   if (role === "lider") {
     return [
-      { href: "/lider-painel", label: "Painel" },
-      { href: "/inscricoes", label: "Inscrições" },
-      { href: "/pedidos", label: "Pedidos" },
+      { href: "/admin/lider-painel", label: "Painel" },
+      { href: "/admin/inscricoes", label: "Inscrições" },
+      { href: "/admin/pedidos", label: "Pedidos" },
     ];
   }
 
   return [
-    { href: "/dashboard", label: "Painel" },
-    { href: "/inscricoes", label: "Inscrições" },
-    { href: "/pedidos", label: "Pedidos" },
-    { href: "/usuarios", label: "Usuários" },
-    { href: "/campos", label: "Campos" },
+    { href: "/admin/dashboard", label: "Painel" },
+    { href: "/admin/inscricoes", label: "Inscrições" },
+    { href: "/admin/pedidos", label: "Pedidos" },
+    { href: "/admin/usuarios", label: "Usuários" },
+    { href: "/admin/campos", label: "Campos" },
   ];
 };
 
@@ -50,7 +50,7 @@ export default function Header() {
   return (
     <header className="bg-[#2A1A1C] text-[#DCDCDC] shadow-md sticky top-0 z-50">
       <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
-        <Link href="/" className="flex items-center">
+        <Link href="/admin" className="flex items-center">
           <Image
             src="/img/logo_umadeus_branco.png"
             alt="Logotipo UMADEUS"
@@ -111,7 +111,7 @@ export default function Header() {
                 <ul className="absolute right-0 mt-2 w-52 bg-white text-[#2A1A1C] dark:bg-zinc-900 dark:text-white rounded-lg shadow z-50 text-sm py-2 space-y-2">
                   <li>
                     <Link
-                      href="/perfil"
+                      href="/admin/perfil"
                       className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
                     >
                       <User size={16} /> Visualizar perfil
@@ -183,7 +183,7 @@ export default function Header() {
             {isLoggedIn && (
               <>
                 <Link
-                  href="/perfil"
+                  href="/admin/perfil"
                   onClick={() => setMenuAberto(false)}
                   className="px-4 py-2 text-sm hover:bg-[#DCDCDC] hover:text-[#2A1A1C]"
                 >

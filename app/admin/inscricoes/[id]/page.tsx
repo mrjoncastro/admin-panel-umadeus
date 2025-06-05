@@ -143,7 +143,7 @@ export default function InscricaoPage() {
       <div className="mb-6 p-3 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-600 text-center">
         Já fez a inscrição?{" "}
         <Link
-          href="/inscricoes/recuperar"
+          href="/admin/inscricoes/recuperar"
           className="text-purple-700 font-medium underline hover:text-purple-900"
         >
           Clique aqui para concluir

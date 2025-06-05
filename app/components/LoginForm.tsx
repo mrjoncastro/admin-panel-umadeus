@@ -20,9 +20,9 @@ export default function LoginForm() {
   useEffect(() => {
     if (!isLoading && isLoggedIn && user) {
       if (user.role === "coordenador") {
-        router.replace("/dashboard");
+        router.replace("/admin/dashboard");
       } else if (user.role === "lider") {
-        router.replace("/lider-painel");
+        router.replace("/admin/lider-painel");
       } else {
         setErro("Perfil de acesso não permitido.");
       }
