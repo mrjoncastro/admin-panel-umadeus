@@ -26,7 +26,7 @@ export default function UsuariosPage() {
         const token = localStorage.getItem("pb_token");
         const user = localStorage.getItem("pb_user");
 
-        const res = await fetch("/api/usuarios", {
+        const res = await fetch("/admin/api/usuarios", {
           headers: {
             Authorization: `Bearer ${token}`,
             "X-PB-User": user ?? "",

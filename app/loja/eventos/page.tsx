@@ -53,11 +53,12 @@ export default function EventosPage() {
             key={evento.id}
             className="bg-white rounded-xl shadow-md overflow-hidden border"
           >
-            <img
+            <Image
               src={evento.imagem}
               alt={`Imagem do evento ${evento.titulo}`}
+              width={400}
+              height={225}
               className="w-full h-56 object-cover"
-              loading="lazy"
             />
             <div className="p-4 space-y-2">
               <span

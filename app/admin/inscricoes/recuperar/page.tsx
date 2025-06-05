@@ -64,7 +64,7 @@ export default function RecuperarPagamentoPage() {
     const payload = isCPFValido ? { cpf: numeros } : { telefone: numeros };
 
     try {
-      const res = await fetch("/api/recuperar-link", {
+      const res = await fetch("/admin/api/recuperar-link", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
