@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   redirects: async () => [
     {
       source: "/inscricao",
-      destination: "/inscricao/congresso",
+      destination: "/loja/inscricoes",
       permanent: true,
     },
   ],

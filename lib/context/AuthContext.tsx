@@ -1,7 +1,10 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
-import pb from "@/lib/pocketbase";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import createPocketBase, {
+  updateBaseAuth,
+  clearBaseAuth,
+} from "@/lib/pocketbase";
 import type { RecordModel } from "pocketbase";
 
 type UserModel = {
@@ -28,6 +31,7 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const pb = useMemo(() => createPocketBase(), []);
   const [user, setUser] = useState<UserModel | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -40,6 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (token && rawUser) {
         const parsedRecord = JSON.parse(rawUser) as RecordModel;
         pb.authStore.save(token, parsedRecord);
+        updateBaseAuth(token, parsedRecord);
 
         setUser(parsedRecord as unknown as UserModel);
         setIsLoggedIn(true);
@@ -49,6 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error("Erro ao carregar auth:", err.message);
       }
       pb.authStore.clear();
+      clearBaseAuth();
       localStorage.removeItem("pb_token");
       localStorage.removeItem("pb_user");
       setUser(null);
@@ -58,6 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const unsubscribe = pb.authStore.onChange(() => {
       localStorage.setItem("pb_token", pb.authStore.token);
       localStorage.setItem("pb_user", JSON.stringify(pb.authStore.model));
+      updateBaseAuth(pb.authStore.token, pb.authStore.model);
     });
 
     setIsLoading(false);
@@ -75,12 +82,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("pb_token", pb.authStore.token);
     localStorage.setItem("pb_user", JSON.stringify(model));
 
+    updateBaseAuth(pb.authStore.token, pb.authStore.model);
+
     setUser(model);
     setIsLoggedIn(true);
   };
 
   const logout = () => {
     pb.authStore.clear();
+    clearBaseAuth();
     localStorage.removeItem("pb_token");
     localStorage.removeItem("pb_user");
     setUser(null);

@@ -54,3 +54,22 @@ Execute `npm run lint` para verificar problemas de código. Evite o uso de `any`
   leaders.
 - Analytics charts support date range filters and allow exporting the data as
   CSV or XLSX spreadsheets.
+
+
+## Variáveis de Ambiente
+
+Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
+
+- `NEXT_PUBLIC_PB_URL` - URL do PocketBase
+- `PB_ADMIN_EMAIL` - e-mail do administrador do PocketBase
+- `PB_ADMIN_PASSWORD` - senha do administrador
+- `MERCADO_PAGO_ACCESS_TOKEN` - token do Mercado Pago
+- `NEXT_PUBLIC_SITE_URL` - endereço do site (opcional)
+
+## Testes
+
+Para rodar a suíte de testes utilize:
+
+```bash
+npm run test
+```
