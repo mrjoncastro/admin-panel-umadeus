@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import Image from "next/image";
-import RedefinirSenhaModal from "./components/RedefinirSenhaModal";
+import RedefinirSenhaModal from "./admin/components/RedefinirSenhaModal";
 
 export default function LoginPage() {
   const router = useRouter();
