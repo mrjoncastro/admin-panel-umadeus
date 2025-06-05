@@ -32,18 +32,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ThemeProvider>
-          <AuthProvider>
-            <ToastProvider>
-              <LayoutWrapper>{children}</LayoutWrapper>
-            </ToastProvider>
-          </AuthProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+    <div className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <ThemeProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <LayoutWrapper>{children}</LayoutWrapper>
+          </ToastProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </div>
   );
 }
