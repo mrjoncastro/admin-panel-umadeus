@@ -20,7 +20,7 @@ export default function ObrigadoPage() {
 
         <div className="pt-4">
           <Link
-            href="/"
+            href="/admin/login"
             className="inline-block bg-purple-600 text-white font-bold py-2 px-6 rounded-lg"
           >
             Voltar para o início
