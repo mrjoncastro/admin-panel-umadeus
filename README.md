@@ -54,3 +54,5 @@ Execute `npm run lint` para verificar problemas de código. Evite o uso de `any`
   leaders.
 - Analytics charts support date range filters and allow exporting the data as
   CSV or XLSX spreadsheets.
+
+
