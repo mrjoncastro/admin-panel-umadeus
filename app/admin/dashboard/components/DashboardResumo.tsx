@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
+import { setupCharts } from "@/lib/chartSetup";
 import { Info } from "lucide-react";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
@@ -28,7 +29,7 @@ export default function DashboardResumo({
   setFiltroStatus,
 }: DashboardResumoProps) {
   useEffect(() => {
-    import("chart.js/auto");
+    setupCharts();
   }, []);
   const valorTotalConfirmado = inscricoes.reduce((total, i) => {
     const pedido = i.expand?.pedido;

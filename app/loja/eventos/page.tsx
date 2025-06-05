@@ -56,8 +56,8 @@ export default function EventosPage() {
             <Image
               src={evento.imagem}
               alt={`Imagem do evento ${evento.titulo}`}
-              width={400}
-              height={225}
+              width={640}
+              height={320}
               className="w-full h-56 object-cover"
             />
             <div className="p-4 space-y-2">

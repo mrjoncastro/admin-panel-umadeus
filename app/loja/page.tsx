@@ -37,7 +37,6 @@ export default function Home() {
     },
   }[section as "mulher" | "homem"];
 
-  const sections = ["mulher", "homem", "congresso"] as const;
 
   const scrollBy = (direction: "left" | "right") => {
     const el = carouselRef.current;
@@ -88,7 +87,7 @@ export default function Home() {
             {sections.map((s) => (
               <button
                 key={s}
-                onClick={() => setSection(s)}
+                onClick={() => setSection(s as "mulher" | "homem" | "congresso")}
                 className={`px-4 py-1 rounded-full transition font-bold ${
                   section === s
                     ? "bg-cornell_red-600 text-white"

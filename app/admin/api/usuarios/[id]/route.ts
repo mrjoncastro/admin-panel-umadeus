@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/apiAuth";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const id = params.id;
+export async function GET(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+  const id = pathname.split("/").pop() ?? "";
 
   if (!id || id.trim() === "") {
     return NextResponse.json(
