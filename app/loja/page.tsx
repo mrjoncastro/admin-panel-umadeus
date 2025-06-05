@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -127,9 +128,11 @@ export default function Home() {
           <section className="max-w-6xl mx-auto py-12 px-6 text-center md:text-left grid md:grid-cols-2 gap-10 items-center">
             {/* Imagem destacada */}
             <div className="w-full">
-              <img
+              <Image
                 src="/img/congresso_slide1.jpg"
                 alt="Congresso UMADEUS"
+                width={800}
+                height={600}
                 className="w-full rounded-lg shadow-lg border border-platinum/20"
               />
             </div>
@@ -189,12 +192,13 @@ export default function Home() {
                 onMouseDown={pauseAutoScroll}
               >
                 {content.images.map((src, index) => (
-                  <img
+                  <Image
                     key={index}
                     src={src}
                     alt={`Banner ${section} ${index + 1}`}
+                    width={600}
+                    height={600}
                     className="w-[80%] flex-shrink-0 rounded-xl snap-center object-cover transition transform hover:scale-105 hover:shadow-lg border-4 border-black_bean"
-                    loading="lazy"
                   />
                 ))}
               </div>
@@ -203,10 +207,12 @@ export default function Home() {
             {/* Desktop Grid */}
             <div className="hidden md:grid md:grid-cols-3 gap-6 mb-8">
               {content.images.map((src, index) => (
-                <img
+                <Image
                   key={index}
                   src={src}
                   alt={`Banner ${section} ${index + 1}`}
+                  width={600}
+                  height={600}
                   className="w-full h-auto object-cover rounded-xl transition hover:scale-105 hover:shadow-lg"
                 />
               ))}

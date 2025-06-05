@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import Image from "next/image";
 
 export default function ProdutoPage() {
   const [generoSelecionado, setGeneroSelecionado] = useState<
@@ -58,17 +59,21 @@ export default function ProdutoPage() {
       <div className="grid md:grid-cols-2 gap-12 items-start">
         {/* Imagem principal */}
         <div>
-          <img
+          <Image
             src={imagemPrincipal}
             alt="Camiseta UMADEUS"
+            width={600}
+            height={600}
             className="w-full rounded-xl border border-black_bean shadow-lg transition-all duration-300"
           />
           <div className="flex gap-3 mt-4">
             {imagensAtual.map((src, i) => (
-              <img
+              <Image
                 key={i}
                 src={src}
                 alt={`Miniatura ${i + 1}`}
+                width={64}
+                height={64}
                 onClick={() => handleMiniaturaClick(i)}
                 className={`w-16 h-16 object-cover rounded-lg border-2 cursor-pointer transition ${
                   indexImg === i
