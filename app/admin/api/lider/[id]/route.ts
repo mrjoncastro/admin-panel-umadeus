@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createPocketBase } from "@/lib/pocketbase";
 
-export async function GET(req: NextRequest) {
-  const url = new URL(req.nextUrl);
-  const id = url.pathname.split("/").pop();
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const id = params.id;
 
   if (!id || id.trim() === "") {
     return NextResponse.json({ erro: "ID ausente ou inválido." }, { status: 400 });
