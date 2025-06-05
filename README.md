@@ -73,3 +73,9 @@ Para rodar a suíte de testes utilize:
 ```bash
 npm run test
 ```
+
+## Solução para erros de build
+
+Caso o deploy falhe devido a problemas de lint, execute `npx next lint` localmente
+e corrija os arquivos indicados. Remova importações não utilizadas e substitua
+tipagens `any` por tipos específicos.
