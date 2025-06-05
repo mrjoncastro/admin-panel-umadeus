@@ -56,6 +56,3 @@ Execute `npm run lint` para verificar problemas de código. Evite o uso de `any`
   CSV or XLSX spreadsheets.
 
 
-
-## Estrutura do App
-
