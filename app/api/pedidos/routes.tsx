@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     const responsavelId = inscricao.expand?.criado_por;
 
     const valor =
-      inscricao.produto === "Somente Pulseira" ? 9.9 : 39.9;
+      inscricao.produto === "Somente Pulseira" ? 10.00 : 50.00;
 
     const pedido = await pb.collection("pedidos").create({
       id_inscricao: inscricaoId,

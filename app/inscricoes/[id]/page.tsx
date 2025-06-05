@@ -5,8 +5,8 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 
 const PRODUTOS = [
-  { nome: "Kit Camisa + Pulseira", valor: 39.9 },
-  { nome: "Somente Pulseira", valor: 9.9 },
+  { nome: "Kit Camisa + Pulseira", valor: 50.00 },
+  { nome: "Somente Pulseira", valor: 10.00 },
 ];
 
 interface FormFields {
@@ -195,34 +195,56 @@ export default function InscricaoPage() {
             type="text"
             name="cpf"
             placeholder="CPF"
-          value={form.cpf}
-          onChange={handleChange}
-          required
-          className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-        />
-
-        <div>
-          <label className="block font-medium text-sm text-gray-700 mb-1">
-            Produto
-          </label>
-          <select
-            name="produto"
-            value={form.produto}
+            value={form.cpf}
             onChange={handleChange}
+            required
             className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-          >
-            {PRODUTOS.map((p) => (
-              <option key={p.nome} value={p.nome}>
-                {p.nome} - R$ {p.valor.toFixed(2).replace(".", ",")}
-              </option>
-            ))}
-          </select>
-          <p className="text-xs text-gray-500 mt-1">
-            Valor: R$ {PRODUTOS.find((p) => p.nome === form.produto)?.valor
-              .toFixed(2)
-              .replace(".", ",")}
-          </p>
-        </div>
+          />
+
+          <div>
+            <label className="block font-medium text-sm text-gray-700 mb-1">
+              Produto
+            </label>
+            <select
+              name="produto"
+              value={form.produto}
+              onChange={handleChange}
+              className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+            >
+              {PRODUTOS.map((p) => (
+                <option key={p.nome} value={p.nome}>
+                  {p.nome} - R$ {p.valor.toFixed(2).replace(".", ",")}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-gray-500 mt-1">
+              Valor: R${" "}
+              {PRODUTOS.find((p) => p.nome === form.produto)
+                ?.valor.toFixed(2)
+                .replace(".", ",")}
+            </p>
+          </div>
+
+          {form.produto !== "Somente Pulseira" && (
+            <div>
+              <label className="block font-medium text-sm text-gray-700 mb-1">
+                Tamanho da camisa
+              </label>
+              <select
+                name="tamanho"
+                value={form.tamanho}
+                onChange={handleChange}
+                className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+              >
+                <option value="">Selecione o tamanho da camisa</option>
+                {["PP", "P", "M", "G", "GG"].map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div>
             <label className="block font-medium text-sm text-gray-700 mb-1">
@@ -254,27 +276,6 @@ export default function InscricaoPage() {
               className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
             />
           </div>
-
-          {form.produto !== "Somente Pulseira" && (
-            <div>
-              <label className="block font-medium text-sm text-gray-700 mb-1">
-                Tamanho da camisa
-              </label>
-              <select
-                name="tamanho"
-                value={form.tamanho}
-                onChange={handleChange}
-                className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-              >
-                <option value="">Selecione o tamanho da camisa</option>
-                {["PP", "P", "M", "G", "GG"].map((t) => (
-                  <option key={t} value={t}>
-                    {t}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
 
           <div className="flex items-start mt-4">
             <input
