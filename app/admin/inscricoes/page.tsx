@@ -9,6 +9,7 @@ import ModalVisualizarPedido from "./componentes/ModalVisualizarPedido";
 import { CheckCircle, XCircle, Pencil, Trash2, Eye } from "lucide-react";
 import TooltipIcon from "../components/TooltipIcon";
 import { useToast } from "@/lib/context/ToastContext";
+import { PRECO_PULSEIRA, PRECO_KIT } from "@/lib/constants";
 
 const statusBadge = {
   pendente: "bg-yellow-100 text-yellow-800",
@@ -149,7 +150,9 @@ export default function ListaInscricoesPage() {
 
       // 🔹 2. Criar pedido com os dados da inscrição
       const valorPedido =
-        inscricao.produto === "Somente Pulseira" ? 10.00 : 50.00;
+        inscricao.produto === "Somente Pulseira"
+          ? PRECO_PULSEIRA
+          : PRECO_KIT;
 
       const pedido = await pb.collection("pedidos").create({
         id_inscricao: id,

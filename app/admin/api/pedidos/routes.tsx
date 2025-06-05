@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createPocketBase } from "@/lib/pocketbase";
+import PocketBase from "pocketbase";
+import { PRECO_PULSEIRA, PRECO_KIT } from "@/lib/constants";
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest) {
     const responsavelId = inscricao.expand?.criado_por;
 
     const valor =
-      inscricao.produto === "Somente Pulseira" ? 10.00 : 50.00;
+      inscricao.produto === "Somente Pulseira" ? PRECO_PULSEIRA : PRECO_KIT;
 
     const pedido = await pb.collection("pedidos").create({
       id_inscricao: inscricaoId,
