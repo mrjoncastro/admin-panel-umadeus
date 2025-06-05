@@ -69,7 +69,7 @@ export default function LoginForm() {
         </p>
 
         {erro && (
-          <p className="text-sm text-center mb-4 text-error">
+          <p className="text-sm text-center mb-4 text-red-600">
             {erro}
           </p>
         )}
@@ -86,7 +86,7 @@ export default function LoginForm() {
             placeholder="E-mail"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="input-base"
+            className="input-style"
             required
           />
           <input
@@ -94,7 +94,7 @@ export default function LoginForm() {
             placeholder="Senha"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
-            className="input-base"
+            className="input-style"
             required
           />
           <div className="text-right text-sm">
@@ -110,7 +110,7 @@ export default function LoginForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`btn-base ${isSubmitting ? "bg-[#ababab] cursor-not-allowed" : "bg-[#e81920]"}`}
+            className={`btn ${isSubmitting ? "bg-[#ababab] cursor-not-allowed" : "bg-[#e81920]"}`}
           >
             {isSubmitting ? "Entrando..." : "Entrar"}
           </button>
