@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import PocketBase from "pocketbase";
+import createPocketBase from "@/lib/pocketbase";
 import { PRECO_PULSEIRA, PRECO_KIT } from "@/lib/constants";
 
 export async function POST(req: NextRequest) {
