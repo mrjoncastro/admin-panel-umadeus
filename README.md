@@ -66,6 +66,19 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `MERCADO_PAGO_ACCESS_TOKEN` - token do Mercado Pago
 - `NEXT_PUBLIC_SITE_URL` - endereço do site (opcional)
 
+## Conectando ao PocketBase
+
+1. Baixe o binário do [PocketBase](https://pocketbase.io) e coloque-o na raiz do projeto ou em uma pasta acessível pelo seu `PATH`.
+2. Inicie o servidor executando `./pocketbase serve` em um terminal separado.
+3. Defina `NEXT_PUBLIC_PB_URL` apontando para a URL onde o PocketBase está rodando, por exemplo:
+
+```bash
+NEXT_PUBLIC_PB_URL=http://localhost:8090
+```
+
+4. Utilize as variáveis `PB_ADMIN_EMAIL` e `PB_ADMIN_PASSWORD` para autenticar a aplicação.
+
+
 ## Testes
 
 Para rodar a suíte de testes utilize:
