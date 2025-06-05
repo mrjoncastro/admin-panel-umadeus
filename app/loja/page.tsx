@@ -6,9 +6,10 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
-  const [section, setSection] = useState<"mulher" | "homem" | "congresso">(
-    "mulher"
-  );
+  const sections = ["mulher", "homem", "congresso"] as const;
+  type Section = (typeof sections)[number];
+
+  const [section, setSection] = useState<Section>("mulher");
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -36,7 +37,6 @@ export default function Home() {
       bannerButton: "Ver Linha Masculina",
     },
   }[section as "mulher" | "homem"];
-
 
   const scrollBy = (direction: "left" | "right") => {
     const el = carouselRef.current;
@@ -87,7 +87,7 @@ export default function Home() {
             {sections.map((s) => (
               <button
                 key={s}
-                onClick={() => setSection(s as "mulher" | "homem" | "congresso")}
+                onClick={() => setSection(s)}
                 className={`px-4 py-1 rounded-full transition font-bold ${
                   section === s
                     ? "bg-cornell_red-600 text-white"
