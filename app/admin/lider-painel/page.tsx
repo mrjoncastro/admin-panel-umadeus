@@ -6,32 +6,6 @@ import { useAuthContext } from "@/lib/context/AuthContext";
 import createPocketBase from "@/lib/pocketbase";
 import DashboardAnalytics from "../components/DashboardAnalytics";
 import type { Inscricao, Pedido } from "@/types";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement,
-  PointElement,
-  Filler,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-} from "chart.js";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement,
-  PointElement,
-  Filler,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
-);
 
 export default function LiderDashboardPage() {
   const router = useRouter();

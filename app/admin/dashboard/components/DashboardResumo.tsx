@@ -1,8 +1,18 @@
-import { Bar, Pie } from "react-chartjs-2";
+"use client";
+
+import dynamic from "next/dynamic";
+import { useEffect } from "react";
 import { Info } from "lucide-react";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 import type { Inscricao, Pedido } from "@/types";
+
+const Bar = dynamic(() => import("react-chartjs-2").then((m) => m.Bar), {
+  ssr: false,
+});
+const Pie = dynamic(() => import("react-chartjs-2").then((m) => m.Pie), {
+  ssr: false,
+});
 
 interface DashboardResumoProps {
   inscricoes: Inscricao[];
@@ -17,6 +27,9 @@ export default function DashboardResumo({
   filtroStatus,
   setFiltroStatus,
 }: DashboardResumoProps) {
+  useEffect(() => {
+    import("chart.js/auto");
+  }, []);
   const valorTotalConfirmado = inscricoes.reduce((total, i) => {
     const pedido = i.expand?.pedido;
     const confirmado =
