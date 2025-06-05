@@ -34,9 +34,9 @@ export default function Footer() {
             </li>
             {isLoggedIn && (
               <li>
-                <Link href="/dashboard" className="hover:underline">
-                  Painel
-                </Link>
+              <Link href="/admin/dashboard" className="hover:underline">
+                Painel
+              </Link>
               </li>
             )}
           </ul>
