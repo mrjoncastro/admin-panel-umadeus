@@ -30,7 +30,7 @@ export default function GerenciarCamposPage() {
       }
 
       try {
-        const res = await fetch("/api/campos", {
+        const res = await fetch("/admin/api/campos", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -75,7 +75,7 @@ export default function GerenciarCamposPage() {
     }
 
     const metodo = editandoId ? "PUT" : "POST";
-    const url = editandoId ? `/api/campos/${editandoId}` : "/api/campos";
+    const url = editandoId ? `/admin/api/campos/${editandoId}` : "/admin/api/campos";
 
     try {
       const res = await fetch(url, {
@@ -112,7 +112,7 @@ export default function GerenciarCamposPage() {
     if (!token || !user) return;
 
     try {
-      const res = await fetch("/api/campos", {
+      const res = await fetch("/admin/api/campos", {
         headers: {
           Authorization: `Bearer ${token}`,
           "X-PB-User": JSON.stringify(user),
@@ -134,7 +134,7 @@ export default function GerenciarCamposPage() {
     }
 
     try {
-      const res = await fetch(`/api/campos/${id}`, {
+      const res = await fetch(`/admin/api/campos/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

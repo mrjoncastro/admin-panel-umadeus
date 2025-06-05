@@ -39,7 +39,7 @@ export default function NovoUsuarioPage() {
     const token = localStorage.getItem("pb_token");
     const user = localStorage.getItem("pb_user");
 
-    fetch("/api/campos", {
+    fetch("/admin/api/campos", {
       headers: {
         Authorization: `Bearer ${token}`,
         "X-PB-User": user ?? "",
@@ -56,7 +56,7 @@ export default function NovoUsuarioPage() {
     const token = localStorage.getItem("pb_token");
     const user = localStorage.getItem("pb_user");
 
-    const res = await fetch("/api/usuarios", {
+    const res = await fetch("/admin/api/usuarios", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -168,7 +168,7 @@ export default function ListaInscricoesPage() {
       });
 
       // 🔹 3. Gera link de pagamento
-      const res = await fetch("/api/checkout", {
+      const res = await fetch("/admin/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pedidoId: pedido.id, valor: pedido.valor }),
@@ -199,7 +199,7 @@ export default function ListaInscricoesPage() {
       );
 
       // 🔹 5. Notifica n8n
-      await fetch("/api/n8n", {
+      await fetch("/admin/api/n8n", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

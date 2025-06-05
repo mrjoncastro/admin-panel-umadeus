@@ -51,7 +51,7 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
 
     setReenviando(true);
     try {
-      const checkoutRes = await fetch("/api/checkout", {
+      const checkoutRes = await fetch("/admin/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pedidoId: pedido.id, valor: pedido.valor }),
@@ -60,7 +60,7 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
       const { url } = await checkoutRes.json();
       setUrlPagamento(url);
 
-      await fetch("/api/n8n", {
+      await fetch("/admin/api/n8n", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

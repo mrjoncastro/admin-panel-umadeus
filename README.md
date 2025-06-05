@@ -88,3 +88,19 @@ npm run test
 Caso o deploy falhe devido a problemas de lint, execute `npx next lint` localmente
 e corrija os arquivos indicados. Remova importações não utilizadas e substitua
 tipagens `any` por tipos específicos.
+
+## Rotas de API do Painel
+
+Todas as rotas da API ficam em `/admin/api`. Se ao fazer um `fetch` receber um
+erro 404 com HTML ("<!DOCTYPE ..."), verifique se o caminho inclui esse prefixo.
+Por exemplo:
+
+```ts
+fetch("/admin/api/campos");
+```
+
+## Solução para erros de build
+
+Caso o deploy falhe devido a problemas de lint, execute `npx next lint` localmente
+e corrija os arquivos indicados. Remova importações não utilizadas e substitua
+tipagens `any` por tipos específicos.
