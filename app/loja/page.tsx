@@ -155,7 +155,7 @@ export default function Home() {
               </p>
 
               <Link
-                href="/inscricoes"
+                href="/loja/inscricoes"
                 className="inline-block bg-cornell_red-600 hover:bg-cornell_red-700 text-white px-8 py-3 rounded-full font-semibold transition"
               >
                 Inscreva-se agora
