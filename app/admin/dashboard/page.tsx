@@ -37,6 +37,8 @@ export default function DashboardPage() {
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [filtroStatus, setFiltroStatus] = useState("pago");
   const isMounted = useRef(true);
 
@@ -52,14 +54,18 @@ export default function DashboardPage() {
           signal,
         });
 
-        const [rawInscricoes, rawPedidos] = await Promise.all([
+        const perPage = 50;
+        const [inscricoesRes, pedidosRes] = await Promise.all([
           pb
             .collection("inscricoes")
-            .getFullList({ expand: "campo,criado_por,pedido", signal }),
+            .getList(page, perPage, { expand: "campo,criado_por,pedido", signal }),
           pb
             .collection("pedidos")
-            .getFullList({ expand: "campo,criado_por", signal }),
+            .getList(page, perPage, { expand: "campo,criado_por", signal }),
         ]);
+        const rawInscricoes = inscricoesRes.items;
+        const rawPedidos = pedidosRes.items;
+        setTotalPages(Math.max(inscricoesRes.totalPages, pedidosRes.totalPages));
 
         if (!isMounted.current) return;
 
@@ -128,7 +134,7 @@ export default function DashboardPage() {
       isMounted.current = false;
       controller.abort();
     };
-  }, [authChecked, user?.id, user?.role, pb]);
+  }, [authChecked, user?.id, user?.role, pb, page]);
 
 
 
@@ -157,6 +163,25 @@ export default function DashboardPage() {
             setFiltroStatus={setFiltroStatus}
           />
           <DashboardAnalytics inscricoes={inscricoes} pedidos={pedidos} />
+          <div className="flex justify-center items-center gap-4 mt-4">
+            <button
+              className="btn btn-primary px-3 py-1"
+              disabled={page === 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+            >
+              Anterior
+            </button>
+            <span className="text-sm">
+              Página {page} de {totalPages}
+            </span>
+            <button
+              className="btn btn-primary px-3 py-1"
+              disabled={page === totalPages}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            >
+              Próxima
+            </button>
+          </div>
         </>
       )}
     </main>
