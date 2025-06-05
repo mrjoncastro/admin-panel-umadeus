@@ -112,7 +112,7 @@ export default function ListaInscricoesPage() {
         })
         .catch(() => {});
     }
-  }, [showError]);
+  }, [pb, pb.authStore.model, showError]);
 
   const copiarLink = async () => {
     try {

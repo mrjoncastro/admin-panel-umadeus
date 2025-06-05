@@ -37,7 +37,7 @@ export default function NotificationBell() {
     fetchData();
     const id = setInterval(fetchData, 30000);
     return () => clearInterval(id);
-  }, []);
+  }, [pb]);
 
   return (
     <div className="fixed bottom-20 right-4 z-50">

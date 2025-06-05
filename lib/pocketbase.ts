@@ -1,15 +1,12 @@
-import PocketBase, { type AuthRecord } from "pocketbase";
-
-type CloneablePocketBase = PocketBase & {
-  clone?: () => PocketBase;
-};
+import PocketBase from "pocketbase";
 
 const PB_URL = process.env.NEXT_PUBLIC_PB_URL!;
 const basePb = new PocketBase(PB_URL);
 
 export function createPocketBase() {
-  if (typeof (basePb as any).clone === "function") {
-    return (basePb as any).clone();
+  const pbWithClone = basePb as PocketBase & { clone?: () => PocketBase };
+  if (typeof pbWithClone.clone === "function") {
+    return pbWithClone.clone();
   }
   const pb = new PocketBase(PB_URL);
   pb.authStore.save(basePb.authStore.token, basePb.authStore.model);

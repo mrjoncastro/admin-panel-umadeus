@@ -64,7 +64,7 @@ export default function PedidosPage() {
     };
 
     fetchPedidos();
-  }, [pagina, ordem, user, showError]);
+  }, [pb, pagina, ordem, user, showError]);
 
   const pedidosFiltrados = pedidos.filter((p) => {
     const matchStatus = filtroStatus === "" || p.status === filtroStatus;
