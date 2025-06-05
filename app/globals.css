@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .input-base {
+    @apply w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 bg-[#DCDCDD] text-black border-[#ababab] focus:ring-[#e81920];
+  }
+  .btn-base {
+    @apply w-full py-2 rounded font-semibold transition text-white;
+  }
+  .text-error {
+    @apply text-[#e81920];
+  }
+}

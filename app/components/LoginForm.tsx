@@ -69,7 +69,7 @@ export default function LoginForm() {
         </p>
 
         {erro && (
-          <p className="text-sm text-center mb-4" style={{ color: "#e81920" }}>
+          <p className="text-sm text-center mb-4 text-error">
             {erro}
           </p>
         )}
@@ -86,13 +86,7 @@ export default function LoginForm() {
             placeholder="E-mail"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2"
-            style={{
-              backgroundColor: "#DCDCDD",
-              color: "#000000",
-              borderColor: "#ababab",
-              outlineColor: "#e81920",
-            }}
+            className="input-base"
             required
           />
           <input
@@ -100,13 +94,7 @@ export default function LoginForm() {
             placeholder="Senha"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2"
-            style={{
-              backgroundColor: "#DCDCDD",
-              color: "#000000",
-              borderColor: "#ababab",
-              outlineColor: "#e81920",
-            }}
+            className="input-base"
             required
           />
           <div className="text-right text-sm">
@@ -122,13 +110,7 @@ export default function LoginForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full py-2 rounded font-semibold transition ${
-              isSubmitting ? "cursor-not-allowed" : "cursor-pointer"
-            }`}
-            style={{
-              backgroundColor: isSubmitting ? "#ababab" : "#e81920",
-              color: "#ffffff",
-            }}
+            className={`btn-base ${isSubmitting ? "bg-[#ababab] cursor-not-allowed" : "bg-[#e81920]"}`}
           >
             {isSubmitting ? "Entrando..." : "Entrar"}
           </button>
