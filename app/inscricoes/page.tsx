@@ -147,9 +147,12 @@ export default function ListaInscricoesPage() {
       const campo = inscricao.expand?.campo;
 
       // 🔹 2. Criar pedido com os dados da inscrição
+      const valorPedido =
+        inscricao.produto === "Somente Pulseira" ? 9.9 : 39.9;
+
       const pedido = await pb.collection("pedidos").create({
         id_inscricao: id,
-        valor: 39.9,
+        valor: valorPedido,
         status: "pendente",
         produto: inscricao.produto || "Kit Camisa + Pulseira",
         cor: "Roxo",

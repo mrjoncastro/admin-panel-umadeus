@@ -7,7 +7,7 @@ pb.autoCancellation(false);
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { inscricaoId, valor = 39.9 } = body;
+    const { inscricaoId } = body;
 
     if (!inscricaoId) {
       return NextResponse.json(
@@ -30,11 +30,14 @@ export async function POST(req: NextRequest) {
     const campoId = inscricao.expand?.campo?.id;
     const responsavelId = inscricao.expand?.criado_por;
 
+    const valor =
+      inscricao.produto === "Somente Pulseira" ? 9.9 : 39.9;
+
     const pedido = await pb.collection("pedidos").create({
-      inscricao: inscricaoId,
+      id_inscricao: inscricaoId,
       valor,
       status: "pendente",
-      produto: "Kit Camisa + Pulseira",
+      produto: inscricao.produto || "Kit Camisa + Pulseira",
       cor: "Roxo",
       tamanho: inscricao.tamanho,
       genero: inscricao.genero,

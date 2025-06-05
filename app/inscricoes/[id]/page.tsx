@@ -4,6 +4,11 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 
+const PRODUTOS = [
+  { nome: "Kit Camisa + Pulseira", valor: 39.9 },
+  { nome: "Somente Pulseira", valor: 9.9 },
+];
+
 interface FormFields {
   nome: string;
   email: string;
@@ -26,7 +31,7 @@ export default function InscricaoPage() {
     cpf: "",
     data_nascimento: "",
     tamanho: "",
-    produto: "Kit Camisa + Pulseira",
+    produto: PRODUTOS[0].nome,
     genero: "",
   });
 
@@ -206,9 +211,17 @@ export default function InscricaoPage() {
             onChange={handleChange}
             className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
           >
-            <option value="Kit Camisa + Pulseira">Kit Camisa + Pulseira</option>
-            <option value="Somente Pulseira">Somente Pulseira</option>
+            {PRODUTOS.map((p) => (
+              <option key={p.nome} value={p.nome}>
+                {p.nome} - R$ {p.valor.toFixed(2).replace(".", ",")}
+              </option>
+            ))}
           </select>
+          <p className="text-xs text-gray-500 mt-1">
+            Valor: R$ {PRODUTOS.find((p) => p.nome === form.produto)?.valor
+              .toFixed(2)
+              .replace(".", ",")}
+          </p>
         </div>
 
           <div>
