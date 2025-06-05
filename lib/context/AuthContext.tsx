@@ -72,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [pb]);
 
   const login = async (email: string, password: string) => {
     await pb.collection("usuarios").authWithPassword(email, password);

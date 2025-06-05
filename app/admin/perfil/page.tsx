@@ -40,7 +40,7 @@ export default function PerfilPage() {
     }
     const model = pb.authStore.model as unknown as UsuarioAuthModel;
     setUsuario(model);
-  }, [router]);
+  }, [pb.authStore.isValid, pb.authStore.model, router]);
 
   if (!usuario) return null;
 

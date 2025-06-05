@@ -44,7 +44,7 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
       .then((res) => setPedido(res as unknown as PedidoExpandido))
       .catch(() => setMensagem("Erro ao carregar dados do pedido"))
       .finally(() => setLoading(false));
-  }, [pedidoId]);
+  }, [pb, pedidoId]);
 
   const reenviarPagamento = async () => {
     if (!pedido?.id || !pedido?.valor || !pedido?.expand?.id_inscricao) return;
