@@ -38,6 +38,7 @@ Este projeto conta com uma estrutura multidisciplinar de agentes simulados, resp
 * Focar em componentes reutilizáveis e boas práticas UX.
 * Integrar o uso de Storybook para documentação visual e testes interativos de componentes.
 
+
   * Criar e manter arquivos `.stories.tsx` para todos os componentes principais.
   * Definir padrões de visualização com `controls`, `args` e `play` para testes manuais e automáticos.
     **Materiais recomendados:** Figma, bibliotecas de componentes, feedbacks UX, estrutura do Storybook (`.storybook/`, stories existentes).
@@ -66,6 +67,8 @@ Este projeto conta com uma estrutura multidisciplinar de agentes simulados, resp
 
 * Organizar camadas: `app/`, `lib/`, `components/`, `services/`.
 * Padronizar rotas, layouts e middlewares com App Router.
+* Centralizar todos os estilos em Tailwind CSS (preferencialmente) ou global.css para manter consistência e fácil manutenção.
+
   **Materiais recomendados:** Estrutura de diretórios atual, RFCs internos.
 
 ---
@@ -77,7 +80,6 @@ Este projeto conta com uma estrutura multidisciplinar de agentes simulados, resp
 
 * Definir diferenciais competitivos, precificação e posicionamento.
 * Propor estratégias de aquisição, ativação e retenção.
-  **Materiais recomendados:** Benchmark, público-alvo, estratégia atual.
 
 ---
 

@@ -12,8 +12,8 @@ O projeto é dividido logicamente em duas áreas:
 |-------------|-------------------------------------------|-------------------|----------------------|
 | **Loja**    | Página pública para venda e inscrições    | Público           | Visitantes e inscritos |
 | **Admin**   | Painel de gestão e controle de dados      | Privado (auth)    | Coordenadores e líderes |
-
-Ambas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
+| **Blog**   | Pagina p´blica para postagens de conteudo  | Público           | Visitantes e inscritos |
+Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 
 ---
 
