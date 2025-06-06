@@ -44,8 +44,18 @@ export default function ProdutoPage() {
     setTimeout(() => (pauseRef.current = false), 10000);
   };
 
-  const checkoutLink =
-    "https://www.mercadopago.com.br/checkout/v1/redirect?preference-id=UMADEUS2025";
+  const [checkoutLink, setCheckoutLink] = useState<string>("#");
+
+  useEffect(() => {
+    fetch("/api/checkout-link")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.url) setCheckoutLink(data.url);
+      })
+      .catch(() => {
+        /* link permanece como '#' */
+      });
+  }, []);
 
   return (
     <main className="text-platinum font-sans px-4 md:px-16 py-10">
