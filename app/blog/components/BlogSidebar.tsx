@@ -20,15 +20,14 @@ export default function BlogSidebar() {
   useEffect(() => {
     fetch("/posts.json")
       .then((res) => res.json())
-      .then((posts) => {
+      .then((posts: Post[]) => {
         setPopular(posts.slice(0, 3));
         const unique = [
-          ...new Set(posts.map((p: any) => p.category).filter(Boolean)),
-        ];
-        setCategories(unique as string[]);
-        unique;
+          ...new Set(posts.map((p) => p.category).filter(Boolean)),
+        ] as string[];
+        setCategories(unique);
       });
-  }, []);
+  }, [setPopular, setCategories]);
 
   return (
     <aside className="w-full lg:w-1/3 mt-16 lg:mt-0 lg:pl-10 space-y-12">
