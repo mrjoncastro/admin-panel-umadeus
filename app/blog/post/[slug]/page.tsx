@@ -6,6 +6,7 @@ import { evaluate } from "xdm";
 import * as runtime from "react/jsx-runtime";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
+import Image from "next/image";
 import { Share2, Clock } from "lucide-react";
 import { isExternalUrl } from "@/utils/isExternalUrl";
 import styles from "./post.module.css";
@@ -109,14 +110,14 @@ export default async function BlogPostPage({
       <main className={styles.container}>
         {data.thumbnail && (
           <figure>
-            <img
+            <Image
               src={
                 isExternalUrl(data.thumbnail) ? data.thumbnail : data.thumbnail
               }
               alt={`Imagem de capa: ${data.title}`}
+              width={1200}
+              height={600}
               className={styles.thumbnail}
-              loading="lazy"
-              decoding="async"
             />
             {data.credit && <figcaption>{data.credit}</figcaption>}
           </figure>
@@ -130,9 +131,11 @@ export default async function BlogPostPage({
 
         <div className={styles.meta}>
           <div className={styles.authorBlock}>
-            <img
+            <Image
               src="/img/avatar_m24.webp"
               alt="Autor"
+              width={40}
+              height={40}
               className={styles.avatar}
             />
             <span>Redação M24</span>
