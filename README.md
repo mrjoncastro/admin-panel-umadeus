@@ -92,6 +92,19 @@ Para gerar o build de produção execute:
 npm run build
 ```
 
+## Blog
+
+Os artigos do blog devem ser escritos em arquivos `.mdx` dentro do diretório
+`posts/`. Antes de realizar o build ou o deploy, execute o comando abaixo para
+gerar o arquivo `public/posts.json`, utilizado pelas páginas do blog:
+
+```bash
+node scripts/generatePostsJson.js
+```
+
+Imagens enviadas pelo formulário em `/admin/blog` ficam em `public/uploads/`
+e possuem pré-visualização em tempo real.
+
 ## Registro de Logs
 
 Os arquivos dentro do diretório `logs/` guardam o histórico do projeto.

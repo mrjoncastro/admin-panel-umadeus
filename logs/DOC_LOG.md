@@ -9,3 +9,5 @@
 ## [2025-06-06] Adicionada variavel ASAAS_WEBHOOK_SECRET no README
 
 ## [2025-06-06] Removidos console.log das rotas da API admin e criado utilitario logger para padronizar logs. Impacto: reducao de ruido e melhoria na manutencao.
+## [2025-06-06] README atualizado com seção Blog e geração do posts.json
+## [2025-06-06] README detalhado com instruções de upload de imagens no admin
