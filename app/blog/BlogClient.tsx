@@ -7,6 +7,7 @@ import BlogHeroCarousel from "./components/BlogHeroCarousel";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Link from "next/link";
+import Image from "next/image";
 import { isExternalUrl } from "@/utils/isExternalUrl";
 
 interface Post {
@@ -97,16 +98,16 @@ export default function BlogClient() {
                       className="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden flex flex-col"
                     >
                       {post.thumbnail && (
-                        <img
+                        <Image
                           src={
                             isExternalUrl(post.thumbnail)
                               ? post.thumbnail
                               : `${post.thumbnail}`
                           }
                           alt={`Imagem de capa do post: ${post.title}`}
+                          width={640}
+                          height={320}
                           className="w-full h-56 object-cover"
-                          loading="lazy"
-                          decoding="async"
                         />
                       )}
                       <div className="p-6 flex-1 flex flex-col justify-between">

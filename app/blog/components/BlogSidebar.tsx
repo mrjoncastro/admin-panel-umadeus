@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
@@ -20,13 +21,12 @@ export default function BlogSidebar() {
   useEffect(() => {
     fetch("/posts.json")
       .then((res) => res.json())
-      .then((posts) => {
+      .then((posts: Post[]) => {
         setPopular(posts.slice(0, 3));
         const unique = [
-          ...new Set(posts.map((p: any) => p.category).filter(Boolean)),
+          ...new Set(posts.map((p) => p.category).filter(Boolean)),
         ];
         setCategories(unique as string[]);
-        unique;
       });
   }, []);
 
@@ -80,9 +80,11 @@ export default function BlogSidebar() {
           {popular.map((post) => (
             <li key={post.slug} className="flex items-center gap-3">
               {post.thumbnail && (
-                <img
+                <Image
                   src={post.thumbnail}
                   alt={post.title}
+                  width={48}
+                  height={48}
                   className="w-12 h-12 object-cover rounded-md"
                 />
               )}

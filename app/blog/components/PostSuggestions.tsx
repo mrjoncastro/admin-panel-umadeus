@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 interface Post {
   slug: string;
   title: string;
@@ -29,9 +31,11 @@ export default function PostSuggestions({ posts }: PostSuggestionsProps) {
               href={`/blog/post/${post.slug}`}
               className="block bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition overflow-hidden"
             >
-              <img
+              <Image
                 src={post.thumbnail}
                 alt={`Thumbnail de ${post.title}`}
+                width={640}
+                height={320}
                 className="w-full h-48 object-cover"
               />
               <div className="p-4 flex flex-col h-full">
