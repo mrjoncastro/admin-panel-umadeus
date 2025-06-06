@@ -22,12 +22,12 @@ export default function BlogSidebar() {
     fetch("/posts.json")
       .then((res) => res.json())
       .then((posts: Post[]) => {
-      .then((posts: Post[]) => {
         setPopular(posts.slice(0, 3));
         const unique = [
-          ...new Set(posts.map((p) => p.category).filter(Boolean)),
-        ] as string[];
-        setCategories(unique);
+          ...new Set(posts.map((p: any) => p.category).filter(Boolean)),
+        ];
+        setCategories(unique as string[]);
+        unique;
       });
   }, [setPopular, setCategories]);
 
