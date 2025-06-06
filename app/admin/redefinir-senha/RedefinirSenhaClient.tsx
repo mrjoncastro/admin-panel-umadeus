@@ -38,8 +38,8 @@ export default function RedefinirSenhaClient() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#2A1A1C] px-4 text-[#DCDCDC]">
-      <div className="bg-white dark:bg-zinc-900 text-black dark:text-white p-6 rounded-2xl shadow-2xl w-full max-w-md space-y-6 border border-[#DCDCDC]">
+    <main className="min-h-screen flex items-center justify-center bg-[var(--color-secondary)] px-4 text-[var(--background)]">
+      <div className="bg-white dark:bg-zinc-900 text-black dark:text-white p-6 rounded-2xl shadow-2xl w-full max-w-md space-y-6 border border-[var(--background)]">
         <h1 className="text-2xl font-bold text-center">Redefinir sua senha</h1>
 
         <input

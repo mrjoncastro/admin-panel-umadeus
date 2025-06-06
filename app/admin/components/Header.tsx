@@ -57,7 +57,7 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-animated backdrop-blur-md text-[#DCDCDC] shadow-md sticky top-0 z-50 gradient-x">
+    <header className="bg-animated backdrop-blur-md text-[var(--color-secondary)] shadow-md sticky top-0 z-50 gradient-x">
       <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
         <Link href="/admin" className="flex items-center">
           <Image
@@ -72,7 +72,7 @@ export default function Header() {
 
         {/* Botão hambúrguer */}
         <button
-          className="md:hidden text-[#DCDCDC]"
+          className="md:hidden text-[var(--color-secondary)]"
           onClick={() => setMenuAberto(!menuAberto)}
           aria-label="Abrir menu"
         >
@@ -86,8 +86,8 @@ export default function Header() {
               <Link
                 key={href}
                 href={href}
-                className={`transition px-3 py-1 rounded-full hover:bg-[#DCDCDC] hover:text-[#2A1A1C] cursor-pointer ${
-                  pathname === href ? "bg-[#DCDCDC] text-[#2A1A1C]" : ""
+                className={`transition px-3 py-1 rounded-full hover:bg-[var(--background)] hover:text-[var(--foreground)] cursor-pointer ${
+                  pathname === href ? "bg-[var(--background)] text-[var(--foreground)]" : ""
                 }`}
               >
                 {label}
@@ -97,7 +97,7 @@ export default function Header() {
           <button
             onClick={toggleTheme}
             aria-label="Alternar tema"
-            className="p-2 rounded hover:bg-[#DCDCDC] hover:text-[#2A1A1C]"
+            className="p-2 rounded hover:bg-[var(--background)] hover:text-[var(--foreground)]"
           >
             {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
           </button>
@@ -116,7 +116,7 @@ export default function Header() {
               </button>
 
               {perfilAberto && (
-                <ul className="absolute right-0 mt-2 w-52 bg-white text-[#2A1A1C] dark:bg-zinc-900 dark:text-white rounded-lg shadow z-50 text-sm py-2 space-y-2">
+                <ul className="absolute right-0 mt-2 w-52 bg-white text-[var(--foreground)] dark:bg-zinc-900 dark:text-white rounded-lg shadow z-50 text-sm py-2 space-y-2">
                   <li>
                     <Link
                       href="/admin/perfil"
@@ -152,7 +152,7 @@ export default function Header() {
           {!isLoggedIn && (
             <Link
               href="/admin/login"
-              className="text-sm underline text-[#DCDCDC] hover:text-white cursor-pointer"
+              className="text-sm underline text-[var(--color-secondary)] hover:text-white cursor-pointer"
             >
               Entrar
             </Link>
@@ -162,7 +162,7 @@ export default function Header() {
 
       {/* Menu Mobile */}
       {menuAberto && (
-        <div className="md:hidden bg-[#2A1A1C] px-6 pb-4">
+        <div className="md:hidden bg-[var(--color-secondary)] px-6 pb-4">
           <nav className="flex flex-col gap-2">
             {isLoggedIn &&
               navLinks.map(({ href, label }) => (
@@ -170,8 +170,8 @@ export default function Header() {
                   key={href}
                   href={href}
                   onClick={() => setMenuAberto(false)}
-                  className={`transition px-4 py-2 rounded-md text-sm hover:bg-[#DCDCDC] hover:text-[#2A1A1C] ${
-                    pathname === href ? "bg-[#DCDCDC] text-[#2A1A1C]" : ""
+                  className={`transition px-4 py-2 rounded-md text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] ${
+                    pathname === href ? "bg-[var(--background)] text-[var(--foreground)]" : ""
                   }`}
                 >
                   {label}
@@ -182,7 +182,7 @@ export default function Header() {
               onClick={() => {
                 toggleTheme();
               }}
-              className="text-left px-4 py-2 text-sm hover:bg-[#DCDCDC] hover:text-[#2A1A1C]"
+              className="text-left px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)]"
             >
               {theme === "dark" ? "Tema claro" : "Tema escuro"}
             </button>
@@ -192,7 +192,7 @@ export default function Header() {
                 <Link
                   href="/admin/perfil"
                   onClick={() => setMenuAberto(false)}
-                  className="px-4 py-2 text-sm hover:bg-[#DCDCDC] hover:text-[#2A1A1C]"
+                  className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)]"
                 >
                   Perfil
                 </Link>
@@ -201,7 +201,7 @@ export default function Header() {
                     setMenuAberto(false);
                     setMostrarModalSenha(true);
                   }}
-                  className="text-left px-4 py-2 text-sm hover:bg-[#DCDCDC] hover:text-[#2A1A1C]"
+                  className="text-left px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)]"
                 >
                   Redefinir senha
                 </button>
@@ -222,7 +222,7 @@ export default function Header() {
               <Link
                 href="/admin/login"
                 onClick={() => setMenuAberto(false)}
-                className="text-left px-4 py-2 text-sm underline text-[#DCDCDC] hover:text-white"
+                className="text-left px-4 py-2 text-sm underline text-[var(--color-secondary)] hover:text-white"
               >
                 Entrar
               </Link>
