@@ -168,7 +168,7 @@ export default function ListaInscricoesPage() {
       });
 
       // 🔹 3. Gera link de pagamento
-      const res = await fetch("/admin/api/checkout", {
+      const res = await fetch("/admin/api/assas/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pedidoId: pedido.id, valor: pedido.valor }),
