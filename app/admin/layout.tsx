@@ -1,5 +1,5 @@
 // app/layout.tsx
-import "../globals.css";
+import "@/app/globals.css";
 import LayoutWrapper from "./components/LayoutWrapper";
 import { Geist, Geist_Mono } from "next/font/google";
 

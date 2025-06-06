@@ -6,7 +6,16 @@ import { useAuthContext } from "@/lib/context/AuthContext";
 import { useMemo } from "react";
 import createPocketBase from "@/lib/pocketbase";
 import Image from "next/image";
-import { Menu, X, ChevronDown, User, Lock, LogOut, Sun, Moon } from "lucide-react";
+import {
+  Menu,
+  X,
+  ChevronDown,
+  User,
+  Lock,
+  LogOut,
+  Sun,
+  Moon,
+} from "lucide-react";
 import { useState } from "react";
 import { useTheme } from "@/lib/context/ThemeContext";
 import RedefinirSenhaModal from "./RedefinirSenhaModal";
@@ -48,7 +57,7 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-[#2A1A1C] text-[#DCDCDC] shadow-md sticky top-0 z-50">
+    <header className="bg-animated backdrop-blur-md text-[#DCDCDC] shadow-md sticky top-0 z-50 gradient-x">
       <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
         <Link href="/admin" className="flex items-center">
           <Image
@@ -93,7 +102,6 @@ export default function Header() {
             {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 
-
           {isLoggedIn && (
             <div className="relative">
               <button
@@ -118,19 +126,19 @@ export default function Header() {
                     </Link>
                   </li>
                   <li>
-                  <button
-                    onClick={() => {
-                      setMostrarModalSenha(true);
-                      setPerfilAberto(false);
-                    }}
-                    className="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
-                  >
-                    <Lock size={16} /> Redefinir senha
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={handleLogout}
+                    <button
+                      onClick={() => {
+                        setMostrarModalSenha(true);
+                        setPerfilAberto(false);
+                      }}
+                      className="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                    >
+                      <Lock size={16} /> Redefinir senha
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={handleLogout}
                       className="w-full text-left flex items-center gap-2 px-4 py-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-900 cursor-pointer"
                     >
                       <LogOut size={16} /> Sair
@@ -178,7 +186,6 @@ export default function Header() {
             >
               {theme === "dark" ? "Tema claro" : "Tema escuro"}
             </button>
-
 
             {isLoggedIn && (
               <>

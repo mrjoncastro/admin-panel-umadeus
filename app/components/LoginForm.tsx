@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import Image from "next/image";
 import RedefinirSenhaModal from "@/app/admin/components/RedefinirSenhaModal";
+import "@/app/globals.css"; // Certifique-se de que o CSS global está importado
 
 export default function LoginForm() {
   const router = useRouter();
@@ -58,21 +59,31 @@ export default function LoginForm() {
 
   return (
     <div className="relative h-screen flex items-center justify-center bg-gray-900 overflow-hidden">
-      <div className="absolute inset-0 bg-animated opacity-60" aria-hidden="true"></div>
-      <div className="relative z-10 w-full max-w-sm p-6 bg-black/60 rounded-xl backdrop-blur-md text-gray-200">
+      <div
+        className="absolute inset-0 bg-animated opacity-60"
+        aria-hidden="true"
+      ></div>
+      <div className="relative z-10 w-full max-w-sm p-6 bg-black/80 rounded-xl backdrop-blur-md text-gray-200">
         <div className="flex justify-center mb-4">
-          <Image src="/img/logo_umadeus_branco.png" alt="Logo UMADEUS" width={120} height={120} priority />
+          <Image
+            src="/img/logo_umadeus_branco.png"
+            alt="Logo UMADEUS"
+            width={120}
+            height={120}
+            priority
+          />
         </div>
-        <h1 className="text-3xl font-bold text-center mb-2 fade-in-up">Bem-vindo!</h1>
-        <p className="text-center text-sm text-gray-300 mb-6 fade-in-up" style={{ animationDelay: "0.2s" }}>
+        <h1 className="text-3xl font-bold text-center mb-2 fade-in-up">
+          Bem-vindo!
+        </h1>
+        <p
+          className="text-center text-sm text-gray-300 mb-6 fade-in-up"
+          style={{ animationDelay: "0.2s" }}
+        >
           Acesse o painel
         </p>
 
-        {erro && (
-          <p className="text-sm text-center mb-4 text-error">
-            {erro}
-          </p>
-        )}
+        {erro && <p className="text-sm text-center mb-4 text-error">{erro}</p>}
 
         <form
           onSubmit={(e) => {
@@ -110,7 +121,9 @@ export default function LoginForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`btn-base ${isSubmitting ? "bg-[#ababab] cursor-not-allowed" : "bg-[#e81920]"}`}
+            className={`btn-base block mx-auto ${
+              isSubmitting ? "bg-[#ababab] cursor-not-allowed" : "bg-[#e81920]"
+            }`}
           >
             {isSubmitting ? "Entrando..." : "Entrar"}
           </button>
@@ -122,4 +135,3 @@ export default function LoginForm() {
     </div>
   );
 }
-

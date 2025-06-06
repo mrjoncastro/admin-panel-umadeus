@@ -71,6 +71,11 @@ body {
   @apply bg-red-600 text-white hover:bg-red-700;
 }
 
+.btn-base {
+  @apply px-4 py-2 rounded text-sm font-medium transition-colors;
+}
+
+
 .card {
   @apply bg-white/90 backdrop-blur rounded-lg shadow p-4;
 }
@@ -78,6 +83,11 @@ body {
 .input-style {
   @apply w-full px-4 py-3 rounded-lg border border-[#b3b3b3] bg-[#f0f0f0] text-sm text-[#1e2019] focus:outline-none focus:ring-2 focus:ring-red-600 transition;
 }
+
+.input-base {
+  @apply w-full px-4 py-3 rounded-lg border border-[#b3b3b3] bg-[#f0f0f0] text-sm text-[#1e2019] focus:outline-none focus:ring-2 focus:ring-red-600 transition;
+}
+
 
 .table-base {
   @apply min-w-full text-sm bg-white border border-gray-200;
@@ -123,7 +133,7 @@ body {
 }
 
 .bg-animated {
-  background: linear-gradient(270deg, #1e3a8a, #7c3aed, #be123c);
+  background: linear-gradient(270deg, #1F3162, #351669, #7A0926);
   background-size: 400% 400%;
   animation: gradient-x 15s ease infinite;
 }
