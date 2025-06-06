@@ -41,7 +41,7 @@ Este projeto conta com uma estrutura multidisciplinar de agentes simulados, resp
 
   * Criar e manter arquivos `.stories.tsx` para todos os componentes principais.
   * Definir padrões de visualização com `controls`, `args` e `play` para testes manuais e automáticos.
-    **Materiais recomendados:** Figma, bibliotecas de componentes, feedbacks UX, estrutura do Storybook (`.storybook/`, stories existentes).
+    **Materiais recomendados:** Bibliotecas de componentes, feedbacks UX, estrutura do Storybook (`.storybook/`, stories existentes).
 
 ---
 
