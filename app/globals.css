@@ -11,6 +11,14 @@
   --text-primary: #1e2019;
   --text-secondary: #4b4b4b;
   --accent: #7c3aed; /* roxo primário */
+  --color-secondary: #2a1a1c; /* tonalidade complementar */
+  --font-body: var(--font-geist);
+  --font-heading: var(--font-geist);
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -20,6 +28,7 @@
     --text-primary: #dcdcdc;
     --text-secondary: #ababab;
     --accent: #b11116;
+    --color-secondary: #dcdcdc;
   }
 }
 
@@ -32,7 +41,7 @@ html {
 
 body {
   color: var(--text-primary);
-  font-family: "Inter", Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
   transition: background-color 0.5s ease, color 0.9s ease;
 }
 

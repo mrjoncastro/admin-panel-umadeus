@@ -63,7 +63,7 @@ export default function LoginForm() {
         className="absolute inset-0 bg-animated opacity-60"
         aria-hidden="true"
       ></div>
-      <div className="relative z-10 w-full max-w-sm p-6 bg-black/80 rounded-xl backdrop-blur-md text-gray-200">
+      <div className="relative z-10 w-full max-w-sm p-[var(--space-lg)] bg-black/80 rounded-xl backdrop-blur-md text-gray-200">
         <div className="flex justify-center mb-4">
           <Image
             src="/img/logo_umadeus_branco.png"
@@ -90,7 +90,7 @@ export default function LoginForm() {
             e.preventDefault();
             handleLogin();
           }}
-          className="space-y-4"
+          className="space-y-[var(--space-md)]"
         >
           <input
             type="email"
@@ -112,7 +112,7 @@ export default function LoginForm() {
             <button
               type="button"
               onClick={() => setMostrarModal(true)}
-              className="underline text-[#DCDCDD] hover:text-white transition"
+              className="underline text-[var(--color-secondary)] hover:text-white transition"
             >
               Esqueci minha senha
             </button>
@@ -122,7 +122,7 @@ export default function LoginForm() {
             type="submit"
             disabled={isSubmitting}
             className={`btn-base block mx-auto ${
-              isSubmitting ? "bg-[#ababab] cursor-not-allowed" : "bg-[#e81920]"
+              isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-[var(--accent)]"
             }`}
           >
             {isSubmitting ? "Entrando..." : "Entrar"}

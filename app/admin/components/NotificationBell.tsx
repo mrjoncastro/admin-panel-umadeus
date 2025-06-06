@@ -44,7 +44,7 @@ export default function NotificationBell() {
       <button
         aria-label="Notificações"
         onClick={() => setOpen((o) => !o)}
-        className="relative bg-[#2A1A1C] text-[#DCDCDC] p-2 rounded-full shadow"
+        className="relative bg-[var(--color-secondary)] text-[var(--background)] p-2 rounded-full shadow"
       >
         <Bell className="w-5 h-5" />
         {count > 0 && (
@@ -54,7 +54,7 @@ export default function NotificationBell() {
         )}
       </button>
       {open && (
-        <div className="mt-2 w-72 max-h-60 overflow-auto bg-white dark:bg-zinc-900 text-[#2A1A1C] dark:text-white rounded shadow-lg">
+        <div className="mt-2 w-72 max-h-60 overflow-auto bg-white dark:bg-zinc-900 text-[var(--foreground)] dark:text-white rounded shadow-lg">
           <div className="flex items-center justify-between px-4 py-2 border-b dark:border-zinc-700">
             <span className="font-semibold">Novas inscrições</span>
             <button aria-label="Fechar" onClick={() => setOpen(false)}>
