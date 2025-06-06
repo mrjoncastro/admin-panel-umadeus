@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createPocketBase } from "@/lib/pocketbase";
+import { logger } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
@@ -15,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const { pedidoId, valor } = await req.json();
-    console.log("📦 Dados recebidos:", { pedidoId, valor });
+    logger.info("📦 Dados recebidos:", { pedidoId, valor });
 
     if (!pedidoId || valor === undefined || valor === null) {
       return NextResponse.json(
@@ -71,7 +72,7 @@ export async function POST(req: NextRequest) {
       postalCode: inscricao.cep || "41770055",
     };
 
-    console.log("📤 Enviando cliente:", clientePayload);
+    logger.info("📤 Enviando cliente:", clientePayload);
 
     // 🔹 Criar cliente no Asaas
     const clienteResponse = await fetch(`${baseUrl}/customers`, {
@@ -95,7 +96,7 @@ export async function POST(req: NextRequest) {
     }
 
     const cliente = JSON.parse(raw);
-    console.log("✅ Cliente criado:", cliente.id);
+    logger.info("✅ Cliente criado:", cliente.id);
 
     // 🔹 Criar cobrança
     const dueDate = new Date();
@@ -130,7 +131,7 @@ export async function POST(req: NextRequest) {
 
     const cobranca = await cobrancaResponse.json();
     const link = cobranca.invoiceUrl || cobranca.bankSlipUrl;
-    console.log("✅ Cobrança criada. Link:", link);
+    logger.info("✅ Cobrança criada. Link:", link);
 
     // 🔹 Atualizar pedido
     await pb.collection("pedidos").update(pedido.id, {
