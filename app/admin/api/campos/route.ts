@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/apiAuth";
+import { logger } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   const auth = requireRole(req, "coordenador");
@@ -18,9 +19,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(campos, { status: 200 });
   } catch (err: unknown) {
     if (err instanceof Error) {
-      console.error("❌ Erro em /api/campos:", err.message);
+      logger.error("❌ Erro em /api/campos:", err.message);
     } else {
-      console.error("❌ Erro desconhecido em /api/campos.");
+      logger.error("❌ Erro desconhecido em /api/campos.");
     }
 
     return NextResponse.json(
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const { nome } = await req.json();
-    console.log("📥 Nome recebido:", nome);
+    logger.info("📥 Nome recebido:", nome);
 
     if (!nome || nome.length < 2) {
       return NextResponse.json({ error: "Nome inválido" }, { status: 400 });
@@ -49,14 +50,14 @@ export async function POST(req: NextRequest) {
 
     const campo = await pb.collection("campos").create({ nome });
 
-    console.log("✅ Campo criado:", campo);
+    logger.info("✅ Campo criado:", campo);
 
     return NextResponse.json(campo, { status: 201 });
   } catch (err: unknown) {
     if (err instanceof Error) {
-      console.error("❌ Erro em /api/campos:", err.message);
+      logger.error("❌ Erro em /api/campos:", err.message);
     } else {
-      console.error("❌ Erro desconhecido em /api/campos.");
+      logger.error("❌ Erro desconhecido em /api/campos.");
     }
 
     return NextResponse.json(

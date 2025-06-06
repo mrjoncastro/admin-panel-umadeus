@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/apiAuth";
+import { logger } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   const auth = requireRole(req, "coordenador");
@@ -16,13 +17,13 @@ export async function GET(req: NextRequest) {
       expand: "campo",
     });
 
-    console.log(`📦 ${usuarios.length} usuários encontrados.`);
+    logger.info(`📦 ${usuarios.length} usuários encontrados.`);
     return NextResponse.json(usuarios);
   } catch (err: unknown) {
     if (err instanceof Error) {
-      console.error("❌ Erro em /api/usuarios:", err.message);
+      logger.error("❌ Erro em /api/usuarios:", err.message);
     } else {
-      console.error("❌ Erro desconhecido em /api/usuarios.");
+      logger.error("❌ Erro desconhecido em /api/usuarios.");
     }
 
     return NextResponse.json(
@@ -65,13 +66,13 @@ export async function POST(req: NextRequest) {
       campo,
     });
 
-    console.log("✅ Usuário criado:", novoUsuario);
+    logger.info("✅ Usuário criado:", novoUsuario);
     return NextResponse.json(novoUsuario, { status: 201 });
   } catch (err: unknown) {
     if (err instanceof Error) {
-      console.error("❌ Erro em /api/usuarios:", err.message);
+      logger.error("❌ Erro em /api/usuarios:", err.message);
     } else {
-      console.error("❌ Erro desconhecido em /api/usuarios.");
+      logger.error("❌ Erro desconhecido em /api/usuarios.");
     }
 
     return NextResponse.json(
