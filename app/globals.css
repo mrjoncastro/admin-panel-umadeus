@@ -48,6 +48,11 @@ body {
   transition: background-color 0.5s ease, color 0.9s ease;
 }
 
+.dark body {
+  background: #0c0d0a;
+  color: var(--text-primary);
+}
+
 /* ==========================
    📦 Utilitários reutilizáveis
    ========================== */
