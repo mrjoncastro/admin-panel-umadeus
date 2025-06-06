@@ -148,12 +148,11 @@ export default function ListaInscricoesPage() {
 
       const campo = inscricao.expand?.campo;
 
-      // 🔹 2. Criar pedido com os dados da inscrição
+      // 🔹 2. Definir valor do pedido com base no produto
       const valorPedido =
-        inscricao.produto === "Somente Pulseira"
-          ? PRECO_PULSEIRA
-          : PRECO_KIT;
+        inscricao.produto === "Somente Pulseira" ? PRECO_PULSEIRA : PRECO_KIT;
 
+      // 🔹 3. Criar pedido no PocketBase
       const pedido = await pb.collection("pedidos").create({
         id_inscricao: id,
         valor: valorPedido,
@@ -163,29 +162,34 @@ export default function ListaInscricoesPage() {
         tamanho: inscricao.tamanho,
         genero: inscricao.genero,
         email: inscricao.email,
-        campo: campo.id,
+        campo: campo?.id,
         responsavel: inscricao.criado_por,
       });
 
-      // 🔹 3. Gera link de pagamento
-      const res = await fetch("/admin/api/assas/", {
+      // 🔹 4. Gerar link de pagamento via API do Asaas
+      const res = await fetch("/admin/api/asaas/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pedidoId: pedido.id, valor: pedido.valor }),
+        body: JSON.stringify({
+          pedidoId: pedido.id,
+          valor: pedido.valor,
+        }),
       });
 
       const checkout = await res.json();
+
       if (!res.ok || !checkout?.url) {
         throw new Error("Erro ao gerar link de pagamento.");
       }
 
-      // 4. Atualizar inscrição com o ID do pedido
+      // 🔹 5. Atualizar inscrição com o ID do pedido e status
       await pb.collection("inscricoes").update(id, {
-        pedido: pedido.id, // ✅ atualiza campo pedido
+        pedido: pedido.id,
         status: "aguardando_pagamento",
         confirmado_por_lider: true,
       });
 
+      // Atualizar estado local das inscrições
       setInscricoes((prev) =>
         prev.map((i) =>
           i.id === id
@@ -198,7 +202,7 @@ export default function ListaInscricoesPage() {
         )
       );
 
-      // 🔹 5. Notifica n8n
+      // 🔹 6. Notificar via n8n webhook
       await fetch("/admin/api/n8n", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -207,13 +211,14 @@ export default function ListaInscricoesPage() {
           telefone: inscricao.telefone,
           cpf: inscricao.cpf,
           evento: inscricao.evento,
-          liderId: campo.responsavel,
+          liderId: campo?.responsavel,
           pedidoId: pedido.id,
           valor: pedido.valor,
           url_pagamento: checkout.url,
         }),
       });
 
+      // 🔹 7. Mostrar sucesso visual
       showSuccess("Link de pagamento enviado com sucesso!");
     } catch (err) {
       console.error("Erro ao confirmar inscrição:", err);
@@ -289,10 +294,7 @@ export default function ListaInscricoesPage() {
               value={linkPublico}
               className="w-full p-2 border rounded bg-white text-gray-700 font-mono text-xs shadow-sm"
             />
-            <button
-              onClick={copiarLink}
-              className="btn btn-primary text-xs"
-            >
+            <button onClick={copiarLink} className="btn btn-primary text-xs">
               <Copy size={14} />
             </button>
           </div>
@@ -303,7 +305,6 @@ export default function ListaInscricoesPage() {
           )}
         </div>
       )}
-
 
       {/* Filtros */}
       <div className="flex flex-wrap gap-4 mb-6">
@@ -350,9 +351,7 @@ export default function ListaInscricoesPage() {
                 <th>Campo</th>
                 <th>Criado em</th>
                 <th>Confirmação</th>
-                {role === "coordenador" && (
-                  <th>Ação</th>
-                )}
+                {role === "coordenador" && <th>Ação</th>}
               </tr>
             </thead>
             <tbody>
@@ -371,9 +370,7 @@ export default function ListaInscricoesPage() {
                     </span>
                   </td>
                   <td>{i.campo}</td>
-                  <td>
-                    {new Date(i.created).toLocaleDateString("pt-BR")}
-                  </td>
+                  <td>{new Date(i.created).toLocaleDateString("pt-BR")}</td>
                   <td className="text-left text-xs">
                     <div className="flex items-center gap-3">
                       {(role === "lider" || role === "coordenador") &&
