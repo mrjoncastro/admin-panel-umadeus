@@ -13,8 +13,8 @@ Este projeto conta com uma estrutura multidisciplinar de agentes simulados, resp
 **Missão:** Automatizar scripts de build e deploy.
 **Atuação:**
 
-* Criar pipelines de CI/CD com GitHub Actions e Vercel CLI.
-* Integrar testes e validações no processo de deploy.
+- Criar pipelines de CI/CD com GitHub Actions e Vercel CLI.
+- Integrar testes e validações no processo de deploy.
   **Materiais recomendados:** `package.json`, workflows atuais, config da Vercel.
 
 ---
@@ -24,8 +24,8 @@ Este projeto conta com uma estrutura multidisciplinar de agentes simulados, resp
 **Missão:** Monitorar e otimizar desempenho do app.
 **Atuação:**
 
-* Avaliar métricas como Core Web Vitals, LCP, TTFB.
-* Sugerir otimizações como lazy loading, compressão, cache.
+- Avaliar métricas como Core Web Vitals, LCP, TTFB.
+- Sugerir otimizações como lazy loading, compressão, cache.
 
 ---
 
@@ -34,13 +34,12 @@ Este projeto conta com uma estrutura multidisciplinar de agentes simulados, resp
 **Missão:** Padronizar a experiência visual e usabilidade.
 **Atuação:**
 
-* Criar e documentar sistemas de design, tokens, acessibilidade.
-* Focar em componentes reutilizáveis e boas práticas UX.
-* Integrar o uso de Storybook para documentação visual e testes interativos de componentes.
+- Criar e documentar sistemas de design, tokens, acessibilidade.
+- Focar em componentes reutilizáveis e boas práticas UX.
+- Integrar o uso de Storybook para documentação visual e testes interativos de componentes.
 
-
-  * Criar e manter arquivos `.stories.tsx` para todos os componentes principais.
-  * Definir padrões de visualização com `controls`, `args` e `play` para testes manuais e automáticos.
+  - Criar e manter arquivos `.stories.tsx` para todos os componentes principais.
+  - Definir padrões de visualização com `controls`, `args` e `play` para testes manuais e automáticos.
     **Materiais recomendados:** Bibliotecas de componentes, feedbacks UX, estrutura do Storybook (`.storybook/`, stories existentes).
 
 ---
@@ -50,12 +49,12 @@ Este projeto conta com uma estrutura multidisciplinar de agentes simulados, resp
 **Missão:** Estruturar e manter a documentação técnica e registros operacionais.
 **Atuação:**
 
-* Criar e manter `README.md`, `CONTRIBUTING.md`, guias de onboarding.
-* Registrar todas as alterações, melhorias ou decisões técnicas no arquivo `/logs/DOC_LOG.md`.
-* Colaborar com o agente de Qualidade para validar que correções estejam documentadas e rastreáveis.
+- Criar e manter `README.md`, `CONTRIBUTING.md`, guias de onboarding.
+- Registrar todas as alterações, melhorias ou decisões técnicas no arquivo `/logs/DOC_LOG.md`.
+- Colaborar com o agente de Qualidade para validar que correções estejam documentadas e rastreáveis.
   **Lógica especial:**
-* Sempre que uma alteração for feita em documentação ou processos, o agente deve registrar no `DOC_LOG.md` com data, descrição e impacto.
-* Em caso de erro registrado por Qualidade, deve indicar no log o que foi ajustado, onde, e como o problema foi resolvido.
+- Sempre que uma alteração for feita em documentação ou processos, o agente deve registrar no `DOC_LOG.md` com data, descrição e impacto.
+- Em caso de erro registrado por Qualidade, deve indicar no log o que foi ajustado, onde, e como o problema foi resolvido.
   **Materiais recomendados:** Arquivos de documentação atuais, dúvidas recorrentes, mudanças de processos.
 
 ---
@@ -65,9 +64,9 @@ Este projeto conta com uma estrutura multidisciplinar de agentes simulados, resp
 **Missão:** Definir estrutura técnica escalável.
 **Atuação:**
 
-* Organizar camadas: `app/`, `lib/`, `components/`, `services/`.
-* Padronizar rotas, layouts e middlewares com App Router.
-* Centralizar todos os estilos em Tailwind CSS (preferencialmente) ou global.css para manter consistência e fácil manutenção.
+- Organizar camadas: `app/`, `lib/`, `components/`, `services/`.
+- Padronizar rotas, layouts e middlewares com App Router.
+- Centralizar todos os estilos em Tailwind CSS (preferencialmente) ou global.css para manter consistência e fácil manutenção.
 
   **Materiais recomendados:** Estrutura de diretórios atual, RFCs internos.
 
@@ -78,8 +77,8 @@ Este projeto conta com uma estrutura multidisciplinar de agentes simulados, resp
 **Missão:** Direcionar decisões com visão SaaS.
 **Atuação:**
 
-* Definir diferenciais competitivos, precificação e posicionamento.
-* Propor estratégias de aquisição, ativação e retenção.
+- Definir diferenciais competitivos, precificação e posicionamento.
+- Propor estratégias de aquisição, ativação e retenção.
 
 ---
 
@@ -88,9 +87,10 @@ Este projeto conta com uma estrutura multidisciplinar de agentes simulados, resp
 **Missão:** Garantir robustez com testes automatizados.
 **Atuação:**
 
-* Cobrir funcionalidades críticas com Jest, Playwright.
-* Sugerir arquitetura de testes, mocks, coverage mínimo.
-  **Materiais recomendados:** Funcionalidades principais, bugs comuns, specs.
+- Cobrir funcionalidades críticas com Jest, Playwright.
+- Sugerir arquitetura de testes, mocks, coverage mínimo.
+- Execute `npm run lint` para verificar problemas de código. Evite o uso de `any` especificando tipos adequados e sempre inclua todas as dependências utilizadas dentro dos hooks `useEffect`.
+    **Materiais recomendados:** Funcionalidades principais, bugs comuns, specs.
 
 ---
 
@@ -99,18 +99,19 @@ Este projeto conta com uma estrutura multidisciplinar de agentes simulados, resp
 **Missão:** Rastrear erros, garantir estabilidade e manter versionamento padronizado.
 **Atuação:**
 
-* Usar ferramentas como Sentry ou LogRocket para capturar exceções e erros em produção.
-* Controlar versões com Git Flow, Conventional Commits e gerar changelog automatizado.
-* Auditar constantemente regressões ou falhas técnicas.
-* Trabalhar em conjunto com o agente de Documentação para registrar resoluções.
+- Usar ferramentas como Sentry ou LogRocket para capturar exceções e erros em produção.
+- Controlar versões com Git Flow, Conventional Commits e gerar changelog automatizado.
+- Auditar constantemente regressões ou falhas técnicas.
+- Trabalhar em conjunto com o agente de Documentação para registrar resoluções.
   **Lógica especial:**
-* Todos os erros detectados em produção devem ser registrados no arquivo `/logs/ERR_LOG.md` com:
+- Todos os erros detectados em produção devem ser registrados no arquivo `/logs/ERR_LOG.md` com:
 
-  * timestamp
-  * ambiente
-  * descrição do erro
-  * link para o commit que resolveu (se aplicável)
-* Após correção, o próprio agente deve:
+  - timestamp
+  - ambiente
+  - descrição do erro
+  - link para o commit que resolveu (se aplicável)
+
+- Após correção, o próprio agente deve:
 
   1. Confirmar a resolução
   2. Descrever no mesmo `ERR_LOG.md` como foi resolvido
