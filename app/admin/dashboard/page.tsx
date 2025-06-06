@@ -113,19 +113,19 @@ export default function DashboardPage() {
 
 
   return (
-    <main className="min-h-screen bg-[#DCDCDC] text-[#2A1A1C] p-4 md:p-6">
+    <main className="min-h-screen  p-4 md:p-6">
       {!authChecked || !user || loading ? (
-        <p className="text-center text-xl font-semibold">
+        <p className="text-center text-xl font-semibold dark:text-gray-100">
           Carregando painel...
         </p>
       ) : (
         <>
-          <div className="mb-6 text-center">
+          <div className="mb-6 text-center dark:text-gray-100">
             <h1 className="heading">
               Painel de{" "}
               {user.role === "coordenador" ? "Coordenação" : "Liderança"}
             </h1>
-            <p className="text-sm text-gray-700 mt-1">
+            <p className="text-sm text-gray-700 mt-1 dark:text-gray-100">
               Bem-vindo(a), <span className="font-semibold">{user.nome}</span>!
             </p>
           </div>
