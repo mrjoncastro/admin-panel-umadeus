@@ -72,7 +72,7 @@ body {
 }
 
 .card {
-  @apply bg-white/90 backdrop-blur rounded-lg shadow p-4;
+  @apply bg-white border border-gray-300 dark:bg-[#0c0d0a] dark:border-gray-700 rounded-lg shadow p-4;
 }
 
 .input-style {
@@ -80,7 +80,7 @@ body {
 }
 
 .table-base {
-  @apply min-w-full text-sm bg-white border border-gray-200;
+  @apply min-w-full text-sm bg-white border border-gray-300 text-gray-800 dark:bg-[#0c0d0a] dark:border-gray-700 dark:text-gray-100;
 }
 
 .table-base thead {
@@ -93,7 +93,7 @@ body {
 }
 
 .table-base tbody tr {
-  @apply border-b border-gray-100 hover:bg-gray-50 transition-colors;
+  @apply border-b border-gray-100 hover:bg-gray-50 dark:hover:bg-[#1a1b18] dark:border-gray-700 transition-colors;
 }
 
 /* ==========================

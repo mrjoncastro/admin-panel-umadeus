@@ -179,13 +179,13 @@ export default function DashboardAnalytics({ inscricoes, pedidos }: DashboardAna
         </button>
       </div>
       <div className="grid md:grid-cols-2 gap-6 mb-6">
-        <div className="bg-white/90 p-4 rounded-lg shadow">
+        <div className="card p-4">
           <h4 className="font-medium mb-2">Evolução de Inscrições</h4>
           <div className="aspect-video">
             <LineChart data={inscricoesChart} options={{ responsive: true, maintainAspectRatio: false }} />
           </div>
         </div>
-        <div className="bg-white/90 p-4 rounded-lg shadow">
+        <div className="card p-4">
           <h4 className="font-medium mb-2">Evolução de Pedidos</h4>
           <div className="aspect-video">
             <LineChart data={pedidosChart} options={{ responsive: true, maintainAspectRatio: false }} />
@@ -193,11 +193,11 @@ export default function DashboardAnalytics({ inscricoes, pedidos }: DashboardAna
         </div>
       </div>
       <div className="grid md:grid-cols-2 gap-6">
-        <div className="bg-white/90 p-4 rounded-lg shadow flex flex-col justify-center items-center">
+        <div className="card p-4 flex flex-col justify-center items-center">
           <p className="text-sm">Média de Valor por Pedido</p>
           <p className="text-2xl font-bold">R$ {mediaValor.toFixed(2).replace(".", ",")}</p>
         </div>
-        <div className="bg-white/90 p-4 rounded-lg shadow">
+        <div className="card p-4">
           <h4 className="font-medium mb-2">Arrecadação por Campo</h4>
           <div className="aspect-video">
             <BarChart data={arrecadacaoChart} options={{ responsive: true, maintainAspectRatio: false }} />

@@ -137,21 +137,21 @@ export default function LiderDashboardPage() {
 
       {/* Cards Resumo */}
       <div className="grid gap-6 md:grid-cols-3 mb-10">
-        <div className="bg-white/90 backdrop-blur shadow rounded-lg p-6 text-center">
+        <div className="card p-6 text-center">
           <h2 className="text-lg font-semibold mb-2">Inscrições</h2>
           <p>Pendentes: {totais.inscricoes.pendente}</p>
           <p>Confirmadas: {totais.inscricoes.confirmado}</p>
           <p>Canceladas: {totais.inscricoes.cancelado}</p>
         </div>
 
-        <div className="bg-white/90 backdrop-blur shadow rounded-lg p-6 text-center">
+        <div className="card p-6 text-center">
           <h2 className="text-lg font-semibold mb-2">Pedidos</h2>
           <p>Pendentes: {totais.pedidos.pendente}</p>
           <p>Pagos: {totais.pedidos.pago}</p>
           <p>Cancelados: {totais.pedidos.cancelado}</p>
         </div>
 
-        <div className="bg-white/90 backdrop-blur shadow rounded-lg p-6 text-center">
+        <div className="card p-6 text-center">
           <h2 className="text-lg font-semibold mb-2">Total Arrecadado</h2>
           <p className="text-xl font-bold text-green-700">
             R$ {totais.pedidos.valorTotal.toFixed(2).replace(".", ",")}
