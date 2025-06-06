@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["mercadopago.com.br"],
+    domains: ["asaas.com"],
   },
   redirects: async () => [
     {
@@ -12,12 +12,7 @@ const nextConfig: NextConfig = {
       permanent: true,
     },
   ],
-  rewrites: async () => [
-    {
-      source: "/api/mp/:path*",
-      destination: "https://api.mercadopago.com/:path*",
-    },
-  ],
+  rewrites: async () => [],
 };
 
 export default nextConfig;
