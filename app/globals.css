@@ -6,20 +6,20 @@
    🎨 Variáveis de cor customizadas
    ========================== */
 :root {
-  --background: #1e2019;         /* eerie_black */
-  --foreground: #f9c5c7;         /* cornell_red-900 */
-  --text-primary: #dcdcdc;       /* Platinum */
-  --text-secondary: #ababab;     /* jet-800 */
-  --accent: #b11116;             /* cornell_red */
+  --background: #dcdcdc; /* platinum para modo claro */
+  --foreground: #1e2019; /* texto escuro */
+  --text-primary: #1e2019;
+  --text-secondary: #4b4b4b;
+  --accent: #7c3aed; /* roxo primário */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0c0d0a;       /* eerie_black-200 */
-    --foreground: #f9c5c7;
+    --background: #1e2019; /* eerie_black */
+    --foreground: #dcdcdc; /* texto claro */
     --text-primary: #dcdcdc;
-    --text-secondary: #8c8c8c;
-    --accent: #e81920;           /* cornell_red-600 */
+    --text-secondary: #ababab;
+    --accent: #b11116;
   }
 }
 
@@ -31,22 +31,41 @@ html {
 }
 
 body {
-  background: linear-gradient(
-    270deg,
-    #1e2019,
-    #2a1a1c,
-    #3b2a2b,
-    #1e2019,
-    #2a1a1c,
-    #1e2019
-  );
-  background-size: 500% 500%;
-  background-repeat: no-repeat;
-  animation: gradient-x 30s ease-in-out infinite;
   color: var(--text-primary);
   font-family: "Inter", Arial, Helvetica, sans-serif;
   transition: background-color 0.5s ease, color 0.9s ease;
 }
+
+@media (prefers-color-scheme: dark) {
+ html.dark body {
+    background: linear-gradient(
+      270deg,
+      #0c0d0a,
+      #1e2019,
+      #1e2019,
+      #0c0d0a
+    );
+    background-size: 500% 500%;
+    background-repeat: no-repeat;
+    animation: gradient-x 30s ease-in-out infinite;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+ html.light body {
+    background: linear-gradient(
+      270deg,
+      #dcdcdc,
+      #f5f5f5,
+      #dcdcdc,
+      #f5f5f5
+    );
+    background-size: 500% 500%;
+    background-repeat: no-repeat;
+    animation: gradient-x 30s ease-in-out infinite;
+  }
+}
+
 
 /* ==========================
    📦 Utilitários reutilizáveis
@@ -75,19 +94,14 @@ body {
   @apply px-4 py-2 rounded text-sm font-medium transition-colors;
 }
 
-
 .card {
   @apply bg-white border border-gray-300 dark:bg-[#0c0d0a] dark:border-gray-700 rounded-lg shadow p-4;
 }
 
-.input-style {
-  @apply w-full px-4 py-3 rounded-lg border border-[#b3b3b3] bg-[#f0f0f0] text-sm text-[#1e2019] focus:outline-none focus:ring-2 focus:ring-red-600 transition;
-}
-
+.input-style,
 .input-base {
   @apply w-full px-4 py-3 rounded-lg border border-[#b3b3b3] bg-[#f0f0f0] text-sm text-[#1e2019] focus:outline-none focus:ring-2 focus:ring-red-600 transition;
 }
-
 
 .table-base {
   @apply min-w-full text-sm bg-white border border-gray-300 text-gray-800 dark:bg-[#0c0d0a] dark:border-gray-700 dark:text-gray-100;
@@ -133,11 +147,12 @@ body {
 }
 
 .bg-animated {
-  background: linear-gradient(270deg, #1F3162, #351669, #7A0926);
+  background: linear-gradient(270deg, #1f3162, #351669, #7a0926);
   background-size: 400% 400%;
   animation: gradient-x 15s ease infinite;
 }
 
 .fade-in-up {
+  opacity: 0;
   animation: fade-in-up 0.8s ease forwards;
 }
