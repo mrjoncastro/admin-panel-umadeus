@@ -63,8 +63,7 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `NEXT_PUBLIC_PB_URL` - URL do PocketBase
 - `PB_ADMIN_EMAIL` - e-mail do administrador do PocketBase
 - `PB_ADMIN_PASSWORD` - senha do administrador
-- `MERCADO_PAGO_ACCESS_TOKEN` - token do Mercado Pago
-- `ASAAS_API_KEY` - chave da API do Asaas
+- `ASAAS_API_KEY` - chave da API do Asaas para geração de pagamentos
 - `NEXT_PUBLIC_SITE_URL` - endereço do site (opcional)
 
 ## Conectando ao PocketBase
