@@ -13,13 +13,14 @@ export default function LayoutWrapper({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isInscricaoPublica = /^\/inscricoes\/[^/]+$/.test(pathname);
+  const isInscricaoPublica = /^\/admin\/inscricoes\/[^/]+$/.test(pathname);
+
   const { isLoggedIn, user } = useAuthContext();
 
   return (
     <>
       {!isInscricaoPublica && <Header />}
-      <main className="min-h-screen">
+      <main className="min-h-screen bg-[var(--background)] text-[var(--text-primary)]">
         {children}
       </main>
       <Footer />

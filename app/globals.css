@@ -23,15 +23,15 @@
   --space-xl: 2rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #1e2019; /* eerie_black */
-    --foreground: #dcdcdc; /* texto claro */
-    --text-primary: #dcdcdc;
-    --text-secondary: #ababab;
-    --accent: #b11116;
-    --color-secondary: #dcdcdc;
-  }
+html.dark {
+  --background: #1e2019;
+  --foreground: #dcdcdc;
+  --text-primary: #dcdcdc;
+  --text-secondary: #ababab;
+  --text-header-primary: #dcdcdc;
+  --text-header-secondary: #bfbfbf;
+  --accent: #b11116;
+  --color-secondary: #dcdcdc;
 }
 
 /* ==========================
@@ -48,14 +48,8 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
- html.dark body {
-    background: linear-gradient(
-      270deg,
-      #0c0d0a,
-      #1e2019,
-      #1e2019,
-      #0c0d0a
-    );
+  html.dark body {
+    background: linear-gradient(270deg, #0c0d0a, #1e2019, #1e2019, #0c0d0a);
     background-size: 500% 500%;
     background-repeat: no-repeat;
     animation: gradient-x 30s ease-in-out infinite;
@@ -63,20 +57,13 @@ body {
 }
 
 @media (prefers-color-scheme: light) {
- html.light body {
-    background: linear-gradient(
-      270deg,
-      #dcdcdc,
-      #d3d3d3,
-      #dcdcdc,
-      #d3d3d3
-    );
+  html.light body {
+    background: linear-gradient(270deg, #dcdcdc, #d3d3d3, #dcdcdc, #d3d3d3);
     background-size: 500% 500%;
     background-repeat: no-repeat;
     animation: gradient-x 30s ease-in-out infinite;
   }
 }
-
 
 /* ==========================
    📦 Utilitários reutilizáveis

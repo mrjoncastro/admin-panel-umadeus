@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
       customer: cliente.id,
       billingType: "BOLETO",
       value: parsedValor,
-      dueDate: dueDate.toISOString().slice(0, 10),
+      dueDate, // Passe o objeto Date diretamente
       description: pedido.produto || "Produto",
       externalReference: pedido.id,
     });
