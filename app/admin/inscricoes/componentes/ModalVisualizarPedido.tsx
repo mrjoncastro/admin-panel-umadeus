@@ -51,7 +51,7 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
 
     setReenviando(true);
     try {
-      const checkoutRes = await fetch("/admin/api/assas/checkout", {
+      const checkoutRes = await fetch("/admin/api/assas/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pedidoId: pedido.id, valor: pedido.valor }),
