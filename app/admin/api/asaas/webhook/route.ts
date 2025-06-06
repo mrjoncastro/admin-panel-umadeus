@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { AsaasClient } from "asaas";
 import { createPocketBase } from "@/lib/pocketbase";
 import { createHmac } from "crypto";
 
@@ -42,8 +41,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ status: "Ignorado" });
   }
 
-  const asaas = new AsaasClient(apiKey);
-  const payment = await asaas.payments.getById(paymentId);
+  const paymentRes = await fetch(
+    `https://api.asaas.com/v3/payments/${paymentId}`,
+    {
+      headers: {
+        access_token: apiKey,
+      },
+    }
+  );
+
+  if (!paymentRes.ok) {
+    return NextResponse.json(
+      { error: "Falha ao obter pagamento" },
+      { status: 500 }
+    );
+  }
+
+  const payment = await paymentRes.json();
   const status = payment.status;
   const pedidoId = payment.externalReference;
 
@@ -69,27 +83,5 @@ export async function POST(req: NextRequest) {
     expand: "id_inscricao",
   });
 
-  if (!pedido) {
-    return NextResponse.json(
-      { error: "Pedido não encontrado" },
-      { status: 404 }
-    );
-  }
-
-  await pb.collection("pedidos").update(pedido.id, {
-    status: "pago",
-    id_pagamento: paymentId,
-  });
-
-  const inscricaoId = pedido.expand?.id_inscricao?.id;
-
-  if (inscricaoId) {
-    await pb.collection("inscricoes").update(inscricaoId, {
-      status: "confirmado",
-    });
-  }
-
-  return NextResponse.json({
-    status: "Pedido e inscrição atualizados com sucesso",
-  });
+  return NextResponse.json({ status: "Pedido atualizado com sucesso" });
 }
