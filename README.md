@@ -65,6 +65,7 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `PB_ADMIN_PASSWORD` - senha do administrador
 - `MERCADO_PAGO_ACCESS_TOKEN` - token do Mercado Pago
 - `ASAAS_API_KEY` - chave da API do Asaas
+- `ASAAS_WEBHOOK_SECRET` - segredo para validar webhooks do Asaas
 - `NEXT_PUBLIC_SITE_URL` - endereço do site (opcional)
 
 ## Conectando ao PocketBase
