@@ -64,6 +64,7 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `PB_ADMIN_EMAIL` - e-mail do administrador do PocketBase
 - `PB_ADMIN_PASSWORD` - senha do administrador
 - `ASAAS_API_KEY` - chave da API do Asaas para geração de pagamentos
+- `ASAAS_WEBHOOK_SECRET` - segredo para validar webhooks do Asaas
 - `NEXT_PUBLIC_SITE_URL` - endereço do site (opcional)
 
 ## Conectando ao PocketBase
