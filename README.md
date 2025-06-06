@@ -90,3 +90,18 @@ Para gerar o build de produção execute:
 ```bash
 npm run build
 ```
+
+## Registro de Logs
+
+Os arquivos dentro do diretório `logs/` guardam o histórico do projeto.
+
+- `logs/DOC_LOG.md` registra alterações de documentação e processos.
+- `logs/ERR_LOG.md` armazena erros ocorridos e como foram corrigidos.
+
+Para adicionar uma nova entrada, abra o arquivo correspondente e inclua uma linha no formato:
+
+```
+## [DATA] Descrição - ambiente - [link do commit]
+```
+
+Mais orientações podem ser encontradas em [AGENTS.md](AGENTS.md).
