@@ -57,7 +57,7 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-animated backdrop-blur-md text-[var(--color-secondary)] shadow-md sticky top-0 z-50 gradient-x">
+    <header className="bg-animated backdrop-blur-md text-[var(--text-header-primary)] shadow-md sticky top-0 z-50 gradient-x">
       <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
         <Link href="/admin" className="flex items-center">
           <Image
@@ -72,7 +72,7 @@ export default function Header() {
 
         {/* Botão hambúrguer */}
         <button
-          className="md:hidden text-[var(--color-secondary)]"
+          className="md:hidden text-[var(--text-header-primary)]"
           onClick={() => setMenuAberto(!menuAberto)}
           aria-label="Abrir menu"
         >
@@ -152,7 +152,7 @@ export default function Header() {
           {!isLoggedIn && (
             <Link
               href="/admin/login"
-              className="text-sm underline text-[var(--color-secondary)] hover:text-white cursor-pointer"
+              className="text-sm underline text-[var(--text-header-primary)] hover:text-white cursor-pointer"
             >
               Entrar
             </Link>
@@ -162,7 +162,7 @@ export default function Header() {
 
       {/* Menu Mobile */}
       {menuAberto && (
-        <div className="md:hidden bg-[var(--color-secondary)] px-6 pb-4">
+        <div className="md:hidden bg-[var(--text-header-primary)] px-6 pb-4">
           <nav className="flex flex-col gap-2">
             {isLoggedIn &&
               navLinks.map(({ href, label }) => (
@@ -222,7 +222,7 @@ export default function Header() {
               <Link
                 href="/admin/login"
                 onClick={() => setMenuAberto(false)}
-                className="text-left px-4 py-2 text-sm underline text-[var(--color-secondary)] hover:text-white"
+                className="text-left px-4 py-2 text-sm underline text-[var(--text-header-primary)] hover:text-white"
               >
                 Entrar
               </Link>

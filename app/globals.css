@@ -10,6 +10,8 @@
   --foreground: #1e2019; /* texto escuro */
   --text-primary: #1e2019;
   --text-secondary: #4b4b4b;
+  --text-header-primary: #dcdcdc;
+  --text-header-secondary: #4b4b4b;
   --accent: #7c3aed; /* roxo primário */
   --color-secondary: #2a1a1c; /* tonalidade complementar */
   --font-body: var(--font-geist);
