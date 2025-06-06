@@ -94,7 +94,7 @@ export default function DashboardResumo({
   return (
     <>
       <div className="grid gap-4 md:grid-cols-3 mb-6">
-        <div className="bg-white/90 backdrop-blur p-4 rounded-lg shadow text-center">
+        <div className="card text-center">
           <div className="flex justify-center items-center gap-2 mb-1">
             <h2 className="text-sm font-bold">Total de Inscrições</h2>
             <Tippy content="Todas as inscrições feitas no sistema.">
@@ -106,7 +106,7 @@ export default function DashboardResumo({
           <p className="text-3xl font-bold">{inscricoes.length}</p>
         </div>
 
-        <div className="bg-white/90 backdrop-blur p-4 rounded-lg shadow text-center">
+        <div className="card text-center">
           <div className="flex justify-center items-center gap-2 mb-1">
             <h2 className="text-sm font-bold">Total de Pedidos</h2>
             <Tippy content="Todos os pedidos gerados.">
@@ -118,7 +118,7 @@ export default function DashboardResumo({
           <p className="text-3xl font-bold">{pedidos.length}</p>
         </div>
 
-        <div className="bg-white/90 backdrop-blur p-4 rounded-lg shadow text-center">
+        <div className="card text-center">
           <div className="flex justify-center items-center gap-2 mb-1">
             <h2 className="text-sm font-bold">Valor Total</h2>
             <Tippy content="Soma dos pedidos pagos com inscrições confirmadas.">
@@ -180,7 +180,7 @@ export default function DashboardResumo({
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-white/90 p-5 rounded-xl shadow">
+          <div className="card p-5 rounded-xl">
             <div className="flex justify-between items-center mb-3">
               <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                 Inscrições por Campo
@@ -199,7 +199,7 @@ export default function DashboardResumo({
             </div>
           </div>
 
-          <div className="bg-white/90 p-5 rounded-xl shadow">
+          <div className="card p-5 rounded-xl">
             <div className="flex justify-between items-center mb-3">
               <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                 Pedidos por Campo
