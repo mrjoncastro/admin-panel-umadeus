@@ -96,38 +96,38 @@ export default function DashboardResumo({
       <div className="grid gap-4 md:grid-cols-3 mb-6">
         <div className="card text-center">
           <div className="flex justify-center items-center gap-2 mb-1">
-            <h2 className="text-sm font-bold">Total de Inscrições</h2>
+            <h2 className="text-sm font-bold dark:text-gray-100 ">Total de Inscrições</h2>
             <Tippy content="Todas as inscrições feitas no sistema.">
               <span>
-                <Info className="w-4 h-4 text-red-600" />
+                <Info className="w-4 h-4 text-red-600 dark:text-gray-100" />
               </span>
             </Tippy>
           </div>
-          <p className="text-3xl font-bold">{inscricoes.length}</p>
+          <p className="text-3xl font-bold dark:text-gray-100">{inscricoes.length}</p>
         </div>
 
         <div className="card text-center">
           <div className="flex justify-center items-center gap-2 mb-1">
-            <h2 className="text-sm font-bold">Total de Pedidos</h2>
+            <h2 className="text-sm font-bold dark:text-gray-100">Total de Pedidos</h2>
             <Tippy content="Todos os pedidos gerados.">
               <span>
-                <Info className="w-4 h-4 text-red-600" />
+                <Info className="w-4 h-4 text-red-600 dark:text-gray-100" />
               </span>
             </Tippy>
           </div>
-          <p className="text-3xl font-bold">{pedidos.length}</p>
+          <p className="text-3xl font-bold dark:text-gray-100">{pedidos.length}</p>
         </div>
 
         <div className="card text-center">
           <div className="flex justify-center items-center gap-2 mb-1">
-            <h2 className="text-sm font-bold">Valor Total</h2>
+            <h2 className="text-sm font-bold dark:text-gray-100">Valor Total</h2>
             <Tippy content="Soma dos pedidos pagos com inscrições confirmadas.">
               <span>
-                <Info className="w-4 h-4 text-red-600" />
+                <Info className="w-4 h-4 text-red-600 dark:text-gray-100" />
               </span>
             </Tippy>
           </div>
-          <p className="text-3xl font-bold">
+          <p className="text-3xl font-bold dark:text-gray-100">
             R$ {valorTotalConfirmado.toFixed(2)}
           </p>
         </div>
@@ -138,12 +138,12 @@ export default function DashboardResumo({
         {["pendente", "confirmado", "cancelado"].map((status) => (
           <div
             key={status}
-            className="bg-white/70 backdrop-blur p-3 rounded-lg shadow text-center"
+            className="card text-center"
           >
-            <h3 className="text-sm font-semibold">
+            <h3 className="text-sm font-semibold dark:text-gray-100">
               Inscrições {status.charAt(0).toUpperCase() + status.slice(1)}
             </h3>
-            <p className="text-xl font-bold">{statusInscricoes[status] || 0}</p>
+            <p className="text-xl font-bold dark:text-gray-100">{statusInscricoes[status] || 0}</p>
           </div>
         ))}
       </div>
@@ -152,18 +152,18 @@ export default function DashboardResumo({
         {["pendente", "pago", "cancelado"].map((status) => (
           <div
             key={status}
-            className="bg-white/70 backdrop-blur p-3 rounded-lg shadow text-center"
+            className="card text-center"
           >
-            <h3 className="text-sm font-semibold">
+            <h3 className="text-sm font-semibold dark:text-gray-100">
               Pedidos {status.charAt(0).toUpperCase() + status.slice(1)}
             </h3>
-            <p className="text-xl font-bold">{statusPedidos[status] || 0}</p>
+            <p className="text-xl font-bold dark:text-gray-100">{statusPedidos[status] || 0}</p>
           </div>
         ))}
       </div>
 
       {/* Gráficos */}
-      <div className="bg-white/70 backdrop-blur rounded-xl p-6 shadow-md mb-8">
+      <div className="card mb-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
           <label className="text-sm font-medium text-gray-800 dark:text-gray-100">Filtro:</label>
           <select
