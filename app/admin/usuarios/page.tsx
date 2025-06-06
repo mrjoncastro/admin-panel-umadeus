@@ -94,7 +94,7 @@ export default function UsuariosPage() {
                   <td>
                     {usuario.role === "lider" ? (
                       <Link
-                        href={`/inscricoes/${usuario.id}`}
+                        href={`/admin/inscricoes/${usuario.id}`}
                         className="text-blue-600 hover:underline"
                         target="_blank"
                       >
