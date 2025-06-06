@@ -9,3 +9,5 @@
 ## [2025-06-06] Adicionada variavel ASAAS_WEBHOOK_SECRET no README
 
 ## [2025-06-06] Removidos console.log das rotas da API admin e criado utilitario logger para padronizar logs. Impacto: reducao de ruido e melhoria na manutencao.
+## [2025-06-06] Adicionados stories do blog (Sidebar, HeroCarousel, PostSuggestions, NextPostButton e MiniPrecosPost).
+## [2025-06-06] Corrigidos stories do blog e configuracao do Storybook.
