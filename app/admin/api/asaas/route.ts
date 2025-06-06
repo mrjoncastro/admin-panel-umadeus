@@ -4,7 +4,9 @@ import { createPocketBase } from "@/lib/pocketbase";
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
   const apiKey = process.env.ASAAS_API_KEY;
-  const baseUrl = process.env.ASAAS_API_URL?.replace(/\/$/, ""); // remove barra no final
+  const baseUrl = process.env.ASAAS_API_URL;
+  console.log("🔐 ASAAS_API_KEY:", process.env.ASAAS_API_KEY);
+  console.log("🌐 ASAAS_API_URL:", process.env.ASAAS_API_URL);
 
   if (!apiKey || !baseUrl) {
     return NextResponse.json(
@@ -66,7 +68,7 @@ export async function POST(req: NextRequest) {
       cpfCnpj: inscricao.cpf.replace(/\D/g, ""),
       phone: inscricao.telefone || "71900000000",
       address: inscricao.endereco || "Endereço padrão",
-      addressNumber: inscricao.numero || "SN",
+      addressNumber: inscricao.numero || "02",
       province: "BA",
       postalCode: inscricao.cep || "41770055",
     };
@@ -74,9 +76,10 @@ export async function POST(req: NextRequest) {
     console.log("📤 Enviando cliente:", clientePayload);
 
     // 🔹 Criar cliente no Asaas
-    const clienteResponse = await fetch(`${baseUrl}/customers`, {
+    const clienteResponse = await fetch(`https://api-sandbox.asaas.com/v3/customers`, {
       method: "POST",
       headers: {
+        accept: "application/json",
         "Content-Type": "application/json",
         access_token: apiKey,
         "User-Agent": "qg3",
