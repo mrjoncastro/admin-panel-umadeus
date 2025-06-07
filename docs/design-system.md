@@ -67,6 +67,17 @@ As variantes disponíveis são:
 <input class="input-base" />
 ```
 
+## Cabeçalhos
+
+Use os elementos `h1`, `h2` e `h3` para títulos. A classe `.heading` compartilha
+os mesmos estilos do `h1` e pode ser adicionada a qualquer tag:
+
+```html
+<h1 class="heading">Título Principal</h1>
+<h2 class="heading">Subtítulo</h2>
+<h3 class="heading">Seção Interna</h3>
+```
+
 ## Cartões e Tabelas
 
 Utilize as classes `.card` e `.table-base` para aplicar bordas,
