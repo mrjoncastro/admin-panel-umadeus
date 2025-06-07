@@ -6,15 +6,14 @@ Este documento descreve a **arquitetura de pastas e responsabilidades** do proje
 
 ## 🧭 Visão Geral
 
-O projeto é dividido logicamente em quatro áreas principais:
+O projeto é dividido logicamente em quatro áreas:
 
-| Área         | Função Principal                             | Acesso             | Público-alvo                |
-|--------------|----------------------------------------------|--------------------|-----------------------------|
-| **Portal**   | Página institucional personalizada do cliente| Público            | Membros, visitantes, geral  |
-| **Loja**     | Página pública para venda e inscrições       | Público            | Visitantes e inscritos      |
-| **Admin**    | Painel de gestão e controle de dados         | Privado (auth)     | Coordenadores e líderes     |
-| **Blog**     | Página pública para postagens de conteúdo    | Público            | Visitantes e inscritos      |
-
+| Área        | Função Principal                         | Acesso            | Público-alvo            |
+|-------------|-------------------------------------------|-------------------|-------------------------|
+| **Portal**  | Página institucional do cliente           | Público           | Membros, visitantes, geral |
+| **Loja**    | Página pública para venda e inscrições    | Público           | Visitantes e inscritos  |
+| **Admin**   | Painel de gestão e controle de dados      | Privado (auth)    | Coordenadores e líderes |
+| **Blog**    | Página pública para postagens de conteúdo | Público           | Visitantes e inscritos  |
 Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 
 ---
@@ -59,12 +58,20 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 │   ├── layout.tsx         # Layout visual do portal (personalizado por cliente)
 │   └── page.tsx           # Home institucional
 ├── layout.tsx             # Layout raiz compartilhado
+├── page.tsx               # Portal do cliente (institucional)
 ├── globals.css            # CSS global compartilhado
 /posts/                    # Conteúdo do blog em arquivos .mdx
 /scripts/                  # Scripts auxiliares
 /stories/                  # Storybook de componentes
 
 ---
+
+## 🌐 Portal – Boas Práticas
+
+- Mantém a identidade visual do cliente de forma *white label*
+- Permite customização de logo e cores via painel admin (`/admin/configuracoes`)
+- Integra navegação para Loja, Admin e Blog
+- Detalhes em [docs/design-system.md](docs/design-system.md#personalizacao)
 
 ## 🛍️ Loja – Boas Práticas
 
