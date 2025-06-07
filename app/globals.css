@@ -93,6 +93,28 @@ body {
   @apply w-full px-4 py-3 rounded-lg border border-neutral-300 bg-neutral-50 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-error-600 transition;
 }
 
+/* Card e Tabela base */
+.card {
+  @apply bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-sm;
+}
+
+.table-base {
+  @apply w-full text-left text-sm divide-y divide-neutral-200 dark:divide-neutral-700;
+}
+
+.table-base thead {
+  @apply bg-neutral-100 dark:bg-neutral-800;
+}
+
+.table-base th,
+.table-base td {
+  @apply px-4 py-2;
+}
+
+.table-base tbody tr:nth-child(even) {
+  @apply bg-neutral-50 dark:bg-neutral-950;
+}
+
 /* ==========================
    🎞️ Animações
    ========================== */
