@@ -121,43 +121,44 @@ export default function GerenciarCamposPage() {
     }
   };
 
-  async function handleExcluir(id: string) {
-    if (!confirm("Tem certeza que deseja excluir este campo?")) return;
+  // Obsoleto: mantido para referência futura
+  // async function handleExcluir(id: string) {
+  //   if (!confirm("Tem certeza que deseja excluir este campo?")) return;
+  //
+  //   if (!token || !user) {
+  //     setMensagem("Usuário não autenticado.");
+  //     return;
+  //   }
+  //
+  //   try {
+  //     const res = await fetch(`/admin/api/campos/${id}`, {
+  //       method: "DELETE",
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         "X-PB-User": JSON.stringify(user),
+  //       },
+  //     });
+  //
+  //     const data = await res.json();
+  //
+  //     if (res.ok) {
+  //       setMensagem("✅ Campo excluído com sucesso");
+  //       await fetchCampos();
+  //     } else {
+  //       setMensagem("Erro: " + data.error);
+  //       console.error("❌ Erro ao excluir:", data);
+  //     }
+  //   } catch (err: unknown) {
+  //     if (err instanceof Error) {
+  //       console.error("Erro:", err.message);
+  //     }
+  //   }
+  // }
 
-    if (!token || !user) {
-      setMensagem("Usuário não autenticado.");
-      return;
-    }
-
-    try {
-      const res = await fetch(`/admin/api/campos/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "X-PB-User": JSON.stringify(user),
-        },
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setMensagem("✅ Campo excluído com sucesso");
-        await fetchCampos();
-      } else {
-        setMensagem("Erro: " + data.error);
-        console.error("❌ Erro ao excluir:", data);
-      }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error("Erro:", err.message);
-      }
-    }
-  }
-
-  function iniciarEdicao(campo: Campo) {
-    setEditandoId(campo.id);
-    setNome(campo.nome);
-  }
+  // function iniciarEdicao(campo: Campo) {
+  //   setEditandoId(campo.id);
+  //   setNome(campo.nome);
+  // }
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
@@ -199,7 +200,7 @@ export default function GerenciarCamposPage() {
         setMensagem("Campo excluído com sucesso.");
         setCampos((prev) => prev.filter((c) => c.id !== id));
       }
-    } catch (err) {
+    } catch {
       setMensagem("Erro ao excluir campo.");
     } finally {
       setLoading(false);
