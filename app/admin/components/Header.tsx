@@ -59,7 +59,7 @@ export default function Header() {
   return (
     <header className="bg-animated backdrop-blur-md text-[var(--text-header-primary)] shadow-md sticky top-0 z-50 gradient-x">
       <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
-        <Link href="/admin" className="flex items-center">
+        <Link href="/" className="flex items-center">
           <Image
             src="/img/logo_umadeus_branco.png"
             alt="Logotipo UMADEUS"

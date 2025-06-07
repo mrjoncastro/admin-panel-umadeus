@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Header from "@/app/admin/components/Header";
-import Footer from "@/app/admin/components/Footer";
+import Footer from "@/app/components/Footer";
 import BackToTopButton from "@/app/admin/components/BackToTopButton";
 import NotificationBell from "@/app/admin/components/NotificationBell";
 import { useAuthContext } from "@/lib/context/AuthContext";
