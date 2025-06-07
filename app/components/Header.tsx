@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image"; // se quiser exibir logo
+import { useAuthContext } from "@/lib/context/AuthContext";
 
-const navLinks = [
+type UserRole = "visitante" | "usuario" | "lider" | "coordenador";
+
+const baseLinks = [
   { href: "/", label: "Início" },
   { href: "/loja", label: "Loja" },
   { href: "/blog", label: "Blog" },
@@ -16,6 +19,43 @@ const navLinks = [
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const [adminOpen, setAdminOpen] = useState(false);
+  const { user, isLoggedIn } = useAuthContext();
+
+  const role: UserRole = useMemo(() => {
+    if (!isLoggedIn) return "visitante";
+    if (user?.role === "coordenador") return "coordenador";
+    if (user?.role === "lider") return "lider";
+    return "usuario";
+  }, [isLoggedIn, user?.role]);
+
+  const adminLinks = useMemo(() => {
+    if (role === "lider") {
+      return [
+        { href: "/admin/lider-painel", label: "Painel" },
+        { href: "/admin/inscricoes", label: "Inscrições" },
+        { href: "/admin/pedidos", label: "Pedidos" },
+      ];
+    }
+    if (role === "coordenador") {
+      return [
+        { href: "/admin/dashboard", label: "Painel" },
+        { href: "/admin/inscricoes", label: "Inscrições" },
+        { href: "/admin/pedidos", label: "Pedidos" },
+        { href: "/admin/usuarios", label: "Usuários" },
+        { href: "/admin/campos", label: "Campos" },
+        { href: "/admin/posts", label: "Posts" },
+      ];
+    }
+    return [];
+  }, [role]);
+
+  const navLinks = baseLinks;
+
+  const firstName = useMemo(
+    () => user?.nome?.split(" ")[0] ?? "",
+    [user?.nome]
+  );
 
   return (
     <header className="bg-animated backdrop-blur-md text-[var(--text-header-primary)] shadow-md sticky top-0 z-50 gradient-x px-6 py-4 border-b border-platinum/20 fixed top-0 inset-x-0 z-50">
@@ -37,7 +77,7 @@ export default function Header() {
         </Link>
 
         {/* Navegação Desktop */}
-        <nav className="hidden md:flex gap-6 text-base font-medium">
+        <nav className="hidden md:flex gap-6 text-base font-medium items-center">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -47,6 +87,35 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
+
+          {(role === "lider" || role === "coordenador") && (
+            <div className="relative">
+              <button
+                onClick={() => setAdminOpen((prev) => !prev)}
+                className="flex items-center gap-1 hover:text-yellow-400 transition px-2 py-1 rounded-md"
+              >
+                Admin <ChevronDown size={14} />
+              </button>
+              {adminOpen && (
+                <ul className="absolute right-0 mt-2 w-48 bg-white text-[var(--foreground)] dark:bg-zinc-900 dark:text-white rounded-md shadow z-50 text-sm py-2 space-y-1">
+                  {adminLinks.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="block px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+
+          {isLoggedIn && (
+            <span className="ml-4 text-sm">Olá, {firstName}</span>
+          )}
         </nav>
 
         {/* Botão Menu Mobile */}
@@ -72,6 +141,26 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
+
+          {(role === "lider" || role === "coordenador") && (
+            <>
+              <span className="mt-2 font-semibold text-platinum">Admin</span>
+              {adminLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-platinum hover:text-yellow-400 transition py-2 text-base font-medium"
+                  onClick={() => setOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </>
+          )}
+
+          {isLoggedIn && (
+            <span className="mt-2 text-sm text-platinum">Olá, {firstName}</span>
+          )}
         </div>
       )}
     </header>
