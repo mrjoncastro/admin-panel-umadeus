@@ -52,9 +52,13 @@ Execute `npm run lint` para verificar problemas de código. Evite o uso de `any`
 - Dashboard now includes temporal charts showing sign-up and order evolution,
   along with average order value and revenue per field for coordinators and
   leaders.
-- Analytics charts support date range filters and allow exporting the data as
-  CSV or XLSX spreadsheets.
+ - Analytics charts support date range filters and allow exporting the data as
+    CSV or XLSX spreadsheets.
 
+## Design System
+
+Confira a visão geral de tokens, tipografia e componentes em
+[docs/design-system.md](docs/design-system.md).
 
 ## Variáveis de Ambiente
 
