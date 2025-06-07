@@ -26,6 +26,17 @@ Utilize as variáveis de espaçamento para manter consistência entre componente
 | `--space-lg` | `1.5rem`  |
 | `--space-xl` | `2rem`    |
 
+## Paleta de Cores
+
+Os principais tons de cor são definidos no `tailwind.config.js` e podem ser consumidos via classes `text-*` ou `bg-*`.
+
+| Token            | Valor |
+|------------------|-------|
+| `primary-600`    | `#7c3aed` |
+| `error-600`      | `#dc2626` |
+| `neutral-200`    | `#d3d3d3` |
+| `neutral-900`    | `#1e2019` |
+
 ## Exemplos de Componentes
 
 Os principais componentes têm exemplos interativos no Storybook. Alguns dos mais utilizados são:

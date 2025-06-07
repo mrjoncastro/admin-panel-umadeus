@@ -6,14 +6,14 @@
    🎨 Variáveis de cor customizadas
    ========================== */
 :root {
-  --background: #dcdcdc; /* platinum para modo claro */
-  --foreground: #1e2019; /* texto escuro */
-  --text-primary: #1e2019;
-  --text-secondary: #4b4b4b;
-  --text-header-primary: #dcdcdc;
-  --text-header-secondary: #4b4b4b;
-  --accent: theme(colors.primary.600); /* roxo primário */
-  --color-secondary: #2a1a1c; /* tonalidade complementar */
+  --background: theme(colors.neutral.200); /* modo claro */
+  --foreground: theme(colors.neutral.900); /* texto escuro */
+  --text-primary: theme(colors.neutral.900);
+  --text-secondary: theme(colors.neutral.700);
+  --text-header-primary: theme(colors.neutral.200);
+  --text-header-secondary: theme(colors.neutral.700);
+  --accent: theme(colors.primary.600);
+  --color-secondary: theme(colors.neutral.900);
   --font-body: var(--font-geist);
   --font-heading: var(--font-geist);
   /* Exposição da variável de fonte para uso global */
@@ -26,14 +26,14 @@
 }
 
 html.dark {
-  --background: #1e2019;
-  --foreground: #dcdcdc;
-  --text-primary: #dcdcdc;
-  --text-secondary: #ababab;
-  --text-header-primary: #dcdcdc;
-  --text-header-secondary: #bfbfbf;
-  --accent: #b11116;
-  --color-secondary: #dcdcdc;
+  --background: theme(colors.neutral.900);
+  --foreground: theme(colors.neutral.200);
+  --text-primary: theme(colors.neutral.200);
+  --text-secondary: theme(colors.neutral.400);
+  --text-header-primary: theme(colors.neutral.200);
+  --text-header-secondary: theme(colors.neutral.300);
+  --accent: theme(colors.primary.600);
+  --color-secondary: theme(colors.neutral.200);
 }
 
 /* ==========================
@@ -70,10 +70,6 @@ body {
 /* ==========================
    📦 Utilitários reutilizáveis
    ========================== */
-.heading {
-  @apply text-2xl font-semibold mb-6;
-}
-
 .btn {
   @apply px-4 py-2 rounded text-sm font-medium transition-colors;
 }
@@ -81,39 +77,8 @@ body {
 .btn-primary {
   @apply bg-[var(--accent)] text-white hover:bg-primary-700;
 }
-
-.btn-secondary {
-  @apply border border-gray-300 bg-white hover:bg-gray-50;
-}
-
-.btn-danger {
-  @apply bg-error-600 text-white hover:bg-error-700;
-}
-
-
-.card {
-  @apply bg-white border border-gray-300 dark:bg-neutral-950 dark:border-gray-700 rounded-lg shadow p-4;
-}
-
 .input-base {
   @apply w-full px-4 py-3 rounded-lg border border-neutral-300 bg-neutral-50 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-error-600 transition;
-}
-
-.table-base {
-  @apply min-w-full text-sm bg-white border border-gray-300 text-gray-800 dark:bg-neutral-950 dark:border-gray-700 dark:text-gray-100;
-}
-
-.table-base thead {
-  @apply bg-gray-50 text-gray-700 uppercase text-xs tracking-wide;
-}
-
-.table-base th,
-.table-base td {
-  @apply px-4 py-2 text-left;
-}
-
-.table-base tbody tr {
-  @apply border-b border-gray-100 hover:bg-gray-50 dark:hover:bg-neutral-800 dark:border-gray-700 transition-colors;
 }
 
 /* ==========================

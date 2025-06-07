@@ -14,6 +14,15 @@ Este documento lista os tokens de design definidos em `app/globals.css` e como u
 - `error`: paleta de vermelhos para mensagens de erro (`text-error`).
 - `primary-50` a `primary-900`: paleta roxa principal utilizada em botões e links.
 
+### Paleta de cores
+
+| Token         | Valor    |
+|---------------|---------|
+| `primary-600` | `#7c3aed` |
+| `error-600`   | `#dc2626` |
+| `neutral-100` | `#dcdcdc` |
+| `neutral-900` | `#1e2019` |
+
 ## Espaçamentos
 
 - `--space-xs`: `0.25rem` – espaçamentos muito pequenos.
@@ -43,6 +52,12 @@ Exemplo de uso em um componente:
 <div style={{ color: 'var(--text-secondary)', marginTop: 'var(--space-md)' }}>
   Conteúdo
 </div>
+```
+
+Uso com classes Tailwind:
+
+```html
+<p class="text-neutral-900 bg-primary-50 p-2">Texto exemplo</p>
 ```
 
 ### Padrão de Botões e Inputs
