@@ -112,11 +112,8 @@ npm run generate-posts
 
 ## Testes
 
-Para rodar a suíte de testes utilize:
-
-```bash
-npm run test
-```
+Execute `npm run lint` e `npm run test` para validar o projeto.
+Consulte [docs/testes.md](docs/testes.md) para instruções completas.
 
 ## Build
 
