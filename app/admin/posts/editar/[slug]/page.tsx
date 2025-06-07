@@ -1,20 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
-import { useState } from "react";
 import PostContentEditor from "../../components/PostContentEditor";
 
-export default function EditarPostPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  // Se no futuro params for uma Promise, descomente a linha abaixo:
-  // const { slug } = React.use(params);
-
-  const { slug } = params; // Para compatibilidade atual
+export default function EditarPostPage() {
+  const { slug } = useParams<{ slug: string }>();
 
   const [conteudo, setConteudo] = useState("");
 
@@ -58,3 +50,4 @@ export default function EditarPostPage({
     </>
   );
 }
+
