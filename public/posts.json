@@ -1,0 +1,18 @@
+[
+  {
+    "title": "Segundo Post",
+    "slug": "segundo-post",
+    "summary": "",
+    "date": "2024-02-15",
+    "thumbnail": null,
+    "category": "Atualizações"
+  },
+  {
+    "title": "Primeiro Post",
+    "slug": "primeiro-post",
+    "summary": "",
+    "date": "2024-01-01",
+    "thumbnail": null,
+    "category": "Geral"
+  }
+]
