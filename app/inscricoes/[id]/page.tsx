@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { logInfo } from "@/lib/logger";
 
 const PRODUTOS = [
   { nome: "Kit Camisa + Pulseira", valor: 50.0 },
@@ -119,8 +120,8 @@ export default function InscricaoPage() {
           }),
         });
       } catch (erro) {
-        console.warn(
-          "⚠️ Falha ao notificar o n8n (sem impacto no usuário):",
+        logInfo(
+          "⚠️ Falha ao notificar o n8n (sem impacto no usuário)",
           erro
         );
       }

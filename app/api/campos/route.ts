@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserFromHeaders } from "@/lib/getUserFromHeaders";
+import { logInfo } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   const auth = await getUserFromHeaders(req);
@@ -49,7 +50,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const { nome } = await req.json();
-    console.log("📥 Nome recebido:", nome);
+    logInfo("📥 Requisição para criar campo recebida");
 
     if (!nome || nome.length < 2) {
       return NextResponse.json({ error: "Nome inválido" }, { status: 400 });
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
 
     const campo = await pbSafe.collection("campos").create({ nome });
 
-    console.log("✅ Campo criado:", campo);
+    logInfo("✅ Campo criado com sucesso");
 
     return NextResponse.json(campo, { status: 201 });
   } catch (err: unknown) {

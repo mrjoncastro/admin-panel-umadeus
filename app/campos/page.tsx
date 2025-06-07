@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { logInfo } from "@/lib/logger";
 
 interface Campo {
   id: string;
@@ -22,9 +23,9 @@ export default function GerenciarCamposPage() {
 
   useEffect(() => {
     async function carregarCampos() {
-      console.log("🔐 Iniciando carregamento de campos...");
+      logInfo("🔐 Iniciando carregamento de campos...");
       if (!token || !user) {
-        console.warn("⚠️ Usuário ou token ausente.");
+        logInfo("⚠️ Usuário ou token ausente.");
         setMensagem("Usuário não autenticado.");
         return;
       }
@@ -47,7 +48,7 @@ export default function GerenciarCamposPage() {
         }
 
         if (!Array.isArray(data)) {
-          console.warn("⚠️ Resposta inesperada:", data);
+          logInfo("⚠️ Resposta inesperada", data);
           setMensagem("Dados inválidos recebidos.");
           return;
         }

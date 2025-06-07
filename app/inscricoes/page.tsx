@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import pb from "@/lib/pocketbase";
+import { logInfo } from "@/lib/logger";
 import { Copy } from "lucide-react";
 import { saveAs } from "file-saver";
 import ModalEditarInscricao from "./componentes/ModalEdit";
@@ -106,7 +107,7 @@ export default function ListaInscricoesPage() {
           );
           // Se ainda for usar camposDisponiveis no futuro:
           // setCamposDisponiveis(nomes);
-          console.log("Campos disponíveis:", nomes);
+          logInfo("Campos disponíveis", nomes);
         })
         .catch(() => {});
     }

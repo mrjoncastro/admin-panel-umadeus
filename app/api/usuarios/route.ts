@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserFromHeaders } from "@/lib/getUserFromHeaders";
+import { logInfo } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   const result = await getUserFromHeaders(req);
@@ -20,7 +21,7 @@ export async function GET(req: NextRequest) {
       expand: "campo",
     });
 
-    console.log(`📦 ${usuarios.length} usuários encontrados.`);
+    logInfo(`📦 ${usuarios.length} usuários encontrados.`);
     return NextResponse.json(usuarios);
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -73,7 +74,7 @@ export async function POST(req: NextRequest) {
       campo,
     });
 
-    console.log("✅ Usuário criado:", novoUsuario);
+    logInfo("✅ Usuário criado com sucesso");
     return NextResponse.json(novoUsuario, { status: 201 });
   } catch (err: unknown) {
     if (err instanceof Error) {

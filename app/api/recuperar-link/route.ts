@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import PocketBase from "pocketbase";
+import { logInfo } from "@/lib/logger";
 
 const pb = new PocketBase(
   process.env.PB_URL || "https://umadeus-production.up.railway.app"
@@ -10,10 +11,10 @@ export async function POST(req: NextRequest) {
   try {
     const { cpf, telefone } = await req.json();
 
-    console.log("📨 Dados recebidos:", { cpf, telefone });
+    logInfo("📨 Requisição para recuperar link recebida");
 
     if (!cpf && !telefone) {
-      console.warn("⚠️ CPF ou telefone não fornecido.");
+      logInfo("⚠️ CPF ou telefone não fornecido");
       return NextResponse.json(
         { error: "Informe o CPF ou telefone." },
         { status: 400 }
@@ -21,26 +22,26 @@ export async function POST(req: NextRequest) {
     }
 
     if (!pb.authStore.isValid) {
-      console.log("🔐 Autenticando como admin...");
+      logInfo("🔐 Autenticando como admin...");
       await pb.admins.authWithPassword(
         process.env.PB_ADMIN_EMAIL!,
         process.env.PB_ADMIN_PASSWORD!
       );
-      console.log("✅ Autenticado com sucesso.");
+      logInfo("✅ Autenticado com sucesso.");
     }
 
-    const filtro = cpf ? `cpf = "${cpf}"` : `telefone = "${telefone}"`;
-    console.log("🔎 Filtro usado:", filtro);
+    const filtro = cpf ? `cpf = [REDACTED]` : `telefone = [REDACTED]`;
+    logInfo("🔎 Filtro utilizado para busca de inscrição");
 
     const inscricoes = await pb.collection("inscricoes").getFullList({
       filter: filtro,
       expand: "pedido",
     });
 
-    console.log("📋 Inscrições encontradas:", inscricoes.length);
+    logInfo(`📋 ${inscricoes.length} inscrição(ões) encontrada(s)`);
 
     if (!inscricoes.length) {
-      console.warn("❌ Nenhuma inscrição encontrada.");
+      logInfo("❌ Nenhuma inscrição encontrada");
       return NextResponse.json(
         { error: "Inscrição não encontrada. Por favor faça a inscrição." },
         { status: 404 }
@@ -50,29 +51,29 @@ export async function POST(req: NextRequest) {
     const inscricao = inscricoes[0];
     const pedido = inscricao.expand?.pedido;
 
-    console.log("🧾 Pedido expandido:", pedido);
+    logInfo("🧾 Pedido expandido com sucesso");
 
     if (inscricao.status === "cancelado") {
-      console.log("❌ Inscrição recusada pela liderança.");
+      logInfo("❌ Inscrição recusada pela liderança");
       return NextResponse.json({ status: "recusado" });
     }
 
     if (!inscricao.confirmado_por_lider || !pedido) {
-      console.log("⏳ Inscrição aguardando confirmação da liderança.");
+      logInfo("⏳ Inscrição aguardando confirmação da liderança");
       return NextResponse.json({ status: "aguardando_confirmacao" });
     }
 
     if (pedido.status === "pago") {
-      console.log("✅ Pagamento já confirmado.");
+      logInfo("✅ Pagamento já confirmado");
       return NextResponse.json({ status: "pago" });
     }
 
     if (pedido.status === "cancelado") {
-      console.log("❌ Pedido cancelado.");
+      logInfo("❌ Pedido cancelado");
       return NextResponse.json({ status: "cancelado" });
     }
 
-    console.log("⏳ Pagamento pendente. Link:", pedido.link_pagamento);
+    logInfo("⏳ Pagamento pendente");
 
     return NextResponse.json({
       status: "pendente",
