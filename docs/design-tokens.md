@@ -44,3 +44,16 @@ Exemplo de uso em um componente:
   Conteúdo
 </div>
 ```
+
+### Padrão de Botões e Inputs
+
+Todos os componentes interativos utilizam classes globais para manter a
+uniformidade. As principais são:
+
+```html
+<button class="btn btn-primary">Ação</button>
+<input class="input-base" />
+```
+
+Essas classes aplicam cores `primary-600` e foco `error-600` definidos em
+`tailwind.config.js`.

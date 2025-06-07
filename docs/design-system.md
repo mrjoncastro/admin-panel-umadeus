@@ -37,6 +37,17 @@ Os principais componentes têm exemplos interativos no Storybook. Alguns dos mai
 
 Execute `npm run storybook` para iniciar a interface e explorar os exemplos.
 
+## Botões e Inputs
+
+Utilizamos classes utilitárias para manter a consistência visual de elementos
+interativos. Os estilos base encontram-se em `app/globals.css` e devem ser
+reaproveitados nos componentes.
+
+```html
+<button class="btn btn-primary">Salvar</button>
+<input class="input-base" />
+```
+
 ## Adicionando Novos Tokens
 
 1. Inclua a variável desejada em `app/globals.css` ou expanda a paleta de cores em `tailwind.config.js`.

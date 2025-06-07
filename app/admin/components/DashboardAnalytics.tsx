@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
 import type { Inscricao, Pedido } from "@/types";
+import colors from "@/utils/twColors";
 
 const LineChart = dynamic(() => import("react-chartjs-2").then((m) => m.Line), {
   ssr: false,
@@ -58,7 +59,7 @@ export default function DashboardAnalytics({ inscricoes, pedidos }: DashboardAna
         label: "Inscrições",
         data: inscricoesData.data,
         fill: true,
-        borderColor: "#7c3aed",
+        borderColor: colors.primary600,
         backgroundColor: "rgba(124,58,237,0.2)",
       },
     ],
@@ -71,7 +72,7 @@ export default function DashboardAnalytics({ inscricoes, pedidos }: DashboardAna
         label: "Pedidos",
         data: pedidosData.data,
         fill: true,
-        borderColor: "#0ea5e9",
+        borderColor: colors.blue500,
         backgroundColor: "rgba(14,165,233,0.2)",
       },
     ],
@@ -104,7 +105,7 @@ export default function DashboardAnalytics({ inscricoes, pedidos }: DashboardAna
       {
         label: "Arrecadação (R$)",
         data: arrecadacaoLabels.map((l) => arrecadacaoCampo[l]),
-        backgroundColor: "#8b5cf6",
+        backgroundColor: colors.primary600,
       },
     ],
   };

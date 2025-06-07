@@ -65,6 +65,8 @@ documentação.
 Leia as diretrizes completas em [docs/design-system.md](docs/design-system.md)
 e consulte a tabela de tokens em
 [docs/design-tokens.md](docs/design-tokens.md).
+Esses documentos também trazem exemplos das classes globais `btn` e
+`input-base` utilizadas em formulários.
 
 ## Variáveis de Ambiente
 
