@@ -52,7 +52,7 @@ export default function BlogHeroCarousel() {
       {/* Desktop */}
       <div className="hidden md:flex relative z-10 items-end justify-between max-w-7xl mx-auto w-full h-full px-10 pb-24">
         <div className="w-1/2" />
-        <div className="w-full max-w-md bg-white text-[#333] p-8 rounded-2xl shadow-2xl">
+        <div className="w-full max-w-md bg-white text-neutral-800 p-8 rounded-2xl shadow-2xl">
           {post.category && (
             <span className="text-xs uppercase text-gray-500 font-semibold tracking-wide">
               {post.category}
@@ -73,7 +73,7 @@ export default function BlogHeroCarousel() {
 
       {/* Mobile */}
       <div className="md:hidden relative z-10 h-full flex flex-col justify-end items-center px-4 pb-6">
-        <div className="bg-white text-[#333] rounded-2xl shadow-xl p-5 w-full max-w-sm">
+        <div className="bg-white text-neutral-800 rounded-2xl shadow-xl p-5 w-full max-w-sm">
           {post.category && (
             <span className="text-xs uppercase text-gray-500 font-semibold tracking-wide">
               {post.category}

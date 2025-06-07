@@ -67,7 +67,7 @@ export default function DashboardResumo({
       {
         label: "Inscrições",
         data: inscricoes.map(() => 1),
-        backgroundColor: "#DCDCDD",
+        backgroundColor: "#7c3aed",
       },
     ],
   };
@@ -85,7 +85,7 @@ export default function DashboardResumo({
         {
           label: `Pedidos (${filtroStatus})`,
           data: Object.values(contagem),
-          backgroundColor: ["#DCDCDD", "#c94a4a", "#0ea5e9"],
+          backgroundColor: ["#7c3aed", "#dc2626", "#3b82f6"],
         },
       ],
     };
