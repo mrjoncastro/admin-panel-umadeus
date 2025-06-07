@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo } from "react";
 import createPocketBase from "@/lib/pocketbase";
+import { logInfo } from "@/lib/logger";
 import { Copy } from "lucide-react";
 import { saveAs } from "file-saver";
 import ModalEditarInscricao from "./componentes/ModalEdit";
@@ -37,6 +38,12 @@ type Inscricao = {
   pedido_id?: string | null;
 };
 
+interface UsuarioAuthModel {
+  id: string;
+  role: "coordenador" | "lider" | string;
+  campo?: string;
+}
+
 export default function ListaInscricoesPage() {
   const pb = useMemo(() => createPocketBase(), []);
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
@@ -55,8 +62,8 @@ export default function ListaInscricoesPage() {
       ? "Buscar por nome, telefone, CPF ou campo"
       : "Buscar por nome, telefone ou CPF";
 
-  const carregarInscricoes = useCallback(() => {
-    const user = pb.authStore.model;
+  useEffect(() => {
+    const user = pb.authStore.model as unknown as UsuarioAuthModel;
 
     if (!user?.id || !user?.role) {
       showError("Sessão expirada ou inválida.");
@@ -71,7 +78,8 @@ export default function ListaInscricoesPage() {
 
     const filtro = user.role === "coordenador" ? "" : `campo='${user.campo}'`;
 
-    pb.collection("inscricoes")
+    pb
+      .collection("inscricoes")
       .getFullList({ sort: "-created", filter: filtro, expand: "campo,pedido" })
       .then((res) => {
         const lista = res.map((r) => ({
@@ -98,7 +106,8 @@ export default function ListaInscricoesPage() {
       .finally(() => setLoading(false));
 
     if (user.role === "coordenador") {
-      pb.collection("campos")
+      pb
+        .collection("campos")
         .getFullList({ sort: "nome" })
         .then(() => {
           // noop
@@ -106,13 +115,6 @@ export default function ListaInscricoesPage() {
         .catch(() => {});
     }
   }, [pb, showError]);
-
-  useEffect(() => {
-    carregarInscricoes();
-
-    const unsubscribe = pb.authStore.onChange(carregarInscricoes);
-    return () => unsubscribe();
-  }, [pb, carregarInscricoes]);
 
   const copiarLink = async () => {
     try {
@@ -152,7 +154,6 @@ export default function ListaInscricoesPage() {
       const valorPedido =
         inscricao.produto === "Somente Pulseira" ? PRECO_PULSEIRA : PRECO_KIT;
 
-      // 🔹 3. Criar pedido no PocketBase
       const pedido = await pb.collection("pedidos").create({
         id_inscricao: id,
         valor: valorPedido,
@@ -182,12 +183,14 @@ export default function ListaInscricoesPage() {
         throw new Error("Erro ao gerar link de pagamento.");
       }
 
-      // 🔹 5. Atualizar inscrição com o ID do pedido e status
-      await pb.collection("inscricoes").update(id, {
-        pedido: pedido.id,
-        status: "aguardando_pagamento",
-        confirmado_por_lider: true,
-      });
+      // 4. Atualizar inscrição com o ID do pedido
+      await pb
+        .collection("inscricoes")
+        .update(id, {
+          pedido: pedido.id, // ✅ atualiza campo pedido
+          status: "aguardando_pagamento",
+          confirmado_por_lider: true,
+        });
 
       // Atualizar estado local das inscrições
       setInscricoes((prev) =>
