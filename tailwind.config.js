@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+// Helper to read HSL values from CSS variables so Tailwind classes
+// like bg-primary-600 respect the current theme color.
 const withOpacityValue = (variable) => {
   return ({ opacityValue }) => {
     if (opacityValue !== undefined) {

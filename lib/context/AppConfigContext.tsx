@@ -1,6 +1,7 @@
 "use client";
+import * as React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
-import { generateHslShades } from "@/utils/colorShades";
+import { generatePrimaryShades } from "@/utils/primaryShades";
 
 export type AppConfig = {
   font: string;
@@ -39,7 +40,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.style.setProperty("--font-body", config.font);
     document.documentElement.style.setProperty("--font-heading", config.font);
     document.documentElement.style.setProperty("--accent", config.primaryColor);
-    const shades = generateHslShades(config.primaryColor);
+    const shades = generatePrimaryShades(config.primaryColor);
     Object.entries(shades).forEach(([key, value]) => {
       document.documentElement.style.setProperty(`--primary-${key}`, value);
     });
