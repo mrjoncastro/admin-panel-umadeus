@@ -62,28 +62,28 @@ export async function POST(req: NextRequest) {
 
     // 🔹 Dados do cliente para o Asaas
     const clientePayload = {
-      name: inscricao.nome,
-      email: inscricao.email,
-      cpfCnpj: inscricao.cpf.replace(/\D/g, ""),
-      phone: inscricao.telefone || "71900000000",
-      address: inscricao.endereco || "Endereço padrão",
-      addressNumber: inscricao.numero || "SN",
+      name: "JONATAS THIAGO SANTANA CASTRO",
+      email: "jonatasthiago@gmail.com",
+      phone: "71996259886",
+      address: "Tv Arnaldo Lopes da SILVA",
+      addressNumber: "02",
       province: "BA",
-      postalCode: inscricao.cep || "41770055",
+      postalCode: "41770055",
+      cpfCnpj: "83339837074",
     };
 
-    logger.info("📤 Enviando cliente:", clientePayload);
-
-    // 🔹 Criar cliente no Asaas
     const clienteResponse = await fetch(`${baseUrl}/customers`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        access_token: apiKey,
-        "User-Agent": "qg3",
+        accept: "application/json",
+        access_token: "aact_hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjY4NDBkZGQwLWRiYmUtNDVkYi1iMTVjLTdjMjFhZDg4Zjg3YTo6JGFhY2hfNjhlZTY1NzktOGVjMS00OTgzLWIyYTUtZTJhMjNiYjY4NDYy",
+        "User-Agent": "qg3"
       },
       body: JSON.stringify(clientePayload),
     });
+
+    console.log("Payload enviado ao Asaas:", JSON.stringify(clientePayload));
 
     const raw = await clienteResponse.text();
 

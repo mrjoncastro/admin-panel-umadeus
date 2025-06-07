@@ -107,8 +107,6 @@ export default function ListaInscricoesPage() {
               : "Indefinido"
           );
           // Se ainda for usar camposDisponiveis no futuro:
-          // setCamposDisponiveis(nomes);
-          console.log("Campos disponíveis:", nomes);
         })
         .catch(() => {});
     }
