@@ -10,11 +10,6 @@ import Footer from "@/app/components/Footer";
 import Image from "next/image";
 import { Clock } from "lucide-react";
 import { isExternalUrl } from "@/utils/isExternalUrl";
-import Header from "@/app/components/Header";
-import Footer from "@/app/components/Footer";
-import Image from "next/image";
-import { Clock } from "lucide-react";
-import { isExternalUrl } from "@/utils/isExternalUrl";
 
 export default function EditarPostPage() {
   const { slug } = useParams<{ slug: string }>();
