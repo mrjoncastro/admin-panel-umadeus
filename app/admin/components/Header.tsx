@@ -35,6 +35,8 @@ const getNavLinks = (role?: string) => {
     { href: "/admin/pedidos", label: "Pedidos" },
     { href: "/admin/usuarios", label: "Usuários" },
     { href: "/admin/campos", label: "Campos" },
+    { href: "/admin/posts", label: "Posts" },
+
   ];
 };
 

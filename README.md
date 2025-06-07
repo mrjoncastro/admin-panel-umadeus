@@ -97,7 +97,7 @@ Para criar ou editar posts pelo painel admin:
 1. Acesse `/admin` e realize o login.
 2. No menu lateral, clique em **Blog** e escolha **Novo Post** ou selecione um
    existente para editar.
-3. Preencha título, resumo, categoria, thumbnail e o conteúdo em Markdown.
+3. Preencha título, resumo, categoria, autor, data de publicação, caso seja uma edição informe: post editado por {autor}, em {data de edição}, thumbnail e o conteúdo em Markdown.
 4. Salve para publicar ou atualizar o post.
 
 Após salvar as alterações, execute o comando abaixo para gerar
