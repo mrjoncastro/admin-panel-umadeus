@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/nextjs';
 import { within, expect, fn } from 'storybook/test';
 import ModalEditarPedido from '../app/admin/pedidos/componentes/ModalEditarPedido';
 import { ThemeProvider } from '../lib/context/ThemeContext';
+import { Pedido } from '@/types';
+
 
 const meta = {
   title: 'Admin/ModalEditarPedido',
@@ -21,6 +23,10 @@ const meta = {
       tamanho: 'M',
       cor: 'Azul',
       status: 'pendente',
+      id_pagamento: 'pgto-1',
+      id_inscricao: 'insc-1',
+      valor: '100',
+      // Adicione outros campos obrigatórios do tipo Pedido, se necessário
     },
     onClose: fn(),
     onSave: fn(),
