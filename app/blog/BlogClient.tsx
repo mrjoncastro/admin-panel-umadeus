@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import BlogSidebar from "./components/BlogSidebar";
 import BlogHeroCarousel from "./components/BlogHeroCarousel";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import Link from "next/link";
 import Image from "next/image";
 import { isExternalUrl } from "@/utils/isExternalUrl";
@@ -62,7 +60,6 @@ export default function BlogClient() {
 
   return (
     <>
-      <Header />
       <BlogHeroCarousel />
       <main className="max-w-7xl mx-auto px-6 py-20 font-sans">
         <section className="mb-16 text-center">
@@ -186,7 +183,6 @@ export default function BlogClient() {
           <BlogSidebar />
         </div>
       </main>
-      <Footer />
     </>
   );
 }
