@@ -100,9 +100,9 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
           <X className="w-5 h-5" />
         </button>
 
-        <h2 className="text-xl font-bold mb-4 text-purple-700 text-center">
+        <h3 className="text-xl font-bold mb-4 text-purple-700 text-center">
           📦 Detalhes do Pedido
-        </h2>
+        </h3>
 
         {loading || !pedido ? (
           <p className="text-sm text-gray-500 text-center">Carregando...</p>

@@ -271,7 +271,7 @@ export default function ListaInscricoesPage() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="heading">Inscrições Recebidas</h1>
+      <h2 className="heading">Inscrições Recebidas</h2>
 
       {/* Link público */}
       {role === "lider" && (

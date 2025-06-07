@@ -46,9 +46,9 @@ export default function PerfilPage() {
 
   return (
     <div className="max-w-2xl mx-auto mt-10 p-6 bg-white dark:bg-zinc-900 rounded-xl shadow space-y-6">
-      <h1 className="text-2xl font-bold text-zinc-800 dark:text-white">
+      <h2 className="text-2xl font-bold text-zinc-800 dark:text-white">
         Seu Perfil
-      </h1>
+      </h2>
 
       <div className="space-y-2 text-zinc-700 dark:text-zinc-200">
         <p>

@@ -53,7 +53,7 @@ export default function ClientesPage() {
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="heading">Clientes</h1>
+      <h2 className="heading">Clientes</h2>
       <ListaClientes clientes={clientes} onEdit={setClienteEmEdicao} />
       {clienteEmEdicao && (
         <ModalEditarInscricao

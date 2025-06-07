@@ -45,7 +45,7 @@ export default function AdminPostsPage() {
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Posts</h1>
+        <h2 className="text-2xl font-bold">Posts</h2>
         <Link
           href="/admin/posts/novo"
           className="btn btn-primary bg-red-600 hover:bg-red-700"

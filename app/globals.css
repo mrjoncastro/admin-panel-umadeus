@@ -82,6 +82,50 @@ body {
 }
 
 /* ==========================
+   ✨ Heading Styles (h1, h2, h3) e Parágrafo
+   ========================== */
+h1 {
+  font-family: var(--font-heading), Arial, Helvetica, sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-md);
+}
+
+h2 {
+  font-family: var(--font-heading), Arial, Helvetica, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.25;
+  letter-spacing: -0.005em;
+  margin-bottom: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+h3 {
+  font-family: var(--font-heading), Arial, Helvetica, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.35;
+  margin-bottom: var(--space-xs);
+  margin-top: var(--space-sm);
+}
+
+p {
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.7;
+  margin-bottom: var(--space-xs);
+}
+
+
+/* ==========================
    📦 Utilitários reutilizáveis
    ========================== */
 .btn {

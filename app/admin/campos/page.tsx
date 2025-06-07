@@ -13,6 +13,7 @@ export default function GerenciarCamposPage() {
   const [editandoId, setEditandoId] = useState<string | null>(null);
   const [mensagem, setMensagem] = useState("");
   const [loading, setLoading] = useState(false);
+  const [camposCarregados, setCamposCarregados] = useState(false);
 
   const token =
     typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
@@ -21,14 +22,9 @@ export default function GerenciarCamposPage() {
   const user = userRaw ? JSON.parse(userRaw) : null;
 
   useEffect(() => {
-    async function carregarCampos() {
-      console.log("🔐 Iniciando carregamento de campos...");
-      if (!token || !user) {
-        console.warn("⚠️ Usuário ou token ausente.");
-        setMensagem("Usuário não autenticado.");
-        return;
-      }
+    if (!token || !user || camposCarregados) return;
 
+    const carregarCampos = async () => {
       try {
         const res = await fetch("/admin/api/campos", {
           method: "GET",
@@ -41,28 +37,25 @@ export default function GerenciarCamposPage() {
         const data = await res.json();
 
         if (!res.ok) {
-          console.error("❌ Erro ao buscar campos:", data);
           setMensagem("Erro: " + data.error);
           return;
         }
 
         if (!Array.isArray(data)) {
-          console.warn("⚠️ Resposta inesperada:", data);
           setMensagem("Dados inválidos recebidos.");
           return;
         }
 
         setCampos(data);
-        setMensagem(`✅ ${data.length} campos carregados.`);
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          console.error("Erro:", err.message);
-        }
+        setCamposCarregados(true); // Só carrega uma vez!
+      } catch (err) {
+        setMensagem("Erro ao carregar campos.");
+        console.error(err);
       }
-    }
+    };
 
     carregarCampos();
-  }, [token, user]);
+  }, [token, user, camposCarregados]);
 
   async function handleCriarOuAtualizar(e: React.FormEvent) {
     e.preventDefault();
@@ -71,11 +64,14 @@ export default function GerenciarCamposPage() {
 
     if (!token || !user) {
       setMensagem("Usuário não autenticado.");
+      setLoading(false);
       return;
     }
 
     const metodo = editandoId ? "PUT" : "POST";
-    const url = editandoId ? `/admin/api/campos/${editandoId}` : "/admin/api/campos";
+    const url = editandoId
+      ? `/admin/api/campos/${editandoId}`
+      : "/admin/api/campos";
 
     try {
       const res = await fetch(url, {
@@ -163,77 +159,143 @@ export default function GerenciarCamposPage() {
     setNome(campo.nome);
   }
 
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
+
+  // Handler para novo campo
+  function handleNovoCampo() {
+    setEditandoId(null);
+    setNome("");
+    setMostrarFormulario(true);
+  }
+
+  // Handler para editar
+  function handleEditarCampo(campo: Campo) {
+    setEditandoId(campo.id);
+    setNome(campo.nome);
+    setMostrarFormulario(true);
+  }
+
+  // Handler de cancelamento
+  function handleCancelar() {
+    setMostrarFormulario(false);
+    setEditandoId(null);
+    setNome("");
+  }
+
+  async function handleExcluirCampo(id: string) {
+    try {
+      setLoading(true);
+      const res = await fetch(`/admin/api/campos/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-PB-User": JSON.stringify(user),
+        },
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setMensagem("Erro: " + (data.error || "Não foi possível excluir."));
+      } else {
+        setMensagem("Campo excluído com sucesso.");
+        setCampos((prev) => prev.filter((c) => c.id !== id));
+      }
+    } catch (err) {
+      setMensagem("Erro ao excluir campo.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <main className="max-w-xl mx-auto px-4 py-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <h1 className="heading">Gerenciar Campos de Atuação</h1>
-        <button
-          onClick={() => {
-            setEditandoId(null);
-            setNome("");
-          }}
-          className="btn btn-primary"
-        >
+    <>
+    <main className="max-w-6xl mx-auto px-4 py-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <h2 className="heading">Campos Cadastrados</h2>
+
+        <button onClick={handleNovoCampo} className="btn btn-primary">
           + Novo Campo
         </button>
       </div>
 
-      {mensagem && (
-        <div className="mb-4 text-sm text-center text-gray-800">{mensagem}</div>
+      {mensagem && <div className="mb-4 text-sm text-center">{mensagem}</div>}
+
+      {mostrarFormulario && (
+        <form
+          onSubmit={handleCriarOuAtualizar}
+          className="w-full max-w-md mx-auto card mb-8"
+        >
+          <input
+            type="text"
+            placeholder="Nome do Campo"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            className="input-base"
+            required
+            autoFocus
+          />
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              className="btn btn-primary flex-1"
+              disabled={loading}
+            >
+              {loading ? "Salvando..." : editandoId ? "Atualizar" : "Cadastrar"}
+            </button>
+            <button
+              type="button"
+              className="btn flex-1"
+              onClick={handleCancelar}
+              disabled={loading}
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
       )}
 
-      {/* Formulário de criação/edição */}
-      <form onSubmit={handleCriarOuAtualizar} className="space-y-4 mb-6">
-        <input
-          type="text"
-          placeholder="Nome do Campo"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-          className="w-full border p-2 rounded"
-          required
-        />
-
-        <button
-          type="submit"
-          className="btn btn-danger w-full"
-          disabled={loading}
-        >
-          {loading ? "Salvando..." : editandoId ? "Atualizar" : "Cadastrar"}
-        </button>
-      </form>
-
-      {/* Lista de campos */}
-      <div className="overflow-x-auto rounded-lg border bg-white border-gray-300 dark:bg-neutral-950 dark:border-gray-700 shadow-sm">
+      <div className="w-full max-w-2xl mx-auto">
         <table className="table-base">
           <thead>
             <tr>
-              <th>Nome</th>
-              <th>Ações</th>
+              <th className="w-2/3">Nome do Campo</th>
+              <th className="text-right">Ações</th>
             </tr>
           </thead>
           <tbody>
             {campos.map((campo) => (
               <tr key={campo.id}>
                 <td>{campo.nome}</td>
-                <td className="space-x-2">
-                  <button
-                    onClick={() => iniciarEdicao(campo)}
-                    className="text-sm text-blue-600 hover:underline"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => handleExcluir(campo.id)}
-                    className="text-sm text-red-600 hover:underline"
-                  >
-                    Excluir
-                  </button>
+                <td>
+                  <div className="flex justify-end gap-2">
+                    <button
+                      className="btn"
+                      onClick={() => handleEditarCampo(campo)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="btn"
+                      style={{ color: "var(--accent)" }}
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            "Tem certeza que deseja excluir este campo?"
+                          )
+                        ) {
+                          handleExcluirCampo(campo.id);
+                        }
+                      }}
+                    >
+                      Excluir
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-    </main>
+      </main>
+    </>
   );
 }

@@ -55,7 +55,7 @@ export default function UsuariosPage() {
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <h1 className="heading">Usuários Cadastrados</h1>
+        <h2 className="heading">Usuários Cadastrados</h2>
         <Link href="/admin/usuarios/novo" className="btn btn-primary">
           + Adicionar Novo Usuário
         </Link>
