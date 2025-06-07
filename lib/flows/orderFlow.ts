@@ -63,9 +63,5 @@ export function criarPedido(inscricao: Inscricao): Pedido {
 }
 
 function dadosEmail(inscricao: Inscricao): string {
-  // tipo Inscricao não possui email, mas fluxo de API usa campo "email"
-  // aqui simulamos que email vem via expand
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const anyInscricao: any = inscricao
-  return anyInscricao.email || 'sememail@teste.com'
+  return inscricao.email || 'sememail@teste.com'
 }
