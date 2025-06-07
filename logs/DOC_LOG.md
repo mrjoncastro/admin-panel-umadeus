@@ -18,3 +18,4 @@
 ## [2025-06-07] Adicionada seção "Blog e CMS" ao README e script generate-posts no package.json.
 ## [2025-06-07] Atualizadas cores para tokens e padronizado exemplos de botoes
 ## [2025-06-07] Unificação de estilos globais e documentação do design system. Atualizados tokens de cores, utilitários e exemplos.
+## [2025-06-07] Incluídas classes `.card` e `.table-base` no design system.

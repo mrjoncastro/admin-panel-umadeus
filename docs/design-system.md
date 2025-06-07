@@ -59,6 +59,19 @@ reaproveitados nos componentes.
 <input class="input-base" />
 ```
 
+## Cartões e Tabelas
+
+Utilize as classes `.card` e `.table-base` para aplicar bordas,
+espaçamentos e cores padronizados em cartões e listas.
+
+```html
+<div class="card">Conteúdo do cartão</div>
+
+<table class="table-base">
+  <!-- linhas -->
+</table>
+```
+
 ## Adicionando Novos Tokens
 
 1. Inclua a variável desejada em `app/globals.css` ou expanda a paleta de cores em `tailwind.config.js`.

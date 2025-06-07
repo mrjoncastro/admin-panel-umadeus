@@ -165,7 +165,18 @@ export default function GerenciarCamposPage() {
 
   return (
     <main className="max-w-xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-4">Gerenciar Campos de Atuação</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <h1 className="heading">Gerenciar Campos de Atuação</h1>
+        <button
+          onClick={() => {
+            setEditandoId(null);
+            setNome("");
+          }}
+          className="btn btn-primary"
+        >
+          + Novo Campo
+        </button>
+      </div>
 
       {mensagem && (
         <div className="mb-4 text-sm text-center text-gray-800">{mensagem}</div>
@@ -192,30 +203,37 @@ export default function GerenciarCamposPage() {
       </form>
 
       {/* Lista de campos */}
-      <ul className="space-y-2">
-        {campos.map((campo) => (
-          <li
-            key={campo.id}
-            className="flex justify-between items-center border p-2 rounded shadow-sm"
-          >
-            <span>{campo.nome}</span>
-            <div className="space-x-2">
-              <button
-                onClick={() => iniciarEdicao(campo)}
-                className="text-sm text-blue-600 hover:underline"
-              >
-                Editar
-              </button>
-              <button
-                onClick={() => handleExcluir(campo.id)}
-                className="text-sm text-red-600 hover:underline"
-              >
-                Excluir
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <div className="overflow-x-auto rounded-lg border bg-white border-gray-300 dark:bg-neutral-950 dark:border-gray-700 shadow-sm">
+        <table className="table-base">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {campos.map((campo) => (
+              <tr key={campo.id}>
+                <td>{campo.nome}</td>
+                <td className="space-x-2">
+                  <button
+                    onClick={() => iniciarEdicao(campo)}
+                    className="text-sm text-blue-600 hover:underline"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => handleExcluir(campo.id)}
+                    className="text-sm text-red-600 hover:underline"
+                  >
+                    Excluir
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </main>
   );
 }

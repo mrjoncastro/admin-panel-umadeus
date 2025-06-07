@@ -52,23 +52,31 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
-  body {
-    background: linear-gradient(270deg,
-        theme(colors.neutral.950),
-        theme(colors.neutral.900),
-        theme(colors.neutral.900),
-        theme(colors.neutral.950)) no-repeat 0 0 / 500% 500%;
+  html.dark body {
+    background: linear-gradient(
+      270deg,
+      theme(colors.neutral.950),
+      theme(colors.neutral.900),
+      theme(colors.neutral.900),
+      theme(colors.neutral.950)
+    );
+    background-size: 500% 500%;
+    background-repeat: no-repeat;
     animation: gradient-x 30s ease-in-out infinite;
   }
 }
 
 @media (prefers-color-scheme: light) {
   html.light body {
-    background: linear-gradient(270deg,
-        theme(colors.neutral.100),
-        theme(colors.neutral.200),
-        theme(colors.neutral.100),
-        theme(colors.neutral.200)) no-repeat 0 0 / 500% 500%;
+    background: linear-gradient(
+      270deg,
+      theme(colors.neutral.100),
+      theme(colors.neutral.200),
+      theme(colors.neutral.100),
+      theme(colors.neutral.200)
+    );
+    background-size: 500% 500%;
+    background-repeat: no-repeat;
     animation: gradient-x 30s ease-in-out infinite;
   }
 }
@@ -90,21 +98,20 @@ body {
 
 /* Card e Tabela base */
 .card {
-  @apply gap-[var(--space-sm)] p-[var(--space-md)] bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-50 rounded-lg shadow-sm;
+  @apply flex flex-col gap-[var(--space-sm)] p-[var(--space-md)] bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-sm;
 }
 
 .table-base {
-  @apply w-full text-left text-sm divide-y divide-neutral-200 dark:divide-neutral-950;
+  @apply w-full text-left text-sm divide-y divide-neutral-200 dark:divide-neutral-700;
 }
 
 .table-base thead {
-  @apply bg-neutral-50 dark:bg-neutral-950;
+  @apply bg-neutral-100 dark:bg-neutral-800;
 }
 
 .table-base th,
 .table-base td {
   @apply px-[var(--space-md)] py-[var(--space-sm)];
-  ;
 }
 
 .table-base tbody tr:nth-child(even) {
@@ -141,7 +148,12 @@ body {
 }
 
 .bg-animated {
-  background: linear-gradient(270deg, #1f3162, #351669, #7a0926);
+  background: linear-gradient(
+    270deg,
+    theme(colors.primary.900),
+    theme(colors.primary.800),
+    theme(colors.error.800)
+  );
   background-size: 400% 400%;
   animation: gradient-x 15s ease infinite;
 }
