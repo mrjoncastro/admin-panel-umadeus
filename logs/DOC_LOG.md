@@ -31,3 +31,4 @@
 ## [2025-06-07] Documentada correção do carregamento de inscrições ao subscrever mudanças de autenticação.
 ## [2025-06-07] Documentada correção do loop infinito em admin/perfil no ERR_LOG
 ## [2025-06-07] Documentada personalização via AppConfigProvider em docs/design-system.md.
+## [2025-06-07] Portal adicionado na arquitetura e boas práticas ajustadas.
