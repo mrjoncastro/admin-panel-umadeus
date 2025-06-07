@@ -5,11 +5,11 @@ import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "UMADEUS",
-  description: "Site oficial da UMADEUS – Produtos e Eventos",
+  title: "UMADEUS Blog",
+  description: "Artigos e notícias da UMADEUS",
 };
 
-export default function RootLayout({
+export default function BlogLayout({
   children,
 }: {
   children: React.ReactNode;
