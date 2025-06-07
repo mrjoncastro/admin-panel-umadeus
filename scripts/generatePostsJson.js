@@ -21,7 +21,9 @@ function getPosts() {
       slug: filename.replace(/\.mdx$/, ""),
       summary: data.summary || "",
       date: data.date || "",
-      thumbnail: data.thumbnail || null,
+      thumbnail: data.thumbnail
+        ? `/uploads/${path.basename(data.thumbnail)}`
+        : null,
       category: data.category || null,
     };
   });
