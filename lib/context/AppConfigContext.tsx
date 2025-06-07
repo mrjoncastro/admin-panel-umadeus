@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 export type AppConfig = {
   font: string;
@@ -32,10 +32,13 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     localStorage.setItem("app_config", JSON.stringify(config));
-    document.documentElement.style.setProperty("--font-body", config.font);
-    document.documentElement.style.setProperty("--font-heading", config.font);
-    document.documentElement.style.setProperty("--accent", config.primaryColor);
+    const doc = document.documentElement;
+    doc.style.setProperty("--font-body", config.font);
+    doc.style.setProperty("--font-heading", config.font);
+    doc.style.setProperty("--accent", config.primaryColor);
   }, [config]);
 
   const updateConfig = (cfg: Partial<AppConfig>) =>
