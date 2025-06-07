@@ -79,7 +79,7 @@ body {
 }
 
 .btn-primary {
-  @apply bg-red-700 text-white hover:bg-red-800;
+  @apply bg-[var(--accent)] text-white hover:bg-primary-700;
 }
 
 .btn-secondary {
@@ -87,7 +87,7 @@ body {
 }
 
 .btn-danger {
-  @apply bg-red-600 text-white hover:bg-red-700;
+  @apply bg-error-600 text-white hover:bg-error-700;
 }
 
 
@@ -96,7 +96,7 @@ body {
 }
 
 .input-base {
-  @apply w-full px-4 py-3 rounded-lg border border-neutral-300 bg-neutral-50 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-red-600 transition;
+  @apply w-full px-4 py-3 rounded-lg border border-neutral-300 bg-neutral-50 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-error-600 transition;
 }
 
 .table-base {
