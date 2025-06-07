@@ -35,3 +35,4 @@
 
 ## [2025-06-07] Documentada protecao de SSR no AppConfigProvider.
 ## [2025-06-07] Geradas variáveis CSS dinâmicas de cor e mapeamento via Tailwind. Documentação atualizada.
+## [2025-06-07] Adicionado docs/testes.md e atualizada secao de testes no README.
