@@ -79,6 +79,26 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 
 2. Utilize as variáveis `PB_ADMIN_EMAIL` e `PB_ADMIN_PASSWORD` para autenticar a aplicação.
 
+## Blog e CMS
+
+Os arquivos de conteúdo ficam dentro da pasta `posts/` na raiz do projeto. Cada
+arquivo `.mdx` representa um post do blog.
+
+Para criar ou editar posts pelo painel admin:
+
+1. Acesse `/admin` e realize o login.
+2. No menu lateral, clique em **Blog** e escolha **Novo Post** ou selecione um
+   existente para editar.
+3. Preencha título, resumo, categoria, thumbnail e o conteúdo em Markdown.
+4. Salve para publicar ou atualizar o post.
+
+Após salvar as alterações, execute o comando abaixo para gerar
+`/public/posts.json` com a lista de posts:
+
+```bash
+npm run generate-posts
+```
+
 
 ## Testes
 
