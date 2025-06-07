@@ -10,6 +10,7 @@ Este documento lista os tokens de design definidos em `app/globals.css` e como u
 - `--text-secondary`: cor de texto secundária.
 - `--accent`: cor de destaque/ação.
 - `--color-secondary`: cor complementar utilizada em fundos e elementos de navegação.
+- `neutral-50` a `neutral-950`: tons de cinza definidos no `tailwind.config.js` para uso em `@apply`.
 
 ## Espaçamentos
 
