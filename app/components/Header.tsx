@@ -2,8 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { useMemo, useState } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image"; // se quiser exibir logo
 import { useAuthContext } from "@/lib/context/AuthContext";
@@ -151,7 +149,7 @@ export default function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-platinum hover:text-yellow-400 transition py-2 text-base font-medium"
+                  className="text-platinum hover:text-primary-400 transition py-2 text-base font-medium"
                   onClick={() => setOpen(false)}
                 >
                   {link.label}
