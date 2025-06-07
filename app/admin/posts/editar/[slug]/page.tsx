@@ -11,6 +11,8 @@ export default function EditarPostPage() {
 
   const [conteudo, setConteudo] = useState("");
   const [preview, setPreview] = useState(false);
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
   const [date, setDate] = useState("");
   const [thumbnail, setThumbnail] = useState("");
   const [keywords, setKeywords] = useState("");
@@ -23,6 +25,27 @@ export default function EditarPostPage() {
       router.replace("/admin/login");
     }
   }, [isLoggedIn, user, router]);
+
+  useEffect(() => {
+    fetch(`/admin/api/posts/${slug}`)
+      .then((res) => res.json())
+      .then((data: {
+        title: string;
+        category: string;
+        content: string;
+        date: string;
+        thumbnail: string;
+        keywords: string;
+      }) => {
+        setTitle(data.title);
+        setCategory(data.category);
+        setConteudo(data.content);
+        setDate(data.date);
+        setThumbnail(data.thumbnail);
+        setKeywords(data.keywords);
+      })
+      .catch((err) => console.error("Erro ao carregar post:", err));
+  }, [slug]);
 
   if (preview) {
     return (
@@ -66,6 +89,8 @@ export default function EditarPostPage() {
             type="text"
             placeholder="Título"
             name="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             className="w-full border p-2 rounded"
           />
           <input
@@ -79,6 +104,8 @@ export default function EditarPostPage() {
             type="text"
             placeholder="Categoria"
             name="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
             className="w-full border p-2 rounded"
           />
           <input
