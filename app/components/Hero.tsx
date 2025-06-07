@@ -43,27 +43,27 @@ export default function BlogHeroCarousel() {
 
   return (
     <section
-      className="relative h-[200px] md:h-screen bg-cover bg-center text-white font-sans"
+      className="relative h-[260px] md:h-[420px] bg-cover bg-center text-white font-sans"
       style={{ backgroundImage: `url('${post.thumbnail}')` }}
     >
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/60" />
 
-      {/* Desktop (card flutuante) */}
-      <div className="hidden md:flex w-full h-full relative z-10 items-end justify-end px-10 pb-24">
-        <div className="w-[340px] max-w-xs bg-white/90 text-neutral-800 p-5 rounded-2xl shadow-xl border border-black_bean/15 space-y-2">
+      {/* Sidebar fixa no desktop, flutuante com espaçamento */}
+      <div className="hidden md:block absolute top-0 bottom-0 right-0 z-20 flex items-center">
+        <div className="h-[340px] w-[340px] bg-white/90 text-neutral-800 p-8 rounded-l-2xl shadow-xl border-l-4 border-black_bean/15 flex flex-col justify-center space-y-3 mr-12">
           {post.category && (
             <span className="text-xs uppercase text-gray-500 font-semibold tracking-wide">
               {post.category}
             </span>
           )}
-          <h2 className="text-xl font-bold text-gray-900 leading-tight">
+          <h2 className="text-2xl font-bold text-gray-900 leading-tight">
             {post.title}
           </h2>
-          <p className="text-xs text-gray-600 mb-2">{post.summary}</p>
+          <p className="text-sm text-gray-600 flex-1">{post.summary}</p>
           <Link
             href={`/blog/post/${post.slug}`}
-            className="text-black_bean font-semibold text-xs hover:underline inline-flex items-center gap-1"
+            className="text-black_bean font-semibold text-sm hover:underline inline-flex items-center gap-1"
           >
             Leia mais →
           </Link>
@@ -87,7 +87,6 @@ export default function BlogHeroCarousel() {
             Leia mais →
           </Link>
         </div>
-
         {/* Dots */}
         <div className="mt-4 flex gap-2 justify-center">
           {posts.map((_, index) => (

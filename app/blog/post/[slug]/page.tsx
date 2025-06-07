@@ -10,9 +10,7 @@ import Image from "next/image";
 import { Share2, Clock } from "lucide-react";
 import { isExternalUrl } from "@/utils/isExternalUrl";
 import type { Metadata } from "next";
-import CtaWhats from "@/app/components/CTAWhats";
-import CtaWhatsButton from "@/app/components/CtaWhatsButton";
-import { getRelatedPosts } from "@/lib/getRelatedPosts";
+import { getRelatedPosts } from "@/lib/posts/getRelatedPosts";
 import NextPostButton from "@/app/blog/components/NextPostButton";
 import PostSuggestions from "@/app/blog/components/PostSuggestions";
 import MiniPrecosPost from "../../components/MiniPrecosPost";
@@ -180,9 +178,7 @@ export default async function BlogPostPage({
       </main>
 
       <PostSuggestions posts={suggestions} />
-      <CtaWhats />
       <Footer />
-      <CtaWhatsButton />
 
       {/* JSON-LD Schema para SEO */}
       <Script

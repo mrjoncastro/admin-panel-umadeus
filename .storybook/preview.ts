@@ -1,4 +1,4 @@
-import '../app/globals.css';
+ts import '../app/globals.css';
 
 
 import type { Preview } from '@storybook/nextjs'
