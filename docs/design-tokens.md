@@ -10,6 +10,7 @@ Este documento lista os tokens de design definidos em `app/globals.css` e como u
 - `--text-secondary`: cor de texto secundária.
 - `--accent`: cor de destaque/ação.
 - `--color-secondary`: cor complementar utilizada em fundos e elementos de navegação.
+- `error`: paleta de vermelhos para mensagens de erro (`text-error`).
 
 ## Espaçamentos
 

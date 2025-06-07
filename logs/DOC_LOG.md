@@ -14,3 +14,4 @@
 ## [2025-06-06] Corrigidos stories do blog e configuracao do Storybook.
 ## [2025-06-06] Adicionadas stories para DashboardResumo e modais, criado esqueleto da área do cliente na loja e removidos console.log restantes.
 ## [2025-06-06] Criada página de clientes no admin para editar dados e acompanhar pedidos.
+## [2025-06-07] Documentada paleta 'error' no design-tokens.
