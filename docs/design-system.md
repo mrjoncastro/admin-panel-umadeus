@@ -45,3 +45,44 @@ Execute `npm run storybook` para iniciar a interface e explorar os exemplos.
 4. Rode `npm run lint` e `npm run storybook` para validar que tudo está funcionando.
 
 Manter os tokens padronizados garante consistência visual em todo o projeto.
+
+## Guia de Contribuição
+
+Siga estas etapas para colaborar com o design system.
+
+### Criar novos tokens
+
+1. Defina a variável em `app/globals.css` ou acrescente novas cores em
+   `tailwind.config.js`.
+2. Descreva o novo token em `docs/design-tokens.md` e atualize eventuais
+   trechos deste documento.
+3. Ajuste ou crie componentes que utilizem o token e registre a mudança em
+   `stories/`.
+
+### Exemplos de componentes
+
+Os componentes principais ficam em `stories/` e demonstram padrões de uso.
+Uma estrutura mínima de exemplo seria:
+
+```tsx
+// components/MeuBotao.tsx
+export function MeuBotao() {
+  return (
+    <button className="bg-[var(--accent)] p-[var(--space-sm)] rounded">
+      Ação
+    </button>
+  );
+}
+
+// stories/MeuBotao.stories.tsx
+import { MeuBotao } from '../components/MeuBotao';
+
+export default { title: 'Design System/MeuBotao', component: MeuBotao };
+
+export const Padrão = () => <MeuBotao />;
+```
+
+### Referências ao Storybook
+
+Execute `npm run storybook` para iniciar a interface e validar os componentes.
+Qualquer novo token ou componente deve ter uma história correspondente.

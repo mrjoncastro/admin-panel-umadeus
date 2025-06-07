@@ -57,8 +57,14 @@ Execute `npm run lint` para verificar problemas de código. Evite o uso de `any`
 
 ## Design System
 
-Confira a visão geral de tokens, tipografia e componentes em
-[docs/design-system.md](docs/design-system.md).
+Nosso design system centraliza cores, tipografia e espaçamentos em `globals.css`
+e `tailwind.config.js`, garantindo consistência visual em todo o painel. Os
+principais componentes possuem exemplos no Storybook para facilitar testes e
+documentação.
+
+Leia as diretrizes completas em [docs/design-system.md](docs/design-system.md)
+e consulte a tabela de tokens em
+[docs/design-tokens.md](docs/design-tokens.md).
 
 ## Variáveis de Ambiente
 
