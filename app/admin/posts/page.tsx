@@ -19,6 +19,7 @@ export default function AdminPostsPage() {
   const router = useRouter();
   const [posts, setPosts] = useState<Post[]>([]);
   const [page, setPage] = useState(1);
+  
 
   useEffect(() => {
     if (!isLoggedIn || !user) {

@@ -3,10 +3,13 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import { useState } from "react";
+import PostContentEditor from "../components/PostContentEditor";
 
 export default function NovoPostPage() {
   const { user, isLoggedIn } = useAuthContext();
   const router = useRouter();
+  const [conteudo, setConteudo] = useState("");
 
   useEffect(() => {
     if (!isLoggedIn || !user) {
@@ -29,11 +32,12 @@ export default function NovoPostPage() {
           placeholder="Categoria"
           className="w-full border p-2 rounded"
         />
-        <textarea
-          placeholder="Conteúdo MDX"
-          className="w-full border p-2 rounded h-40"
-        ></textarea>
-        <button type="submit" className="w-full bg-red-600 text-white py-2 rounded">
+        <PostContentEditor value={conteudo} onChange={setConteudo} />
+
+        <button
+          type="submit"
+          className="w-full bg-red-600 text-white py-2 rounded"
+        >
           Salvar
         </button>
       </form>
