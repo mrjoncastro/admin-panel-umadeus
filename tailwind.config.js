@@ -1,4 +1,13 @@
 /** @type {import('tailwindcss').Config} */
+const withOpacityValue = (variable) => {
+  return ({ opacityValue }) => {
+    if (opacityValue !== undefined) {
+      return `hsl(var(${variable}) / ${opacityValue})`;
+    }
+    return `hsl(var(${variable}))`;
+  };
+};
+
 module.exports = {
   darkMode: 'class',
   content: [
@@ -10,16 +19,16 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          50: "#f5f3ff",
-          100: "#ede9fe",
-          200: "#ddd6fe",
-          300: "#c4b5fd",
-          400: "#a78bfa",
-          500: "#8b5cf6", // roxo vibrante
-          600: "#7c3aed", // principal
-          700: "#6d28d9",
-          800: "#5b21b6",
-          900: "#4c1d95",
+          50: withOpacityValue('--primary-50'),
+          100: withOpacityValue('--primary-100'),
+          200: withOpacityValue('--primary-200'),
+          300: withOpacityValue('--primary-300'),
+          400: withOpacityValue('--primary-400'),
+          500: withOpacityValue('--primary-500'),
+          600: withOpacityValue('--primary-600'),
+          700: withOpacityValue('--primary-700'),
+          800: withOpacityValue('--primary-800'),
+          900: withOpacityValue('--primary-900'),
         },
         error: {
           DEFAULT: "#dc2626",

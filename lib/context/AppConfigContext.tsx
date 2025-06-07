@@ -1,5 +1,6 @@
 "use client";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { generateHslShades } from "@/utils/colorShades";
 
 export type AppConfig = {
   font: string;
@@ -35,10 +36,13 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
     if (typeof window === "undefined") return;
 
     localStorage.setItem("app_config", JSON.stringify(config));
-    const doc = document.documentElement;
-    doc.style.setProperty("--font-body", config.font);
-    doc.style.setProperty("--font-heading", config.font);
-    doc.style.setProperty("--accent", config.primaryColor);
+    document.documentElement.style.setProperty("--font-body", config.font);
+    document.documentElement.style.setProperty("--font-heading", config.font);
+    document.documentElement.style.setProperty("--accent", config.primaryColor);
+    const shades = generateHslShades(config.primaryColor);
+    Object.entries(shades).forEach(([key, value]) => {
+      document.documentElement.style.setProperty(`--primary-${key}`, value);
+    });
   }, [config]);
 
   const updateConfig = (cfg: Partial<AppConfig>) =>

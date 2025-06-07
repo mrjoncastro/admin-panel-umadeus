@@ -61,7 +61,7 @@ export default function ProdutoPage() {
     <main className="font-sans px-4 md:px-16 py-10">
       <a
         href="/loja"
-        className="text-sm text-platinum hover:text-primary-600 mb-6 inline-block transition"
+        className="text-sm text-platinum hover:text-[var(--primary-600)] mb-6 inline-block transition"
       >
         &lt; voltar
       </a>
@@ -87,7 +87,7 @@ export default function ProdutoPage() {
                 onClick={() => handleMiniaturaClick(i)}
                 className={`w-16 h-16 object-cover rounded-lg border-2 cursor-pointer transition ${
                   indexImg === i
-                    ? "border-primary-600 ring-2 ring-primary-600"
+                    ? "border-[var(--primary-600)] ring-2 ring-[var(--primary-600)]"
                     : "border-black_bean hover:brightness-110"
                 }`}
               />
@@ -97,7 +97,7 @@ export default function ProdutoPage() {
 
         {/* Detalhes do produto */}
         <div className="space-y-6">
-          <h1 className="font-bebas text-primary-600 text-3xl md:text-4xl font-bold leading-tight">
+          <h1 className="font-bebas text-[var(--primary-600)] text-3xl md:text-4xl font-bold leading-tight">
             Camiseta Stanton — Edição Congresso UMADEUS
           </h1>
           <p className="text-xl font-semibold text-platinum">R$ 129,90</p>
@@ -116,7 +116,7 @@ export default function ProdutoPage() {
                   }}
                   className={`px-4 py-1 rounded-full border font-medium transition ${
                     generoSelecionado === g
-                      ? "bg-primary-600 text-white"
+                      ? "bg-[var(--primary-600)] text-white"
                       : "border-platinum/30 text-platinum hover:bg-black_bean"
                   }`}
                 >
@@ -138,7 +138,7 @@ export default function ProdutoPage() {
                   onClick={() => setTamanhoSelecionado(t)}
                   className={`px-3 py-1 border rounded-full text-sm transition ${
                     tamanhoSelecionado === t
-                      ? "bg-primary-600 text-white font-bold"
+                      ? "bg-[var(--primary-600)] text-white font-bold"
                       : "border-platinum/30 text-platinum hover:bg-black_bean"
                   }`}
                 >
@@ -148,7 +148,7 @@ export default function ProdutoPage() {
             </div>
             <a
               href="#"
-              className="text-xs underline mt-2 inline-block text-platinum/60 hover:text-primary-600 transition"
+              className="text-xs underline mt-2 inline-block text-platinum/60 hover:text-[var(--primary-600)] transition"
             >
               Ver guia de tamanhos
             </a>
@@ -159,7 +159,7 @@ export default function ProdutoPage() {
             href={checkoutLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="block w-full bg-primary-600 hover:bg-primary-700 text-white text-center py-3 rounded-full font-semibold transition text-lg"
+            className="block w-full bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white text-center py-3 rounded-full font-semibold transition text-lg"
           >
             Quero essa pra brilhar no Congresso!
           </a>

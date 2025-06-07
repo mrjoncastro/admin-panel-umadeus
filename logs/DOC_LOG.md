@@ -34,3 +34,4 @@
 ## [2025-06-07] Portal adicionado na arquitetura e boas práticas ajustadas.
 
 ## [2025-06-07] Documentada protecao de SSR no AppConfigProvider.
+## [2025-06-07] Geradas variáveis CSS dinâmicas de cor e mapeamento via Tailwind. Documentação atualizada.

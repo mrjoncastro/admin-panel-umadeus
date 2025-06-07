@@ -249,7 +249,7 @@ export default function InscricaoPage() {
 
         <button
           type="submit"
-          className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-6 rounded-lg uppercase transition"
+          className="w-full bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white font-semibold py-3 px-6 rounded-lg uppercase transition"
           disabled={status === "sending"}
         >
           {status === "sending" ? "Enviando..." : "Enviar inscrição"}

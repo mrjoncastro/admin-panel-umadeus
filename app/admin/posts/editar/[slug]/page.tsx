@@ -94,7 +94,7 @@ export default function EditarPostPage() {
           )}
 
           {category && (
-            <span className="text-xs uppercase text-primary-600 font-semibold">
+            <span className="text-xs uppercase text-[var(--primary-600)] font-semibold">
               {category}
             </span>
           )}
