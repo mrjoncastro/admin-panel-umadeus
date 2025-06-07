@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image"; // se quiser exibir logo
 import { useAuthContext } from "@/lib/context/AuthContext";
@@ -28,16 +30,14 @@ export default function Header() {
     if (user?.role === "lider") return "lider";
     return "usuario";
   }, [isLoggedIn, user?.role]);
-  const firstName = useMemo(
-    () => user?.nome?.split(" ")[0] ?? "",
-    [user?.nome]
-  );
+
   const adminLinks = useMemo(() => {
     if (role === "lider") {
       return [
         { href: "/admin/lider-painel", label: "Painel" },
         { href: "/admin/inscricoes", label: "Inscrições" },
         { href: "/admin/pedidos", label: "Pedidos" },
+        { href: "/admin/perfil", label: "Configurações" },
       ];
     }
     if (role === "coordenador") {
@@ -48,12 +48,18 @@ export default function Header() {
         { href: "/admin/usuarios", label: "Usuários" },
         { href: "/admin/campos", label: "Campos" },
         { href: "/admin/posts", label: "Posts" },
+        { href: "/admin/perfil", label: "Configurações" },
       ];
     }
     return [];
   }, [role]);
 
   const navLinks = baseLinks;
+
+  const firstName = useMemo(
+    () => user?.nome?.split(" ")[0] ?? "",
+    [user?.nome]
+  );
 
   return (
     <header className="bg-animated backdrop-blur-md text-[var(--text-header-primary)] shadow-md sticky top-0 z-50 gradient-x px-6 py-4 border-b border-platinum/20 fixed top-0 inset-x-0 z-50">
@@ -145,7 +151,7 @@ export default function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-platinum hover:text-primary-400 transition py-2 text-base font-medium"
+                  className="text-platinum hover:text-yellow-400 transition py-2 text-base font-medium"
                   onClick={() => setOpen(false)}
                 >
                   {link.label}
