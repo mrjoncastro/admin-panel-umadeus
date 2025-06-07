@@ -6,13 +6,7 @@ import createPocketBase, {
   clearBaseAuth,
 } from "@/lib/pocketbase";
 import type { RecordModel } from "pocketbase";
-
-type UserModel = {
-  id: string;
-  nome: string;
-  role: "coordenador" | "lider";
-  [key: string]: unknown;
-};
+import type { UserModel } from "@/types/UserModel";
 
 type AuthContextType = {
   user: UserModel | null;
