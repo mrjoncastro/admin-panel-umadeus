@@ -34,13 +34,22 @@ export default function PerfilPage() {
   };
 
   useEffect(() => {
-    if (!pb.authStore.isValid) {
-      router.push("/admin/login");
-      return;
-    }
-    const model = pb.authStore.model as unknown as UsuarioAuthModel;
-    setUsuario(model);
-  }, [pb.authStore.isValid, pb.authStore.model, router]);
+    const handleAuthChange = () => {
+      if (!pb.authStore.isValid) {
+        router.push("/admin/login");
+      } else {
+        const model = pb.authStore.model as unknown as UsuarioAuthModel;
+        setUsuario(model);
+      }
+    };
+
+    handleAuthChange();
+    const unsubscribe = pb.authStore.onChange(handleAuthChange);
+
+    return () => {
+      unsubscribe();
+    };
+  }, [pb, router]);
 
   if (!usuario) return null;
 
