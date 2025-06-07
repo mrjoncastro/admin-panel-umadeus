@@ -16,9 +16,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`bg-gradient-to-r from-black_bean via-[#5f1b1f] to-eerie_black animate-gradient-x text-platinum font-sans ${inter.className}`}> 
+    <div className={`text-platinum font-sans ${inter.className}`}> 
       <Header />
-      <main className="flex flex-col min-h-screen pt-20">{children}</main>
+      <main className="min-h-screen bg-[var(--background)] text-[var(--text-primary)]">{children}</main>
       <Footer />
     </div>
   );

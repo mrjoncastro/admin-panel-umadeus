@@ -79,7 +79,7 @@ export default function Home() {
   }, [section]);
 
   return (
-    <div className="min-h-screen text-platinum">
+    <>
       {/* Header */}
       <header className="bg-transparent px-6 py-4 shadow-md rounded-2xl mx-4 my-6">
         <nav className="flex justify-center items-center text-sm font-semibold tracking-wide">
@@ -215,6 +215,6 @@ export default function Home() {
           </>
         )}
       </main>
-    </div>
+    </>
   );
 }
