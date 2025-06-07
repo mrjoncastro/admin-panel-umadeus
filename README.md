@@ -71,6 +71,8 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `ASAAS_WEBHOOK_SECRET` - segredo para validar webhooks do Asaas
 - `NEXT_PUBLIC_SITE_URL` - endereço do site (opcional)
 
+Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utilizar o SDK oficial.
+
 ## Conectando ao PocketBase
 
 
