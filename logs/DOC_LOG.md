@@ -24,3 +24,4 @@
 ## [2025-06-08] Adicionados story do PostContentEditor
 ## [2025-06-07] Criado componente EditorToolbar no admin e integrado ao editor de posts.
 ## [2025-06-07] Atualizado script generatePostsJson para ler `keywords` e `headerImage` dos posts.
+## [2025-06-07] Documentadas variantes `.btn-secondary` e `.btn-danger` no design system e adicionadas classes globais correspondentes.

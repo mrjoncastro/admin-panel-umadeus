@@ -54,8 +54,16 @@ Utilizamos classes utilitárias para manter a consistência visual de elementos
 interativos. Os estilos base encontram-se em `app/globals.css` e devem ser
 reaproveitados nos componentes.
 
+As variantes disponíveis são:
+
+- `.btn-primary` para ações principais
+- `.btn-secondary` para ações neutras
+- `.btn-danger` para operações destrutivas
+
 ```html
 <button class="btn btn-primary">Salvar</button>
+<button class="btn btn-secondary">Cancelar</button>
+<button class="btn btn-danger">Excluir</button>
 <input class="input-base" />
 ```
 
