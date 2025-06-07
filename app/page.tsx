@@ -1,7 +1,10 @@
 import Link from "next/link";
+import Hero from "@/app/components/Hero";
 
 export default function PortalPage() {
   return (
+    <>
+    <Hero />
     <main className="min-h-screen bg-[var(--background)] text-[var(--text-primary)]">
       <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-gray-900 text-gray-100">
         <h1 className="text-3xl font-bold">Portal UMADEUS</h1>
@@ -21,5 +24,6 @@ export default function PortalPage() {
         </div>
       </div>
     </main>
+    </>
   );
 }

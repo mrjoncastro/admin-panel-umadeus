@@ -3,5 +3,5 @@ export type UserModel = {
   nome: string;
   email: string;
   role: "coordenador" | "lider";
-  [key: string]: any;
+  [key: string]: unknown;
 };
