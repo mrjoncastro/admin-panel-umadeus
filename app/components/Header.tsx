@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image"; // se quiser exibir logo
+import { useAuthContext } from "@/lib/context/AuthContext";
 
-const navLinks = [
+type UserRole = "visitante" | "usuario" | "lider" | "coordenador";
+
+const baseLinks = [
   { href: "/", label: "Início" },
   { href: "/loja", label: "Loja" },
   { href: "/blog", label: "Blog" },
@@ -16,6 +19,22 @@ const navLinks = [
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const { user, isLoggedIn } = useAuthContext();
+
+  const role: UserRole = useMemo(() => {
+    if (!isLoggedIn) return "visitante";
+    if (user?.role === "coordenador") return "coordenador";
+    if (user?.role === "lider") return "lider";
+    return "usuario";
+  }, [isLoggedIn, user?.role]);
+
+  const navLinks = useMemo(() => {
+    const links = [...baseLinks];
+    if (role === "lider" || role === "coordenador") {
+      links.push({ href: "/admin/dashboard", label: "Painel" });
+    }
+    return links;
+  }, [role]);
 
   return (
     <header className="bg-animated backdrop-blur-md text-[var(--text-header-primary)] shadow-md sticky top-0 z-50 gradient-x px-6 py-4 border-b border-platinum/20 fixed top-0 inset-x-0 z-50">

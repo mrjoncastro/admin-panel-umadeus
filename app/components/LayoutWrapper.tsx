@@ -5,6 +5,9 @@ import Footer from "./Footer";
 import BackToTopButton from "@/app/admin/components/BackToTopButton";
 import NotificationBell from "@/app/admin/components/NotificationBell";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import { useMemo } from "react";
+
+type UserRole = "visitante" | "usuario" | "lider" | "coordenador";
 
 export default function LayoutWrapper({
   children,
@@ -12,6 +15,13 @@ export default function LayoutWrapper({
   children: React.ReactNode;
 }) {
   const { isLoggedIn, user } = useAuthContext();
+  const role: UserRole = useMemo(() => {
+    if (!isLoggedIn) return "visitante";
+    if (user?.role === "coordenador") return "coordenador";
+    if (user?.role === "lider") return "lider";
+    return "usuario";
+  }, [isLoggedIn, user?.role]);
+
   return (
     <>
       <Header />
@@ -19,7 +29,7 @@ export default function LayoutWrapper({
         {children}
       </main>
       <Footer />
-      {isLoggedIn && user?.role === "coordenador" && <NotificationBell />}
+      {role === "coordenador" && <NotificationBell />}
       <BackToTopButton />
     </>
   );
