@@ -4,7 +4,6 @@ import matter from "gray-matter";
 import { notFound } from "next/navigation";
 import { evaluate } from "xdm";
 import * as runtime from "react/jsx-runtime";
-import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import Image from "next/image";
 import { Share2, Clock } from "lucide-react";
@@ -103,7 +102,6 @@ export default async function BlogPostPage({
 
   return (
     <>
-      <Header />
       <main
         className="mx-auto mt-8 max-w-[680px] px-5 py-20 text-[1.125rem] leading-[1.8] text-[var(--text-primary)] bg-white"
       >
