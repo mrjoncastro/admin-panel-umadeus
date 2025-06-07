@@ -28,7 +28,10 @@ export default function Header() {
     if (user?.role === "lider") return "lider";
     return "usuario";
   }, [isLoggedIn, user?.role]);
-
+  const firstName = useMemo(
+    () => user?.nome?.split(" ")[0] ?? "",
+    [user?.nome]
+  );
   const adminLinks = useMemo(() => {
     if (role === "lider") {
       return [
@@ -52,11 +55,6 @@ export default function Header() {
 
   const navLinks = baseLinks;
 
-  const firstName = useMemo(
-    () => user?.nome?.split(" ")[0] ?? "",
-    [user?.nome]
-  );
-
   return (
     <header className="bg-animated backdrop-blur-md text-[var(--text-header-primary)] shadow-md sticky top-0 z-50 gradient-x px-6 py-4 border-b border-platinum/20 fixed top-0 inset-x-0 z-50">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
@@ -66,7 +64,6 @@ export default function Header() {
           className="flex items-center gap-2 text-xl md:text-2xl font-bold tracking-wide font-bebas"
           aria-label="Página inicial"
         >
-          {/* Se tiver imagem de logo, descomente a linha abaixo */}
           <Image
             src="/img/logo_umadeus_branco.png"
             alt="UMADEUS"
@@ -82,7 +79,7 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="hover:text-yellow-400 transition px-2 py-1 rounded-md"
+              className="hover:text-primary-400 transition px-2 py-1 rounded-md"
             >
               {link.label}
             </Link>
@@ -92,9 +89,12 @@ export default function Header() {
             <div className="relative">
               <button
                 onClick={() => setAdminOpen((prev) => !prev)}
-                className="flex items-center gap-1 hover:text-yellow-400 transition px-2 py-1 rounded-md"
+                className="flex items-center gap-1 hover:text-primary-400 transition px-2 py-1 rounded-md"
               >
-                Admin <ChevronDown size={14} />
+                {isLoggedIn && (
+                  <span className="ml-4 text-sm">Olá, {firstName}</span>
+                )}
+                <ChevronDown size={14} />
               </button>
               {adminOpen && (
                 <ul className="absolute right-0 mt-2 w-48 bg-white text-[var(--foreground)] dark:bg-zinc-900 dark:text-white rounded-md shadow z-50 text-sm py-2 space-y-1">
@@ -111,10 +111,6 @@ export default function Header() {
                 </ul>
               )}
             </div>
-          )}
-
-          {isLoggedIn && (
-            <span className="ml-4 text-sm">Olá, {firstName}</span>
           )}
         </nav>
 
@@ -135,7 +131,7 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-platinum hover:text-yellow-400 transition py-2 text-base font-medium"
+              className="text-platinum hover:text-primary-400 transition py-2 text-base font-medium"
               onClick={() => setOpen(false)}
             >
               {link.label}
@@ -149,7 +145,7 @@ export default function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-platinum hover:text-yellow-400 transition py-2 text-base font-medium"
+                  className="text-platinum hover:text-primary-400 transition py-2 text-base font-medium"
                   onClick={() => setOpen(false)}
                 >
                   {link.label}
