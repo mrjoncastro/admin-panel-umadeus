@@ -79,9 +79,22 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  await pb.collection("pedidos").getOne(pedidoId, {
+  const pedido = await pb.collection("pedidos").getOne(pedidoId, {
     expand: "id_inscricao",
   });
 
-  return NextResponse.json({ status: "Pedido atualizado com sucesso" });
+  const atualizado = await pb.collection("pedidos").update(pedidoId, {
+    status: "pago",
+    pago_em: new Date().toISOString(),
+  });
+
+  const inscricaoId = pedido.expand?.id_inscricao?.id;
+  if (inscricaoId) {
+    await pb.collection("inscricoes").update(inscricaoId, { status: "pago" });
+  }
+
+  return NextResponse.json({
+    status: "Pedido atualizado com sucesso",
+    pedido: atualizado,
+  });
 }
