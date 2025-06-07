@@ -95,17 +95,22 @@ export default function BlogClient() {
                       className="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden flex flex-col"
                     >
                       {post.thumbnail && (
-                        <Image
-                          src={
-                            isExternalUrl(post.thumbnail)
-                              ? post.thumbnail
-                              : `${post.thumbnail}`
-                          }
-                          alt={`Imagem de capa do post: ${post.title}`}
-                          width={640}
-                          height={320}
-                          className="w-full h-56 object-cover"
-                        />
+                        isExternalUrl(post.thumbnail) ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={post.thumbnail}
+                            alt={`Imagem de capa do post: ${post.title}`}
+                            className="w-full h-56 object-cover"
+                          />
+                        ) : (
+                          <Image
+                            src={post.thumbnail}
+                            alt={`Imagem de capa do post: ${post.title}`}
+                            width={640}
+                            height={320}
+                            className="w-full h-56 object-cover"
+                          />
+                        )
                       )}
                       <div className="p-6 flex-1 flex flex-col justify-between">
                         {post.category && (

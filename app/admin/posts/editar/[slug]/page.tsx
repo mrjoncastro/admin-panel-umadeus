@@ -10,6 +10,11 @@ import Footer from "@/app/components/Footer";
 import Image from "next/image";
 import { Clock } from "lucide-react";
 import { isExternalUrl } from "@/utils/isExternalUrl";
+import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
+import Image from "next/image";
+import { Clock } from "lucide-react";
+import { isExternalUrl } from "@/utils/isExternalUrl";
 
 export default function EditarPostPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -72,13 +77,22 @@ export default function EditarPostPage() {
 
           {thumbnail && (
             <figure>
-              <Image
-                src={isExternalUrl(thumbnail) ? thumbnail : thumbnail}
-                alt={`Imagem de capa: ${title}`}
-                width={1200}
-                height={600}
-                className="w-full max-w-[640px] max-h-[360px] object-cover rounded-xl mx-auto mb-6"
-              />
+              {isExternalUrl(thumbnail) ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={thumbnail}
+                  alt={`Imagem de capa: ${title}`}
+                  className="w-full max-w-[640px] max-h-[360px] object-cover rounded-xl mx-auto mb-6"
+                />
+              ) : (
+                <Image
+                  src={thumbnail}
+                  alt={`Imagem de capa: ${title}`}
+                  width={1200}
+                  height={600}
+                  className="w-full max-w-[640px] max-h-[360px] object-cover rounded-xl mx-auto mb-6"
+                />
+              )}
             </figure>
           )}
 

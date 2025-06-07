@@ -109,15 +109,22 @@ export default async function BlogPostPage({
       >
         {data.thumbnail && (
           <figure>
-            <Image
-              src={
-                isExternalUrl(data.thumbnail) ? data.thumbnail : data.thumbnail
-              }
-              alt={`Imagem de capa: ${data.title}`}
-              width={1200}
-              height={600}
-              className="w-full max-w-[640px] max-h-[360px] object-cover rounded-xl mx-auto mb-6"
-            />
+            {isExternalUrl(data.thumbnail) ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={data.thumbnail}
+                alt={`Imagem de capa: ${data.title}`}
+                className="w-full max-w-[640px] max-h-[360px] object-cover rounded-xl mx-auto mb-6"
+              />
+            ) : (
+              <Image
+                src={data.thumbnail}
+                alt={`Imagem de capa: ${data.title}`}
+                width={1200}
+                height={600}
+                className="w-full max-w-[640px] max-h-[360px] object-cover rounded-xl mx-auto mb-6"
+              />
+            )}
             {data.credit && (
               <figcaption className="text-sm text-neutral-500 text-center mt-2 italic">
                 {data.credit}
