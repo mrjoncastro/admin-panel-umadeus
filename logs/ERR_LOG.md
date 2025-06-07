@@ -4,3 +4,5 @@
 ## [2025-06-07] Corrigido efeito em ListaInscricoes que não respondia a mudanças de autenticação - dev -
 ## [2025-06-07] Erro 'Property 'primary' does not exist on type 'DefaultColors' resolvido em twColors - dev - a63d0a1
 ## [2025-06-07] Resolvido loop infinito em admin/perfil causado por dependências do useEffect - dev - 261ebe7
+## [2025-06-07] Erro 'Property 'primary' does not exist on type 'DefaultColors' resolvido em twColors - dev - a63d0a1
+## [2025-06-07] Erro 'Property "posts" does not exist on type "{}"' em stories do blog, causando falha no build - dev - 441b5f1
