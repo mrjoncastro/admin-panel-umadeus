@@ -21,3 +21,4 @@
 ## [2025-06-07] Incluídas classes `.card` e `.table-base` no design system.
 
 ## [2025-06-07] Corrigidos nomes de ícones e atualizado manifest.json para remover referência ausente.
+## [2025-06-08] Adicionados story do PostContentEditor
