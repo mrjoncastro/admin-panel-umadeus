@@ -24,10 +24,9 @@ export default function BlogSidebar() {
       .then((posts: Post[]) => {
         setPopular(posts.slice(0, 3));
         const unique = [
-          ...new Set(posts.map((p: any) => p.category).filter(Boolean)),
+          ...new Set(posts.map((p: Post) => p.category).filter(Boolean)),
         ];
         setCategories(unique as string[]);
-        unique;
       });
   }, [setPopular, setCategories]);
 
