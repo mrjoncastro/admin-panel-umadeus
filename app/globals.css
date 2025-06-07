@@ -133,7 +133,7 @@ p {
 }
 
 .btn-primary {
-  @apply bg-[var(--accent)] text-white hover:bg-primary-700;
+  @apply bg-[var(--accent)] text-white hover:bg-[var(--primary-700)];
 }
 
 .btn-secondary {

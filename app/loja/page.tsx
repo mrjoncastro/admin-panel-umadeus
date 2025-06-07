@@ -90,7 +90,7 @@ export default function Home() {
                 onClick={() => setSection(s)}
                 className={`px-4 py-1 rounded-full transition font-bold ${
                   section === s
-                    ? "bg-primary-600 text-white"
+                    ? "bg-[var(--primary-600)] text-white"
                     : "bg-transparent text-platinum"
                 }`}
               >
@@ -136,7 +136,7 @@ export default function Home() {
 
               <Link
                 href="/loja/inscricoes"
-                className="inline-block bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-full font-semibold transition"
+                className="inline-block bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white px-8 py-3 rounded-full font-semibold transition"
               >
                 Inscreva-se agora
               </Link>
@@ -208,7 +208,7 @@ export default function Home() {
 
             <Link
               href="/loja/produtos"
-              className="inline-block mt-2 px-8 py-3 rounded-full font-semibold transition transform hover:scale-105 shadow-lg text-lg bg-primary-600 text-white hover:bg-primary-700"
+              className="inline-block mt-2 px-8 py-3 rounded-full font-semibold transition transform hover:scale-105 shadow-lg text-lg bg-[var(--primary-600)] text-white hover:bg-[var(--primary-700)]"
             >
               {content.bannerButton}
             </Link>
