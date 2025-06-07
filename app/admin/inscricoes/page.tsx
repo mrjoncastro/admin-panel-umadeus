@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import pb from "@/lib/pocketbase";
-import { logInfo } from "@/lib/logger";
+import { useEffect, useState, useMemo, useCallback } from "react";
+import createPocketBase from "@/lib/pocketbase";
 import { Copy } from "lucide-react";
 import { saveAs } from "file-saver";
 import ModalEditarInscricao from "./componentes/ModalEdit";
@@ -10,6 +9,7 @@ import ModalVisualizarPedido from "./componentes/ModalVisualizarPedido";
 import { CheckCircle, XCircle, Pencil, Trash2, Eye } from "lucide-react";
 import TooltipIcon from "../components/TooltipIcon";
 import { useToast } from "@/lib/context/ToastContext";
+import { PRECO_PULSEIRA, PRECO_KIT } from "@/lib/constants";
 
 const statusBadge = {
   pendente: "bg-yellow-100 text-yellow-800",
@@ -38,6 +38,7 @@ type Inscricao = {
 };
 
 export default function ListaInscricoesPage() {
+  const pb = useMemo(() => createPocketBase(), []);
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
   const [role, setRole] = useState("");
   const [linkPublico, setLinkPublico] = useState("");
@@ -54,14 +55,8 @@ export default function ListaInscricoesPage() {
       ? "Buscar por nome, telefone, CPF ou campo"
       : "Buscar por nome, telefone ou CPF";
 
-  useEffect(() => {
-    // Se pb pode ser uma função, trate explicitamente
-    const pbClient =
-      typeof pb === "function"
-        ? (pb() as { authStore?: { model?: any }; autoCancellation?: (v: boolean) => void; collection: (name: string) => any })
-        : (pb as { authStore?: { model?: any }; autoCancellation?: (v: boolean) => void; collection: (name: string) => any });
-
-    const user = pbClient.authStore?.model;
+  const carregarInscricoes = useCallback(() => {
+    const user = pb.authStore.model;
 
     if (!user?.id || !user?.role) {
       showError("Sessão expirada ou inválida.");
@@ -69,78 +64,60 @@ export default function ListaInscricoesPage() {
       return;
     }
 
-    pbClient.autoCancellation?.(false);
+    pb.autoCancellation(false);
 
     setRole(user.role);
     setLinkPublico(`${window.location.origin}/inscricoes/${user.id}`);
 
     const filtro = user.role === "coordenador" ? "" : `campo='${user.campo}'`;
 
-    pbClient
-      .collection("inscricoes")
+    pb.collection("inscricoes")
       .getFullList({ sort: "-created", filter: filtro, expand: "campo,pedido" })
-      .then((res: unknown[]) => {
-        const lista = res.map((r) => {
-          // Defina um tipo explícito para o registro retornado
-          type PBInscricao = {
-            id: string;
-            nome: string;
-            telefone: string;
-            evento: string;
-            cpf: string;
-            status: StatusInscricao;
-            created: string;
-            tamanho?: string;
-            produto?: string;
-            genero?: string;
-            data_nascimento?: string;
-            criado_por?: string;
-            confirmado_por_lider?: boolean;
-            expand?: {
-              campo?: { nome?: string };
-              pedido?: { status?: string; id?: string };
-            };
-          };
-          const rec = r as PBInscricao;
-          return {
-            id: rec.id,
-            nome: rec.nome,
-            telefone: rec.telefone,
-            evento: rec.evento,
-            cpf: rec.cpf,
-            status: rec.status,
-            created: rec.created,
-            campo: rec.expand?.campo?.nome || "—",
-            tamanho: rec.tamanho,
-            produto: rec.produto,
-            genero: rec.genero,
-            data_nascimento: rec.data_nascimento,
-            criado_por: rec.criado_por,
-            confirmado_por_lider: rec.confirmado_por_lider,
-            pedido_status: rec.expand?.pedido?.status || null,
-            pedido_id: rec.expand?.pedido?.id || null,
-          };
-        });
+      .then((res) => {
+        const lista = res.map((r) => ({
+          id: r.id,
+          nome: r.nome,
+          telefone: r.telefone,
+          evento: r.evento,
+          cpf: r.cpf,
+          status: r.status,
+          created: r.created,
+          campo: r.expand?.campo?.nome || "—",
+          tamanho: r.tamanho,
+          produto: r.produto,
+          genero: r.genero,
+          data_nascimento: r.data_nascimento,
+          criado_por: r.criado_por,
+          confirmado_por_lider: r.confirmado_por_lider,
+          pedido_status: r.expand?.pedido?.status || null,
+          pedido_id: r.expand?.pedido?.id || null,
+        }));
         setInscricoes(lista);
       })
       .catch(() => showError("Erro ao carregar inscrições."))
       .finally(() => setLoading(false));
 
     if (user.role === "coordenador") {
-      pbClient
-        .collection("campos")
+      pb.collection("campos")
         .getFullList({ sort: "nome" })
-        .then((res: unknown[]) => {
-          const nomes = res.map((c) =>
+        .then((res) => {
+          const nomes = res.map((c: any) =>
             typeof c === "object" && c !== null && "nome" in c
               ? String(c.nome)
               : "Indefinido"
           );
-          logInfo("Campos disponíveis", nomes);
+          // logInfo("Campos disponíveis", nomes);
         })
         .catch(() => {});
     }
-  }, [showError]);
+  }, [pb, showError]);
+
+  useEffect(() => {
+    carregarInscricoes();
+
+    const unsubscribe = pb.authStore.onChange(carregarInscricoes);
+    return () => unsubscribe();
+  }, [pb, carregarInscricoes]);
 
   const copiarLink = async () => {
     try {
@@ -155,11 +132,7 @@ export default function ListaInscricoesPage() {
   const deletarInscricao = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta inscrição?")) {
       try {
-        const pbClient =
-          typeof pb === "function"
-            ? (pb() as { collection: (name: string) => any })
-            : (pb as { collection: (name: string) => any });
-        await pbClient.collection("inscricoes").delete(id);
+        await pb.collection("inscricoes").delete(id);
         setInscricoes((prev) => prev.filter((i) => i.id !== id));
         showSuccess("Inscrição excluída.");
       } catch {
@@ -174,21 +147,18 @@ export default function ListaInscricoesPage() {
       setConfirmandoId(id);
 
       // 🔹 1. Buscar inscrição com expand do campo
-      const pbClient =
-        typeof pb === "function"
-          ? (pb() as { collection: (name: string) => any })
-          : (pb as { collection: (name: string) => any });
-      const inscricao = await pbClient.collection("inscricoes").getOne(id, {
+      const inscricao = await pb.collection("inscricoes").getOne(id, {
         expand: "campo",
       });
 
       const campo = inscricao.expand?.campo;
 
-      // 🔹 2. Criar pedido com os dados da inscrição
+      // 🔹 2. Definir valor do pedido com base no produto
       const valorPedido =
-        inscricao.produto === "Somente Pulseira" ? 10.0 : 50.0;
+        inscricao.produto === "Somente Pulseira" ? PRECO_PULSEIRA : PRECO_KIT;
 
-      const pedido = await pbClient.collection("pedidos").create({
+      // 🔹 3. Criar pedido no PocketBase
+      const pedido = await pb.collection("pedidos").create({
         id_inscricao: id,
         valor: valorPedido,
         status: "pendente",
@@ -197,35 +167,34 @@ export default function ListaInscricoesPage() {
         tamanho: inscricao.tamanho,
         genero: inscricao.genero,
         email: inscricao.email,
-        campo: campo.id,
+        campo: campo?.id,
         responsavel: inscricao.criado_por,
       });
 
-      // 🔹 3. Gera link de pagamento
-      const res = await fetch("/api/checkout", {
+      // 🔹 4. Gerar link de pagamento via API do Asaas
+      const res = await fetch("/admin/api/asaas/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pedidoId: pedido.id, valor: pedido.valor }),
+        body: JSON.stringify({
+          pedidoId: pedido.id,
+          valor: pedido.valor,
+        }),
       });
 
       const checkout = await res.json();
+
       if (!res.ok || !checkout?.url) {
         throw new Error("Erro ao gerar link de pagamento.");
       }
 
-      // 4. Atualizar inscrição com o ID do pedido
-      await (
-        typeof pb === "function"
-          ? (pb() as { collection: (name: string) => any })
-          : (pb as { collection: (name: string) => any })
-      )
-        .collection("inscricoes")
-        .update(id, {
-          pedido: pedido.id, // ✅ atualiza campo pedido
-          status: "aguardando_pagamento",
-          confirmado_por_lider: true,
-        });
+      // 🔹 5. Atualizar inscrição com o ID do pedido e status
+      await pb.collection("inscricoes").update(id, {
+        pedido: pedido.id,
+        status: "aguardando_pagamento",
+        confirmado_por_lider: true,
+      });
 
+      // Atualizar estado local das inscrições
       setInscricoes((prev) =>
         prev.map((i) =>
           i.id === id
@@ -238,8 +207,8 @@ export default function ListaInscricoesPage() {
         )
       );
 
-      // 🔹 5. Notifica n8n
-      await fetch("/api/n8n", {
+      // 🔹 6. Notificar via n8n webhook
+      await fetch("/admin/api/n8n", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -247,13 +216,14 @@ export default function ListaInscricoesPage() {
           telefone: inscricao.telefone,
           cpf: inscricao.cpf,
           evento: inscricao.evento,
-          liderId: campo.responsavel,
+          liderId: campo?.responsavel,
           pedidoId: pedido.id,
           valor: pedido.valor,
           url_pagamento: checkout.url,
         }),
       });
 
+      // 🔹 7. Mostrar sucesso visual
       showSuccess("Link de pagamento enviado com sucesso!");
     } catch (err) {
       console.error("Erro ao confirmar inscrição:", err);
@@ -317,7 +287,7 @@ export default function ListaInscricoesPage() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="heading">Inscrições Recebidas</h1>
+      <h2 className="heading">Inscrições Recebidas</h2>
 
       {/* Link público */}
       {role === "lider" && (
@@ -329,10 +299,7 @@ export default function ListaInscricoesPage() {
               value={linkPublico}
               className="w-full p-2 border rounded bg-white text-gray-700 font-mono text-xs shadow-sm"
             />
-            <button
-              onClick={copiarLink}
-              className="btn btn-primary text-xs"
-            >
+            <button onClick={copiarLink} className="btn btn-primary text-xs">
               <Copy size={14} />
             </button>
           </div>
@@ -343,7 +310,6 @@ export default function ListaInscricoesPage() {
           )}
         </div>
       )}
-
 
       {/* Filtros */}
       <div className="flex flex-wrap gap-4 mb-6">
@@ -390,9 +356,7 @@ export default function ListaInscricoesPage() {
                 <th>Campo</th>
                 <th>Criado em</th>
                 <th>Confirmação</th>
-                {role === "coordenador" && (
-                  <th>Ação</th>
-                )}
+                {role === "coordenador" && <th>Ação</th>}
               </tr>
             </thead>
             <tbody>
@@ -411,9 +375,7 @@ export default function ListaInscricoesPage() {
                     </span>
                   </td>
                   <td>{i.campo}</td>
-                  <td>
-                    {new Date(i.created).toLocaleDateString("pt-BR")}
-                  </td>
+                  <td>{new Date(i.created).toLocaleDateString("pt-BR")}</td>
                   <td className="text-left text-xs">
                     <div className="flex items-center gap-3">
                       {(role === "lider" || role === "coordenador") &&
@@ -520,11 +482,7 @@ export default function ListaInscricoesPage() {
           inscricao={inscricaoEmEdicao}
           onClose={() => setInscricaoEmEdicao(null)}
           onSave={async (dadosAtualizados: Partial<Inscricao>) => {
-            const pbClient =
-              typeof pb === "function"
-                ? (pb() as { collection: (name: string) => any })
-                : (pb as { collection: (name: string) => any });
-            await pbClient
+            await pb
               .collection("inscricoes")
               .update(inscricaoEmEdicao.id, dadosAtualizados);
             setInscricoes((prev) =>
@@ -557,11 +515,7 @@ export default function ListaInscricoesPage() {
               </button>
               <button
                 onClick={async () => {
-                  const pbClient =
-                    typeof pb === "function"
-                      ? (pb() as { collection: (name: string) => any })
-                      : (pb as { collection: (name: string) => any });
-                  await pbClient
+                  await pb
                     .collection("inscricoes")
                     .update(inscricaoParaRecusar.id, {
                       status: "cancelado",
