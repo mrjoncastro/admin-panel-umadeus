@@ -11,7 +11,6 @@ export default function NovoPostPage() {
   const router = useRouter();
   const [conteudo, setConteudo] = useState("");
   const [preview, setPreview] = useState(false);
-  const [date, setDate] = useState("");
   const [thumbnail, setThumbnail] = useState("");
   const [keywords, setKeywords] = useState("");
 
@@ -46,6 +45,8 @@ export default function NovoPostPage() {
           e.preventDefault();
           const formData = new FormData(e.currentTarget);
           formData.set("content", conteudo);
+          // Adiciona data atual no formato ISO (salva sempre a data/hora do envio)
+          formData.set("date", new Date().toISOString());
           fetch("/admin/api/posts", {
             method: "POST",
             body: formData,
@@ -62,12 +63,13 @@ export default function NovoPostPage() {
           name="title"
           className="w-full border p-2 rounded"
         />
+        {/* Campo de data APENAS visualização, não enviado */}
         <input
-          type="date"
-          name="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          className="w-full border p-2 rounded"
+          type="text"
+          value={new Date().toLocaleDateString("pt-BR")}
+          readOnly
+          disabled
+          className="input-base"
         />
         <input
           type="text"
@@ -92,7 +94,6 @@ export default function NovoPostPage() {
           className="w-full border p-2 rounded"
         />
         <PostContentEditor value={conteudo} onChange={setConteudo} />
-
         <div className="flex gap-2">
           <button
             type="button"
