@@ -167,13 +167,13 @@ export default function DashboardAnalytics({ inscricoes, pedidos }: DashboardAna
         </div>
         <button
           onClick={handleExportCSV}
-          className="btn-primary text-sm px-3 py-1 rounded"
+          className="btn btn-primary px-3 py-1"
         >
           Exportar CSV
         </button>
         <button
           onClick={handleExportXLSX}
-          className="btn-primary text-sm px-3 py-1 rounded"
+          className="btn btn-primary px-3 py-1"
         >
           Exportar XLSX
         </button>

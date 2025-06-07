@@ -186,10 +186,7 @@ export default function NovoUsuarioPage() {
           ))}
         </select>
 
-        <button
-          type="submit"
-          className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition"
-        >
+        <button type="submit" className="btn btn-danger w-full">
           Cadastrar
         </button>
       </form>
