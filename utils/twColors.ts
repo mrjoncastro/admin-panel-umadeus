@@ -1,11 +1,13 @@
-const resolveConfig = require("tailwindcss/resolveConfig");
-const tailwindConfig = require("../tailwind.config.js");
-const colors = require("tailwindcss/colors");
+import resolveConfig from "tailwindcss/resolveConfig";
+import tailwindConfig from "../tailwind.config.js";
+import colors from "tailwindcss/colors";
 
 const fullConfig = resolveConfig(tailwindConfig);
 
-module.exports = {
-  primary600: fullConfig.theme.colors.primary[600],
-  error600: fullConfig.theme.colors.error[600],
+export const twColors = {
+  primary600: (fullConfig.theme.colors as any).primary[600],
+  error600: (fullConfig.theme.colors as any).error[600],
   blue500: colors.blue[500],
 };
+
+export default twColors;

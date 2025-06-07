@@ -62,9 +62,12 @@ const FetchWrapper = ({ posts, children }: { posts: Post[]; children: React.Reac
 };
 
 export const Default: Story = {
-  render: ({ posts }) => (
-    <FetchWrapper posts={posts as Post[]}>
-      <BlogHeroCarousel />
-    </FetchWrapper>
-  ),
+  render: (args) => {
+    const { posts } = args as { posts: Post[] };
+    return (
+      <FetchWrapper posts={posts}>
+        <BlogHeroCarousel />
+      </FetchWrapper>
+    );
+  },
 };
