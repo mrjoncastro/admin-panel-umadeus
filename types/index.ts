@@ -2,6 +2,7 @@ export type Inscricao = {
   id: string;
   nome: string;
   telefone: string;
+  email?: string;
   status?: "pendente" | "aguardando_pagamento" | "confirmado" | "cancelado";
   tamanho?: string;
   produto?: string;
