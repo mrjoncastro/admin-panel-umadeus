@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import PocketBase from "pocketbase";
+import pb from "@/lib/pocketbase";
 
 interface DadosInscricao {
   nome: string;
@@ -16,8 +16,6 @@ interface DadosInscricao {
   tamanho?: string;
 }
 
-const pb = new PocketBase("https://umadeus-production.up.railway.app");
-pb.autoCancellation(false);
 
 export async function POST(req: NextRequest) {
   try {

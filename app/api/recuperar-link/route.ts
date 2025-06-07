@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import PocketBase from "pocketbase";
-
-const pb = new PocketBase(
-  process.env.PB_URL || "https://umadeus-production.up.railway.app"
-);
-pb.autoCancellation(false);
+import pb from "@/lib/pocketbase";
 
 export async function POST(req: NextRequest) {
   try {

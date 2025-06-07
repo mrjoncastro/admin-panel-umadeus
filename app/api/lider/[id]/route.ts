@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import PocketBase from "pocketbase";
+import pb from "@/lib/pocketbase";
 
 export async function GET(req: NextRequest) {
   const url = new URL(req.nextUrl);
@@ -9,11 +9,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ erro: "ID ausente ou inválido." }, { status: 400 });
   }
 
-  const pbSafe = new PocketBase("https://umadeus-production.up.railway.app");
-  pbSafe.autoCancellation(false);
-
   try {
-    const lider = await pbSafe.collection("usuarios").getOne(id, {
+    const lider = await pb.collection("usuarios").getOne(id, {
       expand: "campo",
     });
 

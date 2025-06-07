@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import PocketBase from "pocketbase";
+import pb from "@/lib/pocketbase";
 import mercadopago from "mercadopago";
 
-const pb = new PocketBase("https://umadeus-production.up.railway.app");
-pb.autoCancellation(false);
 
 mercadopago.configure({
   access_token: process.env.MERCADO_PAGO_ACCESS_TOKEN!,
