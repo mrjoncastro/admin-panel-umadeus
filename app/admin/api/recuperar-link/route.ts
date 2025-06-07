@@ -8,7 +8,6 @@ const pb = new PocketBase(
 pb.autoCancellation(false);
 
 export async function POST(req: NextRequest) {
-  const pb = createPocketBase();
   try {
     const { cpf, telefone } = await req.json();
 
@@ -82,14 +81,14 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: unknown) {
     if (error instanceof Error) {
-      logger.error("❌ Erro na recuperação:", error.message);
+      logInfo("❌ Erro na recuperação: " + error.message);
       return NextResponse.json(
         { error: "Erro interno: " + error.message },
         { status: 500 }
       );
     }
 
-    logger.error("❌ Erro desconhecido:", error);
+    logInfo("❌ Erro desconhecido: " + String(error));
     return NextResponse.json(
       { error: "Erro interno desconhecido" },
       { status: 500 }
