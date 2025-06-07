@@ -17,7 +17,7 @@ export default function RedefinirSenhaClient() {
 
   useEffect(() => {
     if (!token) setErro("Token de redefinição inválido ou ausente.");
-  }, [token]);
+  }, [token, setErro]);
 
   const handleSubmit = async () => {
     setErro("");

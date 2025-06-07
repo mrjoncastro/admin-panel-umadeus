@@ -46,7 +46,7 @@ export default function DashboardAnalytics({ inscricoes, pedidos }: DashboardAna
 
   useEffect(() => {
     setupCharts();
-  }, []);
+  }, [setupCharts]);
 
   const inscricoesData = groupByDate(inscricoes, startDate, endDate);
   const pedidosData = groupByDate(pedidos, startDate, endDate);

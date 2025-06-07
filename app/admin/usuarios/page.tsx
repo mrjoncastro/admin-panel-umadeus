@@ -50,7 +50,7 @@ export default function UsuariosPage() {
     }
 
     fetchUsuarios();
-  }, []);
+  }, [setUsuarios, setMensagem, setLoading]);
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">

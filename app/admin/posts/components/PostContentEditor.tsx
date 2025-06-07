@@ -45,8 +45,7 @@ export default function PostMarkdownEditor({ value, onChange }: Props) {
         editor.commands.setContent(html, false);
       }
     }
-    // eslint-disable-next-line
-  }, [value]);
+  }, [editor, value]);
 
   return (
     <div className="bg-white rounded-xl shadow">

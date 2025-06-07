@@ -12,7 +12,7 @@ export default function BackToTopButton() {
     };
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [setVisible]);
 
   if (!visible) return null;
 

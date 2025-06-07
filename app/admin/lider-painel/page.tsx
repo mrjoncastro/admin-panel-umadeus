@@ -125,7 +125,18 @@ export default function LiderDashboardPage() {
       isMounted.current = false;
       controller.abort();
     };
-  }, [pb, isLoggedIn, user, router, page]);
+  }, [
+    pb,
+    isLoggedIn,
+    user,
+    router,
+    page,
+    setInscricoes,
+    setPedidos,
+    setTotais,
+    setTotalPages,
+    setLoading,
+  ]);
 
   if (loading) {
     return <p className="p-6 text-center text-sm">Carregando dashboard...</p>;

@@ -31,7 +31,7 @@ export default function ClientesPage() {
     }
 
     fetchClientes();
-  }, [pb, showError]);
+  }, [pb, showError, setClientes, setLoading]);
 
   const salvarEdicao = async (atualizada: Partial<Inscricao>) => {
     if (!clienteEmEdicao) return;

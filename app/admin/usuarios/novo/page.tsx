@@ -48,7 +48,7 @@ export default function NovoUsuarioPage() {
       .then((res) => res.json())
       .then((data) => setCampos(data))
       .catch(() => setMensagem("❌ Erro ao carregar os campos."));
-  }, []);
+  }, [setCampos, setMensagem]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

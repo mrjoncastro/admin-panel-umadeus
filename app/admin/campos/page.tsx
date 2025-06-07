@@ -62,7 +62,7 @@ export default function GerenciarCamposPage() {
     }
 
     carregarCampos();
-  }, [token, user]);
+  }, [token, user, setCampos, setMensagem]);
 
   async function handleCriarOuAtualizar(e: React.FormEvent) {
     e.preventDefault();

@@ -30,7 +30,7 @@ export default function DashboardResumo({
 }: DashboardResumoProps) {
   useEffect(() => {
     setupCharts();
-  }, []);
+  }, [setupCharts]);
   const valorTotalConfirmado = inscricoes.reduce((total, i) => {
     const pedido = i.expand?.pedido;
     const confirmado =

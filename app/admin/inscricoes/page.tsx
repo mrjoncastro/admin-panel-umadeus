@@ -101,7 +101,7 @@ export default function ListaInscricoesPage() {
       // TODO: caso seja preciso listar campos disponíveis futuramente,
       // recuperar dados aqui e popular o estado correspondente.
     }
-  }, [pb, pb.authStore.model, showError]);
+  }, [pb, pb.authStore.model, showError, setInscricoes, setRole, setLinkPublico, setLoading]);
 
   const copiarLink = async () => {
     try {

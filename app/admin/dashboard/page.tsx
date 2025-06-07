@@ -108,7 +108,17 @@ export default function DashboardPage() {
       isMounted.current = false;
       controller.abort();
     };
-  }, [authChecked, user?.id, user?.role, pb, page]);
+  }, [
+    authChecked,
+    user?.id,
+    user?.role,
+    pb,
+    page,
+    setInscricoes,
+    setPedidos,
+    setTotalPages,
+    setLoading,
+  ]);
 
 
 

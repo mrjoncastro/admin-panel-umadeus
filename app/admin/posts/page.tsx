@@ -34,7 +34,7 @@ export default function AdminPostsPage() {
       .catch((err) => {
         console.error("Erro ao carregar posts:", err);
       });
-  }, []);
+  }, [setPosts]);
 
   const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
   const paginated = posts.slice(

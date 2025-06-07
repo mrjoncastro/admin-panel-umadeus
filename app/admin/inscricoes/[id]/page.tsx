@@ -53,7 +53,7 @@ export default function InscricaoPage() {
         }
       })
       .catch(() => setMensagem("❌ Erro ao buscar dados do líder."));
-  }, [lid]);
+  }, [lid, setCampoNome, setMensagem]);
 
   const maskCPF = (value: string) =>
     value
