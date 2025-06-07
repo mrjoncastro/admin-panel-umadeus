@@ -63,7 +63,7 @@ export default function InscricaoPage() {
                   <input
                     name="user_first_name"
                     required
-                    className="input-style"
+                    className="input-base"
                   />
                 </div>
                 <div className="flex-1">
@@ -73,7 +73,7 @@ export default function InscricaoPage() {
                   <input
                     name="user_last_name"
                     required
-                    className="input-style"
+                    className="input-base"
                   />
                 </div>
               </div>
@@ -87,7 +87,7 @@ export default function InscricaoPage() {
                     type="email"
                     name="user_email"
                     required
-                    className="input-style"
+                    className="input-base"
                   />
                 </div>
                 <div className="flex-1">
@@ -98,7 +98,7 @@ export default function InscricaoPage() {
                     type="tel"
                     name="user_phone"
                     required
-                    className="input-style"
+                    className="input-base"
                   />
                 </div>
               </div>
@@ -106,7 +106,7 @@ export default function InscricaoPage() {
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1">
                   <label className="block mb-1 text-sm font-medium">CPF*</label>
-                  <input name="user_cpf" required className="input-style" />
+                  <input name="user_cpf" required className="input-base" />
                 </div>
                 <div className="flex-1">
                   <label className="block mb-1 text-sm font-medium">
@@ -116,7 +116,7 @@ export default function InscricaoPage() {
                     type="date"
                     name="user_birth_date"
                     required
-                    className="input-style"
+                    className="input-base"
                   />
                 </div>
               </div>
@@ -125,7 +125,7 @@ export default function InscricaoPage() {
                 <label className="block mb-1 text-sm font-medium">
                   Gênero*
                 </label>
-                <select name="user_gender" required className="input-style">
+                <select name="user_gender" required className="input-base">
                   <option value="">Selecione</option>
                   <option value="Masculino">Masculino</option>
                   <option value="Feminino">Feminino</option>
@@ -143,14 +143,14 @@ export default function InscricaoPage() {
             <div className="flex flex-col gap-4">
               <div>
                 <label className="block mb-1 text-sm font-medium">CEP*</label>
-                <input name="user_cep" required className="input-style" />
+                <input name="user_cep" required className="input-base" />
               </div>
 
               <div>
                 <label className="block mb-1 text-sm font-medium">
                   Endereço*
                 </label>
-                <input name="user_address" required className="input-style" />
+                <input name="user_address" required className="input-base" />
               </div>
 
               <div className="flex flex-col md:flex-row gap-4">
@@ -158,13 +158,13 @@ export default function InscricaoPage() {
                   <label className="block mb-1 text-sm font-medium">
                     Número*
                   </label>
-                  <input name="user_number" required className="input-style" />
+                  <input name="user_number" required className="input-base" />
                 </div>
                 <div className="flex-1">
                   <label className="block mb-1 text-sm font-medium">
                     Complemento
                   </label>
-                  <input name="user_complement" className="input-style" />
+                  <input name="user_complement" className="input-base" />
                 </div>
               </div>
 
@@ -176,14 +176,14 @@ export default function InscricaoPage() {
                   <input
                     name="user_neighborhood"
                     required
-                    className="input-style"
+                    className="input-base"
                   />
                 </div>
                 <div className="flex-1">
                   <label className="block mb-1 text-sm font-medium">
                     Cidade*
                   </label>
-                  <input name="user_city" required className="input-style" />
+                  <input name="user_city" required className="input-base" />
                 </div>
               </div>
 
@@ -191,7 +191,7 @@ export default function InscricaoPage() {
                 <label className="block mb-1 text-sm font-medium">
                   Estado*
                 </label>
-                <select name="user_state" required className="input-style">
+                <select name="user_state" required className="input-base">
                   <option value="">Selecione</option>
                   {[
                     "AC",
