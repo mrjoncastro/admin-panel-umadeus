@@ -5,6 +5,7 @@ import { Menu, X, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image"; // se quiser exibir logo
 import { useAuthContext } from "@/lib/context/AuthContext";
+import { useAppConfig } from "@/lib/context/AppConfigContext";
 
 type UserRole = "visitante" | "usuario" | "lider" | "coordenador";
 
@@ -21,6 +22,7 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
   const { user, isLoggedIn } = useAuthContext();
+  const { config } = useAppConfig();
 
   const role: UserRole = useMemo(() => {
     if (!isLoggedIn) return "visitante";
@@ -69,7 +71,7 @@ export default function Header() {
           aria-label="Página inicial"
         >
           <Image
-            src="/img/logo_umadeus_branco.png"
+            src={config.logoUrl || "/img/logo_umadeus_branco.png"}
             alt="UMADEUS"
             width={36}
             height={36}

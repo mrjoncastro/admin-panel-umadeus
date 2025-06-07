@@ -140,3 +140,10 @@ export const Padrão = () => <MeuBotao />;
 
 Execute `npm run storybook` para iniciar a interface e validar os componentes.
 Qualquer novo token ou componente deve ter uma história correspondente.
+
+## Personalização
+
+O portal permite ajustar fonte, cor primária e logotipo dinamicamente. As
+configurações são gerenciadas pelo `AppConfigProvider` (`lib/context/AppConfigContext.tsx`),
+que salva as preferências no `localStorage` e aplica os valores às variáveis CSS
+`--font-body`, `--font-heading` e `--accent`.
