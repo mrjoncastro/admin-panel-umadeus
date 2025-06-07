@@ -2,6 +2,7 @@ import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "../tailwind.config.js";
 import colors from "tailwindcss/colors";
 
+// @ts-expect-error: tailwindConfig may not match the expected type, but works at runtime
 const fullConfig = resolveConfig(tailwindConfig);
 
 export const twColors = {
