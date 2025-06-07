@@ -46,7 +46,12 @@ const FetchWrapper = ({ posts, children }: { posts: Post[]; children: React.Reac
   useEffect(() => {
     const original = global.fetch;
     global.fetch = () =>
-      Promise.resolve({ json: async () => posts });
+      Promise.resolve(
+        new Response(JSON.stringify(posts), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        })
+      );
     return () => {
       global.fetch = original;
     };
