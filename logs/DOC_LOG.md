@@ -15,3 +15,4 @@
 ## [2025-06-07] Adicionado docs/design-system.md e links no README e AGENTS.
 ## [2025-06-07] Documentados tokens neutros e atualizados estilos globais.
 ## [2025-06-07] Documentada paleta 'error' no design-tokens.
+## [2025-06-07] Adicionada seção "Blog e CMS" ao README e script generate-posts no package.json.
