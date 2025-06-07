@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import { setupCharts } from "@/lib/chartSetup";
-import colors from "@/utils/twColors";
+import twColors from "@/utils/twColors";
 import { Info } from "lucide-react";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
@@ -68,7 +68,7 @@ export default function DashboardResumo({
       {
         label: "Inscrições",
         data: inscricoes.map(() => 1),
-        backgroundColor: colors.primary600,
+        backgroundColor: twColors.primary600,
       },
     ],
   };
@@ -87,9 +87,9 @@ export default function DashboardResumo({
           label: `Pedidos (${filtroStatus})`,
           data: Object.values(contagem),
           backgroundColor: [
-            colors.primary600,
-            colors.error600,
-            colors.blue500,
+            twColors.primary600,
+            twColors.error600,
+            twColors.blue500,
           ],
         },
       ],
