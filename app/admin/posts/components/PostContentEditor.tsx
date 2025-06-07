@@ -37,7 +37,7 @@ export default function PostMarkdownEditor({ value, onChange }: Props) {
     },
   });
 
-  // Atualiza quando value externo muda
+  // Atualiza quando o valor externo ou o editor mudam
   useEffect(() => {
     if (editor && value) {
       const html = markdownToHtml(value);
@@ -45,8 +45,7 @@ export default function PostMarkdownEditor({ value, onChange }: Props) {
         editor.commands.setContent(html, false);
       }
     }
-    // eslint-disable-next-line
-  }, [value]);
+  }, [value, editor]);
 
   return (
     <div className="bg-white rounded-xl shadow">
