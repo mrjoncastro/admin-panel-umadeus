@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useMemo } from "react";
 import createPocketBase from "@/lib/pocketbase";
-import { logInfo } from "@/lib/logger";
 import { Copy } from "lucide-react";
 import { saveAs } from "file-saver";
 import ModalEditarInscricao from "./componentes/ModalEdit";
