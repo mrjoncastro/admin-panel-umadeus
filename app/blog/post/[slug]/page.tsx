@@ -9,7 +9,6 @@ import Footer from "@/app/components/Footer";
 import Image from "next/image";
 import { Share2, Clock } from "lucide-react";
 import { isExternalUrl } from "@/utils/isExternalUrl";
-import styles from "./post.module.css";
 import type { Metadata } from "next";
 import CtaWhats from "@/app/components/CTAWhats";
 import CtaWhatsButton from "@/app/components/CtaWhatsButton";
@@ -107,7 +106,9 @@ export default async function BlogPostPage({
   return (
     <>
       <Header />
-      <main className={styles.container}>
+      <main
+        className="mx-auto mt-8 max-w-[680px] px-5 py-20 text-[1.125rem] leading-[1.8] text-[var(--text-primary)] bg-white"
+      >
         {data.thumbnail && (
           <figure>
             <Image
@@ -117,32 +118,40 @@ export default async function BlogPostPage({
               alt={`Imagem de capa: ${data.title}`}
               width={1200}
               height={600}
-              className={styles.thumbnail}
+              className="w-full max-w-[640px] max-h-[360px] object-cover rounded-xl mx-auto mb-6"
             />
-            {data.credit && <figcaption>{data.credit}</figcaption>}
+            {data.credit && (
+              <figcaption className="text-sm text-neutral-500 text-center mt-2 italic">
+                {data.credit}
+              </figcaption>
+            )}
           </figure>
         )}
 
         {data.category && (
-          <span className={styles.category}>{data.category}</span>
+          <span className="text-xs uppercase text-primary-600 font-semibold">
+            {data.category}
+          </span>
         )}
 
-        <h1 className={styles.title}>{data.title}</h1>
+        <h1 className="text-2xl md:text-3xl font-bold leading-snug mt-2 mb-6">
+          {data.title}
+        </h1>
 
-        <div className={styles.meta}>
-          <div className={styles.authorBlock}>
+        <div className="flex flex-wrap items-center gap-4 text-[0.9375rem] mb-6">
+          <div className="flex items-center gap-2 min-w-0">
             <Image
               src="/img/avatar_m24.webp"
               alt="Autor"
               width={40}
               height={40}
-              className={styles.avatar}
+              className="flex-shrink-0 w-9 h-9 rounded-full object-cover"
             />
             <span>Redação M24</span>
           </div>
 
-          <div className={styles.readingTime}>
-            <Clock className={styles.icon} />
+          <div className="flex items-center gap-1">
+            <Clock className="w-4 h-4" />
             <span>{readingTime} min de leitura</span>
           </div>
 
@@ -152,16 +161,18 @@ export default async function BlogPostPage({
             )}`}
             target="_blank"
             rel="noopener noreferrer"
-            className={styles.share}
+            className="flex items-center gap-1 text-primary-600 hover:underline"
           >
-            <Share2 className={styles.icon} />
+            <Share2 className="w-4 h-4" />
             Compartilhar
           </a>
         </div>
 
-        {data.summary && <p className={styles.summary}>{data.summary}</p>}
+        {data.summary && (
+          <p className="mb-8 text-[1.125rem] text-neutral-700">{data.summary}</p>
+        )}
 
-        <article>
+        <article className="prose prose-neutral max-w-none">
           <Content />
           {nextPost && <NextPostButton slug={nextPost.slug} />}
           <MiniPrecosPost />
