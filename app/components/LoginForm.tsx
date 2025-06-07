@@ -121,7 +121,7 @@ export default function LoginForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`btn-base block mx-auto ${
+            className={`btn block mx-auto ${
               isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-[var(--accent)]"
             }`}
           >
