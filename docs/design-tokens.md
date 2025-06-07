@@ -12,6 +12,7 @@ Este documento lista os tokens de design definidos em `app/globals.css` e como u
 - `--color-secondary`: cor complementar utilizada em fundos e elementos de navegação.
 - `neutral-50` a `neutral-950`: tons de cinza definidos no `tailwind.config.js` para uso em `@apply`.
 - `error`: paleta de vermelhos para mensagens de erro (`text-error`).
+- `primary-50` a `primary-900`: paleta roxa principal utilizada em botões e links.
 
 ## Espaçamentos
 

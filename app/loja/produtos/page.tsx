@@ -116,7 +116,7 @@ export default function ProdutoPage() {
                   }}
                   className={`px-4 py-1 rounded-full border font-medium transition ${
                     generoSelecionado === g
-                      ? "bg-cornell_red-600 text-white"
+                      ? "bg-primary-600 text-white"
                       : "border-platinum/30 text-platinum hover:bg-black_bean"
                   }`}
                 >
@@ -159,7 +159,7 @@ export default function ProdutoPage() {
             href={checkoutLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="block w-full bg-cornell_red-600 hover:bg-cornell_red-700 text-white text-center py-3 rounded-full font-semibold transition text-lg"
+            className="block w-full bg-primary-600 hover:bg-primary-700 text-white text-center py-3 rounded-full font-semibold transition text-lg"
           >
             Quero essa pra brilhar no Congresso!
           </a>

@@ -17,3 +17,4 @@
 ## [2025-06-07] Documentada paleta 'error' no design-tokens.
 ## [2025-06-07] Adicionada seção "Blog e CMS" ao README e script generate-posts no package.json.
 ## [2025-06-07] README ajustado indicando uso de chamadas HTTP na API do Asaas, sem SDK.
+## [2025-06-07] Removida paleta `cornell_red` do tailwind.config e atualizado design-tokens.
