@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import pb from "@/lib/pocketbase";
+import { useEffect, useState, useMemo } from "react";
+import createPocketBase from "@/lib/pocketbase";
 import { logInfo } from "@/lib/logger";
 import { Copy } from "lucide-react";
 import { saveAs } from "file-saver";
@@ -37,7 +37,14 @@ type Inscricao = {
   pedido_id?: string | null;
 };
 
+interface UsuarioAuthModel {
+  id: string;
+  role: "coordenador" | "lider" | string;
+  campo?: string;
+}
+
 export default function ListaInscricoesPage() {
+  const pb = useMemo(() => createPocketBase(), []);
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
   const [role, setRole] = useState("");
   const [linkPublico, setLinkPublico] = useState("");
@@ -55,13 +62,7 @@ export default function ListaInscricoesPage() {
       : "Buscar por nome, telefone ou CPF";
 
   useEffect(() => {
-    // Se pb pode ser uma função, trate explicitamente
-    const pbClient =
-      typeof pb === "function"
-        ? (pb() as { authStore?: { model?: any }; autoCancellation?: (v: boolean) => void; collection: (name: string) => any })
-        : (pb as { authStore?: { model?: any }; autoCancellation?: (v: boolean) => void; collection: (name: string) => any });
-
-    const user = pbClient.authStore?.model;
+    const user = pb.authStore.model as unknown as UsuarioAuthModel;
 
     if (!user?.id || !user?.role) {
       showError("Sessão expirada ou inválida.");
@@ -69,14 +70,14 @@ export default function ListaInscricoesPage() {
       return;
     }
 
-    pbClient.autoCancellation?.(false);
+    pb.autoCancellation(false);
 
     setRole(user.role);
     setLinkPublico(`${window.location.origin}/inscricoes/${user.id}`);
 
     const filtro = user.role === "coordenador" ? "" : `campo='${user.campo}'`;
 
-    pbClient
+    pb
       .collection("inscricoes")
       .getFullList({ sort: "-created", filter: filtro, expand: "campo,pedido" })
       .then((res: unknown[]) => {
@@ -127,7 +128,7 @@ export default function ListaInscricoesPage() {
       .finally(() => setLoading(false));
 
     if (user.role === "coordenador") {
-      pbClient
+      pb
         .collection("campos")
         .getFullList({ sort: "nome" })
         .then((res: unknown[]) => {
@@ -140,7 +141,7 @@ export default function ListaInscricoesPage() {
         })
         .catch(() => {});
     }
-  }, [showError]);
+  }, [pb, showError]);
 
   const copiarLink = async () => {
     try {
@@ -155,11 +156,7 @@ export default function ListaInscricoesPage() {
   const deletarInscricao = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta inscrição?")) {
       try {
-        const pbClient =
-          typeof pb === "function"
-            ? (pb() as { collection: (name: string) => any })
-            : (pb as { collection: (name: string) => any });
-        await pbClient.collection("inscricoes").delete(id);
+        await pb.collection("inscricoes").delete(id);
         setInscricoes((prev) => prev.filter((i) => i.id !== id));
         showSuccess("Inscrição excluída.");
       } catch {
@@ -174,11 +171,7 @@ export default function ListaInscricoesPage() {
       setConfirmandoId(id);
 
       // 🔹 1. Buscar inscrição com expand do campo
-      const pbClient =
-        typeof pb === "function"
-          ? (pb() as { collection: (name: string) => any })
-          : (pb as { collection: (name: string) => any });
-      const inscricao = await pbClient.collection("inscricoes").getOne(id, {
+      const inscricao = await pb.collection("inscricoes").getOne(id, {
         expand: "campo",
       });
 
@@ -188,7 +181,7 @@ export default function ListaInscricoesPage() {
       const valorPedido =
         inscricao.produto === "Somente Pulseira" ? 10.0 : 50.0;
 
-      const pedido = await pbClient.collection("pedidos").create({
+      const pedido = await pb.collection("pedidos").create({
         id_inscricao: id,
         valor: valorPedido,
         status: "pendente",
@@ -214,11 +207,7 @@ export default function ListaInscricoesPage() {
       }
 
       // 4. Atualizar inscrição com o ID do pedido
-      await (
-        typeof pb === "function"
-          ? (pb() as { collection: (name: string) => any })
-          : (pb as { collection: (name: string) => any })
-      )
+      await pb
         .collection("inscricoes")
         .update(id, {
           pedido: pedido.id, // ✅ atualiza campo pedido
@@ -520,11 +509,7 @@ export default function ListaInscricoesPage() {
           inscricao={inscricaoEmEdicao}
           onClose={() => setInscricaoEmEdicao(null)}
           onSave={async (dadosAtualizados: Partial<Inscricao>) => {
-            const pbClient =
-              typeof pb === "function"
-                ? (pb() as { collection: (name: string) => any })
-                : (pb as { collection: (name: string) => any });
-            await pbClient
+            await pb
               .collection("inscricoes")
               .update(inscricaoEmEdicao.id, dadosAtualizados);
             setInscricoes((prev) =>
@@ -557,11 +542,7 @@ export default function ListaInscricoesPage() {
               </button>
               <button
                 onClick={async () => {
-                  const pbClient =
-                    typeof pb === "function"
-                      ? (pb() as { collection: (name: string) => any })
-                      : (pb as { collection: (name: string) => any });
-                  await pbClient
+                  await pb
                     .collection("inscricoes")
                     .update(inscricaoParaRecusar.id, {
                       status: "cancelado",
