@@ -1,7 +1,14 @@
 "use client";
 
 import type { Editor } from "@tiptap/react";
-import { Bold, Italic, Heading1 } from "lucide-react";
+import {
+  Bold,
+  Italic,
+  Heading2,
+  Heading3,
+  Pilcrow,
+  Image as ImageIcon,
+} from "lucide-react";
 
 type Props = {
   editor: Editor | null;
@@ -38,9 +45,38 @@ export default function EditorToolbar({ editor }: Props) {
         type="button"
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
         className={`${btnBase} ${editor.isActive("heading", { level: 2 }) ? activeBg : ""}`}
-        aria-label="T\u00edtulo"
+        aria-label="H2"
       >
-        <Heading1 size={16} />
+        <Heading2 size={16} />
+      </button>
+      <button
+        type="button"
+        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+        className={`${btnBase} ${editor.isActive("heading", { level: 3 }) ? activeBg : ""}`}
+        aria-label="H3"
+      >
+        <Heading3 size={16} />
+      </button>
+      <button
+        type="button"
+        onClick={() => editor.chain().focus().setParagraph().run()}
+        className={`${btnBase} ${editor.isActive("paragraph") ? activeBg : ""}`}
+        aria-label="Par\u00e1grafo"
+      >
+        <Pilcrow size={16} />
+      </button>
+      <button
+        type="button"
+        onClick={() => {
+          const url = window.prompt("URL da imagem");
+          if (url) {
+            editor.chain().focus().setImage({ src: url }).run();
+          }
+        }}
+        className={btnBase}
+        aria-label="Inserir imagem"
+      >
+        <ImageIcon size={16} />
       </button>
     </div>
   );
