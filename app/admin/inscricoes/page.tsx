@@ -100,6 +100,9 @@ export default function ListaInscricoesPage() {
     if (user.role === "coordenador") {
       pb.collection("campos")
         .getFullList({ sort: "nome" })
+        .then(() => {
+          // TODO: adicionar camposDisponiveis futuramente
+        })
         .catch(() => {});
     }
   }, [pb, pb.authStore.model, showError]);

@@ -41,6 +41,9 @@ module.exports = {
         eerie_black: "#1e2019",
         platina: "#dcdcdc",
       },
+      fontFamily: {
+        bebas: 'var(--font-bebas)',
+      },
     },
   },
   plugins: [],
