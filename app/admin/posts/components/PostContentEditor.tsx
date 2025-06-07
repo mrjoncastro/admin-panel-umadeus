@@ -1,6 +1,8 @@
 "use client";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Image from "@tiptap/extension-image";
+import Link from "@tiptap/extension-link";
 import EditorToolbar from "./EditorToolbar";
 import { useEffect } from "react";
 // @ts-expect-error: turndown não possui tipos TypeScript oficiais
@@ -22,7 +24,7 @@ type Props = {
 
 export default function PostMarkdownEditor({ value, onChange }: Props) {
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [StarterKit, Image, Link],
     content: markdownToHtml(value),
     editorProps: {
       attributes: {
