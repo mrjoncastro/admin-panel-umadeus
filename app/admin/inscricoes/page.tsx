@@ -100,13 +100,8 @@ export default function ListaInscricoesPage() {
     if (user.role === "coordenador") {
       pb.collection("campos")
         .getFullList({ sort: "nome" })
-        .then((res) => {
-          const nomes = res.map((c: any) =>
-            typeof c === "object" && c !== null && "nome" in c
-              ? String(c.nome)
-              : "Indefinido"
-          );
-          // logInfo("Campos disponíveis", nomes);
+        .then(() => {
+          // noop
         })
         .catch(() => {});
     }
