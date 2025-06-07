@@ -28,3 +28,4 @@
 ## [2025-06-07] Documentada classe `.heading` e exemplo de uso em docs/design-system.md.
 ## [2025-06-07] Atualizado arquitetura.md incluindo se\xC3\xA7\xC3\xA3o do Blog e nova estrutura de pastas.
 ## [2025-06-07] Ajustado processo de tipagem na rota loja/categorias/[slug].
+## [2025-06-07] Documentada correção do carregamento de inscrições ao subscrever mudanças de autenticação.

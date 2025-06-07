@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import createPocketBase from "@/lib/pocketbase";
 import { Copy } from "lucide-react";
 import { saveAs } from "file-saver";
@@ -55,7 +55,7 @@ export default function ListaInscricoesPage() {
       ? "Buscar por nome, telefone, CPF ou campo"
       : "Buscar por nome, telefone ou CPF";
 
-  useEffect(() => {
+  const carregarInscricoes = useCallback(() => {
     const user = pb.authStore.model;
 
     if (!user?.id || !user?.role) {
@@ -101,7 +101,14 @@ export default function ListaInscricoesPage() {
       // TODO: caso seja preciso listar campos disponíveis futuramente,
       // recuperar dados aqui e popular o estado correspondente.
     }
-  }, [pb, pb.authStore.model, showError]);
+  }, [pb, showError]);
+
+  useEffect(() => {
+    carregarInscricoes();
+
+    const unsubscribe = pb.authStore.onChange(carregarInscricoes);
+    return () => unsubscribe();
+  }, [pb, carregarInscricoes]);
 
   const copiarLink = async () => {
     try {
