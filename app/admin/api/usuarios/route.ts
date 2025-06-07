@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireRole } from "@/lib/apiAuth";
-import { logger } from "@/lib/logger";
+import { getUserFromHeaders } from "@/lib/getUserFromHeaders";
 
 export async function GET(req: NextRequest) {
   const auth = requireRole(req, "coordenador");
@@ -17,7 +16,7 @@ export async function GET(req: NextRequest) {
       expand: "campo",
     });
 
-    logger.info(`📦 ${usuarios.length} usuários encontrados.`);
+    console.log(`📦 ${usuarios.length} usuários encontrados.`);
     return NextResponse.json(usuarios);
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -66,7 +65,7 @@ export async function POST(req: NextRequest) {
       campo,
     });
 
-    logger.info("✅ Usuário criado:", novoUsuario);
+    console.log("✅ Usuário criado:", novoUsuario);
     return NextResponse.json(novoUsuario, { status: 201 });
   } catch (err: unknown) {
     if (err instanceof Error) {

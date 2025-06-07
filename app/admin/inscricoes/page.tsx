@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react";
-import createPocketBase from "@/lib/pocketbase";
+import { useEffect, useState } from "react";
+import pb from "@/lib/pocketbase";
+import { logInfo } from "@/lib/logger";
 import { Copy } from "lucide-react";
 import { saveAs } from "file-saver";
 import ModalEditarInscricao from "./componentes/ModalEdit";
@@ -9,7 +10,6 @@ import ModalVisualizarPedido from "./componentes/ModalVisualizarPedido";
 import { CheckCircle, XCircle, Pencil, Trash2, Eye } from "lucide-react";
 import TooltipIcon from "../components/TooltipIcon";
 import { useToast } from "@/lib/context/ToastContext";
-import { PRECO_PULSEIRA, PRECO_KIT } from "@/lib/constants";
 
 const statusBadge = {
   pendente: "bg-yellow-100 text-yellow-800",
@@ -38,7 +38,6 @@ type Inscricao = {
 };
 
 export default function ListaInscricoesPage() {
-  const pb = useMemo(() => createPocketBase(), []);
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
   const [role, setRole] = useState("");
   const [linkPublico, setLinkPublico] = useState("");
@@ -55,7 +54,7 @@ export default function ListaInscricoesPage() {
       ? "Buscar por nome, telefone, CPF ou campo"
       : "Buscar por nome, telefone ou CPF";
 
-  const carregarInscricoes = useCallback(() => {
+  useEffect(() => {
     const user = pb.authStore.model;
 
     if (!user?.id || !user?.role) {
@@ -98,17 +97,21 @@ export default function ListaInscricoesPage() {
       .finally(() => setLoading(false));
 
     if (user.role === "coordenador") {
-      // TODO: caso seja preciso listar campos disponíveis futuramente,
-      // recuperar dados aqui e popular o estado correspondente.
+      pb.collection("campos")
+        .getFullList({ sort: "nome" })
+        .then((res) => {
+          const nomes = res.map((c) =>
+            typeof c === "object" && c !== null && "nome" in c
+              ? String(c.nome)
+              : "Indefinido"
+          );
+          // Se ainda for usar camposDisponiveis no futuro:
+          // setCamposDisponiveis(nomes);
+          logInfo("Campos disponíveis", nomes);
+        })
+        .catch(() => {});
     }
-  }, [pb, showError]);
-
-  useEffect(() => {
-    carregarInscricoes();
-
-    const unsubscribe = pb.authStore.onChange(carregarInscricoes);
-    return () => unsubscribe();
-  }, [pb, carregarInscricoes]);
+  }, [showError]);
 
   const copiarLink = async () => {
     try {
@@ -144,11 +147,10 @@ export default function ListaInscricoesPage() {
 
       const campo = inscricao.expand?.campo;
 
-      // 🔹 2. Definir valor do pedido com base no produto
+      // 🔹 2. Criar pedido com os dados da inscrição
       const valorPedido =
-        inscricao.produto === "Somente Pulseira" ? PRECO_PULSEIRA : PRECO_KIT;
+        inscricao.produto === "Somente Pulseira" ? 10.00 : 50.00;
 
-      // 🔹 3. Criar pedido no PocketBase
       const pedido = await pb.collection("pedidos").create({
         id_inscricao: id,
         valor: valorPedido,
@@ -158,34 +160,29 @@ export default function ListaInscricoesPage() {
         tamanho: inscricao.tamanho,
         genero: inscricao.genero,
         email: inscricao.email,
-        campo: campo?.id,
+        campo: campo.id,
         responsavel: inscricao.criado_por,
       });
 
-      // 🔹 4. Gerar link de pagamento via API do Asaas
-      const res = await fetch("/admin/api/asaas/", {
+      // 🔹 3. Gera link de pagamento
+      const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          pedidoId: pedido.id,
-          valor: pedido.valor,
-        }),
+        body: JSON.stringify({ pedidoId: pedido.id, valor: pedido.valor }),
       });
 
       const checkout = await res.json();
-
       if (!res.ok || !checkout?.url) {
         throw new Error("Erro ao gerar link de pagamento.");
       }
 
-      // 🔹 5. Atualizar inscrição com o ID do pedido e status
+      // 4. Atualizar inscrição com o ID do pedido
       await pb.collection("inscricoes").update(id, {
-        pedido: pedido.id,
+        pedido: pedido.id, // ✅ atualiza campo pedido
         status: "aguardando_pagamento",
         confirmado_por_lider: true,
       });
 
-      // Atualizar estado local das inscrições
       setInscricoes((prev) =>
         prev.map((i) =>
           i.id === id
@@ -198,8 +195,8 @@ export default function ListaInscricoesPage() {
         )
       );
 
-      // 🔹 6. Notificar via n8n webhook
-      await fetch("/admin/api/n8n", {
+      // 🔹 5. Notifica n8n
+      await fetch("/api/n8n", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -207,14 +204,13 @@ export default function ListaInscricoesPage() {
           telefone: inscricao.telefone,
           cpf: inscricao.cpf,
           evento: inscricao.evento,
-          liderId: campo?.responsavel,
+          liderId: campo.responsavel,
           pedidoId: pedido.id,
           valor: pedido.valor,
           url_pagamento: checkout.url,
         }),
       });
 
-      // 🔹 7. Mostrar sucesso visual
       showSuccess("Link de pagamento enviado com sucesso!");
     } catch (err) {
       console.error("Erro ao confirmar inscrição:", err);
@@ -278,7 +274,7 @@ export default function ListaInscricoesPage() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">
-      <h2 className="heading">Inscrições Recebidas</h2>
+      <h1 className="heading">Inscrições Recebidas</h1>
 
       {/* Link público */}
       {role === "lider" && (
@@ -290,7 +286,10 @@ export default function ListaInscricoesPage() {
               value={linkPublico}
               className="w-full p-2 border rounded bg-white text-gray-700 font-mono text-xs shadow-sm"
             />
-            <button onClick={copiarLink} className="btn btn-primary text-xs">
+            <button
+              onClick={copiarLink}
+              className="btn btn-primary text-xs"
+            >
               <Copy size={14} />
             </button>
           </div>
@@ -301,6 +300,7 @@ export default function ListaInscricoesPage() {
           )}
         </div>
       )}
+
 
       {/* Filtros */}
       <div className="flex flex-wrap gap-4 mb-6">
@@ -347,7 +347,9 @@ export default function ListaInscricoesPage() {
                 <th>Campo</th>
                 <th>Criado em</th>
                 <th>Confirmação</th>
-                {role === "coordenador" && <th>Ação</th>}
+                {role === "coordenador" && (
+                  <th>Ação</th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -366,7 +368,9 @@ export default function ListaInscricoesPage() {
                     </span>
                   </td>
                   <td>{i.campo}</td>
-                  <td>{new Date(i.created).toLocaleDateString("pt-BR")}</td>
+                  <td>
+                    {new Date(i.created).toLocaleDateString("pt-BR")}
+                  </td>
                   <td className="text-left text-xs">
                     <div className="flex items-center gap-3">
                       {(role === "lider" || role === "coordenador") &&
