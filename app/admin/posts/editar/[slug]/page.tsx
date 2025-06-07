@@ -35,23 +35,25 @@ export default function EditarPostPage() {
   useEffect(() => {
     fetch(`/admin/api/posts/${slug}`)
       .then((res) => res.json())
-      .then((data: {
-        title: string;
-        summary: string;
-        category: string;
-        content: string;
-        date: string;
-        thumbnail: string;
-        keywords: string;
-      }) => {
-        setTitle(data.title);
-        setSummary(data.summary);
-        setCategory(data.category);
-        setConteudo(data.content);
-        setDate(data.date);
-        setThumbnail(data.thumbnail);
-        setKeywords(data.keywords);
-      })
+      .then(
+        (data: {
+          title: string;
+          summary: string;
+          category: string;
+          content: string;
+          date: string;
+          thumbnail: string;
+          keywords: string;
+        }) => {
+          setTitle(data.title);
+          setSummary(data.summary);
+          setCategory(data.category);
+          setConteudo(data.content);
+          setDate(data.date);
+          setThumbnail(data.thumbnail);
+          setKeywords(data.keywords);
+        }
+      )
       .catch((err) => console.error("Erro ao carregar post:", err));
   }, [slug]);
 
@@ -120,12 +122,12 @@ export default function EditarPostPage() {
           </div>
 
           {keywords && (
-            <p className="mb-2 text-sm text-neutral-500">Palavras-chave: {keywords}</p>
+            <p className="mb-2 text-sm text-neutral-500">
+              Palavras-chave: {keywords}
+            </p>
           )}
 
-          {date && (
-            <p className="text-sm text-neutral-500 mb-6">{date}</p>
-          )}
+          {date && <p className="text-sm text-neutral-500 mb-6">{date}</p>}
 
           {summary && (
             <p className="mb-8 text-[1.125rem] text-neutral-700">{summary}</p>
@@ -143,7 +145,6 @@ export default function EditarPostPage() {
 
   return (
     <>
-      <div>Editando post: {slug}</div>
       <main className="max-w-xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold mb-4">Editar Post</h1>
         <p className="text-sm text-gray-600 mb-4">Slug: {slug}</p>
@@ -174,9 +175,10 @@ export default function EditarPostPage() {
             type="date"
             name="date"
             value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full border p-2 rounded"
+            className="w-full border p-2 rounded bg-neutral-100 cursor-not-allowed opacity-80"
+            disabled
           />
+
           <input
             type="text"
             placeholder="Categoria"
@@ -223,4 +225,3 @@ export default function EditarPostPage() {
     </>
   );
 }
-
