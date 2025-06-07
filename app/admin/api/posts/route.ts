@@ -19,7 +19,9 @@ export async function POST(req: NextRequest) {
     const summary = formData.get("summary")?.toString() || "";
     const category = formData.get("category")?.toString() || "";
     const content = formData.get("content")?.toString() || "";
-    const file = formData.get("thumbnail") as File | null;
+    const date = formData.get("date")?.toString() || new Date().toISOString();
+    const thumbnail = formData.get("thumbnail")?.toString() || "";
+    const keywords = formData.get("keywords")?.toString() || "";
 
     if (!title || !content) {
       return NextResponse.json(
@@ -29,23 +31,6 @@ export async function POST(req: NextRequest) {
     }
 
     const slug = slugify(title);
-    let thumbnailUrl = "";
-
-    if (file) {
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      const uploadsDir = path.join(process.cwd(), "public", "uploads");
-
-      if (!fs.existsSync(uploadsDir)) {
-        await mkdir(uploadsDir, { recursive: true });
-      }
-
-      const ext = path.extname(file.name) || ".jpg";
-      const filename = `${slug}${ext}`;
-      const filepath = path.join(uploadsDir, filename);
-      await writeFile(filepath, buffer);
-      thumbnailUrl = `/uploads/${filename}`;
-    }
 
     const postsDir = path.join(process.cwd(), "posts");
     if (!fs.existsSync(postsDir)) {
@@ -56,15 +41,16 @@ export async function POST(req: NextRequest) {
       title,
       summary,
       category,
-      date: new Date().toISOString(),
-      ...(thumbnailUrl && { thumbnail: thumbnailUrl }),
+      date,
+      ...(thumbnail && { thumbnail }),
+      ...(keywords && { keywords }),
     } as Record<string, string>;
 
     const mdxContent = `${matter.stringify(content, frontMatter)}\n`;
     const postPath = path.join(postsDir, `${slug}.mdx`);
     await writeFile(postPath, mdxContent, "utf8");
 
-    return NextResponse.json({ slug, thumbnail: thumbnailUrl });
+    return NextResponse.json({ slug, thumbnail });
   } catch (err) {
     console.error("Erro ao salvar post:", err);
     return NextResponse.json(

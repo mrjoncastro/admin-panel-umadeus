@@ -11,6 +11,9 @@ export default function NovoPostPage() {
   const router = useRouter();
   const [conteudo, setConteudo] = useState("");
   const [preview, setPreview] = useState(false);
+  const [date, setDate] = useState("");
+  const [thumbnail, setThumbnail] = useState("");
+  const [keywords, setKeywords] = useState("");
 
   useEffect(() => {
     if (!isLoggedIn || !user) {
@@ -38,16 +41,54 @@ export default function NovoPostPage() {
   return (
     <main className="max-w-xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-4">Novo Post</h1>
-      <form className="space-y-4">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          const formData = new FormData(e.currentTarget);
+          formData.set("content", conteudo);
+          fetch("/admin/api/posts", {
+            method: "POST",
+            body: formData,
+          })
+            .then((res) => res.json())
+            .then(() => router.push("/admin/posts"))
+            .catch((err) => console.error("Erro ao salvar post:", err));
+        }}
+        className="space-y-4"
+      >
         <input
           type="text"
           placeholder="Título"
+          name="title"
           className="w-full border p-2 rounded"
         />
-        <input type="date" className="w-full border p-2 rounded" />
+        <input
+          type="date"
+          name="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="w-full border p-2 rounded"
+        />
         <input
           type="text"
           placeholder="Categoria"
+          name="category"
+          className="w-full border p-2 rounded"
+        />
+        <input
+          type="text"
+          placeholder="Thumbnail (URL)"
+          name="thumbnail"
+          value={thumbnail}
+          onChange={(e) => setThumbnail(e.target.value)}
+          className="w-full border p-2 rounded"
+        />
+        <input
+          type="text"
+          placeholder="Palavras-chave"
+          name="keywords"
+          value={keywords}
+          onChange={(e) => setKeywords(e.target.value)}
           className="w-full border p-2 rounded"
         />
         <PostContentEditor value={conteudo} onChange={setConteudo} />
