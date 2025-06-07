@@ -8,11 +8,11 @@ Este documento descreve a **arquitetura de pastas e responsabilidades** do proje
 
 O projeto é dividido logicamente em duas áreas:
 
-| Área        | Função Principal                         | Acesso            | Público-alvo        |
-|-------------|-------------------------------------------|-------------------|----------------------|
-| **Loja**    | Página pública para venda e inscrições    | Público           | Visitantes e inscritos |
+| Área        | Função Principal                         | Acesso            | Público-alvo            |
+|-------------|-------------------------------------------|-------------------|-------------------------|
+| **Loja**    | Página pública para venda e inscrições    | Público           | Visitantes e inscritos  |
 | **Admin**   | Painel de gestão e controle de dados      | Privado (auth)    | Coordenadores e líderes |
-| **Blog**   | Pagina p´blica para postagens de conteudo  | Público           | Visitantes e inscritos |
+| **Blog**    | Página pública para postagens de conteúdo | Público           | Visitantes e inscritos  |
 Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 
 ---
@@ -36,7 +36,11 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 │   ├── redefinir-senha/   # Recuperação de senha
 │   └── usuarios/          # Gestão de usuários autenticados
 │   └── layout.tsx         # Layout do admin com navegação segura
-
+├── blog/                  # Páginas do blog e posts
+│   ├── components/        # Componentes do blog
+│   ├── post/[slug]/       # Página individual de post
+│   ├── page.tsx           # Listagem de posts
+│   └── BlogClient.tsx     # Wrapper do cliente
 ├── loja/                  # Área pública da vitrine e inscrições
 │   ├── components/        # Componentes reutilizáveis da loja
 │   ├── eventos/           # Formulário de inscrição em eventos
@@ -44,9 +48,11 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 │   ├── produtos/          # Listagem e detalhes dos produtos
 │   ├── layout.tsx         # Layout público da loja
 │   └── page.tsx           # Home da loja
-
 ├── layout.tsx             # Layout raiz compartilhado
 ├── globals.css            # CSS global compartilhado
+/posts/                    # Conteúdo do blog em arquivos .mdx
+/scripts/                  # Scripts auxiliares
+/stories/                  # Storybook de componentes
 ```
 
 ---
@@ -60,6 +66,10 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 - Formulários com validação (Zod ou HTML5) + feedback visual
 - Responsivo (mobile-first) com Tailwind
 
+## ✍️ Blog – Boas Práticas
+- Conteúdo em `/posts` no formato MDX
+- Componentes em `app/blog/components`
+- Utilize `BlogClient.tsx` para carregar posts no cliente
 ---
 
 ## 🛠️ Admin – Boas Práticas
