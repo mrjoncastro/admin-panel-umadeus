@@ -184,7 +184,7 @@ export default function GerenciarCamposPage() {
 
         <button
           type="submit"
-          className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition"
+          className="btn btn-danger w-full"
           disabled={loading}
         >
           {loading ? "Salvando..." : editandoId ? "Atualizar" : "Cadastrar"}
