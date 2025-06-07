@@ -3,6 +3,7 @@ import "./globals.css";
 import { AuthProvider } from "@/lib/context/AuthContext";
 import { ThemeProvider } from "@/lib/context/ThemeContext";
 import { ToastProvider } from "@/lib/context/ToastContext";
+import { AppConfigProvider } from "@/lib/context/AppConfigContext";
 import { Geist, Geist_Mono, Bebas_Neue } from "next/font/google";
 
 // Inicialize as fontes
@@ -32,13 +33,15 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`font-sans antialiased ${geistSans.variable} ${geistMono.variable} ${bebas.variable}`}>
-        <ThemeProvider>
-          <AuthProvider>
-            <ToastProvider>
-              {children}
-            </ToastProvider>
-          </AuthProvider>
-        </ThemeProvider>
+        <AppConfigProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <ToastProvider>
+                {children}
+              </ToastProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </AppConfigProvider>
       </body>
     </html>
   );

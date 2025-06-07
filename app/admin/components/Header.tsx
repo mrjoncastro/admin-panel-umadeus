@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useTheme } from "@/lib/context/ThemeContext";
+import { useAppConfig } from "@/lib/context/AppConfigContext";
 import RedefinirSenhaModal from "./RedefinirSenhaModal";
 
 const getNavLinks = (role?: string) => {
@@ -48,6 +49,7 @@ export default function Header() {
   const [perfilAberto, setPerfilAberto] = useState(false);
   const [mostrarModalSenha, setMostrarModalSenha] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const { config } = useAppConfig();
 
   const navLinks = getNavLinks(user?.role);
 
@@ -63,7 +65,7 @@ export default function Header() {
       <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
         <Link href="/" className="flex items-center">
           <Image
-            src="/img/logo_umadeus_branco.png"
+            src={config.logoUrl || "/img/logo_umadeus_branco.png"}
             alt="Logotipo UMADEUS"
             width={160}
             height={40}
@@ -125,6 +127,14 @@ export default function Header() {
                       className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
                     >
                       <User size={16} /> Visualizar perfil
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/admin/configuracoes"
+                      className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                    >
+                      Configurações
                     </Link>
                   </li>
                   <li>
@@ -197,6 +207,13 @@ export default function Header() {
                   className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)]"
                 >
                   Perfil
+                </Link>
+                <Link
+                  href="/admin/configuracoes"
+                  onClick={() => setMenuAberto(false)}
+                  className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)]"
+                >
+                  Configurações
                 </Link>
                 <button
                   onClick={() => {
