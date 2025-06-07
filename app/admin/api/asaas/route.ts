@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createPocketBase } from "@/lib/pocketbase";
-import { logger } from "@/lib/logger";
+import { logInfo } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const { pedidoId, valor } = await req.json();
-    logger.info("📦 Dados recebidos:", { pedidoId, valor });
+    logInfo("📦 Dados recebidos:", { pedidoId, valor });
 
     if (!pedidoId || valor === undefined || valor === null) {
       return NextResponse.json(
@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
     }
 
     const cliente = JSON.parse(raw);
-    logger.info("✅ Cliente criado:", cliente.id);
+    logInfo("✅ Cliente criado: " + cliente.id);
 
     // 🔹 Criar cobrança
     const dueDate = new Date();
@@ -131,7 +131,7 @@ export async function POST(req: NextRequest) {
 
     const cobranca = await cobrancaResponse.json();
     const link = cobranca.invoiceUrl || cobranca.bankSlipUrl;
-    logger.info("✅ Cobrança criada. Link:", link);
+    logInfo("✅ Cobrança criada. Link: " + link);
 
     // 🔹 Atualizar pedido
     await pb.collection("pedidos").update(pedido.id, {

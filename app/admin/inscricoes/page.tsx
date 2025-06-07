@@ -55,7 +55,13 @@ export default function ListaInscricoesPage() {
       : "Buscar por nome, telefone ou CPF";
 
   useEffect(() => {
-    const user = pb.authStore.model;
+    // Se pb pode ser uma função, trate explicitamente
+    const pbClient =
+      typeof pb === "function"
+        ? (pb() as { authStore?: { model?: any }; autoCancellation?: (v: boolean) => void; collection: (name: string) => any })
+        : (pb as { authStore?: { model?: any }; autoCancellation?: (v: boolean) => void; collection: (name: string) => any });
+
+    const user = pbClient.authStore?.model;
 
     if (!user?.id || !user?.role) {
       showError("Sessão expirada ou inválida.");
@@ -63,50 +69,73 @@ export default function ListaInscricoesPage() {
       return;
     }
 
-    pb.autoCancellation(false);
+    pbClient.autoCancellation?.(false);
 
     setRole(user.role);
     setLinkPublico(`${window.location.origin}/inscricoes/${user.id}`);
 
     const filtro = user.role === "coordenador" ? "" : `campo='${user.campo}'`;
 
-    pb.collection("inscricoes")
+    pbClient
+      .collection("inscricoes")
       .getFullList({ sort: "-created", filter: filtro, expand: "campo,pedido" })
-      .then((res) => {
-        const lista = res.map((r) => ({
-          id: r.id,
-          nome: r.nome,
-          telefone: r.telefone,
-          evento: r.evento,
-          cpf: r.cpf,
-          status: r.status,
-          created: r.created,
-          campo: r.expand?.campo?.nome || "—",
-          tamanho: r.tamanho,
-          produto: r.produto,
-          genero: r.genero,
-          data_nascimento: r.data_nascimento,
-          criado_por: r.criado_por,
-          confirmado_por_lider: r.confirmado_por_lider,
-          pedido_status: r.expand?.pedido?.status || null,
-          pedido_id: r.expand?.pedido?.id || null,
-        }));
+      .then((res: unknown[]) => {
+        const lista = res.map((r) => {
+          // Defina um tipo explícito para o registro retornado
+          type PBInscricao = {
+            id: string;
+            nome: string;
+            telefone: string;
+            evento: string;
+            cpf: string;
+            status: StatusInscricao;
+            created: string;
+            tamanho?: string;
+            produto?: string;
+            genero?: string;
+            data_nascimento?: string;
+            criado_por?: string;
+            confirmado_por_lider?: boolean;
+            expand?: {
+              campo?: { nome?: string };
+              pedido?: { status?: string; id?: string };
+            };
+          };
+          const rec = r as PBInscricao;
+          return {
+            id: rec.id,
+            nome: rec.nome,
+            telefone: rec.telefone,
+            evento: rec.evento,
+            cpf: rec.cpf,
+            status: rec.status,
+            created: rec.created,
+            campo: rec.expand?.campo?.nome || "—",
+            tamanho: rec.tamanho,
+            produto: rec.produto,
+            genero: rec.genero,
+            data_nascimento: rec.data_nascimento,
+            criado_por: rec.criado_por,
+            confirmado_por_lider: rec.confirmado_por_lider,
+            pedido_status: rec.expand?.pedido?.status || null,
+            pedido_id: rec.expand?.pedido?.id || null,
+          };
+        });
         setInscricoes(lista);
       })
       .catch(() => showError("Erro ao carregar inscrições."))
       .finally(() => setLoading(false));
 
     if (user.role === "coordenador") {
-      pb.collection("campos")
+      pbClient
+        .collection("campos")
         .getFullList({ sort: "nome" })
-        .then((res) => {
+        .then((res: unknown[]) => {
           const nomes = res.map((c) =>
             typeof c === "object" && c !== null && "nome" in c
               ? String(c.nome)
               : "Indefinido"
           );
-          // Se ainda for usar camposDisponiveis no futuro:
-          // setCamposDisponiveis(nomes);
           logInfo("Campos disponíveis", nomes);
         })
         .catch(() => {});
@@ -126,7 +155,11 @@ export default function ListaInscricoesPage() {
   const deletarInscricao = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir esta inscrição?")) {
       try {
-        await pb.collection("inscricoes").delete(id);
+        const pbClient =
+          typeof pb === "function"
+            ? (pb() as { collection: (name: string) => any })
+            : (pb as { collection: (name: string) => any });
+        await pbClient.collection("inscricoes").delete(id);
         setInscricoes((prev) => prev.filter((i) => i.id !== id));
         showSuccess("Inscrição excluída.");
       } catch {
@@ -141,7 +174,11 @@ export default function ListaInscricoesPage() {
       setConfirmandoId(id);
 
       // 🔹 1. Buscar inscrição com expand do campo
-      const inscricao = await pb.collection("inscricoes").getOne(id, {
+      const pbClient =
+        typeof pb === "function"
+          ? (pb() as { collection: (name: string) => any })
+          : (pb as { collection: (name: string) => any });
+      const inscricao = await pbClient.collection("inscricoes").getOne(id, {
         expand: "campo",
       });
 
@@ -149,9 +186,9 @@ export default function ListaInscricoesPage() {
 
       // 🔹 2. Criar pedido com os dados da inscrição
       const valorPedido =
-        inscricao.produto === "Somente Pulseira" ? 10.00 : 50.00;
+        inscricao.produto === "Somente Pulseira" ? 10.0 : 50.0;
 
-      const pedido = await pb.collection("pedidos").create({
+      const pedido = await pbClient.collection("pedidos").create({
         id_inscricao: id,
         valor: valorPedido,
         status: "pendente",
@@ -177,11 +214,17 @@ export default function ListaInscricoesPage() {
       }
 
       // 4. Atualizar inscrição com o ID do pedido
-      await pb.collection("inscricoes").update(id, {
-        pedido: pedido.id, // ✅ atualiza campo pedido
-        status: "aguardando_pagamento",
-        confirmado_por_lider: true,
-      });
+      await (
+        typeof pb === "function"
+          ? (pb() as { collection: (name: string) => any })
+          : (pb as { collection: (name: string) => any })
+      )
+        .collection("inscricoes")
+        .update(id, {
+          pedido: pedido.id, // ✅ atualiza campo pedido
+          status: "aguardando_pagamento",
+          confirmado_por_lider: true,
+        });
 
       setInscricoes((prev) =>
         prev.map((i) =>
@@ -477,7 +520,11 @@ export default function ListaInscricoesPage() {
           inscricao={inscricaoEmEdicao}
           onClose={() => setInscricaoEmEdicao(null)}
           onSave={async (dadosAtualizados: Partial<Inscricao>) => {
-            await pb
+            const pbClient =
+              typeof pb === "function"
+                ? (pb() as { collection: (name: string) => any })
+                : (pb as { collection: (name: string) => any });
+            await pbClient
               .collection("inscricoes")
               .update(inscricaoEmEdicao.id, dadosAtualizados);
             setInscricoes((prev) =>
@@ -510,7 +557,11 @@ export default function ListaInscricoesPage() {
               </button>
               <button
                 onClick={async () => {
-                  await pb
+                  const pbClient =
+                    typeof pb === "function"
+                      ? (pb() as { collection: (name: string) => any })
+                      : (pb as { collection: (name: string) => any });
+                  await pbClient
                     .collection("inscricoes")
                     .update(inscricaoParaRecusar.id, {
                       status: "cancelado",
