@@ -6,8 +6,10 @@
    🎨 Variáveis de cor customizadas
    ========================== */
 :root {
-  --background: theme(colors.neutral.200); /* modo claro */
-  --foreground: theme(colors.neutral.900); /* texto escuro */
+  --background: theme(colors.neutral.200);
+  /* modo claro */
+  --foreground: theme(colors.neutral.900);
+  /* texto escuro */
   --text-primary: theme(colors.neutral.900);
   --text-secondary: theme(colors.neutral.700);
   --text-header-primary: theme(colors.neutral.200);
@@ -50,31 +52,23 @@ body {
 }
 
 @media (prefers-color-scheme: dark) {
-  html.dark body {
-    background: linear-gradient(
-      270deg,
-      theme(colors.neutral.950),
-      theme(colors.neutral.900),
-      theme(colors.neutral.900),
-      theme(colors.neutral.950)
-    );
-    background-size: 500% 500%;
-    background-repeat: no-repeat;
+  body {
+    background: linear-gradient(270deg,
+        theme(colors.neutral.950),
+        theme(colors.neutral.900),
+        theme(colors.neutral.900),
+        theme(colors.neutral.950)) no-repeat 0 0 / 500% 500%;
     animation: gradient-x 30s ease-in-out infinite;
   }
 }
 
 @media (prefers-color-scheme: light) {
   html.light body {
-    background: linear-gradient(
-      270deg,
-      theme(colors.neutral.100),
-      theme(colors.neutral.200),
-      theme(colors.neutral.100),
-      theme(colors.neutral.200)
-    );
-    background-size: 500% 500%;
-    background-repeat: no-repeat;
+    background: linear-gradient(270deg,
+        theme(colors.neutral.100),
+        theme(colors.neutral.200),
+        theme(colors.neutral.100),
+        theme(colors.neutral.200)) no-repeat 0 0 / 500% 500%;
     animation: gradient-x 30s ease-in-out infinite;
   }
 }
@@ -89,26 +83,28 @@ body {
 .btn-primary {
   @apply bg-[var(--accent)] text-white hover:bg-primary-700;
 }
+
 .input-base {
   @apply w-full px-4 py-3 rounded-lg border border-neutral-300 bg-neutral-50 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-error-600 transition;
 }
 
 /* Card e Tabela base */
 .card {
-  @apply bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-sm;
+  @apply gap-[var(--space-sm)] p-[var(--space-md)] bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-50 rounded-lg shadow-sm;
 }
 
 .table-base {
-  @apply w-full text-left text-sm divide-y divide-neutral-200 dark:divide-neutral-700;
+  @apply w-full text-left text-sm divide-y divide-neutral-200 dark:divide-neutral-950;
 }
 
 .table-base thead {
-  @apply bg-neutral-100 dark:bg-neutral-800;
+  @apply bg-neutral-50 dark:bg-neutral-950;
 }
 
 .table-base th,
 .table-base td {
-  @apply px-4 py-2;
+  @apply px-[var(--space-md)] py-[var(--space-sm)];
+  ;
 }
 
 .table-base tbody tr:nth-child(even) {
@@ -122,9 +118,11 @@ body {
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
@@ -135,6 +133,7 @@ body {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
