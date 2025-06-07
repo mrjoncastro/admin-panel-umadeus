@@ -22,3 +22,4 @@
 
 ## [2025-06-07] Corrigidos nomes de ícones e atualizado manifest.json para remover referência ausente.
 ## [2025-06-08] Adicionados story do PostContentEditor
+## [2025-06-07] Criado componente EditorToolbar no admin e integrado ao editor de posts.

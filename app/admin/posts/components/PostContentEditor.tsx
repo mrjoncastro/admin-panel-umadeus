@@ -1,6 +1,7 @@
 "use client";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import EditorToolbar from "./EditorToolbar";
 import { useEffect } from "react";
 // @ts-expect-error: turndown não possui tipos TypeScript oficiais
 import TurndownService from "turndown";
@@ -49,6 +50,7 @@ export default function PostMarkdownEditor({ value, onChange }: Props) {
 
   return (
     <div className="bg-white rounded-xl shadow">
+      <EditorToolbar editor={editor} />
       <EditorContent editor={editor} />
     </div>
   );
