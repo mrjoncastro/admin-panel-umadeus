@@ -98,12 +98,8 @@ export default function ListaInscricoesPage() {
       .finally(() => setLoading(false));
 
     if (user.role === "coordenador") {
-      pb.collection("campos")
-        .getFullList({ sort: "nome" })
-        .then(() => {
-          // TODO: adicionar camposDisponiveis futuramente
-        })
-        .catch(() => {});
+      // TODO: caso seja preciso listar campos disponíveis futuramente,
+      // recuperar dados aqui e popular o estado correspondente.
     }
   }, [pb, pb.authStore.model, showError]);
 

@@ -16,3 +16,4 @@
 ## [2025-06-06] Criada página de clientes no admin para editar dados e acompanhar pedidos.
 ## [2025-06-07] Adicionado docs/design-system.md e links no README e AGENTS.
 ## [2025-06-07] Documentados tokens neutros e atualizados estilos globais.
+## [2025-06-07] Documentada paleta 'error' no design-tokens.
