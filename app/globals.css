@@ -12,8 +12,8 @@
   /* texto escuro */
   --text-primary: theme(colors.neutral.900);
   --text-secondary: theme(colors.neutral.700);
-  --text-header-primary: theme(colors.neutral.200);
-  --text-header-secondary: theme(colors.neutral.700);
+  --text-header-primary: theme(colors.neutral.100);
+  --text-header-secondary: theme(colors.primary.600);
   --accent: theme(colors.primary.600);
   --color-secondary: theme(colors.neutral.900);
   --font-body: var(--font-geist);
