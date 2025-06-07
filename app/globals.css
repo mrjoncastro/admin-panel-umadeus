@@ -51,7 +51,13 @@ body {
 
 @media (prefers-color-scheme: dark) {
   html.dark body {
-    background: linear-gradient(270deg, #0c0d0a, #1e2019, #1e2019, #0c0d0a);
+    background: linear-gradient(
+      270deg,
+      theme(colors.neutral.950),
+      theme(colors.neutral.900),
+      theme(colors.neutral.900),
+      theme(colors.neutral.950)
+    );
     background-size: 500% 500%;
     background-repeat: no-repeat;
     animation: gradient-x 30s ease-in-out infinite;
@@ -60,7 +66,13 @@ body {
 
 @media (prefers-color-scheme: light) {
   html.light body {
-    background: linear-gradient(270deg, #dcdcdc, #d3d3d3, #dcdcdc, #d3d3d3);
+    background: linear-gradient(
+      270deg,
+      theme(colors.neutral.100),
+      theme(colors.neutral.200),
+      theme(colors.neutral.100),
+      theme(colors.neutral.200)
+    );
     background-size: 500% 500%;
     background-repeat: no-repeat;
     animation: gradient-x 30s ease-in-out infinite;
