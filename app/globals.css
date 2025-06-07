@@ -16,6 +16,8 @@
   --color-secondary: #2a1a1c; /* tonalidade complementar */
   --font-body: var(--font-geist);
   --font-heading: var(--font-geist);
+  /* Exposição da variável de fonte para uso global */
+  --font-bebas: "Bebas Neue", cursive;
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
   --space-md: 1rem;

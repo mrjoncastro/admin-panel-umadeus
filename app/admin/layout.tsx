@@ -1,11 +1,12 @@
 // app/layout.tsx
 import "@/app/globals.css";
 import LayoutWrapper from "./components/LayoutWrapper";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Bebas_Neue } from "next/font/google";
 
 // Inicialize as fontes
 const geistSans = Geist({ subsets: ["latin"], variable: "--font-geist" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
+const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-bebas" });
 
 export const metadata = {
   title: "UMADEUS",
@@ -27,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <div className={`${geistSans.variable} ${geistMono.variable} ${bebas.variable} antialiased`}>
       <LayoutWrapper>{children}</LayoutWrapper>
     </div>
   );
