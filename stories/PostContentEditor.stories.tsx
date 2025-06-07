@@ -33,5 +33,5 @@ const Template = ({ value, onChange }: { value: string; onChange: (val: string) 
 };
 
 export const Default: Story = {
-  render: (args) => <Template {...(args as unknown)} />,
+  render: (args) => <Template value={args.value} onChange={args.onChange} />,
 };
