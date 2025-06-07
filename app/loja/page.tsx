@@ -81,7 +81,7 @@ export default function Home() {
   return (
     <>
       {/* Header */}
-      <header className="bg-transparent px-6 py-4 shadow-md rounded-2xl mx-4 my-6">
+      <header className="bg-neutral-200 px-6 py-4 shadow-md rounded-2xl mx-4">
         <nav className="flex justify-center items-center text-sm font-semibold tracking-wide">
           <div className="flex gap-4">
             {sections.map((s) => (
@@ -125,9 +125,9 @@ export default function Home() {
               <p className="text-platinum/90 leading-relaxed text-base md:text-lg mb-6">
                 Jovem, Deus tem algo poderoso para sua vida! Esteja pronto para
                 um tempo de
-                <strong className="text-yellow-400"> renovação</strong>,{" "}
-                <strong className="text-yellow-400">avivamento</strong> e{" "}
-                <strong className="text-yellow-400">
+                <strong> renovação</strong>,{" "}
+                <strong>avivamento</strong> e{" "}
+                <strong>
                   crescimento espiritual
                 </strong>
                 . Não perca o <strong>Congresso de Jovens 2025</strong> — um
