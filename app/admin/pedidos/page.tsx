@@ -127,7 +127,7 @@ export default function PedidosPage() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="heading">Pedidos Recebidos</h1>
+      <h2 className="heading">Pedidos Recebidos</h2>
 
       {/* Filtros */}
       <div className="flex flex-wrap gap-4 mb-6">

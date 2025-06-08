@@ -52,15 +52,15 @@ export default function BlogHeroCarousel() {
       {/* Desktop */}
       <div className="hidden md:flex relative z-10 items-end justify-between max-w-7xl mx-auto w-full h-full px-10 pb-24">
         <div className="w-1/2" />
-        <div className="w-full max-w-md bg-white text-[#333] p-8 rounded-2xl shadow-2xl">
+        <div className="w-full max-w-md bg-white text-neutral-800 p-8 rounded-2xl shadow-2xl">
           {post.category && (
             <span className="text-xs uppercase text-gray-500 font-semibold tracking-wide">
               {post.category}
             </span>
           )}
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          <h3 className="text-3xl font-bold text-gray-900 mb-4">
             {post.title}
-          </h2>
+          </h3>
           <p className="text-sm text-gray-600 mb-4">{post.summary}</p>
           <Link
             href={`/blog/post/${post.slug}`}
@@ -73,13 +73,13 @@ export default function BlogHeroCarousel() {
 
       {/* Mobile */}
       <div className="md:hidden relative z-10 h-full flex flex-col justify-end items-center px-4 pb-6">
-        <div className="bg-white text-[#333] rounded-2xl shadow-xl p-5 w-full max-w-sm">
+        <div className="bg-white text-neutral-800 rounded-2xl shadow-xl p-5 w-full max-w-sm">
           {post.category && (
             <span className="text-xs uppercase text-gray-500 font-semibold tracking-wide">
               {post.category}
             </span>
           )}
-          <h2 className="text-2xl font-bold text-gray-900">{post.title}</h2>
+          <h3 className="text-2xl font-bold text-gray-900">{post.title}</h3>
           <p className="text-sm text-gray-700 my-2">{post.summary}</p>
           <Link
             href={`/blog/post/${post.slug}`}

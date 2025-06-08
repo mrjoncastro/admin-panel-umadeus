@@ -55,11 +55,8 @@ export default function UsuariosPage() {
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <h1 className="heading">Usuários Cadastrados</h1>
-        <Link
-          href="/admin/usuarios/novo"
-          className="btn btn-primary bg-red-700 hover:bg-red-800"
-        >
+        <h2 className="heading">Usuários Cadastrados</h2>
+        <Link href="/admin/usuarios/novo" className="btn btn-primary">
           + Adicionar Novo Usuário
         </Link>
       </div>
@@ -73,7 +70,7 @@ export default function UsuariosPage() {
       {loading ? (
         <p className="text-center text-gray-600">Carregando usuários...</p>
       ) : (
-        <div className="overflow-auto rounded-lg border bg-white border-gray-300 dark:bg-[#0c0d0a] dark:border-gray-700 shadow-sm">
+        <div className="overflow-auto rounded-lg border bg-white border-gray-300 dark:bg-neutral-950 dark:border-gray-700 shadow-sm">
           <table className="table-base">
             <thead>
               <tr>

@@ -52,9 +52,21 @@ Execute `npm run lint` para verificar problemas de código. Evite o uso de `any`
 - Dashboard now includes temporal charts showing sign-up and order evolution,
   along with average order value and revenue per field for coordinators and
   leaders.
-- Analytics charts support date range filters and allow exporting the data as
-  CSV or XLSX spreadsheets.
+ - Analytics charts support date range filters and allow exporting the data as
+    CSV or XLSX spreadsheets.
 
+## Design System
+
+Nosso design system centraliza cores, tipografia e espaçamentos em `globals.css`
+e `tailwind.config.js`, garantindo consistência visual em todo o painel. Os
+principais componentes possuem exemplos no Storybook para facilitar testes e
+documentação.
+
+Leia as diretrizes completas em [docs/design-system.md](docs/design-system.md)
+e consulte a tabela de tokens em
+[docs/design-tokens.md](docs/design-tokens.md).
+Esses documentos também trazem exemplos das classes globais `btn` e
+`input-base` utilizadas em formulários.
 
 ## Variáveis de Ambiente
 
@@ -67,6 +79,8 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `ASAAS_WEBHOOK_SECRET` - segredo para validar webhooks do Asaas
 - `NEXT_PUBLIC_SITE_URL` - endereço do site (opcional)
 
+Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utilizar o SDK oficial.
+
 ## Conectando ao PocketBase
 
 
@@ -75,14 +89,31 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 
 2. Utilize as variáveis `PB_ADMIN_EMAIL` e `PB_ADMIN_PASSWORD` para autenticar a aplicação.
 
+## Blog e CMS
+
+Os arquivos de conteúdo ficam dentro da pasta `posts/` na raiz do projeto. Cada
+arquivo `.mdx` representa um post do blog.
+
+Para criar ou editar posts pelo painel admin:
+
+1. Acesse `/admin` e realize o login.
+2. No menu lateral, clique em **Blog** e escolha **Novo Post** ou selecione um
+   existente para editar.
+3. Preencha título, resumo, categoria, autor, data de publicação, caso seja uma edição informe: post editado por {autor}, em {data de edição}, thumbnail e o conteúdo em Markdown.
+4. Salve para publicar ou atualizar o post.
+
+Após salvar as alterações, execute o comando abaixo para gerar
+`/public/posts.json` com a lista de posts:
+
+```bash
+npm run generate-posts
+```
+
 
 ## Testes
 
-Para rodar a suíte de testes utilize:
-
-```bash
-npm run test
-```
+Execute `npm run lint` e `npm run test` para validar o projeto.
+Consulte [docs/testes.md](docs/testes.md) para instruções completas.
 
 ## Build
 

@@ -10,6 +10,18 @@ Este documento lista os tokens de design definidos em `app/globals.css` e como u
 - `--text-secondary`: cor de texto secundária.
 - `--accent`: cor de destaque/ação.
 - `--color-secondary`: cor complementar utilizada em fundos e elementos de navegação.
+- `neutral-50` a `neutral-950`: tons de cinza definidos no `tailwind.config.js` para uso em `@apply`.
+- `error`: paleta de vermelhos para mensagens de erro (`text-error`).
+- `primary-50` a `primary-900`: paleta roxa principal utilizada em botões e links.
+
+### Paleta de cores
+
+| Token         | Valor    |
+|---------------|---------|
+| `primary-600` | `#7c3aed` |
+| `error-600`   | `#dc2626` |
+| `neutral-100` | `#dcdcdc` |
+| `neutral-900` | `#1e2019` |
 
 ## Espaçamentos
 
@@ -41,3 +53,22 @@ Exemplo de uso em um componente:
   Conteúdo
 </div>
 ```
+
+Uso com classes Tailwind:
+
+```html
+<p class="text-neutral-900 bg-primary-50 p-2">Texto exemplo</p>
+```
+
+### Padrão de Botões e Inputs
+
+Todos os componentes interativos utilizam classes globais para manter a
+uniformidade. As principais são:
+
+```html
+<button class="btn btn-primary">Ação</button>
+<input class="input-base" />
+```
+
+Essas classes aplicam cores `primary-600` e foco `error-600` definidos em
+`tailwind.config.js`.

@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
 import type { Inscricao, Pedido } from "@/types";
+import twColors from "@/utils/twColors";
 
 const LineChart = dynamic(() => import("react-chartjs-2").then((m) => m.Line), {
   ssr: false,
@@ -58,7 +59,7 @@ export default function DashboardAnalytics({ inscricoes, pedidos }: DashboardAna
         label: "Inscrições",
         data: inscricoesData.data,
         fill: true,
-        borderColor: "#7c3aed",
+        borderColor: twColors.primary600,
         backgroundColor: "rgba(124,58,237,0.2)",
       },
     ],
@@ -71,7 +72,7 @@ export default function DashboardAnalytics({ inscricoes, pedidos }: DashboardAna
         label: "Pedidos",
         data: pedidosData.data,
         fill: true,
-        borderColor: "#0ea5e9",
+        borderColor: twColors.blue500,
         backgroundColor: "rgba(14,165,233,0.2)",
       },
     ],
@@ -104,7 +105,7 @@ export default function DashboardAnalytics({ inscricoes, pedidos }: DashboardAna
       {
         label: "Arrecadação (R$)",
         data: arrecadacaoLabels.map((l) => arrecadacaoCampo[l]),
-        backgroundColor: "#8b5cf6",
+        backgroundColor: twColors.primary600,
       },
     ],
   };
@@ -167,13 +168,13 @@ export default function DashboardAnalytics({ inscricoes, pedidos }: DashboardAna
         </div>
         <button
           onClick={handleExportCSV}
-          className="btn-primary text-sm px-3 py-1 rounded"
+          className="btn btn-primary px-3 py-1"
         >
           Exportar CSV
         </button>
         <button
           onClick={handleExportXLSX}
-          className="btn-primary text-sm px-3 py-1 rounded"
+          className="btn btn-primary px-3 py-1"
         >
           Exportar XLSX
         </button>

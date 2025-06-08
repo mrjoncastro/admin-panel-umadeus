@@ -42,6 +42,8 @@ Este projeto conta com uma estrutura multidisciplinar de agentes simulados, resp
   - Definir padrões de visualização com `controls`, `args` e `play` para testes manuais e automáticos.
     **Materiais recomendados:** Bibliotecas de componentes, feedbacks UX, estrutura do Storybook (`.storybook/`, stories existentes).
 
+Consulte o guia completo em [docs/design-system.md](docs/design-system.md) para visualizar tokens e exemplos.
+
 ---
 
 ## Documentação

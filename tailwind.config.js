@@ -1,4 +1,15 @@
 /** @type {import('tailwindcss').Config} */
+// Helper to read HSL values from CSS variables so Tailwind classes
+// like bg-primary-600 respect the current theme color.
+const withOpacityValue = (variable) => {
+  return ({ opacityValue }) => {
+    if (opacityValue !== undefined) {
+      return `hsl(var(${variable}) / ${opacityValue})`;
+    }
+    return `hsl(var(${variable}))`;
+  };
+};
+
 module.exports = {
   darkMode: 'class',
   content: [
@@ -10,36 +21,46 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          50: "#f5f3ff",
-          100: "#ede9fe",
-          200: "#ddd6fe",
-          300: "#c4b5fd",
-          400: "#a78bfa",
-          500: "#8b5cf6", // roxo vibrante
-          600: "#7c3aed", // principal
-          700: "#6d28d9",
-          800: "#5b21b6",
-          900: "#4c1d95",
+          50: withOpacityValue('--primary-50'),
+          100: withOpacityValue('--primary-100'),
+          200: withOpacityValue('--primary-200'),
+          300: withOpacityValue('--primary-300'),
+          400: withOpacityValue('--primary-400'),
+          500: withOpacityValue('--primary-500'),
+          600: withOpacityValue('--primary-600'),
+          700: withOpacityValue('--primary-700'),
+          800: withOpacityValue('--primary-800'),
+          900: withOpacityValue('--primary-900'),
         },
-        gray: {
-          100: "#f3f4f6",
-          200: "#e5e7eb",
-          300: "#d1d5db",
+        error: {
+          DEFAULT: "#dc2626",
+          50: "#fef2f2",
+          100: "#fee2e2",
+          200: "#fecaca",
+          300: "#fca5a5",
+          400: "#f87171",
+          500: "#ef4444",
+          600: "#dc2626",
+          700: "#b91c1c",
+          800: "#991b1b",
+          900: "#7f1d1d",
+        },
+        neutral: {
+          50: "#FAFAFA",
+          100: "#dcdcdc",
+          200: "#d3d3d3",
+          300: "#b3b3b3",
           400: "#9ca3af",
           500: "#6b7280",
           600: "#4b5563",
           700: "#374151",
-          800: "#1f2937",
-          900: "#111827",
+          800: "#1a1b18",
+          900: "#1e2019",
+          950: "#0c0d0a",
         },
-        cornell_red: {
-          600: "#e81920",
-          700: "#b11116",
-          900: "#f9c5c7",
-        },
-        black_bean: "#3d0c02",
-        eerie_black: "#1e2019",
-        platina: "#dcdcdc",
+      },
+      fontFamily: {
+        bebas: 'var(--font-bebas)',
       },
     },
   },

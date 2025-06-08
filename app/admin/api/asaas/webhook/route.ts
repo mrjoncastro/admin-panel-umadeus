@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const pedido = await pb.collection("pedidos").getOne(pedidoId, {
+  await pb.collection("pedidos").getOne(pedidoId, {
     expand: "id_inscricao",
   });
 

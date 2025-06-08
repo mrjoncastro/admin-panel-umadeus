@@ -3,11 +3,13 @@ import "./globals.css";
 import { AuthProvider } from "@/lib/context/AuthContext";
 import { ThemeProvider } from "@/lib/context/ThemeContext";
 import { ToastProvider } from "@/lib/context/ToastContext";
-import { Geist, Geist_Mono } from "next/font/google";
+import { AppConfigProvider } from "@/lib/context/AppConfigContext";
+import { Geist, Geist_Mono, Bebas_Neue } from "next/font/google";
 
 // Inicialize as fontes
 const geistSans = Geist({ subsets: ["latin"], variable: "--font-geist" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
+const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-bebas" });
 
 export const metadata = {
   title: "UMADEUS",
@@ -30,14 +32,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body className={`font-sans antialiased ${geistSans.variable} ${geistMono.variable}`}>
-        <ThemeProvider>
-          <AuthProvider>
-            <ToastProvider>
-              {children}
-            </ToastProvider>
-          </AuthProvider>
-        </ThemeProvider>
+      <body className={`font-sans antialiased ${geistSans.variable} ${geistMono.variable} ${bebas.variable}`}>
+        <AppConfigProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <ToastProvider>
+                {children}
+              </ToastProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </AppConfigProvider>
       </body>
     </html>
   );

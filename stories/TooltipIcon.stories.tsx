@@ -17,11 +17,10 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     label: 'Texto do tooltip',
+    children: <button>?</button>,
   },
   render: (args) => (
-    <TooltipIcon {...args}>
-      <button>?</button>
-    </TooltipIcon>
+    <TooltipIcon {...args} />
   ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);

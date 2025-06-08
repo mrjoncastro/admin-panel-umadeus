@@ -34,21 +34,30 @@ export default function PerfilPage() {
   };
 
   useEffect(() => {
-    if (!pb.authStore.isValid) {
-      router.push("/admin/login");
-      return;
-    }
-    const model = pb.authStore.model as unknown as UsuarioAuthModel;
-    setUsuario(model);
-  }, [pb.authStore.isValid, pb.authStore.model, router]);
+    const handleAuthChange = () => {
+      if (!pb.authStore.isValid) {
+        router.push("/admin/login");
+      } else {
+        const model = pb.authStore.model as unknown as UsuarioAuthModel;
+        setUsuario(model);
+      }
+    };
+
+    handleAuthChange();
+    const unsubscribe = pb.authStore.onChange(handleAuthChange);
+
+    return () => {
+      unsubscribe();
+    };
+  }, [pb, router]);
 
   if (!usuario) return null;
 
   return (
     <div className="max-w-2xl mx-auto mt-10 p-6 bg-white dark:bg-zinc-900 rounded-xl shadow space-y-6">
-      <h1 className="text-2xl font-bold text-zinc-800 dark:text-white">
+      <h2 className="text-2xl font-bold text-zinc-800 dark:text-white">
         Seu Perfil
-      </h1>
+      </h2>
 
       <div className="space-y-2 text-zinc-700 dark:text-zinc-200">
         <p>

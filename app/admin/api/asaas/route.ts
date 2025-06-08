@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createPocketBase } from "@/lib/pocketbase";
+import { logInfo } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const { pedidoId, valor } = await req.json();
-    console.log("📦 Dados recebidos:", { pedidoId, valor });
+    logInfo("📦 Dados recebidos:", { pedidoId, valor });
 
     if (!pedidoId || valor === undefined || valor === null) {
       return NextResponse.json(
@@ -70,7 +71,8 @@ export async function POST(req: NextRequest) {
       address: inscricao.endereco || "Endereço padrão",
       addressNumber: inscricao.numero || "02",
       province: "BA",
-      postalCode: inscricao.cep || "41770055",
+      postalCode: "41770055",
+      cpfCnpj: "83339837074",
     };
 
     console.log("📤 Enviando cliente:", clientePayload);
@@ -81,11 +83,14 @@ export async function POST(req: NextRequest) {
       headers: {
         accept: "application/json",
         "Content-Type": "application/json",
-        access_token: apiKey,
-        "User-Agent": "qg3",
+        accept: "application/json",
+        access_token: "aact_hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjY4NDBkZGQwLWRiYmUtNDVkYi1iMTVjLTdjMjFhZDg4Zjg3YTo6JGFhY2hfNjhlZTY1NzktOGVjMS00OTgzLWIyYTUtZTJhMjNiYjY4NDYy",
+        "User-Agent": "qg3"
       },
       body: JSON.stringify(clientePayload),
     });
+
+    console.log("Payload enviado ao Asaas:", JSON.stringify(clientePayload));
 
     const raw = await clienteResponse.text();
 
@@ -98,7 +103,7 @@ export async function POST(req: NextRequest) {
     }
 
     const cliente = JSON.parse(raw);
-    console.log("✅ Cliente criado:", cliente.id);
+    logInfo("✅ Cliente criado: " + cliente.id);
 
     // 🔹 Criar cobrança
     const dueDate = new Date();
@@ -133,7 +138,7 @@ export async function POST(req: NextRequest) {
 
     const cobranca = await cobrancaResponse.json();
     const link = cobranca.invoiceUrl || cobranca.bankSlipUrl;
-    console.log("✅ Cobrança criada. Link:", link);
+    logInfo("✅ Cobrança criada. Link: " + link);
 
     // 🔹 Atualizar pedido
     await pb.collection("pedidos").update(pedido.id, {

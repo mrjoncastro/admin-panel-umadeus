@@ -4,9 +4,8 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import BlogSidebar from "./components/BlogSidebar";
 import BlogHeroCarousel from "./components/BlogHeroCarousel";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import Link from "next/link";
+import Image from "next/image";
 import { isExternalUrl } from "@/utils/isExternalUrl";
 
 interface Post {
@@ -61,7 +60,6 @@ export default function BlogClient() {
 
   return (
     <>
-      <Header />
       <BlogHeroCarousel />
       <main className="max-w-7xl mx-auto px-6 py-20 font-sans">
         <section className="mb-16 text-center">
@@ -97,17 +95,22 @@ export default function BlogClient() {
                       className="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden flex flex-col"
                     >
                       {post.thumbnail && (
-                        <img
-                          src={
-                            isExternalUrl(post.thumbnail)
-                              ? post.thumbnail
-                              : `${post.thumbnail}`
-                          }
-                          alt={`Imagem de capa do post: ${post.title}`}
-                          className="w-full h-56 object-cover"
-                          loading="lazy"
-                          decoding="async"
-                        />
+                        isExternalUrl(post.thumbnail) ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={post.thumbnail}
+                            alt={`Imagem de capa do post: ${post.title}`}
+                            className="w-full h-56 object-cover"
+                          />
+                        ) : (
+                          <Image
+                            src={post.thumbnail}
+                            alt={`Imagem de capa do post: ${post.title}`}
+                            width={640}
+                            height={320}
+                            className="w-full h-56 object-cover"
+                          />
+                        )
                       )}
                       <div className="p-6 flex-1 flex flex-col justify-between">
                         {post.category && (
@@ -185,7 +188,6 @@ export default function BlogClient() {
           <BlogSidebar />
         </div>
       </main>
-      <Footer />
     </>
   );
 }

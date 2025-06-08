@@ -6,13 +6,14 @@ Este documento descreve a **arquitetura de pastas e responsabilidades** do proje
 
 ## 🧭 Visão Geral
 
-O projeto é dividido logicamente em duas áreas:
+O projeto é dividido logicamente em quatro áreas:
 
-| Área        | Função Principal                         | Acesso            | Público-alvo        |
-|-------------|-------------------------------------------|-------------------|----------------------|
-| **Loja**    | Página pública para venda e inscrições    | Público           | Visitantes e inscritos |
+| Área        | Função Principal                         | Acesso            | Público-alvo            |
+|-------------|-------------------------------------------|-------------------|-------------------------|
+| **Portal**  | Página institucional do cliente           | Público           | Membros, visitantes, geral |
+| **Loja**    | Página pública para venda e inscrições    | Público           | Visitantes e inscritos  |
 | **Admin**   | Painel de gestão e controle de dados      | Privado (auth)    | Coordenadores e líderes |
-| **Blog**   | Pagina p´blica para postagens de conteudo  | Público           | Visitantes e inscritos |
+| **Blog**    | Página pública para postagens de conteúdo | Público           | Visitantes e inscritos  |
 Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 
 ---
@@ -36,7 +37,11 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 │   ├── redefinir-senha/   # Recuperação de senha
 │   └── usuarios/          # Gestão de usuários autenticados
 │   └── layout.tsx         # Layout do admin com navegação segura
-
+├── blog/                  # Páginas do blog e posts
+│   ├── components/        # Componentes do blog
+│   ├── post/[slug]/       # Página individual de post
+│   ├── page.tsx           # Listagem de posts
+│   └── BlogClient.tsx     # Wrapper do cliente
 ├── loja/                  # Área pública da vitrine e inscrições
 │   ├── components/        # Componentes reutilizáveis da loja
 │   ├── eventos/           # Formulário de inscrição em eventos
@@ -44,12 +49,29 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 │   ├── produtos/          # Listagem e detalhes dos produtos
 │   ├── layout.tsx         # Layout público da loja
 │   └── page.tsx           # Home da loja
-
+├── portal/                # Portal institucional do cliente (White Label)
+│   ├── components/        # Componentes reutilizáveis (Hero, Depoimentos, etc)
+│   ├── eventos/           # Listagem e detalhes dos eventos abertos ao público
+│   ├── loja/              # Link ou vitrine de produtos próprios do campo
+│   ├── sobre/             # Página "Sobre a igreja/campo"
+│   ├── contato/           # Página de contato institucional
+│   ├── layout.tsx         # Layout visual do portal (personalizado por cliente)
+│   └── page.tsx           # Home institucional
 ├── layout.tsx             # Layout raiz compartilhado
+├── page.tsx               # Portal do cliente (institucional)
 ├── globals.css            # CSS global compartilhado
-```
+/posts/                    # Conteúdo do blog em arquivos .mdx
+/scripts/                  # Scripts auxiliares
+/stories/                  # Storybook de componentes
 
 ---
+
+## 🌐 Portal – Boas Práticas
+
+- Mantém a identidade visual do cliente de forma *white label*
+- Permite customização de logo e cores via painel admin (`/admin/configuracoes`)
+- Integra navegação para Loja, Admin e Blog
+- Detalhes em [docs/design-system.md](docs/design-system.md#personalizacao)
 
 ## 🛍️ Loja – Boas Práticas
 
@@ -60,6 +82,10 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 - Formulários com validação (Zod ou HTML5) + feedback visual
 - Responsivo (mobile-first) com Tailwind
 
+## ✍️ Blog – Boas Práticas
+- Conteúdo em `/posts` no formato MDX
+- Componentes em `app/blog/components`
+- Utilize `BlogClient.tsx` para carregar posts no cliente
 ---
 
 ## 🛠️ Admin – Boas Práticas

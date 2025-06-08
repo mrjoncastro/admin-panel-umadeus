@@ -16,13 +16,33 @@ function getPosts() {
     const fileContent = fs.readFileSync(filePath, "utf-8");
     const { data } = matter(fileContent);
 
+    // Aceita "thumbnail" ou "headerImage" no front matter
+    const rawImage = data.thumbnail || data.headerImage;
+
+    let image = null;
+    if (rawImage) {
+      // Mantém URLs externas; para caminhos locais usa /uploads
+      image = /^https?:/.test(rawImage)
+        ? rawImage
+        : `/uploads/${path.basename(rawImage)}`;
+    }
+
+    // "keywords" pode ser string separada por vírgula ou array
+    let keywords = [];
+    if (Array.isArray(data.keywords)) {
+      keywords = data.keywords;
+    } else if (typeof data.keywords === "string") {
+      keywords = data.keywords.split(',').map((k) => k.trim()).filter(Boolean);
+    }
+
     return {
       title: data.title || "Sem título",
       slug: filename.replace(/\.mdx$/, ""),
       summary: data.summary || "",
       date: data.date || "",
-      thumbnail: data.thumbnail || null,
+      thumbnail: image,
       category: data.category || null,
+      keywords,
     };
   });
 

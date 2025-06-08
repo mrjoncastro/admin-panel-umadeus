@@ -37,6 +37,12 @@ type Inscricao = {
   pedido_id?: string | null;
 };
 
+interface UsuarioAuthModel {
+  id: string;
+  role: "coordenador" | "lider" | string;
+  campo?: string;
+}
+
 export default function ListaInscricoesPage() {
   const pb = useMemo(() => createPocketBase(), []);
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
@@ -56,7 +62,7 @@ export default function ListaInscricoesPage() {
       : "Buscar por nome, telefone ou CPF";
 
   useEffect(() => {
-    const user = pb.authStore.model;
+    const user = pb.authStore.model as unknown as UsuarioAuthModel;
 
     if (!user?.id || !user?.role) {
       showError("Sessão expirada ou inválida.");
@@ -71,7 +77,8 @@ export default function ListaInscricoesPage() {
 
     const filtro = user.role === "coordenador" ? "" : `campo='${user.campo}'`;
 
-    pb.collection("inscricoes")
+    pb
+      .collection("inscricoes")
       .getFullList({ sort: "-created", filter: filtro, expand: "campo,pedido" })
       .then((res) => {
         const lista = res.map((r) => ({
@@ -98,21 +105,15 @@ export default function ListaInscricoesPage() {
       .finally(() => setLoading(false));
 
     if (user.role === "coordenador") {
-      pb.collection("campos")
+      pb
+        .collection("campos")
         .getFullList({ sort: "nome" })
-        .then((res) => {
-          const nomes = res.map((c) =>
-            typeof c === "object" && c !== null && "nome" in c
-              ? String(c.nome)
-              : "Indefinido"
-          );
-          // Se ainda for usar camposDisponiveis no futuro:
-          // setCamposDisponiveis(nomes);
-          console.log("Campos disponíveis:", nomes);
+        .then(() => {
+          // noop
         })
         .catch(() => {});
     }
-  }, [pb, pb.authStore.model, showError]);
+  }, [pb, showError]);
 
   const copiarLink = async () => {
     try {
@@ -152,7 +153,6 @@ export default function ListaInscricoesPage() {
       const valorPedido =
         inscricao.produto === "Somente Pulseira" ? PRECO_PULSEIRA : PRECO_KIT;
 
-      // 🔹 3. Criar pedido no PocketBase
       const pedido = await pb.collection("pedidos").create({
         id_inscricao: id,
         valor: valorPedido,
@@ -182,12 +182,14 @@ export default function ListaInscricoesPage() {
         throw new Error("Erro ao gerar link de pagamento.");
       }
 
-      // 🔹 5. Atualizar inscrição com o ID do pedido e status
-      await pb.collection("inscricoes").update(id, {
-        pedido: pedido.id,
-        status: "aguardando_pagamento",
-        confirmado_por_lider: true,
-      });
+      // 4. Atualizar inscrição com o ID do pedido
+      await pb
+        .collection("inscricoes")
+        .update(id, {
+          pedido: pedido.id, // ✅ atualiza campo pedido
+          status: "aguardando_pagamento",
+          confirmado_por_lider: true,
+        });
 
       // Atualizar estado local das inscrições
       setInscricoes((prev) =>
@@ -282,7 +284,7 @@ export default function ListaInscricoesPage() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="heading">Inscrições Recebidas</h1>
+      <h2 className="heading">Inscrições Recebidas</h2>
 
       {/* Link público */}
       {role === "lider" && (

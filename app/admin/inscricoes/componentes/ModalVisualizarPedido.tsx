@@ -51,7 +51,7 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
 
     setReenviando(true);
     try {
-      const checkoutRes = await fetch("/admin/api/assas/", {
+      const checkoutRes = await fetch("/admin/api/assas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pedidoId: pedido.id, valor: pedido.valor }),
@@ -100,9 +100,9 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
           <X className="w-5 h-5" />
         </button>
 
-        <h2 className="text-xl font-bold mb-4 text-purple-700 text-center">
+        <h3 className="text-xl font-bold mb-4 text-purple-700 text-center">
           📦 Detalhes do Pedido
-        </h2>
+        </h3>
 
         {loading || !pedido ? (
           <p className="text-sm text-gray-500 text-center">Carregando...</p>

@@ -6,16 +6,20 @@
    🎨 Variáveis de cor customizadas
    ========================== */
 :root {
-  --background: #dcdcdc; /* platinum para modo claro */
-  --foreground: #1e2019; /* texto escuro */
-  --text-primary: #1e2019;
-  --text-secondary: #4b4b4b;
-  --text-header-primary: #dcdcdc;
-  --text-header-secondary: #4b4b4b;
-  --accent: #7c3aed; /* roxo primário */
-  --color-secondary: #2a1a1c; /* tonalidade complementar */
+  --background: theme(colors.neutral.200);
+  /* modo claro */
+  --foreground: theme(colors.neutral.900);
+  /* texto escuro */
+  --text-primary: theme(colors.neutral.900);
+  --text-secondary: theme(colors.neutral.700);
+  --text-header-primary: theme(colors.neutral.100);
+  --text-header-secondary: theme(colors.primary.600);
+  --accent: theme(colors.primary.600);
+  --color-secondary: theme(colors.neutral.900);
   --font-body: var(--font-geist);
   --font-heading: var(--font-geist);
+  /* Exposição da variável de fonte para uso global */
+  --font-bebas: "Bebas Neue", cursive;
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
   --space-md: 1rem;
@@ -24,14 +28,14 @@
 }
 
 html.dark {
-  --background: #1e2019;
-  --foreground: #dcdcdc;
-  --text-primary: #dcdcdc;
-  --text-secondary: #ababab;
-  --text-header-primary: #dcdcdc;
-  --text-header-secondary: #bfbfbf;
-  --accent: #b11116;
-  --color-secondary: #dcdcdc;
+  --background: theme(colors.neutral.900);
+  --foreground: theme(colors.neutral.200);
+  --text-primary: theme(colors.neutral.200);
+  --text-secondary: theme(colors.neutral.400);
+  --text-header-primary: theme(colors.neutral.200);
+  --text-header-secondary: theme(colors.neutral.300);
+  --accent: theme(colors.primary.600);
+  --color-secondary: theme(colors.neutral.200);
 }
 
 /* ==========================
@@ -49,7 +53,13 @@ body {
 
 @media (prefers-color-scheme: dark) {
   html.dark body {
-    background: linear-gradient(270deg, #0c0d0a, #1e2019, #1e2019, #0c0d0a);
+    background: linear-gradient(
+      270deg,
+      theme(colors.neutral.950),
+      theme(colors.neutral.900),
+      theme(colors.neutral.900),
+      theme(colors.neutral.950)
+    );
     background-size: 500% 500%;
     background-repeat: no-repeat;
     animation: gradient-x 30s ease-in-out infinite;
@@ -58,7 +68,13 @@ body {
 
 @media (prefers-color-scheme: light) {
   html.light body {
-    background: linear-gradient(270deg, #dcdcdc, #d3d3d3, #dcdcdc, #d3d3d3);
+    background: linear-gradient(
+      270deg,
+      theme(colors.neutral.100),
+      theme(colors.neutral.200),
+      theme(colors.neutral.100),
+      theme(colors.neutral.200)
+    );
     background-size: 500% 500%;
     background-repeat: no-repeat;
     animation: gradient-x 30s ease-in-out infinite;
@@ -66,56 +82,92 @@ body {
 }
 
 /* ==========================
-   📦 Utilitários reutilizáveis
+   ✨ Heading Styles (h1, h2, h3) e Parágrafo
    ========================== */
-.heading {
-  @apply text-2xl font-semibold mb-6;
+h1 {
+  font-family: var(--font-heading), Arial, Helvetica, sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-md);
 }
 
+h2 {
+  font-family: var(--font-heading), Arial, Helvetica, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.25;
+  letter-spacing: -0.005em;
+  margin-bottom: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+h3 {
+  font-family: var(--font-heading), Arial, Helvetica, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.35;
+  margin-bottom: var(--space-xs);
+  margin-top: var(--space-sm);
+}
+
+p {
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.7;
+  margin-bottom: var(--space-xs);
+}
+
+
+/* ==========================
+   📦 Utilitários reutilizáveis
+   ========================== */
 .btn {
   @apply px-4 py-2 rounded text-sm font-medium transition-colors;
 }
 
 .btn-primary {
-  @apply bg-red-700 text-white hover:bg-red-800;
+  @apply bg-[var(--accent)] text-white hover:bg-[var(--primary-700)];
 }
 
 .btn-secondary {
-  @apply border border-gray-300 bg-white hover:bg-gray-50;
+  @apply bg-[var(--color-secondary)] text-[var(--background)] hover:bg-neutral-700 dark:hover:bg-neutral-300;
 }
 
 .btn-danger {
-  @apply bg-red-600 text-white hover:bg-red-700;
+  @apply bg-error-600 text-white hover:bg-error-700;
 }
 
-.btn-base {
-  @apply px-4 py-2 rounded text-sm font-medium transition-colors;
-}
-
-.card {
-  @apply bg-white border border-gray-300 dark:bg-[#0c0d0a] dark:border-gray-700 rounded-lg shadow p-4;
-}
-
-.input-style,
 .input-base {
-  @apply w-full px-4 py-3 rounded-lg border border-[#b3b3b3] bg-[#f0f0f0] text-sm text-[#1e2019] focus:outline-none focus:ring-2 focus:ring-red-600 transition;
+  @apply w-full px-4 py-3 rounded-lg border border-neutral-300 bg-neutral-50 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-error-600 transition;
+}
+
+/* Card e Tabela base */
+.card {
+  @apply flex flex-col gap-[var(--space-sm)] p-[var(--space-md)] bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-sm;
 }
 
 .table-base {
-  @apply min-w-full text-sm bg-white border border-gray-300 text-gray-800 dark:bg-[#0c0d0a] dark:border-gray-700 dark:text-gray-100;
+  @apply w-full text-left text-sm divide-y divide-neutral-200 dark:divide-neutral-700;
 }
 
 .table-base thead {
-  @apply bg-gray-50 text-gray-700 uppercase text-xs tracking-wide;
+  @apply bg-neutral-50 dark:bg-neutral-800;
 }
 
 .table-base th,
 .table-base td {
-  @apply px-4 py-2 text-left;
+  @apply px-[var(--space-md)] py-[var(--space-sm)];
 }
 
-.table-base tbody tr {
-  @apply border-b border-gray-100 hover:bg-gray-50 dark:hover:bg-[#1a1b18] dark:border-gray-700 transition-colors;
+.table-base tbody tr:nth-child(even) {
+  @apply bg-neutral-50 dark:bg-neutral-950;
 }
 
 /* ==========================
@@ -125,9 +177,11 @@ body {
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
@@ -138,6 +192,7 @@ body {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -145,7 +200,12 @@ body {
 }
 
 .bg-animated {
-  background: linear-gradient(270deg, #1f3162, #351669, #7a0926);
+  background: linear-gradient(
+    270deg,
+    theme(colors.primary.900),
+    theme(colors.primary.800),
+    theme(colors.error.800)
+  );
   background-size: 400% 400%;
   animation: gradient-x 15s ease infinite;
 }

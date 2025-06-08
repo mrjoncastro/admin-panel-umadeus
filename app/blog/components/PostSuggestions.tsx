@@ -1,5 +1,8 @@
 "use client";
 
+import Image from "next/image";
+import { isExternalUrl } from "@/utils/isExternalUrl";
+
 interface Post {
   slug: string;
   title: string;
@@ -29,11 +32,22 @@ export default function PostSuggestions({ posts }: PostSuggestionsProps) {
               href={`/blog/post/${post.slug}`}
               className="block bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition overflow-hidden"
             >
-              <img
-                src={post.thumbnail}
-                alt={`Thumbnail de ${post.title}`}
-                className="w-full h-48 object-cover"
-              />
+              {isExternalUrl(post.thumbnail) ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={post.thumbnail}
+                  alt={`Thumbnail de ${post.title}`}
+                  className="w-full h-48 object-cover"
+                />
+              ) : (
+                <Image
+                  src={post.thumbnail}
+                  alt={`Thumbnail de ${post.title}`}
+                  width={640}
+                  height={320}
+                  className="w-full h-48 object-cover"
+                />
+              )}
               <div className="p-4 flex flex-col h-full">
                 <span className="text-xs text-blue-600 uppercase mb-2">
                   {post.category}
