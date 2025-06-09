@@ -90,6 +90,18 @@ export default function EditarProdutoPage() {
     const formElement = e.currentTarget as HTMLFormElement;
     const formData = new FormData(formElement);
 
+    // Tratamento específico para o campo de imagens
+    const imagensInput = formElement.querySelector<HTMLInputElement>(
+      "input[name='imagens']"
+    );
+    const arquivos = imagensInput?.files;
+    formData.delete("imagens");
+    if (arquivos && arquivos.length > 0) {
+      Array.from(arquivos).forEach((file) => {
+        formData.append("imagens", file);
+      });
+    }
+
     // Normaliza checkboxes e arrays
     const ativoChecked = formElement.querySelector<HTMLInputElement>(
       "input[name='ativo']"
