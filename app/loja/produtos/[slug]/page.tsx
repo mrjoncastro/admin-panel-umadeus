@@ -242,15 +242,20 @@ function DetalhesSelecao({
   );
 }
 
-export default async function ProdutoDetalhe({ params }: { params: Params }) {
-  const pb = createPocketBase();
+export default function ProdutoDetalhe({ params }: { params: Params }) {
+  const [produto, setProduto] = useState<Produto | null>(null);
+  const [erro, setErro] = useState(false);
 
-  let produto: Produto | null = null;
-  try {
-    produto = await pb
+  useEffect(() => {
+    const pb = createPocketBase();
+    pb
       .collection("produtos")
-      .getFirstListItem<Produto>(`slug = '${params.slug}'`);
-  } catch (err) {
+      .getFirstListItem<Produto>(`slug = '${params.slug}'`)
+      .then(setProduto)
+      .catch(() => setErro(true));
+  }, [params.slug]);
+
+  if (erro) {
     return (
       <main className="font-sans px-4 md:px-16 py-10">
         <Link
@@ -262,6 +267,14 @@ export default async function ProdutoDetalhe({ params }: { params: Params }) {
         <div className="text-center text-red-500 text-lg mt-10">
           Produto não encontrado ou ocorreu um erro.
         </div>
+      </main>
+    );
+  }
+
+  if (!produto) {
+    return (
+      <main className="font-sans px-4 md:px-16 py-10">
+        <div>Carregando...</div>
       </main>
     );
   }
