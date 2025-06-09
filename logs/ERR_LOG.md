@@ -11,3 +11,4 @@
 ## [2025-06-09] Tratamento de dados de categoria para evitar erro "categorias.map is not a function" no modal de produto - dev - 20a0ca8
 ## [2025-06-09] Tratamento de dados de categoria para evitar erro "categorias.map is not a function" no modal de produto - dev - 20a0ca8
 ## [2025-06-09] Corrigido retorno 401 ao acessar rotas de produtos e categorias no admin - dev - 655ebf9
+## [2025-06-09] Recuperação do token no momento da requisição para evitar 401 nas páginas de produtos - dev - 0a36fd1

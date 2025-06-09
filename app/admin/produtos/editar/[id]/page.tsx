@@ -17,8 +17,6 @@ export default function EditarProdutoPage() {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [initial, setInitial] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
 
   useEffect(() => {
     if (!isLoggedIn || !user || user.role !== "coordenador") {
@@ -28,10 +26,12 @@ export default function EditarProdutoPage() {
 
   useEffect(() => {
     if (!isLoggedIn || !user || user.role !== "coordenador") return;
+    const token = localStorage.getItem("pb_token");
+    const rawUser = localStorage.getItem("pb_user");
     fetch("/admin/api/categorias", {
       headers: {
         Authorization: `Bearer ${token}`,
-        "X-PB-User": JSON.stringify(user),
+        "X-PB-User": rawUser ?? "",
       },
     })
       .then((r) => r.json())
@@ -43,7 +43,7 @@ export default function EditarProdutoPage() {
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          "X-PB-User": JSON.stringify(user),
+          "X-PB-User": rawUser ?? "",
         },
       })
       .then(async (r) => {
@@ -68,7 +68,7 @@ export default function EditarProdutoPage() {
         });
       })
       .finally(() => setLoading(false));
-  }, [id, isLoggedIn, user, router, token]);
+  }, [id, isLoggedIn, user, router]);
 
   if (loading || !initial) {
     return <p className="p-4">Carregando...</p>;
@@ -78,12 +78,14 @@ export default function EditarProdutoPage() {
     e.preventDefault();
     const formElement = e.currentTarget as HTMLFormElement;
     const formData = new FormData(formElement);
+    const token = localStorage.getItem("pb_token");
+    const rawUser = localStorage.getItem("pb_user");
     const res = await fetch(`/admin/api/produtos/${id}`, {
       method: "PUT",
       body: formData,
       headers: {
         Authorization: `Bearer ${token}`,
-        "X-PB-User": JSON.stringify(user),
+        "X-PB-User": rawUser ?? "",
       },
     });
     if (res.ok) {

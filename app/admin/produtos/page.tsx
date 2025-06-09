@@ -16,8 +16,6 @@ export default function AdminProdutosPage() {
   const [page, setPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
   const pathname = usePathname();
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
 
   useEffect(() => {
     if (!isLoggedIn || !user || user.role !== "coordenador") {
@@ -30,10 +28,12 @@ export default function AdminProdutosPage() {
 
     async function fetchProdutos() {
       try {
+        const token = localStorage.getItem("pb_token");
+        const rawUser = localStorage.getItem("pb_user");
         const res = await fetch("/admin/api/produtos", {
           headers: {
             Authorization: `Bearer ${token}`,
-            "X-PB-User": JSON.stringify(user),
+            "X-PB-User": rawUser ?? "",
           },
         });
         const data = await res.json();
@@ -43,7 +43,7 @@ export default function AdminProdutosPage() {
       }
     }
     fetchProdutos();
-  }, [isLoggedIn, user, token]);
+  }, [isLoggedIn, user]);
 
   const totalPages = Math.ceil(produtos.length / PRODUTOS_POR_PAGINA);
   const paginated = produtos.slice(

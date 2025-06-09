@@ -17,8 +17,6 @@ export default function CategoriasAdminPage() {
   const [nome, setNome] = useState("");
   const [editId, setEditId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
 
   useEffect(() => {
     if (!isLoggedIn || !user || user.role !== "coordenador") {
@@ -28,10 +26,12 @@ export default function CategoriasAdminPage() {
 
   useEffect(() => {
     if (!isLoggedIn || !user || user.role !== "coordenador") return;
+    const token = localStorage.getItem("pb_token");
+    const rawUser = localStorage.getItem("pb_user");
     fetch("/admin/api/categorias", {
       headers: {
         Authorization: `Bearer ${token}`,
-        "X-PB-User": JSON.stringify(user),
+        "X-PB-User": rawUser ?? "",
       },
     })
       .then((res) => res.json())
@@ -39,7 +39,7 @@ export default function CategoriasAdminPage() {
         setCategorias(Array.isArray(data) ? data : []);
       })
       .catch(() => {});
-  }, [isLoggedIn, user, token]);
+  }, [isLoggedIn, user]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -53,12 +53,14 @@ export default function CategoriasAdminPage() {
       ? `/admin/api/categorias/${editId}`
       : "/admin/api/categorias";
     try {
+      const token = localStorage.getItem("pb_token");
+      const rawUser = localStorage.getItem("pb_user");
       const res = await fetch(url, {
         method: metodo,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
-          "X-PB-User": JSON.stringify(user),
+          "X-PB-User": rawUser ?? "",
         },
         body: JSON.stringify({ nome }),
       });
@@ -69,7 +71,7 @@ export default function CategoriasAdminPage() {
         fetch("/admin/api/categorias", {
           headers: {
             Authorization: `Bearer ${token}`,
-            "X-PB-User": JSON.stringify(user),
+            "X-PB-User": rawUser ?? "",
           },
         })
           .then((r) => r.json())
@@ -86,11 +88,13 @@ export default function CategoriasAdminPage() {
 
   async function handleDelete(id: string) {
     if (!confirm("Confirma excluir?")) return;
+    const token = localStorage.getItem("pb_token");
+    const rawUser = localStorage.getItem("pb_user");
     await fetch(`/admin/api/categorias/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
-        "X-PB-User": JSON.stringify(user),
+        "X-PB-User": rawUser ?? "",
       },
     });
     setCategorias((prev) => prev.filter((c) => c.id !== id));
