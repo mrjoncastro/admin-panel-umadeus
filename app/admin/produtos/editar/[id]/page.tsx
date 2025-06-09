@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
-import ModalCategoria from "../categorias/ModalCategoria";
 
 interface Categoria {
   id: string;
@@ -88,7 +87,9 @@ export default function EditarProdutoPage() {
               : "", // trata string[] ou string
         });
         setSelectedCategoria(
-          Array.isArray(data.categoria) ? data.categoria[0] ?? "" : data.categoria
+          Array.isArray(data.categoria)
+            ? data.categoria[0] ?? ""
+            : data.categoria
         );
       })
       .finally(() => setLoading(false));
@@ -218,197 +219,191 @@ export default function EditarProdutoPage() {
 
   return (
     <>
-    <main className="max-w-xl mx-auto px-4 py-8">
-      <h1
-        className="text-2xl font-bold mb-4"
-        style={{ fontFamily: "var(--font-heading)" }}
-      >
-        Editar Produto
-      </h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          className="input-base"
-          name="nome"
-          defaultValue={String(initial.nome)}
-          required
-        />
-        <input
-          className="input-base"
-          name="preco"
-          type="number"
-          step="0.01"
-          defaultValue={String(initial.preco)}
-          required
-        />
-        <input
-          className="input-base"
-          name="checkoutUrl"
-          type="url"
-          defaultValue={String(initial.checkoutUrl || "")}
-        />
-
-        {/* Campo de cores HEX separadas por vírgula */}
-        <div>
-          <label className="block text-sm font-semibold mb-1">
-            Cores do produto (clique para adicionar)
-          </label>
-          <div className="flex gap-2 items-center mb-2">
-            <input
-              type="color"
-              ref={inputHex}
-              defaultValue="#000000"
-              className="w-10 h-10 border rounded cursor-pointer"
-              // Removido o onChange!
-            />
-            <button
-              type="button"
-              className="btn btn-sm"
-              onClick={() => {
-                if (inputHex.current) addCor(inputHex.current.value);
-              }}
-            >
-              Adicionar cor
-            </button>
-          </div>
-          <div className="flex gap-2 flex-wrap mt-1">
-            {cores.map((cor) => (
-              <div key={cor} className="flex items-center gap-1">
-                <span
-                  className="w-7 h-7 rounded-full border border-gray-300 inline-block"
-                  style={{ background: cor }}
-                  title={cor}
-                />
-                <button
-                  type="button"
-                  className="text-xs text-red-600"
-                  onClick={() => removeCor(cor)}
-                  title="Remover"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-            {cores.length === 0 && (
-              <span className="text-xs text-gray-500">
-                Nenhuma cor selecionada
-              </span>
-            )}
-          </div>
-          <input type="hidden" name="cores" value={cores.join(",")} />
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold mb-1">Categoria</label>
-          <div className="flex gap-2">
-            <select
-              name="categoria"
-              value={selectedCategoria}
-              onChange={(e) => setSelectedCategoria(e.target.value)}
-              className="input-base flex-1"
-            >
-              <option value="">Selecione a categoria</option>
-              {categorias.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.nome}
-                </option>
-              ))}
-            </select>
-            <button
-              type="button"
-              className="btn btn-secondary whitespace-nowrap"
-              onClick={() => setCategoriaModalOpen(true)}
-            >
-              + Categoria
-            </button>
-          </div>
-        </div>
-        <input
-          type="file"
-          name="imagens"
-          multiple
-          accept="image/*"
-          className="input-base"
-        />
-        {/* ... tamanhos, generos, descricao, detalhes, ativo ... */}
-        <div>
-          <p className="text-sm font-semibold mb-1">Tamanhos</p>
-          <div className="flex gap-2 flex-wrap">
-            {["PP", "P", "M", "G", "GG"].map((t) => (
-              <label key={t} className="flex items-center gap-1 text-sm">
-                <input
-                  type="checkbox"
-                  name="tamanhos"
-                  value={t}
-                  defaultChecked={(
-                    initial.tamanhos as string[] | undefined
-                  )?.includes(t)}
-                />
-                {t}
-              </label>
-            ))}
-          </div>
-        </div>
-        <div>
-          <p className="text-sm font-semibold mb-1">Gêneros</p>
-          <div className="flex gap-2 flex-wrap">
-            {["masculino", "feminino"].map((g) => (
-              <label key={g} className="flex items-center gap-1 text-sm">
-                <input
-                  type="checkbox"
-                  name="generos"
-                  value={g}
-                  defaultChecked={(
-                    initial.generos as string[] | undefined
-                  )?.includes(g)}
-                />
-                {g.charAt(0).toUpperCase() + g.slice(1)}
-              </label>
-            ))}
-          </div>
-        </div>
-        <textarea
-          className="input-base"
-          name="descricao"
-          rows={2}
-          defaultValue={String(initial.descricao || "")}
-          required
-        />
-        <textarea
-          className="input-base"
-          name="detalhes"
-          rows={2}
-          defaultValue={String(initial.detalhes || "")}
-        />
-        <label className="flex items-center gap-2">
+      <main className="max-w-xl mx-auto px-4 py-8">
+        <h1
+          className="text-2xl font-bold mb-4"
+          style={{ fontFamily: "var(--font-heading)" }}
+        >
+          Editar Produto
+        </h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <input
-            type="checkbox"
-            name="ativo"
-            defaultChecked={Boolean(initial.ativo)}
-          />{" "}
-          Produto ativo
-        </label>
-        <div className="flex gap-2">
-          <button type="submit" className="btn btn-primary flex-1">
-            Salvar
-          </button>
-          <button
-            type="button"
-            onClick={() => router.push("/admin/produtos")}
-            className="btn flex-1"
-          >
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </main>
-    {categoriaModalOpen && (
-      <ModalCategoria
-        open={categoriaModalOpen}
-        onClose={() => setCategoriaModalOpen(false)}
-        onSubmit={handleNovaCategoria}
-        initial={null}
-      />
-    )}
+            className="input-base"
+            name="nome"
+            defaultValue={String(initial.nome)}
+            required
+          />
+          <input
+            className="input-base"
+            name="preco"
+            type="number"
+            step="0.01"
+            defaultValue={String(initial.preco)}
+            required
+          />
+          <input
+            className="input-base"
+            name="checkoutUrl"
+            type="url"
+            defaultValue={String(initial.checkoutUrl || "")}
+          />
+
+          {/* Campo de cores HEX separadas por vírgula */}
+          <div>
+            <label className="block text-sm font-semibold mb-1">
+              Cores do produto (clique para adicionar)
+            </label>
+            <div className="flex gap-2 items-center mb-2">
+              <input
+                type="color"
+                ref={inputHex}
+                defaultValue="#000000"
+                className="w-10 h-10 border rounded cursor-pointer"
+                // Removido o onChange!
+              />
+              <button
+                type="button"
+                className="btn btn-sm"
+                onClick={() => {
+                  if (inputHex.current) addCor(inputHex.current.value);
+                }}
+              >
+                Adicionar cor
+              </button>
+            </div>
+            <div className="flex gap-2 flex-wrap mt-1">
+              {cores.map((cor) => (
+                <div key={cor} className="flex items-center gap-1">
+                  <span
+                    className="w-7 h-7 rounded-full border border-gray-300 inline-block"
+                    style={{ background: cor }}
+                    title={cor}
+                  />
+                  <button
+                    type="button"
+                    className="text-xs text-red-600"
+                    onClick={() => removeCor(cor)}
+                    title="Remover"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              {cores.length === 0 && (
+                <span className="text-xs text-gray-500">
+                  Nenhuma cor selecionada
+                </span>
+              )}
+            </div>
+            <input type="hidden" name="cores" value={cores.join(",")} />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold mb-1">
+              Categoria
+            </label>
+            <div className="flex gap-2">
+              <select
+                name="categoria"
+                value={selectedCategoria}
+                onChange={(e) => setSelectedCategoria(e.target.value)}
+                className="input-base flex-1"
+              >
+                <option value="">Selecione a categoria</option>
+                {categorias.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.nome}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                className="btn btn-secondary whitespace-nowrap"
+                onClick={() => setCategoriaModalOpen(true)}
+              >
+                + Categoria
+              </button>
+            </div>
+          </div>
+          <input
+            type="file"
+            name="imagens"
+            multiple
+            accept="image/*"
+            className="input-base"
+          />
+          {/* ... tamanhos, generos, descricao, detalhes, ativo ... */}
+          <div>
+            <p className="text-sm font-semibold mb-1">Tamanhos</p>
+            <div className="flex gap-2 flex-wrap">
+              {["PP", "P", "M", "G", "GG"].map((t) => (
+                <label key={t} className="flex items-center gap-1 text-sm">
+                  <input
+                    type="checkbox"
+                    name="tamanhos"
+                    value={t}
+                    defaultChecked={(
+                      initial.tamanhos as string[] | undefined
+                    )?.includes(t)}
+                  />
+                  {t}
+                </label>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="text-sm font-semibold mb-1">Gêneros</p>
+            <div className="flex gap-2 flex-wrap">
+              {["masculino", "feminino"].map((g) => (
+                <label key={g} className="flex items-center gap-1 text-sm">
+                  <input
+                    type="checkbox"
+                    name="generos"
+                    value={g}
+                    defaultChecked={(
+                      initial.generos as string[] | undefined
+                    )?.includes(g)}
+                  />
+                  {g.charAt(0).toUpperCase() + g.slice(1)}
+                </label>
+              ))}
+            </div>
+          </div>
+          <textarea
+            className="input-base"
+            name="descricao"
+            rows={2}
+            defaultValue={String(initial.descricao || "")}
+            required
+          />
+          <textarea
+            className="input-base"
+            name="detalhes"
+            rows={2}
+            defaultValue={String(initial.detalhes || "")}
+          />
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              name="ativo"
+              defaultChecked={Boolean(initial.ativo)}
+            />{" "}
+            Produto ativo
+          </label>
+          <div className="flex gap-2">
+            <button type="submit" className="btn btn-primary flex-1">
+              Salvar
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push("/admin/produtos")}
+              className="btn flex-1"
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </main>
     </>
   );
 }
