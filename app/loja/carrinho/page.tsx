@@ -2,10 +2,22 @@
 
 import { useCart } from "@/lib/context/CartContext";
 import Image from "next/image";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/lib/context/AuthContext";
+import AuthModal from "@/app/components/AuthModal";
 
 export default function CarrinhoPage() {
   const { itens, removeItem, clearCart } = useCart();
+  const { isLoggedIn } = useAuthContext();
+  const router = useRouter();
+  const [showAuth, setShowAuth] = useState(false);
   const total = itens.reduce((sum, i) => sum + i.preco * i.quantidade, 0);
+
+  function handleCheckout() {
+    if (!isLoggedIn) setShowAuth(true);
+    else router.push("/loja/checkout");
+  }
 
   if (itens.length === 0) {
     return (
@@ -57,8 +69,11 @@ export default function CarrinhoPage() {
         >
           Limpar carrinho
         </button>
-        <button className="btn btn-primary">Finalizar compra</button>
+        <button onClick={handleCheckout} className="btn btn-primary">
+          Finalizar compra
+        </button>
       </div>
+      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
     </main>
   );
 }

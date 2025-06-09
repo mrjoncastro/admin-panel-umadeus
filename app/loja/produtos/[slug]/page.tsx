@@ -1,20 +1,20 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/lib/context/AuthContext";
+import AuthModal from "@/app/components/AuthModal";
 
 import Image from "next/image";
 import Link from "next/link";
 import createPocketBase from "@/lib/pocketbase";
 import AddToCartButton from "./AddToCartButton";
 import { Suspense } from "react";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import AuthModal from "@/app/components/AuthModal";
 
 interface Produto {
   id: string;
   nome: string;
   preco: number;
   imagens: string[] | Record<string, string[]>;
-  checkout_url: string;
   slug: string;
   descricao?: string;
   cores?: string | string[];
@@ -33,27 +33,24 @@ function ProdutoInterativo({
   tamanhos,
   nome,
   preco,
-  checkout_url,
   descricao,
   produto,
-  isLoggedIn,
-  onRequireAuth,
 }: {
   imagens: Record<string, string[]>;
   generos: string[];
   tamanhos: string[];
   nome: string;
   preco: number;
-  checkout_url: string;
   descricao?: string;
   produto: Produto;
-  isLoggedIn: boolean;
-  onRequireAuth: () => void;
 }) {
   const [genero, setGenero] = useState(generos[0]);
   const [tamanho, setTamanho] = useState(tamanhos[0]);
   const [indexImg, setIndexImg] = useState(0);
   const pauseRef = useRef(false);
+  const { isLoggedIn } = useAuthContext();
+  const router = useRouter();
+  const [showAuth, setShowAuth] = useState(false);
 
   const imgs = imagens[genero] || imagens[generos[0]];
 
@@ -75,6 +72,11 @@ function ProdutoInterativo({
     setIndexImg(i);
     setTimeout(() => (pauseRef.current = false), 10000);
   };
+
+  function handleComprar() {
+    if (!isLoggedIn) setShowAuth(true);
+    else router.push("/loja/checkout");
+  }
 
   return (
     <div className="grid md:grid-cols-2 gap-12 items-start">
@@ -133,20 +135,12 @@ function ProdutoInterativo({
             setTamanho={setTamanho}
           />
         </div>
-        <a
-          href={checkout_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => {
-            if (!isLoggedIn) {
-              e.preventDefault();
-              onRequireAuth();
-            }
-          }}
+        <button
+          onClick={handleComprar}
           className="block w-full bg-cornell_red-600 hover:bg-cornell_red-700 text-white text-center py-3 rounded-full font-semibold transition text-lg"
         >
           Quero essa pra brilhar no Congresso!
-        </a>
+        </button>
         <AddToCartButton
           produto={{
             ...produto,
@@ -163,6 +157,7 @@ function ProdutoInterativo({
                 : undefined,
           }}
         />
+        {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
         {descricao && (
           <p className="text-sm text-platinum mt-4 whitespace-pre-line">
             {descricao}
@@ -279,8 +274,6 @@ function DetalhesSelecao({
 export default function ProdutoDetalhe({ params }: { params: Params }) {
   const [produto, setProduto] = useState<Produto | null>(null);
   const [erro, setErro] = useState(false);
-  const [showAuth, setShowAuth] = useState(false);
-  const { isLoggedIn } = useAuthContext();
 
   useEffect(() => {
     const pb = createPocketBase();
@@ -349,16 +342,10 @@ export default function ProdutoDetalhe({ params }: { params: Params }) {
           tamanhos={tamanhos}
           nome={produto.nome}
           preco={produto.preco}
-          checkout_url={produto.checkout_url}
           descricao={produto.descricao}
           produto={produto}
-          isLoggedIn={isLoggedIn}
-          onRequireAuth={() => setShowAuth(true)}
         />
       </Suspense>
-      {showAuth && (
-        <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
-      )}
     </main>
   );
 }
