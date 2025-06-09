@@ -39,3 +39,4 @@
 ## [2025-06-07] Adicionado docs/testes.md e atualizada secao de testes no README.
 ## [2025-06-08] Documentado uso de dominio proprio com Vercel no README
 ## [2025-06-08] Atualizadas regras de acesso: produtos agora vinculados ao campo `user_org` e consultas filtradas por usuário.
+## [2025-06-09] Movido rota de inscricoes do admin para raiz e atualizados caminhos.
