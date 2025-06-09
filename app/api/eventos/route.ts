@@ -9,7 +9,7 @@ export async function GET() {
     await atualizarStatus(eventos, pb);
     const comUrls = eventos.map((e) => ({
       ...e,
-      imagem: e.imagem ? pb.files.getUrl(e, e.imagem) : undefined,
+      imagem: e.imagem ? pb.files.getURL(e, e.imagem) : undefined,
     }));
     return NextResponse.json(comUrls);
   } catch (err) {

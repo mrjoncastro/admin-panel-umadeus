@@ -26,7 +26,7 @@ export default async function CategoriaDetalhe({ params }: { params: Params }) {
 
   const produtos = produtosPB.map((p) => ({
     ...p,
-    imagens: (p.imagens || []).map((img) => pb.files.getUrl(p, img)),
+    imagens: (p.imagens || []).map((img) => pb.files.getURL(p, img)),
   }));
 
   return (

@@ -25,7 +25,6 @@ export default function CategoriasAdminPage() {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [editCategoria, setEditCategoria] = useState<Categoria | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const { token, user } = getAuth();
@@ -56,7 +55,6 @@ export default function CategoriasAdminPage() {
   async function handleSave(form: { nome: string }) {
     const { token, user } = getAuth();
     if (!isLoggedIn || !user || user.role !== "coordenador") return;
-    setLoading(true);
     const metodo = editCategoria ? "PUT" : "POST";
     const url = editCategoria
       ? `/admin/api/categorias/${editCategoria.id}`
@@ -90,7 +88,6 @@ export default function CategoriasAdminPage() {
         console.error(data.error);
       }
     } finally {
-      setLoading(false);
       setModalOpen(false);
       setEditCategoria(null);
     }

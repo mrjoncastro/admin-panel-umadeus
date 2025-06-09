@@ -35,7 +35,7 @@ export default async function ProdutoDetalhe({ params }: { params: Params }) {
       <div className="grid md:grid-cols-2 gap-12 items-start">
         <div>
           <Image
-            src={pb.files.getUrl(produto, produto.imagens[0])}
+            src={pb.files.getURL(produto, produto.imagens[0])}
             alt={produto.nome}
             width={600}
             height={600}
