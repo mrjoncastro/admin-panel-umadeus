@@ -42,21 +42,58 @@ export function ModalProduto<T extends Record<string, unknown>>({
   }, [open]);
 
   useEffect(() => {
-    if (!isLoggedIn || !user || user.role !== "coordenador") return;
+    console.log(
+      "[ModalProduto] Renderizou, open:",
+      open,
+      "isLoggedIn:",
+      isLoggedIn,
+      "user:",
+      user
+    );
+    if (!isLoggedIn || !user || user.role !== "coordenador") {
+      console.warn(
+        "[ModalProduto] Usuário não logado, user inválido, ou sem permissão. Não irá buscar categorias."
+      );
+      return;
+    }
     const token = localStorage.getItem("pb_token");
     const rawUser = localStorage.getItem("pb_user");
+    console.log("[ModalProduto] Token recuperado:", token);
+    console.log("[ModalProduto] User bruto:", rawUser);
     fetch("/admin/api/categorias", {
       headers: {
         Authorization: `Bearer ${token}`,
         "X-PB-User": rawUser ?? "",
       },
     })
-      .then((r) => r.json())
-      .then((data) => {
-        setCategorias(Array.isArray(data) ? data : []);
+      .then(async (r) => {
+        console.log(
+          "[ModalProduto] Status da resposta fetch categorias:",
+          r.status
+        );
+        const json = await r.json();
+        console.log("[ModalProduto] JSON retornado:", json);
+        return json;
       })
-      .catch(() => {});
-  }, [isLoggedIn, user]);
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setCategorias(data);
+          console.log("[ModalProduto] Categorias salvas:", data);
+        } else if (Array.isArray(data.items)) {
+          setCategorias(data.items);
+          console.log(
+            "[ModalProduto] Categorias (de .items) salvas:",
+            data.items
+          );
+        } else {
+          setCategorias([]);
+          console.warn("[ModalProduto] Nenhuma categoria válida encontrada.");
+        }
+      })
+      .catch((err) => {
+        console.error("[ModalProduto] Erro ao buscar categorias:", err);
+      });
+  }, [isLoggedIn, user, open]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -77,10 +114,13 @@ export function ModalProduto<T extends Record<string, unknown>>({
     ).map((el) => el.value);
     form.ativo = !!form.ativo;
     // Corrige imagens para ser FileList ou File[]
-    const imagensInput = formElement.querySelector("input[name='imagens']") as HTMLInputElement;
-    form.imagens = imagensInput && imagensInput.files && imagensInput.files.length > 0
-      ? imagensInput.files
-      : null;
+    const imagensInput = formElement.querySelector(
+      "input[name='imagens']"
+    ) as HTMLInputElement;
+    form.imagens =
+      imagensInput && imagensInput.files && imagensInput.files.length > 0
+        ? imagensInput.files
+        : null;
     onSubmit(form as T);
     onClose();
   }
