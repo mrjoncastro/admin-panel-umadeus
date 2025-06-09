@@ -29,7 +29,12 @@ export default function ProdutosPage() {
     if (!user) return;
     async function fetchProdutos() {
       try {
-        const lista = await pb.collection("produtos").getFullList<Produto>({ sort: "-created" });
+        const lista = await pb
+          .collection("produtos")
+          .getFullList<Produto>({
+            sort: "-created",
+            filter: `user_org = "${user.id}"`,
+          });
         setProdutos(lista);
       } catch (err) {
         console.error("Erro ao carregar produtos", err);
@@ -44,7 +49,12 @@ export default function ProdutosPage() {
   const criarProduto = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const criado = await pb.collection("produtos").create({ nome, preco: parseFloat(preco), imagem });
+      const criado = await pb.collection("produtos").create({
+        nome,
+        preco: parseFloat(preco),
+        imagem,
+        user_org: user?.id,
+      });
       setProdutos((p) => [criado as Produto, ...p]);
       setNome("");
       setPreco("");
