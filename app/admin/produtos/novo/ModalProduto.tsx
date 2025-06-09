@@ -1,5 +1,4 @@
-import { useEffect, useRef } from "react";
-import { useState } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
 
 export interface ModalProdutoProps<T extends Record<string, unknown>> {
@@ -35,11 +34,14 @@ export function ModalProduto<T extends Record<string, unknown>>({
   const ref = useRef<HTMLDialogElement>(null);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const { isLoggedIn, user: ctxUser } = useAuthContext();
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
-  const rawUser =
-    typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
-  const user = rawUser ? JSON.parse(rawUser) : ctxUser;
+  const getAuth = useCallback(() => {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
+    const raw =
+      typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
+    const user = raw ? JSON.parse(raw) : ctxUser;
+    return { token, user } as const;
+  }, [ctxUser]);
 
   useEffect(() => {
     if (open) ref.current?.showModal();
@@ -47,6 +49,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
   }, [open]);
 
   useEffect(() => {
+    const { token, user } = getAuth();
     if (!isLoggedIn || !token || !user || user.role !== "coordenador") return;
     fetch("/admin/api/categorias", {
       headers: {
@@ -62,7 +65,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
         console.error("Erro ao carregar categorias:", err);
         setCategorias([]);
       });
-  }, [isLoggedIn, user, token]);
+  }, [isLoggedIn, open, getAuth]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

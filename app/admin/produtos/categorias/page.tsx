@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 
@@ -13,23 +13,28 @@ interface Categoria {
 export default function CategoriasAdminPage() {
   const { user: ctxUser, isLoggedIn } = useAuthContext();
   const router = useRouter();
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
-  const rawUser =
-    typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
-  const user = rawUser ? JSON.parse(rawUser) : ctxUser;
+  const getAuth = useCallback(() => {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
+    const raw =
+      typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
+    const user = raw ? JSON.parse(raw) : ctxUser;
+    return { token, user } as const;
+  }, [ctxUser]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [nome, setNome] = useState("");
   const [editId, setEditId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    const { token, user } = getAuth();
     if (!isLoggedIn || !token || !user || user.role !== "coordenador") {
       router.replace("/admin/login");
     }
-  }, [isLoggedIn, token, user, router]);
+  }, [isLoggedIn, router, getAuth]);
 
   useEffect(() => {
+    const { token, user } = getAuth();
     if (!isLoggedIn || !token || !user || user.role !== "coordenador") return;
     fetch("/admin/api/categorias", {
       headers: {
@@ -45,14 +50,12 @@ export default function CategoriasAdminPage() {
         console.error("Erro ao carregar categorias:", err);
         setCategorias([]);
       });
-  }, [isLoggedIn, token, user]);
+  }, [isLoggedIn, getAuth]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!isLoggedIn || !user || user.role !== "coordenador" || !user.token) {
-      console.log("Token ou usuário ausente.");
-      return;
-    }
+    const { token, user } = getAuth();
+    if (!isLoggedIn || !user || user.role !== "coordenador") return;
     setLoading(true);
     const metodo = editId ? "PUT" : "POST";
     const url = editId
@@ -74,10 +77,11 @@ export default function CategoriasAdminPage() {
       if (res.ok) {
         setNome("");
         setEditId(null);
+        const auth = getAuth();
         fetch("/admin/api/categorias", {
           headers: {
-            Authorization: `Bearer ${token}`,
-            "X-PB-User": JSON.stringify(user),
+            Authorization: `Bearer ${auth.token}`,
+            "X-PB-User": JSON.stringify(auth.user),
           },
         })
           .then((r) => r.json())
@@ -98,6 +102,7 @@ export default function CategoriasAdminPage() {
 
   async function handleDelete(id: string) {
     if (!confirm("Confirma excluir?")) return;
+    const { token, user } = getAuth();
     await fetch(`/admin/api/categorias/${id}`, {
       method: "DELETE",
       headers: {

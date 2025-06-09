@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 
@@ -14,22 +14,27 @@ export default function EditarProdutoPage() {
   const { id } = useParams<{ id: string }>();
   const { user: ctxUser, isLoggedIn } = useAuthContext();
   const router = useRouter();
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
-  const rawUser =
-    typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
-  const user = rawUser ? JSON.parse(rawUser) : ctxUser;
+  const getAuth = useCallback(() => {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
+    const raw =
+      typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
+    const user = raw ? JSON.parse(raw) : ctxUser;
+    return { token, user } as const;
+  }, [ctxUser]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [initial, setInitial] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const { token, user } = getAuth();
     if (!isLoggedIn || !token || !user || user.role !== "coordenador") {
       router.replace("/admin/login");
     }
-  }, [isLoggedIn, token, user, router]);
+  }, [isLoggedIn, router, getAuth]);
 
   useEffect(() => {
+    const { token, user } = getAuth();
     if (!isLoggedIn || !token || !user || user.role !== "coordenador") return;
     fetch("/admin/api/categorias", {
       headers: {
@@ -74,7 +79,7 @@ export default function EditarProdutoPage() {
         });
       })
       .finally(() => setLoading(false));
-  }, [id, isLoggedIn, user, router, token]);
+  }, [id, isLoggedIn, router, getAuth]);
 
   if (loading || !initial) {
     return <p className="p-4">Carregando...</p>;
@@ -84,6 +89,7 @@ export default function EditarProdutoPage() {
     e.preventDefault();
     const formElement = e.currentTarget as HTMLFormElement;
     const formData = new FormData(formElement);
+    const { token, user } = getAuth();
     const res = await fetch(`/admin/api/produtos/${id}`, {
       method: "PUT",
       body: formData,

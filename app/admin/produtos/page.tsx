@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import Link from "next/link";
@@ -12,23 +12,28 @@ const PRODUTOS_POR_PAGINA = 10;
 export default function AdminProdutosPage() {
   const { user: ctxUser, isLoggedIn } = useAuthContext();
   const router = useRouter();
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
-  const rawUser =
-    typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
-  const user = rawUser ? JSON.parse(rawUser) : ctxUser;
+  const getAuth = useCallback(() => {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
+    const raw =
+      typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
+    const user = raw ? JSON.parse(raw) : ctxUser;
+    return { token, user } as const;
+  }, [ctxUser]);
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [page, setPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
+    const { token, user } = getAuth();
     if (!isLoggedIn || !token || !user || user.role !== "coordenador") {
       router.replace("/admin/login");
     }
-  }, [isLoggedIn, token, user, router]);
+  }, [isLoggedIn, router, getAuth]);
 
   useEffect(() => {
+    const { token, user } = getAuth();
     if (!isLoggedIn || !token || !user || user.role !== "coordenador") return;
 
     async function fetchProdutos() {
@@ -46,7 +51,7 @@ export default function AdminProdutosPage() {
       }
     }
     fetchProdutos();
-  }, [isLoggedIn, token, user]);
+  }, [isLoggedIn, getAuth]);
 
   const totalPages = Math.ceil(produtos.length / PRODUTOS_POR_PAGINA);
   const paginated = produtos.slice(
@@ -59,7 +64,7 @@ export default function AdminProdutosPage() {
     const formData = new FormData();
     formData.set("nome", String(form.nome ?? ""));
     formData.set("preco", String(form.preco ?? 0));
-    if (form.checkout_url) formData.set("checkout_url", String(form.checkout_url));
+    if (form.checkoutUrl) formData.set("checkoutUrl", String(form.checkoutUrl));
     if (form.categoria) formData.set("categoria", String(form.categoria));
     if (Array.isArray(form.tamanhos))
       form.tamanhos.forEach((t) => formData.append("tamanhos", t));
@@ -74,6 +79,7 @@ export default function AdminProdutosPage() {
       );
     }
 
+    const { token, user } = getAuth();
     try {
       const res = await fetch("/admin/api/produtos", {
         method: "POST",
