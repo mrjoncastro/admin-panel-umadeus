@@ -1,21 +1,245 @@
+"use client";
+import { useState, useRef, useEffect } from "react";
+
 import Image from "next/image";
 import Link from "next/link";
 import createPocketBase from "@/lib/pocketbase";
 import AddToCartButton from "./AddToCartButton";
+import { Suspense } from "react";
 
 interface Produto {
   id: string;
   nome: string;
   preco: number;
-  imagens: string[];
+  imagens: string[] | Record<string, string[]>;
   checkout_url: string;
   slug: string;
   descricao?: string;
   cores?: string | string[];
+  tamanhos?: string | string[];
+  generos?: string | string[];
 }
 
 interface Params {
   slug: string;
+}
+
+// Componente Client para interatividade (gênero, tamanho, galeria)
+function ProdutoInterativo({
+  imagens,
+  generos,
+  tamanhos,
+  nome,
+  preco,
+  checkout_url,
+  descricao,
+  produto,
+}: {
+  imagens: Record<string, string[]>;
+  generos: string[];
+  tamanhos: string[];
+  nome: string;
+  preco: number;
+  checkout_url: string;
+  descricao?: string;
+  produto: Produto;
+}) {
+  const [genero, setGenero] = useState(generos[0]);
+  const [tamanho, setTamanho] = useState(tamanhos[0]);
+  const [indexImg, setIndexImg] = useState(0);
+  const pauseRef = useRef(false);
+
+  const imgs = imagens[genero] || imagens[generos[0]];
+
+  useEffect(() => {
+    setIndexImg(0);
+  }, [genero]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!pauseRef.current) {
+        setIndexImg((prev) => (prev + 1) % imgs.length);
+      }
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [imgs]);
+
+  const handleMiniaturaClick = (i: number) => {
+    pauseRef.current = true;
+    setIndexImg(i);
+    setTimeout(() => (pauseRef.current = false), 10000);
+  };
+
+  return (
+    <div className="grid md:grid-cols-2 gap-12 items-start">
+      <div>
+        <Image
+          src={imgs[indexImg]}
+          alt={nome}
+          width={600}
+          height={600}
+          className="w-full rounded-xl border border-black_bean shadow-lg transition-all duration-300"
+          priority
+        />
+        <div className="flex gap-3 mt-4">
+          {imgs.map((src, i) => (
+            <Image
+              key={i}
+              src={src}
+              alt={`Miniatura ${i + 1}`}
+              width={64}
+              height={64}
+              onClick={() => handleMiniaturaClick(i)}
+              className={`w-16 h-16 object-cover rounded-lg border-2 cursor-pointer transition ${
+                indexImg === i
+                  ? "border-yellow-400 ring-2 ring-yellow-400"
+                  : "border-black_bean hover:brightness-110"
+              }`}
+            />
+          ))}
+        </div>
+        {/* Tamanhos e gênero abaixo da imagem no mobile */}
+        <div className="block md:hidden mt-6">
+          <DetalhesSelecao
+            generos={generos}
+            tamanhos={tamanhos}
+            genero={genero}
+            setGenero={setGenero}
+            tamanho={tamanho}
+            setTamanho={setTamanho}
+          />
+        </div>
+      </div>
+      <div className="space-y-6">
+        <h1 className="text-3xl md:text-4xl font-bold font-bebas leading-tight text-yellow-400">
+          {nome}
+        </h1>
+        <p className="text-xl font-semibold text-platinum">
+          R$ {preco.toFixed(2).replace(".", ",")}
+        </p>
+        <div className="hidden md:block">
+          <DetalhesSelecao
+            generos={generos}
+            tamanhos={tamanhos}
+            genero={genero}
+            setGenero={setGenero}
+            tamanho={tamanho}
+            setTamanho={setTamanho}
+          />
+        </div>
+        <a
+          href={checkout_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block w-full bg-cornell_red-600 hover:bg-cornell_red-700 text-white text-center py-3 rounded-full font-semibold transition text-lg"
+        >
+          Quero essa pra brilhar no Congresso!
+        </a>
+        <AddToCartButton produto={{ ...produto, genero, tamanho }} />
+        {descricao && (
+          <p className="text-sm text-platinum mt-4 whitespace-pre-line">
+            {descricao}
+          </p>
+        )}
+        <div className="text-sm text-platinum mt-6 space-y-3">
+          <div>
+            <h2 className="font-semibold text-base">Envio e devolução</h2>
+            <p>
+              Entrega rápida em todo o Brasil. Trocas grátis em até 7 dias após
+              o recebimento.
+            </p>
+          </div>
+          <div className="divide-y divide-platinum/20 mt-4">
+            <details className="py-3">
+              <summary className="cursor-pointer font-medium">
+                + Sobre o Produto
+              </summary>
+              <p className="mt-2 text-sm">
+                Camiseta 100% algodão, com caimento confortável e estilo que
+                combina com a juventude cristã.
+              </p>
+            </details>
+            <details className="py-3">
+              <summary className="cursor-pointer font-medium">
+                + Cuidados com sua peça
+              </summary>
+              <p className="mt-2 text-sm">
+                Lave com amor — à mão ou na máquina, sempre com água fria.
+              </p>
+            </details>
+            <details className="py-3">
+              <summary className="cursor-pointer font-medium">
+                + Sobre o tecido
+              </summary>
+              <p className="mt-2 text-sm">
+                Tecido leve e respirável. Ideal pra louvar, pular e viver cada
+                momento do congresso com liberdade.
+              </p>
+            </details>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Componente para seleção de gênero e tamanho (reutilizável)
+function DetalhesSelecao({
+  generos,
+  tamanhos,
+  genero,
+  setGenero,
+  tamanho,
+  setTamanho,
+}) {
+  return (
+    <>
+      {/* Gênero */}
+      <div className="mb-4">
+        <p className="text-sm mb-2 text-platinum/80">Modelo:</p>
+        <div className="flex gap-3">
+          {generos.map((g) => (
+            <button
+              key={g}
+              onClick={() => setGenero(g)}
+              className={`px-4 py-1 rounded-full border font-medium transition ${
+                genero === g
+                  ? "bg-cornell_red-600 text-white"
+                  : "border-platinum/30 text-platinum hover:bg-black_bean"
+              }`}
+            >
+              {g.charAt(0).toUpperCase() + g.slice(1)}
+            </button>
+          ))}
+        </div>
+      </div>
+      {/* Tamanhos */}
+      <div>
+        <p className="text-sm mb-2 text-platinum/80">Tamanhos disponíveis:</p>
+        <div className="flex gap-2">
+          {tamanhos.map((t) => (
+            <button
+              key={t}
+              onClick={() => setTamanho(t)}
+              className={`px-3 py-1 border rounded-full text-sm transition ${
+                tamanho === t
+                  ? "bg-yellow-400 text-black_bean font-bold"
+                  : "border-platinum/30 text-platinum hover:bg-black_bean"
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+        <a
+          href="#"
+          className="text-xs underline mt-2 inline-block text-platinum/60 hover:text-yellow-400 transition"
+        >
+          Ver guia de tamanhos
+        </a>
+      </div>
+    </>
+  );
 }
 
 export default async function ProdutoDetalhe({ params }: { params: Params }) {
@@ -27,7 +251,6 @@ export default async function ProdutoDetalhe({ params }: { params: Params }) {
       .collection("produtos")
       .getFirstListItem<Produto>(`slug = '${params.slug}'`);
   } catch (err) {
-    console.error(err);
     return (
       <main className="font-sans px-4 md:px-16 py-10">
         <Link
@@ -43,75 +266,45 @@ export default async function ProdutoDetalhe({ params }: { params: Params }) {
     );
   }
 
-  // Converte para array de string
-  const coresArray: string[] = Array.isArray(produto.cores)
-    ? produto.cores
-    : produto.cores
-    ? produto.cores
-        .split(",")
-        .map((cor) => cor.trim())
-        .filter(Boolean)
-    : [];
+  // Normaliza imagens, tamanhos, generos
+  let generos: string[] = [];
+  let imagens: Record<string, string[]> = {};
+  if (typeof produto.imagens === "object" && !Array.isArray(produto.imagens)) {
+    // formato: { masculino: [...], feminino: [...] }
+    imagens = produto.imagens as Record<string, string[]>;
+    generos = Object.keys(imagens);
+  } else {
+    // formato: array
+    imagens = { default: (produto.imagens as string[]) || [] };
+    generos = ["default"];
+  }
+
+  const tamanhos = Array.isArray(produto.tamanhos)
+    ? produto.tamanhos
+    : typeof produto.tamanhos === "string"
+    ? produto.tamanhos.split(",").map((t) => t.trim())
+    : ["P", "M", "G", "GG"];
 
   return (
-    <main className="font-sans px-4 md:px-16 py-10">
+    <main className="text-platinum font-sans px-4 md:px-16 py-10">
       <Link
         href="/loja/produtos"
-        className="text-sm text-platinum hover:text-[var(--primary-600)] mb-6 inline-block transition"
+        className="text-sm text-platinum hover:text-yellow-400 mb-6 inline-block transition"
       >
         &lt; voltar
       </Link>
-
-      <div className="grid md:grid-cols-2 gap-12 items-start">
-        <div>
-          <Image
-            src={pb.files.getURL(produto, produto.imagens[0])}
-            alt={produto.nome}
-            width={600}
-            height={600}
-            className="w-full rounded-xl border border-black_bean shadow-lg"
-          />
-
-          {coresArray.length > 0 && (
-            <div className="mt-5 flex flex-wrap gap-3">
-              <span className="text-xs text-gray-600 mr-2">
-                Cores disponíveis:
-              </span>
-              {coresArray.map((cor) => (
-                <span
-                  key={cor}
-                  title={cor}
-                  className="inline-block w-7 h-7 rounded-full border-2 border-white shadow"
-                  style={{ background: cor, borderColor: "#e0e0e0" }}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="space-y-6">
-          <h1 className="font-bebas text-[var(--primary-600)] text-3xl md:text-4xl font-bold leading-tight">
-            {produto.nome}
-          </h1>
-          <p className="text-xl font-semibold text-platinum">
-            R$ {produto.preco.toFixed(2).replace(".", ",")}
-          </p>
-
-          <a
-            href={produto.checkout_url}
-            className="block w-full bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white text-center py-3 rounded-full font-semibold transition text-lg"
-          >
-            Comprar agora
-          </a>
-          <AddToCartButton produto={{ ...produto, cores: coresArray }} />
-
-          {produto.descricao && (
-            <p className="text-sm text-platinum mt-4 whitespace-pre-line">
-              {produto.descricao}
-            </p>
-          )}
-        </div>
-      </div>
+      <Suspense fallback={<div>Carregando...</div>}>
+        <ProdutoInterativo
+          imagens={imagens}
+          generos={generos}
+          tamanhos={tamanhos}
+          nome={produto.nome}
+          preco={produto.preco}
+          checkout_url={produto.checkout_url}
+          descricao={produto.descricao}
+          produto={produto}
+        />
+      </Suspense>
     </main>
   );
 }
