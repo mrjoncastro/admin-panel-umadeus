@@ -79,6 +79,7 @@ export type Produto = {
   imagens?: string[];
   tamanhos?: string[];
   generos?: string[];
+  cores?: string[];
   descricao?: string;
   detalhes?: string;
   checkout_url?: string;

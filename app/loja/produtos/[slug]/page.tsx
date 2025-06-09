@@ -11,25 +11,23 @@ interface Produto {
   checkout_url: string;
   slug: string;
   descricao?: string;
+  cores?: string | string[];
 }
 
 interface Params {
   slug: string;
 }
 
-export default async function ProdutoDetalhe(props: { params: Promise<Params> }) {
-  const { params } = props;
-  const resolvedParams = await params;
+export default async function ProdutoDetalhe({ params }: { params: Params }) {
   const pb = createPocketBase();
 
   let produto: Produto | null = null;
   try {
     produto = await pb
       .collection("produtos")
-      .getFirstListItem<Produto>(`slug = '${resolvedParams.slug}'`);
+      .getFirstListItem<Produto>(`slug = '${params.slug}'`);
   } catch (err) {
     console.error(err);
-    // Produto não encontrado ou erro na consulta
     return (
       <main className="font-sans px-4 md:px-16 py-10">
         <Link
@@ -44,6 +42,16 @@ export default async function ProdutoDetalhe(props: { params: Promise<Params> })
       </main>
     );
   }
+
+  // Converte para array de string
+  const coresArray: string[] = Array.isArray(produto.cores)
+    ? produto.cores
+    : produto.cores
+    ? produto.cores
+        .split(",")
+        .map((cor) => cor.trim())
+        .filter(Boolean)
+    : [];
 
   return (
     <main className="font-sans px-4 md:px-16 py-10">
@@ -63,6 +71,22 @@ export default async function ProdutoDetalhe(props: { params: Promise<Params> })
             height={600}
             className="w-full rounded-xl border border-black_bean shadow-lg"
           />
+
+          {coresArray.length > 0 && (
+            <div className="mt-5 flex flex-wrap gap-3">
+              <span className="text-xs text-gray-600 mr-2">
+                Cores disponíveis:
+              </span>
+              {coresArray.map((cor) => (
+                <span
+                  key={cor}
+                  title={cor}
+                  className="inline-block w-7 h-7 rounded-full border-2 border-white shadow"
+                  style={{ background: cor, borderColor: "#e0e0e0" }}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="space-y-6">
@@ -79,7 +103,7 @@ export default async function ProdutoDetalhe(props: { params: Promise<Params> })
           >
             Comprar agora
           </a>
-          <AddToCartButton produto={produto} />
+          <AddToCartButton produto={{ ...produto, cores: coresArray }} />
 
           {produto.descricao && (
             <p className="text-sm text-platinum mt-4 whitespace-pre-line">

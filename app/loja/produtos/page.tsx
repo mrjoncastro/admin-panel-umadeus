@@ -8,60 +8,112 @@ interface Produto {
   nome: string;
   preco: number;
   imagens: string[];
+  checkout_url: string;
   slug: string;
-  categoria: string;
+  descricao?: string;
+  cores?: string | string[]; // aceita ambos para facilitar o parsing
 }
 
-export default async function ProdutosPage() {
+interface Params {
+  slug: string;
+}
+
+export default async function ProdutoDetalhe({ params }: { params: Params }) {
   const pb = createPocketBase();
-  const produtos: Produto[] = await pb
-    .collection("produtos")
-    .getFullList({ filter: "ativo = true", sort: "-created" });
 
-  const agrupados = produtos.reduce<Record<string, Produto[]>>((acc, p) => {
-    const cat = p.categoria || "outros";
-    if (!acc[cat]) acc[cat] = [];
-    acc[cat].push(p);
-    return acc;
-  }, {});
+  let produto: Produto | null = null;
+  try {
+    produto = await pb
+      .collection("produtos")
+      .getFirstListItem<Produto>(`slug = '${params.slug}'`);
+  } catch (err) {
+    console.error(err);
+    return (
+      <main className="font-sans px-4 md:px-16 py-10">
+        <Link
+          href="/loja/produtos"
+          className="text-sm text-platinum hover:text-[var(--primary-600)] mb-6 inline-block transition"
+        >
+          &lt; voltar
+        </Link>
+        <div className="text-center text-red-500 text-lg mt-10">
+          Produto não encontrado ou ocorreu um erro.
+        </div>
+      </main>
+    );
+  }
 
-  const categorias = Object.keys(agrupados);
+  // Converte cores para array
+  const coresArray: string[] = Array.isArray(produto.cores)
+    ? produto.cores
+    : produto.cores
+    ? produto.cores
+        .split(",")
+        .map((cor) => cor.trim())
+        .filter(Boolean)
+    : [];
 
   return (
-    <main className="p-4 md:p-8 font-sans">
-      <h1 className="text-2xl md:text-3xl font-bold mb-6 text-platinum">
-        Produtos
-      </h1>
-      {categorias.map((cat) => (
-        <section key={cat} className="mb-10">
-          <h2 className="text-xl font-semibold mb-4">
-            {cat.charAt(0).toUpperCase() + cat.slice(1)}
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {agrupados[cat].map((p) => (
-              <div key={p.id} className="bg-white rounded shadow p-2">
-                <Link href={`/loja/produtos/${p.slug}`}
-                  className="block">
-                  <Image
-                    src={pb.files.getURL(p, p.imagens[0])}
-                    alt={p.nome}
-                    width={400}
-                    height={400}
-                    className="w-full h-auto object-cover rounded"
-                  />
-                  <h3 className="text-sm font-medium text-black mt-2 line-clamp-2">
-                    {p.nome}
-                  </h3>
-                  <p className="text-base font-semibold text-black_bean mt-1">
-                    R$ {p.preco.toFixed(2).replace(".", ",")}
-                  </p>
-                </Link>
-                <AddToCartButton produto={p} />
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
+    <main className="font-sans px-4 md:px-16 py-10">
+      <Link
+        href="/loja/produtos"
+        className="text-sm text-platinum hover:text-[var(--primary-600)] mb-6 inline-block transition"
+      >
+        &lt; voltar
+      </Link>
+
+      <div className="grid md:grid-cols-2 gap-12 items-start">
+        <div>
+          <Image
+            src={pb.files.getURL(produto, produto.imagens[0])}
+            alt={produto.nome}
+            width={600}
+            height={600}
+            className="w-full rounded-xl border border-black_bean shadow-lg"
+          />
+
+          {/* Mostra as variações de cor */}
+          {coresArray.length > 0 && (
+            <div className="mt-5 flex flex-wrap gap-3">
+              <span className="text-xs text-gray-600 mr-2">
+                Cores disponíveis:
+              </span>
+              {coresArray.map((cor) => (
+                <span
+                  key={cor}
+                  title={cor}
+                  className="inline-block w-7 h-7 rounded-full border-2 border-white shadow"
+                  style={{ background: cor, borderColor: "#e0e0e0" }}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-6">
+          <h1 className="font-bebas text-[var(--primary-600)] text-3xl md:text-4xl font-bold leading-tight">
+            {produto.nome}
+          </h1>
+          <p className="text-xl font-semibold text-platinum">
+            R$ {produto.preco.toFixed(2).replace(".", ",")}
+          </p>
+
+          <a
+            href={produto.checkout_url}
+            className="block w-full bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white text-center py-3 rounded-full font-semibold transition text-lg"
+          >
+            Comprar agora
+          </a>
+          {/* Aqui garante que AddToCartButton sempre recebe cores como array */}
+          <AddToCartButton produto={{ ...produto, cores: coresArray }} />
+
+          {produto.descricao && (
+            <p className="text-sm text-platinum mt-4 whitespace-pre-line">
+              {produto.descricao}
+            </p>
+          )}
+        </div>
+      </div>
     </main>
   );
 }
