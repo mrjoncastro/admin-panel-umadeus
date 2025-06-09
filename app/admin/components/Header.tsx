@@ -59,7 +59,7 @@ export default function Header() {
     pb.authStore.clear();
     localStorage.removeItem("pb_token");
     localStorage.removeItem("pb_user");
-    window.location.href = "/admin/login";
+    window.location.href = "/login";
   };
 
   return (
@@ -171,7 +171,7 @@ export default function Header() {
 
           {!isLoggedIn && (
             <Link
-              href="/admin/login"
+              href="/login"
               className="text-sm underline text-[var(--text-header-primary)] hover:text-white cursor-pointer"
             >
               Entrar
@@ -253,7 +253,7 @@ export default function Header() {
 
             {!isLoggedIn && (
               <Link
-                href="/admin/login"
+                href="/login"
                 onClick={() => setMenuAberto(false)}
                 className="text-left px-4 py-2 text-sm underline text-[var(--text-header-primary)] hover:text-white"
               >

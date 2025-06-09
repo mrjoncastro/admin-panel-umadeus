@@ -29,7 +29,7 @@ export default function CategoriasAdminPage() {
   useEffect(() => {
     const { token, user } = getAuth();
     if (!isLoggedIn || !token || !user || user.role !== "coordenador") {
-      router.replace("/admin/login");
+      router.replace("/login");
     }
   }, [isLoggedIn, router, getAuth]);
 
