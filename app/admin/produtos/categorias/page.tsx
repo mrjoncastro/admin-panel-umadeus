@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 
@@ -11,29 +11,50 @@ interface Categoria {
 }
 
 export default function CategoriasAdminPage() {
-  const { user, isLoggedIn } = useAuthContext();
+  const { user: ctxUser, isLoggedIn } = useAuthContext();
   const router = useRouter();
+  const getAuth = useCallback(() => {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
+    const raw =
+      typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
+    const user = raw ? JSON.parse(raw) : ctxUser;
+    return { token, user } as const;
+  }, [ctxUser]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [nome, setNome] = useState("");
   const [editId, setEditId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!isLoggedIn || !user || user.role !== "coordenador") {
+    const { token, user } = getAuth();
+    if (!isLoggedIn || !token || !user || user.role !== "coordenador") {
       router.replace("/admin/login");
     }
-  }, [isLoggedIn, user, router]);
+  }, [isLoggedIn, router, getAuth]);
 
   useEffect(() => {
-    if (!isLoggedIn || !user || user.role !== "coordenador") return;
-    fetch("/admin/api/categorias")
+    const { token, user } = getAuth();
+    if (!isLoggedIn || !token || !user || user.role !== "coordenador") return;
+    fetch("/admin/api/categorias", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-PB-User": JSON.stringify(user),
+      },
+    })
       .then((res) => res.json())
-      .then(setCategorias)
-      .catch(() => {});
-  }, [isLoggedIn, user]);
+      .then((data) => {
+        setCategorias(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        console.error("Erro ao carregar categorias:", err);
+        setCategorias([]);
+      });
+  }, [isLoggedIn, getAuth]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const { token, user } = getAuth();
     if (!isLoggedIn || !user || user.role !== "coordenador") return;
     setLoading(true);
     const metodo = editId ? "PUT" : "POST";
@@ -41,16 +62,32 @@ export default function CategoriasAdminPage() {
     try {
       const res = await fetch(url, {
         method: metodo,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "X-PB-User": JSON.stringify(user),
+        },
         body: JSON.stringify({ nome }),
       });
       const data = await res.json();
       if (res.ok) {
         setNome("");
         setEditId(null);
-        fetch("/admin/api/categorias")
+        const auth = getAuth();
+        fetch("/admin/api/categorias", {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+            "X-PB-User": JSON.stringify(auth.user),
+          },
+        })
           .then((r) => r.json())
-          .then(setCategorias);
+          .then((cats) => {
+            setCategorias(Array.isArray(cats) ? cats : []);
+          })
+          .catch((err) => {
+            console.error("Erro ao atualizar categorias:", err);
+            setCategorias([]);
+          });
       } else {
         console.error(data.error);
       }
@@ -61,7 +98,14 @@ export default function CategoriasAdminPage() {
 
   async function handleDelete(id: string) {
     if (!confirm("Confirma excluir?")) return;
-    await fetch(`/admin/api/categorias/${id}`, { method: "DELETE" });
+    const { token, user } = getAuth();
+    await fetch(`/admin/api/categorias/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-PB-User": JSON.stringify(user),
+      },
+    });
     setCategorias((prev) => prev.filter((c) => c.id !== id));
   }
 

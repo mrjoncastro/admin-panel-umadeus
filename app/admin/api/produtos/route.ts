@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/apiAuth";
+import { logInfo } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   const auth = requireRole(req, "coordenador");
@@ -7,6 +8,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
   const { pb, user } = auth;
+  logInfo("PocketBase host:", pb.baseUrl);
   try {
     const produtos = await pb.collection("produtos").getFullList({
       sort: "-created",
@@ -25,6 +27,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
   const { pb, user } = auth;
+  logInfo("PocketBase host:", pb.baseUrl);
   try {
     const formData = await req.formData();
     formData.set("user_org", user.id);
