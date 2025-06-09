@@ -29,7 +29,7 @@ export default function EditarProdutoPage() {
   useEffect(() => {
     const { token, user } = getAuth();
     if (!isLoggedIn || !token || !user || user.role !== "coordenador") {
-      router.replace("/admin/login");
+      router.replace("/login");
     }
   }, [isLoggedIn, router, getAuth]);
 
@@ -59,7 +59,7 @@ export default function EditarProdutoPage() {
       })
       .then(async (r) => {
         if (r.status === 401) {
-          router.replace("/admin/login");
+          router.replace("/login");
           return null;
         }
         return r.json();

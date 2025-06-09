@@ -25,7 +25,7 @@ export default function GerenciarCamposPage() {
 
   useEffect(() => {
     if (!token || !user || user.role !== "coordenador") {
-      router.replace("/admin/login");
+      router.replace("/login");
     }
   }, [token, user, router]);
 

@@ -23,7 +23,7 @@ export default function AdminPostsPage() {
 
   useEffect(() => {
     if (!isLoggedIn || !user) {
-      router.replace("/admin/login");
+      router.replace("/login");
     }
   }, [isLoggedIn, user, router]);
 
