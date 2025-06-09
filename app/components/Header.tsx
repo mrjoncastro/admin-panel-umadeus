@@ -22,9 +22,11 @@ const baseLinks = [
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
+  const [clientOpen, setClientOpen] = useState(false);
   const { user, isLoggedIn, logout } = useAuthContext();
   const { config } = useAppConfig();
   const adminMenuRef = useRef<HTMLUListElement>(null);
+  const clientMenuRef = useRef<HTMLUListElement>(null);
 
   const role: UserRole = useMemo(() => {
     if (!isLoggedIn) return "visitante";
@@ -77,10 +79,25 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [adminOpen]);
 
+  useEffect(() => {
+    if (!clientOpen) return;
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        clientMenuRef.current &&
+        !clientMenuRef.current.contains(event.target as Node)
+      ) {
+        setClientOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [clientOpen]);
+
   // Função de logout (contexto)
   function handleLogout() {
     logout?.(); // pode ser logout(), useAuthLogout(), etc.
     setAdminOpen(false);
+    setClientOpen(false);
     setOpen(false);
     window.location.href = "/"; // Redireciona para home
   }
@@ -160,6 +177,45 @@ export default function Header() {
               )}
             </div>
           )}
+
+
+          {role === "usuario" && (
+            <div className="relative">
+              <button
+                onClick={() => setClientOpen((prev) => !prev)}
+                className="flex items-center gap-1 hover:text-[var(--primary-400)] transition px-2 py-1 rounded-md"
+              >
+                <span className="ml-4 text-sm">Olá, {firstName}</span>
+                <ChevronDown size={14} />
+              </button>
+              {clientOpen && (
+                <ul
+                  className="absolute right-0 mt-2 w-48 bg-white text-[var(--foreground)] dark:bg-zinc-900 dark:text-white rounded-md shadow z-50 text-sm py-2 space-y-1"
+                  ref={clientMenuRef}
+                >
+                  <li>
+                    <Link
+                      href="/loja/cliente"
+                      className="block px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                      onClick={() => setClientOpen(false)}
+                    >
+                      Área do Cliente
+                    </Link>
+                  </li>
+                  <li>
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 text-red-600 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                    >
+                      <span className="inline-flex items-center gap-2">
+                        <span className="rotate-180 inline-block">↩</span> Sair
+                      </span>
+                    </button>
+                  </li>
+                </ul>
+              )}
+            </div>
+          )}
         </nav>
 
         {/* Botão Menu Mobile */}
@@ -201,6 +257,25 @@ export default function Header() {
                   {link.label}
                 </Link>
               ))}
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 text-red-600 mt-2"
+              >
+                <LogOut size={16} />
+                Sair
+              </button>
+            </>
+          )}
+
+          {role === "usuario" && (
+            <>
+              <Link
+                href="/loja/cliente"
+                className="text-platinum hover:text-[var(--primary-400)] transition py-2 text-base font-medium"
+                onClick={() => setOpen(false)}
+              >
+                Área do Cliente
+              </Link>
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 text-red-600 mt-2"
