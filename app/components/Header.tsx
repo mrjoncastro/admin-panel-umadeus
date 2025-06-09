@@ -179,20 +179,20 @@ export default function Header() {
           )}
 
 
-          {role === "usuario" && (
-            <div className="relative">
-              <button
-                onClick={() => setClientOpen((prev) => !prev)}
-                className="flex items-center gap-1 hover:text-[var(--primary-400)] transition px-2 py-1 rounded-md"
+        {role === "usuario" && (
+          <div className="relative">
+            <button
+              onClick={() => setClientOpen((prev) => !prev)}
+              className="flex items-center gap-1 hover:text-[var(--primary-400)] transition px-2 py-1 rounded-md"
+            >
+              <span className="ml-4 text-sm">Olá, {firstName}</span>
+              <ChevronDown size={14} />
+            </button>
+            {clientOpen && (
+              <ul
+                className="absolute right-0 mt-2 w-48 bg-white text-[var(--foreground)] dark:bg-zinc-900 dark:text-white rounded-md shadow z-50 text-sm py-2 space-y-1"
+                ref={clientMenuRef}
               >
-                <span className="ml-4 text-sm">Olá, {firstName}</span>
-                <ChevronDown size={14} />
-              </button>
-              {clientOpen && (
-                <ul
-                  className="absolute right-0 mt-2 w-48 bg-white text-[var(--foreground)] dark:bg-zinc-900 dark:text-white rounded-md shadow z-50 text-sm py-2 space-y-1"
-                  ref={clientMenuRef}
-                >
                   <li>
                     <Link
                       href="/loja/cliente"
@@ -212,11 +212,17 @@ export default function Header() {
                       </span>
                     </button>
                   </li>
-                </ul>
-              )}
-            </div>
-          )}
-        </nav>
+              </ul>
+            )}
+          </div>
+        )}
+
+        {!isLoggedIn && (
+          <Link href="/login" className="btn btn-primary">
+            Acessar sua conta
+          </Link>
+        )}
+      </nav>
 
         {/* Botão Menu Mobile */}
         <button
