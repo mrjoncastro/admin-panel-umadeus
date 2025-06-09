@@ -41,7 +41,10 @@ export default function EditarProdutoPage() {
       .then((data) => {
         setCategorias(Array.isArray(data) ? data : []);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error("Erro ao carregar categorias:", err);
+        setCategorias([]);
+      });
     fetch(`/admin/api/produtos/${id}`,
       {
         headers: {
@@ -71,7 +74,7 @@ export default function EditarProdutoPage() {
         });
       })
       .finally(() => setLoading(false));
-  }, [id, isLoggedIn, user, router]);
+  }, [id, isLoggedIn, user, router, token]);
 
   if (loading || !initial) {
     return <p className="p-4">Carregando...</p>;

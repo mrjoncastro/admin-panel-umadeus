@@ -13,4 +13,5 @@
 ## [2025-06-09] Recuperação do token no momento da requisição para evitar 401 nas páginas de produtos - dev - 0a36fd1
 ## [2025-06-09] Cadastro de produtos não enviava dados à API; adicionada chamada POST com logs - dev - 91694f6
 ## [2025-06-09] Adicionado log de host do PocketBase nas rotas de produtos para verificar inconsistências de banco
-## [2025-06-09] Ajustado envio de token e usuário nas páginas de produtos e categorias para evitar 401 - dev - TBD
+## [2025-06-09] Ajustado envio de token e usuário nas páginas de produtos e categorias para evitar 401 - dev - 668eeb0
+## [2025-06-09] Cabeçalhos de autenticação ausentes geravam 401 nas rotas de produtos; tokens foram adicionados em todas as páginas do admin - dev - 668eeb0
