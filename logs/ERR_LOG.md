@@ -9,3 +9,5 @@
 
 ## [2025-06-07] Corrigido mock de fetch nas stories do blog para retornar Response - dev - 4ab1693
 ## [2025-06-09] Tratamento de dados de categoria para evitar erro "categorias.map is not a function" no modal de produto - dev - 20a0ca8
+## [2025-06-09] Tratamento de dados de categoria para evitar erro "categorias.map is not a function" no modal de produto - dev - 20a0ca8
+## [2025-06-09] Corrigido retorno 401 ao acessar rotas de produtos e categorias no admin - dev - 655ebf9
