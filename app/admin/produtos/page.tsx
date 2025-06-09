@@ -10,30 +10,33 @@ import { ModalProduto } from "./novo/ModalProduto";
 const PRODUTOS_POR_PAGINA = 10;
 
 export default function AdminProdutosPage() {
-  const { user, isLoggedIn } = useAuthContext();
+  const { user: ctxUser, isLoggedIn } = useAuthContext();
   const router = useRouter();
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
+  const rawUser =
+    typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
+  const user = rawUser ? JSON.parse(rawUser) : ctxUser;
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [page, setPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!isLoggedIn || !user || user.role !== "coordenador") {
+    if (!isLoggedIn || !token || !user || user.role !== "coordenador") {
       router.replace("/admin/login");
     }
-  }, [isLoggedIn, user, router]);
+  }, [isLoggedIn, token, user, router]);
 
   useEffect(() => {
-    if (!isLoggedIn || !user || user.role !== "coordenador") return;
+    if (!isLoggedIn || !token || !user || user.role !== "coordenador") return;
 
     async function fetchProdutos() {
       try {
-        const token = localStorage.getItem("pb_token");
-        const rawUser = localStorage.getItem("pb_user");
         const res = await fetch("/admin/api/produtos", {
           headers: {
             Authorization: `Bearer ${token}`,
-            "X-PB-User": rawUser ?? "",
+            "X-PB-User": JSON.stringify(user),
           },
         });
         const data = await res.json();
@@ -43,7 +46,7 @@ export default function AdminProdutosPage() {
       }
     }
     fetchProdutos();
-  }, [isLoggedIn, user]);
+  }, [isLoggedIn, token, user]);
 
   const totalPages = Math.ceil(produtos.length / PRODUTOS_POR_PAGINA);
   const paginated = produtos.slice(
@@ -56,7 +59,7 @@ export default function AdminProdutosPage() {
     const formData = new FormData();
     formData.set("nome", String(form.nome ?? ""));
     formData.set("preco", String(form.preco ?? 0));
-    if (form.checkout_url) formData.set("checkout_url", String(form.checkout_url));
+    if (form.checkoutUrl) formData.set("checkoutUrl", String(form.checkoutUrl));
     if (form.categoria) formData.set("categoria", String(form.categoria));
     if (Array.isArray(form.tamanhos))
       form.tamanhos.forEach((t) => formData.append("tamanhos", t));
@@ -72,13 +75,11 @@ export default function AdminProdutosPage() {
     }
 
     try {
-      const token = localStorage.getItem("pb_token");
-      const rawUser = localStorage.getItem("pb_user");
       const res = await fetch("/admin/api/produtos", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
-          "X-PB-User": rawUser ?? "",
+          "X-PB-User": JSON.stringify(user),
         },
         body: formData,
       });

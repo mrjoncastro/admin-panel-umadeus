@@ -34,7 +34,12 @@ export function ModalProduto<T extends Record<string, unknown>>({
 }: ModalProdutoProps<T>) {
   const ref = useRef<HTMLDialogElement>(null);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
-  const { isLoggedIn, user } = useAuthContext();
+  const { isLoggedIn, user: ctxUser } = useAuthContext();
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
+  const rawUser =
+    typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
+  const user = rawUser ? JSON.parse(rawUser) : ctxUser;
 
   useEffect(() => {
     if (open) ref.current?.showModal();
@@ -42,13 +47,11 @@ export function ModalProduto<T extends Record<string, unknown>>({
   }, [open]);
 
   useEffect(() => {
-    if (!isLoggedIn || !user || user.role !== "coordenador") return;
-    const token = localStorage.getItem("pb_token");
-    const rawUser = localStorage.getItem("pb_user");
+    if (!isLoggedIn || !token || !user || user.role !== "coordenador") return;
     fetch("/admin/api/categorias", {
       headers: {
         Authorization: `Bearer ${token}`,
-        "X-PB-User": rawUser ?? "",
+        "X-PB-User": JSON.stringify(user),
       },
     })
       .then((r) => r.json())

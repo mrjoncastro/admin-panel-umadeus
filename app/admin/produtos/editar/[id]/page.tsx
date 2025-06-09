@@ -12,26 +12,29 @@ interface Categoria {
 
 export default function EditarProdutoPage() {
   const { id } = useParams<{ id: string }>();
-  const { user, isLoggedIn } = useAuthContext();
+  const { user: ctxUser, isLoggedIn } = useAuthContext();
   const router = useRouter();
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
+  const rawUser =
+    typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
+  const user = rawUser ? JSON.parse(rawUser) : ctxUser;
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [initial, setInitial] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isLoggedIn || !user || user.role !== "coordenador") {
+    if (!isLoggedIn || !token || !user || user.role !== "coordenador") {
       router.replace("/admin/login");
     }
-  }, [isLoggedIn, user, router]);
+  }, [isLoggedIn, token, user, router]);
 
   useEffect(() => {
-    if (!isLoggedIn || !user || user.role !== "coordenador") return;
-    const token = localStorage.getItem("pb_token");
-    const rawUser = localStorage.getItem("pb_user");
+    if (!isLoggedIn || !token || !user || user.role !== "coordenador") return;
     fetch("/admin/api/categorias", {
       headers: {
         Authorization: `Bearer ${token}`,
-        "X-PB-User": rawUser ?? "",
+        "X-PB-User": JSON.stringify(user),
       },
     })
       .then((r) => r.json())
@@ -43,7 +46,7 @@ export default function EditarProdutoPage() {
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          "X-PB-User": rawUser ?? "",
+          "X-PB-User": JSON.stringify(user),
         },
       })
       .then(async (r) => {
@@ -78,14 +81,12 @@ export default function EditarProdutoPage() {
     e.preventDefault();
     const formElement = e.currentTarget as HTMLFormElement;
     const formData = new FormData(formElement);
-    const token = localStorage.getItem("pb_token");
-    const rawUser = localStorage.getItem("pb_user");
     const res = await fetch(`/admin/api/produtos/${id}`, {
       method: "PUT",
       body: formData,
       headers: {
         Authorization: `Bearer ${token}`,
-        "X-PB-User": rawUser ?? "",
+        "X-PB-User": JSON.stringify(user),
       },
     });
     if (res.ok) {
