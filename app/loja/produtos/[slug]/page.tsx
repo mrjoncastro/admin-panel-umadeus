@@ -143,6 +143,12 @@ function ProdutoInterativo({
               : (imagens[genero] || []),
             generos: [genero],
             tamanhos: [tamanho],
+            // Normaliza cores para string[]
+            cores: Array.isArray(produto.cores)
+              ? produto.cores
+              : typeof produto.cores === "string"
+                ? produto.cores.split(",").map((c) => c.trim())
+                : undefined,
           }}
         />
         {descricao && (
@@ -200,6 +206,13 @@ function DetalhesSelecao({
   setGenero,
   tamanho,
   setTamanho,
+}: {
+  generos: string[];
+  tamanhos: string[];
+  genero: string;
+  setGenero: (g: string) => void;
+  tamanho: string;
+  setTamanho: (t: string) => void;
 }) {
   return (
     <>
