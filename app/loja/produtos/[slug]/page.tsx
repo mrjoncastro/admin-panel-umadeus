@@ -28,6 +28,7 @@ export default async function ProdutoDetalhe(props: { params: Promise<Params> })
       .collection("produtos")
       .getFirstListItem<Produto>(`slug = '${resolvedParams.slug}'`);
   } catch (err) {
+    console.error(err);
     // Produto não encontrado ou erro na consulta
     return (
       <main className="font-sans px-4 md:px-16 py-10">
