@@ -14,6 +14,7 @@ export async function GET(req: NextRequest) {
     });
     return NextResponse.json(produtos, { status: 200 });
   } catch (err) {
+    console.error(err);
     return NextResponse.json({ error: "Erro ao listar" }, { status: 500 });
   }
 }
@@ -30,6 +31,7 @@ export async function POST(req: NextRequest) {
     const produto = await pb.collection("produtos").create(formData);
     return NextResponse.json(produto, { status: 201 });
   } catch (err) {
+    console.error(err);
     return NextResponse.json({ error: "Erro ao criar" }, { status: 500 });
   }
 }

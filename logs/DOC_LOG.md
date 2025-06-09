@@ -44,3 +44,4 @@
 ## [2025-06-09] Atualizadas rotas de login do admin para \`/login\`.
 ## [2025-06-09] Atualizadas rotas de login do admin para "/login" e ajustadas referencias no Header.
 ## [2025-06-09] Adicionado menu de usuário no Header com link para "Área do Cliente" e botão de sair.
+## [2025-06-09] Removida pagina duplicada de login na loja e criado redirecionamento para /login.
