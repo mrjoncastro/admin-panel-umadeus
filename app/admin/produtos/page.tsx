@@ -46,6 +46,8 @@ export default function AdminProdutosPage() {
 
   // Função para adicionar produto na lista após cadastro via modal
   const handleNovoProduto = (form: Produto) => {
+    // Aqui você pode adaptar para criar um Produto a partir do form retornado pelo modal
+    // Exemplo básico (ajuste conforme necessário para seu backend/estrutura):
     const produto: Produto = {
       id: crypto.randomUUID(), // ou gere conforme necessário
       nome: String(form.nome ?? ""),

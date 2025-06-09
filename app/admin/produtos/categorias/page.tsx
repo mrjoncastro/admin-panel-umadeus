@@ -29,7 +29,7 @@ export default function CategoriasAdminPage() {
     fetch("/admin/api/categorias")
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data)) setCategorias(data);
+        setCategorias(Array.isArray(data) ? data : []);
       })
       .catch(() => {});
   }, [isLoggedIn, user]);
@@ -53,7 +53,7 @@ export default function CategoriasAdminPage() {
         fetch("/admin/api/categorias")
           .then((r) => r.json())
           .then((cats) => {
-            if (Array.isArray(cats)) setCategorias(cats);
+            setCategorias(Array.isArray(cats) ? cats : []);
           });
       } else {
         console.error(data.error);

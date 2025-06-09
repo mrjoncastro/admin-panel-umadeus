@@ -25,15 +25,23 @@ export default function EditarProdutoPage() {
   }, [isLoggedIn, user, router]);
 
   useEffect(() => {
+    if (!isLoggedIn || !user || user.role !== "coordenador") return;
     fetch("/admin/api/categorias")
       .then((r) => r.json())
       .then((data) => {
-        if (Array.isArray(data)) setCategorias(data);
+        setCategorias(Array.isArray(data) ? data : []);
       })
       .catch(() => {});
     fetch(`/admin/api/produtos/${id}`)
-      .then((r) => r.json())
+      .then(async (r) => {
+        if (r.status === 401) {
+          router.replace("/admin/login");
+          return null;
+        }
+        return r.json();
+      })
       .then((data) => {
+        if (!data) return;
         setInitial({
           nome: data.nome,
           preco: data.preco,
@@ -47,7 +55,7 @@ export default function EditarProdutoPage() {
         });
       })
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, isLoggedIn, user, router]);
 
   if (loading || !initial) {
     return <p className="p-4">Carregando...</p>;
