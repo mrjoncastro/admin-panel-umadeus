@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { useAuthContext } from "@/lib/context/AuthContext";
+import AuthModal from "@/app/components/AuthModal";
 
 interface Produto {
   id: string;
@@ -24,6 +26,8 @@ export default function ProdutosFiltrados({
 }) {
   const [tamanho, setTamanho] = useState("");
   const [genero, setGenero] = useState("");
+  const [showAuth, setShowAuth] = useState(false);
+  const { isLoggedIn } = useAuthContext();
 
   const filtrados = produtos.filter((p) => {
     const matchTamanho =
@@ -89,6 +93,12 @@ export default function ProdutosFiltrados({
 
             <a
               href={p.checkout_url}
+              onClick={(e) => {
+                if (!isLoggedIn) {
+                  e.preventDefault();
+                  setShowAuth(true);
+                }
+              }}
               className="block mt-3 bg-black_bean text-white text-center py-2 rounded text-sm font-bold hover:bg-black_bean/90"
             >
               Comprar agora
@@ -96,6 +106,9 @@ export default function ProdutosFiltrados({
           </div>
         ))}
       </div>
+      {showAuth && (
+        <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
+      )}
     </>
   );
 }

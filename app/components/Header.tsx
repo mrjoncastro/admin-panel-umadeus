@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { useAppConfig } from "@/lib/context/AppConfigContext";
+import AuthModal from "./AuthModal";
 
 type UserRole = "visitante" | "usuario" | "lider" | "coordenador";
 
@@ -23,6 +24,7 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
   const [clientOpen, setClientOpen] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
   const { user, isLoggedIn, logout } = useAuthContext();
   const { config } = useAppConfig();
   const adminMenuRef = useRef<HTMLUListElement>(null);
@@ -218,9 +220,9 @@ export default function Header() {
         )}
 
         {!isLoggedIn && (
-          <Link href="/login" className="btn btn-primary">
+          <button onClick={() => setShowAuth(true)} className="btn btn-primary">
             Acessar sua conta
-          </Link>
+          </button>
         )}
       </nav>
 
@@ -293,13 +295,15 @@ export default function Header() {
           )}
 
           {!isLoggedIn && (
-            <Link
-              href="/login"
-              onClick={() => setOpen(false)}
+            <button
+              onClick={() => {
+                setShowAuth(true);
+                setOpen(false);
+              }}
               className="btn btn-primary text-sm text-center mt-2"
             >
               Acessar sua conta
-            </Link>
+            </button>
           )}
 
           {isLoggedIn && (
@@ -308,5 +312,8 @@ export default function Header() {
         </div>
       )}
     </header>
+    {showAuth && (
+      <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
+    )}
   );
 }
