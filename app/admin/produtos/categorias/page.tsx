@@ -36,21 +36,33 @@ export default function CategoriasAdminPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!isLoggedIn || !user || user.role !== "coordenador") return;
+    if (!isLoggedIn || !user || user.role !== "coordenador" || !user.token) {
+      console.log("Token ou usuário ausente.");
+      return;
+    }
     setLoading(true);
     const metodo = editId ? "PUT" : "POST";
-    const url = editId ? `/admin/api/categorias/${editId}` : "/admin/api/categorias";
+    const url = editId
+      ? `/admin/api/categorias/${editId}`
+      : "/admin/api/categorias";
     try {
       const res = await fetch(url, {
         method: metodo,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`, // <-- Aqui está o token!
+        },
         body: JSON.stringify({ nome }),
       });
       const data = await res.json();
       if (res.ok) {
         setNome("");
         setEditId(null);
-        fetch("/admin/api/categorias")
+        fetch("/admin/api/categorias", {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        })
           .then((r) => r.json())
           .then((cats) => {
             setCategorias(Array.isArray(cats) ? cats : []);
@@ -65,13 +77,21 @@ export default function CategoriasAdminPage() {
 
   async function handleDelete(id: string) {
     if (!confirm("Confirma excluir?")) return;
-    await fetch(`/admin/api/categorias/${id}`, { method: "DELETE" });
+    await fetch(`/admin/api/categorias/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${user?.token}`,
+      },
+    });
     setCategorias((prev) => prev.filter((c) => c.id !== id));
   }
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">
-      <h2 className="text-2xl font-bold mb-6" style={{ fontFamily: "var(--font-heading)" }}>
+      <h2
+        className="text-2xl font-bold mb-6"
+        style={{ fontFamily: "var(--font-heading)" }}
+      >
         Categorias
       </h2>
       <form onSubmit={handleSubmit} className="card max-w-md mb-6">
@@ -83,11 +103,22 @@ export default function CategoriasAdminPage() {
           required
         />
         <div className="flex gap-2">
-          <button type="submit" className="btn btn-primary flex-1" disabled={loading}>
+          <button
+            type="submit"
+            className="btn btn-primary flex-1"
+            disabled={loading}
+          >
             {editId ? "Atualizar" : "Cadastrar"}
           </button>
           {editId && (
-            <button type="button" className="btn flex-1" onClick={() => {setEditId(null); setNome("");}}>
+            <button
+              type="button"
+              className="btn flex-1"
+              onClick={() => {
+                setEditId(null);
+                setNome("");
+              }}
+            >
               Cancelar
             </button>
           )}
@@ -109,10 +140,20 @@ export default function CategoriasAdminPage() {
                 <td>{c.slug}</td>
                 <td>
                   <div className="flex justify-end gap-2">
-                    <button className="btn" onClick={() => {setEditId(c.id); setNome(c.nome);}}>
+                    <button
+                      className="btn"
+                      onClick={() => {
+                        setEditId(c.id);
+                        setNome(c.nome);
+                      }}
+                    >
                       Editar
                     </button>
-                    <button className="btn" style={{ color: "var(--accent)" }} onClick={() => handleDelete(c.id)}>
+                    <button
+                      className="btn"
+                      style={{ color: "var(--accent)" }}
+                      onClick={() => handleDelete(c.id)}
+                    >
                       Excluir
                     </button>
                   </div>
