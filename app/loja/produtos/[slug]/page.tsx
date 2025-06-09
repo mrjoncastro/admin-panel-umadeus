@@ -135,7 +135,16 @@ function ProdutoInterativo({
         >
           Quero essa pra brilhar no Congresso!
         </a>
-        <AddToCartButton produto={{ ...produto, genero, tamanho }} />
+        <AddToCartButton
+          produto={{
+            ...produto,
+            imagens: Array.isArray(produto.imagens)
+              ? produto.imagens
+              : (imagens[genero] || []),
+            generos: [genero],
+            tamanhos: [tamanho],
+          }}
+        />
         {descricao && (
           <p className="text-sm text-platinum mt-4 whitespace-pre-line">
             {descricao}
