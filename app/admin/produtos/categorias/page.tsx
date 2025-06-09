@@ -28,7 +28,9 @@ export default function CategoriasAdminPage() {
     if (!isLoggedIn || !user || user.role !== "coordenador") return;
     fetch("/admin/api/categorias")
       .then((res) => res.json())
-      .then(setCategorias)
+      .then((data) => {
+        setCategorias(Array.isArray(data) ? data : []);
+      })
       .catch(() => {});
   }, [isLoggedIn, user]);
 
@@ -50,7 +52,9 @@ export default function CategoriasAdminPage() {
         setEditId(null);
         fetch("/admin/api/categorias")
           .then((r) => r.json())
-          .then(setCategorias);
+          .then((cats) => {
+            setCategorias(Array.isArray(cats) ? cats : []);
+          });
       } else {
         console.error(data.error);
       }

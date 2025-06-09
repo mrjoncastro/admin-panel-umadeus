@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
 import { useState } from "react";
+import { useAuthContext } from "@/lib/context/AuthContext";
 
-export interface ModalProdutoProps {
+export interface ModalProdutoProps<T extends Record<string, unknown>> {
   open: boolean;
   onClose: () => void;
-  onSubmit: (form: Record<string, unknown>) => void;
+  onSubmit: (form: T) => void;
   initial?: {
     nome?: string;
     preco?: string;
@@ -19,14 +20,21 @@ export interface ModalProdutoProps {
   };
 }
 
-export function ModalProduto({
+interface Categoria {
+  id: string;
+  nome: string;
+  slug: string;
+}
+
+export function ModalProduto<T extends Record<string, unknown>>({
   open,
   onClose,
   onSubmit,
   initial = {},
-}: ModalProdutoProps) {
+}: ModalProdutoProps<T>) {
   const ref = useRef<HTMLDialogElement>(null);
-  const [categorias, setCategorias] = useState<{ id: string; nome: string }[]>([]);
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const { isLoggedIn, user } = useAuthContext();
 
   useEffect(() => {
     if (open) ref.current?.showModal();
@@ -34,11 +42,14 @@ export function ModalProduto({
   }, [open]);
 
   useEffect(() => {
+    if (!isLoggedIn || !user || user.role !== "coordenador") return;
     fetch("/admin/api/categorias")
       .then((r) => r.json())
-      .then(setCategorias)
+      .then((data) => {
+        setCategorias(Array.isArray(data) ? data : []);
+      })
       .catch(() => {});
-  }, []);
+  }, [isLoggedIn, user]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -59,7 +70,7 @@ export function ModalProduto({
     form.imagens = imagensInput && imagensInput.files && imagensInput.files.length > 0
       ? imagensInput.files
       : null;
-    onSubmit(form);
+    onSubmit(form as T);
     onClose();
   }
 
