@@ -41,7 +41,10 @@ export default function CategoriasAdminPage() {
       .then((data) => {
         setCategorias(Array.isArray(data) ? data : []);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error("Erro ao carregar categorias:", err);
+        setCategorias([]);
+      });
   }, [isLoggedIn, token, user]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -74,12 +77,16 @@ export default function CategoriasAdminPage() {
         fetch("/admin/api/categorias", {
           headers: {
             Authorization: `Bearer ${token}`,
-          "X-PB-User": JSON.stringify(user),
+            "X-PB-User": JSON.stringify(user),
           },
         })
           .then((r) => r.json())
           .then((cats) => {
             setCategorias(Array.isArray(cats) ? cats : []);
+          })
+          .catch((err) => {
+            console.error("Erro ao atualizar categorias:", err);
+            setCategorias([]);
           });
       } else {
         console.error(data.error);

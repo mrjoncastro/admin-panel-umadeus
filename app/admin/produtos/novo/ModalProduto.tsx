@@ -58,8 +58,11 @@ export function ModalProduto<T extends Record<string, unknown>>({
       .then((data) => {
         setCategorias(Array.isArray(data) ? data : []);
       })
-      .catch(() => {});
-  }, [isLoggedIn, user]);
+      .catch((err) => {
+        console.error("Erro ao carregar categorias:", err);
+        setCategorias([]);
+      });
+  }, [isLoggedIn, user, token]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
