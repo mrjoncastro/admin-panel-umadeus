@@ -16,6 +16,8 @@ export default function AdminProdutosPage() {
   const [page, setPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
   const pathname = usePathname();
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
 
   useEffect(() => {
     if (!isLoggedIn || !user || user.role !== "coordenador") {
@@ -28,7 +30,12 @@ export default function AdminProdutosPage() {
 
     async function fetchProdutos() {
       try {
-        const res = await fetch("/admin/api/produtos");
+        const res = await fetch("/admin/api/produtos", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-PB-User": JSON.stringify(user),
+          },
+        });
         const data = await res.json();
         setProdutos(Array.isArray(data) ? data : data.items ?? []);
       } catch (err) {
@@ -36,7 +43,7 @@ export default function AdminProdutosPage() {
       }
     }
     fetchProdutos();
-  }, [isLoggedIn, user]);
+  }, [isLoggedIn, user, token]);
 
   const totalPages = Math.ceil(produtos.length / PRODUTOS_POR_PAGINA);
   const paginated = produtos.slice(
@@ -45,7 +52,7 @@ export default function AdminProdutosPage() {
   );
 
   // Função para adicionar produto na lista após cadastro via modal
-  const handleNovoProduto = (form: Record<string, unknown>) => {
+  const handleNovoProduto = (form: Produto) => {
     // Aqui você pode adaptar para criar um Produto a partir do form retornado pelo modal
     // Exemplo básico (ajuste conforme necessário para seu backend/estrutura):
     const produto: Produto = {
@@ -106,7 +113,7 @@ export default function AdminProdutosPage() {
 
       {/* O modal fica aqui, fora do cabeçalho. Só é aberto se modalOpen=true */}
       {modalOpen && (
-        <ModalProduto
+        <ModalProduto<Produto>
           open={modalOpen}
           onClose={() => setModalOpen(false)}
           onSubmit={handleNovoProduto}
