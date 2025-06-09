@@ -85,6 +85,7 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `PB_ADMIN_PASSWORD` - senha do administrador
 - `ASAAS_API_KEY` - chave da API do Asaas para geração de pagamentos
 - `ASAAS_WEBHOOK_SECRET` - segredo para validar webhooks do Asaas
+- `ASAAS_API_URL` - URL base da API do Asaas (ex.: `https://sandbox.asaas.com/api/v3/`)
 - `NEXT_PUBLIC_SITE_URL` - endereço do site (opcional)
 
 Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utilizar o SDK oficial.
@@ -96,6 +97,15 @@ Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utiliza
 
 
 2. Utilize as variáveis `PB_ADMIN_EMAIL` e `PB_ADMIN_PASSWORD` para autenticar a aplicação.
+
+## Fluxo de Cadastro e Checkout
+
+1. O usuário preenche o formulário e os dados são enviados para `criarInscricao`.
+2. A função valida os campos e retorna uma inscrição com status `pendente`.
+3. Em seguida `criarPedido` gera o pedido vinculado à inscrição.
+4. A API `/admin/api/asaas` recebe o `pedidoId` e devolve a `url` de pagamento,
+   que é salva em `link_pagamento`.
+5. O usuário é redirecionado para essa URL para concluir o pagamento.
 
 ## Perfis de Acesso
 
