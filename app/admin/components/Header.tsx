@@ -15,6 +15,7 @@ import {
   LogOut,
   Sun,
   Moon,
+  Settings,
 } from "lucide-react";
 import { useState } from "react";
 import { useTheme } from "@/lib/context/ThemeContext";
@@ -142,7 +143,7 @@ export default function Header() {
                       href="/admin/configuracoes"
                       className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
                     >
-                      Configurações
+                      <Settings size={16} />Configurações
                     </Link>
                   </li>
                   <li>

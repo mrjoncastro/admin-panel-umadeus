@@ -169,7 +169,7 @@ export default function Header() {
                       className="block w-full text-left px-4 py-2 text-red-600 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                     >
                       <span className="inline-flex items-center gap-2">
-                        <span className="rotate-180 inline-block">↩</span> Sair
+                        <LogOut size={16} /> Sair
                       </span>
                     </button>
                   </li>
