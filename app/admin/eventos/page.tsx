@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { ModalEvento } from "./novo/ModalEvento";
+import { formatDate } from "@/utils/formatDate";
 
 interface Evento {
   id: string;
@@ -119,7 +120,7 @@ export default function AdminEventosPage() {
               eventos.map((ev) => (
                 <tr key={ev.id}>
                   <td>{ev.titulo}</td>
-                  <td>{ev.data ?? "—"}</td>
+                  <td>{ev.data ? formatDate(ev.data) : "—"}</td>
                   <td>{ev.status ?? "—"}</td>
                 </tr>
               ))

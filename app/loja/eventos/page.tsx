@@ -2,48 +2,31 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { formatDate } from "@/utils/formatDate";
 
 interface Evento {
-  id: number;
+  id: string;
   titulo: string;
   descricao: string;
   data: string;
   cidade: string;
-  imagem: string;
+  imagem?: string;
   status: "realizado" | "em breve";
 }
 
-const eventos: Evento[] = [
-  {
-    id: 1,
-    titulo: "Congresso UMADEUS 2024",
-    descricao: "Dias de avivamento, comunhão e crescimento espiritual.",
-    data: "15 a 17 de Março de 2024",
-    cidade: "Salvador - BA",
-    imagem: "/eventos/evento1.jpg",
-    status: "realizado",
-  },
-  {
-    id: 2,
-    titulo: "Vigília Jovem - Região Norte",
-    descricao: "Uma noite de intercessão e louvor com a juventude baiana.",
-    data: "12 de Julho de 2024",
-    cidade: "Salvador - BA",
-    imagem: "/eventos/evento2.jpg",
-    status: "em breve",
-  },
-  {
-    id: 3,
-    titulo: "Congresso 2K25",
-    descricao: "Jovens em ação levando a Palavra com criatividade e coragem!",
-    data: "05 de Outubro de 2024",
-    cidade: "Santaluz - BA",
-    imagem: "/img/mulher2.png",
-    status: "em breve",
-  },
-];
-
 export default function EventosPage() {
+  const [eventos, setEventos] = useState<Evento[]>([]);
+
+  useEffect(() => {
+    fetch("/api/eventos")
+      .then((r) => r.json())
+      .then((data) => Array.isArray(data) ? setEventos(data) : setEventos([]))
+      .catch((err) => {
+        console.error("Erro ao carregar eventos:", err);
+      });
+  }, []);
+
   return (
     <main className="px-4 py-10 md:px-16">
       <h1 className="text-3xl font-bold text-center mb-10">Eventos UMADEUS</h1>
@@ -53,13 +36,15 @@ export default function EventosPage() {
             key={evento.id}
             className="bg-white rounded-xl shadow-md overflow-hidden border"
           >
-            <Image
-              src={evento.imagem}
-              alt={`Imagem do evento ${evento.titulo}`}
-              width={640}
-              height={320}
-              className="w-full h-56 object-cover"
-            />
+            {evento.imagem && (
+              <Image
+                src={evento.imagem}
+                alt={`Imagem do evento ${evento.titulo}`}
+                width={640}
+                height={320}
+                className="w-full h-56 object-cover"
+              />
+            )}
             <div className="p-4 space-y-2">
               <span
                 className={`inline-block text-xs px-2 py-1 rounded-full uppercase tracking-wide font-semibold ${
@@ -72,7 +57,7 @@ export default function EventosPage() {
               </span>
               <h2 className="text-lg font-semibold">{evento.titulo}</h2>
               <p className="text-sm text-gray-600">{evento.descricao}</p>
-              <p className="text-sm font-medium text-gray-800">{evento.data}</p>
+              <p className="text-sm font-medium text-gray-800">{formatDate(evento.data)}</p>
               <p className="text-sm text-gray-500">{evento.cidade}</p>
             </div>
           </div>
