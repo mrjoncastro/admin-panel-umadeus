@@ -137,7 +137,7 @@ p {
 }
 
 .btn-secondary {
-  @apply bg-[var(--color-secondary)] text-[var(--background)] hover:bg-neutral-700 dark:hover:bg-neutral-300;
+  @apply bg-[var(--color-secondary)] text-[var(--background)] hover:bg-[var(--primary-700)] hover:text-white dark:hover:bg-[var(--primary-500)];
 }
 
 .btn-danger {

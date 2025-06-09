@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import ModalCategoria from "./ModalCategoria";
 
 interface Categoria {
   id: string;
@@ -22,8 +23,8 @@ export default function CategoriasAdminPage() {
     return { token, user } as const;
   }, [ctxUser]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
-  const [nome, setNome] = useState("");
-  const [editId, setEditId] = useState<string | null>(null);
+  const [editCategoria, setEditCategoria] = useState<Categoria | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -52,18 +53,15 @@ export default function CategoriasAdminPage() {
       });
   }, [isLoggedIn, getAuth]);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSave(form: { nome: string }) {
     const { token, user } = getAuth();
     if (!isLoggedIn || !user || user.role !== "coordenador") return;
     setLoading(true);
-    const metodo = editId ? "PUT" : "POST";
-    const url = editId
-      ? `/admin/api/categorias/${editId}`
+    const metodo = editCategoria ? "PUT" : "POST";
+    const url = editCategoria
+      ? `/admin/api/categorias/${editCategoria.id}`
       : "/admin/api/categorias";
     try {
-      const token = localStorage.getItem("pb_token");
-      const rawUser = localStorage.getItem("pb_user");
       const res = await fetch(url, {
         method: metodo,
         headers: {
@@ -71,12 +69,10 @@ export default function CategoriasAdminPage() {
           Authorization: `Bearer ${token}`,
           "X-PB-User": JSON.stringify(user),
         },
-        body: JSON.stringify({ nome }),
+        body: JSON.stringify(form),
       });
       const data = await res.json();
       if (res.ok) {
-        setNome("");
-        setEditId(null);
         const auth = getAuth();
         fetch("/admin/api/categorias", {
           headers: {
@@ -85,9 +81,7 @@ export default function CategoriasAdminPage() {
           },
         })
           .then((r) => r.json())
-          .then((cats) => {
-            setCategorias(Array.isArray(cats) ? cats : []);
-          })
+          .then((cats) => setCategorias(Array.isArray(cats) ? cats : []))
           .catch((err) => {
             console.error("Erro ao atualizar categorias:", err);
             setCategorias([]);
@@ -97,6 +91,8 @@ export default function CategoriasAdminPage() {
       }
     } finally {
       setLoading(false);
+      setModalOpen(false);
+      setEditCategoria(null);
     }
   }
 
@@ -115,42 +111,28 @@ export default function CategoriasAdminPage() {
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">
-      <h2
-        className="text-2xl font-bold mb-6"
-        style={{ fontFamily: "var(--font-heading)" }}
-      >
-        Categorias
-      </h2>
-      <form onSubmit={handleSubmit} className="card max-w-md mb-6">
-        <input
-          className="input-base"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-          placeholder="Nome da categoria"
-          required
+      <div className="flex justify-between items-center mb-[var(--space-lg)]">
+        <h2
+          className="text-2xl font-bold"
+          style={{ fontFamily: "var(--font-heading)" }}
+        >
+          Categorias
+        </h2>
+        <button className="btn btn-primary" onClick={() => setModalOpen(true)}>
+          + Nova Categoria
+        </button>
+      </div>
+      {modalOpen && (
+        <ModalCategoria
+          open={modalOpen}
+          onClose={() => {
+            setModalOpen(false);
+            setEditCategoria(null);
+          }}
+          onSubmit={handleSave}
+          initial={editCategoria ? { nome: editCategoria.nome } : null}
         />
-        <div className="flex gap-2">
-          <button
-            type="submit"
-            className="btn btn-primary flex-1"
-            disabled={loading}
-          >
-            {editId ? "Atualizar" : "Cadastrar"}
-          </button>
-          {editId && (
-            <button
-              type="button"
-              className="btn flex-1"
-              onClick={() => {
-                setEditId(null);
-                setNome("");
-              }}
-            >
-              Cancelar
-            </button>
-          )}
-        </div>
-      </form>
+      )}
       <div className="overflow-x-auto rounded border shadow-sm bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700">
         <table className="table-base">
           <thead>
@@ -170,8 +152,8 @@ export default function CategoriasAdminPage() {
                     <button
                       className="btn"
                       onClick={() => {
-                        setEditId(c.id);
-                        setNome(c.nome);
+                        setEditCategoria(c);
+                        setModalOpen(true);
                       }}
                     >
                       Editar

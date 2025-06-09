@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import { ModalEvento } from "./novo/ModalEvento";
 
 interface Evento {
   id: string;
@@ -23,6 +24,7 @@ export default function AdminEventosPage() {
   }, [ctxUser]);
 
   const [eventos, setEventos] = useState<Evento[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     const { token, user } = getAuth();
@@ -53,11 +55,50 @@ export default function AdminEventosPage() {
     fetchEventos();
   }, [isLoggedIn, getAuth]);
 
+  async function handleNovoEvento(form: Record<string, unknown>) {
+    const { token, user } = getAuth();
+    if (!isLoggedIn || !user || user.role !== "coordenador") return;
+    try {
+      const res = await fetch("/admin/api/eventos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "X-PB-User": JSON.stringify(user),
+        },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setEventos((prev) => [data, ...prev]);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        console.error("Falha ao criar evento", data);
+      }
+    } catch (err) {
+      console.error("Erro ao criar evento:", err);
+    } finally {
+      setModalOpen(false);
+    }
+  }
+
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">
-      <h2 className="text-2xl font-bold mb-6" style={{ fontFamily: "var(--font-heading)" }}>
-        Eventos
-      </h2>
+      <div className="flex justify-between items-center mb-[var(--space-lg)]">
+        <h2 className="text-2xl font-bold" style={{ fontFamily: "var(--font-heading)" }}>
+          Eventos
+        </h2>
+        <button className="btn btn-primary" onClick={() => setModalOpen(true)}>
+          + Novo Evento
+        </button>
+      </div>
+      {modalOpen && (
+        <ModalEvento
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onSubmit={handleNovoEvento}
+        />
+      )}
       <div className="overflow-x-auto rounded border shadow-sm bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700">
         <table className="table-base">
           <thead>

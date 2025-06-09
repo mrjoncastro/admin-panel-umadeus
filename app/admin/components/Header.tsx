@@ -88,17 +88,23 @@ export default function Header() {
         {/* Navegação - desktop */}
         <nav className="hidden md:flex gap-4 text-sm font-semibold items-center">
           {isLoggedIn &&
-            navLinks.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className={`transition px-3 py-1 rounded-full hover:bg-[var(--background)] hover:text-[var(--foreground)] cursor-pointer ${
-                  pathname === href ? "bg-[var(--background)] text-[var(--foreground)]" : ""
-                }`}
-              >
-                {label}
-              </Link>
-            ))}
+            navLinks.map(({ href, label }) => {
+              const active =
+                href === "/admin/produtos"
+                  ? pathname.startsWith("/admin/produtos")
+                  : pathname === href;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`transition px-3 py-1 rounded-full hover:bg-[var(--background)] hover:text-[var(--foreground)] cursor-pointer ${
+                    active ? "bg-[var(--background)] text-[var(--foreground)]" : ""
+                  }`}
+                >
+                  {label}
+                </Link>
+              );
+            })}
 
           <button
             onClick={toggleTheme}
@@ -179,18 +185,24 @@ export default function Header() {
         <div className="md:hidden bg-[var(--text-header-primary)] px-6 pb-4">
           <nav className="flex flex-col gap-2">
             {isLoggedIn &&
-              navLinks.map(({ href, label }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={() => setMenuAberto(false)}
-                  className={`transition px-4 py-2 rounded-md text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] ${
-                    pathname === href ? "bg-[var(--background)] text-[var(--foreground)]" : ""
-                  }`}
-                >
-                  {label}
-                </Link>
-              ))}
+              navLinks.map(({ href, label }) => {
+                const active =
+                  href === "/admin/produtos"
+                    ? pathname.startsWith("/admin/produtos")
+                    : pathname === href;
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setMenuAberto(false)}
+                    className={`transition px-4 py-2 rounded-md text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] ${
+                      active ? "bg-[var(--background)] text-[var(--foreground)]" : ""
+                    }`}
+                  >
+                    {label}
+                  </Link>
+                );
+              })}
 
             <button
               onClick={() => {
