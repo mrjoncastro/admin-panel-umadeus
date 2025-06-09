@@ -56,7 +56,7 @@ export default function AdminProdutosPage() {
     const formData = new FormData();
     formData.set("nome", String(form.nome ?? ""));
     formData.set("preco", String(form.preco ?? 0));
-    if (form.checkoutUrl) formData.set("checkoutUrl", String(form.checkoutUrl));
+    if (form.checkout_url) formData.set("checkout_url", String(form.checkout_url));
     if (form.categoria) formData.set("categoria", String(form.categoria));
     if (Array.isArray(form.tamanhos))
       form.tamanhos.forEach((t) => formData.append("tamanhos", t));
@@ -192,7 +192,7 @@ export default function AdminProdutosPage() {
                   </td>
                 </tr>
               ))
-            )}
+            }
           </tbody>
         </table>
       </div>
