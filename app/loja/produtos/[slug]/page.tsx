@@ -17,11 +17,32 @@ interface Params {
   slug: string;
 }
 
-export default async function ProdutoDetalhe({ params }: { params: Params }) {
+export default async function ProdutoDetalhe(props: { params: Promise<Params> }) {
+  const { params } = props;
+  const resolvedParams = await params;
   const pb = createPocketBase();
-  const produto = await pb
-    .collection("produtos")
-    .getFirstListItem<Produto>(`slug = '${params.slug}'`);
+
+  let produto: Produto | null = null;
+  try {
+    produto = await pb
+      .collection("produtos")
+      .getFirstListItem<Produto>(`slug = '${resolvedParams.slug}'`);
+  } catch (err) {
+    // Produto não encontrado ou erro na consulta
+    return (
+      <main className="font-sans px-4 md:px-16 py-10">
+        <Link
+          href="/loja/produtos"
+          className="text-sm text-platinum hover:text-[var(--primary-600)] mb-6 inline-block transition"
+        >
+          &lt; voltar
+        </Link>
+        <div className="text-center text-red-500 text-lg mt-10">
+          Produto não encontrado ou ocorreu um erro.
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="font-sans px-4 md:px-16 py-10">
