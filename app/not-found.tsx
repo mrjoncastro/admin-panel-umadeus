@@ -8,7 +8,7 @@ export default function NotFound() {
         <p className="text-gray-700 text-base leading-relaxed">A página que você procura não existe ou foi movida.</p>
         <div className="pt-4">
           <Link href="/" className="inline-block bg-purple-600 text-white font-bold py-2 px-6 rounded-lg">
-            Voltar para o portal
+            Voltar para a loja
           </Link>
         </div>
       </div>
