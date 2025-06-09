@@ -25,7 +25,7 @@ export default function LoginForm() {
       } else if (user.role === "lider") {
         router.replace("/admin/lider-painel");
       } else {
-        setErro("Perfil de acesso não permitido.");
+        router.replace("/loja/cliente");
       }
     }
   }, [isLoading, isLoggedIn, user, router]);

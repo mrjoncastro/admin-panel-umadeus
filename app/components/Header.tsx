@@ -91,6 +91,15 @@ export default function Header() {
             </Link>
           ))}
 
+          {!isLoggedIn && (
+            <Link
+              href="/admin/login"
+              className="btn btn-primary text-sm whitespace-nowrap"
+            >
+              Acessar sua conta
+            </Link>
+          )}
+
           {(role === "lider" || role === "coordenador") && (
             <div className="relative">
               <button
@@ -158,6 +167,16 @@ export default function Header() {
                 </Link>
               ))}
             </>
+          )}
+
+          {!isLoggedIn && (
+            <Link
+              href="/admin/login"
+              onClick={() => setOpen(false)}
+              className="btn btn-primary text-sm text-center mt-2"
+            >
+              Acessar sua conta
+            </Link>
           )}
 
           {isLoggedIn && (
