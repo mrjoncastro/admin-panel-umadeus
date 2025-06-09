@@ -80,6 +80,7 @@ export type Produto = {
   tamanhos?: string[];
   generos?: string[];
   cores?: string[];
+  slug: string;
   descricao?: string;
   detalhes?: string;
   checkout_url?: string;
