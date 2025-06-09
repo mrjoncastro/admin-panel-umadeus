@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 
@@ -12,26 +12,60 @@ interface Categoria {
 
 export default function EditarProdutoPage() {
   const { id } = useParams<{ id: string }>();
-  const { user, isLoggedIn } = useAuthContext();
+  const { user: ctxUser, isLoggedIn } = useAuthContext();
   const router = useRouter();
+  const getAuth = useCallback(() => {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
+    const raw =
+      typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
+    const user = raw ? JSON.parse(raw) : ctxUser;
+    return { token, user } as const;
+  }, [ctxUser]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [initial, setInitial] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isLoggedIn || !user || user.role !== "coordenador") {
+    const { token, user } = getAuth();
+    if (!isLoggedIn || !token || !user || user.role !== "coordenador") {
       router.replace("/admin/login");
     }
-  }, [isLoggedIn, user, router]);
+  }, [isLoggedIn, router, getAuth]);
 
   useEffect(() => {
-    fetch("/admin/api/categorias")
-      .then((r) => r.json())
-      .then(setCategorias)
-      .catch(() => {});
-    fetch(`/admin/api/produtos/${id}`)
+    const { token, user } = getAuth();
+    if (!isLoggedIn || !token || !user || user.role !== "coordenador") return;
+    fetch("/admin/api/categorias", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-PB-User": JSON.stringify(user),
+      },
+    })
       .then((r) => r.json())
       .then((data) => {
+        setCategorias(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        console.error("Erro ao carregar categorias:", err);
+        setCategorias([]);
+      });
+    fetch(`/admin/api/produtos/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-PB-User": JSON.stringify(user),
+        },
+      })
+      .then(async (r) => {
+        if (r.status === 401) {
+          router.replace("/admin/login");
+          return null;
+        }
+        return r.json();
+      })
+      .then((data) => {
+        if (!data) return;
         setInitial({
           nome: data.nome,
           preco: data.preco,
@@ -45,7 +79,7 @@ export default function EditarProdutoPage() {
         });
       })
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, isLoggedIn, router, getAuth]);
 
   if (loading || !initial) {
     return <p className="p-4">Carregando...</p>;
@@ -55,7 +89,15 @@ export default function EditarProdutoPage() {
     e.preventDefault();
     const formElement = e.currentTarget as HTMLFormElement;
     const formData = new FormData(formElement);
-    const res = await fetch(`/admin/api/produtos/${id}`, { method: "PUT", body: formData });
+    const { token, user } = getAuth();
+    const res = await fetch(`/admin/api/produtos/${id}`, {
+      method: "PUT",
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-PB-User": JSON.stringify(user),
+      },
+    });
     if (res.ok) {
       router.push("/admin/produtos");
     }
