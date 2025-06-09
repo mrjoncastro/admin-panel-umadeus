@@ -69,3 +69,4 @@ export type Pedido = {
     };
   };
 };
+export type { Endereco } from "./Endereco";
