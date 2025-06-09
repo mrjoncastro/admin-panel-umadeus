@@ -45,7 +45,7 @@ export default function AdminProdutosPage() {
   );
 
   // Função para adicionar produto na lista após cadastro via modal
-  const handleNovoProduto = (form: Record<string, unknown>) => {
+  const handleNovoProduto = (form: Produto) => {
     // Aqui você pode adaptar para criar um Produto a partir do form retornado pelo modal
     // Exemplo básico (ajuste conforme necessário para seu backend/estrutura):
     const produto: Produto = {
@@ -106,7 +106,7 @@ export default function AdminProdutosPage() {
 
       {/* O modal fica aqui, fora do cabeçalho. Só é aberto se modalOpen=true */}
       {modalOpen && (
-        <ModalProduto
+        <ModalProduto<Produto>
           open={modalOpen}
           onClose={() => setModalOpen(false)}
           onSubmit={handleNovoProduto}

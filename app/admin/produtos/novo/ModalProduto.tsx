@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 import { useState } from "react";
 
-export interface ModalProdutoProps {
+export interface ModalProdutoProps<T extends Record<string, unknown>> {
   open: boolean;
   onClose: () => void;
-  onSubmit: (form: Record<string, unknown>) => void;
+  onSubmit: (form: T) => void;
   initial?: {
     nome?: string;
     preco?: string;
@@ -19,12 +19,12 @@ export interface ModalProdutoProps {
   };
 }
 
-export function ModalProduto({
+export function ModalProduto<T extends Record<string, unknown>>({
   open,
   onClose,
   onSubmit,
   initial = {},
-}: ModalProdutoProps) {
+}: ModalProdutoProps<T>) {
   const ref = useRef<HTMLDialogElement>(null);
   const [categorias, setCategorias] = useState<{ id: string; nome: string }[]>([]);
 
@@ -59,7 +59,7 @@ export function ModalProduto({
     form.imagens = imagensInput && imagensInput.files && imagensInput.files.length > 0
       ? imagensInput.files
       : null;
-    onSubmit(form);
+    onSubmit(form as T);
     onClose();
   }
 
