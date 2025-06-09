@@ -48,3 +48,4 @@
 ## [2025-06-09] Removida pagina duplicada de login na loja e criado redirecionamento para /login.
 ## [2025-06-10] Adicionado componente CartPreview com documentação no Storybook.
 ## [2025-06-10] Implementado AuthModal com Login e Cadastro e integrado ao Header e páginas de produto.
+## [2025-06-10] Adicionados testes de cadastro/checkout e documentação do fluxo no README.
