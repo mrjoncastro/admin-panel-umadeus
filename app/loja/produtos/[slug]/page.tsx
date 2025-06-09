@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, use } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -242,15 +242,34 @@ function DetalhesSelecao({
   );
 }
 
-export default async function ProdutoDetalhe({ params }: { params: Params }) {
-  const pb = createPocketBase();
+export default function ProdutoDetalhe({ params }: { params: Promise<Params> }) {
+  const { slug } = use(params);
+  const [produto, setProduto] = useState<Produto | null>(null);
+  const [erro, setErro] = useState(false);
 
-  let produto: Produto | null = null;
-  try {
-    produto = await pb
+  useEffect(() => {
+    const pb = createPocketBase();
+    pb
       .collection("produtos")
-      .getFirstListItem<Produto>(`slug = '${params.slug}'`);
-  } catch (err) {
+      .getFirstListItem<Produto>(`slug = '${slug}'`)
+      .then((prod) => {
+        if (Array.isArray(prod.imagens)) {
+          prod.imagens = prod.imagens.map((img) => pb.files.getURL(prod, img));
+        } else if (typeof prod.imagens === "object" && prod.imagens) {
+          const mapped: Record<string, string[]> = {};
+          for (const [g, imgs] of Object.entries(
+            prod.imagens as Record<string, string[]>
+          )) {
+            mapped[g] = imgs.map((img) => pb.files.getURL(prod, img));
+          }
+          prod.imagens = mapped;
+        }
+        setProduto(prod);
+      })
+      .catch(() => setErro(true));
+  }, [slug]);
+
+  if (erro) {
     return (
       <main className="font-sans px-4 md:px-16 py-10">
         <Link
@@ -262,6 +281,14 @@ export default async function ProdutoDetalhe({ params }: { params: Params }) {
         <div className="text-center text-red-500 text-lg mt-10">
           Produto não encontrado ou ocorreu um erro.
         </div>
+      </main>
+    );
+  }
+
+  if (!produto) {
+    return (
+      <main className="font-sans px-4 md:px-16 py-10">
+        <div>Carregando...</div>
       </main>
     );
   }
