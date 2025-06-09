@@ -64,13 +64,18 @@ export default async function ProdutoDetalhe({ params }: { params: Params }) {
 
       <div className="grid md:grid-cols-2 gap-12 items-start">
         <div>
-          <Image
-            src={pb.files.getURL(produto, produto.imagens[0])}
-            alt={produto.nome}
-            width={600}
-            height={600}
-            className="w-full rounded-xl border border-black_bean shadow-lg"
-          />
+          {(() => {
+            const img = produto.imagens?.[0] ?? produto.imagem;
+            return img ? (
+              <Image
+                src={pb.files.getURL(produto, img)}
+                alt={produto.nome}
+                width={600}
+                height={600}
+                className="w-full rounded-xl border border-black_bean shadow-lg"
+              />
+            ) : null;
+          })()}
 
           {/* Mostra as variações de cor */}
           {coresArray.length > 0 && (
