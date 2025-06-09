@@ -35,6 +35,13 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+### Domínio próprio na Vercel
+
+1. Instale a Vercel CLI com `npm i -g vercel` e execute `vercel` para vincular o projeto à sua conta.
+2. No painel da Vercel, adicione o domínio desejado em **Settings > Domains**.
+3. Defina a variável `NEXT_PUBLIC_SITE_URL` com o domínio configurado (ex.: `https://meuapp.com`).
+4. Rode `vercel --prod` para publicar e aplique as configurações de DNS indicadas pela própria Vercel.
+
 ## Lint e boas práticas
 
 Execute `npm run lint` para verificar problemas de código. Evite o uso de `any` especificando tipos adequados e sempre inclua todas as dependências utilizadas dentro dos hooks `useEffect`.
