@@ -89,6 +89,29 @@ export default function EditarProdutoPage() {
     e.preventDefault();
     const formElement = e.currentTarget as HTMLFormElement;
     const formData = new FormData(formElement);
+
+    // Normaliza checkboxes e arrays
+    const ativoChecked = formElement.querySelector<HTMLInputElement>(
+      "input[name='ativo']"
+    )?.checked;
+    formData.set("ativo", ativoChecked ? "true" : "false");
+
+    const tamanhos = Array.from(
+      formElement.querySelectorAll<HTMLInputElement>(
+        "input[name='tamanhos']:checked"
+      )
+    ).map((el) => el.value);
+    formData.delete("tamanhos");
+    tamanhos.forEach((t) => formData.append("tamanhos", t));
+
+    const generos = Array.from(
+      formElement.querySelectorAll<HTMLInputElement>(
+        "input[name='generos']:checked"
+      )
+    ).map((el) => el.value);
+    formData.delete("generos");
+    generos.forEach((g) => formData.append("generos", g));
+
     const { token, user } = getAuth();
     const res = await fetch(`/admin/api/produtos/${id}`, {
       method: "PUT",
@@ -112,14 +135,22 @@ export default function EditarProdutoPage() {
         <input className="input-base" name="nome" defaultValue={String(initial.nome)} required />
         <input className="input-base" name="preco" type="number" step="0.01" defaultValue={String(initial.preco)} required />
         <input className="input-base" name="checkoutUrl" type="url" defaultValue={String(initial.checkoutUrl || "")} />
-        <select name="categoria" defaultValue={String(initial.categoria || "")} className="input-base">
-          <option value="">Selecione a categoria</option>
-          {categorias.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.nome}
-            </option>
-          ))}
-        </select>
+        {(() => {
+          const defaultCat =
+            categorias.find(
+              (c) => c.id === initial.categoria || c.slug === initial.categoria
+            )?.id ?? "";
+          return (
+            <select name="categoria" defaultValue={defaultCat} className="input-base">
+              <option value="">Selecione a categoria</option>
+              {categorias.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nome}
+                </option>
+              ))}
+            </select>
+          );
+        })()}
         <input type="file" name="imagens" multiple accept="image/*" className="input-base" />
         <div>
           <p className="text-sm font-semibold mb-1">Tamanhos</p>
