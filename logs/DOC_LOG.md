@@ -42,3 +42,4 @@
 ## [2025-06-09] Movido rota de inscricoes do admin para raiz e atualizados caminhos.
 ## [2025-06-09] Adicionado role 'usuario' e documentada seção de perfis de acesso no README.
 ## [2025-06-09] Atualizadas rotas de login do admin para \`/login\`.
+## [2025-06-09] Atualizadas rotas de login do admin para "/login" e ajustadas referencias no Header.
