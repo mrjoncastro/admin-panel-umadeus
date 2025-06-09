@@ -28,6 +28,7 @@ const getNavLinks = (role?: string) => {
       { href: "/admin/lider-painel", label: "Painel" },
       { href: "/admin/inscricoes", label: "Inscrições" },
       { href: "/admin/pedidos", label: "Pedidos" },
+      { href: "/loja", label: "Ver loja" },
     ];
   }
 
@@ -40,6 +41,7 @@ const getNavLinks = (role?: string) => {
     { href: "/admin/produtos", label: "Produtos" },
     { href: "/admin/eventos", label: "Eventos" },
     { href: "/admin/posts", label: "Posts" },
+    { href: "/loja", label: "Ver loja" },
 
   ];
 };
