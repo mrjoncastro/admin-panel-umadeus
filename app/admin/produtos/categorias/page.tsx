@@ -62,8 +62,6 @@ export default function CategoriasAdminPage() {
       ? `/admin/api/categorias/${editId}`
       : "/admin/api/categorias";
     try {
-      const token = localStorage.getItem("pb_token");
-      const rawUser = localStorage.getItem("pb_user");
       const res = await fetch(url, {
         method: metodo,
         headers: {
