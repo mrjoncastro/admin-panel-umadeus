@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { useMemo, useState, useRef, useEffect } from "react";
+import { Menu, X, ChevronDown, LogOut } from "lucide-react";
 import CartButton from "./CartButton";
 import Link from "next/link";
 import Image from "next/image";
