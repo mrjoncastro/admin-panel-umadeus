@@ -51,13 +51,13 @@ export default function AdminProdutosPage() {
       nome: String(form.nome ?? ""),
       preco: Number(form.preco ?? 0),
       imagens: [], // ajuste se necessário
-      checkout_url: String((form as any).checkout_url ?? ""), // corrigido para checkout_url
+      checkout_url: String(form.checkout_url ?? ""),
       categoria: "", // ajuste se necessário
-      tamanhos: Array.isArray((form as any).tamanhos) ? (form as any).tamanhos as string[] : [],
-      generos: Array.isArray((form as any).generos) ? (form as any).generos as string[] : [],
-      descricao: String((form as any).descricao ?? ""),
-      detalhes: String((form as any).detalhes ?? ""),
-      ativo: !!(form as any).ativo,
+      tamanhos: Array.isArray(form.tamanhos) ? form.tamanhos : [],
+      generos: Array.isArray(form.generos) ? form.generos : [],
+      descricao: String(form.descricao ?? ""),
+      detalhes: String(form.detalhes ?? ""),
+      ativo: !!form.ativo,
       // ...adicione outros campos se necessário
     };
     setProdutos((prev) => [produto, ...prev]);

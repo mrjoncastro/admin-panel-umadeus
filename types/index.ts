@@ -99,3 +99,14 @@ export type Categoria = {
   nome: string;
   slug: string;
 };
+
+export type Evento = {
+  id: string;
+  titulo: string;
+  descricao: string;
+  data: string;
+  cidade: string;
+  imagem?: string;
+  status: "realizado" | "em breve";
+  created?: string;
+};
