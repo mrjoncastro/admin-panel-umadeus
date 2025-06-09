@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
+import CartButton from "./CartButton";
 import Link from "next/link";
 import Image from "next/image"; // se quiser exibir logo
 import { useAuthContext } from "@/lib/context/AuthContext";
@@ -91,6 +92,8 @@ export default function Header() {
             </Link>
           ))}
 
+          <CartButton />
+
           {(role === "lider" || role === "coordenador") && (
             <div className="relative">
               <button
@@ -143,6 +146,8 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
+
+          <CartButton />
 
           {(role === "lider" || role === "coordenador") && (
             <>

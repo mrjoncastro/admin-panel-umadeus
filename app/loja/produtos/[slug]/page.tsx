@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import createPocketBase from "@/lib/pocketbase";
+import AddToCartButton from "./AddToCartButton";
 
 interface Produto {
   id: string;
@@ -56,6 +57,7 @@ export default async function ProdutoDetalhe({ params }: { params: Params }) {
           >
             Comprar agora
           </a>
+          <AddToCartButton produto={produto} />
 
           {produto.descricao && (
             <p className="text-sm text-platinum mt-4 whitespace-pre-line">
