@@ -1,9 +1,10 @@
 import { useEffect, useRef } from "react";
+import { useState } from "react";
 
 export interface ModalProdutoProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (form: any) => void;
+  onSubmit: (form: Record<string, unknown>) => void;
   initial?: {
     nome?: string;
     preco?: string;
@@ -13,6 +14,7 @@ export interface ModalProdutoProps {
     descricao?: string;
     detalhes?: string;
     checkoutUrl?: string;
+    categoria?: string;
     ativo?: boolean;
   };
 }
@@ -24,23 +26,33 @@ export function ModalProduto({
   initial = {},
 }: ModalProdutoProps) {
   const ref = useRef<HTMLDialogElement>(null);
+  const [categorias, setCategorias] = useState<{ id: string; nome: string }[]>([]);
 
   useEffect(() => {
     if (open) ref.current?.showModal();
     else ref.current?.close();
   }, [open]);
 
+  useEffect(() => {
+    fetch("/admin/api/categorias")
+      .then((r) => r.json())
+      .then(setCategorias)
+      .catch(() => {});
+  }, []);
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const formElement = e.currentTarget as HTMLFormElement;
-    const form = Object.fromEntries(new FormData(formElement));
+    const form: Record<string, unknown> = Object.fromEntries(
+      new FormData(formElement)
+    );
     // Corrige checkboxes (arrays)
     form.tamanhos = Array.from(
-      formElement.querySelectorAll("input[name='tamanhos']:checked")
-    ).map((el: any) => el.value);
+      formElement.querySelectorAll<HTMLInputElement>("input[name='tamanhos']:checked")
+    ).map((el) => el.value);
     form.generos = Array.from(
-      formElement.querySelectorAll("input[name='generos']:checked")
-    ).map((el: any) => el.value);
+      formElement.querySelectorAll<HTMLInputElement>("input[name='generos']:checked")
+    ).map((el) => el.value);
     form.ativo = !!form.ativo;
     // Corrige imagens para ser FileList ou File[]
     const imagensInput = formElement.querySelector("input[name='imagens']") as HTMLInputElement;
@@ -103,6 +115,14 @@ export function ModalProduto({
           type="url"
           defaultValue={initial.checkoutUrl || ""}
         />
+        <select name="categoria" defaultValue={initial.categoria || ""} className="input-base">
+          <option value="">Selecione a categoria</option>
+          {categorias.map((c) => (
+            <option key={c.id} value={c.slug}>
+              {c.nome}
+            </option>
+          ))}
+        </select>
         <input
           type="file"
           name="imagens"
