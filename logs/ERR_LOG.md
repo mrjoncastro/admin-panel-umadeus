@@ -44,3 +44,4 @@
 ## [2025-06-09] Adicionada página e API de eventos com cabeçalhos de autenticação para evitar 401 - dev - a2d7bd0
 
 ## [2025-06-10] Ajustado uso de getURL nos produtos e categorias para impedir erro na loja - dev - 2b29c07
+## [2025-06-09] Corrigido erro de imagem sem src na loja/produtos - dev - 1937fbf
