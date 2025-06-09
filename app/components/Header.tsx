@@ -213,7 +213,7 @@ export default function Header() {
 
           {!isLoggedIn && (
             <Link
-              href="/admin/login"
+              href="/login"
               onClick={() => setOpen(false)}
               className="btn btn-primary text-sm text-center mt-2"
             >

@@ -36,7 +36,7 @@ export default function PerfilPage() {
   useEffect(() => {
     const handleAuthChange = () => {
       if (!pb.authStore.isValid) {
-        router.push("/admin/login");
+        router.push("/login");
       } else {
         const model = pb.authStore.model as unknown as UsuarioAuthModel;
         setUsuario(model);

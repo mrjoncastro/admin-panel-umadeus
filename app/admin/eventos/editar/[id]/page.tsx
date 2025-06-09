@@ -12,7 +12,7 @@ export default function EditarEventoPage() {
 
   useEffect(() => {
     if (!isLoggedIn || !user || user.role !== "coordenador") {
-      router.replace("/admin/login");
+      router.replace("/login");
     }
   }, [isLoggedIn, user, router]);
 
