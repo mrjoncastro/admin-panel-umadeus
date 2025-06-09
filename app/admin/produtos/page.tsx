@@ -52,24 +52,48 @@ export default function AdminProdutosPage() {
   );
 
   // Função para adicionar produto na lista após cadastro via modal
-  const handleNovoProduto = (form: Produto) => {
-    // Aqui você pode adaptar para criar um Produto a partir do form retornado pelo modal
-    // Exemplo básico (ajuste conforme necessário para seu backend/estrutura):
-    const produto: Produto = {
-      id: crypto.randomUUID(), // ou gere conforme necessário
-      nome: String(form.nome ?? ""),
-      preco: Number(form.preco ?? 0),
-      imagens: [], // ajuste se necessário
-      checkout_url: String(form.checkout_url ?? ""),
-      categoria: "", // ajuste se necessário
-      tamanhos: Array.isArray(form.tamanhos) ? form.tamanhos : [],
-      generos: Array.isArray(form.generos) ? form.generos : [],
-      descricao: String(form.descricao ?? ""),
-      detalhes: String(form.detalhes ?? ""),
-      ativo: !!form.ativo,
-      // ...adicione outros campos se necessário
-    };
-    setProdutos((prev) => [produto, ...prev]);
+  const handleNovoProduto = async (form: Produto) => {
+    const formData = new FormData();
+    formData.set("nome", String(form.nome ?? ""));
+    formData.set("preco", String(form.preco ?? 0));
+    if (form.checkoutUrl) formData.set("checkoutUrl", String(form.checkoutUrl));
+    if (form.categoria) formData.set("categoria", String(form.categoria));
+    if (Array.isArray(form.tamanhos))
+      form.tamanhos.forEach((t) => formData.append("tamanhos", t));
+    if (Array.isArray(form.generos))
+      form.generos.forEach((g) => formData.append("generos", g));
+    if (form.descricao) formData.set("descricao", String(form.descricao));
+    if (form.detalhes) formData.set("detalhes", String(form.detalhes));
+    formData.set("ativo", String(form.ativo ? "true" : "false"));
+    if (form.imagens && form.imagens instanceof FileList) {
+      Array.from(form.imagens).forEach((file) =>
+        formData.append("imagens", file)
+      );
+    }
+
+    try {
+      const token = localStorage.getItem("pb_token");
+      const rawUser = localStorage.getItem("pb_user");
+      const res = await fetch("/admin/api/produtos", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-PB-User": rawUser ?? "",
+        },
+        body: formData,
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        console.error("Falha ao criar produto", res.status, data);
+        return;
+      }
+      const data = await res.json();
+      console.log("Produto criado:", data);
+      setProdutos((prev) => [data, ...prev]);
+    } catch (err) {
+      console.error("Erro ao criar produto:", err);
+    }
+
     setModalOpen(false);
     setPage(1);
   };
