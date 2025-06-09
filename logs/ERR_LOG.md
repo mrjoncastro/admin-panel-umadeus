@@ -8,3 +8,5 @@
 ## [2025-06-07] Erro 'Property "posts" does not exist on type "{}"' em stories do blog, causando falha no build - dev - 441b5f1
 
 ## [2025-06-07] Corrigido mock de fetch nas stories do blog para retornar Response - dev - 4ab1693
+## [2025-06-09] Corrigido tipo de params em categorias para finalizar build - dev - 73d40f4
+## [2025-06-09] Ajustado caminho das imagens no carrinho que causava erro no Next/Image - dev - c0bd75f

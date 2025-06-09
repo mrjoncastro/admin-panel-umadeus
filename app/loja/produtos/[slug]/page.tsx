@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import createPocketBase from "@/lib/pocketbase";
+import AddToCartButton from "./AddToCartButton";
 
 interface Produto {
   id: string;
@@ -18,9 +19,16 @@ interface Params {
 
 export default async function ProdutoDetalhe({ params }: { params: Params }) {
   const pb = createPocketBase();
-  const produto = await pb
+  const produtoRaw = await pb
     .collection("produtos")
     .getFirstListItem<Produto>(`slug = '${params.slug}'`);
+
+  const produto = {
+    ...produtoRaw,
+    imagens: produtoRaw.imagens.map((img) =>
+      pb.files.getUrl(produtoRaw as Record<string, unknown>, img)
+    ),
+  };
 
   return (
     <main className="font-sans px-4 md:px-16 py-10">
@@ -34,7 +42,7 @@ export default async function ProdutoDetalhe({ params }: { params: Params }) {
       <div className="grid md:grid-cols-2 gap-12 items-start">
         <div>
           <Image
-            src={pb.files.getUrl(produto, produto.imagens[0])}
+            src={produto.imagens[0]}
             alt={produto.nome}
             width={600}
             height={600}
@@ -56,6 +64,7 @@ export default async function ProdutoDetalhe({ params }: { params: Params }) {
           >
             Comprar agora
           </a>
+          <AddToCartButton produto={produto} />
 
           {produto.descricao && (
             <p className="text-sm text-platinum mt-4 whitespace-pre-line">
