@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface Campo {
   id: string;
@@ -14,6 +15,7 @@ export default function GerenciarCamposPage() {
   const [mensagem, setMensagem] = useState("");
   const [loading, setLoading] = useState(false);
   const [camposCarregados, setCamposCarregados] = useState(false);
+  const router = useRouter();
 
   const token =
     typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
@@ -22,7 +24,13 @@ export default function GerenciarCamposPage() {
   const user = userRaw ? JSON.parse(userRaw) : null;
 
   useEffect(() => {
-    if (!token || !user || camposCarregados) return;
+    if (!token || !user || user.role !== "coordenador") {
+      router.replace("/admin/login");
+    }
+  }, [token, user, router]);
+
+  useEffect(() => {
+    if (!token || !user || user.role !== "coordenador" || camposCarregados) return;
 
     const carregarCampos = async () => {
       try {
@@ -62,7 +70,7 @@ export default function GerenciarCamposPage() {
     setLoading(true);
     setMensagem("");
 
-    if (!token || !user) {
+    if (!token || !user || user.role !== "coordenador") {
       setMensagem("Usuário não autenticado.");
       setLoading(false);
       return;
@@ -105,7 +113,7 @@ export default function GerenciarCamposPage() {
   }
 
   const fetchCampos = async () => {
-    if (!token || !user) return;
+    if (!token || !user || user.role !== "coordenador") return;
 
     try {
       const res = await fetch("/admin/api/campos", {
@@ -186,6 +194,11 @@ export default function GerenciarCamposPage() {
   async function handleExcluirCampo(id: string) {
     try {
       setLoading(true);
+      if (!token || !user || user.role !== "coordenador") {
+        setMensagem("Usuário não autenticado.");
+        setLoading(false);
+        return;
+      }
       const res = await fetch(`/admin/api/campos/${id}`, {
         method: "DELETE",
         headers: {

@@ -93,3 +93,9 @@ export type Produto = {
     };
   };
 };
+
+export type Categoria = {
+  id: string;
+  nome: string;
+  slug: string;
+};
