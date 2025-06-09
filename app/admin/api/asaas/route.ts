@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
       headers: {
         accept: "application/json",
         "Content-Type": "application/json",
-        "access_token": "aact_hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjY4NDBkZGQwLWRiYmUtNDVkYi1iMTVjLTdjMjFhZDg4Zjg3YTo6JGFhY2hfNjhlZTY1NzktOGVjMS00OTgzLWIyYTUtZTJhMjNiYjY4NDYy",
+        "access_token": "$aact_hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjY4NDBkZGQwLWRiYmUtNDVkYi1iMTVjLTdjMjFhZDg4Zjg3YTo6JGFhY2hfNjhlZTY1NzktOGVjMS00OTgzLWIyYTUtZTJhMjNiYjY4NDYy",
         "User-Agent": "qg3"
       },
       body: JSON.stringify(clientePayload),
