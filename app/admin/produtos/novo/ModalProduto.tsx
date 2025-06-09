@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 export interface ModalProdutoProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (form: any) => void;
+  onSubmit: (form: Record<string, unknown>) => void;
   initial?: {
     nome?: string;
     preco?: string;
@@ -37,10 +37,10 @@ export function ModalProduto({
     // Corrige checkboxes (arrays)
     form.tamanhos = Array.from(
       formElement.querySelectorAll("input[name='tamanhos']:checked")
-    ).map((el: any) => el.value);
+    ).map((el) => (el as HTMLInputElement).value);
     form.generos = Array.from(
       formElement.querySelectorAll("input[name='generos']:checked")
-    ).map((el: any) => el.value);
+    ).map((el) => (el as HTMLInputElement).value);
     form.ativo = !!form.ativo;
     // Corrige imagens para ser FileList ou File[]
     const imagensInput = formElement.querySelector("input[name='imagens']") as HTMLInputElement;
