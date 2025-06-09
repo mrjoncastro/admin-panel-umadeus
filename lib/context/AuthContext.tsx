@@ -10,7 +10,7 @@ import type { RecordModel } from "pocketbase";
 type UserModel = {
   id: string;
   nome: string;
-  role: "coordenador" | "lider";
+  role: "coordenador" | "lider" | "cliente";
   [key: string]: unknown;
 };
 
