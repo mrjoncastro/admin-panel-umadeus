@@ -4,7 +4,19 @@ import { logInfo } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
-  const apiKey = process.env.ASAAS_API_KEY;
+  const rawEnvKey = process.env.ASAAS_API_KEY;
+
+  if (!rawEnvKey) {
+    throw new Error(
+      "❌ ASAAS_API_KEY não definida! Confira seu .env ou painel de variáveis."
+    );
+  }
+
+  // Se não começar com '$', adiciona manualmente.
+  const apiKey = rawEnvKey.startsWith("$") ? rawEnvKey : "$" + rawEnvKey;
+
+  // Opcional: log para garantir que está certo (remova em produção!)
+  console.log("🔐 Chave Asaas utilizada:", apiKey);
   const baseUrl = process.env.ASAAS_API_URL;
   console.log("🔐 ASAAS_API_KEY:", process.env.ASAAS_API_KEY);
   console.log("🌐 ASAAS_API_URL:", process.env.ASAAS_API_URL);
@@ -77,13 +89,13 @@ export async function POST(req: NextRequest) {
     console.log(" Enviando cliente:", clientePayload);
 
     // 🔹 Criar cliente no Asaas
-    const clienteResponse = await fetch(`https://api-sandbox.asaas.com/v3/customers`, {
+    const clienteResponse = await fetch(`${baseUrl}/customers`, {
       method: "POST",
       headers: {
         accept: "application/json",
         "Content-Type": "application/json",
-        "access_token": "$aact_hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjRkYmQ0YWE1LTY4NWUtNDA3Yi1iY2VlLWFjNTNmMDc4NjhmZTo6JGFhY2hfMmFhNGRjMTUtMTU3Yi00NTRiLTg4ZWItNjdkNmRhM2MwZWM0",
-        "User-Agent": "qg3"
+        "access-token": apiKey,
+        "User-Agent": "qg3",
       },
       body: JSON.stringify(clientePayload),
     });
@@ -112,7 +124,7 @@ export async function POST(req: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        access_token: apiKey,
+        "access-token": apiKey,
         "User-Agent": "qg3",
       },
       body: JSON.stringify({

@@ -4,7 +4,16 @@ import { createHmac } from "crypto";
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
-  const apiKey = process.env.ASAAS_API_KEY;
+  const rawEnvKey = process.env.ASAAS_API_KEY;
+
+  if (!rawEnvKey) {
+    throw new Error(
+      "❌ ASAAS_API_KEY não definida! Confira seu .env ou painel de variáveis."
+    );
+  }
+
+  // Se não começar com '$', adiciona manualmente.
+  const apiKey = rawEnvKey.startsWith("$") ? rawEnvKey : "$" + rawEnvKey;
   const webhookSecret = process.env.ASAAS_WEBHOOK_SECRET;
 
   if (!apiKey) {
