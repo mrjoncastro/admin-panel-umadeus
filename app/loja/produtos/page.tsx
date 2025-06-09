@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import createPocketBase from "@/lib/pocketbase";
+import AddToCartButton from "./AddToCartButton";
 
 interface Produto {
   id: string;
@@ -38,25 +39,25 @@ export default async function ProdutosPage() {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {agrupados[cat].map((p) => (
-              <Link
-                key={p.id}
-                href={`/loja/produtos/${p.slug}`}
-                className="bg-white rounded shadow p-2 block"
-              >
-                <Image
-                  src={pb.files.getUrl(p, p.imagens[0])}
-                  alt={p.nome}
-                  width={400}
-                  height={400}
-                  className="w-full h-auto object-cover rounded"
-                />
-                <h3 className="text-sm font-medium text-black mt-2 line-clamp-2">
-                  {p.nome}
-                </h3>
-                <p className="text-base font-semibold text-black_bean mt-1">
-                  R$ {p.preco.toFixed(2).replace(".", ",")}
-                </p>
-              </Link>
+              <div key={p.id} className="bg-white rounded shadow p-2">
+                <Link href={`/loja/produtos/${p.slug}`}
+                  className="block">
+                  <Image
+                    src={pb.files.getUrl(p, p.imagens[0])}
+                    alt={p.nome}
+                    width={400}
+                    height={400}
+                    className="w-full h-auto object-cover rounded"
+                  />
+                  <h3 className="text-sm font-medium text-black mt-2 line-clamp-2">
+                    {p.nome}
+                  </h3>
+                  <p className="text-base font-semibold text-black_bean mt-1">
+                    R$ {p.preco.toFixed(2).replace(".", ",")}
+                  </p>
+                </Link>
+                <AddToCartButton produto={p} />
+              </div>
             ))}
           </div>
         </section>

@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState, useRef, useEffect } from "react";
-import { Menu, X, ChevronDown, LogOut } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Menu, X, ChevronDown } from "lucide-react";
+import CartButton from "./CartButton";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuthContext } from "@/lib/context/AuthContext";
@@ -114,14 +115,7 @@ export default function Header() {
             </Link>
           ))}
 
-          {!isLoggedIn && (
-            <Link
-              href="/admin/login"
-              className="btn btn-primary text-sm whitespace-nowrap"
-            >
-              Acessar sua conta
-            </Link>
-          )}
+          <CartButton />
 
           {(role === "lider" || role === "coordenador") && (
             <div className="relative">
@@ -191,6 +185,8 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
+
+          <CartButton />
 
           {(role === "lider" || role === "coordenador") && (
             <>

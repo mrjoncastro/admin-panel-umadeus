@@ -17,10 +17,12 @@
   --accent: theme(colors.primary.600);
   --accent-900: theme(colors.primary.900);
   --color-secondary: theme(colors.neutral.900);
+  /* Fontes padronizadas para evitar depend\u00eancia de downloads no build */
+  --font-geist: system-ui, sans-serif;
   --font-body: var(--font-geist);
   --font-heading: var(--font-geist);
-  /* Exposição da variável de fonte para uso global */
-  --font-bebas: "Bebas Neue", cursive;
+  /* Fallback para a fonte Bebas Neue */
+  --font-bebas: system-ui, sans-serif;
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
   --space-md: 1rem;
