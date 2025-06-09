@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import createPocketBase from "@/lib/pocketbase";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { useToast } from "@/lib/context/ToastContext";
+import PostContentEditor from "../posts/components/PostContentEditor";
 import type { Produto } from "@/types";
 
 export default function ProdutosPage() {
@@ -17,7 +18,13 @@ export default function ProdutosPage() {
   const [loading, setLoading] = useState(true);
   const [nome, setNome] = useState("");
   const [preco, setPreco] = useState("");
-  const [imagem, setImagem] = useState("");
+  const [imagens, setImagens] = useState<FileList | null>(null);
+  const [tamanhosSelecionados, setTamanhosSelecionados] = useState<string[]>([]);
+  const [generosSelecionados, setGenerosSelecionados] = useState<string[]>([]);
+  const [descricao, setDescricao] = useState("");
+  const [detalhes, setDetalhes] = useState("");
+  const [checkoutUrl, setCheckoutUrl] = useState("");
+  const [ativo, setAtivo] = useState(true);
 
   useEffect(() => {
     if (!isLoggedIn || !user) {
@@ -43,12 +50,50 @@ export default function ProdutosPage() {
 
   const criarProduto = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!user) return;
+
     try {
-      const criado = await pb.collection("produtos").create({ nome, preco: parseFloat(preco), imagem });
-      setProdutos((p) => [criado as Produto, ...p]);
+      const formData = new FormData();
+      formData.set("nome", nome);
+      formData.set("preco", preco);
+      formData.set("checkout_url", checkoutUrl);
+      formData.set("descricao", descricao);
+      formData.set("detalhes", detalhes);
+      formData.set("ativo", ativo ? "true" : "false");
+      formData.set("user_org", user.id);
+      tamanhosSelecionados.forEach((t) => formData.append("tamanhos", t));
+      generosSelecionados.forEach((g) => formData.append("generos", g));
+      if (imagens) {
+        Array.from(imagens).forEach((file) => {
+          formData.append("imagens", file);
+        });
+      }
+
+      const res = await fetch("/admin/api/produtos", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${pb.authStore.token}`,
+          "X-PB-User": JSON.stringify(pb.authStore.model),
+        },
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        showError(data.error || "Erro ao criar produto");
+        return;
+      }
+
+      setProdutos((p) => [data as Produto, ...p]);
       setNome("");
       setPreco("");
-      setImagem("");
+      setImagens(null);
+      setTamanhosSelecionados([]);
+      setGenerosSelecionados([]);
+      setDescricao("");
+      setDetalhes("");
+      setCheckoutUrl("");
+      setAtivo(true);
       showSuccess("Produto criado");
     } catch (err) {
       console.error("Erro ao criar produto", err);
@@ -79,11 +124,76 @@ export default function ProdutosPage() {
           required
         />
         <input
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={(e) => setImagens(e.target.files)}
           className="input-base"
-          placeholder="URL da imagem"
-          value={imagem}
-          onChange={(e) => setImagem(e.target.value)}
         />
+        <div>
+          <p className="text-sm mb-1">Tamanhos</p>
+          <div className="flex gap-2 flex-wrap">
+            {["PP", "P", "M", "G", "GG"].map((t) => (
+              <label key={t} className="flex items-center gap-1">
+                <input
+                  type="checkbox"
+                  value={t}
+                  checked={tamanhosSelecionados.includes(t)}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setTamanhosSelecionados((prev) =>
+                      checked ? [...prev, t] : prev.filter((x) => x !== t)
+                    );
+                  }}
+                />
+                {t}
+              </label>
+            ))}
+          </div>
+        </div>
+        <div>
+          <p className="text-sm mb-1">Gêneros</p>
+          <div className="flex gap-2 flex-wrap">
+            {["masculino", "feminino"].map((g) => (
+              <label key={g} className="flex items-center gap-1">
+                <input
+                  type="checkbox"
+                  value={g}
+                  checked={generosSelecionados.includes(g)}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setGenerosSelecionados((prev) =>
+                      checked ? [...prev, g] : prev.filter((x) => x !== g)
+                    );
+                  }}
+                />
+                {g.charAt(0).toUpperCase() + g.slice(1)}
+              </label>
+            ))}
+          </div>
+        </div>
+        <div>
+          <p className="text-sm mb-1">Descrição</p>
+          <PostContentEditor value={descricao} onChange={setDescricao} />
+        </div>
+        <div>
+          <p className="text-sm mb-1">Detalhes</p>
+          <PostContentEditor value={detalhes} onChange={setDetalhes} />
+        </div>
+        <input
+          className="input-base"
+          placeholder="Checkout URL"
+          value={checkoutUrl}
+          onChange={(e) => setCheckoutUrl(e.target.value)}
+        />
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={ativo}
+            onChange={(e) => setAtivo(e.target.checked)}
+          />
+          Ativo
+        </label>
         <button type="submit" className="btn btn-primary w-full">Salvar</button>
       </form>
 

@@ -75,6 +75,21 @@ export type Produto = {
   id: string;
   nome: string;
   preco: number;
-  imagem: string;
+  imagem?: string;
+  imagens?: string[];
+  tamanhos?: string[];
+  generos?: string[];
+  descricao?: string;
+  detalhes?: string;
+  checkout_url?: string;
+  ativo?: boolean;
+  user_org?: string;
+  categoria?: string;
   created?: string;
+  expand?: {
+    user_org?: {
+      id: string;
+      nome: string;
+    };
+  };
 };

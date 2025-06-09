@@ -21,13 +21,11 @@ export async function POST(req: NextRequest) {
   if ("error" in auth) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
-  const { pb } = auth;
+  const { pb, user } = auth;
   try {
-    const { nome, preco, imagem } = await req.json();
-    if (!nome || !preco) {
-      return NextResponse.json({ error: "Dados inválidos" }, { status: 400 });
-    }
-    const produto = await pb.collection("produtos").create({ nome, preco, imagem });
+    const formData = await req.formData();
+    formData.set("user_org", user.id);
+    const produto = await pb.collection("produtos").create(formData);
     return NextResponse.json(produto, { status: 201 });
   } catch (err) {
     console.error("Erro ao criar produto:", err);
