@@ -19,7 +19,11 @@ export interface ModalProdutoProps<T extends Record<string, unknown>> {
   };
 }
 
-type Categoria = { id: string; nome: string };
+interface Categoria {
+  id: string;
+  nome: string;
+  slug: string;
+}
 
 export function ModalProduto<T extends Record<string, unknown>>({
   open,
@@ -39,11 +43,9 @@ export function ModalProduto<T extends Record<string, unknown>>({
     fetch("/api/collections/categorias/records")
       .then((r) => r.json())
       .then((data) => {
-        console.log("Resposta da API categorias:", data);
-        if (Array.isArray(data.items)) setCategorias(data.items);
-        else setCategorias([]);
+        if (Array.isArray(data)) setCategorias(data);
       })
-      .catch(() => setCategorias([]));
+      .catch(() => {});
   }, []);
 
   function handleSubmit(e: React.FormEvent) {

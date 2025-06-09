@@ -27,7 +27,9 @@ export default function EditarProdutoPage() {
   useEffect(() => {
     fetch("/admin/api/categorias")
       .then((r) => r.json())
-      .then(setCategorias)
+      .then((data) => {
+        if (Array.isArray(data)) setCategorias(data);
+      })
       .catch(() => {});
     fetch(`/admin/api/produtos/${id}`)
       .then((r) => r.json())

@@ -8,3 +8,4 @@
 ## [2025-06-07] Erro 'Property "posts" does not exist on type "{}"' em stories do blog, causando falha no build - dev - 441b5f1
 
 ## [2025-06-07] Corrigido mock de fetch nas stories do blog para retornar Response - dev - 4ab1693
+## [2025-06-09] Tratamento de dados de categoria para evitar erro "categorias.map is not a function" no modal de produto - dev - 20a0ca8
