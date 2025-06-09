@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import ModalCategoria from "../categorias/ModalCategoria";
 
 export interface ModalProdutoProps<T extends Record<string, unknown>> {
   open: boolean;
@@ -47,6 +48,10 @@ export function ModalProduto<T extends Record<string, unknown>>({
 }: ModalProdutoProps<T>) {
   const ref = useRef<HTMLDialogElement>(null);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [categoriaModalOpen, setCategoriaModalOpen] = useState(false);
+  const [selectedCategoria, setSelectedCategoria] = useState<string>(
+    initial.categoria || ""
+  );
   const { isLoggedIn, user: ctxUser } = useAuthContext();
   const getAuth = useCallback(() => {
     const token =
@@ -65,6 +70,10 @@ export function ModalProduto<T extends Record<string, unknown>>({
     if (open) ref.current?.showModal();
     else ref.current?.close();
   }, [open]);
+
+  useEffect(() => {
+    setSelectedCategoria(initial.categoria || "");
+  }, [initial.categoria, open]);
 
   useEffect(() => {
     const { token, user } = getAuth();
@@ -108,6 +117,31 @@ export function ModalProduto<T extends Record<string, unknown>>({
     setCores(cores.filter((c) => c !== hex));
   }
 
+  async function handleNovaCategoria(form: { nome: string }) {
+    const { token, user } = getAuth();
+    if (!isLoggedIn || !token || !user) return;
+    try {
+      const res = await fetch("/admin/api/categorias", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "X-PB-User": JSON.stringify(user),
+        },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setCategorias((prev) => [...prev, data]);
+        setSelectedCategoria(data.id);
+      } else {
+        console.error(data);
+      }
+    } finally {
+      setCategoriaModalOpen(false);
+    }
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const formElement = e.currentTarget as HTMLFormElement;
@@ -149,12 +183,13 @@ export function ModalProduto<T extends Record<string, unknown>>({
   }
 
   return (
-    <dialog ref={ref} className="modal-base max-w-2xl w-full z-[9999]">
-      <form
-        onSubmit={handleSubmit}
-        className="p-8 space-y-7"
-        method="dialog"
-        autoComplete="off"
+    <>
+      <dialog ref={ref} className="modal-base max-w-2xl w-full z-[9999]">
+        <form
+          onSubmit={handleSubmit}
+          className="p-8 space-y-7"
+          method="dialog"
+          autoComplete="off"
       >
         {/* Header */}
         <div className="flex justify-between items-center pb-3 border-b border-neutral-100 mb-4">
@@ -197,18 +232,28 @@ export function ModalProduto<T extends Record<string, unknown>>({
           </div>
           <div>
             <label className="label-base">Categoria</label>
-            <select
-              name="categoria"
-              defaultValue={initial.categoria || ""}
-              className="input-base"
-            >
-              <option value="">Selecione a categoria</option>
-              {categorias.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.nome}
-                </option>
-              ))}
-            </select>
+            <div className="flex gap-2">
+              <select
+                name="categoria"
+                value={selectedCategoria}
+                onChange={(e) => setSelectedCategoria(e.target.value)}
+                className="input-base flex-1"
+              >
+                <option value="">Selecione a categoria</option>
+                {categorias.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.nome}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                className="btn btn-secondary whitespace-nowrap"
+                onClick={() => setCategoriaModalOpen(true)}
+              >
+                + Categoria
+              </button>
+            </div>
           </div>
           <div>
             <label className="label-base">Checkout URL</label>
@@ -362,6 +407,15 @@ export function ModalProduto<T extends Record<string, unknown>>({
           </button>
         </div>
       </form>
-    </dialog>
+      </dialog>
+      {categoriaModalOpen && (
+        <ModalCategoria
+          open={categoriaModalOpen}
+          onClose={() => setCategoriaModalOpen(false)}
+          onSubmit={handleNovaCategoria}
+          initial={null}
+        />
+      )}
+    </>
   );
 }

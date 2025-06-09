@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import ModalCategoria from "../categorias/ModalCategoria";
 
 interface Categoria {
   id: string;
@@ -23,6 +24,8 @@ export default function EditarProdutoPage() {
     return { token, user } as const;
   }, [ctxUser]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [categoriaModalOpen, setCategoriaModalOpen] = useState(false);
+  const [selectedCategoria, setSelectedCategoria] = useState<string>("");
   const [initial, setInitial] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
   const [cores, setCores] = useState<string[]>([]);
@@ -84,6 +87,9 @@ export default function EditarProdutoPage() {
               ? data.cores.join(", ")
               : "", // trata string[] ou string
         });
+        setSelectedCategoria(
+          Array.isArray(data.categoria) ? data.categoria[0] ?? "" : data.categoria
+        );
       })
       .finally(() => setLoading(false));
   }, [id, isLoggedIn, router, getAuth]);
@@ -99,7 +105,14 @@ export default function EditarProdutoPage() {
     } else if (Array.isArray(initial?.cores)) {
       setCores(initial.cores as string[]);
     }
-  }, [initial?.cores]);
+    if (initial?.categoria) {
+      setSelectedCategoria(
+        Array.isArray(initial.categoria)
+          ? initial.categoria[0] ?? ""
+          : (initial.categoria as string)
+      );
+    }
+  }, [initial?.cores, initial?.categoria]);
   if (loading || !initial) {
     return <p className="p-4">Carregando...</p>;
   }
@@ -155,10 +168,7 @@ export default function EditarProdutoPage() {
     generos.forEach((g) => formData.append("generos", g));
 
     // Categoria enviada sempre pelo id
-    const catSelect = formElement.querySelector<HTMLSelectElement>(
-      "select[name='categoria']"
-    );
-    const catValue = catSelect?.value ?? "";
+    const catValue = selectedCategoria;
     formData.delete("categoria");
     if (catValue) {
       formData.append("categoria", catValue);
@@ -187,7 +197,33 @@ export default function EditarProdutoPage() {
     setCores(cores.filter((c) => c !== hex));
   }
 
+  async function handleNovaCategoria(form: { nome: string }) {
+    const { token, user } = getAuth();
+    if (!isLoggedIn || !token || !user) return;
+    try {
+      const res = await fetch("/admin/api/categorias", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "X-PB-User": JSON.stringify(user),
+        },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setCategorias((prev) => [...prev, data]);
+        setSelectedCategoria(data.id);
+      } else {
+        console.error(data);
+      }
+    } finally {
+      setCategoriaModalOpen(false);
+    }
+  }
+
   return (
+    <>
     <main className="max-w-xl mx-auto px-4 py-8">
       <h1
         className="text-2xl font-bold mb-4"
@@ -267,20 +303,14 @@ export default function EditarProdutoPage() {
           <input type="hidden" name="cores" value={cores.join(",")} />
         </div>
 
-        {(() => {
-          const defaultCat = Array.isArray(initial.categoria)
-            ? initial.categoria[0] ?? ""
-            : categorias.find(
-                (c) =>
-                  c.id === initial.categoria || c.slug === initial.categoria
-              )?.id ??
-              (initial.categoria as string | "") ??
-              "";
-          return (
+        <div>
+          <label className="block text-sm font-semibold mb-1">Categoria</label>
+          <div className="flex gap-2">
             <select
               name="categoria"
-              defaultValue={defaultCat}
-              className="input-base"
+              value={selectedCategoria}
+              onChange={(e) => setSelectedCategoria(e.target.value)}
+              className="input-base flex-1"
             >
               <option value="">Selecione a categoria</option>
               {categorias.map((c) => (
@@ -289,8 +319,15 @@ export default function EditarProdutoPage() {
                 </option>
               ))}
             </select>
-          );
-        })()}
+            <button
+              type="button"
+              className="btn btn-secondary whitespace-nowrap"
+              onClick={() => setCategoriaModalOpen(true)}
+            >
+              + Categoria
+            </button>
+          </div>
+        </div>
         <input
           type="file"
           name="imagens"
@@ -370,5 +407,14 @@ export default function EditarProdutoPage() {
         </div>
       </form>
     </main>
+    {categoriaModalOpen && (
+      <ModalCategoria
+        open={categoriaModalOpen}
+        onClose={() => setCategoriaModalOpen(false)}
+        onSubmit={handleNovaCategoria}
+        initial={null}
+      />
+    )}
+    </>
   );
 }
