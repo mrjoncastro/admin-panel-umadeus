@@ -26,16 +26,9 @@ export async function POST(req: NextRequest) {
   }
   const { pb, user } = auth;
   try {
-    const { nome, preco, imagem } = await req.json();
-    if (!nome || !preco) {
-      return NextResponse.json({ error: "Dados inválidos" }, { status: 400 });
-    }
-    const produto = await pb.collection("produtos").create({
-      nome,
-      preco,
-      imagem,
-      user_org: user.id,
-    });
+    const formData = await req.formData();
+    formData.set("user_org", user.id);
+    const produto = await pb.collection("produtos").create(formData);
     return NextResponse.json(produto, { status: 201 });
   } catch (err) {
     console.error("Erro ao criar produto:", err);
