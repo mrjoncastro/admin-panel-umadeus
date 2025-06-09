@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
 
@@ -16,6 +18,7 @@ export interface ModalProdutoProps<T extends Record<string, unknown>> {
     checkoutUrl?: string;
     categoria?: string;
     ativo?: boolean;
+    cores?: string | string[];
   };
 }
 
@@ -23,6 +26,17 @@ interface Categoria {
   id: string;
   nome: string;
   slug: string;
+}
+
+// Função para gerar slug automático
+function slugify(str: string) {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "")
+    .replace(/-+/g, "-");
 }
 
 export function ModalProduto<T extends Record<string, unknown>>({
@@ -42,6 +56,10 @@ export function ModalProduto<T extends Record<string, unknown>>({
     const user = raw ? JSON.parse(raw) : ctxUser;
     return { token, user } as const;
   }, [ctxUser]);
+
+  // Novos estados para cor
+  const [cores, setCores] = useState<string[]>([]);
+  const inputHex = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (open) ref.current?.showModal();
@@ -67,12 +85,36 @@ export function ModalProduto<T extends Record<string, unknown>>({
       });
   }, [isLoggedIn, open, getAuth]);
 
+  // Preenche cores iniciais (em modo editar)
+  useEffect(() => {
+    if (initial?.cores && typeof initial.cores === "string") {
+      setCores(
+        initial.cores
+          .split(",")
+          .map((c: string) => c.trim())
+          .filter(Boolean)
+      );
+    } else if (Array.isArray(initial?.cores)) {
+      setCores(initial.cores as string[]);
+    }
+  }, [initial?.cores, open]);
+
+  function addCor(hex: string) {
+    if (!hex || cores.includes(hex)) return;
+    setCores([...cores, hex]);
+    if (inputHex.current) inputHex.current.value = "#000000";
+  }
+  function removeCor(hex: string) {
+    setCores(cores.filter((c) => c !== hex));
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const formElement = e.currentTarget as HTMLFormElement;
     const form: Record<string, unknown> = Object.fromEntries(
       new FormData(formElement)
     );
+
     // Corrige checkboxes (arrays)
     form.tamanhos = Array.from(
       formElement.querySelectorAll<HTMLInputElement>(
@@ -86,19 +128,28 @@ export function ModalProduto<T extends Record<string, unknown>>({
     ).map((el) => el.value);
     form.ativo = !!form.ativo;
     // Corrige imagens para ser FileList ou File[]
-    const imagensInput = formElement.querySelector("input[name='imagens']") as HTMLInputElement;
-    form.imagens = imagensInput && imagensInput.files && imagensInput.files.length > 0
-      ? imagensInput.files
-      : null;
+    const imagensInput = formElement.querySelector(
+      "input[name='imagens']"
+    ) as HTMLInputElement;
+    form.imagens =
+      imagensInput && imagensInput.files && imagensInput.files.length > 0
+        ? imagensInput.files
+        : null;
+
+    // Cores
+    form.cores = cores.join(",");
+
+    // Slug automático (sempre gerado a partir do nome)
+    if (typeof form.nome === "string") {
+      form.slug = slugify(form.nome);
+    }
+
     onSubmit(form as T);
     onClose();
   }
 
   return (
-    <dialog
-      ref={ref}
-      className="modal-base max-w-2xl w-full z-[9999]"
-    >
+    <dialog ref={ref} className="modal-base max-w-2xl w-full z-[9999]">
       <form
         onSubmit={handleSubmit}
         className="p-8 space-y-7"
@@ -240,6 +291,55 @@ export function ModalProduto<T extends Record<string, unknown>>({
           </div>
         </div>
 
+        {/* Campo para selecionar cores */}
+        <div>
+          <label className="label-base">
+            Cores do produto (clique para adicionar)
+          </label>
+          <div className="flex gap-2 items-center mb-2">
+            <input
+              type="color"
+              ref={inputHex}
+              defaultValue="#000000"
+              className="w-10 h-10 border rounded cursor-pointer"
+            />
+            <button
+              type="button"
+              className="btn btn-sm"
+              onClick={() => {
+                if (inputHex.current) addCor(inputHex.current.value);
+              }}
+            >
+              Adicionar cor
+            </button>
+          </div>
+          <div className="flex gap-2 flex-wrap mt-1">
+            {cores.map((cor) => (
+              <div key={cor} className="flex items-center gap-1">
+                <span
+                  className="w-7 h-7 rounded-full border border-gray-300 inline-block"
+                  style={{ background: cor }}
+                  title={cor}
+                />
+                <button
+                  type="button"
+                  className="text-xs text-red-600"
+                  onClick={() => removeCor(cor)}
+                  title="Remover"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+            {cores.length === 0 && (
+              <span className="text-xs text-gray-500">
+                Nenhuma cor selecionada
+              </span>
+            )}
+          </div>
+          <input type="hidden" name="cores" value={cores.join(",")} />
+        </div>
+
         <div className="flex items-center gap-2 mt-2">
           <input
             type="checkbox"
@@ -254,17 +354,10 @@ export function ModalProduto<T extends Record<string, unknown>>({
         </div>
 
         <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-neutral-100">
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={onClose}
-          >
+          <button type="button" className="btn btn-secondary" onClick={onClose}>
             Cancelar
           </button>
-          <button
-            type="submit"
-            className="btn btn-primary"
-          >
+          <button type="submit" className="btn btn-primary">
             Salvar
           </button>
         </div>
