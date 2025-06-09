@@ -86,13 +86,10 @@ export function ModalProduto<T extends Record<string, unknown>>({
     ).map((el) => el.value);
     form.ativo = !!form.ativo;
     // Corrige imagens para ser FileList ou File[]
-    const imagensInput = formElement.querySelector(
-      "input[name='imagens']"
-    ) as HTMLInputElement;
-    form.imagens =
-      imagensInput && imagensInput.files && imagensInput.files.length > 0
-        ? imagensInput.files
-        : null;
+    const imagensInput = formElement.querySelector("input[name='imagens']") as HTMLInputElement;
+    form.imagens = imagensInput && imagensInput.files && imagensInput.files.length > 0
+      ? imagensInput.files
+      : null;
     onSubmit(form as T);
     onClose();
   }
