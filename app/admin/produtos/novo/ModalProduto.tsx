@@ -19,6 +19,8 @@ export interface ModalProdutoProps<T extends Record<string, unknown>> {
   };
 }
 
+type Categoria = { id: string; nome: string };
+
 export function ModalProduto<T extends Record<string, unknown>>({
   open,
   onClose,
@@ -26,7 +28,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
   initial = {},
 }: ModalProdutoProps<T>) {
   const ref = useRef<HTMLDialogElement>(null);
-  const [categorias, setCategorias] = useState<{ id: string; nome: string }[]>([]);
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
 
   useEffect(() => {
     if (open) ref.current?.showModal();
@@ -36,7 +38,9 @@ export function ModalProduto<T extends Record<string, unknown>>({
   useEffect(() => {
     fetch("/admin/api/categorias")
       .then((r) => r.json())
-      .then(setCategorias)
+      .then((data) =>
+        setCategorias(Array.isArray(data) ? data : data.items ?? [])
+      )
       .catch(() => {});
   }, []);
 
@@ -48,17 +52,24 @@ export function ModalProduto<T extends Record<string, unknown>>({
     );
     // Corrige checkboxes (arrays)
     form.tamanhos = Array.from(
-      formElement.querySelectorAll<HTMLInputElement>("input[name='tamanhos']:checked")
+      formElement.querySelectorAll<HTMLInputElement>(
+        "input[name='tamanhos']:checked"
+      )
     ).map((el) => el.value);
     form.generos = Array.from(
-      formElement.querySelectorAll<HTMLInputElement>("input[name='generos']:checked")
+      formElement.querySelectorAll<HTMLInputElement>(
+        "input[name='generos']:checked"
+      )
     ).map((el) => el.value);
     form.ativo = !!form.ativo;
     // Corrige imagens para ser FileList ou File[]
-    const imagensInput = formElement.querySelector("input[name='imagens']") as HTMLInputElement;
-    form.imagens = imagensInput && imagensInput.files && imagensInput.files.length > 0
-      ? imagensInput.files
-      : null;
+    const imagensInput = formElement.querySelector(
+      "input[name='imagens']"
+    ) as HTMLInputElement;
+    form.imagens =
+      imagensInput && imagensInput.files && imagensInput.files.length > 0
+        ? imagensInput.files
+        : null;
     onSubmit(form as T);
     onClose();
   }
@@ -115,14 +126,20 @@ export function ModalProduto<T extends Record<string, unknown>>({
           type="url"
           defaultValue={initial.checkoutUrl || ""}
         />
-        <select name="categoria" defaultValue={initial.categoria || ""} className="input-base">
+
+        <select
+          name="categoria"
+          defaultValue={initial.categoria || ""}
+          className="input-base"
+        >
           <option value="">Selecione a categoria</option>
           {categorias.map((c) => (
-            <option key={c.id} value={c.slug}>
+            <option key={c.id} value={c.id}>
               {c.nome}
             </option>
           ))}
         </select>
+
         <input
           type="file"
           name="imagens"

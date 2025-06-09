@@ -46,20 +46,18 @@ export default function AdminProdutosPage() {
 
   // Função para adicionar produto na lista após cadastro via modal
   const handleNovoProduto = (form: Produto) => {
-    // Aqui você pode adaptar para criar um Produto a partir do form retornado pelo modal
-    // Exemplo básico (ajuste conforme necessário para seu backend/estrutura):
     const produto: Produto = {
       id: crypto.randomUUID(), // ou gere conforme necessário
       nome: String(form.nome ?? ""),
       preco: Number(form.preco ?? 0),
       imagens: [], // ajuste se necessário
-      checkout_url: String(form.checkoutUrl ?? ""),
+      checkout_url: String((form as any).checkout_url ?? ""), // corrigido para checkout_url
       categoria: "", // ajuste se necessário
-      tamanhos: Array.isArray(form.tamanhos) ? form.tamanhos as string[] : [],
-      generos: Array.isArray(form.generos) ? form.generos as string[] : [],
-      descricao: String(form.descricao ?? ""),
-      detalhes: String(form.detalhes ?? ""),
-      ativo: !!form.ativo,
+      tamanhos: Array.isArray((form as any).tamanhos) ? (form as any).tamanhos as string[] : [],
+      generos: Array.isArray((form as any).generos) ? (form as any).generos as string[] : [],
+      descricao: String((form as any).descricao ?? ""),
+      detalhes: String((form as any).detalhes ?? ""),
+      ativo: !!(form as any).ativo,
       // ...adicione outros campos se necessário
     };
     setProdutos((prev) => [produto, ...prev]);
