@@ -124,6 +124,16 @@ export default function EditarProdutoPage() {
     formData.delete("generos");
     generos.forEach((g) => formData.append("generos", g));
 
+    // Categoria enviada sempre pelo id
+    const catSelect = formElement.querySelector<HTMLSelectElement>(
+      "select[name='categoria']"
+    );
+    const catValue = catSelect?.value ?? "";
+    formData.delete("categoria");
+    if (catValue) {
+      formData.append("categoria", catValue);
+    }
+
     const { token, user } = getAuth();
     const res = await fetch(`/admin/api/produtos/${id}`, {
       method: "PUT",
@@ -148,10 +158,11 @@ export default function EditarProdutoPage() {
         <input className="input-base" name="preco" type="number" step="0.01" defaultValue={String(initial.preco)} required />
         <input className="input-base" name="checkoutUrl" type="url" defaultValue={String(initial.checkoutUrl || "")} />
         {(() => {
-          const defaultCat =
-            categorias.find(
-              (c) => c.id === initial.categoria || c.slug === initial.categoria
-            )?.id ?? "";
+          const defaultCat = Array.isArray(initial.categoria)
+            ? initial.categoria[0] ?? ""
+            : categorias.find(
+                (c) => c.id === initial.categoria || c.slug === initial.categoria
+              )?.id ?? (initial.categoria as string | "") ?? "";
           return (
             <select name="categoria" defaultValue={defaultCat} className="input-base">
               <option value="">Selecione a categoria</option>
