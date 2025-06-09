@@ -115,7 +115,7 @@ export default function EditarProdutoPage() {
         <select name="categoria" defaultValue={String(initial.categoria || "")} className="input-base">
           <option value="">Selecione a categoria</option>
           {categorias.map((c) => (
-            <option key={c.id} value={c.slug}>
+            <option key={c.id} value={c.id}>
               {c.nome}
             </option>
           ))}
