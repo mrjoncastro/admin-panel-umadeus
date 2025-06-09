@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import { Menu, X, ChevronDown, LogOut } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -23,6 +23,7 @@ export default function Header() {
   const [adminOpen, setAdminOpen] = useState(false);
   const { user, isLoggedIn, logout } = useAuthContext();
   const { config } = useAppConfig();
+  const adminMenuRef = useRef<HTMLUListElement>(null);
 
   const role: UserRole = useMemo(() => {
     if (!isLoggedIn) return "visitante";
@@ -55,11 +56,25 @@ export default function Header() {
   }, [role]);
 
   const navLinks = baseLinks;
-
   const firstName = useMemo(
     () => user?.nome?.split(" ")[0] ?? "",
     [user?.nome]
   );
+
+  // FECHAR AO CLICAR FORA
+  useEffect(() => {
+    if (!adminOpen) return;
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        adminMenuRef.current &&
+        !adminMenuRef.current.contains(event.target as Node)
+      ) {
+        setAdminOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [adminOpen]);
 
   // Função de logout (contexto)
   function handleLogout() {
@@ -120,7 +135,10 @@ export default function Header() {
                 <ChevronDown size={14} />
               </button>
               {adminOpen && (
-                <ul className="absolute right-0 mt-2 w-48 bg-white text-[var(--foreground)] dark:bg-zinc-900 dark:text-white rounded-md shadow z-50 text-sm py-2 space-y-1">
+                <ul
+                  className="absolute right-0 mt-2 w-48 bg-white text-[var(--foreground)] dark:bg-zinc-900 dark:text-white rounded-md shadow z-50 text-sm py-2 space-y-1"
+                  ref={adminMenuRef} // referencia para clique fora
+                >
                   {adminLinks.map((link) => (
                     <li key={link.href}>
                       <Link
@@ -133,11 +151,15 @@ export default function Header() {
                   ))}
                   <li>
                     <button
-                      onClick={handleLogout}
-                      className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 text-red-600"
+                      onClick={() => {
+                        logout?.();
+                        setAdminOpen(false);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-red-600 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                     >
-                      <LogOut size={16} />
-                      Sair
+                      <span className="inline-flex items-center gap-2">
+                        <span className="rotate-180 inline-block">↩</span> Sair
+                      </span>
                     </button>
                   </li>
                 </ul>
