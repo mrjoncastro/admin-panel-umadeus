@@ -15,6 +15,7 @@
   --text-header-primary: theme(colors.neutral.100);
   --text-header-secondary: theme(colors.primary.600);
   --accent: theme(colors.primary.600);
+  --accent-900: theme(colors.primary.900);
   --color-secondary: theme(colors.neutral.900);
   --font-body: var(--font-geist);
   --font-heading: var(--font-geist);
@@ -35,6 +36,7 @@ html.dark {
   --text-header-primary: theme(colors.neutral.200);
   --text-header-secondary: theme(colors.neutral.300);
   --accent: theme(colors.primary.600);
+  --accent-900: theme(colors.primary.900);
   --color-secondary: theme(colors.neutral.200);
 }
 
@@ -133,7 +135,7 @@ p {
 }
 
 .btn-primary {
-  @apply bg-[var(--accent)] text-white hover:bg-[var(--primary-700)];
+  @apply bg-[var(--accent)] text-white hover:bg-[var(--accent-900)];
 }
 
 .btn-secondary {
