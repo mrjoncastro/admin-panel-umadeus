@@ -96,6 +96,14 @@ Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utiliza
 
 2. Utilize as variáveis `PB_ADMIN_EMAIL` e `PB_ADMIN_PASSWORD` para autenticar a aplicação.
 
+## Perfis de Acesso
+
+O sistema possui três níveis de usuário:
+
+- **Coordenador** – acesso total ao painel administrativo.
+- **Lider** – acesso restrito às inscrições e pedidos do seu campo.
+- **Usuário** – cliente final que realiza compras e visualiza a área do cliente em `/loja/cliente`.
+
 ## Blog e CMS
 
 Os arquivos de conteúdo ficam dentro da pasta `posts/` na raiz do projeto. Cada

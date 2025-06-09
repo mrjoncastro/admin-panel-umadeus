@@ -1,9 +1,11 @@
 "use client";
 
-import { useAuthContext } from "@/lib/context/AuthContext";
+import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
 
 export default function AreaCliente() {
-  const { user } = useAuthContext();
+  const { user, authChecked } = useAuthGuard(["usuario"]);
+
+  if (!authChecked) return null;
 
   const pedidos = [
     {
