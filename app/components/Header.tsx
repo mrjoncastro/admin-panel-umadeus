@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, LogOut } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image"; // se quiser exibir logo
+import Image from "next/image";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { useAppConfig } from "@/lib/context/AppConfigContext";
 
@@ -21,7 +21,7 @@ const baseLinks = [
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
-  const { user, isLoggedIn } = useAuthContext();
+  const { user, isLoggedIn, logout } = useAuthContext();
   const { config } = useAppConfig();
 
   const role: UserRole = useMemo(() => {
@@ -60,6 +60,14 @@ export default function Header() {
     () => user?.nome?.split(" ")[0] ?? "",
     [user?.nome]
   );
+
+  // Função de logout (contexto)
+  function handleLogout() {
+    logout?.(); // pode ser logout(), useAuthLogout(), etc.
+    setAdminOpen(false);
+    setOpen(false);
+    window.location.href = "/"; // Redireciona para home
+  }
 
   return (
     <header className="bg-animated backdrop-blur-md text-[var(--text-header-primary)] shadow-md sticky top-0 z-50 gradient-x px-6 py-4 border-b border-platinum/20 fixed top-0 inset-x-0 z-50">
@@ -123,6 +131,15 @@ export default function Header() {
                       </Link>
                     </li>
                   ))}
+                  <li>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 text-red-600"
+                    >
+                      <LogOut size={16} />
+                      Sair
+                    </button>
+                  </li>
                 </ul>
               )}
             </div>
@@ -166,6 +183,13 @@ export default function Header() {
                   {link.label}
                 </Link>
               ))}
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 text-red-600 mt-2"
+              >
+                <LogOut size={16} />
+                Sair
+              </button>
             </>
           )}
 

@@ -192,7 +192,7 @@ export default function AdminProdutosPage() {
                   </td>
                 </tr>
               ))
-            }
+            )}
           </tbody>
         </table>
       </div>
