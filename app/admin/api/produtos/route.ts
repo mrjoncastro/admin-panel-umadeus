@@ -7,6 +7,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
   const { pb, user } = auth;
+  console.log("PocketBase host:", (pb as any).baseUrl || (pb as any).client?.baseUrl);
   try {
     const produtos = await pb.collection("produtos").getFullList({
       sort: "-created",
@@ -25,6 +26,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
   const { pb, user } = auth;
+  console.log("PocketBase host:", (pb as any).baseUrl || (pb as any).client?.baseUrl);
   try {
     const formData = await req.formData();
     formData.set("user_org", user.id);

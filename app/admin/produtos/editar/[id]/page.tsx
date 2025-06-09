@@ -25,13 +25,36 @@ export default function EditarProdutoPage() {
   }, [isLoggedIn, user, router]);
 
   useEffect(() => {
-    fetch("/admin/api/categorias")
-      .then((r) => r.json())
-      .then(setCategorias)
-      .catch(() => {});
-    fetch(`/admin/api/produtos/${id}`)
+    if (!isLoggedIn || !user || user.role !== "coordenador") return;
+    const token = localStorage.getItem("pb_token");
+    const rawUser = localStorage.getItem("pb_user");
+    fetch("/admin/api/categorias", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-PB-User": rawUser ?? "",
+      },
+    })
       .then((r) => r.json())
       .then((data) => {
+        setCategorias(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {});
+    fetch(`/admin/api/produtos/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-PB-User": rawUser ?? "",
+        },
+      })
+      .then(async (r) => {
+        if (r.status === 401) {
+          router.replace("/admin/login");
+          return null;
+        }
+        return r.json();
+      })
+      .then((data) => {
+        if (!data) return;
         setInitial({
           nome: data.nome,
           preco: data.preco,
@@ -45,7 +68,7 @@ export default function EditarProdutoPage() {
         });
       })
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, isLoggedIn, user, router]);
 
   if (loading || !initial) {
     return <p className="p-4">Carregando...</p>;
@@ -55,7 +78,16 @@ export default function EditarProdutoPage() {
     e.preventDefault();
     const formElement = e.currentTarget as HTMLFormElement;
     const formData = new FormData(formElement);
-    const res = await fetch(`/admin/api/produtos/${id}`, { method: "PUT", body: formData });
+    const token = localStorage.getItem("pb_token");
+    const rawUser = localStorage.getItem("pb_user");
+    const res = await fetch(`/admin/api/produtos/${id}`, {
+      method: "PUT",
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-PB-User": rawUser ?? "",
+      },
+    });
     if (res.ok) {
       router.push("/admin/produtos");
     }
