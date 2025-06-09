@@ -36,12 +36,14 @@ export function ModalProduto<T extends Record<string, unknown>>({
   }, [open]);
 
   useEffect(() => {
-    fetch("/admin/api/categorias")
+    fetch("/api/collections/categorias/records")
       .then((r) => r.json())
-      .then((data) =>
-        setCategorias(Array.isArray(data) ? data : data.items ?? [])
-      )
-      .catch(() => {});
+      .then((data) => {
+        console.log("Resposta da API categorias:", data);
+        if (Array.isArray(data.items)) setCategorias(data.items);
+        else setCategorias([]);
+      })
+      .catch(() => setCategorias([]));
   }, []);
 
   function handleSubmit(e: React.FormEvent) {
