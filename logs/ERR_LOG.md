@@ -42,3 +42,5 @@
 ## [2025-06-09] Cabeçalhos de autenticação ausentes geravam 401 nas rotas de produtos; tokens foram adicionados em todas as páginas do admin - dev - 668eeb0
 ## [2025-06-09] Recuperação de token em cada requisição nas páginas de categorias e edição de produto para evitar 401 - dev - e512eac
 ## [2025-06-09] Adicionada página e API de eventos com cabeçalhos de autenticação para evitar 401 - dev - a2d7bd0
+
+## [2025-06-10] Ajustado uso de getURL nos produtos e categorias para impedir erro na loja - dev - 2b29c07

@@ -43,7 +43,7 @@ export default async function ProdutosPage() {
                 <Link href={`/loja/produtos/${p.slug}`}
                   className="block">
                   <Image
-                    src={pb.files.getUrl(p, p.imagens[0])}
+                    src={pb.files.getURL(p, p.imagens[0])}
                     alt={p.nome}
                     width={400}
                     height={400}

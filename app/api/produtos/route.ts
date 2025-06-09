@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     // Monta URLs completas das imagens
     const comUrls = ativos.map((p) => ({
       ...p,
-      imagens: (p.imagens || []).map((img) => pb.files.getUrl(p, img)),
+      imagens: (p.imagens || []).map((img) => pb.files.getURL(p, img)),
     }));
     console.log("[/api/produtos] Produtos prontos para resposta:", comUrls);
 
