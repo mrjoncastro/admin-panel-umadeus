@@ -19,6 +19,12 @@ export interface ModalProdutoProps<T extends Record<string, unknown>> {
   };
 }
 
+interface Categoria {
+  id: string;
+  nome: string;
+  slug: string;
+}
+
 export function ModalProduto<T extends Record<string, unknown>>({
   open,
   onClose,
@@ -26,7 +32,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
   initial = {},
 }: ModalProdutoProps<T>) {
   const ref = useRef<HTMLDialogElement>(null);
-  const [categorias, setCategorias] = useState<{ id: string; nome: string }[]>([]);
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
 
   useEffect(() => {
     if (open) ref.current?.showModal();
@@ -36,7 +42,9 @@ export function ModalProduto<T extends Record<string, unknown>>({
   useEffect(() => {
     fetch("/admin/api/categorias")
       .then((r) => r.json())
-      .then(setCategorias)
+      .then((data) => {
+        if (Array.isArray(data)) setCategorias(data);
+      })
       .catch(() => {});
   }, []);
 
