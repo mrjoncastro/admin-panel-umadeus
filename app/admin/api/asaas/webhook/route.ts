@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createPocketBase } from "@/lib/pocketbase";
-import { createHmac } from "crypto";
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
@@ -28,7 +27,7 @@ export async function POST(req: NextRequest) {
   let body;
   try {
     body = JSON.parse(rawBody);
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "JSON inválido" }, { status: 400 });
   }
 
@@ -82,7 +81,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const pedido = await pb.collection("pedidos").getOne(pedidoId, {
+  await pb.collection("pedidos").getOne(pedidoId, {
     expand: "id_inscricao",
   });
 

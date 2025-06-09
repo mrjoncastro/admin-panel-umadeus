@@ -109,28 +109,22 @@ export default function EditarProdutoPage() {
     const formElement = e.currentTarget as HTMLFormElement;
     const formData = new FormData(formElement);
 
-    async function handleSubmit(e: React.FormEvent) {
-      e.preventDefault();
-      const formElement = e.currentTarget as HTMLFormElement;
-      const formData = new FormData(formElement);
+    // Tratamento específico para o campo de imagens
+    const imagensInput = formElement.querySelector<HTMLInputElement>(
+      "input[name='imagens']"
+    );
+    const arquivos = imagensInput?.files;
+    formData.delete("imagens");
+    if (arquivos && arquivos.length > 0) {
+      Array.from(arquivos).forEach((file) => {
+        formData.append("imagens", file);
+      });
+    }
 
-      // Tratamento específico para o campo de imagens
-      const imagensInput = formElement.querySelector<HTMLInputElement>(
-        "input[name='imagens']"
-      );
-      const arquivos = imagensInput?.files;
-      formData.delete("imagens");
-      if (arquivos && arquivos.length > 0) {
-        Array.from(arquivos).forEach((file) => {
-          formData.append("imagens", file);
-        });
-      }
-
-      // Trata o campo de cores: insere como string separada por vírgula
-      formData.delete("cores");
-      if (cores.length > 0) {
-        formData.append("cores", cores.join(","));
-      }
+    // Trata o campo de cores: insere como string separada por vírgula
+    formData.delete("cores");
+    if (cores.length > 0) {
+      formData.append("cores", cores.join(","));
     }
     // Normaliza checkboxes e arrays
     const ativoChecked = formElement.querySelector<HTMLInputElement>(
