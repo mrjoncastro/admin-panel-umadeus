@@ -24,7 +24,6 @@ export default function EditarProdutoPage() {
     return { token, user } as const;
   }, [ctxUser]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
-  const [categoriaModalOpen, setCategoriaModalOpen] = useState(false);
   const [selectedCategoria, setSelectedCategoria] = useState<string>("");
   const [initial, setInitial] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
@@ -207,31 +206,6 @@ export default function EditarProdutoPage() {
     setCores(cores.filter((c) => c !== hex));
   }
 
-  async function handleNovaCategoria(form: { nome: string }) {
-    const { token, user } = getAuth();
-    if (!isLoggedIn || !token || !user) return;
-    try {
-      const res = await fetch("/admin/api/categorias", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          "X-PB-User": JSON.stringify(user),
-        },
-        body: JSON.stringify(form),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setCategorias((prev) => [...prev, data]);
-        setSelectedCategoria(data.id);
-      } else {
-        console.error(data);
-      }
-    } finally {
-      setCategoriaModalOpen(false);
-    }
-  }
-
   return (
     <>
       <main className="max-w-xl mx-auto px-4 py-8">
@@ -331,13 +305,6 @@ export default function EditarProdutoPage() {
                   </option>
                 ))}
               </select>
-              <button
-                type="button"
-                className="btn btn-secondary whitespace-nowrap"
-                onClick={() => setCategoriaModalOpen(true)}
-              >
-                + Categoria
-              </button>
             </div>
           </div>
           <input
