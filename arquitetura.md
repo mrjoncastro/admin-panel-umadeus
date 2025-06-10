@@ -10,7 +10,6 @@ O projeto é dividido logicamente em quatro áreas:
 
 | Área        | Função Principal                         | Acesso            | Público-alvo            |
 |-------------|-------------------------------------------|-------------------|-------------------------|
-| **Portal**  | Página institucional do cliente           | Público           | Membros, visitantes, geral |
 | **Loja**    | Página pública para venda e inscrições    | Público           | Visitantes e inscritos  |
 | **Admin**   | Painel de gestão e controle de dados      | Privado (auth)    | Coordenadores e líderes |
 | **Blog**    | Página pública para postagens de conteúdo | Público           | Visitantes e inscritos  |
@@ -54,16 +53,9 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 │   ├── produtos/          # Listagem e detalhes dos produtos
 │   ├── layout.tsx         # Layout público da loja
 │   └── page.tsx           # Home da loja
-├── portal/                # Portal institucional do cliente (White Label)
-│   ├── components/        # Componentes reutilizáveis (Hero, Depoimentos, etc)
-│   ├── eventos/           # Listagem e detalhes dos eventos abertos ao público
-│   ├── loja/              # Link ou vitrine de produtos próprios do campo
-│   ├── sobre/             # Página "Sobre a igreja/campo"
-│   ├── contato/           # Página de contato institucional
-│   ├── layout.tsx         # Layout visual do portal (personalizado por cliente)
-│   └── page.tsx           # Home institucional
+├── 
 ├── layout.tsx             # Layout raiz compartilhado
-├── page.tsx               # Portal do cliente (institucional)
+├── page.tsx               # Loja do cliente
 ├── globals.css            # CSS global compartilhado
 /posts/                    # Conteúdo do blog em arquivos .mdx
 /scripts/                  # Scripts auxiliares
