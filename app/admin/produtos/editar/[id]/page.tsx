@@ -52,7 +52,6 @@ export default function EditarProdutoPage() {
         setCategorias(Array.isArray(data) ? data : []);
       })
       .catch((err) => {
-        console.error("Erro ao carregar categorias:", err);
         setCategorias([]);
       });
     fetch(`/admin/api/produtos/${id}`, {
@@ -78,10 +77,16 @@ export default function EditarProdutoPage() {
         const gens = Array.isArray(data.generos)
           ? data.generos
           : typeof data.generos === "string"
-          ? data.generos.split(",").map((s: string) => s.trim())
+          ? [data.generos.trim()]
           : [];
-        setTamanhos(tams);
-        setGeneros(gens);
+
+        setTamanhos(
+          tams.map((t: string) => t.trim().toUpperCase()).filter(Boolean)
+        );
+        setGeneros(
+          gens.map((g: string) => g.trim().toLowerCase()).filter(Boolean)
+        );
+
         setInitial({
           nome: data.nome,
           preco: data.preco,
@@ -317,49 +322,67 @@ export default function EditarProdutoPage() {
           <div>
             <p className="text-sm font-semibold mb-1">Tamanhos</p>
             <div className="flex gap-2 flex-wrap">
-              {["PP", "P", "M", "G", "GG"].map((t) => (
-                <label key={t} className="flex items-center gap-1 text-sm">
-                  <input
-                    type="checkbox"
-                    name="tamanhos"
-                    value={t}
-                    checked={tamanhos.includes(t)}
-                    onChange={(e) =>
-                      setTamanhos((prev) =>
-                        e.target.checked
-                          ? [...prev, t]
-                          : prev.filter((v) => v !== t)
-                      )
-                    }
-                  />
-                  {t}
-                </label>
-              ))}
+              {["PP", "P", "M", "G", "GG"].map((t) => {
+                const value = t.toUpperCase();
+                return (
+                  <label
+                    key={value}
+                    className="flex items-center gap-1 text-sm"
+                  >
+                    <input
+                      type="checkbox"
+                      name="tamanhos"
+                      value={value}
+                      checked={tamanhos
+                        .map((x) => x.toUpperCase())
+                        .includes(value)}
+                      onChange={(e) =>
+                        setTamanhos((prev) =>
+                          e.target.checked
+                            ? [...prev, value]
+                            : prev.filter((v) => v.toUpperCase() !== value)
+                        )
+                      }
+                    />
+                    {value}
+                  </label>
+                );
+              })}
             </div>
           </div>
+
           <div>
             <p className="text-sm font-semibold mb-1">Gêneros</p>
             <div className="flex gap-2 flex-wrap">
-              {["masculino", "feminino"].map((g) => (
-                <label key={g} className="flex items-center gap-1 text-sm">
-                  <input
-                    type="checkbox"
-                    name="generos"
-                    value={g}
-                    checked={generos.includes(g)}
-                    onChange={(e) =>
-                      setGeneros((prev) =>
-                        e.target.checked
-                          ? [...prev, g]
-                          : prev.filter((v) => v !== g)
-                      )
-                    }
-                  />
-                  {g.charAt(0).toUpperCase() + g.slice(1)}
-                </label>
-              ))}
+              {["masculino", "feminino"].map((g) => {
+                const value = g.toLowerCase();
+                return (
+                  <label
+                    key={value}
+                    className="flex items-center gap-1 text-sm"
+                  >
+                    <input
+                      type="checkbox"
+                      name="generos"
+                      value={value}
+                      checked={generos
+                        .map((x) => x.toLowerCase())
+                        .includes(value)}
+                      onChange={(e) =>
+                        setGeneros((prev) =>
+                          e.target.checked
+                            ? [...prev, value]
+                            : prev.filter((v) => v.toLowerCase() !== value)
+                        )
+                      }
+                    />
+                    {g.charAt(0).toUpperCase() + g.slice(1)}
+                  </label>
+                );
+              })}
             </div>
           </div>
+
           <textarea
             className="input-base"
             name="descricao"
