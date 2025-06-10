@@ -51,3 +51,4 @@
 ## [2025-06-10] Atualizado arquitetura.md incluindo seções de carrinho, categorias, checkout, cliente e login na pasta `/app/loja`.
 ## [2025-06-10] Adicionados testes de cadastro/checkout e documentação do fluxo no README.
 ## [2025-06-10] README traduzido e introducao atualizada; adicionada nota de personalizacao.
+## [2025-06-10] Padronizada sintaxe theme('colors.*') em globals.css e stories para compatibilidade com Tailwind.
