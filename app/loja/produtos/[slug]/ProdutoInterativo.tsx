@@ -1,24 +1,10 @@
 "use client";
-
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import AuthModal from "@/app/components/AuthModal";
 import AddToCartButton from "./AddToCartButton";
-
-interface Produto {
-  id: string;
-  nome: string;
-  preco: number;
-  imagens: string[] | Record<string, string[]>;
-  slug: string;
-  descricao?: string;
-  cores?: string | string[];
-  tamanhos?: string | string[];
-  generos?: string | string[];
-  checkout_url?: string;
-}
 
 // Componente para seleção de gênero e tamanho (reutilizável)
 function DetalhesSelecao({
@@ -36,7 +22,7 @@ function DetalhesSelecao({
   tamanho: string;
   setTamanho: (t: string) => void;
 }) {
-  const ALL_GENEROS = ["masculino", "feminino"];
+  const ALL_GENEROS = ["Masculino", "Feminino"];
   const indisponivel = ALL_GENEROS.filter((g) => !generos.includes(g));
 
   return (
@@ -61,7 +47,7 @@ function DetalhesSelecao({
               ${!disponivel ? "opacity-50 cursor-not-allowed" : ""}
               focus-visible:ring-2 focus-visible:ring-[var(--accent-900)]`}
               >
-                {disponivel ? g.charAt(0).toUpperCase() + g.slice(1) : "X"}
+                {g}
               </button>
             );
           })}
@@ -70,7 +56,7 @@ function DetalhesSelecao({
           <p className="text-xs text-red-600 mt-1">
             {indisponivel
               .map((g) =>
-                g === "masculino" ? "Modelo masculino" : "Modelo feminino"
+                g === "Masculino" ? "Modelo masculino" : "Modelo Feminino"
               )
               .join(" e ")}{" "}
             indisponível
@@ -110,7 +96,6 @@ function DetalhesSelecao({
   );
 }
 
-// Componente Client para interatividade (gênero, tamanho, galeria)
 export default function ProdutoInterativo({
   imagens,
   generos,
@@ -128,16 +113,24 @@ export default function ProdutoInterativo({
   nome: string;
   preco: number;
   descricao?: string;
-  produto: Produto;
+  produto: any;
   isLoggedIn: boolean;
   onRequireAuth: () => void;
 }) {
-  const [genero, setGenero] = useState(generos[0]);
+  // Padronização dos gêneros:
+  const generosNorm = generos.map((g) =>
+    g.trim().toLowerCase() === "masculino"
+      ? "Masculino"
+      : g.trim().toLowerCase() === "feminino"
+      ? "Feminino"
+      : g
+  );
+  const [genero, setGenero] = useState(generosNorm[0]);
   const [tamanho, setTamanho] = useState(tamanhos[0]);
   const coresList = Array.isArray(produto.cores)
     ? produto.cores
     : typeof produto.cores === "string"
-    ? produto.cores.split(",").map((c) => c.trim())
+    ? produto.cores.split(",").map((c: string) => c.trim())
     : [];
   const [cor, setCor] = useState(coresList[0] || "");
   const [indexImg, setIndexImg] = useState(0);
@@ -145,7 +138,7 @@ export default function ProdutoInterativo({
   const [showAuth, setShowAuth] = useState(false);
   const router = useRouter();
 
-  const imgs = imagens[genero] || imagens[generos[0]];
+  const imgs = imagens[genero] || imagens[generosNorm[0]];
 
   useEffect(() => {
     setIndexImg(0);
@@ -173,9 +166,9 @@ export default function ProdutoInterativo({
         <Image
           src={imgs[indexImg]}
           alt={nome}
-          width={600}
-          height={600}
-          className="w-full rounded-xl border border-[var(--accent-900)] shadow-lg transition-all duration-300 bg-[var(--background)]"
+          width={480}
+          height={480}
+          className="w-full max-w-[480px] mx-auto rounded-xl border border-[var(--accent-900)] shadow-lg transition-all duration-300 bg-[var(--background)]"
           priority
         />
         <div className="flex gap-3 mt-4">
@@ -199,7 +192,7 @@ export default function ProdutoInterativo({
         {/* Tamanhos e gênero no mobile */}
         <div className="block md:hidden mt-6">
           <DetalhesSelecao
-            generos={generos}
+            generos={generosNorm}
             tamanhos={tamanhos}
             genero={genero}
             setGenero={setGenero}
@@ -238,7 +231,7 @@ export default function ProdutoInterativo({
         </p>
         <div className="hidden md:block">
           <DetalhesSelecao
-            generos={generos}
+            generos={generosNorm}
             tamanhos={tamanhos}
             genero={genero}
             setGenero={setGenero}
@@ -266,33 +259,39 @@ export default function ProdutoInterativo({
             </div>
           )}
         </div>
-        <a
-          href={produto.checkout_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => {
-            if (!isLoggedIn) {
-              onRequireAuth();
-            } else {
-              e.preventDefault();
-              router.push("/loja/checkout");
-            }
-          }}
-          className="block w-full btn btn-primary"
-        >
-          Quero essa pra brilhar no Congresso!
-        </a>
-        <AddToCartButton
-          produto={{
-            ...produto,
-            imagens: Array.isArray(produto.imagens)
-              ? produto.imagens
-              : imagens[genero] || [],
-            generos: [genero],
-            tamanhos: [tamanho],
-            cores: cor ? [cor] : [],
-          }}
-        />
+        {/* Botões em linha */}
+        <div className="flex flex-col md:flex-row gap-3 mt-4">
+          <a
+            href={produto.checkout_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => {
+              if (!isLoggedIn) {
+                onRequireAuth();
+              } else {
+                e.preventDefault();
+                router.push("/loja/checkout");
+              }
+            }}
+            className="w-full md:w-auto btn btn-primary text-center"
+          >
+            Quero essa pra brilhar no Congresso!
+          </a>
+          <div className="w-full md:w-auto">
+            <AddToCartButton
+              produto={{
+                ...produto,
+                imagens: Array.isArray(produto.imagens)
+                  ? produto.imagens
+                  : imagens[genero] || [],
+                generos: [genero],
+                tamanhos: [tamanho],
+                cores: cor ? [cor] : [],
+              }}
+            />
+          </div>
+        </div>
+        {/* Resto dos detalhes */}
         {showAuth && (
           <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
         )}
@@ -305,8 +304,7 @@ export default function ProdutoInterativo({
           <div>
             <h2 className="font-semibold text-base">Envio e devolução</h2>
             <p>
-              Entrega rápida em todo o Brasil. Trocas grátis em até 7 dias após
-              o recebimento.
+              Entrega rápida em todo o Brasil. Trocas grátis em até 7 dias após o recebimento.
             </p>
           </div>
           <div className="divide-y divide-[var(--accent-900)]/10 mt-4">
