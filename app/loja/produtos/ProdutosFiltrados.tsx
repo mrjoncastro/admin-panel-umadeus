@@ -41,7 +41,7 @@ export default function ProdutosFiltrados({ produtos }: { produtos: Produto[] })
       res = [...res].sort((a, b) => b.preco - a.preco);
     }
     return res;
-  }, [busca, faixasSelecionadas, ordem, produtos]);
+  }, [busca, faixasSelecionadas, ordem, produtos, faixasPreco]);
 
   function toggleFaixa(label: string) {
     setFaixasSelecionadas((prev) =>
