@@ -1,103 +1,136 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import AuthModal from "@/app/components/AuthModal";
+import Link from "next/link";
+import { useMemo, useState } from "react";
 
 interface Produto {
   id: string;
   nome: string;
   preco: number;
   imagens: string[];
-  checkout_url: string;
-  tamanhos?: string[];
-  generos?: string[];
+  slug: string;
 }
 
-const TAMANHOS = ["PP", "P", "M", "G", "GG"];
-const GENEROS = ["masculino", "feminino"];
-
 export default function ProdutosFiltrados({ produtos }: { produtos: Produto[] }) {
-  const [tamanho, setTamanho] = useState("");
-  const [genero, setGenero] = useState("");
-  const [showAuth, setShowAuth] = useState(false);
-  const { isLoggedIn } = useAuthContext();
+  const [busca, setBusca] = useState("");
+  const [faixasSelecionadas, setFaixasSelecionadas] = useState<string[]>([]);
+  const [ordem, setOrdem] = useState("recentes");
 
-  const filtrados = produtos.filter((p) => {
-    const matchTamanho = tamanho === "" || (p.tamanhos || []).includes(tamanho);
-    const matchGenero = genero === "" || (p.generos || []).includes(genero);
-    return matchTamanho && matchGenero;
-  });
+  const faixasPreco = [
+    { label: "Até R$ 50", min: 0, max: 50 },
+    { label: "R$ 50 a R$ 100", min: 50, max: 100 },
+    { label: "Acima de R$ 100", min: 100, max: Infinity },
+  ];
+
+  const filtrados = useMemo(() => {
+    let res = produtos.filter((p) =>
+      p.nome.toLowerCase().includes(busca.toLowerCase())
+    );
+    if (faixasSelecionadas.length > 0) {
+      res = res.filter((p) =>
+        faixasSelecionadas.some((label) => {
+          const faixa = faixasPreco.find((f) => f.label === label);
+          return faixa ? p.preco >= faixa.min && p.preco <= faixa.max : true;
+        })
+      );
+    }
+    if (ordem === "menor-preco") {
+      res = [...res].sort((a, b) => a.preco - b.preco);
+    } else if (ordem === "maior-preco") {
+      res = [...res].sort((a, b) => b.preco - a.preco);
+    }
+    return res;
+  }, [busca, faixasSelecionadas, ordem, produtos]);
+
+  function toggleFaixa(label: string) {
+    setFaixasSelecionadas((prev) =>
+      prev.includes(label)
+        ? prev.filter((l) => l !== label)
+        : [...prev, label]
+    );
+  }
 
   return (
-    <>
-      <div className="flex gap-4 mb-6">
-        <select
-          value={tamanho}
-          onChange={(e) => setTamanho(e.target.value)}
-          className="border rounded px-3 py-1 text-sm"
-        >
-          <option value="">Todos os tamanhos</option>
-          {TAMANHOS.map((t) => (
-            <option key={t} value={t}>
-              {t}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={genero}
-          onChange={(e) => setGenero(e.target.value)}
-          className="border rounded px-3 py-1 text-sm"
-        >
-          <option value="">Todos os gêneros</option>
-          {GENEROS.map((g) => (
-            <option key={g} value={g}>
-              {g.charAt(0).toUpperCase() + g.slice(1)}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        {filtrados.map((p) => (
-          <div key={p.id} className="bg-white rounded shadow p-2">
-            <div className="relative">
-              <Image
-                src={p.imagens[0]}
-                alt={p.nome}
-                width={400}
-                height={400}
-                className="w-full h-auto object-cover rounded"
-              />
-            </div>
-
-            <h2 className="text-sm font-medium text-black mt-1 line-clamp-2">
-              {p.nome}
-            </h2>
-            <p className="text-base font-semibold text-black_bean mt-1">
-              R$ {p.preco.toFixed(2).replace(".", ",")}
-            </p>
-
-            <a
-              href={p.checkout_url}
-              onClick={(e) => {
-                if (!isLoggedIn) {
-                  e.preventDefault();
-                  setShowAuth(true);
-                }
-              }}
-              className="block mt-3 bg-black_bean text-white text-center py-2 rounded text-sm font-bold hover:bg-black_bean/90"
-            >
-              Comprar agora
-            </a>
+    <div className="flex gap-8">
+      <aside className="hidden md:block w-64 shrink-0 rounded-2xl bg-white/80 shadow-lg p-6 h-fit border border-[var(--accent-900)]/10">
+        <h2 className="text-lg font-semibold mb-4">Filtrar</h2>
+        <div className="mb-6">
+          <label className="block mb-2 text-sm">Buscar produto</label>
+          <input
+            type="text"
+            placeholder="Digite o nome"
+            className="input-base"
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+          />
+        </div>
+        <div className="mb-6">
+          <label className="block mb-2 text-sm">Preço</label>
+          <div className="space-y-2">
+            {faixasPreco.map((faixa) => (
+              <div key={faixa.label} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  className="accent-[var(--accent)]"
+                  checked={faixasSelecionadas.includes(faixa.label)}
+                  onChange={() => toggleFaixa(faixa.label)}
+                />
+                <span className="text-sm">{faixa.label}</span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      {showAuth && (
-        <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
-      )}
-    </>
+        </div>
+        <div>
+          <label className="block mb-2 text-sm">Ordenar por</label>
+          <select
+            className="input-base"
+            value={ordem}
+            onChange={(e) => setOrdem(e.target.value)}
+          >
+            <option value="recentes">Mais recentes</option>
+            <option value="menor-preco">Menor preço</option>
+            <option value="maior-preco">Maior preço</option>
+          </select>
+        </div>
+      </aside>
+
+      <section className="flex-1">
+        <div className="md:hidden mb-4 flex gap-2">
+          <button className="btn btn-secondary">Filtrar</button>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+          {filtrados.map((p) => (
+            <div
+              key={p.id}
+              className="bg-white rounded-2xl shadow-lg border border-[var(--accent-900)]/10 flex flex-col items-center p-4 transition hover:shadow-xl"
+            >
+              <div className="w-full aspect-square flex items-center justify-center overflow-hidden rounded-xl mb-2 bg-neutral-100 border border-[var(--accent)]/5">
+                <Image
+                  src={p.imagens[0]}
+                  alt={p.nome}
+                  width={300}
+                  height={300}
+                  className="object-cover w-[90%] h-[90%] transition group-hover:scale-105"
+                  style={{ objectPosition: "center" }}
+                />
+              </div>
+              <h2 className="text-base font-semibold text-[var(--text-primary)] mb-1 line-clamp-2 text-center">
+                {p.nome}
+              </h2>
+              <p className="text-base font-bold text-[var(--accent-900)] mb-2">
+                R$ {p.preco.toFixed(2).replace(".", ",")}
+              </p>
+              <Link
+                href={`/loja/produtos/${p.slug}`}
+                className="btn btn-primary w-full text-center mt-auto"
+              >
+                Ver detalhes
+              </Link>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
   );
 }

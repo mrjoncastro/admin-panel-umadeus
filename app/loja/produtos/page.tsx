@@ -6,9 +6,7 @@ interface Produto {
   nome: string;
   preco: number;
   imagens: string[];
-  checkout_url: string;
-  tamanhos?: string[];
-  generos?: string[];
+  slug: string;
 }
 
 export default async function ProdutosPage() {
