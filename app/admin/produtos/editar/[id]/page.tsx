@@ -69,14 +69,24 @@ export default function EditarProdutoPage() {
       })
       .then((data) => {
         if (!data) return;
+        const tams = Array.isArray(data.tamanhos)
+          ? data.tamanhos
+          : typeof data.tamanhos === "string"
+          ? data.tamanhos.split(",").map((s: string) => s.trim())
+          : [];
+        const gens = Array.isArray(data.generos)
+          ? data.generos
+          : typeof data.generos === "string"
+          ? data.generos.split(",").map((s: string) => s.trim())
+          : [];
         setInitial({
           nome: data.nome,
           preco: data.preco,
           descricao: data.descricao,
           detalhes: data.detalhes,
-          checkoutUrl: data.checkout_url,
-          tamanhos: data.tamanhos,
-          generos: data.generos,
+          checkout_url: data.checkout_url,
+          tamanhos: tams,
+          generos: gens,
           categoria: data.categoria,
           ativo: data.ativo,
           cores:
@@ -84,7 +94,7 @@ export default function EditarProdutoPage() {
               ? data.cores
               : Array.isArray(data.cores)
               ? data.cores.join(", ")
-              : "", // trata string[] ou string
+              : "",
         });
         setSelectedCategoria(
           Array.isArray(data.categoria)
@@ -243,9 +253,9 @@ export default function EditarProdutoPage() {
           />
           <input
             className="input-base"
-            name="checkoutUrl"
+            name="checkout_url"
             type="url"
-            defaultValue={String(initial.checkoutUrl || "")}
+            defaultValue={String(initial.checkout_url || "")}
           />
 
           {/* Campo de cores HEX separadas por vírgula */}

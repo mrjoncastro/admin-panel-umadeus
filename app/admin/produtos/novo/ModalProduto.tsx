@@ -16,7 +16,7 @@ export interface ModalProdutoProps<T extends Record<string, unknown>> {
     generos?: string[];
     descricao?: string;
     detalhes?: string;
-    checkoutUrl?: string;
+    checkout_url?: string;
     categoria?: string;
     ativo?: boolean;
     cores?: string | string[];
@@ -259,10 +259,10 @@ export function ModalProduto<T extends Record<string, unknown>>({
             <label className="label-base">Checkout URL</label>
             <input
               className="input-base"
-              name="checkoutUrl"
+              name="checkout_url"
               placeholder="Checkout URL"
               type="url"
-              defaultValue={initial.checkoutUrl || ""}
+              defaultValue={initial.checkout_url || ""}
             />
           </div>
         </div>
