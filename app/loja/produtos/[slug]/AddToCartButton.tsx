@@ -1,6 +1,7 @@
 "use client";
 import { useCart } from "@/lib/context/CartContext";
 import type { Produto } from "@/types";
+import { ShoppingCart } from "lucide-react";
 
 export default function AddToCartButton({ produto }: { produto: Produto }) {
   const { addItem } = useCart();
@@ -9,8 +10,7 @@ export default function AddToCartButton({ produto }: { produto: Produto }) {
       onClick={() => addItem(produto)}
       className="block w-full btn btn-primary"
     >
-      Adicionar ao carrinho
+      <ShoppingCart size={20} />
     </button>
   );
 }
-

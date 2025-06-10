@@ -217,37 +217,6 @@ export default function Home() {
             >
               {content.bannerButton}
             </Link>
-
-            {produtos.length > 0 && (
-              <section className="mt-12">
-                <h3 className="text-2xl font-bold mb-6 text-[var(--text-primary)]">
-                  Novidades
-                </h3>
-                <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-                  {produtos.map((p) => (
-                    <div
-                      key={p.id}
-                      className="card text-center p-4 bg-[var(--background)]"
-                    >
-                      <Image
-                        src={p.imagem}
-                        alt={p.nome}
-                        width={300}
-                        height={300}
-                        className="w-full h-48 object-cover rounded mb-2"
-                      />
-                      <h4 className="font-semibold">{p.nome}</h4>
-                      <p className="font-bold">
-                        {Number(p.preco).toLocaleString("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        })}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
           </>
         )}
       </main>
