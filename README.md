@@ -1,39 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Este repositório reúne portal institucional, blog, loja virtual e painel administrativo em uma única aplicação Next.js.
+Visitantes navegam pelo portal e pelo blog, realizam compras na loja e os coordenadores gerenciam tudo pelo admin.
+Consulte [arquitetura.md](arquitetura.md) para entender a divisão de pastas e responsabilidades.
+Para personalizar a interface utilize as orientações de [docs/design-system.md](docs/design-system.md).
 
-## Getting Started
+## Primeiros Passos
 
-First, run the development server:
+Para iniciar o servidor de desenvolvimento execute:
 
 ```bash
 npm run dev
-# or
+# ou
 yarn dev
-# or
+# ou
 pnpm dev
-# or
+# ou
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000) no navegador para visualizar.
+Você pode editar a página inicial em `app/page.tsx` e ver as alterações em tempo real.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Este projeto utiliza [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) para otimizar e carregar a fonte [Geist](https://vercel.com/font).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Saiba Mais
 
-## Learn More
+Para saber mais sobre o Next.js consulte os recursos abaixo:
 
-To learn more about Next.js, take a look at the following resources:
+- [Documentação do Next.js](https://nextjs.org/docs) - funcionalidades e API.
+- [Aprenda Next.js](https://nextjs.org/learn) - tutorial interativo.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Você também pode conferir o [repositório do Next.js no GitHub](https://github.com/vercel/next.js) para colaborar.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deploy na Vercel
 
-## Deploy on Vercel
+A maneira mais simples de publicar a aplicação é utilizar a [Plataforma Vercel](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme), criada pelos desenvolvedores do Next.js.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Consulte a [documentação de deploy do Next.js](https://nextjs.org/docs/app/building-your-application/deploying) para mais detalhes.
 
 ### Domínio próprio na Vercel
 
@@ -47,21 +49,16 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 Execute `npm run lint` para verificar problemas de código. Evite o uso de `any` especificando tipos adequados e sempre inclua todas as dependências utilizadas dentro dos hooks `useEffect`.
 Antes de rodar o lint ou o TypeScript (`tsc`), execute `npm install` para garantir que todas as dependências estejam disponíveis.
 
-## Additional Features
+## Funcionalidades Adicionais
 
-- Interactive notification bell lists pending sign-up names and fields outside
-  the header.
-- Mobile navigation includes a "back to top" button for easier scrolling.
-- Search forms for orders and registrations adapt to the user role and allow
-  busca pelo nome do inscrito.
-- Users can switch between light and dark themes.
-- Toast notifications inform success or error of actions.
-- Minimalist tables and buttons for a consistent look.
-- Dashboard now includes temporal charts showing sign-up and order evolution,
-  along with average order value and revenue per field for coordinators and
-  leaders.
- - Analytics charts support date range filters and allow exporting the data as
-    CSV or XLSX spreadsheets.
+- Sinal de notificações lista inscrições pendentes fora do cabeçalho.
+- A navegação mobile inclui botão "voltar ao topo" para facilitar a rolagem.
+- Formulários de busca de pedidos e inscrições se adaptam ao tipo de usuário, permitindo busca pelo nome do inscrito.
+- Usuários podem alternar entre os temas claro e escuro.
+- Toasts informam sucesso ou erro das ações.
+- Tabelas e botões minimalistas mantêm a aparência consistente.
+- O dashboard traz gráficos temporais de inscrições e pedidos, além de ticket médio e receita por campo para coordenadores e líderes.
+- Os gráficos permitem filtrar por período e exportar os dados em CSV ou XLSX.
 
 ## Design System
 
