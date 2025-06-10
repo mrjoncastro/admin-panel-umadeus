@@ -32,19 +32,19 @@ export default function CartPreview() {
             )}
             <div className="flex-1">
               <p className="font-medium text-xs">{item.nome}</p>
-              <p className="text-xs text-neutral-600 dark:text-neutral-400">
+              <p className="text-xs text-neutral-900 dark:text-neutral-400">
                 x{item.quantidade}
               </p>
             </div>
-            <span className="text-xs font-semibold">
+            <span className="text-xs text-neutral-900 font-semibold">
               R$ {(item.preco * item.quantidade).toFixed(2).replace(".", ",")}
             </span>
           </li>
         ))}
       </ul>
       <div className="flex justify-between items-center pt-2 border-t border-neutral-200 dark:border-neutral-700 mt-2">
-        <span className="font-semibold text-sm">Total:</span>
-        <span className="font-semibold text-sm">
+        <span className="font-semibold text-neutral-900 text-sm">Total:</span>
+        <span className="font-semibold text-neutral-900 text-sm">
           R$ {total.toFixed(2).replace(".", ",")}
         </span>
       </div>

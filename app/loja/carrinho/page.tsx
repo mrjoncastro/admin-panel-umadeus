@@ -59,10 +59,10 @@ export default function CarrinhoPage() {
                 />
               )}
               <div className="flex-1">
-                <p className="font-medium text-base">{item.nome}</p>
+                <p className="font-medium text-accent">{item.nome}</p>
                 <p className="text-xs text-gray-400">Qtd: {item.quantidade}</p>
               </div>
-              <div className="font-semibold text-base">
+              <div className="font-semibold text-accent">
                 {formatCurrency(item.preco * item.quantidade)}
               </div>
               <button
@@ -88,7 +88,7 @@ export default function CarrinhoPage() {
           </button>
           <button
             onClick={handleCheckout}
-            className="py-2 px-8 rounded-xl bg-black text-white font-medium text-base tracking-wide transition hover:bg-neutral-900 active:scale-95"
+            className="py-2 px-8 rounded-xl bg-black text-white font-medium text-accent tracking-wide transition hover:bg-neutral-900 active:scale-95"
           >
             Finalizar compra
           </button>
