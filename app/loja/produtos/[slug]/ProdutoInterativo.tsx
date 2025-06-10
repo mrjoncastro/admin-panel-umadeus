@@ -36,28 +36,46 @@ function DetalhesSelecao({
   tamanho: string;
   setTamanho: (t: string) => void;
 }) {
+  const ALL_GENEROS = ["masculino", "feminino"];
+  const indisponivel = ALL_GENEROS.filter((g) => !generos.includes(g));
+
   return (
     <>
       {/* Gênero */}
       <div className="mb-4">
         <p className="text-sm mb-2 text-[var(--text-primary)]/70">Modelo:</p>
         <div className="flex gap-3">
-          {generos.map((g) => (
-            <button
-              key={g}
-              onClick={() => setGenero(g)}
-              className={`px-4 py-1 rounded-full border font-medium transition-colors duration-200 outline-none
-            ${
-              genero === g
-                ? "bg-[var(--accent)] text-white border-[var(--accent)] shadow"
-                : "bg-transparent text-[var(--text-primary)] border-[var(--accent)]/40 hover:bg-[var(--accent)]/10"
-            }
-            focus-visible:ring-2 focus-visible:ring-[var(--accent-900)]`}
-            >
-              {g.charAt(0).toUpperCase() + g.slice(1)}
-            </button>
-          ))}
+          {ALL_GENEROS.map((g) => {
+            const disponivel = generos.includes(g);
+            return (
+              <button
+                key={g}
+                onClick={() => disponivel && setGenero(g)}
+                disabled={!disponivel}
+                className={`px-4 py-1 rounded-full border font-medium transition-colors duration-200 outline-none
+              ${
+                genero === g && disponivel
+                  ? "bg-[var(--accent)] text-white border-[var(--accent)] shadow"
+                  : "bg-transparent text-[var(--text-primary)] border-[var(--accent)]/40 hover:bg-[var(--accent)]/10"
+              }
+              ${!disponivel ? "opacity-50 cursor-not-allowed" : ""}
+              focus-visible:ring-2 focus-visible:ring-[var(--accent-900)]`}
+              >
+                {disponivel ? g.charAt(0).toUpperCase() + g.slice(1) : "X"}
+              </button>
+            );
+          })}
         </div>
+        {indisponivel.length > 0 && (
+          <p className="text-xs text-red-600 mt-1">
+            {indisponivel
+              .map((g) =>
+                g === "masculino" ? "Modelo masculino" : "Modelo feminino"
+              )
+              .join(" e ")}{" "}
+            indisponível
+          </p>
+        )}
       </div>
       {/* Tamanhos */}
       <div>
@@ -116,6 +134,12 @@ export default function ProdutoInterativo({
 }) {
   const [genero, setGenero] = useState(generos[0]);
   const [tamanho, setTamanho] = useState(tamanhos[0]);
+  const coresList = Array.isArray(produto.cores)
+    ? produto.cores
+    : typeof produto.cores === "string"
+    ? produto.cores.split(",").map((c) => c.trim())
+    : [];
+  const [cor, setCor] = useState(coresList[0] || "");
   const [indexImg, setIndexImg] = useState(0);
   const pauseRef = useRef(false);
   const [showAuth, setShowAuth] = useState(false);
@@ -182,6 +206,26 @@ export default function ProdutoInterativo({
             tamanho={tamanho}
             setTamanho={setTamanho}
           />
+          {coresList.length > 0 && (
+            <div className="mt-4">
+              <p className="text-sm mb-2 text-[var(--text-primary)]/70">Cores disponíveis:</p>
+              <div className="flex gap-2">
+                {coresList.map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setCor(c)}
+                    className={`w-7 h-7 rounded-full border-2 transition-all ${
+                      cor === c
+                        ? "border-[var(--accent)] ring-2 ring-[var(--accent)]"
+                        : "border-[var(--accent-900)]"
+                    }`}
+                    style={{ background: c }}
+                    aria-label={`Selecionar cor ${c}`}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
       {/* Detalhes do produto */}
@@ -201,6 +245,26 @@ export default function ProdutoInterativo({
             tamanho={tamanho}
             setTamanho={setTamanho}
           />
+          {coresList.length > 0 && (
+            <div className="mt-4">
+              <p className="text-sm mb-2 text-[var(--text-primary)]/70">Cores disponíveis:</p>
+              <div className="flex gap-2">
+                {coresList.map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setCor(c)}
+                    className={`w-7 h-7 rounded-full border-2 transition-all ${
+                      cor === c
+                        ? "border-[var(--accent)] ring-2 ring-[var(--accent)]"
+                        : "border-[var(--accent-900)]"
+                    }`}
+                    style={{ background: c }}
+                    aria-label={`Selecionar cor ${c}`}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
         <a
           href={produto.checkout_url}
@@ -226,11 +290,7 @@ export default function ProdutoInterativo({
               : imagens[genero] || [],
             generos: [genero],
             tamanhos: [tamanho],
-            cores: Array.isArray(produto.cores)
-              ? produto.cores
-              : typeof produto.cores === "string"
-              ? produto.cores.split(",").map((c) => c.trim())
-              : undefined,
+            cores: cor ? [cor] : [],
           }}
         />
         {showAuth && (
