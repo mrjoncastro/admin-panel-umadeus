@@ -82,7 +82,7 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `PB_ADMIN_PASSWORD` - senha do administrador
 - `ASAAS_API_KEY` - chave da API do Asaas para geração de pagamentos
 - `ASAAS_WEBHOOK_SECRET` - segredo para validar webhooks do Asaas
-- `ASAAS_API_URL` - URL base da API do Asaas (ex.: `https://sandbox.asaas.com/api/v3/`)
+- `ASAAS_API_URL` - URL base da API do Asaas (ex.: `https://api-sandbox.asaas.com/api/v3/`)
 - `NEXT_PUBLIC_SITE_URL` - endereço do site (opcional)
 
 Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utilizar o SDK oficial.
@@ -120,7 +120,7 @@ arquivo `.mdx` representa um post do blog.
 Para criar ou editar posts pelo painel admin:
 
 1. Acesse `/admin` e realize o login.
-2. No menu lateral, clique em **Blog** e escolha **Novo Post** ou selecione um
+2. No menu lateral, clique em **Posts** e escolha **Novo Post** ou selecione um
    existente para editar.
 3. Preencha título, resumo, categoria, autor, data de publicação, caso seja uma edição informe: post editado por {autor}, em {data de edição}, thumbnail e o conteúdo em Markdown.
 4. Salve para publicar ou atualizar o post.
