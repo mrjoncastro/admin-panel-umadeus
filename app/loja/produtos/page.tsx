@@ -1,6 +1,8 @@
 import createPocketBase from "@/lib/pocketbase";
 import ProdutosFiltrados from "./ProdutosFiltrados";
 
+export const dynamic = "force-dynamic";
+
 interface Produto {
   id: string;
   nome: string;

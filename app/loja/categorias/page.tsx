@@ -1,5 +1,7 @@
 import createPocketBase from "@/lib/pocketbase";
 
+export const dynamic = "force-dynamic";
+
 interface Categoria {
   id: string;
   nome: string;

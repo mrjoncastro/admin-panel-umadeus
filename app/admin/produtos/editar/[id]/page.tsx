@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
-import ModalCategoria from "../../categorias/ModalCategoria";
 
 interface Categoria {
   id: string;
@@ -396,14 +395,6 @@ export default function EditarProdutoPage() {
           </div>
         </form>
       </main>
-      {categoriaModalOpen && (
-        <ModalCategoria
-          open={categoriaModalOpen}
-          onClose={() => setCategoriaModalOpen(false)}
-          onSubmit={handleNovaCategoria}
-          initial={null}
-        />
-      )}
     </>
   );
 }

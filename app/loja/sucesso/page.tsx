@@ -2,8 +2,9 @@
 
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { Suspense } from "react";
 
-export default function SucessoPage() {
+function SucessoContent() {
   const searchParams = useSearchParams();
   const pedido = searchParams.get("pedido");
 
@@ -40,5 +41,13 @@ export default function SucessoPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function SucessoPage() {
+  return (
+    <Suspense>
+      <SucessoContent />
+    </Suspense>
   );
 }

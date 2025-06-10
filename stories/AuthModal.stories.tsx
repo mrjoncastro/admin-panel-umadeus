@@ -22,4 +22,9 @@ const meta = {
 export default meta;
 export type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    open: true,
+    onClose: () => {},
+  },
+};

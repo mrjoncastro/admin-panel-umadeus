@@ -46,7 +46,7 @@ export default function AreaCliente() {
           <strong>E-mail:</strong> {user?.email || "-"}
         </p>
         <p>
-          <strong>Telefone:</strong> {user?.telefone || "-"}
+          <strong>Telefone:</strong> {String(user?.telefone ?? "-")}
         </p>
 
         <div className="flex flex-wrap gap-2 pt-4">

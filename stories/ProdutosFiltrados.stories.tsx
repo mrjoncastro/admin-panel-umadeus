@@ -12,7 +12,6 @@ const meta = {
         preco: 79.9,
         imagens: ['https://placehold.co/400'],
         slug: 'camiseta-feminina',
-        categoria: 'roupas',
       },
       {
         id: '2',
@@ -20,7 +19,6 @@ const meta = {
         preco: 89.9,
         imagens: ['https://placehold.co/400'],
         slug: 'camiseta-masculina',
-        categoria: 'roupas',
       },
     ],
   },

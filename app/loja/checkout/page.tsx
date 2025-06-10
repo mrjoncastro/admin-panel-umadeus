@@ -2,9 +2,9 @@
 
 import { useCart } from "@/lib/context/CartContext";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const { itens, clearCart } = useCart();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -90,5 +90,13 @@ export default function CheckoutPage() {
         </button>
       </div>
     </main>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense>
+      <CheckoutContent />
+    </Suspense>
   );
 }
