@@ -147,6 +147,6 @@ O portal permite ajustar fonte, cor primária e logotipo dinamicamente. As
 configurações são gerenciadas pelo `AppConfigProvider` (`lib/context/AppConfigContext.tsx`),
 que salva as preferências no `localStorage`.
 Além de definir `--accent`, o provedor gera uma paleta HSL e expõe as variáveis
-`--primary-50` … `--primary-900`. As classes Tailwind utilizam essas variáveis
-(`bg-[var(--primary-600)]`, `text-[var(--primary-500)]`, etc.), permitindo que
-a interface se adapte à cor escolhida.
+`--primary-50` … `--primary-900`. Essas variáveis são mapeadas para classes
+Tailwind (`bg-primary-*`, `text-primary-*`), eliminando a necessidade de usar
+`bg-[var(--primary-600)]` ou `text-[var(--primary-500)]`.

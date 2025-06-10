@@ -137,11 +137,11 @@ p {
 }
 
 .btn-primary {
-  @apply bg-[var(--accent)] text-white hover:bg-[var(--primary-500)];
+  @apply bg-[var(--accent)] text-white hover:bg-primary-500;
 }
 
 .btn-secondary {
-  @apply bg-[var(--color-secondary)] text-[var(--background)] hover:bg-[var(--primary-700)] hover:text-white dark:hover:bg-[var(--primary-500)];
+  @apply bg-[var(--color-secondary)] text-[var(--background)] hover:bg-primary-700 hover:text-white dark:hover:bg-primary-500;
 }
 
 .btn-danger {

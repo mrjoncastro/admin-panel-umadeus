@@ -136,7 +136,7 @@ export default async function BlogPostPage({
         )}
 
         {data.category && (
-          <span className="text-xs uppercase text-[var(--primary-600)] font-semibold">
+          <span className="text-xs uppercase text-primary-600 font-semibold">
             {data.category}
           </span>
         )}
@@ -168,7 +168,7 @@ export default async function BlogPostPage({
             )}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1 text-[var(--primary-600)] hover:underline"
+            className="flex items-center gap-1 text-primary-600 hover:underline"
           >
             <Share2 className="w-4 h-4" />
             Compartilhar

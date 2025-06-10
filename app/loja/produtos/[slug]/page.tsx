@@ -52,7 +52,7 @@ export default function ProdutoDetalhe() {
       <main className="font-sans px-4 md:px-16 py-10">
         <Link
           href="/loja/produtos"
-          className="text-sm text-platinum hover:text-[var(--primary-600)] mb-6 inline-block transition"
+          className="text-sm text-platinum hover:text-primary-600 mb-6 inline-block transition"
         >
           &lt; voltar
         </Link>

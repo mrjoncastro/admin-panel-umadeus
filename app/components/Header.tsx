@@ -131,7 +131,7 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="hover:text-[var(--primary-400)] transition px-2 py-1 rounded-md"
+                className="hover:text-primary-400 transition px-2 py-1 rounded-md"
               >
                 {link.label}
               </Link>
@@ -143,7 +143,7 @@ export default function Header() {
               <div className="relative">
                 <button
                   onClick={() => setAdminOpen((prev) => !prev)}
-                  className="flex items-center gap-1 hover:text-[var(--primary-400)] transition px-2 py-1 rounded-md"
+                  className="flex items-center gap-1 hover:text-primary-400 transition px-2 py-1 rounded-md"
                 >
                   {isLoggedIn && (
                     <span className="ml-4 text-sm">Olá, {firstName}</span>
@@ -187,7 +187,7 @@ export default function Header() {
               <div className="relative">
                 <button
                   onClick={() => setClientOpen((prev) => !prev)}
-                  className="flex items-center gap-1 hover:text-[var(--primary-400)] transition px-2 py-1 rounded-md"
+                  className="flex items-center gap-1 hover:text-primary-400 transition px-2 py-1 rounded-md"
                 >
                   <span className="ml-4 text-sm">Olá, {firstName}</span>
                   <ChevronDown size={14} />
@@ -249,7 +249,7 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-platinum hover:text-[var(--primary-400)] transition py-2 text-base font-medium"
+                className="text-platinum hover:text-primary-400 transition py-2 text-base font-medium"
                 onClick={() => setOpen(false)}
               >
                 {link.label}
@@ -265,7 +265,7 @@ export default function Header() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="text-platinum hover:text-[var(--primary-400)] transition py-2 text-base font-medium"
+                    className="text-platinum hover:text-primary-400 transition py-2 text-base font-medium"
                     onClick={() => setOpen(false)}
                   >
                     {link.label}
@@ -285,7 +285,7 @@ export default function Header() {
               <>
                 <Link
                   href="/loja/cliente"
-                  className="text-platinum hover:text-[var(--primary-400)] transition py-2 text-base font-medium"
+                  className="text-platinum hover:text-primary-400 transition py-2 text-base font-medium"
                   onClick={() => setOpen(false)}
                 >
                   Área do Cliente
