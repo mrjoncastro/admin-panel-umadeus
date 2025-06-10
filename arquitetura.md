@@ -43,6 +43,11 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 │   ├── page.tsx           # Listagem de posts
 │   └── BlogClient.tsx     # Wrapper do cliente
 ├── loja/                  # Área pública da vitrine e inscrições
+│   ├── carrinho/          # Visualização e gestão do carrinho de compras
+│   ├── categorias/        # Filtros e páginas de cada categoria de produto
+│   ├── checkout/          # Processo de pagamento e finalização do pedido
+│   ├── cliente/           # Área do cliente com pedidos e dados pessoais
+│   ├── login/             # Rotas de autenticação da loja
 │   ├── components/        # Componentes reutilizáveis da loja
 │   ├── eventos/           # Formulário de inscrição em eventos
 │   ├── inscricoes/        # Envio e visualização pública (se necessário)
