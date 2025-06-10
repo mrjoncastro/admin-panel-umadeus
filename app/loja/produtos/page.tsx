@@ -11,10 +11,11 @@ interface Produto {
 
 export default async function ProdutosPage() {
   const pb = createPocketBase();
-  const produtosPB: Produto[] = await pb.collection("produtos").getFullList({
+  const list = await pb.collection("produtos").getList<Produto>(1, 50, {
     filter: "ativo = true",
     sort: "-created",
   });
+  const produtosPB: Produto[] = list.items;
 
   const produtos = produtosPB.map((p) => ({
     ...p,
