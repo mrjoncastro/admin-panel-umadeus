@@ -3,32 +3,39 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import createPocketBase from "@/lib/pocketbase";
 
-// MOCK dos produtos destaque
-const produtosDestaque = [
-  {
-    id: 1,
-    nome: "Camiseta Propósito",
-    preco: 89.9,
-    imagem: "/img/camisa_frente.webp",
-  },
-  {
-    id: 2,
-    nome: "Camiseta Avivamento",
-    preco: 89.9,
-    imagem: "/img/camisa_verso.webp",
-  },
-  {
-    id: 3,
-    nome: "Kit Fé & Força",
-    preco: 159.9,
-    imagem: "/img/mulher2.png",
-  },
-];
+interface Produto {
+  id: string;
+  nome: string;
+  preco: number;
+  imagens: string[];
+  slug: string;
+}
 
 export default function Home() {
   const carouselRef = useRef<HTMLDivElement>(null);
+  const [produtosDestaque, setProdutosDestaque] = useState<Produto[]>([]);
+
+  useEffect(() => {
+    async function fetchProdutos() {
+      try {
+        const pb = createPocketBase();
+        const list = await pb
+          .collection("produtos")
+          .getList<Produto>(1, 6, { filter: "ativo = true", sort: "-created" });
+        const prods = list.items.map((p) => ({
+          ...p,
+          imagens: (p.imagens || []).map((img) => pb.files.getURL(p, img)),
+        }));
+        setProdutosDestaque(prods);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    fetchProdutos();
+  }, []);
 
   // Se quiser carrossel nos produtos, use funções abaixo:
   const scrollBy = (direction: "left" | "right") => {
@@ -98,7 +105,7 @@ export default function Home() {
               className="rounded-2xl bg-white shadow-sm p-4 flex flex-col items-center transition hover:shadow-lg"
             >
               <Image
-                src={prod.imagem}
+                src={prod.imagens[0]}
                 alt={prod.nome}
                 width={300}
                 height={300}
@@ -109,7 +116,7 @@ export default function Home() {
                 .toFixed(2)
                 .replace(".", ",")}`}</span>
               <Link
-                href={`/loja/produtos/${prod.id}`}
+                href={`/loja/produtos/${prod.slug}`}
                 className="bg-[var(--accent)] hover:bg-[var(--accent-900)] text-white px-6 py-2 rounded-full font-semibold text-sm transition"
               >
                 Ver produto
