@@ -11,11 +11,9 @@ interface Produto {
   categoria: string;
 }
 
-interface Params {
-  slug: string;
-}
-
-export default async function CategoriaDetalhe({ params }: { params: Params }) {
+export default async function CategoriaDetalhe(
+  { params }: { params: { slug: string } }
+) {
   const { slug } = params;
   const pb = createPocketBase();
 
