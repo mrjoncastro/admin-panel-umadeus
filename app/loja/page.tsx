@@ -44,36 +44,36 @@ export default function Home() {
   return (
     <>
       {/* HERO Congresso */}
-      <section className=" bg-[var(--primary)] py-10 md:py-20 flex flex-col md:flex-row items-center justify-center px-6 max-w-7xl mx-auto rounded-2xl shadow mb-10 overflow-hidden">
-        {/* Imagem congresso */}
-        <div className="md:w-1/2 flex-shrink-0 flex justify-center mb-6 md:mb-0">
-          <Image
-            src="/img/congresso_slide1.jpg"
-            alt="Congresso UMADEUS"
-            width={550}
-            height={410}
-            className="rounded-2xl shadow-lg object-cover border border-[var(--accent-900)]/20"
-            priority
-          />
-        </div>
-        {/* Texto congresso */}
-        <div className="md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left pl-0 md:pl-10">
-          <span className="inline-block mb-3 px-4 py-1 bg-[var(--accent)]/90 text-white rounded-full text-xs uppercase tracking-wide font-semibold shadow">
+      <section className="w-full min-h-[400px] md:min-h-[540px] grid grid-cols-1 md:grid-cols-2">
+        {/* Esquerda: Texto */}
+        <div className="flex flex-col justify-center items-center md:items-start text-center md:text-left bg-primary-600 px-8">
+          <span className="mb-4 px-4 py-1 bg-white/20 text-white rounded-full text-xs uppercase tracking-wide font-semibold">
             Inscrições abertas!
           </span>
-          <h1 className="text-4xl md:text-5xl font-extrabold font-bebas uppercase tracking-wide text-[var(--accent)] mb-4">
+          <h1 className="text-4xl md:text-5xl font-extrabold font-bebas uppercase tracking-wide text-white mb-4">
             Congresso UMADEUS 2K25
           </h1>
-          <p className="text-base md:text-lg text-[var(--text-primary)]/90 mb-8 max-w-lg">
+          <p className="text-base md:text-lg text-white/90 mb-8 max-w-lg">
             Prepare-se para dias de avivamento, comunhão e crescimento
             espiritual. Faça já sua inscrição no maior encontro jovem do ano!
           </p>
           <Link
             href="/loja/inscricoes"
-            className="inline-block bg-[var(--accent)] hover:bg-[var(--accent-900)] text-white px-8 py-3 rounded-full font-semibold transition text-lg shadow"
+            className="inline-block bg-white text-primary-600 px-8 py-3 rounded-full font-semibold transition text-lg hover:bg-gray-100"
           >
             Inscreva-se agora
           </Link>
+        </div>
+        {/* Direita: Imagem crua */}
+        <div className="relative w-full h-[300px] md:h-auto">
+          <Image
+            src="/img/qg3_tech.webp"
+            alt="Congresso UMADEUS"
+            fill
+            style={{ objectFit: "cover" }}
+            className="w-full h-full"
+            priority
+          />
         </div>
       </section>
 
