@@ -13,27 +13,20 @@ interface Produto {
   checkout_url: string;
   tamanhos?: string[];
   generos?: string[];
-  categoria: string;
 }
 
 const TAMANHOS = ["PP", "P", "M", "G", "GG"];
 const GENEROS = ["masculino", "feminino"];
 
-export default function ProdutosFiltrados({
-  produtos,
-}: {
-  produtos: Produto[];
-}) {
+export default function ProdutosFiltrados({ produtos }: { produtos: Produto[] }) {
   const [tamanho, setTamanho] = useState("");
   const [genero, setGenero] = useState("");
   const [showAuth, setShowAuth] = useState(false);
   const { isLoggedIn } = useAuthContext();
 
   const filtrados = produtos.filter((p) => {
-    const matchTamanho =
-      tamanho === "" || (p.tamanhos || []).includes(tamanho);
-    const matchGenero =
-      genero === "" || (p.generos || []).includes(genero);
+    const matchTamanho = tamanho === "" || (p.tamanhos || []).includes(tamanho);
+    const matchGenero = genero === "" || (p.generos || []).includes(genero);
     return matchTamanho && matchGenero;
   });
 
