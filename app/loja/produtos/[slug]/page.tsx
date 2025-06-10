@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -20,8 +20,8 @@ interface Produto {
   cores?: string | string[];
   tamanhos?: string | string[];
   generos?: string | string[];
+  checkout_url?: string;
 }
-
 
 // Componente Client para interatividade (gênero, tamanho, galeria)
 function ProdutoInterativo({
@@ -50,6 +50,7 @@ function ProdutoInterativo({
   const [indexImg, setIndexImg] = useState(0);
   const pauseRef = useRef(false);
   const [showAuth, setShowAuth] = useState(false);
+  const router = useRouter();
 
   const imgs = imagens[genero] || imagens[generos[0]];
 
@@ -71,7 +72,6 @@ function ProdutoInterativo({
     setIndexImg(i);
     setTimeout(() => (pauseRef.current = false), 10000);
   };
-
 
   return (
     <div className="grid md:grid-cols-2 gap-12 items-start">
@@ -138,10 +138,11 @@ function ProdutoInterativo({
             if (!isLoggedIn) {
               onRequireAuth();
             } else {
+              e.preventDefault(); // Prevent default navigation
               router.push("/loja/checkout");
             }
           }}
-          className="block w-full bg-cornell_red-600 hover:bg-cornell_red-700 text-white text-center py-3 rounded-full font-semibold transition text-lg"
+          className="block w-full btn-primary"
         >
           Quero essa pra brilhar no Congresso!
         </a>
