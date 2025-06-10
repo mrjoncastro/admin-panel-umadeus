@@ -30,7 +30,6 @@ export default function CheckoutPage() {
       clearCart();
       router.push(`/loja/sucesso?pedido=${pedidoId}`);
     } catch (err) {
-      // eslint-disable-next-line no-console
       console.error(err);
       alert("Erro ao processar pagamento");
     } finally {

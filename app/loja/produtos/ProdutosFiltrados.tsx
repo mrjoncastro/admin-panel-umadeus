@@ -4,6 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+const faixasPreco = [
+  { label: "Até R$ 50", min: 0, max: 50 },
+  { label: "R$ 50 a R$ 100", min: 50, max: 100 },
+  { label: "Acima de R$ 100", min: 100, max: Infinity },
+];
+
 interface Produto {
   id: string;
   nome: string;
@@ -17,11 +23,6 @@ export default function ProdutosFiltrados({ produtos }: { produtos: Produto[] })
   const [faixasSelecionadas, setFaixasSelecionadas] = useState<string[]>([]);
   const [ordem, setOrdem] = useState("recentes");
 
-  const faixasPreco = [
-    { label: "Até R$ 50", min: 0, max: 50 },
-    { label: "R$ 50 a R$ 100", min: 50, max: 100 },
-    { label: "Acima de R$ 100", min: 100, max: Infinity },
-  ];
 
   const filtrados = useMemo(() => {
     let res = produtos.filter((p) =>
