@@ -4,14 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import type { Produto } from "@/types";
 
 export default function Home() {
   const sections = ["mulher", "homem", "congresso"] as const;
   type Section = (typeof sections)[number];
 
   const [section, setSection] = useState<Section>("mulher");
-  const [produtos, setProdutos] = useState<Produto[]>([]);
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -79,15 +77,6 @@ export default function Home() {
       if (timeoutRestoreRef.current) clearTimeout(timeoutRestoreRef.current);
     };
   }, [section]);
-
-  useEffect(() => {
-    fetch("/api/produtos")
-      .then((res) => res.json())
-      .then(setProdutos)
-      .catch(() => {
-        /* ignore */
-      });
-  }, []);
 
   return (
     <>

@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
     }));
 
     return NextResponse.json(comUrls);
-  } catch (err) {
+  } catch {
     return NextResponse.json([], { status: 500 });
   }
 }
