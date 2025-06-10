@@ -40,17 +40,19 @@ function DetalhesSelecao({
     <>
       {/* Gênero */}
       <div className="mb-4">
-        <p className="text-sm mb-2 text-platinum/80">Modelo:</p>
+        <p className="text-sm mb-2 text-[var(--text-primary)]/70">Modelo:</p>
         <div className="flex gap-3">
           {generos.map((g) => (
             <button
               key={g}
               onClick={() => setGenero(g)}
-              className={`px-4 py-1 rounded-full border font-medium transition ${
-                genero === g
-                  ? "bg-cornell_red-600 text-white"
-                  : "border-platinum/30 text-platinum hover:bg-black_bean"
-              }`}
+              className={`px-4 py-1 rounded-full border font-medium transition-colors duration-200 outline-none
+            ${
+              genero === g
+                ? "bg-[var(--accent)] text-white border-[var(--accent)] shadow"
+                : "bg-transparent text-[var(--text-primary)] border-[var(--accent)]/40 hover:bg-[var(--accent)]/10"
+            }
+            focus-visible:ring-2 focus-visible:ring-[var(--accent-900)]`}
             >
               {g.charAt(0).toUpperCase() + g.slice(1)}
             </button>
@@ -59,17 +61,21 @@ function DetalhesSelecao({
       </div>
       {/* Tamanhos */}
       <div>
-        <p className="text-sm mb-2 text-platinum/80">Tamanhos disponíveis:</p>
+        <p className="text-sm mb-2 text-[var(--text-primary)]/70">
+          Tamanhos disponíveis:
+        </p>
         <div className="flex gap-2">
           {tamanhos.map((t) => (
             <button
               key={t}
               onClick={() => setTamanho(t)}
-              className={`px-3 py-1 border rounded-full text-sm transition ${
-                tamanho === t
-                  ? "bg-yellow-400 text-black_bean font-bold"
-                  : "border-platinum/30 text-platinum hover:bg-black_bean"
-              }`}
+              className={`px-3 py-1 border rounded-full text-sm font-medium transition-colors duration-200 outline-none
+            ${
+              tamanho === t
+                ? "bg-[var(--accent)] text-white border-[var(--accent)] font-bold shadow"
+                : "bg-transparent text-[var(--text-primary)] border-[var(--accent)]/40 hover:bg-[var(--accent)]/10"
+            }
+            focus-visible:ring-2 focus-visible:ring-[var(--accent-900)]`}
             >
               {t}
             </button>
@@ -77,7 +83,7 @@ function DetalhesSelecao({
         </div>
         <a
           href="#"
-          className="text-xs underline mt-2 inline-block text-platinum/60 hover:text-yellow-400 transition"
+          className="text-xs underline mt-2 inline-block text-[var(--text-primary)]/50 hover:text-[var(--accent)] transition"
         >
           Ver guia de tamanhos
         </a>
@@ -138,13 +144,14 @@ export default function ProdutoInterativo({
 
   return (
     <div className="grid md:grid-cols-2 gap-12 items-start">
+      {/* Galeria de imagens */}
       <div>
         <Image
           src={imgs[indexImg]}
           alt={nome}
           width={600}
           height={600}
-          className="w-full rounded-xl border border-black_bean shadow-lg transition-all duration-300"
+          className="w-full rounded-xl border border-[var(--accent-900)] shadow-lg transition-all duration-300 bg-[var(--background)]"
           priority
         />
         <div className="flex gap-3 mt-4">
@@ -156,15 +163,16 @@ export default function ProdutoInterativo({
               width={64}
               height={64}
               onClick={() => handleMiniaturaClick(i)}
-              className={`w-16 h-16 object-cover rounded-lg border-2 cursor-pointer transition ${
+              className={`w-16 h-16 object-cover rounded-lg border-2 cursor-pointer transition
+              ${
                 indexImg === i
-                  ? "border-yellow-400 ring-2 ring-yellow-400"
-                  : "border-black_bean hover:brightness-110"
+                  ? "border-[var(--accent)] ring-2 ring-[var(--accent)]"
+                  : "border-[var(--accent-900)] hover:brightness-110"
               }`}
             />
           ))}
         </div>
-        {/* Tamanhos e gênero abaixo da imagem no mobile */}
+        {/* Tamanhos e gênero no mobile */}
         <div className="block md:hidden mt-6">
           <DetalhesSelecao
             generos={generos}
@@ -176,11 +184,12 @@ export default function ProdutoInterativo({
           />
         </div>
       </div>
+      {/* Detalhes do produto */}
       <div className="space-y-6">
-        <h1 className="text-3xl md:text-4xl font-bold font-bebas leading-tight text-yellow-400">
+        <h1 className="text-3xl md:text-4xl font-bold font-bebas leading-tight text-[var(--accent)]">
           {nome}
         </h1>
-        <p className="text-xl font-semibold text-platinum">
+        <p className="text-xl font-semibold text-[var(--text-primary)]">
           R$ {preco.toFixed(2).replace(".", ",")}
         </p>
         <div className="hidden md:block">
@@ -205,7 +214,7 @@ export default function ProdutoInterativo({
               router.push("/loja/checkout");
             }
           }}
-          className="block w-full btn-primary"
+          className="block w-full btn btn-primary"
         >
           Quero essa pra brilhar no Congresso!
         </a>
@@ -217,42 +226,54 @@ export default function ProdutoInterativo({
               : imagens[genero] || [],
             generos: [genero],
             tamanhos: [tamanho],
-            // Normaliza cores para string[]
             cores: Array.isArray(produto.cores)
               ? produto.cores
               : typeof produto.cores === "string"
-                ? produto.cores.split(",").map((c) => c.trim())
-                : undefined,
+              ? produto.cores.split(",").map((c) => c.trim())
+              : undefined,
           }}
         />
-        {showAuth && <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />}
-        {descricao && (
-          <p className="text-sm text-platinum mt-4 whitespace-pre-line">{descricao}</p>
+        {showAuth && (
+          <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
         )}
-        <div className="text-sm text-platinum mt-6 space-y-3">
+        {descricao && (
+          <p className="text-sm text-[var(--text-primary)]/80 mt-4 whitespace-pre-line">
+            {descricao}
+          </p>
+        )}
+        <div className="text-sm text-[var(--text-primary)]/70 mt-6 space-y-3">
           <div>
             <h2 className="font-semibold text-base">Envio e devolução</h2>
             <p>
-              Entrega rápida em todo o Brasil. Trocas grátis em até 7 dias após o recebimento.
+              Entrega rápida em todo o Brasil. Trocas grátis em até 7 dias após
+              o recebimento.
             </p>
           </div>
-          <div className="divide-y divide-platinum/20 mt-4">
+          <div className="divide-y divide-[var(--accent-900)]/10 mt-4">
             <details className="py-3">
-              <summary className="cursor-pointer font-medium">+ Sobre o Produto</summary>
+              <summary className="cursor-pointer font-medium">
+                + Sobre o Produto
+              </summary>
               <p className="mt-2 text-sm">
-                Camiseta 100% algodão, com caimento confortável e estilo que combina com a juventude
-                cristã.
+                Camiseta 100% algodão, com caimento confortável e estilo que
+                combina com a juventude cristã.
               </p>
             </details>
             <details className="py-3">
-              <summary className="cursor-pointer font-medium">+ Cuidados com sua peça</summary>
-              <p className="mt-2 text-sm">Lave com amor — à mão ou na máquina, sempre com água fria.</p>
+              <summary className="cursor-pointer font-medium">
+                + Cuidados com sua peça
+              </summary>
+              <p className="mt-2 text-sm">
+                Lave com amor — à mão ou na máquina, sempre com água fria.
+              </p>
             </details>
             <details className="py-3">
-              <summary className="cursor-pointer font-medium">+ Sobre o tecido</summary>
+              <summary className="cursor-pointer font-medium">
+                + Sobre o tecido
+              </summary>
               <p className="mt-2 text-sm">
-                Tecido leve e respirável. Ideal pra louvar, pular e viver cada momento do congresso com
-                liberdade.
+                Tecido leve e respirável. Ideal pra louvar, pular e viver cada
+                momento do congresso com liberdade.
               </p>
             </details>
           </div>
@@ -261,4 +282,3 @@ export default function ProdutoInterativo({
     </div>
   );
 }
-
