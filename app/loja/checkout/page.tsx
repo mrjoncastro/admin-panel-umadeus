@@ -43,16 +43,16 @@ function CheckoutContent() {
   const handleConfirm = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/admin/api/asaas", {
+      const res = await fetch("/admin/api/asaas/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ valor: total, pedidoId }),
       });
       const data = await res.json();
-      if (!res.ok || !data?.url)
+      if (!res.ok || !data?.checkoutUrl)
         throw new Error("Falha ao gerar link de pagamento");
       clearCart();
-      router.push(`/loja/sucesso?pedido=${pedidoId}`);
+      window.location.href = data.checkoutUrl;
     } catch (err) {
       alert("Erro ao processar pagamento. Tente novamente.");
     } finally {
