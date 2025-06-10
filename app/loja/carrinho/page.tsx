@@ -42,7 +42,7 @@ export default function CarrinhoPage() {
   return (
     <main className="min-h-[70vh] flex justify-center items-center py-10">
       <div className="w-full max-w-3xl bg-neutral-50 rounded-2xl shadow-sm p-6 md:p-10">
-        <h1 className="text-2xl md:text-3xl font-serif font-light tracking-tight mb-6">
+        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight mb-6">
           Carrinho
         </h1>
         <ul className="divide-y divide-gray-100 mb-6">
