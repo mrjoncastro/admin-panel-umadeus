@@ -160,8 +160,21 @@ export default function EditarProdutoPage() {
     )?.checked;
     formData.set("ativo", ativoChecked ? "true" : "false");
 
-    formData.set("tamanhos", tamanhos.join(","));
-    formData.set("generos", generos.join(","));
+    const tamanhos = Array.from(
+      formElement.querySelectorAll<HTMLInputElement>(
+        "input[name='tamanhos']:checked"
+      )
+    ).map((el) => el.value);
+    formData.delete("tamanhos");
+    tamanhos.forEach((t) => formData.append("tamanhos", t));
+
+    const generos = Array.from(
+      formElement.querySelectorAll<HTMLInputElement>(
+        "input[name='generos']:checked"
+      )
+    ).map((el) => el.value);
+    formData.delete("generos");
+    generos.forEach((g) => formData.append("generos", g));
 
     // Categoria enviada sempre pelo id
     const catValue = selectedCategoria;
