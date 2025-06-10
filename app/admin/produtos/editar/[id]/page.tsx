@@ -161,14 +161,16 @@ export default function EditarProdutoPage() {
         "input[name='tamanhos']:checked"
       )
     ).map((el) => el.value);
-    formData.set("tamanhos", tamanhos.join(","));
+    formData.delete("tamanhos");
+    tamanhos.forEach((t) => formData.append("tamanhos", t));
 
     const generos = Array.from(
       formElement.querySelectorAll<HTMLInputElement>(
         "input[name='generos']:checked"
       )
     ).map((el) => el.value);
-    formData.set("generos", generos.join(","));
+    formData.delete("generos");
+    generos.forEach((g) => formData.append("generos", g));
 
     // Categoria enviada sempre pelo id
     const catValue = selectedCategoria;

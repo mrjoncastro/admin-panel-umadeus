@@ -68,10 +68,10 @@ export default function AdminProdutosPage() {
       formData.set("checkout_url", String(form.checkout_url));
     if (form.categoria) formData.set("categoria", String(form.categoria));
     if (Array.isArray(form.tamanhos)) {
-      formData.set("tamanhos", form.tamanhos.join(","));
+      form.tamanhos.forEach((t) => formData.append("tamanhos", t));
     }
     if (Array.isArray(form.generos)) {
-      formData.set("generos", form.generos.join(","));
+      form.generos.forEach((g) => formData.append("generos", g));
     }
     if (form.descricao) formData.set("descricao", String(form.descricao));
     if (form.detalhes) formData.set("detalhes", String(form.detalhes));
