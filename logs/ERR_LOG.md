@@ -45,3 +45,4 @@
 
 ## [2025-06-10] Ajustado uso de getURL nos produtos e categorias para impedir erro na loja - dev - 2b29c07
 ## [2025-06-09] Corrigido erro de imagem sem src na loja/produtos - dev - 1937fbf
+## [2025-06-10] Corrigido carregamento de slug e imagens absolutas em loja/produtos/[slug] - dev - 3a448ad
