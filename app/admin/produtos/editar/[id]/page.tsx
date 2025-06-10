@@ -211,15 +211,19 @@ export default function EditarProdutoPage() {
   }
 
   return (
-    <>
-      <main className="max-w-xl mx-auto px-4 py-8">
-        <h1
-          className="text-2xl font-bold mb-4"
-          style={{ fontFamily: "var(--font-heading)" }}
-        >
-          Editar Produto
-        </h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <main className="max-w-xl mx-auto px-4 py-8">
+      <h1
+        className="text-2xl font-bold mb-6"
+        style={{ fontFamily: "var(--font-heading)" }}
+      >
+        Editar Produto
+      </h1>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Informações Básicas */}
+        <fieldset className="space-y-4">
+          <legend className="text-lg font-semibold">Informações básicas</legend>
+
           <input
             className="input-base"
             name="nome"
@@ -240,86 +244,78 @@ export default function EditarProdutoPage() {
             type="url"
             defaultValue={String(initial.checkout_url || "")}
           />
+        </fieldset>
 
-          {/* Campo de cores HEX separadas por vírgula */}
-          <div>
-            <label className="block text-sm font-semibold mb-1">
-              Cores do produto (clique para adicionar)
-            </label>
-            <div className="flex gap-2 items-center mb-2">
-              <input
-                type="color"
-                ref={inputHex}
-                defaultValue="#000000"
-                className="w-10 h-10 border rounded cursor-pointer"
-                // Removido o onChange!
-              />
-              <button
-                type="button"
-                className="btn btn-sm"
-                onClick={() => {
-                  if (inputHex.current) addCor(inputHex.current.value);
-                }}
-              >
-                Adicionar cor
-              </button>
-            </div>
-            <div className="flex gap-2 flex-wrap mt-1">
-              {cores.map((cor) => (
-                <div key={cor} className="flex items-center gap-1">
-                  <span
-                    className="w-7 h-7 rounded-full border border-gray-300 inline-block"
-                    style={{ background: cor }}
-                    title={cor}
-                  />
-                  <button
-                    type="button"
-                    className="text-xs text-red-600"
-                    onClick={() => removeCor(cor)}
-                    title="Remover"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-              {cores.length === 0 && (
-                <span className="text-xs text-gray-500">
-                  Nenhuma cor selecionada
-                </span>
-              )}
-            </div>
-            <input type="hidden" name="cores" value={cores.join(",")} />
-          </div>
+        {/* Categoria */}
+        <fieldset>
+          <legend className="text-lg font-semibold mb-2">Categoria</legend>
+          <select
+            name="categoria"
+            value={selectedCategoria}
+            onChange={(e) => setSelectedCategoria(e.target.value)}
+            className="input-base w-full"
+          >
+            <option value="">Selecione a categoria</option>
+            {categorias.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.nome}
+              </option>
+            ))}
+          </select>
+        </fieldset>
 
-          <div>
-            <label className="block text-sm font-semibold mb-1">
-              Categoria
-            </label>
-            <div className="flex gap-2">
-              <select
-                name="categoria"
-                value={selectedCategoria}
-                onChange={(e) => setSelectedCategoria(e.target.value)}
-                className="input-base flex-1"
-              >
-                <option value="">Selecione a categoria</option>
-                {categorias.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.nome}
-                  </option>
-                ))}
-              </select>
-            </div>
+        {/* Cores */}
+        <fieldset>
+          <legend className="text-lg font-semibold mb-2">Cores</legend>
+          <div className="flex gap-2 items-center mb-2">
+            <input
+              type="color"
+              ref={inputHex}
+              defaultValue="#000000"
+              className="w-10 h-10 border rounded cursor-pointer"
+            />
+            <button
+              type="button"
+              className="btn btn-sm"
+              onClick={() => {
+                if (inputHex.current) addCor(inputHex.current.value);
+              }}
+            >
+              Adicionar cor
+            </button>
           </div>
-          <input
-            type="file"
-            name="imagens"
-            multiple
-            accept="image/*"
-            className="input-base"
-          />
-          {/* ... tamanhos, generos, descricao, detalhes, ativo ... */}
-          <div>
+          <div className="flex gap-2 flex-wrap mt-1">
+            {cores.map((cor) => (
+              <div key={cor} className="flex items-center gap-1">
+                <span
+                  className="w-7 h-7 rounded-full border border-gray-300 inline-block"
+                  style={{ background: cor }}
+                  title={cor}
+                />
+                <button
+                  type="button"
+                  className="text-xs text-red-600"
+                  onClick={() => removeCor(cor)}
+                  title="Remover"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+            {cores.length === 0 && (
+              <span className="text-xs text-gray-500">
+                Nenhuma cor selecionada
+              </span>
+            )}
+          </div>
+          <input type="hidden" name="cores" value={cores.join(",")} />
+        </fieldset>
+
+        {/* Variações */}
+        <fieldset>
+          <legend className="text-lg font-semibold mb-2">Variações</legend>
+
+          <div className="mb-4">
             <p className="text-sm font-semibold mb-1">Tamanhos</p>
             <div className="flex gap-2 flex-wrap">
               {["PP", "P", "M", "G", "GG"].map((t) => {
@@ -382,6 +378,11 @@ export default function EditarProdutoPage() {
               })}
             </div>
           </div>
+        </fieldset>
+
+        {/* Descrição e Detalhes */}
+        <fieldset className="space-y-4">
+          <legend className="text-lg font-semibold mb-2">Descrição</legend>
 
           <textarea
             className="input-base"
@@ -396,28 +397,44 @@ export default function EditarProdutoPage() {
             rows={2}
             defaultValue={String(initial.detalhes || "")}
           />
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              name="ativo"
-              defaultChecked={Boolean(initial.ativo)}
-            />{" "}
-            Produto ativo
-          </label>
-          <div className="flex gap-2">
-            <button type="submit" className="btn btn-primary flex-1">
-              Salvar
-            </button>
-            <button
-              type="button"
-              onClick={() => router.push("/admin/produtos")}
-              className="btn flex-1"
-            >
-              Cancelar
-            </button>
-          </div>
-        </form>
-      </main>
-    </>
+        </fieldset>
+
+        {/* Upload de imagens */}
+        <fieldset>
+          <legend className="text-lg font-semibold mb-2">Imagens</legend>
+          <input
+            type="file"
+            name="imagens"
+            multiple
+            accept="image/*"
+            className="input-base"
+          />
+        </fieldset>
+
+        {/* Produto ativo */}
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            name="ativo"
+            defaultChecked={Boolean(initial.ativo)}
+          />
+          Produto ativo
+        </label>
+
+        {/* Ações */}
+        <div className="flex gap-2">
+          <button type="submit" className="btn btn-primary flex-1">
+            Salvar
+          </button>
+          <button
+            type="button"
+            onClick={() => router.push("/admin/produtos")}
+            className="btn flex-1"
+          >
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </main>
   );
 }
