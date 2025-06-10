@@ -28,6 +28,8 @@ export default function EditarProdutoPage() {
   const [initial, setInitial] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
   const [cores, setCores] = useState<string[]>([]);
+  const [tamanhos, setTamanhos] = useState<string[]>([]);
+  const [generos, setGeneros] = useState<string[]>([]);
   const inputHex = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -79,6 +81,8 @@ export default function EditarProdutoPage() {
           : typeof data.generos === "string"
           ? data.generos.split(",").map((s: string) => s.trim())
           : [];
+        setTamanhos(tams);
+        setGeneros(gens);
         setInitial({
           nome: data.nome,
           preco: data.preco,
@@ -156,18 +160,7 @@ export default function EditarProdutoPage() {
     )?.checked;
     formData.set("ativo", ativoChecked ? "true" : "false");
 
-    const tamanhos = Array.from(
-      formElement.querySelectorAll<HTMLInputElement>(
-        "input[name='tamanhos']:checked"
-      )
-    ).map((el) => el.value);
     formData.set("tamanhos", tamanhos.join(","));
-
-    const generos = Array.from(
-      formElement.querySelectorAll<HTMLInputElement>(
-        "input[name='generos']:checked"
-      )
-    ).map((el) => el.value);
     formData.set("generos", generos.join(","));
 
     // Categoria enviada sempre pelo id
@@ -350,9 +343,14 @@ export default function EditarProdutoPage() {
                     type="checkbox"
                     name="tamanhos"
                     value={t}
-                    defaultChecked={(
-                      initial.tamanhos as string[] | undefined
-                    )?.includes(t)}
+                    checked={tamanhos.includes(t)}
+                    onChange={(e) =>
+                      setTamanhos((prev) =>
+                        e.target.checked
+                          ? [...prev, t]
+                          : prev.filter((v) => v !== t)
+                      )
+                    }
                   />
                   {t}
                 </label>
@@ -368,9 +366,14 @@ export default function EditarProdutoPage() {
                     type="checkbox"
                     name="generos"
                     value={g}
-                    defaultChecked={(
-                      initial.generos as string[] | undefined
-                    )?.includes(g)}
+                    checked={generos.includes(g)}
+                    onChange={(e) =>
+                      setGeneros((prev) =>
+                        e.target.checked
+                          ? [...prev, g]
+                          : prev.filter((v) => v !== g)
+                      )
+                    }
                   />
                   {g.charAt(0).toUpperCase() + g.slice(1)}
                 </label>
