@@ -53,3 +53,4 @@
 ## [2025-06-10] README traduzido e introducao atualizada; adicionada nota de personalizacao.
 ## [2025-06-10] Atualizadas classes de cor para uso de bg-primary-* e text-primary-* nas páginas e docs.
 ## [2025-06-10] Padronizada sintaxe theme('colors.*') em globals.css e stories para compatibilidade com Tailwind.
+## [2025-06-10] Verificada padronizacao theme('colors.*') em arquivos CSS sem novas ocorrencias.
