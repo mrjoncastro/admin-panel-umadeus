@@ -92,7 +92,7 @@ export default function Home() {
   return (
     <>
       {/* Header */}
-      <header className="bg-neutral-200 px-6 py-4 shadow-md rounded-2xl mx-4">
+      <header className="bg-[var(--background)] px-6 py-4 shadow-md rounded-2xl mx-4 mt-4">
         <nav className="flex justify-center items-center text-sm font-semibold tracking-wide">
           <div className="flex gap-4">
             {sections.map((s) => (
@@ -101,8 +101,8 @@ export default function Home() {
                 onClick={() => setSection(s)}
                 className={`px-4 py-1 rounded-full transition font-bold ${
                   section === s
-                    ? "bg-[var(--primary-600)] text-white"
-                    : "bg-transparent text-platinum"
+                    ? "bg-[var(--accent)] text-white shadow"
+                    : "bg-transparent text-[var(--text-primary)] hover:bg-[var(--accent)]/10"
                 }`}
               >
                 {s === "congresso"
@@ -114,7 +114,7 @@ export default function Home() {
         </nav>
       </header>
 
-      <main className="pt-20 p-6 text-center max-w-7xl mx-auto">
+      <main className="pt-20 p-6 max-w-7xl mx-auto text-center font-sans text-[var(--text-primary)]">
         {section === "congresso" ? (
           <section className="max-w-6xl mx-auto py-12 px-6 text-center md:text-left grid md:grid-cols-2 gap-10 items-center">
             {/* Imagem destacada */}
@@ -124,30 +124,25 @@ export default function Home() {
                 alt="Congresso UMADEUS"
                 width={800}
                 height={600}
-                className="w-full rounded-lg shadow-lg border border-platinum/20"
+                className="w-full rounded-xl shadow-lg border border-[var(--accent-900)]/20"
               />
             </div>
-
             {/* Conteúdo textual */}
             <div>
-              <h2 className="text-4xl md:text-5xl font-extrabold font-bebas uppercase tracking-wide text-platinum mb-4">
+              <h2 className="text-4xl md:text-5xl font-extrabold font-bebas uppercase tracking-wide text-[var(--accent)] mb-4">
                 Congresso UMADEUS 2K25
               </h2>
-              <p className="text-platinum/90 leading-relaxed text-base md:text-lg mb-6">
+              <p className="text-[var(--text-primary)]/90 leading-relaxed text-base md:text-lg mb-6">
                 Jovem, Deus tem algo poderoso para sua vida! Esteja pronto para
                 um tempo de
-                <strong> renovação</strong>,{" "}
-                <strong>avivamento</strong> e{" "}
-                <strong>
-                  crescimento espiritual
-                </strong>
-                . Não perca o <strong>Congresso de Jovens 2025</strong> — um
-                encontro que vai marcar sua geração.
+                <strong> renovação</strong>, <strong>avivamento</strong> e
+                <strong> crescimento espiritual</strong>. Não perca o{" "}
+                <strong>Congresso de Jovens 2025</strong> — um encontro que vai
+                marcar sua geração.
               </p>
-
               <Link
                 href="/loja/inscricoes"
-                className="inline-block bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white px-8 py-3 rounded-full font-semibold transition"
+                className="inline-block bg-[var(--accent)] hover:bg-[var(--accent-900)] text-white px-8 py-3 rounded-full font-semibold transition"
               >
                 Inscreva-se agora
               </Link>
@@ -162,7 +157,7 @@ export default function Home() {
                   scrollBy("left");
                   pauseAutoScroll();
                 }}
-                className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-black_bean/80 p-2 rounded-full shadow-md"
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-[var(--accent-900)]/80 p-2 rounded-full shadow-md"
               >
                 <ChevronLeft size={20} />
               </button>
@@ -171,11 +166,10 @@ export default function Home() {
                   scrollBy("right");
                   pauseAutoScroll();
                 }}
-                className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-black_bean/80 p-2 rounded-full shadow-md"
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[var(--accent-900)]/80 p-2 rounded-full shadow-md"
               >
                 <ChevronRight size={20} />
               </button>
-
               <div
                 ref={carouselRef}
                 className="overflow-x-auto flex gap-4 snap-x scroll-smooth pb-4"
@@ -189,7 +183,7 @@ export default function Home() {
                     alt={`Banner ${section} ${index + 1}`}
                     width={600}
                     height={600}
-                    className="w-[80%] flex-shrink-0 rounded-xl snap-center object-cover transition transform hover:scale-105 hover:shadow-lg border-4 border-black_bean"
+                    className="w-[80%] flex-shrink-0 rounded-xl snap-center object-cover transition transform hover:scale-105 hover:shadow-lg border-4 border-[var(--accent-900)]"
                   />
                 ))}
               </div>
@@ -204,32 +198,37 @@ export default function Home() {
                   alt={`Banner ${section} ${index + 1}`}
                   width={600}
                   height={600}
-                  className="w-full h-auto object-cover rounded-xl transition hover:scale-105 hover:shadow-lg"
+                  className="w-full h-auto object-cover rounded-xl transition hover:scale-105 hover:shadow-lg border border-[var(--accent-900)]/30"
                 />
               ))}
             </div>
 
-            <h2 className="text-4xl md:text-5xl font-extrabold mb-3 font-bebas tracking-wide uppercase text-platinum">
+            <h2 className="text-4xl md:text-5xl font-extrabold mb-3 font-bebas tracking-wide uppercase text-[var(--accent)]">
               {content.title}
             </h2>
 
-            <p className="mb-6 text-base md:text-lg font-medium text-platinum/90 max-w-2xl mx-auto">
+            <p className="mb-6 text-base md:text-lg font-medium text-[var(--text-primary)]/90 max-w-2xl mx-auto">
               {content.text}
             </p>
 
             <Link
               href="/loja/produtos"
-              className="inline-block mt-2 px-8 py-3 rounded-full font-semibold transition transform hover:scale-105 shadow-lg text-lg bg-[var(--primary-600)] text-white hover:bg-[var(--primary-700)]"
+              className="inline-block mt-2 px-8 py-3 rounded-full font-semibold transition transform hover:scale-105 shadow-lg text-lg bg-[var(--accent)] text-white hover:bg-[var(--accent-900)]"
             >
               {content.bannerButton}
             </Link>
 
             {produtos.length > 0 && (
               <section className="mt-12">
-                <h3 className="text-2xl font-bold mb-6 text-platinum">Novidades</h3>
+                <h3 className="text-2xl font-bold mb-6 text-[var(--text-primary)]">
+                  Novidades
+                </h3>
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
                   {produtos.map((p) => (
-                    <div key={p.id} className="card text-center p-4">
+                    <div
+                      key={p.id}
+                      className="card text-center p-4 bg-[var(--background)]"
+                    >
                       <Image
                         src={p.imagem}
                         alt={p.nome}
