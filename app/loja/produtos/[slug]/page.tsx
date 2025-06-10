@@ -9,6 +9,8 @@ import Link from "next/link";
 import createPocketBase from "@/lib/pocketbase";
 import AddToCartButton from "./AddToCartButton";
 import { Suspense } from "react";
+import { useAuthContext } from "@/lib/context/AuthContext";
+import AuthModal from "@/app/components/AuthModal";
 
 interface Produto {
   id: string;
@@ -35,6 +37,8 @@ function ProdutoInterativo({
   preco,
   descricao,
   produto,
+  isLoggedIn,
+  onRequireAuth,
 }: {
   imagens: Record<string, string[]>;
   generos: string[];
@@ -43,6 +47,8 @@ function ProdutoInterativo({
   preco: number;
   descricao?: string;
   produto: Produto;
+  isLoggedIn: boolean;
+  onRequireAuth: () => void;
 }) {
   const [genero, setGenero] = useState(generos[0]);
   const [tamanho, setTamanho] = useState(tamanhos[0]);
@@ -135,8 +141,16 @@ function ProdutoInterativo({
             setTamanho={setTamanho}
           />
         </div>
-        <button
-          onClick={handleComprar}
+        <a
+          href={checkout_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => {
+            if (!isLoggedIn) {
+              e.preventDefault();
+              onRequireAuth();
+            }
+          }}
           className="block w-full bg-cornell_red-600 hover:bg-cornell_red-700 text-white text-center py-3 rounded-full font-semibold transition text-lg"
         >
           Quero essa pra brilhar no Congresso!
@@ -274,6 +288,8 @@ function DetalhesSelecao({
 export default function ProdutoDetalhe({ params }: { params: Params }) {
   const [produto, setProduto] = useState<Produto | null>(null);
   const [erro, setErro] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
+  const { isLoggedIn } = useAuthContext();
 
   useEffect(() => {
     const pb = createPocketBase();
@@ -344,8 +360,13 @@ export default function ProdutoDetalhe({ params }: { params: Params }) {
           preco={produto.preco}
           descricao={produto.descricao}
           produto={produto}
+          isLoggedIn={isLoggedIn}
+          onRequireAuth={() => setShowAuth(true)}
         />
       </Suspense>
+      {showAuth && (
+        <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
+      )}
     </main>
   );
 }

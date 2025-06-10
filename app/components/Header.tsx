@@ -105,7 +105,8 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-animated backdrop-blur-md text-[var(--text-header-primary)] shadow-md sticky top-0 z-50 gradient-x px-6 py-4 border-b border-platinum/20 fixed top-0 inset-x-0 z-50">
+    <>
+      <header className="bg-animated backdrop-blur-md text-[var(--text-header-primary)] shadow-md sticky top-0 z-50 gradient-x px-6 py-4 border-b border-platinum/20 fixed top-0 inset-x-0 z-50">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* LOGO */}
         <Link
@@ -180,20 +181,21 @@ export default function Header() {
             </div>
           )}
 
-          {role === "usuario" && (
-            <div className="relative">
-              <button
-                onClick={() => setClientOpen((prev) => !prev)}
-                className="flex items-center gap-1 hover:text-[var(--primary-400)] transition px-2 py-1 rounded-md"
+
+        {role === "usuario" && (
+          <div className="relative">
+            <button
+              onClick={() => setClientOpen((prev) => !prev)}
+              className="flex items-center gap-1 hover:text-[var(--primary-400)] transition px-2 py-1 rounded-md"
+            >
+              <span className="ml-4 text-sm">Olá, {firstName}</span>
+              <ChevronDown size={14} />
+            </button>
+            {clientOpen && (
+              <ul
+                className="absolute right-0 mt-2 w-48 bg-white text-[var(--foreground)] dark:bg-zinc-900 dark:text-white rounded-md shadow z-50 text-sm py-2 space-y-1"
+                ref={clientMenuRef}
               >
-                <span className="ml-4 text-sm">Olá, {firstName}</span>
-                <ChevronDown size={14} />
-              </button>
-              {clientOpen && (
-                <ul
-                  className="absolute right-0 mt-2 w-48 bg-white text-[var(--foreground)] dark:bg-zinc-900 dark:text-white rounded-md shadow z-50 text-sm py-2 space-y-1"
-                  ref={clientMenuRef}
-                >
                   <li>
                     <Link
                       href="/loja/cliente"
@@ -213,17 +215,18 @@ export default function Header() {
                       </span>
                     </button>
                   </li>
-                </ul>
-              )}
-            </div>
-          )}
+              </ul>
+            )}
+          </div>
+        )}
 
-          {!isLoggedIn && (
-            <button onClick={() => setShowAuth(true)} className="btn btn-primary">
-              Acessar sua conta
-            </button>
-          )}
-        </nav>
+        {!isLoggedIn && (
+          <button onClick={() => setShowAuth(true)} className="btn btn-primary">
+            Acessar sua conta
+          </button>
+        )}
+      </nav>
+
         {/* Botão Menu Mobile */}
         <button
           onClick={() => setOpen(!open)}
@@ -310,9 +313,9 @@ export default function Header() {
         </div>
       )}
     </header>
-    {showAuth && (
-      <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
-    )}
+      {showAuth && (
+        <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
+      )}
+    </>
   );
 }
-
