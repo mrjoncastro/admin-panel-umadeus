@@ -54,3 +54,5 @@
 ## [2025-06-10] Atualizadas classes de cor para uso de bg-primary-* e text-primary-* nas páginas e docs.
 ## [2025-06-10] Padronizada sintaxe theme('colors.*') em globals.css e stories para compatibilidade com Tailwind.
 ## [2025-06-10] README atualizado incluindo novo endpoint /checkouts
+
+## [2025-06-10] Documentada diferença entre inscrições e compras de loja no README

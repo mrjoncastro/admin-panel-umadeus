@@ -105,6 +105,15 @@ Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utiliza
    em `link_pagamento`.
 5. O usuário é redirecionado para essa URL para concluir o pagamento.
 
+### Inscrições x Compras na Loja
+
+* **Inscrições** – após um líder confirmar a inscrição pelo admin, o painel faz
+  uma chamada para `/admin/api/asaas` a fim de gerar o boleto e salvar o link de
+  pagamento no pedido correspondente.
+* **Compras de Loja** – os produtos adicionados ao carrinho são processados na
+  página `/loja/checkout`. Esse fluxo usa `/admin/api/asaas/checkout` para
+  criar um `checkoutUrl` do Asaas e redirecionar o usuário automaticamente.
+
 ## Perfis de Acesso
 
 O sistema possui três níveis de usuário:
