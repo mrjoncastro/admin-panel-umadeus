@@ -19,6 +19,7 @@ type AuthContextType = {
   isLoggedIn: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  signUp: (nome: string, email: string, password: string) => Promise<void>;
   logout: () => void;
 };
 
@@ -27,6 +28,7 @@ const AuthContext = createContext<AuthContextType>({
   isLoggedIn: false,
   isLoading: true,
   login: async () => {},
+  signUp: async () => {},
   logout: () => {},
 });
 
@@ -88,6 +90,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoggedIn(true);
   };
 
+  const signUp = async (nome: string, email: string, password: string) => {
+    await pb.collection("usuarios").create({
+      nome,
+      email,
+      password,
+      passwordConfirm: password,
+      role: "usuario",
+    });
+    await login(email, password);
+  };
+
   const logout = () => {
     pb.authStore.clear();
     clearBaseAuth();
@@ -99,7 +112,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, isLoggedIn, isLoading, login, logout }}
+      value={{ user, isLoggedIn, isLoading, login, signUp, logout }}
     >
       {children}
     </AuthContext.Provider>
