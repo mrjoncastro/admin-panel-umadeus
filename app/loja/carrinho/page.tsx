@@ -73,7 +73,9 @@ export default function CarrinhoPage() {
           Finalizar compra
         </button>
       </div>
-      {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
+      {showAuth && (
+        <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
+      )}
     </main>
   );
 }
