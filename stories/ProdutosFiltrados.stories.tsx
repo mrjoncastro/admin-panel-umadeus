@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import ProdutosFiltrados from '../app/loja/categorias/[slug]/ProdutosFiltrados';
+import ProdutosFiltrados from '../app/loja/produtos/ProdutosFiltrados';
 
 const meta = {
   title: 'Loja/ProdutosFiltrados',
@@ -11,9 +11,7 @@ const meta = {
         nome: 'Camiseta Feminina',
         preco: 79.9,
         imagens: ['https://placehold.co/400'],
-        checkout_url: '#',
-        tamanhos: ['P', 'M'],
-        generos: ['feminino'],
+        slug: 'camiseta-feminina',
         categoria: 'roupas',
       },
       {
@@ -21,9 +19,7 @@ const meta = {
         nome: 'Camiseta Masculina',
         preco: 89.9,
         imagens: ['https://placehold.co/400'],
-        checkout_url: '#',
-        tamanhos: ['G', 'GG'],
-        generos: ['masculino'],
+        slug: 'camiseta-masculina',
         categoria: 'roupas',
       },
     ],

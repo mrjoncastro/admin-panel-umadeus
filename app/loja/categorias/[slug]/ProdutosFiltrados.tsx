@@ -1,16 +1,15 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import AuthModal from "@/app/components/AuthModal";
 
 interface Produto {
   id: string;
   nome: string;
   preco: number;
   imagens: string[];
-  checkout_url: string;
+  slug: string;
   tamanhos?: string[];
   generos?: string[];
   categoria: string;
@@ -26,8 +25,6 @@ export default function ProdutosFiltrados({
 }) {
   const [tamanho, setTamanho] = useState("");
   const [genero, setGenero] = useState("");
-  const [showAuth, setShowAuth] = useState(false);
-  const { isLoggedIn } = useAuthContext();
 
   const filtrados = produtos.filter((p) => {
     const matchTamanho =
@@ -78,12 +75,8 @@ export default function ProdutosFiltrados({
                 height={400}
                 className="w-full h-auto object-cover rounded"
               />
-              <div className="absolute top-0 left-0 bg-black text-white text-xs px-2 py-1">
-                50% OFF
-              </div>
             </div>
 
-            <p className="text-xs text-gray-400 mt-2">Ver Semelhantes</p>
             <h2 className="text-sm font-medium text-black mt-1 line-clamp-2">
               {p.nome}
             </h2>
@@ -91,24 +84,15 @@ export default function ProdutosFiltrados({
               R$ {p.preco.toFixed(2).replace(".", ",")}
             </p>
 
-            <a
-              href={p.checkout_url}
-              onClick={(e) => {
-                if (!isLoggedIn) {
-                  e.preventDefault();
-                  setShowAuth(true);
-                }
-              }}
-              className="block mt-3 bg-black_bean text-white text-center py-2 rounded text-sm font-bold hover:bg-black_bean/90"
+            <Link
+              href={`/loja/produtos/${p.slug}`}
+              className="btn btn-primary w-full text-center mt-auto"
             >
-              Comprar agora
-            </a>
+              Ver detalhes
+            </Link>
           </div>
         ))}
       </div>
-      {showAuth && (
-        <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
-      )}
     </>
   );
 }

@@ -7,7 +7,7 @@ interface Produto {
   nome: string;
   preco: number;
   imagens: string[];
-  checkout_url: string;
+  slug: string;
   categoria: string;
 }
 

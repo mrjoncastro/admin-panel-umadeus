@@ -64,12 +64,15 @@ export default function AdminProdutosPage() {
     const formData = new FormData();
     formData.set("nome", String(form.nome ?? ""));
     formData.set("preco", String(form.preco ?? 0));
-    if (form.checkoutUrl) formData.set("checkoutUrl", String(form.checkoutUrl));
+    if (form.checkout_url)
+      formData.set("checkout_url", String(form.checkout_url));
     if (form.categoria) formData.set("categoria", String(form.categoria));
-    if (Array.isArray(form.tamanhos))
-      form.tamanhos.forEach((t) => formData.append("tamanhos", t));
-    if (Array.isArray(form.generos))
-      form.generos.forEach((g) => formData.append("generos", g));
+    if (Array.isArray(form.tamanhos)) {
+      formData.set("tamanhos", form.tamanhos.join(","));
+    }
+    if (Array.isArray(form.generos)) {
+      formData.set("generos", form.generos.join(","));
+    }
     if (form.descricao) formData.set("descricao", String(form.descricao));
     if (form.detalhes) formData.set("detalhes", String(form.detalhes));
     formData.set("ativo", String(form.ativo ? "true" : "false"));
