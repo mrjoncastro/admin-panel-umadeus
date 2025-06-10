@@ -9,8 +9,6 @@ import Link from "next/link";
 import createPocketBase from "@/lib/pocketbase";
 import AddToCartButton from "./AddToCartButton";
 import { Suspense } from "react";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import AuthModal from "@/app/components/AuthModal";
 
 interface Produto {
   id: string;
@@ -54,7 +52,6 @@ function ProdutoInterativo({
   const [tamanho, setTamanho] = useState(tamanhos[0]);
   const [indexImg, setIndexImg] = useState(0);
   const pauseRef = useRef(false);
-  const { isLoggedIn } = useAuthContext();
   const router = useRouter();
   const [showAuth, setShowAuth] = useState(false);
 
@@ -141,14 +138,13 @@ function ProdutoInterativo({
             setTamanho={setTamanho}
           />
         </div>
-        <a
-          href={checkout_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => {
+        <button
+          type="button"
+          onClick={() => {
             if (!isLoggedIn) {
-              e.preventDefault();
               onRequireAuth();
+            } else {
+              router.push("/loja/checkout");
             }
           }}
           className="block w-full bg-cornell_red-600 hover:bg-cornell_red-700 text-white text-center py-3 rounded-full font-semibold transition text-lg"
@@ -171,7 +167,7 @@ function ProdutoInterativo({
                 : undefined,
           }}
         />
-        {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
+        {showAuth && <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />}
         {descricao && (
           <p className="text-sm text-platinum mt-4 whitespace-pre-line">
             {descricao}
