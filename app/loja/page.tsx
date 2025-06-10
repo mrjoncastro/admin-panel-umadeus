@@ -87,7 +87,7 @@ export default function Home() {
       {/* PRODUTOS DESTAQUE */}
       <section className="max-w-7xl mx-auto px-6 py-10">
         <div className="flex items-end justify-between mb-8">
-          <h2 className="text-2xl md:text-3xl font-semibold font-serif tracking-tight text-[var(--accent)]">
+          <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-[var(--accent)]">
             Produtos em Destaque
           </h2>
           <Link
