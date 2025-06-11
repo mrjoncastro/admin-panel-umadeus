@@ -184,7 +184,7 @@ function CheckoutContent() {
           <button
             onClick={handleConfirm}
             disabled={loading}
-            className="mt-8 w-full py-3 rounded-xl bg-black text-white font-medium text-base tracking-wide transition hover:bg-neutral-900 active:scale-95 disabled:opacity-50"
+            className="mt-8 w-full py-3 rounded-xl bg-primary-600 text-white font-medium text-base tracking-wide transition hover:bg-primary-900 active:scale-95 disabled:opacity-50"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">

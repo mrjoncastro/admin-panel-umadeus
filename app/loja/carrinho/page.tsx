@@ -88,7 +88,7 @@ export default function CarrinhoPage() {
           </button>
           <button
             onClick={handleCheckout}
-            className="py-2 px-8 rounded-xl bg-black text-white font-medium text-accent tracking-wide transition hover:bg-neutral-900 active:scale-95"
+            className="py-2 px-8 rounded-xl bg-primary-600 text-white font-medium text-accent tracking-wide transition hover:bg-primary-900 active:scale-95"
           >
             Finalizar compra
           </button>
