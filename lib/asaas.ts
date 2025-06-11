@@ -55,7 +55,7 @@ export async function createCheckout(
     headers: {
       accept: "application/json",
       "Content-Type": "application/json",
-      access_token: apiKey,
+      "access-token": apiKey,
       "User-Agent": "qg3",
     },
     body: JSON.stringify(payload),
