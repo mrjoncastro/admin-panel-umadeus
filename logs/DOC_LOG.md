@@ -57,3 +57,5 @@
 
 ## [2025-06-10] Documentada diferença entre inscrições e compras de loja no README
 ## [2025-06-11] Documentado endpoint /admin/api/asaas/checkout no README
+## [2025-06-10] Adicionadas tarefas para checkout Asaas em docs/tarefas-checkout-asaas.md
+## [2025-06-10] Atualizado fluxo de checkout para usar Checkout Pronto do Asaas em README e docs.
