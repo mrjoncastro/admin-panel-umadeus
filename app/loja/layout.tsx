@@ -1,8 +1,5 @@
 import "../globals.css";
 import LayoutWrapper from "../components/LayoutWrapper";
-import { Inter } from "next/font/google";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "UMADEUS",
@@ -15,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`text-platinum font-sans ${inter.className}`}>
+    <div className="text-platinum font-sans">
       <LayoutWrapper>{children}</LayoutWrapper>
     </div>
   );

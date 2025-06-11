@@ -4,8 +4,14 @@ import { logInfo } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
-  const apiKey = process.env.ASAAS_API_KEY;
-  const baseUrl = process.env.ASAAS_API_URL?.replace(/\/$/, ""); // remove barra no final
+  const rawEnvKey = process.env.ASAAS_API_KEY;
+  if (!rawEnvKey) {
+    throw new Error(
+      "❌ ASAAS_API_KEY não definida! Confira seu .env ou painel de variáveis."
+    );
+  }
+  const apiKey = rawEnvKey.startsWith("$") ? rawEnvKey : "$" + rawEnvKey;
+  const baseUrl = process.env.ASAAS_API_URL;
 
   if (!apiKey || !baseUrl) {
     return NextResponse.json(
@@ -40,7 +46,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 🔹 Buscar o pedido
+    // Buscar pedido
     const pedido = await pb.collection("pedidos").getOne(pedidoId);
     if (!pedido) {
       return NextResponse.json(
@@ -49,7 +55,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 🔹 Buscar inscrição vinculada
+    // Buscar inscrição vinculada
     const inscricao = await pb
       .collection("inscricoes")
       .getOne(pedido.id_inscricao);
@@ -60,43 +66,69 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 🔹 Dados do cliente para o Asaas
-    const clientePayload = {
-      name: "JONATAS THIAGO SANTANA CASTRO",
-      email: "jonatasthiago@gmail.com",
-      phone: "71996259886",
-      address: "Tv Arnaldo Lopes da SILVA",
-      addressNumber: "02",
-      province: "BA",
-      postalCode: "41770055",
-      cpfCnpj: "83339837074",
-    };
+    const cpfCnpj = inscricao.cpf.replace(/\D/g, "");
 
-    const clienteResponse = await fetch(`${baseUrl}/customers`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        accept: "application/json",
-        access_token: "aact_hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjY4NDBkZGQwLWRiYmUtNDVkYi1iMTVjLTdjMjFhZDg4Zjg3YTo6JGFhY2hfNjhlZTY1NzktOGVjMS00OTgzLWIyYTUtZTJhMjNiYjY4NDYy",
-        "User-Agent": "qg3"
-      },
-      body: JSON.stringify(clientePayload),
-    });
+    // 🔹 Verificar se cliente já existe no Asaas pelo CPF
+    const buscaCliente = await fetch(
+      `${baseUrl}/customers?cpfCnpj=${cpfCnpj}`,
+      {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          "access-token": apiKey,
+          "User-Agent": "qg3",
+        },
+      }
+    );
 
-    console.log("Payload enviado ao Asaas:", JSON.stringify(clientePayload));
-
-    const raw = await clienteResponse.text();
-
-    if (!clienteResponse.ok) {
-      console.error("❌ Erro ao criar cliente:", {
-        status: clienteResponse.status,
-        body: raw,
-      });
-      throw new Error("Erro ao criar cliente");
+    let clienteId: string | null = null;
+    if (buscaCliente.ok) {
+      const data = await buscaCliente.json();
+      // Se já existe, retorna sempre um array/data (pode ser vazio)
+      if (Array.isArray(data.data) && data.data.length > 0) {
+        clienteId = data.data[0].id; // Usa o primeiro cliente encontrado
+        logInfo("👤 Cliente já existe no Asaas: " + clienteId);
+      }
     }
 
-    const cliente = JSON.parse(raw);
-    logInfo("✅ Cliente criado: " + cliente.id);
+    // 🔹 Se não existe, cria o cliente
+    if (!clienteId) {
+      const clientePayload = {
+        name: inscricao.nome,
+        email: inscricao.email,
+        cpfCnpj,
+        phone: inscricao.telefone || "71900000000",
+        address: inscricao.endereco || "Endereço padrão",
+        addressNumber: inscricao.numero || "02",
+        province: "BA",
+        postalCode: "41770055",
+      };
+
+      const clienteResponse = await fetch(`${baseUrl}/customers`, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          "access-token": apiKey,
+          "User-Agent": "qg3",
+        },
+        body: JSON.stringify(clientePayload),
+      });
+
+      const raw = await clienteResponse.text();
+
+      if (!clienteResponse.ok) {
+        console.error("❌ Erro ao criar cliente:", {
+          status: clienteResponse.status,
+          body: raw,
+        });
+        throw new Error("Erro ao criar cliente");
+      }
+
+      const cliente = JSON.parse(raw);
+      clienteId = cliente.id;
+      logInfo("✅ Cliente criado: " + clienteId);
+    }
 
     // 🔹 Criar cobrança
     const dueDate = new Date();
@@ -107,11 +139,11 @@ export async function POST(req: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        access_token: apiKey,
+        "access-token": apiKey,
         "User-Agent": "qg3",
       },
       body: JSON.stringify({
-        customer: cliente.id,
+        customer: clienteId,
         billingType: "BOLETO",
         value: parsedValor,
         dueDate: dueDateStr,

@@ -1,59 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Este repositório reúne portal institucional, blog, loja virtual e painel administrativo em uma única aplicação Next.js.
+Visitantes navegam pelo portal e pelo blog, realizam compras na loja e os coordenadores gerenciam tudo pelo admin.
+Consulte [arquitetura.md](arquitetura.md) para entender a divisão de pastas e responsabilidades.
+Para personalizar a interface utilize as orientações de [docs/design-system.md](docs/design-system.md).
 
-## Getting Started
+## Primeiros Passos
 
-First, run the development server:
+Para iniciar o servidor de desenvolvimento execute:
 
 ```bash
 npm run dev
-# or
+# ou
 yarn dev
-# or
+# ou
 pnpm dev
-# or
+# ou
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000) no navegador para visualizar.
+Você pode editar a página inicial em `app/page.tsx` e ver as alterações em tempo real.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Este projeto utiliza [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) para otimizar e carregar a fonte [Geist](https://vercel.com/font).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Saiba Mais
 
-## Learn More
+Para saber mais sobre o Next.js consulte os recursos abaixo:
 
-To learn more about Next.js, take a look at the following resources:
+- [Documentação do Next.js](https://nextjs.org/docs) - funcionalidades e API.
+- [Aprenda Next.js](https://nextjs.org/learn) - tutorial interativo.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Você também pode conferir o [repositório do Next.js no GitHub](https://github.com/vercel/next.js) para colaborar.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deploy na Vercel
 
-## Deploy on Vercel
+A maneira mais simples de publicar a aplicação é utilizar a [Plataforma Vercel](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme), criada pelos desenvolvedores do Next.js.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Consulte a [documentação de deploy do Next.js](https://nextjs.org/docs/app/building-your-application/deploying) para mais detalhes.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Domínio próprio na Vercel
+
+1. Instale a Vercel CLI com `npm i -g vercel` e execute `vercel` para vincular o projeto à sua conta.
+2. No painel da Vercel, adicione o domínio desejado em **Settings > Domains**.
+3. Defina a variável `NEXT_PUBLIC_SITE_URL` com o domínio configurado (ex.: `https://meuapp.com`).
+4. Rode `vercel --prod` para publicar e aplique as configurações de DNS indicadas pela própria Vercel.
 
 ## Lint e boas práticas
 
 Execute `npm run lint` para verificar problemas de código. Evite o uso de `any` especificando tipos adequados e sempre inclua todas as dependências utilizadas dentro dos hooks `useEffect`.
+Antes de rodar o lint ou o TypeScript (`tsc`), execute `npm install` para garantir que todas as dependências estejam disponíveis.
 
-## Additional Features
+## Funcionalidades Adicionais
 
-- Interactive notification bell lists pending sign-up names and fields outside
-  the header.
-- Mobile navigation includes a "back to top" button for easier scrolling.
-- Search forms for orders and registrations adapt to the user role and allow
-  busca pelo nome do inscrito.
-- Users can switch between light and dark themes.
-- Toast notifications inform success or error of actions.
-- Minimalist tables and buttons for a consistent look.
-- Dashboard now includes temporal charts showing sign-up and order evolution,
-  along with average order value and revenue per field for coordinators and
-  leaders.
- - Analytics charts support date range filters and allow exporting the data as
-    CSV or XLSX spreadsheets.
+- Sinal de notificações lista inscrições pendentes fora do cabeçalho.
+- A navegação mobile inclui botão "voltar ao topo" para facilitar a rolagem.
+- Formulários de busca de pedidos e inscrições se adaptam ao tipo de usuário, permitindo busca pelo nome do inscrito.
+- Usuários podem alternar entre os temas claro e escuro.
+- Toasts informam sucesso ou erro das ações.
+- Tabelas e botões minimalistas mantêm a aparência consistente.
+- O dashboard traz gráficos temporais de inscrições e pedidos, além de ticket médio e receita por campo para coordenadores e líderes.
+- Os gráficos permitem filtrar por período e exportar os dados em CSV ou XLSX.
 
 ## Design System
 
@@ -77,6 +82,7 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `PB_ADMIN_PASSWORD` - senha do administrador
 - `ASAAS_API_KEY` - chave da API do Asaas para geração de pagamentos
 - `ASAAS_WEBHOOK_SECRET` - segredo para validar webhooks do Asaas
+- `ASAAS_API_URL` - URL base da API do Asaas (ex.: `https://api-sandbox.asaas.com/api/v3/`)
 - `NEXT_PUBLIC_SITE_URL` - endereço do site (opcional)
 
 Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utilizar o SDK oficial.
@@ -89,6 +95,58 @@ Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utiliza
 
 2. Utilize as variáveis `PB_ADMIN_EMAIL` e `PB_ADMIN_PASSWORD` para autenticar a aplicação.
 
+## Fluxo de Cadastro e Checkout
+
+1. O usuário preenche o formulário e os dados são enviados para `criarInscricao`.
+2. A função valida os campos e retorna uma inscrição com status `pendente`.
+3. Em seguida `criarPedido` gera o pedido vinculado à inscrição.
+4. Compras feitas na loja enviam o `pedidoId` para o endpoint `/checkouts`, que
+   comunica-se com `/admin/api/asaas` para gerar a `url` de pagamento e salvá-la
+   em `link_pagamento`.
+5. O usuário é redirecionado para essa URL para concluir o pagamento.
+
+### Inscrições x Compras na Loja
+
+* **Inscrições** – após um líder confirmar a inscrição pelo admin, o painel faz
+  uma chamada para `/admin/api/asaas` a fim de gerar o boleto e salvar o link de
+  pagamento no pedido correspondente.
+* **Compras de Loja** – os produtos adicionados ao carrinho são processados na
+  página `/loja/checkout`. Esse fluxo usa `/admin/api/asaas/checkout` para
+  criar um `checkoutUrl` do Asaas e redirecionar o usuário automaticamente.
+
+### Endpoint `/admin/api/asaas/checkout`
+
+Envie uma requisição `POST` em JSON contendo:
+
+```json
+{
+  "valor": 99.9,
+  "itens": [{ "name": "Produto", "quantity": 1, "value": 99.9 }],
+  "successUrl": "https://meusite.com/sucesso",
+  "errorUrl": "https://meusite.com/erro"
+}
+```
+
+- **valor** – valor total em reais.
+- **itens** – lista de itens (nome, quantidade e valor unitário).
+- **successUrl** – página de redirecionamento em caso de aprovação.
+- **errorUrl** – página de erro ou cancelamento.
+
+O endpoint utiliza as variáveis de ambiente `ASAAS_API_URL` e `ASAAS_API_KEY`.
+A resposta contém o campo `checkoutUrl` com o link gerado:
+
+```json
+{ "checkoutUrl": "https://asaas.com/..." }
+```
+
+## Perfis de Acesso
+
+O sistema possui três níveis de usuário:
+
+- **Coordenador** – acesso total ao painel administrativo.
+- **Lider** – acesso restrito às inscrições e pedidos do seu campo.
+- **Usuário** – cliente final que realiza compras e visualiza a área do cliente em `/loja/cliente`.
+
 ## Blog e CMS
 
 Os arquivos de conteúdo ficam dentro da pasta `posts/` na raiz do projeto. Cada
@@ -97,7 +155,7 @@ arquivo `.mdx` representa um post do blog.
 Para criar ou editar posts pelo painel admin:
 
 1. Acesse `/admin` e realize o login.
-2. No menu lateral, clique em **Blog** e escolha **Novo Post** ou selecione um
+2. No menu lateral, clique em **Posts** e escolha **Novo Post** ou selecione um
    existente para editar.
 3. Preencha título, resumo, categoria, autor, data de publicação, caso seja uma edição informe: post editado por {autor}, em {data de edição}, thumbnail e o conteúdo em Markdown.
 4. Salve para publicar ou atualizar o post.

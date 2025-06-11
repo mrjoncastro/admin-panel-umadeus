@@ -16,7 +16,7 @@ export default function NovoPostPage() {
 
   useEffect(() => {
     if (!isLoggedIn || !user) {
-      router.replace("/admin/login");
+      router.replace("/login");
     }
   }, [isLoggedIn, user, router]);
 

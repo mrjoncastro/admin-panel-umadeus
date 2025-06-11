@@ -25,7 +25,7 @@ export default function LayoutWrapper({
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-[var(--background)] text-[var(--text-primary)]">
+      <main className="min-h-screen text-[var(--text-primary)]">
         {children}
       </main>
       <Footer />

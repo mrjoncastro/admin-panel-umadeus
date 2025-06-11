@@ -41,6 +41,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.style.setProperty("--font-heading", config.font);
     document.documentElement.style.setProperty("--accent", config.primaryColor);
     const shades = generatePrimaryShades(config.primaryColor);
+    document.documentElement.style.setProperty("--accent-900", shades["900"]);
     Object.entries(shades).forEach(([key, value]) => {
       document.documentElement.style.setProperty(`--primary-${key}`, value);
     });

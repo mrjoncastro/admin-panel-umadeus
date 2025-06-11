@@ -73,6 +73,8 @@ export default async function BlogPostPage({
   const words = content.split(/\s+/).length;
   const readingTime = Math.ceil(words / 200);
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://m24saude.com.br";
+
   const schema = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -80,7 +82,7 @@ export default async function BlogPostPage({
     description: data.summary || "",
     image: isExternalUrl(data.thumbnail)
       ? data.thumbnail
-      : `https://m24saude.com.br${data.thumbnail || "/img/og-default.jpg"}`,
+      : `${siteUrl}${data.thumbnail || "/img/og-default.jpg"}`,
     author: {
       "@type": "Person",
       name: "Redação M24",
@@ -90,13 +92,13 @@ export default async function BlogPostPage({
       name: "M24 Saúde",
       logo: {
         "@type": "ImageObject",
-        url: "https://m24saude.com.br/img/M24.webp",
+        url: `${siteUrl}/img/M24.webp`,
       },
     },
     datePublished: data.date || new Date().toISOString(),
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://m24saude.com.br/blog/post/${slug}`,
+      "@id": `${siteUrl}/blog/post/${slug}`,
     },
   };
 
@@ -132,7 +134,7 @@ export default async function BlogPostPage({
         )}
 
         {data.category && (
-          <span className="text-xs uppercase text-[var(--primary-600)] font-semibold">
+          <span className="text-xs uppercase text-primary-600 font-semibold">
             {data.category}
           </span>
         )}
@@ -159,12 +161,12 @@ export default async function BlogPostPage({
           </div>
 
           <a
-            href={`https://twitter.com/intent/tweet?url=https://m24saude.com.br/blog/post/${slug}&text=${encodeURIComponent(
+            href={`https://twitter.com/intent/tweet?url=${siteUrl}/blog/post/${slug}&text=${encodeURIComponent(
               data.title
             )}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1 text-[var(--primary-600)] hover:underline"
+            className="flex items-center gap-1 text-primary-600 hover:underline"
           >
             <Share2 className="w-4 h-4" />
             Compartilhar

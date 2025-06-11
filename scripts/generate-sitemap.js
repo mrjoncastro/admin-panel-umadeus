@@ -2,7 +2,9 @@ const fs = require("fs");
 const path = require("path");
 const matter = require("gray-matter");
 
-const BASE_URL = "https://m24saude.com.br"; // sem barra no final
+// Usa a URL definida nas variáveis de ambiente ou mantém o domínio padrão
+const BASE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://m24saude.com.br"; // sem barra no final
 
 function getStaticRoutes() {
   const appDir = path.join(process.cwd(), "app");

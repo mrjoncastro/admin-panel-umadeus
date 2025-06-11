@@ -26,7 +26,7 @@ export default function LiderDashboardPage() {
 
   useEffect(() => {
     if (!isLoggedIn || !user || user.role !== "lider") {
-      router.replace("/admin/login");
+      router.replace("/login");
       return;
     }
 

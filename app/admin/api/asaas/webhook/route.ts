@@ -1,11 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createPocketBase } from "@/lib/pocketbase";
-import { createHmac } from "crypto";
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
-  const apiKey = process.env.ASAAS_API_KEY;
-  const webhookSecret = process.env.ASAAS_WEBHOOK_SECRET;
+  const rawEnvKey = process.env.ASAAS_API_KEY;
+  const baseUrl = process.env.ASAAS_API_URL;
+
+  if (!rawEnvKey) {
+    throw new Error(
+      "❌ ASAAS_API_KEY não definida! Confira seu .env ou painel de variáveis."
+    );
+  }
+
+  // Se não começar com '$', adiciona manualmente.
+  const apiKey = rawEnvKey.startsWith("$") ? rawEnvKey : "$" + rawEnvKey;
 
   if (!apiKey) {
     return NextResponse.json(
@@ -16,20 +24,13 @@ export async function POST(req: NextRequest) {
 
   const rawBody = await req.text();
 
-  if (webhookSecret) {
-    const signature = req.headers.get("asaas-signature");
-    const expected = createHmac("sha256", webhookSecret)
-      .update(rawBody)
-      .digest("hex");
-    if (!signature || signature !== expected) {
-      return NextResponse.json(
-        { error: "Assinatura do webhook inválida" },
-        { status: 401 }
-      );
-    }
+  let body;
+  try {
+    body = JSON.parse(rawBody);
+  } catch {
+    return NextResponse.json({ error: "JSON inválido" }, { status: 400 });
   }
 
-  const body = JSON.parse(rawBody);
   const paymentId = body?.payment?.id;
   const event = body?.event;
 
@@ -41,23 +42,24 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ status: "Ignorado" });
   }
 
-  const paymentRes = await fetch(
-    `https://api.asaas.com/v3/payments/${paymentId}`,
-    {
-      headers: {
-        access_token: apiKey,
-      },
-    }
-  );
+  const paymentRes = await fetch(`${baseUrl}/payments/${paymentId}`, {
+    headers: {
+      accept: "application/json",
+      "access-token": apiKey,
+      "User-Agent": "qg3",
+    },
+  });
 
   if (!paymentRes.ok) {
+    const errorBody = await paymentRes.text();
     return NextResponse.json(
-      { error: "Falha ao obter pagamento" },
+      { error: "Falha ao obter pagamento", details: errorBody },
       { status: 500 }
     );
   }
 
   const payment = await paymentRes.json();
+
   const status = payment.status;
   const pedidoId = payment.externalReference;
 

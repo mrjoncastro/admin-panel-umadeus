@@ -28,7 +28,7 @@ export default function EditarPostPage() {
 
   useEffect(() => {
     if (!isLoggedIn || !user) {
-      router.replace("/admin/login");
+      router.replace("/login");
     }
   }, [isLoggedIn, user, router]);
 
@@ -94,7 +94,7 @@ export default function EditarPostPage() {
           )}
 
           {category && (
-            <span className="text-xs uppercase text-[var(--primary-600)] font-semibold">
+            <span className="text-xs uppercase text-primary-600 font-semibold">
               {category}
             </span>
           )}

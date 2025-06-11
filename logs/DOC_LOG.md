@@ -37,3 +37,27 @@
 ## [2025-06-07] Geradas variáveis CSS dinâmicas de cor e mapeamento via Tailwind. Documentação atualizada.
 ## [2025-06-08] Gerado utilitário primaryShades e atualizado AppConfigProvider para definir variáveis CSS. Tailwind e testes ajustados.
 ## [2025-06-07] Adicionado docs/testes.md e atualizada secao de testes no README.
+## [2025-06-08] Documentado uso de dominio proprio com Vercel no README
+## [2025-06-08] Atualizadas regras de acesso: produtos agora vinculados ao campo `user_org` e consultas filtradas por usuário.
+## [2025-06-09] Movido rota de inscricoes do admin para raiz e atualizados caminhos.
+## [2025-06-09] Adicionado role 'usuario' e documentada seção de perfis de acesso no README.
+## [2025-06-09] Atualizadas rotas de login do admin para \`/login\`.
+## [2025-06-09] Atualizadas rotas de login do admin para "/login" e ajustadas referencias no Header.
+## [2025-06-09] Adicionado menu de usuário no Header com link para "Área do Cliente" e botão de sair.
+## [2025-06-09] Adicionado o uso do rawEnvKey nas requisições para o asaas.
+## [2025-06-09] Removida pagina duplicada de login na loja e criado redirecionamento para /login.
+## [2025-06-10] Adicionado componente CartPreview com documentação no Storybook.
+## [2025-06-10] Implementado AuthModal com Login e Cadastro e integrado ao Header e páginas de produto.
+## [2025-06-10] Atualizado arquitetura.md incluindo seções de carrinho, categorias, checkout, cliente e login na pasta `/app/loja`.
+## [2025-06-10] Adicionados testes de cadastro/checkout e documentação do fluxo no README.
+## [2025-06-10] README traduzido e introducao atualizada; adicionada nota de personalizacao.
+## [2025-06-10] Atualizadas classes de cor para uso de bg-primary-* e text-primary-* nas páginas e docs.
+## [2025-06-10] Padronizada sintaxe theme('colors.*') em globals.css e stories para compatibilidade com Tailwind.
+## [2025-06-10] README atualizado incluindo novo endpoint /checkouts
+
+## [2025-06-10] Documentada diferença entre inscrições e compras de loja no README
+## [2025-06-11] Documentado endpoint /admin/api/asaas/checkout no README
+## [2025-06-10] Adicionadas tarefas para checkout Asaas em docs/tarefas-checkout-asaas.md
+## [2025-06-10] Atualizado fluxo de checkout para usar Checkout Pronto do Asaas em README e docs.
+## [2025-06-11] Atualizado cadastro com novos campos e payload do checkout
+## [2025-06-11] Foto do produto (base64) agora enviada no item do checkout, removida do cadastro de usuário

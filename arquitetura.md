@@ -10,7 +10,6 @@ O projeto é dividido logicamente em quatro áreas:
 
 | Área        | Função Principal                         | Acesso            | Público-alvo            |
 |-------------|-------------------------------------------|-------------------|-------------------------|
-| **Portal**  | Página institucional do cliente           | Público           | Membros, visitantes, geral |
 | **Loja**    | Página pública para venda e inscrições    | Público           | Visitantes e inscritos  |
 | **Admin**   | Painel de gestão e controle de dados      | Privado (auth)    | Coordenadores e líderes |
 | **Blog**    | Página pública para postagens de conteúdo | Público           | Visitantes e inscritos  |
@@ -43,22 +42,20 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 │   ├── page.tsx           # Listagem de posts
 │   └── BlogClient.tsx     # Wrapper do cliente
 ├── loja/                  # Área pública da vitrine e inscrições
+│   ├── carrinho/          # Visualização e gestão do carrinho de compras
+│   ├── categorias/        # Filtros e páginas de cada categoria de produto
+│   ├── checkout/          # Processo de pagamento e finalização do pedido
+│   ├── cliente/           # Área do cliente com pedidos e dados pessoais
+│   ├── login/             # Rotas de autenticação da loja
 │   ├── components/        # Componentes reutilizáveis da loja
 │   ├── eventos/           # Formulário de inscrição em eventos
 │   ├── inscricoes/        # Envio e visualização pública (se necessário)
 │   ├── produtos/          # Listagem e detalhes dos produtos
 │   ├── layout.tsx         # Layout público da loja
 │   └── page.tsx           # Home da loja
-├── portal/                # Portal institucional do cliente (White Label)
-│   ├── components/        # Componentes reutilizáveis (Hero, Depoimentos, etc)
-│   ├── eventos/           # Listagem e detalhes dos eventos abertos ao público
-│   ├── loja/              # Link ou vitrine de produtos próprios do campo
-│   ├── sobre/             # Página "Sobre a igreja/campo"
-│   ├── contato/           # Página de contato institucional
-│   ├── layout.tsx         # Layout visual do portal (personalizado por cliente)
-│   └── page.tsx           # Home institucional
+├── 
 ├── layout.tsx             # Layout raiz compartilhado
-├── page.tsx               # Portal do cliente (institucional)
+├── page.tsx               # Loja do cliente
 ├── globals.css            # CSS global compartilhado
 /posts/                    # Conteúdo do blog em arquivos .mdx
 /scripts/                  # Scripts auxiliares

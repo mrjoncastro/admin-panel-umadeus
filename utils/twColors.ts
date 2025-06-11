@@ -5,9 +5,13 @@ import colors from "tailwindcss/colors";
 // @ts-expect-error: tailwindConfig may not match the expected type, but works at runtime
 const fullConfig = resolveConfig(tailwindConfig);
 
+function resolveColor(value: any) {
+  return typeof value === 'function' ? value({}) : value;
+}
+
 export const twColors = {
-  primary600: ((fullConfig.theme.colors as unknown) as { [key: string]: any }).primary?.[600],
-  error600: ((fullConfig.theme.colors as unknown) as { [key: string]: any }).error?.[600],
+  primary600: resolveColor(((fullConfig.theme.colors as unknown) as { [key: string]: any }).primary?.[600]),
+  error600: resolveColor(((fullConfig.theme.colors as unknown) as { [key: string]: any }).error?.[600]),
   blue500: colors.blue[500],
 };
 

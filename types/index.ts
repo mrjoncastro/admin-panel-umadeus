@@ -70,3 +70,46 @@ export type Pedido = {
     };
   };
 };
+
+export type Produto = {
+  id: string;
+  nome: string;
+  preco: number;
+  imagem?: string;
+  imagens?: string[];
+  tamanhos?: string[];
+  generos?: string[];
+  cores?: string[];
+  slug: string;
+  descricao?: string;
+  detalhes?: string;
+  checkout_url?: string;
+  checkoutUrl?: string; // alias usado no formulário do admin
+  ativo?: boolean;
+  user_org?: string;
+  categoria?: string;
+  created?: string;
+  expand?: {
+    user_org?: {
+      id: string;
+      nome: string;
+    };
+  };
+};
+
+export type Categoria = {
+  id: string;
+  nome: string;
+  slug: string;
+};
+
+export type Evento = {
+  id: string;
+  titulo: string;
+  descricao: string;
+  data: string;
+  cidade: string;
+  imagem?: string;
+  status: "realizado" | "em breve";
+  created?: string;
+};

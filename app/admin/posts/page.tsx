@@ -23,7 +23,7 @@ export default function AdminPostsPage() {
 
   useEffect(() => {
     if (!isLoggedIn || !user) {
-      router.replace("/admin/login");
+      router.replace("/login");
     }
   }, [isLoggedIn, user, router]);
 
@@ -48,7 +48,7 @@ export default function AdminPostsPage() {
         <h2 className="text-2xl font-bold">Posts</h2>
         <Link
           href="/admin/posts/novo"
-          className="btn btn-primary bg-red-600 hover:bg-red-700"
+          className="btn btn-primary bg-red-600 hover:bg-primary-900"
         >
           + Novo Post
         </Link>

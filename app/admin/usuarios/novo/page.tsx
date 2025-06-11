@@ -30,7 +30,7 @@ export default function NovoUsuarioPage() {
   const [telefone, setTelefone] = useState("");
   const [cpf, setCpf] = useState("");
   const [dataNascimento, setDataNascimento] = useState("");
-  const [role, setRole] = useState("lider");
+  const [role, setRole] = useState("usuario");
   const [campoId, setCampoId] = useState("");
   const [campos, setCampos] = useState<Campo[]>([]);
   const [mensagem, setMensagem] = useState("");
@@ -86,7 +86,7 @@ export default function NovoUsuarioPage() {
       setTelefone("");
       setCpf("");
       setDataNascimento("");
-      setRole("lider");
+      setRole("usuario");
       setCampoId("");
     } else {
       setMensagem("❌ Erro: " + (data?.error || "Erro desconhecido"));
@@ -168,6 +168,7 @@ export default function NovoUsuarioPage() {
           onChange={(e) => setRole(e.target.value)}
           className="w-full border rounded p-2"
         >
+          <option value="usuario">Usuário</option>
           <option value="lider">Liderança</option>
           <option value="coordenador">Coordenador</option>
         </select>

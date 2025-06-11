@@ -34,7 +34,7 @@ export default function PedidosPage() {
   // Redireciona se não for coordenador
   useEffect(() => {
     if (!isLoggedIn || !user) {
-      router.replace("/admin/login");
+      router.replace("/login");
     }
   }, [isLoggedIn, user, router]);
 

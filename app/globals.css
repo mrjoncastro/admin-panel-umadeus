@@ -6,20 +6,23 @@
    🎨 Variáveis de cor customizadas
    ========================== */
 :root {
-  --background: theme(colors.neutral.200);
+  --background: theme('colors.neutral.200');
   /* modo claro */
-  --foreground: theme(colors.neutral.900);
+  --foreground: theme('colors.neutral.900');
   /* texto escuro */
-  --text-primary: theme(colors.neutral.900);
-  --text-secondary: theme(colors.neutral.700);
-  --text-header-primary: theme(colors.neutral.100);
-  --text-header-secondary: theme(colors.primary.600);
-  --accent: theme(colors.primary.600);
-  --color-secondary: theme(colors.neutral.900);
+  --text-primary: theme('colors.neutral.900');
+  --text-secondary: theme('colors.neutral.700');
+  --text-header-primary: theme('colors.neutral.100');
+  --text-header-secondary: theme('colors.primary.600');
+  --accent: theme('colors.primary.600');
+  --accent-900: theme('colors.primary.900');
+  --color-secondary: theme('colors.neutral.900');
+  /* Fontes padronizadas para evitar depend\u00eancia de downloads no build */
+  --font-geist: system-ui, sans-serif;
   --font-body: var(--font-geist);
   --font-heading: var(--font-geist);
-  /* Exposição da variável de fonte para uso global */
-  --font-bebas: "Bebas Neue", cursive;
+  /* Fallback para a fonte Bebas Neue */
+  --font-bebas: system-ui, sans-serif;
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
   --space-md: 1rem;
@@ -28,14 +31,15 @@
 }
 
 html.dark {
-  --background: theme(colors.neutral.900);
-  --foreground: theme(colors.neutral.200);
-  --text-primary: theme(colors.neutral.200);
-  --text-secondary: theme(colors.neutral.400);
-  --text-header-primary: theme(colors.neutral.200);
-  --text-header-secondary: theme(colors.neutral.300);
-  --accent: theme(colors.primary.600);
-  --color-secondary: theme(colors.neutral.200);
+  --background: theme('colors.neutral.900');
+  --foreground: theme('colors.neutral.200');
+  --text-primary: theme('colors.neutral.200');
+  --text-secondary: theme('colors.neutral.400');
+  --text-header-primary: theme('colors.neutral.200');
+  --text-header-secondary: theme('colors.neutral.300');
+  --accent: theme('colors.primary.600');
+  --accent-900: theme('colors.primary.900');
+  --color-secondary: theme('colors.neutral.200');
 }
 
 /* ==========================
@@ -55,10 +59,10 @@ body {
   html.dark body {
     background: linear-gradient(
       270deg,
-      theme(colors.neutral.950),
-      theme(colors.neutral.900),
-      theme(colors.neutral.900),
-      theme(colors.neutral.950)
+      theme('colors.neutral.950'),
+      theme('colors.neutral.900'),
+      theme('colors.neutral.900'),
+      theme('colors.neutral.950')
     );
     background-size: 500% 500%;
     background-repeat: no-repeat;
@@ -70,10 +74,10 @@ body {
   html.light body {
     background: linear-gradient(
       270deg,
-      theme(colors.neutral.100),
-      theme(colors.neutral.200),
-      theme(colors.neutral.100),
-      theme(colors.neutral.200)
+      theme('colors.neutral.100'),
+      theme('colors.neutral.200'),
+      theme('colors.neutral.100'),
+      theme('colors.neutral.200')
     );
     background-size: 500% 500%;
     background-repeat: no-repeat;
@@ -133,11 +137,11 @@ p {
 }
 
 .btn-primary {
-  @apply bg-[var(--accent)] text-white hover:bg-[var(--primary-700)];
+  @apply bg-[var(--accent)] text-white hover:bg-primary-500;
 }
 
 .btn-secondary {
-  @apply bg-[var(--color-secondary)] text-[var(--background)] hover:bg-neutral-700 dark:hover:bg-neutral-300;
+  @apply bg-[var(--color-secondary)] text-[var(--background)] hover:bg-primary-700 hover:text-white dark:hover:bg-primary-500;
 }
 
 .btn-danger {
@@ -202,9 +206,9 @@ p {
 .bg-animated {
   background: linear-gradient(
     270deg,
-    theme(colors.primary.900),
-    theme(colors.primary.800),
-    theme(colors.error.800)
+    theme('colors.primary.900'),
+    theme('colors.primary.800'),
+    theme('colors.error.800')
   );
   background-size: 400% 400%;
   animation: gradient-x 15s ease infinite;

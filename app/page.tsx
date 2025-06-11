@@ -1,15 +1,5 @@
-import Link from "next/link";
-import Hero from "@/app/components/Hero";
-import Header from "./components/Header";
+import { redirect } from "next/navigation";
 
-export default function PortalPage() {
-  return (
-    <>
-    <Header />
-    <Hero />
-    <main className="min-h-screen bg-[var(--background)] text-[var(--text-primary)]">
-
-    </main>
-    </>
-  );
+export default function Home() {
+  redirect("/loja");
 }

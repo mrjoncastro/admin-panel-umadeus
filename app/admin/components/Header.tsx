@@ -15,6 +15,7 @@ import {
   LogOut,
   Sun,
   Moon,
+  Settings,
 } from "lucide-react";
 import { useState } from "react";
 import { useTheme } from "@/lib/context/ThemeContext";
@@ -27,6 +28,7 @@ const getNavLinks = (role?: string) => {
       { href: "/admin/lider-painel", label: "Painel" },
       { href: "/admin/inscricoes", label: "Inscrições" },
       { href: "/admin/pedidos", label: "Pedidos" },
+      { href: "/loja", label: "Ver loja" },
     ];
   }
 
@@ -36,7 +38,10 @@ const getNavLinks = (role?: string) => {
     { href: "/admin/pedidos", label: "Pedidos" },
     { href: "/admin/usuarios", label: "Usuários" },
     { href: "/admin/campos", label: "Campos" },
+    { href: "/admin/produtos", label: "Produtos" },
+    { href: "/admin/eventos", label: "Eventos" },
     { href: "/admin/posts", label: "Posts" },
+    { href: "/loja", label: "Ver loja" },
 
   ];
 };
@@ -57,7 +62,7 @@ export default function Header() {
     pb.authStore.clear();
     localStorage.removeItem("pb_token");
     localStorage.removeItem("pb_user");
-    window.location.href = "/admin/login";
+    window.location.href = "/login";
   };
 
   return (
@@ -86,17 +91,23 @@ export default function Header() {
         {/* Navegação - desktop */}
         <nav className="hidden md:flex gap-4 text-sm font-semibold items-center">
           {isLoggedIn &&
-            navLinks.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className={`transition px-3 py-1 rounded-full hover:bg-[var(--background)] hover:text-[var(--foreground)] cursor-pointer ${
-                  pathname === href ? "bg-[var(--background)] text-[var(--foreground)]" : ""
-                }`}
-              >
-                {label}
-              </Link>
-            ))}
+            navLinks.map(({ href, label }) => {
+              const active =
+                href === "/admin/produtos"
+                  ? pathname.startsWith("/admin/produtos")
+                  : pathname === href;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`transition px-3 py-1 rounded-full hover:bg-[var(--background)] hover:text-[var(--foreground)] cursor-pointer ${
+                    active ? "bg-[var(--background)] text-[var(--foreground)]" : ""
+                  }`}
+                >
+                  {label}
+                </Link>
+              );
+            })}
 
           <button
             onClick={toggleTheme}
@@ -134,7 +145,7 @@ export default function Header() {
                       href="/admin/configuracoes"
                       className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
                     >
-                      Configurações
+                      <Settings size={16} />Configurações
                     </Link>
                   </li>
                   <li>
@@ -163,7 +174,7 @@ export default function Header() {
 
           {!isLoggedIn && (
             <Link
-              href="/admin/login"
+              href="/login"
               className="text-sm underline text-[var(--text-header-primary)] hover:text-white cursor-pointer"
             >
               Entrar
@@ -177,18 +188,24 @@ export default function Header() {
         <div className="md:hidden bg-[var(--text-header-primary)] px-6 pb-4">
           <nav className="flex flex-col gap-2">
             {isLoggedIn &&
-              navLinks.map(({ href, label }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={() => setMenuAberto(false)}
-                  className={`transition px-4 py-2 rounded-md text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] ${
-                    pathname === href ? "bg-[var(--background)] text-[var(--foreground)]" : ""
-                  }`}
-                >
-                  {label}
-                </Link>
-              ))}
+              navLinks.map(({ href, label }) => {
+                const active =
+                  href === "/admin/produtos"
+                    ? pathname.startsWith("/admin/produtos")
+                    : pathname === href;
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setMenuAberto(false)}
+                    className={`transition px-4 py-2 rounded-md text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] ${
+                      active ? "bg-[var(--background)] text-[var(--foreground)]" : ""
+                    }`}
+                  >
+                    {label}
+                  </Link>
+                );
+              })}
 
             <button
               onClick={() => {
@@ -239,7 +256,7 @@ export default function Header() {
 
             {!isLoggedIn && (
               <Link
-                href="/admin/login"
+                href="/login"
                 onClick={() => setMenuAberto(false)}
                 className="text-left px-4 py-2 text-sm underline text-[var(--text-header-primary)] hover:text-white"
               >
