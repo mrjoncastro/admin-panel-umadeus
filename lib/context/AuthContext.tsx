@@ -19,7 +19,13 @@ type AuthContextType = {
   isLoggedIn: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signUp: (nome: string, email: string, password: string) => Promise<void>;
+  signUp: (
+    nome: string,
+    email: string,
+    telefone: string,
+    cpf: string,
+    password: string
+  ) => Promise<void>;
   logout: () => void;
 };
 
@@ -90,10 +96,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoggedIn(true);
   };
 
-  const signUp = async (nome: string, email: string, password: string) => {
+  const signUp = async (
+    nome: string,
+    email: string,
+    telefone: string,
+    cpf: string,
+    password: string
+  ) => {
     await pb.collection("usuarios").create({
       nome,
       email,
+      telefone,
+      cpf,
       password,
       passwordConfirm: password,
       role: "usuario",

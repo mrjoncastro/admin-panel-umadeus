@@ -6,6 +6,7 @@ export type CheckoutItem = {
   name: string;
   quantity: number;
   value: number;
+  fotoBase64?: string | null;
 };
 
 export type CreateCheckoutParams = {
@@ -13,6 +14,14 @@ export type CreateCheckoutParams = {
   itens: CheckoutItem[];
   successUrl: string;
   errorUrl: string;
+  cliente: {
+    nome: string;
+    email: string;
+    telefone: string;
+    cpf: string;
+  };
+  installments?: number;
+  paymentMethods?: ("PIX" | "CREDIT_CARD")[];
 };
 
 export async function createCheckout(
@@ -36,16 +45,29 @@ export async function createCheckout(
     .join(" | ");
 
   const payload = {
-    billingType: "UNDEFINED", // Ou "CREDIT_CARD", "PIX"
+    billingTypes: params.paymentMethods ?? ["PIX", "CREDIT_CARD"],
+    installmentCount: params.installments ?? 1,
     value: params.valor,
+    customer: {
+      name: params.cliente.nome,
+      email: params.cliente.email,
+      cpfCnpj: params.cliente.cpf,
+      phone: params.cliente.telefone,
+    },
     description: descricao,
-    dueDate: new Date(Date.now() + 2 * 86400000).toISOString().split("T")[0], // vencimento +2 dias
+    dueDate: new Date(Date.now() + 2 * 86400000).toISOString().split("T")[0],
     checkoutNotificationEnabled: true,
     callback: {
       successUrl: params.successUrl,
       cancelUrl: params.errorUrl,
       errorUrl: params.errorUrl,
     },
+    customFields:
+      (params.itens
+        .map((item, idx) =>
+          item.fotoBase64 ? { name: `item${idx + 1}Foto`, value: item.fotoBase64 } : null
+        )
+        .filter(Boolean) as { name: string; value: string }[]) || undefined,
   };
 
   console.log("📦 Payload enviado ao Asaas:", payload);

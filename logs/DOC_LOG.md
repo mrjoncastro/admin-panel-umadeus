@@ -56,3 +56,5 @@
 ## [2025-06-10] README atualizado incluindo novo endpoint /checkouts
 
 ## [2025-06-10] Documentada diferença entre inscrições e compras de loja no README
+## [2025-06-11] Atualizado cadastro com novos campos e payload do checkout
+## [2025-06-11] Foto do produto (base64) agora enviada no item do checkout, removida do cadastro de usuário
