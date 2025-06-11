@@ -29,12 +29,42 @@ describe('checkout route', () => {
 
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({ valor: 10, itens: [], successUrl: 's', errorUrl: 'e' })
+      body: JSON.stringify({
+        valor: 10,
+        itens: [{ name: 'p', quantity: 1, value: 10 }],
+        successUrl: 's',
+        errorUrl: 'e'
+      })
     });
 
     const res = await POST(req as unknown as NextRequest);
     const data = await res.json();
     expect(fetchMock).toHaveBeenCalledWith('https://asaas/checkouts', expect.any(Object));
     expect(data.checkoutUrl).toBe('url');
+  });
+
+  it('retorna 400 quando corpo inválido', async () => {
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({ valor: 'a', itens: [], successUrl: 's', errorUrl: 'e' })
+    });
+
+    const res = await POST(req as unknown as NextRequest);
+    expect(res.status).toBe(400);
+  });
+
+  it('retorna 400 quando itens incompletos', async () => {
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({
+        valor: 10,
+        itens: [{ quantity: 1, value: 10 }],
+        successUrl: 's',
+        errorUrl: 'e'
+      })
+    });
+
+    const res = await POST(req as unknown as NextRequest);
+    expect(res.status).toBe(400);
   });
 });
