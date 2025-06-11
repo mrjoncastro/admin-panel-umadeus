@@ -56,3 +56,4 @@
 ## [2025-06-10] README atualizado incluindo novo endpoint /checkouts
 
 ## [2025-06-10] Documentada diferença entre inscrições e compras de loja no README
+## [2025-06-11] Documentado endpoint /admin/api/asaas/checkout no README

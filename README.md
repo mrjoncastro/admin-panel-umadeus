@@ -114,6 +114,31 @@ Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utiliza
   página `/loja/checkout`. Esse fluxo usa `/admin/api/asaas/checkout` para
   criar um `checkoutUrl` do Asaas e redirecionar o usuário automaticamente.
 
+### Endpoint `/admin/api/asaas/checkout`
+
+Envie uma requisição `POST` em JSON contendo:
+
+```json
+{
+  "valor": 99.9,
+  "itens": [{ "name": "Produto", "quantity": 1, "value": 99.9 }],
+  "successUrl": "https://meusite.com/sucesso",
+  "errorUrl": "https://meusite.com/erro"
+}
+```
+
+- **valor** – valor total em reais.
+- **itens** – lista de itens (nome, quantidade e valor unitário).
+- **successUrl** – página de redirecionamento em caso de aprovação.
+- **errorUrl** – página de erro ou cancelamento.
+
+O endpoint utiliza as variáveis de ambiente `ASAAS_API_URL` e `ASAAS_API_KEY`.
+A resposta contém o campo `checkoutUrl` com o link gerado:
+
+```json
+{ "checkoutUrl": "https://asaas.com/..." }
+```
+
 ## Perfis de Acesso
 
 O sistema possui três níveis de usuário:
