@@ -7,7 +7,11 @@ import Image from "next/image";
 import RedefinirSenhaModal from "@/app/admin/components/RedefinirSenhaModal";
 import "@/app/globals.css"; // Certifique-se de que o CSS global está importado
 
-export default function LoginForm() {
+export default function LoginForm({
+  redirectTo,
+}: {
+  redirectTo?: string;
+}) {
   const router = useRouter();
   const { login, isLoggedIn, isLoading, user } = useAuthContext();
 
@@ -20,7 +24,9 @@ export default function LoginForm() {
   // Redirecionamento pós-login
   useEffect(() => {
     if (!isLoading && isLoggedIn && user) {
-      if (user.role === "coordenador") {
+      if (redirectTo) {
+        router.replace(redirectTo);
+      } else if (user.role === "coordenador") {
         router.replace("/admin/dashboard");
       } else if (user.role === "lider") {
         router.replace("/admin/lider-painel");
@@ -28,7 +34,7 @@ export default function LoginForm() {
         router.replace("/loja/cliente");
       }
     }
-  }, [isLoading, isLoggedIn, user, router]);
+  }, [isLoading, isLoggedIn, user, router, redirectTo]);
 
   if (!isLoading && isLoggedIn) {
     return null; // impede que o componente renderize novamente

@@ -4,7 +4,6 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Suspense } from "react";
 
-import AuthModal from "@/app/components/AuthModal";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import createPocketBase from "@/lib/pocketbase";
 import ProdutoInterativo from "./ProdutoInterativo";
@@ -25,7 +24,6 @@ export default function ProdutoDetalhe() {
   const { slug } = useParams<{ slug: string }>();
   const [produto, setProduto] = useState<Produto | null>(null);
   const [erro, setErro] = useState(false);
-  const [showAuth, setShowAuth] = useState(false);
   const { isLoggedIn } = useAuthContext();
 
   useEffect(() => {
@@ -108,12 +106,8 @@ export default function ProdutoDetalhe() {
           descricao={produto.descricao}
           produto={produto}
           isLoggedIn={isLoggedIn}
-          onRequireAuth={() => setShowAuth(true)}
         />
       </Suspense>
-      {showAuth && (
-        <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
-      )}
     </main>
   );
 }

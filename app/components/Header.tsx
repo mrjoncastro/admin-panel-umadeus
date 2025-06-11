@@ -7,7 +7,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { useAppConfig } from "@/lib/context/AppConfigContext";
-import AuthModal from "./AuthModal";
 
 type UserRole = "visitante" | "usuario" | "lider" | "coordenador";
 
@@ -24,7 +23,6 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
   const [clientOpen, setClientOpen] = useState(false);
-  const [showAuth, setShowAuth] = useState(false);
   const { user, isLoggedIn, logout } = useAuthContext();
   const { config } = useAppConfig();
   const adminMenuRef = useRef<HTMLUListElement>(null);
@@ -223,12 +221,14 @@ export default function Header() {
             )}
 
             {!isLoggedIn && (
-              <button
-                onClick={() => setShowAuth(true)}
-                className="btn btn-primary"
-              >
-                Acessar sua conta
-              </button>
+              <>
+                <Link href="/login" className="btn btn-primary">
+                  Acessar sua conta
+                </Link>
+                <Link href="/login?view=signup" className="btn btn-secondary">
+                  Crie sua conta
+                </Link>
+              </>
             )}
           </nav>
 
@@ -301,15 +301,22 @@ export default function Header() {
             )}
 
             {!isLoggedIn && (
-              <button
-                onClick={() => {
-                  setShowAuth(true);
-                  setOpen(false);
-                }}
-                className="btn btn-primary text-sm text-center mt-2"
-              >
-                Acessar sua conta
-              </button>
+              <>
+                <Link
+                  href="/login"
+                  className="btn btn-primary text-sm text-center mt-2"
+                  onClick={() => setOpen(false)}
+                >
+                  Acessar sua conta
+                </Link>
+                <Link
+                  href="/login?view=signup"
+                  className="btn btn-secondary text-sm text-center"
+                  onClick={() => setOpen(false)}
+                >
+                  Crie sua conta
+                </Link>
+              </>
             )}
 
             {isLoggedIn && (
@@ -320,9 +327,6 @@ export default function Header() {
           </div>
         )}
       </header>
-      {showAuth && (
-        <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
-      )}
     </>
   );
 }

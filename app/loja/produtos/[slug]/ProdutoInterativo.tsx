@@ -3,7 +3,6 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-import AuthModal from "@/app/components/AuthModal";
 import AddToCartButton from "./AddToCartButton";
 
 // Componente para seleção de gênero e tamanho (reutilizável)
@@ -105,7 +104,6 @@ export default function ProdutoInterativo({
   descricao,
   produto,
   isLoggedIn,
-  onRequireAuth,
 }: {
   imagens: Record<string, string[]>;
   generos: string[];
@@ -115,7 +113,6 @@ export default function ProdutoInterativo({
   descricao?: string;
   produto: any;
   isLoggedIn: boolean;
-  onRequireAuth: () => void;
 }) {
   // Padronização dos gêneros:
   const generosNorm = generos.map((g) =>
@@ -135,7 +132,6 @@ export default function ProdutoInterativo({
   const [cor, setCor] = useState(coresList[0] || "");
   const [indexImg, setIndexImg] = useState(0);
   const pauseRef = useRef(false);
-  const [showAuth, setShowAuth] = useState(false);
   const router = useRouter();
 
   const imgs = imagens[genero] || imagens[generosNorm[0]];
@@ -261,22 +257,18 @@ export default function ProdutoInterativo({
         </div>
         {/* Botões em linha */}
         <div className="flex flex-col md:flex-row gap-3 mt-4">
-          <a
-            href={produto.checkout_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => {
+          <button
+            onClick={() => {
               if (!isLoggedIn) {
-                onRequireAuth();
+                router.push("/login?redirect=/loja/checkout");
               } else {
-                e.preventDefault();
                 router.push("/loja/checkout");
               }
             }}
             className="w-full md:w-auto btn btn-primary text-center"
           >
             Quero essa pra brilhar no Congresso!
-          </a>
+          </button>
           <div className="w-full md:w-auto">
             <AddToCartButton
               produto={{
@@ -292,9 +284,6 @@ export default function ProdutoInterativo({
           </div>
         </div>
         {/* Resto dos detalhes */}
-        {showAuth && (
-          <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
-        )}
         {descricao && (
           <p className="text-sm text-[var(--text-primary)]/80 mt-4 whitespace-pre-line">
             {descricao}
