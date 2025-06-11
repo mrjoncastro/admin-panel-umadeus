@@ -18,11 +18,14 @@ interface Produto {
   slug: string;
 }
 
-export default function ProdutosFiltrados({ produtos }: { produtos: Produto[] }) {
+export default function ProdutosFiltrados({
+  produtos,
+}: {
+  produtos: Produto[];
+}) {
   const [busca, setBusca] = useState("");
   const [faixasSelecionadas, setFaixasSelecionadas] = useState<string[]>([]);
   const [ordem, setOrdem] = useState("recentes");
-
 
   const filtrados = useMemo(() => {
     let res = produtos.filter((p) =>
@@ -46,9 +49,7 @@ export default function ProdutosFiltrados({ produtos }: { produtos: Produto[] })
 
   function toggleFaixa(label: string) {
     setFaixasSelecionadas((prev) =>
-      prev.includes(label)
-        ? prev.filter((l) => l !== label)
-        : [...prev, label]
+      prev.includes(label) ? prev.filter((l) => l !== label) : [...prev, label]
     );
   }
 
@@ -106,14 +107,12 @@ export default function ProdutosFiltrados({ produtos }: { produtos: Produto[] })
               key={p.id}
               className="bg-white rounded-2xl shadow-lg border border-[var(--accent-900)]/10 flex flex-col items-center p-4 transition hover:shadow-xl"
             >
-              <div className="w-full aspect-square flex items-center justify-center overflow-hidden rounded-xl mb-2 bg-neutral-100 border border-[var(--accent)]/5">
+              <div className="w-full aspect-square overflow-hidden rounded-xl mb-2 bg-neutral-100 border border-[var(--accent)]/5 relative">
                 <Image
                   src={p.imagens[0]}
                   alt={p.nome}
-                  width={300}
-                  height={300}
-                  className="object-cover w-[90%] h-[90%] transition group-hover:scale-105"
-                  style={{ objectPosition: "center" }}
+                  fill
+                  className="object-cover object-center transition group-hover:scale-105"
                 />
               </div>
               <h2 className="text-base font-semibold text-[var(--text-primary)] mb-1 line-clamp-2 text-center">

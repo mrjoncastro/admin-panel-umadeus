@@ -51,7 +51,7 @@ export default function Home() {
   return (
     <>
       {/* HERO Congresso */}
-      <section className="w-full bg-primay-900 min-h-[400px] md:min-h-[540px] grid grid-cols-1 md:grid-cols-2">
+      <section className="w-full bg-primary-900 min-h-[400px] md:min-h-[540px] grid grid-cols-1 md:grid-cols-2">
         {/* Esquerda: Texto */}
         <div className="flex flex-col justify-center items-center md:items-start text-center md:text-left bg-primary-600 px-8">
           <span className="mb-4 px-4 py-1 bg-white/20 text-white rounded-full text-xs uppercase tracking-wide font-semibold">
