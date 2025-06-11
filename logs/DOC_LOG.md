@@ -59,3 +59,5 @@
 ## [2025-06-11] Documentado endpoint /admin/api/asaas/checkout no README
 ## [2025-06-10] Adicionadas tarefas para checkout Asaas em docs/tarefas-checkout-asaas.md
 ## [2025-06-10] Atualizado fluxo de checkout para usar Checkout Pronto do Asaas em README e docs.
+## [2025-06-11] Atualizado cadastro com novos campos e payload do checkout
+## [2025-06-11] Foto do produto (base64) agora enviada no item do checkout, removida do cadastro de usuário

@@ -7,6 +7,8 @@ export default function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
   const { signUp } = useAuthContext();
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [cpf, setCpf] = useState("");
   const [senha, setSenha] = useState("");
   const [senhaConfirm, setSenhaConfirm] = useState("");
   const [erro, setErro] = useState("");
@@ -21,7 +23,7 @@ export default function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
     }
     setLoading(true);
     try {
-      await signUp(nome, email, senha);
+      await signUp(nome, email, telefone, cpf, senha);
       onSuccess?.();
     } catch (err) {
       console.error("Erro no cadastro:", err);
@@ -47,6 +49,22 @@ export default function SignUpForm({ onSuccess }: { onSuccess?: () => void }) {
         placeholder="E-mail"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        className="input-base"
+        required
+      />
+      <input
+        type="text"
+        placeholder="Telefone"
+        value={telefone}
+        onChange={(e) => setTelefone(e.target.value)}
+        className="input-base"
+        required
+      />
+      <input
+        type="text"
+        placeholder="CPF"
+        value={cpf}
+        onChange={(e) => setCpf(e.target.value)}
         className="input-base"
         required
       />

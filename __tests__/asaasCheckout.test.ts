@@ -20,6 +20,21 @@ describe('checkout route', () => {
     vi.restoreAllMocks();
   });
 
+  const basePayload = {
+    valor: 10,
+    itens: [{ name: 'p', quantity: 1, value: 10, fotoBase64: 'data:image/png;base64,a' }],
+    successUrl: 'https://sucesso',
+    errorUrl: 'https://erro',
+    cliente: {
+      nome: 'João',
+      email: 'j@x.com',
+      telefone: '111',
+      cpf: '000',
+    },
+    installments: 1,
+    paymentMethods: ['PIX', 'CREDIT_CARD'],
+  };
+
   it('executa POST e retorna checkoutUrl', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
@@ -29,12 +44,7 @@ describe('checkout route', () => {
 
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({
-        valor: 10,
-        itens: [{ name: 'p', quantity: 1, value: 10 }],
-        successUrl: 'https://sucesso',
-        errorUrl: 'https://erro'
-      })
+      body: JSON.stringify(basePayload)
     });
 
     const res = await POST(req as unknown as NextRequest);
@@ -47,10 +57,9 @@ describe('checkout route', () => {
     const req = new Request('http://test', {
       method: 'POST',
       body: JSON.stringify({
+        ...basePayload,
         valor: 'a',
         itens: [],
-        successUrl: 'https://sucesso',
-        errorUrl: 'https://erro'
       })
     });
 
@@ -62,10 +71,8 @@ describe('checkout route', () => {
     const req = new Request('http://test', {
       method: 'POST',
       body: JSON.stringify({
-        valor: 10,
+        ...basePayload,
         itens: [{ quantity: 1, value: 10 }],
-        successUrl: 'https://sucesso',
-        errorUrl: 'https://erro'
       })
     });
 
@@ -77,10 +84,8 @@ describe('checkout route', () => {
     const req = new Request('http://test', {
       method: 'POST',
       body: JSON.stringify({
-        valor: 10,
-        itens: [{ name: 'p', quantity: 1, value: 10 }],
-        successUrl: 'nota-url',
-        errorUrl: 'https://erro'
+        ...basePayload,
+        successUrl: 'nota-url'
       })
     });
 
@@ -92,9 +97,7 @@ describe('checkout route', () => {
     const req = new Request('http://test', {
       method: 'POST',
       body: JSON.stringify({
-        valor: 10,
-        itens: [{ name: 'p', quantity: 1, value: 10 }],
-        successUrl: 'https://sucesso',
+        ...basePayload,
         errorUrl: 'nota-url'
       })
     });
