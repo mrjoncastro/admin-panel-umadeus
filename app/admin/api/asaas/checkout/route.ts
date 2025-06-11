@@ -13,8 +13,8 @@ const checkoutSchema = z.object({
       })
     )
     .min(1),
-  successUrl: z.string(),
-  errorUrl: z.string(),
+  successUrl: z.string().url(),
+  errorUrl: z.string().url(),
 });
 
 export async function POST(req: NextRequest) {

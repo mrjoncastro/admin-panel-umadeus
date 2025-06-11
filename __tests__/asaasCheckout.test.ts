@@ -32,8 +32,8 @@ describe('checkout route', () => {
       body: JSON.stringify({
         valor: 10,
         itens: [{ name: 'p', quantity: 1, value: 10 }],
-        successUrl: 's',
-        errorUrl: 'e'
+        successUrl: 'https://sucesso',
+        errorUrl: 'https://erro'
       })
     });
 
@@ -46,7 +46,12 @@ describe('checkout route', () => {
   it('retorna 400 quando corpo inválido', async () => {
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({ valor: 'a', itens: [], successUrl: 's', errorUrl: 'e' })
+      body: JSON.stringify({
+        valor: 'a',
+        itens: [],
+        successUrl: 'https://sucesso',
+        errorUrl: 'https://erro'
+      })
     });
 
     const res = await POST(req as unknown as NextRequest);
@@ -59,8 +64,38 @@ describe('checkout route', () => {
       body: JSON.stringify({
         valor: 10,
         itens: [{ quantity: 1, value: 10 }],
-        successUrl: 's',
-        errorUrl: 'e'
+        successUrl: 'https://sucesso',
+        errorUrl: 'https://erro'
+      })
+    });
+
+    const res = await POST(req as unknown as NextRequest);
+    expect(res.status).toBe(400);
+  });
+
+  it('retorna 400 quando successUrl inválida', async () => {
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({
+        valor: 10,
+        itens: [{ name: 'p', quantity: 1, value: 10 }],
+        successUrl: 'nota-url',
+        errorUrl: 'https://erro'
+      })
+    });
+
+    const res = await POST(req as unknown as NextRequest);
+    expect(res.status).toBe(400);
+  });
+
+  it('retorna 400 quando errorUrl inválida', async () => {
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({
+        valor: 10,
+        itens: [{ name: 'p', quantity: 1, value: 10 }],
+        successUrl: 'https://sucesso',
+        errorUrl: 'nota-url'
       })
     });
 
