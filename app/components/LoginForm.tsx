@@ -9,8 +9,10 @@ import "@/app/globals.css"; // Certifique-se de que o CSS global está importado
 
 export default function LoginForm({
   redirectTo,
+  children,
 }: {
   redirectTo?: string;
+  children?: React.ReactNode;
 }) {
   const router = useRouter();
   const { login, isLoggedIn, isLoading, user } = useAuthContext();
@@ -64,13 +66,9 @@ export default function LoginForm({
   }
 
   return (
-    <div className="relative h-screen flex items-center justify-center bg-gray-900 overflow-hidden">
-      <div
-        className="absolute inset-0 bg-animated opacity-60"
-        aria-hidden="true"
-      ></div>
-      <div className="relative z-10 w-full max-w-sm p-[var(--space-lg)] bg-black/80 rounded-xl backdrop-blur-md text-gray-200">
-        <div className="flex justify-center mb-4">
+    <div className="relative h-screen flex items-center justify-center overflow-hidden">
+      <div className="relative z-10 w-full max-w-sm p-[var(--space-lg)] bg-primary-900 rounded-xl backdrop-blur-md text-gray-200">
+        <div className="flex flex-col items-center gap-2 mb-6">
           <Image
             src="/img/logo_umadeus_branco.png"
             alt="Logo UMADEUS"
@@ -79,9 +77,11 @@ export default function LoginForm({
             priority
           />
         </div>
+
         <h1 className="text-3xl font-bold text-center mb-2 fade-in-up">
           Bem-vindo!
         </h1>
+
         <p
           className="text-center text-sm text-gray-300 mb-6 fade-in-up"
           style={{ animationDelay: "0.2s" }}
@@ -123,12 +123,16 @@ export default function LoginForm({
               Esqueci minha senha
             </button>
           </div>
-
+          {children && (
+            <div className="text-sm text-gray-300 text-center">{children}</div>
+          )}
           <button
             type="submit"
             disabled={isSubmitting}
             className={`btn block mx-auto ${
-              isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-[var(--accent)]"
+              isSubmitting
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[var(--accent)]"
             }`}
           >
             {isSubmitting ? "Entrando..." : "Entrar"}
