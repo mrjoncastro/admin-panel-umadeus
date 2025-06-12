@@ -205,6 +205,15 @@ export default function Header() {
                       </Link>
                     </li>
                     <li>
+                      <Link
+                        href="/loja/compras"
+                        className="block px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                        onClick={() => setClientOpen(false)}
+                      >
+                        Minhas compras
+                      </Link>
+                    </li>
+                    <li>
                       <button
                         onClick={handleLogout}
                         className="block w-full text-left px-4 py-2 text-red-600 hover:bg-zinc-100 dark:hover:bg-zinc-800"
@@ -289,6 +298,13 @@ export default function Header() {
                   onClick={() => setOpen(false)}
                 >
                   Área do Cliente
+                </Link>
+                <Link
+                  href="/loja/compras"
+                  className="text-platinum hover:text-primary-400 transition py-2 text-base font-medium"
+                  onClick={() => setOpen(false)}
+                >
+                  Minhas compras
                 </Link>
                 <button
                   onClick={handleLogout}
