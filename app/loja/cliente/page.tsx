@@ -50,7 +50,7 @@ export default function AreaCliente() {
         </p>
 
         <div className="flex flex-wrap gap-2 pt-4">
-          <a href="/admin/perfil" className="btn btn-secondary">
+          <a href="/loja/perfil" className="btn btn-secondary">
             Alterar dados pessoais
           </a>
           <a href="/admin/redefinir-senha" className="btn btn-secondary">
