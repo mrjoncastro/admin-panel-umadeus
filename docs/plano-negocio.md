@@ -7,8 +7,24 @@ Implementamos a base multi-tenant do sistema no banco usando PocketBase, já pre
 ### 1. m24_clientes
 - Cadastro central de cada cliente (tenant).
 - Campo `documento` (CPF ou CNPJ) obrigatório e único, para identificação fiscal e integrações.
-- Demais campos: `nome`, `dominio`, `logo_url`, `cor_primaria`, `responsavel_nome`, `responsavel_email`, `ativo`, `created`.
 
+
+#### Tabela de Campos
+
+| Campo | Descrição |
+|-------|-----------|
+| `documento` | CPF ou CNPJ do cliente, usado em integrações. |
+| `nome` | Nome ou razão social do cliente. |
+| `dominio` | Endereço principal configurado. |
+| `tipo_dominio` | Indica se o cliente usa subdomínio ou domínio próprio. |
+| `verificado` | Confirma se o domínio está validado. |
+| `modo_validacao` | Método adotado para validação do domínio. |
+| `logo_url` | URL do logotipo exibido na plataforma. |
+| `cor_primaria` | Cor principal utilizada na personalização. |
+| `responsavel_nome` | Nome da pessoa responsável. |
+| `responsavel_email` | E-mail de contato do responsável. |
+| `ativo` | Indica se o cliente está ativo no sistema. |
+| `created` | Data de criação do cadastro. |
 ### 2. Coleções filhas (usuarios, produtos, pedidos, inscricoes)
 - Todas possuem campo de relação obrigatória `cliente` (referência à coleção `clientes`).
 - Isso garante que todo registro esteja sempre vinculado a um cliente.

@@ -87,3 +87,4 @@
 ## [2025-06-12] Ícone de tour e página /admin/compras restritos ao admin; link público removido
 
 ## [2025-06-12] Adicionadas propriedades tipo_dominio, verificado e modo_validacao ao tipo Cliente.
+## [2025-06-12] Adicionada tabela de campos em docs/plano-negocio.md incluindo tipo_dominio, verificado e modo_validacao
