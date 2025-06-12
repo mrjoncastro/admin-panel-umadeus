@@ -92,3 +92,4 @@
 ## [2025-06-12] Removida variavel NEXT_PUBLIC_TENANT_ID e implementada logica para obter tenant pelo host.
 
 ## [2025-06-12] Atualizados README e plano-negocio sobre getTenantFromHost e remoção do NEXT_PUBLIC_TENANT_ID.
+## [2025-06-13] Documentadas seções de LoadingOverlay, SmoothTabs e ModalAnimated no design system.
