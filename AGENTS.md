@@ -31,18 +31,34 @@ Este projeto conta com uma estrutura multidisciplinar de agentes simulados, resp
 
 ## Designer (UI/UX)
 
-**Missão:** Padronizar a experiência visual e usabilidade.
+**Missão:** Padronizar a experiência visual, usabilidade e animações no produto.
+
 **Atuação:**
 
-- Criar e documentar sistemas de design, tokens, acessibilidade.
-- Focar em componentes reutilizáveis e boas práticas UX.
-- Integrar o uso de Storybook para documentação visual e testes interativos de componentes.
+- Criar, documentar e manter o **sistema de design**, tokens e diretrizes de acessibilidade.
+- Desenvolver **componentes reutilizáveis**, animados e acessíveis com base em bibliotecas integradas.
+- Integrar e manter o **Storybook** para documentação interativa dos componentes visuais.
 
-  - Criar e manter arquivos `.stories.tsx` para todos os componentes principais.
-  - Definir padrões de visualização com `controls`, `args` e `play` para testes manuais e automáticos.
-    **Materiais recomendados:** Bibliotecas de componentes, feedbacks UX, estrutura do Storybook (`.storybook/`, stories existentes).
+### Bibliotecas e Tecnologias
 
-Consulte o guia completo em [docs/design-system.md](docs/design-system.md) para visualizar tokens e exemplos.
+- **Framer Motion** para animações suaves de UI, SVGs e transições (`motion.*`, `AnimatePresence`, `useAnimation`).
+- **Radix UI** para componentes acessíveis como `Dialog`, `Tabs`, `Popover`, `DropdownMenu`.
+- **Smooth Tabs**: abas com transição suave utilizando `Radix + Framer Motion`.
+- **Overlay de Loading**: componentes reutilizáveis com transições animadas para estados de carregamento.
+
+### Entregas Esperadas
+
+- Criar e manter arquivos `.stories.tsx` para **todos os componentes visuais**, incluindo variações com animação.
+- Definir **padrões visuais interativos** usando `controls`, `args` e `play` para testes manuais e automáticos no Storybook.
+- Garantir que **animações e overlays** estejam padronizados e reutilizáveis (ex: `LoadingOverlay.tsx`, `SmoothTabs.tsx`, `ModalAnimated.tsx`).
+- Colaborar com o time de acessibilidade para validar contraste, foco e uso de teclado nos componentes.
+
+### Materiais recomendados
+
+- `app/globals.css`, `tailwind.config.js`
+- `components/`, `stories/`, `.storybook/`
+- Documentação de tokens em `docs/design-tokens.md`
+- Referência: [docs/design-system.md](docs/design-system.md)
 
 ---
 
@@ -93,9 +109,9 @@ Consulte o guia completo em [docs/design-system.md](docs/design-system.md) para 
 - Cobrir funcionalidades críticas com Jest, Playwright.
 - Sugerir arquitetura de testes, mocks, coverage mínimo.
 - Execute `npm run lint` para verificar problemas de código. Evite o uso de `any` especificando tipos adequados e sempre inclua todas as dependências utilizadas dentro dos hooks `useEffect`.
-- Execute `npm run build` para verificar problemas de código. 
+- Execute `npm run build` para verificar problemas de código.
 
-    **Materiais recomendados:** Funcionalidades principais, bugs comuns, specs.
+  **Materiais recomendados:** Funcionalidades principais, bugs comuns, specs.
 
 ---
 
