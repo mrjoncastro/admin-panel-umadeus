@@ -21,15 +21,10 @@ function CheckoutContent() {
   const [email, setEmail] = useState(user?.email || "");
   const [endereco, setEndereco] = useState(String(user?.endereco ?? ""));
   const [cpf, setCpf] = useState("");
-  const [numero, setNumero] = useState("");
   const [estado, setEstado] = useState("");
   const [cep, setCep] = useState("");
   const [cidade, setCidade] = useState("");
-  const [cpf, setCpf] = useState(String(user?.cpf ?? ""));
   const [numero, setNumero] = useState(String(user?.numero ?? ""));
-  const [estado, setEstado] = useState(String(user?.estado ?? ""));
-  const [cep, setCep] = useState(String(user?.cep ?? ""));
-  const [cidade, setCidade] = useState(String(user?.cidade ?? ""));
   const [dataNascimento, setDataNascimento] = useState(
     String((user as any)?.data_nascimento ?? "")
   );
