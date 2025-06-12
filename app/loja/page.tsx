@@ -20,11 +20,29 @@ export default function Home() {
     async function fetchProdutos() {
       try {
         const pb = createPocketBase();
-        const tenantId = localStorage.getItem("tenant_id");
+        const storedTenant = localStorage.getItem("tenant_id");
+        let tenantId = storedTenant;
+
+        if (!tenantId) {
+          const host = window.location.hostname;
+          try {
+            const cliente = await pb
+              .collection("m24_clientes")
+              .getFirstListItem(`dominio='${host}'`);
+            tenantId = cliente.id;
+            localStorage.setItem("tenant_id", tenantId);
+          } catch {
+            tenantId = null;
+          }
+        }
+
+        const filterStr = tenantId
+          ? `ativo = true && cliente='${tenantId}'`
+          : "ativo = true";
         const list = await pb
           .collection("produtos")
           .getList<Produto>(1, 6, {
-            filter: `ativo = true && cliente='${tenantId}'`,
+            filter: filterStr,
             sort: "-created",
           });
         const prods = list.items.map((p) => ({
