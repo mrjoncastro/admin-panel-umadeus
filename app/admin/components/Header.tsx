@@ -18,6 +18,8 @@ import {
   Settings,
 } from "lucide-react";
 import { useState } from "react";
+import * as Popover from "@radix-ui/react-popover";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/lib/context/ThemeContext";
 import { useAppConfig } from "@/lib/context/AppConfigContext";
 import RedefinirSenhaModal from "./RedefinirSenhaModal";
@@ -119,58 +121,69 @@ export default function Header() {
           </button>
 
           {isLoggedIn && (
-            <div className="relative">
-              <button
-                onClick={() => setPerfilAberto((prev) => !prev)}
-                className="flex items-center gap-2 text-sm font-semibold hover:opacity-90"
-              >
-                <User size={18} />
-                <span className="cursor-pointer">
-                  Olá, {user?.nome?.split(" ")[0]}
-                </span>
-                <ChevronDown size={14} />
-              </button>
-
-              {perfilAberto && (
-                <ul className="absolute right-0 mt-2 w-52 bg-white text-[var(--foreground)] dark:bg-zinc-900 dark:text-white rounded-lg shadow z-50 text-sm py-2 space-y-2">
-                  <li>
-                    <Link
-                      href="/admin/perfil"
-                      className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
-                    >
-                      <User size={16} /> Visualizar perfil
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/admin/configuracoes"
-                      className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
-                    >
-                      <Settings size={16} />Configurações
-                    </Link>
-                  </li>
-                  <li>
-                    <button
-                      onClick={() => {
-                        setMostrarModalSenha(true);
-                        setPerfilAberto(false);
-                      }}
-                      className="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
-                    >
-                      <Lock size={16} /> Redefinir senha
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left flex items-center gap-2 px-4 py-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-900 cursor-pointer"
-                    >
-                      <LogOut size={16} /> Sair
-                    </button>
-                  </li>
-                </ul>
-              )}
-            </div>
+            <Popover.Root open={perfilAberto} onOpenChange={setPerfilAberto}>
+              <Popover.Trigger asChild>
+                <button
+                  className="flex items-center gap-2 text-sm font-semibold hover:opacity-90"
+                >
+                  <User size={18} />
+                  <span className="cursor-pointer">
+                    Olá, {user?.nome?.split(" ")[0]}
+                  </span>
+                  <ChevronDown size={14} />
+                </button>
+              </Popover.Trigger>
+              <AnimatePresence>
+                {perfilAberto && (
+                  <Popover.Portal forceMount>
+                    <Popover.Content asChild side="bottom" align="end">
+                      <motion.ul
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="mt-2 w-52 bg-white text-[var(--foreground)] dark:bg-zinc-900 dark:text-white rounded-lg shadow z-50 text-sm py-2 space-y-2"
+                      >
+                        <li>
+                          <Link
+                            href="/admin/perfil"
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                          >
+                            <User size={16} /> Visualizar perfil
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/admin/configuracoes"
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                          >
+                            <Settings size={16} />Configurações
+                          </Link>
+                        </li>
+                        <li>
+                          <button
+                            onClick={() => {
+                              setMostrarModalSenha(true);
+                              setPerfilAberto(false);
+                            }}
+                            className="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                          >
+                            <Lock size={16} /> Redefinir senha
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            onClick={handleLogout}
+                            className="w-full text-left flex items-center gap-2 px-4 py-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-900 cursor-pointer"
+                          >
+                            <LogOut size={16} /> Sair
+                          </button>
+                        </li>
+                      </motion.ul>
+                    </Popover.Content>
+                  </Popover.Portal>
+                )}
+              </AnimatePresence>
+            </Popover.Root>
           )}
 
           {!isLoggedIn && (
