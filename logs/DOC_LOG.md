@@ -84,3 +84,4 @@
 ## [2025-06-12] Criada página /iniciar-tour com guia de primeiro acesso e link atualizado no README
 ## [2025-06-12] Removido link Iniciar Tour do menu; adicionado ícone de tour junto ao sino
 ## [2025-06-12] Campo booleano 'tour' registrado para usuários e link Compras incluído no header
+## [2025-06-12] Ícone de tour e página /admin/compras restritos ao admin; link público removido
