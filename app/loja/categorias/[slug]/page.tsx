@@ -22,9 +22,10 @@ export default async function CategoriaDetalhe({
 }) {
   const { slug } = await params;
   const pb = createPocketBase();
+  const tenantId = process.env.NEXT_PUBLIC_TENANT_ID;
 
   const produtosPB: Produto[] = await pb.collection("produtos").getFullList({
-    filter: `ativo = true && categoria = '${slug}'`,
+    filter: `ativo = true && categoria = '${slug}' && cliente='${tenantId}'`,
     sort: "-created",
   });
 
