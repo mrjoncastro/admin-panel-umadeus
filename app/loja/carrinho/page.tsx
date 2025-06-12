@@ -28,7 +28,6 @@ export default function CarrinhoPage() {
   const goToSignup = () =>
     router.push("/login?view=signup&redirect=/loja/checkout");
   const goToLogin = () => router.push("/login?redirect=/loja/checkout");
-  }
 
   if (itens.length === 0) {
     return (
@@ -121,3 +120,4 @@ export default function CarrinhoPage() {
     </main>
   );
 }
+

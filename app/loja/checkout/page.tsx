@@ -138,7 +138,7 @@ function CheckoutContent() {
               <label className="block text-xs text-gray-500 mb-1">E-mail</label>
               <input
                 type="email"
-                value={email}
+                value={typeof email === "string" ? email : ""}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
                 placeholder="Seu melhor e-mail"
@@ -151,7 +151,7 @@ function CheckoutContent() {
               </label>
               <input
                 type="text"
-                value={endereco}
+                value={typeof endereco === "string" ? endereco : ""}
                 onChange={(e) => setEndereco(e.target.value)}
                 className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
                 placeholder="Rua, número e complemento"
