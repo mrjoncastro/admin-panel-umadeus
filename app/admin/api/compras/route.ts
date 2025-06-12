@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const auth = requireRole(req, "coordenador");
+  const auth = requireRole(req, "usuario");
   if ("error" in auth) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
     data.cliente = user.cliente;
+    data.usuario = user.id;
     const compra = await pb.collection("compras").create(data);
     return NextResponse.json(compra, { status: 201 });
   } catch (err) {
