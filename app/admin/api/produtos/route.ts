@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   try {
     const produtos = await pb.collection("produtos").getFullList({
       sort: "-created",
-      filter: `user_org = "${user.id}"`,
+      filter: `user_org = "${user.id}" && cliente="${user.cliente}"`,
     });
     return NextResponse.json(produtos, { status: 200 });
   } catch (err) {
@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     formData.set("user_org", user.id);
+    formData.set("cliente", user.cliente as string);
     const produto = await pb.collection("produtos").create(formData);
     return NextResponse.json(produto, { status: 201 });
   } catch (err) {

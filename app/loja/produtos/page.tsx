@@ -13,8 +13,9 @@ interface Produto {
 
 export default async function ProdutosPage() {
   const pb = createPocketBase();
+  const tenantId = process.env.NEXT_PUBLIC_TENANT_ID;
   const list = await pb.collection("produtos").getList<Produto>(1, 50, {
-    filter: "ativo = true",
+    filter: `ativo = true && cliente='${tenantId}'`,
     sort: "-created",
   });
   const produtosPB: Produto[] = list.items;

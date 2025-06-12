@@ -3,5 +3,6 @@ export type UserModel = {
   nome: string;
   email: string;
   role: "coordenador" | "lider" | "usuario";
+  cliente?: string;
   [key: string]: unknown;
 };

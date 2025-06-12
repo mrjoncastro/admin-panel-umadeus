@@ -43,6 +43,7 @@ export async function POST(req: NextRequest) {
       email: inscricao.email,
       campo: campoId,
       responsavel: responsavelId,
+      cliente: inscricao.cliente,
     });
 
     return NextResponse.json({

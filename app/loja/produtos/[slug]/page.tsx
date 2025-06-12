@@ -29,9 +29,10 @@ export default function ProdutoDetalhe() {
   useEffect(() => {
     if (!slug) return;
     const pb = createPocketBase();
+    const tenantId = localStorage.getItem("tenant_id");
     pb
       .collection("produtos")
-      .getFirstListItem<Produto>(`slug = '${slug}'`)
+      .getFirstListItem<Produto>(`slug = '${slug}' && cliente='${tenantId}'`)
       .then((p) => {
         const imgs = Array.isArray(p.imagens)
           ? p.imagens.map((img) => pb.files.getURL(p, img))

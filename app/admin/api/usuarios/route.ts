@@ -9,12 +9,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
-  const { pb } = auth;
+  const { pb, user } = auth;
 
   try {
     const usuarios = await pb.collection("usuarios").getFullList({
       sort: "nome",
       expand: "campo",
+      filter: `cliente='${user.cliente}'`,
     });
 
     logInfo(`📦 ${usuarios.length} usuários encontrados.`);
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
-  const { pb } = auth;
+  const { pb, user } = auth;
 
   try {
     const { nome, email, password, passwordConfirm, role, campo } =
@@ -64,6 +65,7 @@ export async function POST(req: NextRequest) {
       passwordConfirm,
       role,
       campo,
+      cliente: user.cliente,
     });
 
     logInfo("✅ Usuário criado com sucesso");

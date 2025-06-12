@@ -11,6 +11,7 @@ export type Inscricao = {
   data_nascimento?: string;
   criado_por?: string;
   campo?: string;
+  cliente?: string;
   cpf?: string;
   confirmado_por_lider?: boolean;
   created?: string;
@@ -46,6 +47,7 @@ export type Pedido = {
   cor: string;
   genero?: string;
   responsavel?: string;
+  cliente?: string;
   email: string;
   created?: string;
   valor: string;
@@ -87,6 +89,7 @@ export type Produto = {
   checkoutUrl?: string; // alias usado no formulário do admin
   ativo?: boolean;
   user_org?: string;
+  cliente?: string;
   categoria?: string;
   created?: string;
   expand?: {
