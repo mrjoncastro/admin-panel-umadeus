@@ -66,3 +66,4 @@
 ## [2025-06-11] Incluídos campos de endereço no cadastro e adequação do payload do checkout ao novo modelo do Asaas
 ## [2025-06-12] Exibidos detalhes de cor, tamanho e modelo no carrinho e checkout com aviso de cadastro obrigatório
 ## [2025-06-12] Cores do carrinho e checkout agora exibem nome da cor
+## [2025-06-12] Checkout carrega cpf, endereço e inclui data de nascimento

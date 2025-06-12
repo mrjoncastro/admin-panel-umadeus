@@ -20,6 +20,14 @@ function CheckoutContent() {
   const [telefone, setTelefone] = useState(String(user?.telefone ?? ""));
   const [email, setEmail] = useState(user?.email || "");
   const [endereco, setEndereco] = useState(String(user?.endereco ?? ""));
+  const [cpf, setCpf] = useState(String(user?.cpf ?? ""));
+  const [numero, setNumero] = useState(String(user?.numero ?? ""));
+  const [estado, setEstado] = useState(String(user?.estado ?? ""));
+  const [cep, setCep] = useState(String(user?.cep ?? ""));
+  const [cidade, setCidade] = useState(String(user?.cidade ?? ""));
+  const [dataNascimento, setDataNascimento] = useState(
+    String((user as any)?.data_nascimento ?? "")
+  );
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -28,6 +36,12 @@ function CheckoutContent() {
       setTelefone(String(user.telefone ?? ""));
       setEmail(user.email || "");
       setEndereco(String(user.endereco ?? ""));
+      setCpf(String(user.cpf ?? ""));
+      setNumero(String(user.numero ?? ""));
+      setEstado(String(user.estado ?? ""));
+      setCep(String(user.cep ?? ""));
+      setCidade(String(user.cidade ?? ""));
+      setDataNascimento(String((user as any).data_nascimento ?? ""));
     }
   }, [user]);
 
@@ -61,17 +75,63 @@ function CheckoutContent() {
   const handleConfirm = async () => {
     setLoading(true);
     try {
+      const itensPayload = await Promise.all(
+        itens.map(async (i) => {
+          let fotoBase64: string | undefined;
+          if (i.imagem) {
+            try {
+              const resp = await fetch(i.imagem);
+              const blob = await resp.blob();
+              fotoBase64 = await new Promise((res) => {
+                const reader = new FileReader();
+                reader.onloadend = () => res(reader.result as string);
+                reader.readAsDataURL(blob);
+              });
+            } catch {
+              /* ignore */
+            }
+          }
+          return {
+            name: i.nome,
+            description: i.descricao,
+            quantity: i.quantidade,
+            value: i.preco,
+            fotoBase64,
+          };
+        })
+      );
+
+      const payload = {
+        valor: total,
+        itens: itensPayload,
+        successUrl: `${window.location.origin}/loja/sucesso?pedido=${pedidoId}`,
+        errorUrl: `${window.location.origin}/loja/sucesso?pedido=${pedidoId}`,
+        cliente: {
+          nome,
+          email,
+          telefone,
+          cpf,
+          endereco,
+          numero,
+          estado,
+          cep,
+          cidade,
+        },
+        installments: 1,
+        paymentMethods: ["PIX", "CREDIT_CARD"],
+      };
+
       const res = await fetch("/admin/api/asaas/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ valor: total, pedidoId }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (!res.ok || !data?.checkoutUrl)
         throw new Error("Falha ao gerar link de pagamento");
       clearCart();
       window.location.href = data.checkoutUrl;
-    } catch (err) {
+    } catch {
       alert("Erro ao processar pagamento. Tente novamente.");
     } finally {
       setLoading(false);
@@ -155,7 +215,66 @@ function CheckoutContent() {
                 value={endereco}
                 onChange={(e) => setEndereco(e.target.value)}
                 className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
-                placeholder="Rua, número e complemento"
+                placeholder="Rua"
+                required
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="text"
+                value={numero}
+                onChange={(e) => setNumero(e.target.value)}
+                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
+                placeholder="Número"
+                required
+              />
+              <input
+                type="text"
+                value={estado}
+                onChange={(e) => setEstado(e.target.value)}
+                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
+                placeholder="Estado"
+                required
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="text"
+                value={cep}
+                onChange={(e) => setCep(e.target.value)}
+                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
+                placeholder="CEP"
+                required
+              />
+              <input
+                type="text"
+                value={cidade}
+                onChange={(e) => setCidade(e.target.value)}
+                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
+                placeholder="Cidade"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">CPF</label>
+              <input
+                type="text"
+                value={cpf}
+                onChange={(e) => setCpf(e.target.value)}
+                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
+                placeholder="CPF"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">
+                Data de nascimento
+              </label>
+              <input
+                type="date"
+                value={dataNascimento}
+                onChange={(e) => setDataNascimento(e.target.value)}
+                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
                 required
               />
             </div>
