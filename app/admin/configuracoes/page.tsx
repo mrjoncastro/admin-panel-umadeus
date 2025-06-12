@@ -84,6 +84,12 @@ export default function ConfiguracoesPage() {
   }
 
   const handleLogoChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.type === "text") {
+      const url = e.target.value;
+      setLogoUrl(url);
+      updateConfig({ logoUrl: url });
+      return;
+    }
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
@@ -166,7 +172,14 @@ export default function ConfiguracoesPage() {
         </label>
         {error && <div className="text-sm text-red-600">{error}</div>}
         <label className="block">
-          <span className="block mb-1">Logo</span>
+          <span className="block mb-1">Logo (URL ou Upload)</span>
+          <input
+            type="text"
+            value={logoUrl.startsWith("data:") ? "" : logoUrl}
+            placeholder="Cole a URL do logo"
+            onChange={handleLogoChange}
+            className="input-base mb-2"
+          />
           <input
             ref={fileRef}
             type="file"
