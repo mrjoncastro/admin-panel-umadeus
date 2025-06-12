@@ -1,6 +1,6 @@
-# 📁 Estrutura de Projeto – UMADEUS
+# 📁 Estrutura de Projeto – M24Vendas
 
-Este documento descreve a **arquitetura de pastas e responsabilidades** do projeto UMADEUS, com orientações baseadas em **boas práticas de desenvolvimento, organização e performance**.
+Este documento descreve a **arquitetura de pastas e responsabilidades** do projeto M24Vendas, com orientações baseadas em **boas práticas de desenvolvimento, organização e performance**.
 
 ---
 
@@ -62,8 +62,51 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 /stories/                  # Storybook de componentes
 
 ---
+# Estrutura Multi-tenant PocketBase — m
 
-## 🌐 Portal – Boas Práticas
+Implementamos a base multi-tenant do sistema no banco usando PocketBase, já preparada para isolamento de dados entre diferentes clientes (tenants) desde o desenvolvimento.
+
+## Estrutura das Coleções
+
+### 1. m24_clientes
+- Cadastro central de cada cliente/união (tenant).
+- Campo `documento` (CPF ou CNPJ) obrigatório e único, para identificação fiscal e integrações.
+- Demais campos: `nome`, `dominio`, `logo_url`, `cor_primaria`, `responsavel_nome`, `responsavel_email`, `ativo`, `created`.
+
+### 2. Coleções filhas (usuarios, produtos, pedidos, inscricoes)
+- Todas possuem campo de relação obrigatória `cliente` (referência à coleção `clientes`).
+- Isso garante que todo registro esteja sempre vinculado a um cliente.
+
+## Permissões e Lógica Multi-tenant 
+
+- Todas queries, leituras e gravações devem ser filtradas pelo campo `cliente`.
+- **É obrigatório que toda criação, edição, atualização ou exclusão de usuários, pedidos, inscrições, compras e quaisquer outros registros SEMPRE inclua o campo `cliente`, vinculando corretamente ao cliente (tenant) em questão.**
+- O fluxo de autenticação, consulta ou cadastro deve sempre:
+  1. **Procurar primeiro o cliente** (tenant) usando `documento` (CPF/CNPJ) ou domínio.
+  2. **Isolar todas as operações** usando o ID do cliente (campo `cliente`).
+  3. Garantir que cada usuário veja/edite apenas dados do seu próprio cliente (tenant).
+
+> **Exemplo de filtro em query:**  
+> Buscar pedidos apenas do cliente autenticado:
+> ```js
+> pb.collection('pedidos').getFullList({ filter: `cliente='ID_DO_CLIENTE'` })
+> ```
+
+- O escopo do usuário (coordenador, lider, usuario) deve ser respeitado dentro do tenant.
+
+## Benefícios
+
+- Estrutura pronta para SaaS: escalável, segura, pronta para deploy em nuvem.
+- Fácil integração com pagamentos, notas fiscais e automações.
+- Permissões e isolamento já padronizados desde o desenvolvimento local.
+
+---
+
+> Adote este padrão multi-tenant em toda a aplicação, SEMPRE consultando, criando e isolando pelo cliente antes de qualquer outra operação — isso inclui obrigatoriamente toda criação, edição e atualização de registros nas coleções filhas. Assim, a transição para produção será transparente e segura.
+
+
+
+## 🌐 Site – Boas Práticas
 
 - Mantém a identidade visual do cliente de forma *white label*
 - Permite customização de logo e cores via painel admin (`/admin/configuracoes`)
@@ -120,4 +163,4 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 
 ## 📌 Considerações Finais
 
-Esta estrutura busca garantir **clareza, escalabilidade e manutenibilidade** do projeto UMADEUS, atendendo tanto ao público final quanto às lideranças administrativas. Deve ser evoluída com base no crescimento do projeto, mantendo a consistência na organização e nos princípios de performance e segurança.
+Esta estrutura busca garantir **clareza, escalabilidade e manutenibilidade** do projeto M24Vendas, atendendo tanto ao público final quanto às lideranças administrativas. Deve ser evoluída com base no crescimento do projeto, mantendo a consistência na organização e nos princípios de performance e segurança.
