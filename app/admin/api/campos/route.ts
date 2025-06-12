@@ -9,11 +9,12 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
-  const { pb } = auth;
+  const { pb, user } = auth;
 
   try {
     const campos = await pb.collection("campos").getFullList({
       sort: "nome",
+      filter: `cliente='${user.cliente}'`,
     });
 
     return NextResponse.json(campos, { status: 200 });
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
-  const { pb } = auth;
+  const { pb, user } = auth;
 
   try {
     const { nome } = await req.json();
@@ -48,7 +49,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Nome inválido" }, { status: 400 });
     }
 
-    const campo = await pb.collection("campos").create({ nome });
+    const campo = await pb.collection("campos").create({ nome, cliente: user.cliente });
 
     logInfo("✅ Campo criado: " + JSON.stringify(campo));
 

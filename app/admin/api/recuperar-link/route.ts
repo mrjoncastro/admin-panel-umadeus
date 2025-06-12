@@ -9,7 +9,7 @@ pb.autoCancellation(false);
 
 export async function POST(req: NextRequest) {
   try {
-    const { cpf, telefone } = await req.json();
+    const { cpf, telefone, cliente } = await req.json();
 
     console.log("📨 Dados recebidos:", { cpf, telefone });
 
@@ -17,6 +17,13 @@ export async function POST(req: NextRequest) {
       logInfo("⚠️ CPF ou telefone não fornecido");
       return NextResponse.json(
         { error: "Informe o CPF ou telefone." },
+        { status: 400 }
+      );
+    }
+
+    if (!cliente) {
+      return NextResponse.json(
+        { error: "Cliente ausente." },
         { status: 400 }
       );
     }
@@ -30,7 +37,8 @@ export async function POST(req: NextRequest) {
       logInfo("✅ Autenticado com sucesso.");
     }
 
-    const filtro = cpf ? `cpf = "${cpf}"` : `telefone = "${telefone}"`;
+    const filtroBase = cpf ? `cpf = "${cpf}"` : `telefone = "${telefone}"`;
+    const filtro = `${filtroBase} && cliente='${cliente}'`;
     console.log("🔎 Filtro usado:", filtro);
 
     const inscricoes = await pb.collection("inscricoes").getFullList({

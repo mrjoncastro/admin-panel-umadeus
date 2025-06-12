@@ -4,9 +4,11 @@ import { useEffect, useState, useMemo } from "react";
 import { Bell, X } from "lucide-react";
 import createPocketBase from "@/lib/pocketbase";
 import type { Inscricao } from "@/types";
+import { useAuthContext } from "@/lib/context/AuthContext";
 
 export default function NotificationBell() {
   const pb = useMemo(() => createPocketBase(), []);
+  const { tenantId } = useAuthContext();
   const [count, setCount] = useState(0);
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
   const [open, setOpen] = useState(false);
@@ -16,13 +18,13 @@ export default function NotificationBell() {
       try {
         const [insList, pedidos] = await Promise.all([
           pb.collection("inscricoes").getList<Inscricao>(1, 5, {
-            filter: 'status="pendente"',
+            filter: `status='pendente' && cliente='${tenantId}'`,
             expand: "campo",
             sort: "-created",
             $autoCancel: false,
           }),
           pb.collection("pedidos").getList(1, 1, {
-            filter: 'status="pendente"',
+            filter: `status='pendente' && cliente='${tenantId}'`,
             $autoCancel: false,
           }),
         ]);
@@ -37,7 +39,7 @@ export default function NotificationBell() {
     fetchData();
     const id = setInterval(fetchData, 30000);
     return () => clearInterval(id);
-  }, [pb]);
+  }, [pb, tenantId]);
 
   return (
     <div className="fixed bottom-20 right-4 z-50">

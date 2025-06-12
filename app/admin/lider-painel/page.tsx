@@ -9,7 +9,7 @@ import type { Inscricao, Pedido } from "@/types";
 
 export default function LiderDashboardPage() {
   const router = useRouter();
-  const { user, isLoggedIn } = useAuthContext();
+  const { user, isLoggedIn, tenantId } = useAuthContext();
   const pb = useMemo(() => createPocketBase(), []);
 
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
@@ -41,10 +41,18 @@ export default function LiderDashboardPage() {
         const [inscricoesRes, pedidosRes] = await Promise.all([
           pb
             .collection("inscricoes")
-            .getList(page, perPage, { filter: `campo="${campoId}"`, expand: "campo,criado_por,pedido", signal }),
+            .getList(page, perPage, {
+              filter: `campo="${campoId}" && cliente='${tenantId}'`,
+              expand: "campo,criado_por,pedido",
+              signal,
+            }),
           pb
             .collection("pedidos")
-            .getList(page, perPage, { filter: `campo="${campoId}"`, expand: "campo,criado_por", signal }),
+            .getList(page, perPage, {
+              filter: `campo="${campoId}" && cliente='${tenantId}'`,
+              expand: "campo,criado_por",
+              signal,
+            }),
         ]);
         const rawInscricoes = inscricoesRes.items;
         const rawPedidos = pedidosRes.items;
@@ -125,7 +133,7 @@ export default function LiderDashboardPage() {
       isMounted.current = false;
       controller.abort();
     };
-  }, [pb, isLoggedIn, user, router, page]);
+  }, [pb, isLoggedIn, tenantId, user, router, page]);
 
   if (loading) {
     return <p className="p-6 text-center text-sm">Carregando dashboard...</p>;

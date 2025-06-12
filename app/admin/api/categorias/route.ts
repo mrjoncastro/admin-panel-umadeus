@@ -6,9 +6,12 @@ export async function GET(req: NextRequest) {
   if ("error" in auth) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
-  const { pb } = auth;
+  const { pb, user } = auth;
   try {
-    const categorias = await pb.collection("categorias").getFullList({ sort: "nome" });
+    const categorias = await pb.collection("categorias").getFullList({
+      sort: "nome",
+      filter: `cliente='${user.cliente}'`,
+    });
     return NextResponse.json(categorias, { status: 200 });
   } catch (err) {
     console.error("Erro ao listar categorias:", err);
@@ -21,14 +24,16 @@ export async function POST(req: NextRequest) {
   if ("error" in auth) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
-  const { pb } = auth;
+  const { pb, user } = auth;
   try {
     const { nome } = await req.json();
     if (!nome || nome.length < 2) {
       return NextResponse.json({ error: "Nome inválido" }, { status: 400 });
     }
     const slug = nome.toLowerCase().replace(/\s+/g, "-");
-    const categoria = await pb.collection("categorias").create({ nome, slug });
+    const categoria = await pb
+      .collection("categorias")
+      .create({ nome, slug, cliente: user.cliente });
     return NextResponse.json(categoria, { status: 201 });
   } catch (err) {
     console.error("Erro ao criar categoria:", err);
