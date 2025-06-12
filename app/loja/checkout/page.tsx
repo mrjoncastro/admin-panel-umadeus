@@ -46,11 +46,6 @@ function CheckoutContent() {
       setCep(String(user.cep ?? ""));
       setCidade(String(user.cidade ?? ""));
       setCpf(String(user.cpf ?? ""));
-      setCpf(String(user.cpf ?? ""));
-      setNumero(String(user.numero ?? ""));
-      setEstado(String(user.estado ?? ""));
-      setCep(String(user.cep ?? ""));
-      setCidade(String(user.cidade ?? ""));
       setDataNascimento(String((user as UsuarioExtra).data_nascimento ?? ""));
     }
   }, [user]);
