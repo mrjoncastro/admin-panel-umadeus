@@ -117,7 +117,7 @@ export default function Home() {
                 .replace(".", ",")}`}</span>
               <Link
                 href={`/loja/produtos/${prod.slug}`}
-                className="bg-[var(--accent)] hover:bg-[var(--accent-900)] text-white px-6 py-2 rounded-full font-semibold text-sm transition"
+                className="bg-primary-600 hover:bg-primary-900 text-white px-6 py-2 rounded-full font-semibold text-sm transition"
               >
                 Ver produto
               </Link>
