@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import createPocketBase from "@/lib/pocketbase";
 import { filtrarProdutos, ProdutoRecord } from "@/lib/products";
+import { getTenantFromHost } from "@/lib/getTenantFromHost";
 
 export async function GET(req: NextRequest) {
 
   const pb = createPocketBase();
   const categoria = req.nextUrl.searchParams.get("categoria") || undefined;
-  const tenantId = process.env.NEXT_PUBLIC_TENANT_ID;
+  const tenantId = await getTenantFromHost();
 
   try {
     const baseFilter = tenantId ? `ativo = true && cliente='${tenantId}'` : "ativo = true";

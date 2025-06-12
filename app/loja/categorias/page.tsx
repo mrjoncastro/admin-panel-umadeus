@@ -1,4 +1,5 @@
 import createPocketBase from "@/lib/pocketbase";
+import { getTenantFromHost } from "@/lib/getTenantFromHost";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +11,7 @@ interface Categoria {
 
 export default async function CategoriasPage() {
   const pb = createPocketBase();
-  const tenantId = process.env.NEXT_PUBLIC_TENANT_ID;
+  const tenantId = await getTenantFromHost();
   const categorias: Categoria[] = await pb
     .collection("categorias")
     .getFullList({ sort: "nome", filter: `cliente='${tenantId}'` });

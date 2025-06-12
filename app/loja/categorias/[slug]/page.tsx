@@ -1,6 +1,7 @@
 // app/loja/categorias/[slug]/page.tsx
 import createPocketBase from "@/lib/pocketbase";
 import ProdutosFiltrados from "./ProdutosFiltrados";
+import { getTenantFromHost } from "@/lib/getTenantFromHost";
 
 interface Produto {
   id: string;
@@ -22,7 +23,7 @@ export default async function CategoriaDetalhe({
 }) {
   const { slug } = await params;
   const pb = createPocketBase();
-  const tenantId = process.env.NEXT_PUBLIC_TENANT_ID;
+  const tenantId = await getTenantFromHost();
 
   const produtosPB: Produto[] = await pb.collection("produtos").getFullList({
     filter: `ativo = true && categoria = '${slug}' && cliente='${tenantId}'`,
