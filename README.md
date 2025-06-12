@@ -80,18 +80,18 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `NEXT_PUBLIC_PB_URL` - URL do PocketBase
 - `PB_ADMIN_EMAIL` - e-mail do administrador do PocketBase
 - `PB_ADMIN_PASSWORD` - senha do administrador
-- `ASAAS_API_KEY` - chave da API do Asaas para geração de pagamentos
+- `ASAAS_API_KEY` - (opcional) chave padrão da API do Asaas
 - `ASAAS_WEBHOOK_SECRET` - segredo para validar webhooks do Asaas
 - `ASAAS_API_URL` - URL base da API do Asaas (ex.: `https://api-sandbox.asaas.com/api/v3/`)
 - `NEXT_PUBLIC_SITE_URL` - endereço do site (opcional)
+
+Cada registro em `m24_clientes` contém o campo `asaas_api_key`. A aplicação busca a chave correta deste cliente antes de criar cobranças ou checkouts, garantindo que cada subconta do Asaas seja utilizada separadamente.
 
 Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utilizar o SDK oficial.
 
 ## Conectando ao PocketBase
 
-
 1. Defina `NEXT_PUBLIC_PB_URL` apontando para a URL onde o PocketBase está rodando, por exemplo:
-
 
 2. Utilize as variáveis `PB_ADMIN_EMAIL` e `PB_ADMIN_PASSWORD` para autenticar a aplicação.
 
@@ -188,7 +188,6 @@ Após salvar as alterações, execute o comando abaixo para gerar
 ```bash
 npm run generate-posts
 ```
-
 
 ## Testes
 
