@@ -80,12 +80,16 @@ Esses documentos também trazem exemplos das classes globais `btn` e
 Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 
 - `NEXT_PUBLIC_PB_URL` - URL do PocketBase
+- `NEXT_PUBLIC_TENANT_ID` - ID do cliente (tenant) usado para filtrar produtos na loja
 - `PB_ADMIN_EMAIL` - e-mail do administrador do PocketBase
 - `PB_ADMIN_PASSWORD` - senha do administrador
 - `ASAAS_API_KEY` - (opcional) chave padrão da API do Asaas
 - `ASAAS_WEBHOOK_SECRET` - segredo para validar webhooks do Asaas
 - `ASAAS_API_URL` - URL base da API do Asaas (ex.: `https://api-sandbox.asaas.com/api/v3/`)
 - `NEXT_PUBLIC_SITE_URL` - endereço do site (opcional)
+
+`NEXT_PUBLIC_TENANT_ID` define qual cliente (tenant) deve ter seus produtos
+listados na loja. Se não for informado, todos os produtos serão exibidos.
 
 Cada registro em `m24_clientes` contém o campo `asaas_api_key`. A aplicação busca a chave correta deste cliente antes de criar cobranças ou checkouts, garantindo que cada subconta do Asaas seja utilizada separadamente.
 
