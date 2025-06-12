@@ -26,8 +26,12 @@ function CheckoutContent() {
   const [cep, setCep] = useState("");
   const [cidade, setCidade] = useState("");
   const [numero, setNumero] = useState(String(user?.numero ?? ""));
+  interface UsuarioExtra {
+    data_nascimento?: string;
+  }
+
   const [dataNascimento, setDataNascimento] = useState(
-    String((user as any)?.data_nascimento ?? "")
+    String((user as UsuarioExtra)?.data_nascimento ?? "")
   );
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
 
@@ -47,7 +51,7 @@ function CheckoutContent() {
       setEstado(String(user.estado ?? ""));
       setCep(String(user.cep ?? ""));
       setCidade(String(user.cidade ?? ""));
-      setDataNascimento(String((user as any).data_nascimento ?? ""));
+      setDataNascimento(String((user as UsuarioExtra).data_nascimento ?? ""));
     }
   }, [user]);
 
