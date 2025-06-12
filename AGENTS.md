@@ -79,7 +79,7 @@ Consulte o guia completo em [docs/design-system.md](docs/design-system.md) para 
 **Missão:** Direcionar decisões com visão SaaS.
 **Atuação:**
 
-- Definir o modelo de desevolvimento a partir da comprenssão do negócio
+- Definir o modelo de código a partir da comprenssão do negócio
 - Leia (docs/plano-negocio.md)
 
 ---
