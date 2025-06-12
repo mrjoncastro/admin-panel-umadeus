@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
 
 export default function SignUpForm({
@@ -24,6 +24,24 @@ export default function SignUpForm({
   const [senhaConfirm, setSenhaConfirm] = useState("");
   const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    async function fetchEndereco() {
+      const cleanCep = cep.replace(/\D/g, "");
+      if (cleanCep.length !== 8) return;
+      try {
+        const res = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+        const data = await res.json();
+        if (data.erro) return;
+        setEndereco(data.logradouro || "");
+        setCidade(data.localidade || "");
+        setEstado(data.uf || "");
+      } catch {
+        /* ignore */
+      }
+    }
+    fetchEndereco();
+  }, [cep]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
