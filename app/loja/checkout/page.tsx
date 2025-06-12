@@ -13,13 +13,22 @@ function CheckoutContent() {
   const { itens, clearCart } = useCart();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { isLoggedIn } = useAuthContext();
+  const { isLoggedIn, user } = useAuthContext();
 
-  const [nome, setNome] = useState("");
-  const [telefone, setTelefone] = useState("");
-  const [email, setEmail] = useState("");
-  const [endereco, setEndereco] = useState("");
+  const [nome, setNome] = useState(user?.nome || "");
+  const [telefone, setTelefone] = useState(String(user?.telefone ?? ""));
+  const [email, setEmail] = useState(user?.email || "");
+  const [endereco, setEndereco] = useState(String(user?.endereco ?? ""));
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setNome(user.nome || "");
+      setTelefone(String(user.telefone ?? ""));
+      setEmail(user.email || "");
+      setEndereco(String(user.endereco ?? ""));
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -166,8 +175,10 @@ function CheckoutContent() {
                 <div>
                   <div className="font-medium">{item.nome}</div>
                   <div className="text-xs text-gray-400">
-                    Qtd: {item.quantidade}
+                    Modelo: {item.generos?.[0] || "-"} | Tamanho:{" "}
+                    {item.tamanhos?.[0] || "-"} | Cor: {item.cores?.[0] || "-"}
                   </div>
+                  <div className="text-xs text-gray-400">Qtd: {item.quantidade}</div>
                 </div>
                 <div className="font-semibold">
                   {formatCurrency(item.preco * item.quantidade)}

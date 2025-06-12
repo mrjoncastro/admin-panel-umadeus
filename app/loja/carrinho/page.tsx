@@ -4,6 +4,7 @@ import { useCart } from "@/lib/context/CartContext";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import { useState } from "react";
 
 function formatCurrency(n: number) {
   return `R$ ${n.toFixed(2).replace(".", ",")}`;
@@ -13,11 +14,20 @@ export default function CarrinhoPage() {
   const { itens, removeItem, clearCart } = useCart();
   const { isLoggedIn } = useAuthContext();
   const router = useRouter();
+  const [showPrompt, setShowPrompt] = useState(false);
   const total = itens.reduce((sum, i) => sum + i.preco * i.quantidade, 0);
 
   function handleCheckout() {
-    if (!isLoggedIn) router.push("/login?redirect=/loja/checkout");
-    else router.push("/loja/checkout");
+    if (!isLoggedIn) {
+      setShowPrompt(true);
+      return;
+    }
+    router.push("/loja/checkout");
+  }
+
+  const goToSignup = () =>
+    router.push("/login?view=signup&redirect=/loja/checkout");
+  const goToLogin = () => router.push("/login?redirect=/loja/checkout");
   }
 
   if (itens.length === 0) {
@@ -57,6 +67,10 @@ export default function CarrinhoPage() {
               )}
               <div className="flex-1">
                 <p className="font-medium text-accent">{item.nome}</p>
+                <p className="text-xs text-gray-400">
+                  Modelo: {item.generos?.[0] || "-"} | Tamanho:{" "}
+                  {item.tamanhos?.[0] || "-"} | Cor: {item.cores?.[0] || "-"}
+                </p>
                 <p className="text-xs text-gray-400">Qtd: {item.quantidade}</p>
               </div>
               <div className="font-semibold text-accent">
@@ -89,6 +103,19 @@ export default function CarrinhoPage() {
           >
             Finalizar compra
           </button>
+          {showPrompt && !isLoggedIn && (
+            <div className="text-sm text-center text-gray-600 mt-4 w-full">
+              É necessário ter uma conta para prosseguir.{' '}
+              <button onClick={goToSignup} className="underline">
+                Criar conta
+              </button>{' '}
+              ou{' '}
+              <button onClick={goToLogin} className="underline">
+                fazer login
+              </button>
+              .
+            </div>
+          )}
         </div>
       </div>
     </main>
