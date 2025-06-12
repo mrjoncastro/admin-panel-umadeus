@@ -1,6 +1,3 @@
-// Add this at the top of the file to silence the TS7016 error
-// Remove if you add a proper @types/color-namer package or .d.ts file
-// @ts-expect-error: no type definitions for 'color-namer'
 import namer from 'color-namer'
 
 const ptMap: Record<string, string> = {
