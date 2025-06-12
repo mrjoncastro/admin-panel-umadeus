@@ -169,6 +169,8 @@ O sistema possui três níveis de usuário:
 - **Lider** – acesso restrito às inscrições e pedidos do seu campo.
 - **Usuário** – cliente final que realiza compras e visualiza a área do cliente em `/loja/cliente`.
 
+Somente coordenadores podem acessar a página `/admin/compras` para visualizar as compras realizadas.
+
 ## Blog e CMS
 
 Os arquivos de conteúdo ficam dentro da pasta `posts/` na raiz do projeto. Cada
