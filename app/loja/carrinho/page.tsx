@@ -2,10 +2,8 @@
 
 import { useCart } from "@/lib/context/CartContext";
 import Image from "next/image";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
-import AuthModal from "@/app/components/AuthModal";
 
 function formatCurrency(n: number) {
   return `R$ ${n.toFixed(2).replace(".", ",")}`;
@@ -15,11 +13,10 @@ export default function CarrinhoPage() {
   const { itens, removeItem, clearCart } = useCart();
   const { isLoggedIn } = useAuthContext();
   const router = useRouter();
-  const [showAuth, setShowAuth] = useState(false);
   const total = itens.reduce((sum, i) => sum + i.preco * i.quantidade, 0);
 
   function handleCheckout() {
-    if (!isLoggedIn) setShowAuth(true);
+    if (!isLoggedIn) router.push("/login?redirect=/loja/checkout");
     else router.push("/loja/checkout");
   }
 
@@ -93,9 +90,6 @@ export default function CarrinhoPage() {
             Finalizar compra
           </button>
         </div>
-        {showAuth && (
-          <AuthModal open={showAuth} onClose={() => setShowAuth(false)} />
-        )}
       </div>
     </main>
   );

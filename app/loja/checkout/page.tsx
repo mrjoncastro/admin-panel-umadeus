@@ -2,7 +2,8 @@
 
 import { useCart } from "@/lib/context/CartContext";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
+import { useAuthContext } from "@/lib/context/AuthContext";
 
 function formatCurrency(n: number) {
   return `R$ ${n.toFixed(2).replace(".", ",")}`;
@@ -12,12 +13,19 @@ function CheckoutContent() {
   const { itens, clearCart } = useCart();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { isLoggedIn } = useAuthContext();
 
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
   const [email, setEmail] = useState("");
   const [endereco, setEndereco] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      router.replace("/login?redirect=/loja/checkout");
+    }
+  }, [isLoggedIn, router]);
 
   const pedidoId = searchParams.get("pedido") || Date.now().toString();
   const total = itens.reduce((sum, i) => sum + i.preco * i.quantidade, 0);
@@ -53,7 +61,7 @@ function CheckoutContent() {
         throw new Error("Falha ao gerar link de pagamento");
       clearCart();
       window.location.href = data.checkoutUrl;
-    } catch (err) {
+    } catch {
       alert("Erro ao processar pagamento. Tente novamente.");
     } finally {
       setLoading(false);
