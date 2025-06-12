@@ -14,6 +14,7 @@ interface DadosInscricao {
   status: "pendente";
   produto: string;
   tamanho?: string;
+  cliente?: string;
 }
 
 
@@ -103,6 +104,7 @@ export async function POST(req: NextRequest) {
       criado_por: liderId,
       status: "pendente",
       produto,
+      cliente: lider.cliente,
     };
     if (tamanho) dadosInscricao.tamanho = tamanho;
 

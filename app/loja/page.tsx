@@ -20,9 +20,13 @@ export default function Home() {
     async function fetchProdutos() {
       try {
         const pb = createPocketBase();
+        const tenantId = localStorage.getItem("tenant_id");
         const list = await pb
           .collection("produtos")
-          .getList<Produto>(1, 6, { filter: "ativo = true", sort: "-created" });
+          .getList<Produto>(1, 6, {
+            filter: `ativo = true && cliente='${tenantId}'`,
+            sort: "-created",
+          });
         const prods = list.items.map((p) => ({
           ...p,
           imagens: (p.imagens || []).map((img) => pb.files.getURL(p, img)),

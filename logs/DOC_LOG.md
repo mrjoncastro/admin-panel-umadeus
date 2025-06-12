@@ -73,4 +73,5 @@
 ## [2025-06-12] Ajustado checkout para enviar dados completos do cliente e imagens dos produtos; página de checkout atualizada com novos campos
 ## [2025-06-12] Checkout carrega cpf, endereço e inclui data de nascimento
 ## [2025-06-12] Criada página /loja/perfil com inputs de CPF, telefone e data de nascimento. Atualizados Header e rotas da loja para incluir o novo caminho.
+## [2025-06-12] Ajustado contexto de autenticação para armazenar tenantId e filtros multi-tenant
 ## [2025-06-13] Documentado formato de externalReference e atualizados testes de checkout
