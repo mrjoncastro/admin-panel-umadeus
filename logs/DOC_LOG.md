@@ -71,3 +71,4 @@
 ## [2025-06-11] Foto do produto (base64) agora enviada no item do checkout, removida do cadastro de usuário
 ## [2025-06-11] Incluídos campos de endereço no cadastro e adequação do payload do checkout ao novo modelo do Asaas
 ## [2025-06-12] Ajustado checkout para enviar dados completos do cliente e imagens dos produtos; página de checkout atualizada com novos campos
+## [2025-06-12] Checkout carrega cpf, endereço e inclui data de nascimento

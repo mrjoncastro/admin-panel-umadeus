@@ -25,6 +25,14 @@ function CheckoutContent() {
   const [estado, setEstado] = useState("");
   const [cep, setCep] = useState("");
   const [cidade, setCidade] = useState("");
+  const [cpf, setCpf] = useState(String(user?.cpf ?? ""));
+  const [numero, setNumero] = useState(String(user?.numero ?? ""));
+  const [estado, setEstado] = useState(String(user?.estado ?? ""));
+  const [cep, setCep] = useState(String(user?.cep ?? ""));
+  const [cidade, setCidade] = useState(String(user?.cidade ?? ""));
+  const [dataNascimento, setDataNascimento] = useState(
+    String((user as any)?.data_nascimento ?? "")
+  );
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -33,6 +41,12 @@ function CheckoutContent() {
       setTelefone(String(user.telefone ?? ""));
       setEmail(user.email || "");
       setEndereco(String(user.endereco ?? ""));
+      setCpf(String(user.cpf ?? ""));
+      setNumero(String(user.numero ?? ""));
+      setEstado(String(user.estado ?? ""));
+      setCep(String(user.cep ?? ""));
+      setCidade(String(user.cidade ?? ""));
+      setDataNascimento(String((user as any).data_nascimento ?? ""));
     }
   }, [user]);
 
@@ -252,6 +266,18 @@ function CheckoutContent() {
                 onChange={(e) => setCpf(e.target.value)}
                 className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
                 placeholder="CPF"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">
+                Data de nascimento
+              </label>
+              <input
+                type="date"
+                value={dataNascimento}
+                onChange={(e) => setDataNascimento(e.target.value)}
+                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
                 required
               />
             </div>
