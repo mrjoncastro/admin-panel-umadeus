@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState, useEffect } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { CheckCircle } from "lucide-react";
+import { hexToPtName } from "@/utils/colorNamePt";
 
 function formatCurrency(n: number) {
   return `R$ ${n.toFixed(2).replace(".", ",")}`;
