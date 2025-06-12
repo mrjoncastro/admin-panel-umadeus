@@ -145,6 +145,22 @@ A resposta contém o campo `link` com o URL gerado. O `externalReference` enviad
 { "link": "https://asaas.com/..." }
 ```
 
+### Coleção `compras`
+
+Registra as compras feitas na loja. Campos principais:
+
+- `cliente` – relação obrigatória com o tenant.
+- `usuario` – usuário que realizou a compra.
+- `itens` – JSON com os produtos adquiridos.
+- `valor_total` – soma dos itens.
+- `status` – `pendente`, `pago` ou `cancelado`.
+- `metodo_pagamento` – `pix`, `cartao` ou `boleto`.
+- `checkout_url` – link de pagamento gerado (opcional).
+- `asaas_payment_id` – ID da transação no Asaas (opcional).
+- `externalReference` – identificador único enviado ao Asaas.
+- `endereco_entrega` – dados de entrega (opcional).
+- `created` / `updated` – gerenciados pelo PocketBase.
+
 ## Perfis de Acesso
 
 O sistema possui três níveis de usuário:

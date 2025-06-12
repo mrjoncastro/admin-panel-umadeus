@@ -105,33 +105,21 @@ export async function POST(req: NextRequest) {
       paymentMethods,
     });
 
-<<<<<<< HEAD
-    const checkoutUrl = await createCheckout({
-      valor,
-      itens,
-      successUrl,
-      errorUrl,
-      clienteId,
-      usuarioId,
-      inscricaoId,
-      cliente,
-      installments,
-      paymentMethods,
-    });
-=======
     const checkoutUrl = await createCheckout(
       {
         valor,
         itens,
         successUrl,
         errorUrl,
+        clienteId,
+        usuarioId,
+        inscricaoId,
         cliente,
         installments,
         paymentMethods,
       },
       apiKey
     );
->>>>>>> origin/codex/adicionar-campo-asaas_api_key-e-integração
 
     console.log("✅ Checkout criado com sucesso:", checkoutUrl);
 

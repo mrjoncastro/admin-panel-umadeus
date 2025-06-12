@@ -32,6 +32,7 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 │   ├── lider-painel/      # Painel exclusivo para lideranças locais
 │   ├── obrigado/          # Página de agradecimento
 │   ├── pedidos/           # Gestão de pedidos vinculados à inscrição
+│   ├── compras/           # Gestão de compras da loja
 │   ├── pendente/          # Tela para inscrições pendentes
 │   ├── perfil/            # Tela de perfil do usuário logado
 │   ├── redefinir-senha/   # Recuperação de senha
