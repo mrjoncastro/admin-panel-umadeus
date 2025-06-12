@@ -48,6 +48,7 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 │   ├── categorias/        # Filtros e páginas de cada categoria de produto
 │   ├── checkout/          # Processo de pagamento e finalização do pedido
 │   ├── cliente/           # Área do cliente com pedidos e dados pessoais
+│   ├── compras/           # Histórico do usuário com suas compras
 │   ├── login/             # Rotas de autenticação da loja
 │   ├── components/        # Componentes reutilizáveis da loja
 │   ├── eventos/           # Formulário de inscrição em eventos
