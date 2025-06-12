@@ -20,6 +20,13 @@ interface Post {
 const POSTS_PER_PAGE = 6;
 
 export default function BlogClient() {
+  const nomeCliente = "M24";
+
+  const introText = {
+    title: "Criamos este espaço porque acreditamos no poder do conhecimento.",
+    paragraph: `${nomeCliente} valoriza a informação como forma de cuidado. Por isso, cada conteúdo aqui foi pensado para orientar, inspirar e caminhar ao seu lado.`,
+  };
+
   const [posts, setPosts] = useState<Post[]>([]);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -61,14 +68,13 @@ export default function BlogClient() {
   return (
     <>
       <BlogHeroCarousel />
+
       <main className="max-w-7xl mx-auto px-6 py-20 font-sans">
         <section className="mb-16 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Conhecimento que Cuida
+            {introText.title}
           </h1>
-          <p className="text-gray-600 text-lg mb-6">
-            Encontre respostas para suas dúvidas de saúde e bem-estar com a M24.
-          </p>
+          <p className="text-gray-600 text-lg mb-6">{introText.paragraph}</p>
           <div className="max-w-xl mx-auto flex items-center gap-2">
             <input
               type="text"
@@ -84,7 +90,6 @@ export default function BlogClient() {
         </section>
 
         <div className="flex flex-col lg:flex-row gap-12">
-          {/* LISTAGEM */}
           <div className="w-full lg:w-2/3">
             {paginatedPosts.length > 0 ? (
               <>
@@ -94,9 +99,8 @@ export default function BlogClient() {
                       key={post.slug}
                       className="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden flex flex-col"
                     >
-                      {post.thumbnail && (
-                        isExternalUrl(post.thumbnail) ? (
-                          // eslint-disable-next-line @next/next/no-img-element
+                      {post.thumbnail &&
+                        (isExternalUrl(post.thumbnail) ? (
                           <img
                             src={post.thumbnail}
                             alt={`Imagem de capa do post: ${post.title}`}
@@ -110,8 +114,7 @@ export default function BlogClient() {
                             height={320}
                             className="w-full h-56 object-cover"
                           />
-                        )
-                      )}
+                        ))}
                       <div className="p-6 flex-1 flex flex-col justify-between">
                         {post.category && (
                           <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full mb-2 uppercase tracking-wide">
@@ -132,7 +135,6 @@ export default function BlogClient() {
                         <p className="text-sm text-gray-700 mb-4 line-clamp-3">
                           {post.summary}
                         </p>
-
                         <Link
                           href={`/blog/post/${post.slug}`}
                           className="mt-auto inline-block text-sm text-blue-600 hover:text-blue-800 font-semibold"
@@ -144,7 +146,6 @@ export default function BlogClient() {
                   ))}
                 </div>
 
-                {/* Paginação */}
                 <div className="flex justify-center items-center mt-12 gap-2 flex-wrap">
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
@@ -184,7 +185,6 @@ export default function BlogClient() {
             )}
           </div>
 
-          {/* SIDEBAR */}
           <BlogSidebar />
         </div>
       </main>
