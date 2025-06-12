@@ -25,7 +25,7 @@ export default async function CategoriaDetalhe({
   const tenantId = process.env.NEXT_PUBLIC_TENANT_ID;
 
   const produtosPB: Produto[] = await pb.collection("produtos").getFullList({
-    filter: `ativo = true && categoria = '${slug}'${tenantId ? ` && cliente='${tenantId}'` : ""}`,
+    filter: `ativo = true && categoria = '${slug}' && cliente='${tenantId}'`,
     sort: "-created",
   });
 

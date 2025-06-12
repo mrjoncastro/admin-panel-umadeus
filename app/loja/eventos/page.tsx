@@ -19,7 +19,8 @@ export default function EventosPage() {
   const [eventos, setEventos] = useState<Evento[]>([]);
 
   useEffect(() => {
-    fetch("/api/eventos")
+    const tenantId = localStorage.getItem("tenant_id");
+    fetch(`/api/eventos?tenant=${tenantId ?? ""}`)
       .then((r) => r.json())
       .then((data) => Array.isArray(data) ? setEventos(data) : setEventos([]))
       .catch((err) => {

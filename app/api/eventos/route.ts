@@ -1,14 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import createPocketBase from "@/lib/pocketbase";
 import { EventoRecord, atualizarStatus } from "@/lib/events";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const pb = createPocketBase();
-  const tenantId = process.env.NEXT_PUBLIC_TENANT_ID;
+  const tenant = req.nextUrl.searchParams.get("tenant") || undefined;
   try {
     const eventos = await pb.collection("eventos").getFullList<EventoRecord>({
       sort: "-data",
-      filter: tenantId ? `cliente='${tenantId}'` : undefined,
+      filter: tenant ? `cliente='${tenant}'` : undefined,
     });
     await atualizarStatus(eventos, pb);
     const comUrls = eventos.map((e) => ({
