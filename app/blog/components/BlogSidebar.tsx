@@ -39,9 +39,9 @@ export default function BlogSidebar() {
         <input
           type="email"
           placeholder="Seu e-mail"
-          className="w-full px-4 py-2 mb-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 mb-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
-        <button className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+        <button className="w-full bg-primary-600 text-white py-2 rounded-lg hover:bg-primary-700">
           Inscrever-se
         </button>
       </div>
@@ -49,14 +49,14 @@ export default function BlogSidebar() {
       {/* Categorias */}
       <div>
         <h3 className="text-lg font-semibold mb-4">Categorias</h3>
-        <ul className="space-y-2 text-sm text-gray-700">
+        <ul className="space-y-2 text-sm text-neutral-700">
           {categories.map((cat) => (
             <li key={cat}>
               <Link
                 href={`?categoria=${encodeURIComponent(cat.toLowerCase())}`}
                 scroll={false}
                 className={`hover:underline ${
-                  current === cat.toLowerCase() ? "font-bold text-blue-600" : ""
+                  current === cat.toLowerCase() ? "font-bold text-primary-600" : ""
                 }`}
               >
                 {cat}
@@ -67,7 +67,7 @@ export default function BlogSidebar() {
         {current && (
           <button
             onClick={() => window.history.pushState({}, "", "/blog")}
-            className="mt-4 text-sm text-gray-500 hover:underline"
+            className="mt-4 text-sm text-neutral-500 hover:underline"
           >
             Limpar filtro
           </button>
@@ -100,7 +100,7 @@ export default function BlogSidebar() {
               )}
               <Link
                 href={`/blog/post/${post.slug}`}
-                className="text-sm text-gray-800 hover:underline"
+                className="text-sm text-neutral-800 hover:underline"
               >
                 {post.title}
               </Link>

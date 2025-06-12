@@ -52,19 +52,19 @@ export default function BlogHeroCarousel() {
       {/* Desktop */}
       <div className="hidden md:flex relative z-10 items-end justify-between max-w-7xl mx-auto w-full h-full px-10 pb-24">
         <div className="w-1/2" />
-        <div className="w-full max-w-md bg-white text-neutral-800 p-8 rounded-2xl shadow-2xl">
+        <div className="w-full max-w-md bg-[var(--background)] dark:bg-neutral-900 text-[var(--text-primary)] p-8 rounded-2xl shadow-2xl">
           {post.category && (
-            <span className="text-xs uppercase text-gray-500 font-semibold tracking-wide">
+            <span className="text-xs uppercase text-neutral-500 font-semibold tracking-wide">
               {post.category}
             </span>
           )}
-          <h3 className="text-3xl font-bold text-gray-900 mb-4">
+          <h3 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
             {post.title}
           </h3>
-          <p className="text-sm text-gray-600 mb-4">{post.summary}</p>
+          <p className="text-sm text-neutral-600 mb-4">{post.summary}</p>
           <Link
             href={`/blog/post/${post.slug}`}
-            className="text-blue-600 font-semibold text-sm hover:underline inline-flex items-center gap-1"
+            className="text-primary-600 font-semibold text-sm hover:underline inline-flex items-center gap-1"
           >
             Leia mais →
           </Link>
@@ -73,17 +73,17 @@ export default function BlogHeroCarousel() {
 
       {/* Mobile */}
       <div className="md:hidden relative z-10 h-full flex flex-col justify-end items-center px-4 pb-6">
-        <div className="bg-white text-neutral-800 rounded-2xl shadow-xl p-5 w-full max-w-sm">
+        <div className="bg-[var(--background)] dark:bg-neutral-900 text-[var(--text-primary)] rounded-2xl shadow-xl p-5 w-full max-w-sm">
           {post.category && (
-            <span className="text-xs uppercase text-gray-500 font-semibold tracking-wide">
+            <span className="text-xs uppercase text-neutral-500 font-semibold tracking-wide">
               {post.category}
             </span>
           )}
-          <h3 className="text-2xl font-bold text-gray-900">{post.title}</h3>
-          <p className="text-sm text-gray-700 my-2">{post.summary}</p>
+          <h3 className="text-2xl font-bold text-[var(--text-primary)]">{post.title}</h3>
+          <p className="text-sm text-neutral-700 my-2">{post.summary}</p>
           <Link
             href={`/blog/post/${post.slug}`}
-            className="text-blue-600 font-semibold text-sm hover:underline inline-flex items-center gap-1"
+            className="text-primary-600 font-semibold text-sm hover:underline inline-flex items-center gap-1"
           >
             Leia mais →
           </Link>
@@ -95,7 +95,7 @@ export default function BlogHeroCarousel() {
             <span
               key={index}
               className={`w-2.5 h-2.5 rounded-full ${
-                index === currentIndex ? "bg-blue-600" : "bg-white/50"
+                index === currentIndex ? "bg-primary-600" : "bg-white/50"
               }`}
             />
           ))}
@@ -106,13 +106,13 @@ export default function BlogHeroCarousel() {
       <div className="absolute bottom-5 left-5 z-20 gap-2 hidden md:flex">
         <button
           onClick={prevSlide}
-          className="bg-white text-gray-700 border rounded-md p-2 hover:bg-gray-100 shadow"
+          className="bg-[var(--background)] text-neutral-700 border rounded-md p-2 hover:bg-neutral-100 shadow"
         >
           ←
         </button>
         <button
           onClick={nextSlide}
-          className="bg-white text-gray-700 border rounded-md p-2 hover:bg-gray-100 shadow"
+          className="bg-[var(--background)] text-neutral-700 border rounded-md p-2 hover:bg-neutral-100 shadow"
         >
           →
         </button>
