@@ -1,12 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginClient />
+    </Suspense>
+  );
+}
+
 import { useSearchParams } from "next/navigation";
 import LoginForm from "../components/LoginForm";
 import SignUpForm from "../components/SignUpForm";
 import LayoutWrapper from "../components/LayoutWrapper";
 
-export default function LoginPage() {
+function LoginClient() {
+  "use client";
   const searchParams = useSearchParams();
   const initial = searchParams.get("view") === "signup" ? "signup" : "login";
   const [view, setView] = useState<"login" | "signup">(initial);

@@ -3,7 +3,12 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["asaas.com", "umadeus-production.up.railway.app"],
+    domains: [
+      "asaas.com",
+      "umadeus-production.up.railway.app",
+      "images.unsplash.com",
+      "picsum.photos",
+    ],
   },
   redirects: async () => [
     {

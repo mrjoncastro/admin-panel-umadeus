@@ -7,22 +7,14 @@ import { Suspense } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import createPocketBase from "@/lib/pocketbase";
 import ProdutoInterativo from "./ProdutoInterativo";
+import type { Produto as ProdutoBase } from "@/types";
 
-interface Produto {
-  id: string;
-  nome: string;
-  preco: number;
+interface ProdutoPB extends Omit<ProdutoBase, "imagens"> {
   imagens: string[] | Record<string, string[]>;
-  slug: string;
-  descricao?: string;
-  cores?: string | string[];
-  tamanhos?: string | string[];
-  generos?: string | string[];
-  checkout_url?: string;
 }
 export default function ProdutoDetalhe() {
   const { slug } = useParams<{ slug: string }>();
-  const [produto, setProduto] = useState<Produto | null>(null);
+  const [produto, setProduto] = useState<ProdutoBase | null>(null);
   const [erro, setErro] = useState(false);
   const { isLoggedIn } = useAuthContext();
 
@@ -32,8 +24,8 @@ export default function ProdutoDetalhe() {
     const tenantId = localStorage.getItem("tenant_id");
     pb
       .collection("produtos")
-      .getFirstListItem<Produto>(`slug = '${slug}' && cliente='${tenantId}'`)
-      .then((p) => {
+      .getFirstListItem<ProdutoPB>(`slug = '${slug}' && cliente='${tenantId}'`)
+      .then((p: ProdutoPB) => {
         const imgs = Array.isArray(p.imagens)
           ? p.imagens.map((img) => pb.files.getURL(p, img))
           : Object.fromEntries(
@@ -41,7 +33,7 @@ export default function ProdutoDetalhe() {
                 ([g, arr]) => [g, arr.map((img) => pb.files.getURL(p, img))]
               )
             );
-        setProduto({ ...p, imagens: imgs });
+        setProduto({ ...p, imagens: imgs } as ProdutoBase);
       })
       .catch(() => setErro(true));
   }, [slug]);
