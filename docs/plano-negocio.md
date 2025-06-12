@@ -46,6 +46,8 @@ Implementamos a base multi-tenant do sistema no banco usando PocketBase, já pre
 
 - O escopo do usuário (coordenador, lider, usuario) deve ser respeitado dentro do tenant.
 
+As rotas de servidor (`/api`) chamam `getTenantFromHost` para identificar o cliente pelo domínio da requisição, garantindo o isolamento automático entre tenants.
+
 ## Benefícios
 
 - Estrutura pronta para SaaS: escalável, segura, pronta para deploy em nuvem.
