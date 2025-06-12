@@ -28,10 +28,10 @@ function CheckoutContent() {
 
   useEffect(() => {
     if (user) {
-      setNome(user.nome || "");
-      setTelefone(String(user.telefone ?? ""));
-      setEmail(user.email || "");
-      setEndereco(String(user.endereco ?? ""));
+      setNome(typeof user.nome === "string" ? user.nome : "");
+      setTelefone(typeof user.telefone === "string" || typeof user.telefone === "number" ? String(user.telefone) : "");
+      setEmail(typeof user.email === "string" ? user.email : "");
+      setEndereco(typeof user.endereco === "string" ? user.endereco : "");
     }
   }, [user]);
 

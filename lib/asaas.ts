@@ -50,9 +50,9 @@ export async function createCheckout(
     billingTypes: params.paymentMethods ?? ["CREDIT_CARD", "PIX"],
     chargeTypes: ["DETACHED", "INSTALLMENT"],
     callback: {
-      successUrl: params.successUrl,
-      cancelUrl: params.errorUrl,
-      expiredUrl: params.errorUrl,
+      successUrl: "https://m24saude.com.br/asaas/sucesso",
+      cancelUrl: "https://m24saude.com.br/asaas/cancelado",
+      expiredUrl: "https://m24saude.com.br/asaas/expirado",
     },
     minutesToExpire: 10,
     items: params.itens.map((i) => ({
