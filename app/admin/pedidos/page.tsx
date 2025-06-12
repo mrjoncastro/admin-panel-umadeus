@@ -11,7 +11,7 @@ import { useToast } from "@/lib/context/ToastContext";
 
 export default function PedidosPage() {
   const router = useRouter();
-  const { user, isLoggedIn } = useAuthContext();
+  const { user, isLoggedIn, tenantId } = useAuthContext();
   const pb = useMemo(() => createPocketBase(), []);
 
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
@@ -44,8 +44,11 @@ export default function PedidosPage() {
     const fetchPedidos = async () => {
       setLoading(true);
       try {
+        const baseFiltro = `cliente='${tenantId}'`;
         const filtro =
-          user.role === "coordenador" ? "" : `campo = "${user.campo}"`;
+          user.role === "coordenador"
+            ? baseFiltro
+            : `campo = "${user.campo}" && ${baseFiltro}`;
 
         const res = await pb.collection("pedidos").getList<Pedido>(pagina, 10, {
           filter: filtro,
@@ -64,7 +67,7 @@ export default function PedidosPage() {
     };
 
     fetchPedidos();
-  }, [pb, pagina, ordem, user, showError]);
+  }, [pb, pagina, ordem, tenantId, user, showError]);
 
   const pedidosFiltrados = pedidos.filter((p) => {
     const matchStatus = filtroStatus === "" || p.status === filtroStatus;

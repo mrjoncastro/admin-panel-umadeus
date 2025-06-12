@@ -10,6 +10,7 @@ import { CheckCircle, XCircle, Pencil, Trash2, Eye } from "lucide-react";
 import TooltipIcon from "../components/TooltipIcon";
 import { useToast } from "@/lib/context/ToastContext";
 import { PRECO_PULSEIRA, PRECO_KIT } from "@/lib/constants";
+import { useAuthContext } from "@/lib/context/AuthContext";
 
 const statusBadge = {
   pendente: "bg-yellow-100 text-yellow-800",
@@ -37,14 +38,9 @@ type Inscricao = {
   pedido_id?: string | null;
 };
 
-interface UsuarioAuthModel {
-  id: string;
-  role: "coordenador" | "lider" | string;
-  campo?: string;
-}
-
 export default function ListaInscricoesPage() {
   const pb = useMemo(() => createPocketBase(), []);
+  const { user, tenantId } = useAuthContext();
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
   const [role, setRole] = useState("");
   const [linkPublico, setLinkPublico] = useState("");
@@ -62,9 +58,7 @@ export default function ListaInscricoesPage() {
       : "Buscar por nome, telefone ou CPF";
 
   useEffect(() => {
-    const user = pb.authStore.model as unknown as UsuarioAuthModel;
-
-    if (!user?.id || !user?.role) {
+    if (!user) {
       showError("Sessão expirada ou inválida.");
       setLoading(false);
       return;
@@ -75,7 +69,9 @@ export default function ListaInscricoesPage() {
     setRole(user.role);
     setLinkPublico(`${window.location.origin}/inscricoes/${user.id}`);
 
-    const filtro = user.role === "coordenador" ? "" : `campo='${user.campo}'`;
+    const baseFiltro = `cliente='${tenantId}'`;
+    const filtro =
+      user.role === "coordenador" ? baseFiltro : `campo='${user.campo}' && ${baseFiltro}`;
 
     pb
       .collection("inscricoes")
@@ -113,7 +109,7 @@ export default function ListaInscricoesPage() {
         })
         .catch(() => {});
     }
-  }, [pb, showError]);
+  }, [pb, tenantId, user, showError]);
 
   const copiarLink = async () => {
     try {

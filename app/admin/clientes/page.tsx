@@ -6,9 +6,11 @@ import ListaClientes from "./components/ListaClientes";
 import ModalEditarInscricao from "../inscricoes/componentes/ModalEdit";
 import type { Inscricao } from "@/types";
 import { useToast } from "@/lib/context/ToastContext";
+import { useAuthContext } from "@/lib/context/AuthContext";
 
 export default function ClientesPage() {
   const pb = useMemo(() => createPocketBase(), []);
+  const { tenantId } = useAuthContext();
   const { showError, showSuccess } = useToast();
   const [clientes, setClientes] = useState<Inscricao[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,6 +22,7 @@ export default function ClientesPage() {
         const lista = await pb.collection("inscricoes").getFullList<Inscricao>({
           expand: "pedido",
           sort: "-created",
+          filter: `cliente='${tenantId}'`,
         });
         setClientes(lista);
       } catch (err) {
@@ -31,7 +34,7 @@ export default function ClientesPage() {
     }
 
     fetchClientes();
-  }, [pb, showError]);
+  }, [pb, tenantId, showError]);
 
   const salvarEdicao = async (atualizada: Partial<Inscricao>) => {
     if (!clienteEmEdicao) return;
