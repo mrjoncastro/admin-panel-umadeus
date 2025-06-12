@@ -17,6 +17,11 @@ export default function ModalEditarPerfil({
   const [dataNascimento, setDataNascimento] = useState(
     String(user?.data_nascimento || "")
   );
+  const [endereco, setEndereco] = useState(String(user?.endereco || ""));
+  const [numero, setNumero] = useState(String(user?.numero || ""));
+  const [estado, setEstado] = useState(String(user?.estado || ""));
+  const [cep, setCep] = useState(String(user?.cep || ""));
+  const [cidade, setCidade] = useState(String(user?.cidade || ""));
 
   const [mensagem, setMensagem] = useState("");
   const [erro, setErro] = useState("");
@@ -36,6 +41,11 @@ export default function ModalEditarPerfil({
         telefone: String(telefone).trim(),
         cpf: String(cpf).trim(),
         data_nascimento: String(dataNascimento),
+        endereco: String(endereco).trim(),
+        numero: String(numero).trim(),
+        estado: String(estado).trim(),
+        cep: String(cep).trim(),
+        cidade: String(cidade).trim(),
         role: user.role,
       });
 
@@ -83,6 +93,46 @@ export default function ModalEditarPerfil({
           className={inputStyle}
           value={String(dataNascimento)}
           onChange={(e) => setDataNascimento(e.target.value)}
+        />
+
+        <input
+          type="text"
+          placeholder="Endereço"
+          className={inputStyle}
+          value={String(endereco)}
+          onChange={(e) => setEndereco(e.target.value)}
+        />
+
+        <input
+          type="text"
+          placeholder="Número"
+          className={inputStyle}
+          value={String(numero)}
+          onChange={(e) => setNumero(e.target.value)}
+        />
+
+        <input
+          type="text"
+          placeholder="Estado"
+          className={inputStyle}
+          value={String(estado)}
+          onChange={(e) => setEstado(e.target.value)}
+        />
+
+        <input
+          type="text"
+          placeholder="CEP"
+          className={inputStyle}
+          value={String(cep)}
+          onChange={(e) => setCep(e.target.value)}
+        />
+
+        <input
+          type="text"
+          placeholder="Cidade"
+          className={inputStyle}
+          value={String(cidade)}
+          onChange={(e) => setCidade(e.target.value)}
         />
 
         <div>
