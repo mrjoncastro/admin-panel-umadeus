@@ -20,6 +20,34 @@ describe('checkout route', () => {
     vi.restoreAllMocks();
   });
 
+  const basePayload = {
+    valor: 10,
+    itens: [
+      {
+        name: 'p',
+        description: 'p',
+        quantity: 1,
+        value: 10,
+        fotoBase64: 'data:image/png;base64,a'
+      }
+    ],
+    successUrl: 'https://sucesso',
+    errorUrl: 'https://erro',
+    cliente: {
+      nome: 'João',
+      email: 'j@x.com',
+      telefone: '111',
+      cpf: '000',
+      endereco: 'rua',
+      numero: '1',
+      estado: 'BA',
+      cep: '000',
+      cidade: '123',
+    },
+    installments: 1,
+    paymentMethods: ['PIX', 'CREDIT_CARD'],
+  };
+
   it('executa POST e retorna checkoutUrl', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
@@ -29,12 +57,65 @@ describe('checkout route', () => {
 
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({ valor: 10, itens: [], successUrl: 's', errorUrl: 'e' })
+      body: JSON.stringify(basePayload)
     });
 
     const res = await POST(req as unknown as NextRequest);
     const data = await res.json();
     expect(fetchMock).toHaveBeenCalledWith('https://asaas/checkouts', expect.any(Object));
     expect(data.checkoutUrl).toBe('url');
+  });
+
+  it('retorna 400 quando corpo inválido', async () => {
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({
+        ...basePayload,
+        valor: 'a',
+        itens: [],
+      })
+    });
+
+    const res = await POST(req as unknown as NextRequest);
+    expect(res.status).toBe(400);
+  });
+
+  it('retorna 400 quando itens incompletos', async () => {
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({
+        ...basePayload,
+        itens: [{ quantity: 1, value: 10 }],
+      })
+    });
+
+    const res = await POST(req as unknown as NextRequest);
+    expect(res.status).toBe(400);
+  });
+
+  it('retorna 400 quando successUrl inválida', async () => {
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({
+        ...basePayload,
+        successUrl: 'nota-url'
+      })
+    });
+
+    const res = await POST(req as unknown as NextRequest);
+    expect(res.status).toBe(400);
+  });
+
+  it('retorna 400 quando errorUrl inválida', async () => {
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({
+        ...basePayload,
+        errorUrl: 'nota-url'
+      })
+    });
+
+    const res = await POST(req as unknown as NextRequest);
+    expect(res.status).toBe(400);
   });
 });
