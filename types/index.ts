@@ -79,9 +79,9 @@ export type Produto = {
   preco: number;
   imagem?: string;
   imagens?: string[];
-  tamanhos?: string[];
-  generos?: string[];
-  cores?: string[];
+  tamanhos?: string[] | string;
+  generos?: string[] | string;
+  cores?: string[] | string;
   slug: string;
   descricao?: string;
   detalhes?: string;

@@ -7,22 +7,11 @@ import { Suspense } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import createPocketBase from "@/lib/pocketbase";
 import ProdutoInterativo from "./ProdutoInterativo";
-
-interface Produto {
-  id: string;
-  nome: string;
-  preco: number;
-  imagens: string[] | Record<string, string[]>;
-  slug: string;
-  descricao?: string;
-  cores?: string | string[];
-  tamanhos?: string | string[];
-  generos?: string | string[];
-  checkout_url?: string;
-}
+import type { Produto } from "@/types";
 export default function ProdutoDetalhe() {
   const { slug } = useParams<{ slug: string }>();
   const [produto, setProduto] = useState<Produto | null>(null);
+  const [imagens, setImagens] = useState<Record<string, string[]>>({});
   const [erro, setErro] = useState(false);
   const { isLoggedIn } = useAuthContext();
 
@@ -36,12 +25,17 @@ export default function ProdutoDetalhe() {
       .then((p) => {
         const imgs = Array.isArray(p.imagens)
           ? p.imagens.map((img) => pb.files.getURL(p, img))
-          : Object.fromEntries(
+          : p.imagens
+          ? Object.fromEntries(
               Object.entries(p.imagens as Record<string, string[]>).map(
                 ([g, arr]) => [g, arr.map((img) => pb.files.getURL(p, img))]
               )
-            );
-        setProduto({ ...p, imagens: imgs });
+            )
+          : [];
+        setProduto(p);
+        setImagens(
+          Array.isArray(imgs) ? { default: imgs } : (imgs as Record<string, string[]>)
+        );
       })
       .catch(() => setErro(true));
   }, [slug]);
@@ -71,17 +65,7 @@ export default function ProdutoDetalhe() {
   }
 
   // Normaliza imagens, tamanhos, generos
-  let generos: string[] = [];
-  let imagens: Record<string, string[]> = {};
-  if (typeof produto.imagens === "object" && !Array.isArray(produto.imagens)) {
-    // formato: { masculino: [...], feminino: [...] }
-    imagens = produto.imagens as Record<string, string[]>;
-    generos = Object.keys(imagens);
-  } else {
-    // formato: array
-    imagens = { default: (produto.imagens as string[]) || [] };
-    generos = ["default"];
-  }
+  const generos = Object.keys(imagens).length > 0 ? Object.keys(imagens) : ["default"];
 
   const tamanhos = Array.isArray(produto.tamanhos)
     ? produto.tamanhos

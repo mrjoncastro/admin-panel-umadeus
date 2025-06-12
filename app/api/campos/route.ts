@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
   const { user, pbSafe } = auth;
 
   const tenantId =
-    (user && (user as Record<string, any>).cliente) ||
+    (user && (user as { cliente?: string }).cliente) ||
     process.env.NEXT_PUBLIC_TENANT_ID;
 
   if (user.role !== "coordenador") {
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
   }
 
   const tenantId =
-    (user && (user as Record<string, any>).cliente) ||
+    (user && (user as { cliente?: string }).cliente) ||
     process.env.NEXT_PUBLIC_TENANT_ID;
 
   try {
