@@ -48,3 +48,4 @@
 ## [2025-06-10] Corrigido carregamento de slug e imagens absolutas em loja/produtos/[slug] - dev - 3a448ad
 ## [2025-06-12] Corrigido erro de build por importacao de fs/promises no bundle de cliente - dev - 94b6508
 ## [2025-06-12] Ajustado tipo Produto em loja/produtos/[slug] para compatibilidade com types - dev - 707ff02
+## [2025-06-12] Corrigido erro de build em login por falta de Suspense - dev - 823ad2b
