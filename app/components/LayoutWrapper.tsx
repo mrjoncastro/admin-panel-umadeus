@@ -4,7 +4,6 @@ import Header from "./Header";
 import Footer from "./Footer";
 import BackToTopButton from "@/app/admin/components/BackToTopButton";
 import NotificationBell from "@/app/admin/components/NotificationBell";
-import TourIcon from "@/app/admin/components/TourIcon";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { useMemo } from "react";
 
@@ -30,12 +29,7 @@ export default function LayoutWrapper({
         {children}
       </main>
       <Footer />
-      {role === "coordenador" && (
-        <>
-          <NotificationBell />
-          <TourIcon />
-        </>
-      )}
+      {role === "coordenador" && <NotificationBell />}
       <BackToTopButton />
     </>
   );

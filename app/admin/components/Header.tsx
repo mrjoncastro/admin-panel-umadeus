@@ -36,6 +36,7 @@ const getNavLinks = (role?: string) => {
     { href: "/admin/dashboard", label: "Painel" },
     { href: "/admin/inscricoes", label: "Inscrições" },
     { href: "/admin/pedidos", label: "Pedidos" },
+    { href: "/admin/compras", label: "Compras" },
     { href: "/admin/usuarios", label: "Usuários" },
     { href: "/admin/campos", label: "Campos" },
     { href: "/admin/produtos", label: "Produtos" },

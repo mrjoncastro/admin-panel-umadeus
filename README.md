@@ -3,7 +3,7 @@ Visitantes navegam pelo portal e pelo blog, realizam compras na loja e os coorde
 Consulte [arquitetura.md](arquitetura.md) para entender a divisão de pastas e responsabilidades.
 Para personalizar a interface utilize as orientações de [docs/design-system.md](docs/design-system.md).
 Para um passo a passo inicial do sistema consulte [docs/iniciar-tour.md](docs/iniciar-tour.md).
-O tour pode ser iniciado clicando no ícone de mapa ao lado do sino de notificações ou acessando `/iniciar-tour` diretamente.
+Coordenadores podem iniciar o tour clicando no ícone de mapa ao lado do sino de notificações no painel admin ou acessando `/iniciar-tour` diretamente.
 
 ## Primeiros Passos
 
@@ -165,8 +165,9 @@ Registra as compras feitas na loja. Campos principais:
 
 ### Rotas de Compras
 
-- `/admin/compras` – listagem de compras para coordenadores.
+- `/admin/compras` – listagem completa de compras (restrito a coordenadores).
 - `/admin/compras/[id]` – detalhes de uma compra.
+- `/loja/compras` – lista "Minhas compras" disponível ao cliente.
 - `/loja/compras/[id]` – página de detalhes acessível pelo usuário.
 
 ## Perfis de Acesso
