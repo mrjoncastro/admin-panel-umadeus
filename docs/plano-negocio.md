@@ -5,7 +5,7 @@ Implementamos a base multi-tenant do sistema no banco usando PocketBase, já pre
 ## Estrutura das Coleções
 
 ### 1. m24_clientes
-- Cadastro central de cada cliente/união (tenant).
+- Cadastro central de cada cliente (tenant).
 - Campo `documento` (CPF ou CNPJ) obrigatório e único, para identificação fiscal e integrações.
 - Demais campos: `nome`, `dominio`, `logo_url`, `cor_primaria`, `responsavel_nome`, `responsavel_email`, `ativo`, `created`.
 
