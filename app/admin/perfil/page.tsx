@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import createPocketBase from "@/lib/pocketbase";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
 import ModalEditarPerfil from "./components/ModalEditarPerfil";
 
 interface UsuarioAuthModel {
@@ -22,10 +21,20 @@ interface UsuarioAuthModel {
 }
 
 export default function PerfilPage() {
-  const router = useRouter();
-  const pb = useMemo(() => createPocketBase(), []);
-  const [usuario, setUsuario] = useState<UsuarioAuthModel | null>(null);
+  const { user: usuarioGuard, pb, authChecked } = useAuthGuard([
+    "coordenador",
+    "lider",
+  ]);
+  const [usuario, setUsuario] = useState<UsuarioAuthModel | null>(
+    usuarioGuard as UsuarioAuthModel | null,
+  );
   const [mostrarModal, setMostrarModal] = useState(false);
+
+  useEffect(() => {
+    if (usuarioGuard) {
+      setUsuario(usuarioGuard as UsuarioAuthModel);
+    }
+  }, [usuarioGuard]);
 
   // Atualiza local após edição
   const atualizarDados = () => {
@@ -33,23 +42,13 @@ export default function PerfilPage() {
     setUsuario(model);
   };
 
-  useEffect(() => {
-    const handleAuthChange = () => {
-      if (!pb.authStore.isValid) {
-        router.push("/login");
-      } else {
-        const model = pb.authStore.model as unknown as UsuarioAuthModel;
-        setUsuario(model);
-      }
-    };
-
-    handleAuthChange();
-    const unsubscribe = pb.authStore.onChange(handleAuthChange);
-
-    return () => {
-      unsubscribe();
-    };
-  }, [pb, router]);
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <h1 className="text-2xl font-semibold">403 - Acesso negado</h1>
+      </div>
+    );
+  }
 
   if (!usuario) return null;
 
