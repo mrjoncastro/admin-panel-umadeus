@@ -69,6 +69,7 @@ Consulte o guia completo em [docs/design-system.md](docs/design-system.md) para 
 - Organizar camadas: `app/`, `lib/`, `components/`, `services/`.
 - Padronizar rotas, layouts e middlewares com App Router.
 - Centralizar todos os estilos em Tailwind CSS (preferencialmente) ou global.css para manter consistência e fácil manutenção.
+- Leia os requesitos funcionais (docs/integracao-vercel-cloudflare.md)
 
   **Materiais recomendados:** Estrutura de diretórios atual, RFCs internos.
 
