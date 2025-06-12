@@ -51,7 +51,7 @@ export default function EditarProdutoPage() {
       .then((data) => {
         setCategorias(Array.isArray(data) ? data : []);
       })
-      .catch((err) => {
+      .catch(() => {
         setCategorias([]);
       });
     fetch(`/admin/api/produtos/${id}`, {

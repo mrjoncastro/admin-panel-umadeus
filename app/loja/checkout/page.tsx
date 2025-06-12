@@ -15,10 +15,15 @@ function CheckoutContent() {
   const searchParams = useSearchParams();
   const { isLoggedIn, user } = useAuthContext();
 
-  const [nome, setNome] = useState(user?.nome || "");
-  const [telefone, setTelefone] = useState(String(user?.telefone ?? ""));
-  const [email, setEmail] = useState(user?.email || "");
-  const [endereco, setEndereco] = useState(String(user?.endereco ?? ""));
+  const [nome, setNome] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [email, setEmail] = useState("");
+  const [endereco, setEndereco] = useState("");
+  const [numero, setNumero] = useState("");
+  const [estado, setEstado] = useState("");
+  const [cep, setCep] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [cpf, setCpf] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -60,17 +65,63 @@ function CheckoutContent() {
   const handleConfirm = async () => {
     setLoading(true);
     try {
+      const itensPayload = await Promise.all(
+        itens.map(async (i) => {
+          let fotoBase64: string | undefined;
+          if (i.imagem) {
+            try {
+              const resp = await fetch(i.imagem);
+              const blob = await resp.blob();
+              fotoBase64 = await new Promise((res) => {
+                const reader = new FileReader();
+                reader.onloadend = () => res(reader.result as string);
+                reader.readAsDataURL(blob);
+              });
+            } catch {
+              /* ignore */
+            }
+          }
+          return {
+            name: i.nome,
+            description: i.descricao,
+            quantity: i.quantidade,
+            value: i.preco,
+            fotoBase64,
+          };
+        })
+      );
+
+      const payload = {
+        valor: total,
+        itens: itensPayload,
+        successUrl: `${window.location.origin}/loja/sucesso?pedido=${pedidoId}`,
+        errorUrl: `${window.location.origin}/loja/sucesso?pedido=${pedidoId}`,
+        cliente: {
+          nome,
+          email,
+          telefone,
+          cpf,
+          endereco,
+          numero,
+          estado,
+          cep,
+          cidade,
+        },
+        installments: 1,
+        paymentMethods: ["PIX", "CREDIT_CARD"],
+      };
+
       const res = await fetch("/admin/api/asaas/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ valor: total, pedidoId }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (!res.ok || !data?.checkoutUrl)
         throw new Error("Falha ao gerar link de pagamento");
       clearCart();
       window.location.href = data.checkoutUrl;
-    } catch (err) {
+    } catch {
       alert("Erro ao processar pagamento. Tente novamente.");
     } finally {
       setLoading(false);
@@ -146,19 +197,63 @@ function CheckoutContent() {
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1">
-                Endereço
-              </label>
+              <label className="block text-xs text-gray-500 mb-1">Endereço</label>
               <input
                 type="text"
                 value={typeof endereco === "string" ? endereco : ""}
                 onChange={(e) => setEndereco(e.target.value)}
                 className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
-                placeholder="Rua, número e complemento"
+                placeholder="Rua"
                 required
               />
             </div>
-            {/* Você pode expandir com mais campos aqui */}
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="text"
+                value={numero}
+                onChange={(e) => setNumero(e.target.value)}
+                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
+                placeholder="Número"
+                required
+              />
+              <input
+                type="text"
+                value={estado}
+                onChange={(e) => setEstado(e.target.value)}
+                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
+                placeholder="Estado"
+                required
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="text"
+                value={cep}
+                onChange={(e) => setCep(e.target.value)}
+                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
+                placeholder="CEP"
+                required
+              />
+              <input
+                type="text"
+                value={cidade}
+                onChange={(e) => setCidade(e.target.value)}
+                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
+                placeholder="Cidade"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">CPF</label>
+              <input
+                type="text"
+                value={cpf}
+                onChange={(e) => setCpf(e.target.value)}
+                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
+                placeholder="CPF"
+                required
+              />
+            </div>
           </form>
         </section>
         {/* Bloco DIREITO: Resumo do pedido */}
