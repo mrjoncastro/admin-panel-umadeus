@@ -6,6 +6,8 @@ import BlogSidebar from "./components/BlogSidebar";
 import BlogHeroCarousel from "./components/BlogHeroCarousel";
 import Link from "next/link";
 import Image from "next/image";
+import createPocketBase from "@/lib/pocketbase";
+import type { Cliente } from "@/types";
 
 interface Post {
   title: string;
@@ -19,7 +21,32 @@ interface Post {
 const POSTS_PER_PAGE = 6;
 
 export default function BlogClient() {
-  const nomeCliente = "{nomeCliente}"; // Busque em m24_cliente o nome do cliente";
+  const [nomeCliente, setNomeCliente] = useState("");
+
+  useEffect(() => {
+    const pb = createPocketBase();
+    async function fetchCliente() {
+      try {
+        const tenantId = localStorage.getItem("tenant_id");
+        if (tenantId) {
+          const c = await pb
+            .collection("m24_clientes")
+            .getOne<Cliente>(tenantId);
+          setNomeCliente(c.nome ?? "");
+          return;
+        }
+        const dominio = window.location.hostname;
+        const c = await pb
+          .collection("m24_clientes")
+          .getFirstListItem<Cliente>(`dominio='${dominio}'`);
+        localStorage.setItem("tenant_id", c.id);
+        setNomeCliente(c.nome ?? "");
+      } catch (err) {
+        console.error("Erro ao buscar nome do cliente:", err);
+      }
+    }
+    fetchCliente();
+  }, []);
 
   const introText = {
     title: "Criamos este espaço porque acreditamos no poder do conhecimento.",
