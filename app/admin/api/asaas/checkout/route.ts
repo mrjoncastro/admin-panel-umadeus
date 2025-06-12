@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     console.log("📥 Recebendo requisição POST em /asaas/checkout");
 
     const body = await req.json();
-    console.log("🧾 Body recebido:", body);
+    console.log("🧾 Body recebido:\n", JSON.stringify(body, null, 2));
 
     const parse = checkoutSchema.safeParse(body);
     if (!parse.success) {
