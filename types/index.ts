@@ -113,3 +113,18 @@ export type Evento = {
   status: "realizado" | "em breve";
   created?: string;
 };
+
+export type Cliente = {
+  id: string;
+  documento: string;
+  nome?: string;
+  dominio?: string;
+  logo_url?: string;
+  cor_primaria?: string;
+  responsavel_nome?: string;
+  responsavel_email?: string;
+  ativo?: boolean;
+  asaas_api_key?: string;
+  asaas_account_id?: string;
+  created?: string;
+};
