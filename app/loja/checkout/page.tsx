@@ -20,6 +20,11 @@ function CheckoutContent() {
   const [telefone, setTelefone] = useState(String(user?.telefone ?? ""));
   const [email, setEmail] = useState(user?.email || "");
   const [endereco, setEndereco] = useState(String(user?.endereco ?? ""));
+  const [cpf, setCpf] = useState("");
+  const [numero, setNumero] = useState("");
+  const [estado, setEstado] = useState("");
+  const [cep, setCep] = useState("");
+  const [cidade, setCidade] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
