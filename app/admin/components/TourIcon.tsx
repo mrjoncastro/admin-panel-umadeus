@@ -14,7 +14,7 @@ export default function TourIcon() {
 
   useEffect(() => {
     if (!isLoggedIn || !user) return setVisible(false);
-    const fezTour = Boolean((user as any).tour);
+    const fezTour = Boolean(user.tour);
     setVisible(!fezTour);
   }, [isLoggedIn, user]);
 
