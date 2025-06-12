@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createPocketBase } from "@/lib/pocketbase";
 import { logInfo } from "@/lib/logger";
+import { buildExternalReference } from "@/lib/asaas";
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
@@ -135,6 +136,19 @@ export async function POST(req: NextRequest) {
     dueDate.setDate(dueDate.getDate() + 3);
     const dueDateStr = dueDate.toISOString().split("T")[0];
 
+    const clienteTenantId =
+      ((pedido as Record<string, unknown>).cliente as string | undefined) ||
+      ((inscricao as Record<string, unknown>).cliente as string | undefined) ||
+      ((inscricao as Record<string, unknown>).campo as string | undefined);
+    const usuarioIdRef =
+      (pedido.responsavel as string | undefined) ||
+      (inscricao.criado_por as string | undefined);
+    const externalReference = buildExternalReference(
+      String(clienteTenantId),
+      String(usuarioIdRef),
+      inscricao.id
+    );
+
     const cobrancaResponse = await fetch(`${baseUrl}/payments`, {
       method: "POST",
       headers: {
@@ -148,7 +162,7 @@ export async function POST(req: NextRequest) {
         value: parsedValor,
         dueDate: dueDateStr,
         description: pedido.produto || "Produto",
-        externalReference: pedido.id,
+        externalReference,
       }),
     });
 

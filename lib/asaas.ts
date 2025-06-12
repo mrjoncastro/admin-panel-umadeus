@@ -2,6 +2,16 @@ export function buildCheckoutUrl(baseUrl: string): string {
   return baseUrl.replace(/\/$/, "") + "/checkouts";
 }
 
+export function buildExternalReference(
+  clienteId: string,
+  usuarioId: string,
+  inscricaoId?: string
+): string {
+  let ref = `cliente_${clienteId}_usuario_${usuarioId}`;
+  if (inscricaoId) ref += `_inscricao_${inscricaoId}`;
+  return ref;
+}
+
 export type CheckoutItem = {
   name: string;
   description?: string;
@@ -15,6 +25,9 @@ export type CreateCheckoutParams = {
   itens: CheckoutItem[];
   successUrl: string;
   errorUrl: string;
+  clienteId: string;
+  usuarioId: string;
+  inscricaoId?: string;
   cliente: {
     nome: string;
     email: string;
@@ -45,6 +58,12 @@ export async function createCheckout(
 
   const apiKey = rawKey.startsWith("$") ? rawKey : `$${rawKey}`;
   const url = buildCheckoutUrl(baseUrl);
+
+  const externalReference = buildExternalReference(
+    params.clienteId,
+    params.usuarioId,
+    params.inscricaoId
+  );
 
   const payload = {
     billingTypes: params.paymentMethods ?? ["CREDIT_CARD", "PIX"],
@@ -79,6 +98,7 @@ export async function createCheckout(
           item.fotoBase64 ? { name: `item${idx + 1}Foto`, value: item.fotoBase64 } : null
         )
         .filter(Boolean) as { name: string; value: string }[]) || undefined,
+    externalReference,
   };
 
   console.log("📦 Payload enviado ao Asaas:", payload);
