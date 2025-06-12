@@ -87,7 +87,7 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `ASAAS_API_URL` - URL base da API do Asaas (ex.: `https://api-sandbox.asaas.com/api/v3/`)
 - `NEXT_PUBLIC_SITE_URL` - endereço do site (opcional)
 
-Os servidores identificam automaticamente o tenant pelo domínio de cada requisição usando `getTenantFromHost`. A variável `NEXT_PUBLIC_TENANT_ID` foi removida.
+Os servidores identificam automaticamente o tenant pelo domínio de cada requisição usando `getTenantFromHost`.
 
 Cada registro em `m24_clientes` contém o campo `asaas_api_key`. A aplicação busca a chave correta deste cliente antes de criar cobranças ou checkouts, garantindo que cada subconta do Asaas seja utilizada separadamente.
 
