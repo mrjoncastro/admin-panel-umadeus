@@ -4,8 +4,12 @@ import { EventoRecord, atualizarStatus } from "@/lib/events";
 
 export async function GET() {
   const pb = createPocketBase();
+  const tenantId = process.env.NEXT_PUBLIC_TENANT_ID;
   try {
-    const eventos = await pb.collection("eventos").getFullList<EventoRecord>({ sort: "-data" });
+    const eventos = await pb.collection("eventos").getFullList<EventoRecord>({
+      sort: "-data",
+      filter: tenantId ? `cliente='${tenantId}'` : undefined,
+    });
     await atualizarStatus(eventos, pb);
     const comUrls = eventos.map((e) => ({
       ...e,

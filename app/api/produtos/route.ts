@@ -6,11 +6,13 @@ export async function GET(req: NextRequest) {
 
   const pb = createPocketBase();
   const categoria = req.nextUrl.searchParams.get("categoria") || undefined;
+  const tenantId = process.env.NEXT_PUBLIC_TENANT_ID;
 
   try {
+    const baseFilter = tenantId ? `ativo = true && cliente='${tenantId}'` : "ativo = true";
     const filterString = categoria
-      ? `ativo = true && categoria = '${categoria}'`
-      : "ativo = true";
+      ? `${baseFilter} && categoria = '${categoria}'`
+      : baseFilter;
 
     const produtos = await pb
       .collection("produtos")
