@@ -61,3 +61,6 @@
 ## [2025-06-10] Atualizado fluxo de checkout para usar Checkout Pronto do Asaas em README e docs.
 ## [2025-06-11] Atualizado cadastro com novos campos e payload do checkout
 ## [2025-06-11] Foto do produto (base64) agora enviada no item do checkout, removida do cadastro de usuário
+## [2025-06-11] Atualizado cadastro com novos campos e payload do checkout
+## [2025-06-11] Foto do produto (base64) agora enviada no item do checkout, removida do cadastro de usuário
+## [2025-06-11] Incluídos campos de endereço no cadastro e adequação do payload do checkout ao novo modelo do Asaas

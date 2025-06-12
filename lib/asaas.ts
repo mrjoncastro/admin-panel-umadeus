@@ -4,6 +4,7 @@ export function buildCheckoutUrl(baseUrl: string): string {
 
 export type CheckoutItem = {
   name: string;
+  description?: string;
   quantity: number;
   value: number;
   fotoBase64?: string | null;
@@ -19,6 +20,11 @@ export type CreateCheckoutParams = {
     email: string;
     telefone: string;
     cpf: string;
+    endereco: string;
+    numero: string;
+    estado: string;
+    cep: string;
+    cidade: string;
   };
   installments?: number;
   paymentMethods?: ("PIX" | "CREDIT_CARD")[];
@@ -40,28 +46,33 @@ export async function createCheckout(
   const apiKey = rawKey.startsWith("$") ? rawKey : `$${rawKey}`;
   const url = buildCheckoutUrl(baseUrl);
 
-  const descricao = params.itens
-    .map((item) => `${item.quantity}x ${item.name}`)
-    .join(" | ");
-
   const payload = {
-    billingTypes: params.paymentMethods ?? ["PIX", "CREDIT_CARD"],
-    installmentCount: params.installments ?? 1,
-    value: params.valor,
-    customer: {
-      name: params.cliente.nome,
-      email: params.cliente.email,
-      cpfCnpj: params.cliente.cpf,
-      phone: params.cliente.telefone,
-    },
-    description: descricao,
-    dueDate: new Date(Date.now() + 2 * 86400000).toISOString().split("T")[0],
-    checkoutNotificationEnabled: true,
+    billingTypes: params.paymentMethods ?? ["CREDIT_CARD", "PIX"],
+    chargeTypes: ["DETACHED", "INSTALLMENT"],
     callback: {
       successUrl: params.successUrl,
       cancelUrl: params.errorUrl,
-      errorUrl: params.errorUrl,
+      expiredUrl: params.errorUrl,
     },
+    minutesToExpire: 10,
+    items: params.itens.map((i) => ({
+      description: i.description ?? i.name,
+      name: i.name,
+      quantity: i.quantity,
+      value: i.value,
+    })),
+    customerData: {
+      name: params.cliente.nome,
+      email: params.cliente.email,
+      phone: params.cliente.telefone,
+      address: params.cliente.endereco,
+      addressNumber: Number(params.cliente.numero),
+      province: params.cliente.estado,
+      postalCode: params.cliente.cep,
+      city: params.cliente.cidade,
+      cpfCnpj: params.cliente.cpf,
+    },
+    installment: { maxInstallmentCount: params.installments ?? 1 },
     customFields:
       (params.itens
         .map((item, idx) =>

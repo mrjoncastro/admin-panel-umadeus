@@ -24,6 +24,11 @@ type AuthContextType = {
     email: string,
     telefone: string,
     cpf: string,
+    endereco: string,
+    numero: string,
+    estado: string,
+    cep: string,
+    cidade: string,
     password: string
   ) => Promise<void>;
   logout: () => void;
@@ -101,6 +106,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     email: string,
     telefone: string,
     cpf: string,
+    endereco: string,
+    numero: string,
+    estado: string,
+    cep: string,
+    cidade: string,
     password: string
   ) => {
     await pb.collection("usuarios").create({
@@ -108,6 +118,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email,
       telefone,
       cpf,
+      endereco,
+      numero,
+      estado,
+      cep,
+      cidade,
       password,
       passwordConfirm: password,
       role: "usuario",

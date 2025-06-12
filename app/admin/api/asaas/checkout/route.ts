@@ -8,6 +8,7 @@ const checkoutSchema = z.object({
     .array(
       z.object({
         name: z.string(),
+        description: z.string().optional(),
         quantity: z.number(),
         value: z.number(),
         fotoBase64: z.string().optional().nullable(),
@@ -21,6 +22,11 @@ const checkoutSchema = z.object({
     email: z.string().email(),
     telefone: z.string(),
     cpf: z.string(),
+    endereco: z.string(),
+    numero: z.string(),
+    estado: z.string(),
+    cep: z.string(),
+    cidade: z.string(),
   }),
   installments: z.number().int().min(1).max(2).optional(),
   paymentMethods: z

@@ -22,7 +22,15 @@ describe('checkout route', () => {
 
   const basePayload = {
     valor: 10,
-    itens: [{ name: 'p', quantity: 1, value: 10, fotoBase64: 'data:image/png;base64,a' }],
+    itens: [
+      {
+        name: 'p',
+        description: 'p',
+        quantity: 1,
+        value: 10,
+        fotoBase64: 'data:image/png;base64,a'
+      }
+    ],
     successUrl: 'https://sucesso',
     errorUrl: 'https://erro',
     cliente: {
@@ -30,6 +38,11 @@ describe('checkout route', () => {
       email: 'j@x.com',
       telefone: '111',
       cpf: '000',
+      endereco: 'rua',
+      numero: '1',
+      estado: 'BA',
+      cep: '000',
+      cidade: '123',
     },
     installments: 1,
     paymentMethods: ['PIX', 'CREDIT_CARD'],
