@@ -6,7 +6,6 @@ import BlogSidebar from "./components/BlogSidebar";
 import BlogHeroCarousel from "./components/BlogHeroCarousel";
 import Link from "next/link";
 import Image from "next/image";
-import { isExternalUrl } from "@/utils/isExternalUrl";
 
 interface Post {
   title: string;
@@ -99,22 +98,15 @@ export default function BlogClient() {
                       key={post.slug}
                       className="bg-[var(--background)] dark:bg-neutral-900 rounded-xl shadow-md hover:shadow-lg transition overflow-hidden flex flex-col"
                     >
-                      {post.thumbnail &&
-                        (isExternalUrl(post.thumbnail) ? (
-                          <img
-                            src={post.thumbnail}
-                            alt={`Imagem de capa do post: ${post.title}`}
-                            className="w-full h-56 object-cover"
-                          />
-                        ) : (
-                          <Image
-                            src={post.thumbnail}
-                            alt={`Imagem de capa do post: ${post.title}`}
-                            width={640}
-                            height={320}
-                            className="w-full h-56 object-cover"
-                          />
-                        ))}
+                      {post.thumbnail && (
+                        <Image
+                          src={post.thumbnail}
+                          alt={`Imagem de capa do post: ${post.title}`}
+                          width={640}
+                          height={320}
+                          className="w-full h-56 object-cover"
+                        />
+                      )}
                       <div className="p-6 flex-1 flex flex-col justify-between">
                         {post.category && (
                           <span className="inline-block bg-primary-50 text-primary-800 text-xs font-semibold px-3 py-1 rounded-full mb-2 uppercase tracking-wide">

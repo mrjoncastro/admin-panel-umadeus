@@ -7,19 +7,7 @@ import { Suspense } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import createPocketBase from "@/lib/pocketbase";
 import ProdutoInterativo from "./ProdutoInterativo";
-
-interface Produto {
-  id: string;
-  nome: string;
-  preco: number;
-  imagens: string[] | Record<string, string[]>;
-  slug: string;
-  descricao?: string;
-  cores?: string | string[];
-  tamanhos?: string | string[];
-  generos?: string | string[];
-  checkout_url?: string;
-}
+import type { Produto } from "@/types";
 export default function ProdutoDetalhe() {
   const { slug } = useParams<{ slug: string }>();
   const [produto, setProduto] = useState<Produto | null>(null);
