@@ -70,10 +70,14 @@ export async function POST(req: NextRequest) {
     } = parse.data;
 
     const pb = createPocketBase();
-    if (!pb.authStore.isValid) {
+    if (
+      process.env.PB_ADMIN_EMAIL &&
+      process.env.PB_ADMIN_PASSWORD &&
+      !pb.authStore.isValid
+    ) {
       await pb.admins.authWithPassword(
-        process.env.PB_ADMIN_EMAIL!,
-        process.env.PB_ADMIN_PASSWORD!
+        process.env.PB_ADMIN_EMAIL,
+        process.env.PB_ADMIN_PASSWORD
       );
     }
 
@@ -105,33 +109,21 @@ export async function POST(req: NextRequest) {
       paymentMethods,
     });
 
-<<<<<<< HEAD
-    const checkoutUrl = await createCheckout({
-      valor,
-      itens,
-      successUrl,
-      errorUrl,
-      clienteId,
-      usuarioId,
-      inscricaoId,
-      cliente,
-      installments,
-      paymentMethods,
-    });
-=======
     const checkoutUrl = await createCheckout(
       {
         valor,
         itens,
         successUrl,
         errorUrl,
+        clienteId,
+        usuarioId,
+        inscricaoId,
         cliente,
         installments,
         paymentMethods,
       },
-      apiKey
+      apiKey,
     );
->>>>>>> origin/codex/adicionar-campo-asaas_api_key-e-integração
 
     console.log("✅ Checkout criado com sucesso:", checkoutUrl);
 
