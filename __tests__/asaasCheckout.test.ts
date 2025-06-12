@@ -33,6 +33,9 @@ describe('checkout route', () => {
     ],
     successUrl: 'https://sucesso',
     errorUrl: 'https://erro',
+    clienteId: 'cli1',
+    usuarioId: 'user1',
+    inscricaoId: 'ins1',
     cliente: {
       nome: 'João',
       email: 'j@x.com',
@@ -62,7 +65,14 @@ describe('checkout route', () => {
 
     const res = await POST(req as unknown as NextRequest);
     const data = await res.json();
-    expect(fetchMock).toHaveBeenCalledWith('https://asaas/checkouts', expect.any(Object));
+    expect(fetchMock).toHaveBeenCalledWith(
+      'https://asaas/checkouts',
+      expect.objectContaining({ body: expect.any(String) })
+    );
+    const sentBody = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(sentBody.externalReference).toBe(
+      'cliente_cli1_usuario_user1_inscricao_ins1'
+    );
     expect(data.checkoutUrl).toBe('url');
   });
 

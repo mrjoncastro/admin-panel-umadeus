@@ -123,7 +123,10 @@ Envie uma requisição `POST` em JSON contendo:
   "valor": 99.9,
   "itens": [{ "name": "Produto", "quantity": 1, "value": 99.9 }],
   "successUrl": "https://meusite.com/sucesso",
-  "errorUrl": "https://meusite.com/erro"
+  "errorUrl": "https://meusite.com/erro",
+  "clienteId": "cli_123",
+  "usuarioId": "user_456",
+  "inscricaoId": "ins_789"
 }
 ```
 
@@ -131,9 +134,12 @@ Envie uma requisição `POST` em JSON contendo:
 - **itens** – lista de itens (nome, quantidade e valor unitário).
 - **successUrl** – página de redirecionamento em caso de aprovação.
 - **errorUrl** – página de erro ou cancelamento.
+- **clienteId** – ID do cliente (tenant) responsável pelo pagamento.
+- **usuarioId** – ID do usuário que gerou o checkout.
+- **inscricaoId** – ID da inscrição relacionada (opcional).
 
 O endpoint utiliza as variáveis de ambiente `ASAAS_API_URL` e `ASAAS_API_KEY`.
-A resposta contém o campo `link` com o URL gerado:
+A resposta contém o campo `link` com o URL gerado. O `externalReference` enviado ao Asaas segue o formato `cliente_<idCliente>_usuario_<idUsuario>[_inscricao_<id>]`:
 
 ```json
 { "link": "https://asaas.com/..." }

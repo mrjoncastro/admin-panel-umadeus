@@ -61,14 +61,26 @@ export async function POST(req: NextRequest) {
   const payment = await paymentRes.json();
 
   const status = payment.status;
-  const pedidoId = payment.externalReference;
+  const externalRef: string | undefined = payment.externalReference;
 
-  if (!pedidoId) {
+  if (!externalRef) {
     return NextResponse.json(
       { error: "Referência externa ausente no pagamento" },
       { status: 400 }
     );
   }
+
+  const match = externalRef.match(
+    /^cliente_(.+?)_usuario_(.+?)(?:_inscricao_(.+))?$/
+  );
+  if (!match) {
+    return NextResponse.json(
+      { error: "Formato de externalReference inválido" },
+      { status: 400 }
+    );
+  }
+
+  const [, clienteId, , inscricaoId] = match;
 
   if (status !== "RECEIVED" && status !== "CONFIRMED") {
     return NextResponse.json({ status: "Aguardando pagamento" });
@@ -81,9 +93,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  await pb.collection("pedidos").getOne(pedidoId, {
-    expand: "id_inscricao",
-  });
+  if (inscricaoId) {
+    await pb
+      .collection("pedidos")
+      .getFirstListItem(
+        `id_inscricao='${inscricaoId}' && cliente='${clienteId}'`
+      );
+  }
 
   return NextResponse.json({ status: "Pedido atualizado com sucesso" });
 }

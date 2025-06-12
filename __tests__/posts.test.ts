@@ -6,7 +6,7 @@ import { getRecentPostsClient } from '../lib/posts/getRecentPostsClient'
 describe('posts utilities', () => {
   it('getPosts retorna lista ordenada', async () => {
     const posts = await getPosts()
-    expect(posts[0].slug).toBe('segundo-post')
+    expect(posts[0].slug).toBe('dores-gstricas')
     expect(posts.at(-1)?.slug).toBe('dicas-controlar-ansiedade')
   })
 
