@@ -12,7 +12,6 @@ import type { Metadata } from "next";
 import { getRelatedPosts } from "@/lib/posts/getRelatedPosts";
 import NextPostButton from "@/app/blog/components/NextPostButton";
 import PostSuggestions from "@/app/blog/components/PostSuggestions";
-import MiniPrecosPost from "../../components/MiniPrecosPost";
 import Script from "next/script";
 
 interface Params {
@@ -180,7 +179,6 @@ export default async function BlogPostPage({
         <article className="prose prose-neutral max-w-none">
           <Content />
           {nextPost && <NextPostButton slug={nextPost.slug} />}
-          <MiniPrecosPost />
         </article>
       </main>
 
