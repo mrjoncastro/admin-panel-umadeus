@@ -62,17 +62,25 @@ export default function ProdutoDetalhe() {
     );
   }
 
-  // Normaliza imagens, tamanhos, generos
+  // Normaliza imagens e gêneros
   let generos: string[] = [];
   let imagens: Record<string, string[]> = {};
+
+  // Tenta extrair lista de gêneros armazenada no produto
+  if (produto.generos) {
+    generos = Array.isArray(produto.generos)
+      ? produto.generos.map((g) => g.trim())
+      : produto.generos.split(",").map((g) => g.trim());
+  }
+
   if (typeof produto.imagens === "object" && !Array.isArray(produto.imagens)) {
     // formato: { masculino: [...], feminino: [...] }
     imagens = produto.imagens as Record<string, string[]>;
-    generos = Object.keys(imagens);
+    if (generos.length === 0) generos = Object.keys(imagens);
   } else {
     // formato: array
     imagens = { default: (produto.imagens as string[]) || [] };
-    generos = ["default"];
+    if (generos.length === 0) generos = ["default"];
   }
 
   const tamanhos = Array.isArray(produto.tamanhos)

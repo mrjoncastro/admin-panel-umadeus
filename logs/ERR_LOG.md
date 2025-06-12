@@ -53,3 +53,4 @@
 ## [2025-06-12] Corrigido erro "Expression expected" no preview do Storybook renomeando arquivo para .tsx - dev - 25cd01a 
 ## [2025-06-12] Ajustado tipo Produto em loja/produtos/[slug] para compatibilidade com types - dev - 707ff02
 ## [2025-06-12] Corrigido erro de build em login por falta de Suspense - dev - 823ad2b
+## [2025-06-12] Ajustado carregamento de gêneros e imagens no detalhe do produto - dev - 6fd0697
