@@ -27,7 +27,7 @@ function CheckoutContent() {
   const [cidade, setCidade] = useState("");
   const [numero, setNumero] = useState(String(user?.numero ?? ""));
   const [dataNascimento, setDataNascimento] = useState(
-    String((user as any)?.data_nascimento ?? "")
+    String((user as { data_nascimento?: string } | null)?.data_nascimento ?? "")
   );
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
 
@@ -47,7 +47,9 @@ function CheckoutContent() {
       setEstado(String(user.estado ?? ""));
       setCep(String(user.cep ?? ""));
       setCidade(String(user.cidade ?? ""));
-      setDataNascimento(String((user as any).data_nascimento ?? ""));
+      setDataNascimento(
+        String((user as { data_nascimento?: string }).data_nascimento ?? "")
+      );
     }
   }, [user]);
 
