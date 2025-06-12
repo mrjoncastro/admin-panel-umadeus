@@ -92,6 +92,8 @@ Consulte o guia completo em [docs/design-system.md](docs/design-system.md) para 
 - Cobrir funcionalidades críticas com Jest, Playwright.
 - Sugerir arquitetura de testes, mocks, coverage mínimo.
 - Execute `npm run lint` para verificar problemas de código. Evite o uso de `any` especificando tipos adequados e sempre inclua todas as dependências utilizadas dentro dos hooks `useEffect`.
+- Execute `npm run build` para verificar problemas de código. 
+
     **Materiais recomendados:** Funcionalidades principais, bugs comuns, specs.
 
 ---
