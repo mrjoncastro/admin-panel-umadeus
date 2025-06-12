@@ -74,7 +74,6 @@ export default function ListaInscricoesPage() {
       user.role === "coordenador"
         ? baseFiltro
         : `campo='${user.campo}' && ${baseFiltro}`;
-    console.log("Filtro aplicado:", filtro);
 
     pb.collection("inscricoes")
       .getFullList({ sort: "-created", filter: filtro, expand: "campo,pedido" })

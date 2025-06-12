@@ -107,7 +107,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .getFirstListItem(`dominio='${dominio}'`);
       localStorage.setItem("tenant_id", cliente.id);
       setTenantId(cliente.id);
-      console.log("dominio:", dominio, "clienteId:", cliente?.id);
     } catch {
       setTenantId(null);
     }
