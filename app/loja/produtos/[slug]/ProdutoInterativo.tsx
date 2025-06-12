@@ -135,7 +135,8 @@ export default function ProdutoInterativo({
   const pauseRef = useRef(false);
   const router = useRouter();
 
-  const imgs = imagens[genero] || imagens[generosNorm[0]];
+  const firstImgKey = Object.keys(imagens)[0];
+  const imgs = imagens[genero] || imagens["default"] || imagens[firstImgKey];
 
   useEffect(() => {
     setIndexImg(0);
@@ -276,7 +277,7 @@ export default function ProdutoInterativo({
                 ...produto,
                 imagens: Array.isArray(produto.imagens)
                   ? produto.imagens
-                  : imagens[genero] || [],
+                  : imagens[genero] || imagens["default"] || imagens[firstImgKey] || [],
                 generos: [genero],
                 tamanhos: [tamanho],
                 cores: cor ? [cor] : [],
