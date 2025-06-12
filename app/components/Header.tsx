@@ -13,6 +13,7 @@ type UserRole = "visitante" | "usuario" | "lider" | "coordenador";
 const baseLinks = [
   { href: "/", label: "Início" },
   { href: "/loja/produtos", label: "Produtos" },
+  { href: "/loja/compras", label: "Compras" },
   { href: "/blog", label: "Blog" },
   { href: "/loja/eventos", label: "Eventos" },
   { href: "/loja/faq", label: "FAQ" },
