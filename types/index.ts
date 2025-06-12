@@ -122,6 +122,9 @@ export type Cliente = {
   documento: string;
   nome?: string;
   dominio?: string;
+  tipo_dominio?: "subdominio" | "proprio" | "registrado";
+  verificado?: boolean;
+  modo_validacao?: "wildcard" | "manual" | "cloudflare_api";
   logo_url?: string;
   cor_primaria?: string;
   responsavel_nome?: string;
