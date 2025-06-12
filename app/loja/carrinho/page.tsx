@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { useState } from "react";
+import { hexToPtName } from "@/utils/colorNamePt";
 
 function formatCurrency(n: number) {
   return `R$ ${n.toFixed(2).replace(".", ",")}`;
@@ -25,9 +26,14 @@ export default function CarrinhoPage() {
     router.push("/loja/checkout");
   }
 
-  const goToSignup = () =>
+  const goToSignup = () => {
+    setShowPrompt(false);
     router.push("/login?view=signup&redirect=/loja/checkout");
-  const goToLogin = () => router.push("/login?redirect=/loja/checkout");
+  };
+  const goToLogin = () => {
+    setShowPrompt(false);
+    router.push("/login?redirect=/loja/checkout");
+  };
 
   if (itens.length === 0) {
     return (
@@ -68,7 +74,8 @@ export default function CarrinhoPage() {
                 <p className="font-medium text-accent">{item.nome}</p>
                 <p className="text-xs text-gray-400">
                   Modelo: {item.generos?.[0] || "-"} | Tamanho:{" "}
-                  {item.tamanhos?.[0] || "-"} | Cor: {item.cores?.[0] || "-"}
+                  {item.tamanhos?.[0] || "-"} | Cor:{" "}
+                  {item.cores?.[0] ? hexToPtName(item.cores[0]) : "-"}
                 </p>
                 <p className="text-xs text-gray-400">Qtd: {item.quantidade}</p>
               </div>
@@ -104,7 +111,7 @@ export default function CarrinhoPage() {
           </button>
           {showPrompt && !isLoggedIn && (
             <div className="text-sm text-center text-gray-600 mt-4 w-full">
-              É necessário ter uma conta para prosseguir.{' '}
+              Para finalizar a compra, é preciso ter uma conta.{' '}
               <button onClick={goToSignup} className="underline">
                 Criar conta
               </button>{' '}

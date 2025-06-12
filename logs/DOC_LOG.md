@@ -65,6 +65,8 @@
 ## [2025-06-11] Foto do produto (base64) agora enviada no item do checkout, removida do cadastro de usuário
 ## [2025-06-11] Incluídos campos de endereço no cadastro e adequação do payload do checkout ao novo modelo do Asaas
 ## [2025-06-12] Exibidos detalhes de cor, tamanho e modelo no carrinho e checkout com aviso de cadastro obrigatório
+## [2025-06-12] Cores do carrinho e checkout agora exibem nome da cor
+## [2025-06-12] Exibidos detalhes de cor, tamanho e modelo no carrinho e checkout com aviso de cadastro obrigatório
 ## [2025-06-11] Atualizado cadastro com novos campos e payload do checkout
 ## [2025-06-11] Foto do produto (base64) agora enviada no item do checkout, removida do cadastro de usuário
 ## [2025-06-11] Incluídos campos de endereço no cadastro e adequação do payload do checkout ao novo modelo do Asaas

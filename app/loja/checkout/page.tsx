@@ -4,6 +4,7 @@ import { useCart } from "@/lib/context/CartContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState, useEffect } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import { hexToPtName } from "@/utils/colorNamePt";
 
 function formatCurrency(n: number) {
   return `R$ ${n.toFixed(2).replace(".", ",")}`;
@@ -15,23 +16,18 @@ function CheckoutContent() {
   const searchParams = useSearchParams();
   const { isLoggedIn, user } = useAuthContext();
 
-  const [nome, setNome] = useState("");
-  const [telefone, setTelefone] = useState("");
-  const [email, setEmail] = useState("");
-  const [endereco, setEndereco] = useState("");
-  const [numero, setNumero] = useState("");
-  const [estado, setEstado] = useState("");
-  const [cep, setCep] = useState("");
-  const [cidade, setCidade] = useState("");
-  const [cpf, setCpf] = useState("");
+  const [nome, setNome] = useState(user?.nome || "");
+  const [telefone, setTelefone] = useState(String(user?.telefone ?? ""));
+  const [email, setEmail] = useState(user?.email || "");
+  const [endereco, setEndereco] = useState(String(user?.endereco ?? ""));
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
-      setNome(typeof user.nome === "string" ? user.nome : "");
-      setTelefone(typeof user.telefone === "string" || typeof user.telefone === "number" ? String(user.telefone) : "");
-      setEmail(typeof user.email === "string" ? user.email : "");
-      setEndereco(typeof user.endereco === "string" ? user.endereco : "");
+      setNome(user.nome || "");
+      setTelefone(String(user.telefone ?? ""));
+      setEmail(user.email || "");
+      setEndereco(String(user.endereco ?? ""));
     }
   }, [user]);
 
@@ -271,7 +267,8 @@ function CheckoutContent() {
                   <div className="font-medium">{item.nome}</div>
                   <div className="text-xs text-gray-400">
                     Modelo: {item.generos?.[0] || "-"} | Tamanho:{" "}
-                    {item.tamanhos?.[0] || "-"} | Cor: {item.cores?.[0] || "-"}
+                    {item.tamanhos?.[0] || "-"} | Cor:{" "}
+                    {item.cores?.[0] ? hexToPtName(item.cores[0]) : "-"}
                   </div>
                   <div className="text-xs text-gray-400">Qtd: {item.quantidade}</div>
                 </div>
