@@ -53,6 +53,7 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 │   ├── eventos/           # Formulário de inscrição em eventos
 │   ├── inscricoes/        # Envio e visualização pública (se necessário)
 │   ├── produtos/          # Listagem e detalhes dos produtos
+│   ├── compras/           # Detalhes de compras realizadas
 │   ├── layout.tsx         # Layout público da loja
 │   └── page.tsx           # Home da loja
 ├──

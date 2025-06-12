@@ -57,6 +57,7 @@ export default function ComprasPage() {
                 <th>Status</th>
                 <th>Método</th>
                 <th>Checkout</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -78,6 +79,14 @@ export default function ComprasPage() {
                     ) : (
                       "—"
                     )}
+                  </td>
+                  <td>
+                    <a
+                      href={`/admin/compras/${c.id}`}
+                      className="text-blue-600 underline text-xs"
+                    >
+                      Ver detalhes
+                    </a>
                   </td>
                 </tr>
               ))}

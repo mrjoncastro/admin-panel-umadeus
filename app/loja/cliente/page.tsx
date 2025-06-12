@@ -82,7 +82,12 @@ export default function AreaCliente() {
                 <td>{p.status}</td>
                 <td>{p.pagamento}</td>
                 <td className="flex gap-2">
-                  <button className="btn btn-secondary">Ver detalhes</button>
+                  <a
+                    href={`/loja/compras/${p.id}`}
+                    className="btn btn-secondary"
+                  >
+                    Ver detalhes
+                  </a>
                   <button className="btn btn-primary">Recomprar</button>
                 </td>
               </tr>
