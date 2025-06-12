@@ -117,13 +117,27 @@ Para SVG:
 <motion.path d="..." initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} />
 ```
 
-## Overlay de Loading
+## LoadingOverlay
 
-Utilizamos `LoadingOverlay.tsx` com `AnimatePresence` para mostrar carregamentos com transições suaves. Pode ser usado globalmente ou em seções específicas.
+O componente `LoadingOverlay` utiliza `motion.div` e `AnimatePresence` para exibir
+uma camada de carregamento animada. Ele cobre toda a tela (ou o bloco desejado)
+com um fundo escurecido e um spinner, podendo também mostrar um texto
+opcional. É indicado para chamadas assíncronas que precisam bloquear a
+interação temporariamente.
 
-## Tabs com Transição
+## SmoothTabs
 
-O componente `SmoothTabs` combina `@radix-ui/react-tabs` com animação do `framer-motion`. Veja exemplos em `stories/Tabs.stories.tsx`.
+`SmoothTabs` combina `@radix-ui/react-tabs` com `framer-motion` para gerar
+transições suaves entre as abas. Basta fornecer um array de objetos `tabs` com
+`value`, `label` e `content`. O exemplo de uso está em
+`stories/Tabs.stories.tsx`.
+
+## ModalAnimated
+
+`ModalAnimated` é um wrapper do `@radix-ui/react-dialog` que adiciona animações
+de abertura e fechamento via `framer-motion`. É útil para exibir modais leves
+sem código repetitivo. Consulte `stories/ModalEditarPerfil.stories.tsx` para um
+exemplo de implementação.
 
 ## Adicionando Novos Tokens
 
