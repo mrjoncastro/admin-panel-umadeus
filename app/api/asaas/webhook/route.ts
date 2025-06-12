@@ -1,9 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import createPocketBase from "@/lib/pocketbase";
+import { logConciliacaoErro } from "@/lib/logger";
+import type { RecordModel } from "pocketbase";
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
   const baseUrl = process.env.ASAAS_API_URL;
+
+  const secretHeader = req.headers.get("asaas-webhook-secret");
+  const secretParam = req.nextUrl.searchParams.get("secret");
+  if (
+    process.env.ASAAS_WEBHOOK_SECRET &&
+    secretHeader !== process.env.ASAAS_WEBHOOK_SECRET &&
+    secretParam !== process.env.ASAAS_WEBHOOK_SECRET
+  ) {
+    return NextResponse.json({ error: "Segredo inválido" }, { status: 401 });
+  }
 
   const rawBody = await req.text();
   let body: {
@@ -49,6 +61,9 @@ export async function POST(req: NextRequest) {
   }
 
   let clienteApiKey: string | null = null;
+  let clienteId: string | null = null;
+  let usuarioId: string | null = null;
+  let inscricaoId: string | null = null;
   const accountId = payment?.accountId || body.accountId;
   if (accountId) {
     try {
@@ -56,20 +71,30 @@ export async function POST(req: NextRequest) {
         .collection("m24_clientes")
         .getFirstListItem(`asaas_account_id = "${accountId}"`);
       clienteApiKey = c?.asaas_api_key ?? null;
+      clienteId = c?.id ?? null;
     } catch {
       /* ignore */
     }
   }
 
-  if (!clienteApiKey && payment?.externalReference) {
-    const match = /cliente_([^_]+)/.exec(payment.externalReference);
+  if (payment?.externalReference) {
+    const match =
+      /cliente_([^_]+)_usuario_([^_]+)(?:_inscricao_([^_]+))?/.exec(
+        payment.externalReference,
+      );
     if (match) {
-      try {
-        const c = await pb.collection("m24_clientes").getOne(match[1]);
-        clienteApiKey = c?.asaas_api_key ?? null;
-      } catch {
-        /* ignore */
-      }
+      clienteId = clienteId || match[1];
+      usuarioId = match[2];
+      inscricaoId = match[3] || null;
+    }
+  }
+
+  if (!clienteApiKey && clienteId) {
+    try {
+      const c = await pb.collection("m24_clientes").getOne(clienteId);
+      clienteApiKey = c?.asaas_api_key ?? null;
+    } catch {
+      /* ignore */
     }
   }
 
@@ -97,25 +122,71 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const payment = await paymentRes.json();
+  const paymentData = await paymentRes.json();
 
-  const status = payment.status;
-  const pedidoId = payment.externalReference;
-
-  if (!pedidoId) {
-    return NextResponse.json(
-      { error: "Referência externa ausente no pagamento" },
-      { status: 400 }
-    );
-  }
+  const status = paymentData.status as string | undefined;
+  const externalRef: string | undefined = paymentData.externalReference;
 
   if (status !== "RECEIVED" && status !== "CONFIRMED") {
     return NextResponse.json({ status: "Aguardando pagamento" });
   }
 
-  await pb.collection("pedidos").getOne(pedidoId, {
-    expand: "id_inscricao",
-  });
+  if (externalRef && !inscricaoId) {
+    const m = /cliente_([^_]+)_usuario_([^_]+)(?:_inscricao_([^_]+))?/.exec(
+      externalRef,
+    );
+    if (m) {
+      inscricaoId = m[3] || null;
+    }
+  }
+
+  let pedidoRecord: RecordModel | null = null;
+  try {
+    if (inscricaoId) {
+      const filtro = usuarioId
+        ? `id_inscricao = "${inscricaoId}" && responsavel = "${usuarioId}"`
+        : `id_inscricao = "${inscricaoId}"`;
+      pedidoRecord = await pb.collection("pedidos").getFirstListItem(filtro);
+    } else {
+      const filtro = usuarioId
+        ? `id_pagamento = "${paymentId}" && responsavel = "${usuarioId}"`
+        : `id_pagamento = "${paymentId}"`;
+      pedidoRecord = await pb.collection("pedidos").getFirstListItem(filtro);
+    }
+  } catch {
+    /* ignore */
+  }
+
+  if (!pedidoRecord) {
+    await logConciliacaoErro(
+      `Pedido nao encontrado para pagamento ${paymentId}`,
+    );
+    return NextResponse.json(
+      { error: "Pedido não encontrado" },
+      { status: 404 },
+    );
+  }
+
+  try {
+    await pb.collection("pedidos").update(pedidoRecord.id, {
+      status: "pago",
+      id_pagamento: paymentId,
+    });
+
+    if (inscricaoId) {
+      await pb.collection("inscricoes").update(inscricaoId, {
+        status: "confirmado",
+      });
+    }
+  } catch (err) {
+    await logConciliacaoErro(
+      `Falha ao atualizar pedido ${pedidoRecord.id}: ${String(err)}`,
+    );
+    return NextResponse.json(
+      { error: "Erro ao atualizar pedido" },
+      { status: 500 },
+    );
+  }
 
   return NextResponse.json({ status: "Pedido atualizado com sucesso" });
 }

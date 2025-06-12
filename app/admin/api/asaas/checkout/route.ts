@@ -70,10 +70,14 @@ export async function POST(req: NextRequest) {
     } = parse.data;
 
     const pb = createPocketBase();
-    if (!pb.authStore.isValid) {
+    if (
+      process.env.PB_ADMIN_EMAIL &&
+      process.env.PB_ADMIN_PASSWORD &&
+      !pb.authStore.isValid
+    ) {
       await pb.admins.authWithPassword(
-        process.env.PB_ADMIN_EMAIL!,
-        process.env.PB_ADMIN_PASSWORD!
+        process.env.PB_ADMIN_EMAIL,
+        process.env.PB_ADMIN_PASSWORD
       );
     }
 
@@ -118,7 +122,7 @@ export async function POST(req: NextRequest) {
         installments,
         paymentMethods,
       },
-      apiKey
+      apiKey,
     );
 
     console.log("✅ Checkout criado com sucesso:", checkoutUrl);
