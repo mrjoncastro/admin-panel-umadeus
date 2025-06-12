@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserFromHeaders } from "@/lib/getUserFromHeaders";
 import { logInfo } from "@/lib/logger";
+import { getTenantFromHost } from "@/lib/getTenantFromHost";
 
 export async function GET(req: NextRequest) {
   const auth = await getUserFromHeaders(req);
@@ -13,7 +14,7 @@ export async function GET(req: NextRequest) {
 
   const tenantId =
     (user && (user as { cliente?: string }).cliente) ||
-    process.env.NEXT_PUBLIC_TENANT_ID;
+    (await getTenantFromHost());
 
   if (user.role !== "coordenador") {
     return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
@@ -55,7 +56,7 @@ export async function POST(req: NextRequest) {
 
   const tenantId =
     (user && (user as { cliente?: string }).cliente) ||
-    process.env.NEXT_PUBLIC_TENANT_ID;
+    (await getTenantFromHost());
 
   try {
     const { nome } = await req.json();

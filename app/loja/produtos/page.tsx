@@ -1,5 +1,6 @@
 import createPocketBase from "@/lib/pocketbase";
 import ProdutosFiltrados from "./ProdutosFiltrados";
+import { getTenantFromHost } from "@/lib/getTenantFromHost";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ interface Produto {
 
 export default async function ProdutosPage() {
   const pb = createPocketBase();
-  const tenantId = process.env.NEXT_PUBLIC_TENANT_ID;
+  const tenantId = await getTenantFromHost();
   const list = await pb.collection("produtos").getList<Produto>(1, 50, {
     filter: `ativo = true && cliente='${tenantId}'`,
     sort: "-created",

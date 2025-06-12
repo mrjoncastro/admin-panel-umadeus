@@ -88,3 +88,5 @@
 
 ## [2025-06-12] Adicionadas propriedades tipo_dominio, verificado e modo_validacao ao tipo Cliente.
 ## [2025-06-12] Adicionada tabela de campos em docs/plano-negocio.md incluindo tipo_dominio, verificado e modo_validacao
+
+## [2025-06-12] Removida variavel NEXT_PUBLIC_TENANT_ID e implementada logica para obter tenant pelo host.
