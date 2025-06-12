@@ -2,6 +2,8 @@ Este repositório reúne portal institucional, blog, loja virtual e painel admin
 Visitantes navegam pelo portal e pelo blog, realizam compras na loja e os coordenadores gerenciam tudo pelo admin.
 Consulte [arquitetura.md](arquitetura.md) para entender a divisão de pastas e responsabilidades.
 Para personalizar a interface utilize as orientações de [docs/design-system.md](docs/design-system.md).
+Para um passo a passo inicial do sistema consulte [docs/iniciar-tour.md](docs/iniciar-tour.md).
+O tour pode ser iniciado clicando no ícone de mapa ao lado do sino de notificações ou acessando `/iniciar-tour` diretamente.
 
 ## Primeiros Passos
 

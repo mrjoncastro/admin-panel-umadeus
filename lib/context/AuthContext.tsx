@@ -11,6 +11,7 @@ type UserModel = {
   id: string;
   nome: string;
   role: "coordenador" | "lider" | "usuario";
+  tour?: boolean;
   [key: string]: unknown;
 };
 
@@ -159,6 +160,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       passwordConfirm: password,
       role: "usuario",
       cliente: clienteId,
+      tour: false,
     });
     await login(email, password);
   };
