@@ -49,5 +49,7 @@
 ## [2025-06-12] Corrigido erro de build por importacao de fs/promises no bundle de cliente - dev - 94b6508
 ## [2025-06-12] Corrigido prefixo de tipo incorreto no preview do Storybook - dev - c3ffbb6
 ## [2025-06-12] Ajustado preview do Storybook para aplicar AppConfigProvider e exibir cores primarias - dev - 30fade5
+
+## [2025-06-12] Corrigido erro "Expression expected" no preview do Storybook renomeando arquivo para .tsx - dev - 25cd01a 
 ## [2025-06-12] Ajustado tipo Produto em loja/produtos/[slug] para compatibilidade com types - dev - 707ff02
 ## [2025-06-12] Corrigido erro de build em login por falta de Suspense - dev - 823ad2b
