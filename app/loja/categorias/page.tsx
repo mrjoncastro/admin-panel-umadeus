@@ -10,9 +10,13 @@ interface Categoria {
 
 export default async function CategoriasPage() {
   const pb = createPocketBase();
+  const tenantId = process.env.NEXT_PUBLIC_TENANT_ID;
   const categorias: Categoria[] = await pb
     .collection("categorias")
-    .getFullList({ sort: "nome" });
+    .getFullList({
+      sort: "nome",
+      ...(tenantId ? { filter: `cliente='${tenantId}'` } : {}),
+    });
 
   return (
     <main className="p-8 text-platinum font-sans">

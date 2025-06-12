@@ -11,6 +11,10 @@ export async function GET(req: NextRequest) {
 
   const { user, pbSafe } = auth;
 
+  const tenantId =
+    (user && (user as Record<string, any>).cliente) ||
+    process.env.NEXT_PUBLIC_TENANT_ID;
+
   if (user.role !== "coordenador") {
     return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
   }
@@ -18,6 +22,7 @@ export async function GET(req: NextRequest) {
   try {
     const campos = await pbSafe.collection("campos").getFullList({
       sort: "nome",
+      filter: tenantId ? `cliente='${tenantId}'` : undefined,
     });
 
     return NextResponse.json(campos, { status: 200 });
@@ -48,6 +53,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
   }
 
+  const tenantId =
+    (user && (user as Record<string, any>).cliente) ||
+    process.env.NEXT_PUBLIC_TENANT_ID;
+
   try {
     const { nome } = await req.json();
     logInfo("📥 Requisição para criar campo recebida");
@@ -56,7 +65,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Nome inválido" }, { status: 400 });
     }
 
-    const campo = await pbSafe.collection("campos").create({ nome });
+    const campo = await pbSafe
+      .collection("campos")
+      .create({ nome, ...(tenantId ? { cliente: tenantId } : {}) });
 
     logInfo("✅ Campo criado com sucesso");
 

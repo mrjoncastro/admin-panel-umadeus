@@ -103,7 +103,7 @@ export default function ListaInscricoesPage() {
     if (user.role === "coordenador") {
       pb
         .collection("campos")
-        .getFullList({ sort: "nome" })
+        .getFullList({ sort: "nome", filter: `cliente='${tenantId}'` })
         .then(() => {
           // noop
         })
