@@ -71,10 +71,10 @@ export default function BlogClient() {
 
       <main className="max-w-7xl mx-auto px-6 py-20 font-sans">
         <section className="mb-16 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-[var(--text-primary)] mb-4">
             {introText.title}
           </h1>
-          <p className="text-gray-600 text-lg mb-6">{introText.paragraph}</p>
+          <p className="text-[var(--text-secondary)] text-lg mb-6">{introText.paragraph}</p>
           <div className="max-w-xl mx-auto flex items-center gap-2">
             <input
               type="text"
@@ -84,7 +84,7 @@ export default function BlogClient() {
                 setSearch(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
         </section>
@@ -97,7 +97,7 @@ export default function BlogClient() {
                   {paginatedPosts.map((post) => (
                     <div
                       key={post.slug}
-                      className="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden flex flex-col"
+                      className="bg-[var(--background)] dark:bg-neutral-900 rounded-xl shadow-md hover:shadow-lg transition overflow-hidden flex flex-col"
                     >
                       {post.thumbnail &&
                         (isExternalUrl(post.thumbnail) ? (
@@ -117,7 +117,7 @@ export default function BlogClient() {
                         ))}
                       <div className="p-6 flex-1 flex flex-col justify-between">
                         {post.category && (
-                          <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full mb-2 uppercase tracking-wide">
+                          <span className="inline-block bg-primary-50 text-primary-800 text-xs font-semibold px-3 py-1 rounded-full mb-2 uppercase tracking-wide">
                             {post.category}
                           </span>
                         )}
@@ -125,19 +125,19 @@ export default function BlogClient() {
                           href={`/blog/post/${post.slug}`}
                           className="hover:underline"
                         >
-                          <h2 className="text-xl font-semibold text-gray-800 mb-1">
+                          <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-1">
                             {post.title}
                           </h2>
                         </Link>
-                        <p className="text-sm text-gray-500 mb-3">
+                        <p className="text-sm text-neutral-500 mb-3">
                           {post.date}
                         </p>
-                        <p className="text-sm text-gray-700 mb-4 line-clamp-3">
+                        <p className="text-sm text-neutral-700 mb-4 line-clamp-3">
                           {post.summary}
                         </p>
                         <Link
                           href={`/blog/post/${post.slug}`}
-                          className="mt-auto inline-block text-sm text-blue-600 hover:text-blue-800 font-semibold"
+                          className="mt-auto inline-block text-sm text-primary-600 hover:text-primary-800 font-semibold"
                         >
                           Leia mais →
                         </Link>
@@ -150,7 +150,7 @@ export default function BlogClient() {
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="px-3 py-2 text-sm rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+                    className="px-3 py-2 text-sm rounded bg-neutral-200 hover:bg-neutral-300 disabled:opacity-50"
                   >
                     ← Anterior
                   </button>
@@ -161,8 +161,8 @@ export default function BlogClient() {
                       onClick={() => handlePageChange(i + 1)}
                       className={`px-3 py-2 text-sm rounded ${
                         currentPage === i + 1
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-100 hover:bg-gray-200"
+                          ? "bg-primary-600 text-white"
+                          : "bg-neutral-100 hover:bg-neutral-200"
                       }`}
                     >
                       {i + 1}
@@ -172,14 +172,14 @@ export default function BlogClient() {
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="px-3 py-2 text-sm rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+                    className="px-3 py-2 text-sm rounded bg-neutral-200 hover:bg-neutral-300 disabled:opacity-50"
                   >
                     Próxima →
                   </button>
                 </div>
               </>
             ) : (
-              <p className="text-center text-gray-500 text-lg">
+              <p className="text-center text-neutral-500 text-lg">
                 Nenhum post encontrado com esse termo.
               </p>
             )}
