@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import createPocketBase from "@/lib/pocketbase"; // ajuste para seu caminho real
 
+const VIA_CEP_URL =
+  process.env.NEXT_PUBLIC_VIA_CEP_URL || "https://viacep.com.br/ws";
+
 export default function SignUpForm({
   onSuccess,
   children,
@@ -42,18 +45,30 @@ export default function SignUpForm({
       .catch(() => {
         console.warn("Erro ao carregar os campos");
       });
-  }, []);
+  }, [pb]);
 
   useEffect(() => {
     const cleanCep = cep.replace(/\D/g, "");
     if (cleanCep.length !== 8) return;
-    fetch(`https://viacep.com.br/ws/${cleanCep}/json/`)
-      .then((res) => res.json())
+    fetch(`${VIA_CEP_URL}/${cleanCep}/json/`)
+      .then(async (res) => {
+        if (!res.ok) {
+          setErro("CEP n\u00e3o encontrado.");
+          setEndereco("");
+          setCidade("");
+          setEstado("");
+          return null;
+        }
+        return res.json();
+      })
       .then((data) => {
-        if (data.erro) return;
+        if (!data || data.erro) return;
         setEndereco(data.logradouro || "");
         setCidade(data.localidade || "");
         setEstado(data.uf || "");
+      })
+      .catch(() => {
+        setErro("Erro ao buscar o CEP.");
       });
   }, [cep]);
 
@@ -83,9 +98,7 @@ export default function SignUpForm({
         estado,
         cep,
         cidade,
-        senha,
-        dataNascimento,
-        campo // id do campo
+        senha
       );
       onSuccess?.();
     } catch (err) {
