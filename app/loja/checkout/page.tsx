@@ -131,6 +131,26 @@ function CheckoutContent() {
         paymentMethods: ["PIX", "CREDIT_CARD"],
       };
 
+      const token = localStorage.getItem("pb_token");
+      const pbUser = localStorage.getItem("pb_user");
+      await fetch("/admin/api/compras", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "X-PB-User": pbUser ?? "",
+        },
+        body: JSON.stringify({
+          usuario: user?.id,
+          itens: itensPayload,
+          valor_total: total,
+          status: "pendente",
+          metodo_pagamento: "pix",
+          externalReference: `cliente_${user?.cliente}_usuario_${user?.id}`,
+          endereco_entrega: { endereco, numero, estado, cep, cidade },
+        }),
+      });
+
       const res = await fetch("/admin/api/asaas/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

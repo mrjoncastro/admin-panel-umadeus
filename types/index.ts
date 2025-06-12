@@ -131,3 +131,19 @@ export type Cliente = {
   asaas_account_id?: string;
   created?: string;
 };
+
+export type Compra = {
+  id: string;
+  cliente: string;
+  usuario: string;
+  itens: Record<string, unknown>[];
+  valor_total: number;
+  status: "pendente" | "pago" | "cancelado";
+  metodo_pagamento: "pix" | "cartao" | "boleto";
+  checkout_url?: string;
+  asaas_payment_id?: string;
+  externalReference: string;
+  endereco_entrega?: Record<string, unknown>;
+  created?: string;
+  updated?: string;
+};
