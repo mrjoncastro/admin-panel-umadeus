@@ -5,8 +5,10 @@ import { useAuthContext } from "@/lib/context/AuthContext";
 
 export default function SignUpForm({
   onSuccess,
+  children,
 }: {
   onSuccess?: () => void;
+  children?: React.ReactNode;
 }) {
   const { signUp } = useAuthContext();
   const [nome, setNome] = useState("");
@@ -151,6 +153,9 @@ export default function SignUpForm({
       >
         {loading ? "Enviando..." : "Criar conta"}
       </button>
+      {children && (
+        <div className="text-sm text-gray-300 text-center">{children}</div>
+      )}
     </form>
   );
 }
