@@ -4,6 +4,7 @@ import { useCart } from "@/lib/context/CartContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState, useEffect } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import { CheckCircle } from "lucide-react";
 
 function formatCurrency(n: number) {
   return `R$ ${n.toFixed(2).replace(".", ",")}`;
@@ -24,7 +25,7 @@ function CheckoutContent() {
   const [cep, setCep] = useState("");
   const [cidade, setCidade] = useState("");
   const [cpf, setCpf] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
 
   useEffect(() => {
     if (user) {
@@ -32,6 +33,11 @@ function CheckoutContent() {
       setTelefone(String(user.telefone ?? ""));
       setEmail(user.email || "");
       setEndereco(String(user.endereco ?? ""));
+      setNumero(String(user.numero ?? ""));
+      setEstado(String(user.estado ?? ""));
+      setCep(String(user.cep ?? ""));
+      setCidade(String(user.cidade ?? ""));
+      setCpf(String(user.cpf ?? ""));
     }
   }, [user]);
 
@@ -63,7 +69,7 @@ function CheckoutContent() {
   }
 
   const handleConfirm = async () => {
-    setLoading(true);
+    setStatus("loading");
     try {
       const itensPayload = await Promise.all(
         itens.map(async (i) => {
@@ -117,14 +123,18 @@ function CheckoutContent() {
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (!res.ok || !data?.checkoutUrl)
-        throw new Error("Falha ao gerar link de pagamento");
+      const link = data?.checkoutUrl || data?.link;
+      if (!res.ok || !link) throw new Error("Falha ao gerar link de pagamento");
       clearCart();
-      window.location.href = data.checkoutUrl;
+      setTimeout(() => {
+        setStatus("success");
+        setTimeout(() => {
+          window.location.href = link;
+        }, 1000);
+      }, 1000);
     } catch {
       alert("Erro ao processar pagamento. Tente novamente.");
-    } finally {
-      setLoading(false);
+      setStatus("idle");
     }
   };
 
@@ -297,14 +307,16 @@ function CheckoutContent() {
           </div>
           <button
             onClick={handleConfirm}
-            disabled={loading}
+            disabled={status !== "idle"}
             className="mt-8 w-full py-3 rounded-xl bg-primary-600 text-white font-medium text-base tracking-wide transition hover:bg-primary-900 active:scale-95 disabled:opacity-50"
           >
-            {loading ? (
+            {status === "loading" ? (
               <span className="flex items-center justify-center gap-2">
                 <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                 Processando...
               </span>
+            ) : status === "success" ? (
+              <CheckCircle className="w-5 h-5" />
             ) : (
               "Confirmar Pedido"
             )}

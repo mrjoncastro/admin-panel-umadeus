@@ -112,7 +112,7 @@ Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utiliza
   pagamento no pedido correspondente.
 * **Compras de Loja** – os produtos adicionados ao carrinho são processados na
   página `/loja/checkout`. Esse fluxo usa `/admin/api/asaas/checkout` para
-  criar um `checkoutUrl` do Asaas e redirecionar o usuário automaticamente.
+  criar um link de checkout do Asaas e redirecionar o usuário automaticamente.
 
 ### Endpoint `/admin/api/asaas/checkout`
 
@@ -133,10 +133,10 @@ Envie uma requisição `POST` em JSON contendo:
 - **errorUrl** – página de erro ou cancelamento.
 
 O endpoint utiliza as variáveis de ambiente `ASAAS_API_URL` e `ASAAS_API_KEY`.
-A resposta contém o campo `checkoutUrl` com o link gerado:
+A resposta contém o campo `link` com o URL gerado:
 
 ```json
-{ "checkoutUrl": "https://asaas.com/..." }
+{ "link": "https://asaas.com/..." }
 ```
 
 ## Perfis de Acesso

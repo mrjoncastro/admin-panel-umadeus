@@ -102,7 +102,8 @@ export async function createCheckout(
   }
 
   const data = JSON.parse(text);
-  const checkoutUrl: string | undefined = data?.invoiceUrl || data?.checkoutUrl;
+  const checkoutUrl: string | undefined =
+    data?.invoiceUrl || data?.checkoutUrl || data?.link;
 
   console.log("🔗 URL do checkout gerada:", checkoutUrl);
 

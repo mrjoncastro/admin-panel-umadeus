@@ -2,14 +2,11 @@
 
 import { useState } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
-import Image from "next/image";
 
 export default function SignUpForm({
   onSuccess,
-  children,
 }: {
   onSuccess?: () => void;
-  children?: React.ReactNode;
 }) {
   const { signUp } = useAuthContext();
   const [nome, setNome] = useState("");
