@@ -5,22 +5,24 @@ import { logInfo } from "@/lib/logger";
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
   try {
-    const { nome, email, telefone, password } = await req.json();
-
-    if (!nome || !email || !telefone || !password) {
+    const { nome, email, telefone, password, cliente } = await req.json();
+    if (!nome || !email || !telefone || !password || !cliente) {
       return NextResponse.json({ error: "Dados inv\u00E1lidos" }, { status: 400 });
     }
-
+    try {
+      await pb.collection("m24_clientes").getOne(String(cliente));
+    } catch {
+      return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
+    }
     const novoUsuario = await pb.collection("usuarios").create({
       nome: String(nome).trim(),
       email: String(email).trim(),
+      cliente: String(cliente),
       telefone: String(telefone).trim(),
       password: String(password),
       passwordConfirm: String(password),
     });
-
     logInfo("\u2705 Usu\u00E1rio registrado com sucesso");
-
     return NextResponse.json(novoUsuario, { status: 201 });
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -28,7 +30,6 @@ export async function POST(req: NextRequest) {
     } else {
       console.error("\u274C Erro desconhecido em /api/register.");
     }
-
     return NextResponse.json(
       { erro: "Erro ao processar a requisi\u00E7\u00E3o." },
       { status: 500 }
