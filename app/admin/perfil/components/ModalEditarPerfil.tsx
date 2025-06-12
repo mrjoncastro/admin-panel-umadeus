@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import * as Dialog from "@radix-ui/react-dialog";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import createPocketBase from "@/lib/pocketbase";
 
@@ -60,9 +62,25 @@ export default function ModalEditarPerfil({
     "w-full border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-2 rounded";
 
   return (
-    <div className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-zinc-900 text-black dark:text-white p-6 rounded-xl shadow-xl w-full max-w-md space-y-5">
-        <h3 className="text-xl font-semibold text-center">Editar Perfil</h3>
+    <Dialog.Root open onOpenChange={(v) => !v && onClose()}>
+      <AnimatePresence>
+        <Dialog.Portal forceMount>
+          <Dialog.Overlay asChild>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm"
+            />
+          </Dialog.Overlay>
+          <Dialog.Content asChild>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white dark:bg-zinc-900 text-black dark:text-white p-6 rounded-xl shadow-xl w-full max-w-md space-y-5"
+            >
+            <h3 className="text-xl font-semibold text-center">Editar Perfil</h3>
 
         <input
           type="text"
@@ -165,7 +183,10 @@ export default function ModalEditarPerfil({
             Salvar
           </button>
         </div>
-      </div>
-    </div>
+            </motion.div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </AnimatePresence>
+    </Dialog.Root>
   );
 }

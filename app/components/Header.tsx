@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useRef, useEffect } from "react";
 import { Menu, X, ChevronDown, LogOut } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import CartButton from "./CartButton";
 import Link from "next/link";
 import Image from "next/image";
@@ -252,8 +253,14 @@ export default function Header() {
         </div>
 
         {/* Navegação Mobile */}
-        {open && (
-          <div className="md:hidden mt-2 px-6 pb-3 flex flex-col gap-2 bg-black_bean/95 backdrop-blur-md border-t border-platinum/10 rounded-b-2xl shadow-lg animate-fade-in">
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="md:hidden mt-2 px-6 pb-3 flex flex-col gap-2 bg-black_bean/95 backdrop-blur-md border-t border-platinum/10 rounded-b-2xl shadow-lg"
+            >
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -340,8 +347,9 @@ export default function Header() {
                 Olá, {firstName}
               </span>
             )}
-          </div>
+          </motion.div>
         )}
+        </AnimatePresence>
       </header>
     </>
   );

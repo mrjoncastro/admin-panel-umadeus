@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
+import { motion, AnimatePresence } from "framer-motion";
 
 export interface ModalCategoriaProps {
   open: boolean;
@@ -13,12 +14,6 @@ export default function ModalCategoria({
   onSubmit,
   initial,
 }: ModalCategoriaProps) {
-  const ref = useRef<HTMLDialogElement>(null);
-
-  useEffect(() => {
-    if (open) ref.current?.showModal();
-    else ref.current?.close();
-  }, [open]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -28,37 +23,59 @@ export default function ModalCategoria({
   }
 
   return (
-    <dialog ref={ref} className="rounded-xl card max-w-sm w-full border-0 p-0 fade-in-up z-[9999]">
-      <form onSubmit={handleSubmit} className="p-6 space-y-5" method="dialog" autoComplete="off">
-        <div className="flex justify-between items-center mb-3">
-          <h2 className="text-xl font-bold" style={{ fontFamily: "var(--font-heading)" }}>
-            {initial ? "Editar Categoria" : "Nova Categoria"}
-          </h2>
-          <button
-            type="button"
-            className="text-lg px-3 py-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800"
-            onClick={onClose}
-            aria-label="Fechar"
-          >
-            ×
-          </button>
-        </div>
-        <input
-          className="input-base"
-          name="nome"
-          placeholder="Nome da categoria"
-          defaultValue={initial?.nome || ""}
-          required
-        />
-        <div className="flex justify-end gap-3 mt-4">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>
-            Cancelar
-          </button>
-          <button type="submit" className="btn btn-primary">
-            Salvar
-          </button>
-        </div>
-      </form>
-    </dialog>
+    <Dialog.Root open={open} onOpenChange={(v) => !v && onClose()}>
+      <AnimatePresence>
+        {open && (
+          <Dialog.Portal forceMount>
+            <Dialog.Overlay asChild>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+            </Dialog.Overlay>
+            <Dialog.Content asChild>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                className="rounded-xl card max-w-sm w-full border-0 p-0 bg-white dark:bg-zinc-900 z-[9999]"
+              >
+                <form onSubmit={handleSubmit} className="p-6 space-y-5" autoComplete="off">
+                  <div className="flex justify-between items-center mb-3">
+                    <h2 className="text-xl font-bold" style={{ fontFamily: "var(--font-heading)" }}>
+                      {initial ? "Editar Categoria" : "Nova Categoria"}
+                    </h2>
+                    <button
+                      type="button"
+                      className="text-lg px-3 py-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                      onClick={onClose}
+                      aria-label="Fechar"
+                    >
+                      ×
+                    </button>
+                  </div>
+                  <input
+                    className="input-base"
+                    name="nome"
+                    placeholder="Nome da categoria"
+                    defaultValue={initial?.nome || ""}
+                    required
+                  />
+                  <div className="flex justify-end gap-3 mt-4">
+                    <button type="button" className="btn btn-secondary" onClick={onClose}>
+                      Cancelar
+                    </button>
+                    <button type="submit" className="btn btn-primary">
+                      Salvar
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            </Dialog.Content>
+          </Dialog.Portal>
+        )}
+      </AnimatePresence>
+    </Dialog.Root>
   );
 }

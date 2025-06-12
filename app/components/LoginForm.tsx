@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import Image from "next/image";
@@ -78,16 +79,23 @@ export default function LoginForm({
           />
         </div>
 
-        <h1 className="text-3xl font-bold text-center mb-2 fade-in-up">
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-3xl font-bold text-center mb-2"
+        >
           Bem-vindo!
-        </h1>
+        </motion.h1>
 
-        <p
-          className="text-center text-sm text-gray-300 mb-6 fade-in-up"
-          style={{ animationDelay: "0.2s" }}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-center text-sm text-gray-300 mb-6"
         >
           Acesse o painel
-        </p>
+        </motion.p>
 
         {erro && <p className="text-sm text-center mb-4 text-error">{erro}</p>}
 
