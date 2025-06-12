@@ -4,5 +4,6 @@ export type UserModel = {
   email: string;
   role: "coordenador" | "lider" | "usuario";
   cliente?: string;
+  tour?: boolean;
   [key: string]: unknown;
 };

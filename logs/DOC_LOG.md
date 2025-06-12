@@ -80,3 +80,8 @@
 ## [2025-06-13] Documentado acesso restrito de /admin/compras aos coordenadores e atualizada proteção do código
 ## [2025-06-13] Adicionada página Minhas compras na loja e link no menu do usuário
 ## [2025-06-13] Adicionadas páginas de detalhes de compras e links na listagem.
+## [2025-06-12] Adicionado guia iniciar-tour.md com passo a passo para clientes
+## [2025-06-12] Criada página /iniciar-tour com guia de primeiro acesso e link atualizado no README
+## [2025-06-12] Removido link Iniciar Tour do menu; adicionado ícone de tour junto ao sino
+## [2025-06-12] Campo booleano 'tour' registrado para usuários e link Compras incluído no header
+## [2025-06-12] Ícone de tour e página /admin/compras restritos ao admin; link público removido
