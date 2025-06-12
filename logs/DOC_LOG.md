@@ -77,5 +77,6 @@
 ## [2025-06-13] Documentado formato de externalReference e atualizados testes de checkout
 ## [2025-06-13] README atualizado sobre ASAAS_API_KEY e .env.example ajustado
 ## [2025-06-12] Documentada coleção de compras e página no admin
+## [2025-06-13] Documentado acesso restrito de /admin/compras aos coordenadores e atualizada proteção do código
 ## [2025-06-13] Adicionada página Minhas compras na loja e link no menu do usuário
 ## [2025-06-13] Adicionadas páginas de detalhes de compras e links na listagem.

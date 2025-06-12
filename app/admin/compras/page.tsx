@@ -1,24 +1,17 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import createPocketBase from "@/lib/pocketbase";
+import { useEffect, useState } from "react";
+import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
 import { Compra } from "@/types";
 
 export default function ComprasPage() {
-  const router = useRouter();
-  const { user, isLoggedIn } = useAuthContext();
-  const pb = useMemo(() => createPocketBase(), []);
+  const { user, pb, authChecked } = useAuthGuard(["coordenador"]);
 
   const [compras, setCompras] = useState<Compra[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isLoggedIn || !user) {
-      router.replace("/login");
-      return;
-    }
+    if (!authChecked || !user) return;
 
     const fetchCompras = async () => {
       setLoading(true);
@@ -36,7 +29,15 @@ export default function ComprasPage() {
     };
 
     fetchCompras();
-  }, [pb, isLoggedIn, user, router]);
+  }, [pb, authChecked, user]);
+
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <h1 className="text-2xl font-semibold">403 - Acesso negado</h1>
+      </div>
+    );
+  }
 
   if (loading) {
     return <p className="p-6 text-center text-sm">Carregando compras...</p>;
