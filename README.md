@@ -161,6 +161,12 @@ Registra as compras feitas na loja. Campos principais:
 - `endereco_entrega` – dados de entrega (opcional).
 - `created` / `updated` – gerenciados pelo PocketBase.
 
+### Rotas de Compras
+
+- `/admin/compras` – listagem de compras para coordenadores.
+- `/admin/compras/[id]` – detalhes de uma compra.
+- `/loja/compras/[id]` – página de detalhes acessível pelo usuário.
+
 ## Perfis de Acesso
 
 O sistema possui três níveis de usuário:
