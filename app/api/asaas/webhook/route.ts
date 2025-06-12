@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import createPocketBase from "@/lib/pocketbase";
-import { logConciliacaoErro } from "@/lib/logger";
+import { logConciliacaoErro } from "@/lib/server/logger";
 import type { RecordModel } from "pocketbase";
 
 export async function POST(req: NextRequest) {
