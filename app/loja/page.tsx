@@ -1,9 +1,8 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import createPocketBase from "@/lib/pocketbase";
 
 interface Produto {
@@ -15,7 +14,6 @@ interface Produto {
 }
 
 export default function Home() {
-  const carouselRef = useRef<HTMLDivElement>(null);
   const [produtosDestaque, setProdutosDestaque] = useState<Produto[]>([]);
 
   useEffect(() => {
@@ -37,16 +35,7 @@ export default function Home() {
     fetchProdutos();
   }, []);
 
-  // Se quiser carrossel nos produtos, use funções abaixo:
-  const scrollBy = (direction: "left" | "right") => {
-    const el = carouselRef.current;
-    if (!el) return;
-    const offset = el.offsetWidth * 0.8 + 16;
-    el.scrollBy({
-      left: direction === "right" ? offset : -offset,
-      behavior: "smooth",
-    });
-  };
+
 
   return (
     <>

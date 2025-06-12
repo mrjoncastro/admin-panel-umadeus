@@ -56,3 +56,7 @@
 ## [2025-06-10] README atualizado incluindo novo endpoint /checkouts
 
 ## [2025-06-10] Documentada diferença entre inscrições e compras de loja no README
+## [2025-06-11] Atualizado cadastro com novos campos e payload do checkout
+## [2025-06-11] Foto do produto (base64) agora enviada no item do checkout, removida do cadastro de usuário
+## [2025-06-11] Incluídos campos de endereço no cadastro e adequação do payload do checkout ao novo modelo do Asaas
+## [2025-06-12] Ajustado checkout para enviar dados completos do cliente e imagens dos produtos; página de checkout atualizada com novos campos

@@ -4,8 +4,10 @@ export function buildCheckoutUrl(baseUrl: string): string {
 
 export type CheckoutItem = {
   name: string;
+  description?: string;
   quantity: number;
   value: number;
+  fotoBase64?: string | null;
 };
 
 export type CreateCheckoutParams = {
@@ -13,6 +15,19 @@ export type CreateCheckoutParams = {
   itens: CheckoutItem[];
   successUrl: string;
   errorUrl: string;
+  cliente: {
+    nome: string;
+    email: string;
+    telefone: string;
+    cpf: string;
+    endereco: string;
+    numero: string;
+    estado: string;
+    cep: string;
+    cidade: string;
+  };
+  installments?: number;
+  paymentMethods?: ("PIX" | "CREDIT_CARD")[];
 };
 
 export async function createCheckout(
@@ -31,21 +46,39 @@ export async function createCheckout(
   const apiKey = rawKey.startsWith("$") ? rawKey : `$${rawKey}`;
   const url = buildCheckoutUrl(baseUrl);
 
-  const descricao = params.itens
-    .map((item) => `${item.quantity}x ${item.name}`)
-    .join(" | ");
-
   const payload = {
-    billingType: "UNDEFINED", // Ou "CREDIT_CARD", "PIX"
-    value: params.valor,
-    description: descricao,
-    dueDate: new Date(Date.now() + 2 * 86400000).toISOString().split("T")[0], // vencimento +2 dias
-    checkoutNotificationEnabled: true,
+    billingTypes: params.paymentMethods ?? ["CREDIT_CARD", "PIX"],
+    chargeTypes: ["DETACHED", "INSTALLMENT"],
     callback: {
       successUrl: params.successUrl,
       cancelUrl: params.errorUrl,
-      errorUrl: params.errorUrl,
+      expiredUrl: params.errorUrl,
     },
+    minutesToExpire: 10,
+    items: params.itens.map((i) => ({
+      description: i.description ?? i.name,
+      name: i.name,
+      quantity: i.quantity,
+      value: i.value,
+    })),
+    customerData: {
+      name: params.cliente.nome,
+      email: params.cliente.email,
+      phone: params.cliente.telefone,
+      address: params.cliente.endereco,
+      addressNumber: Number(params.cliente.numero),
+      province: params.cliente.estado,
+      postalCode: params.cliente.cep,
+      city: params.cliente.cidade,
+      cpfCnpj: params.cliente.cpf,
+    },
+    installment: { maxInstallmentCount: params.installments ?? 1 },
+    customFields:
+      (params.itens
+        .map((item, idx) =>
+          item.fotoBase64 ? { name: `item${idx + 1}Foto`, value: item.fotoBase64 } : null
+        )
+        .filter(Boolean) as { name: string; value: string }[]) || undefined,
   };
 
   console.log("📦 Payload enviado ao Asaas:", payload);
