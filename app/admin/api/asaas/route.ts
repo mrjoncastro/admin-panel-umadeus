@@ -4,16 +4,37 @@ import { logInfo } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
-  const rawEnvKey = process.env.ASAAS_API_KEY;
-  if (!rawEnvKey) {
+  const baseUrl = process.env.ASAAS_API_URL;
+
+  let apiKey = process.env.ASAAS_API_KEY || "";
+  try {
+    const host = req.headers.get("host")?.split(":" )[0] ?? "";
+    if (!pb.authStore.isValid) {
+      await pb.admins.authWithPassword(
+        process.env.PB_ADMIN_EMAIL!,
+        process.env.PB_ADMIN_PASSWORD!
+      );
+    }
+    if (host) {
+      const clienteRecord = await pb
+        .collection("m24_clientes")
+        .getFirstListItem(`dominio = "${host}"`);
+      if (clienteRecord?.asaas_api_key) {
+        apiKey = clienteRecord.asaas_api_key;
+      }
+    }
+  } catch {
+    /* ignore */
+  }
+
+  if (!apiKey) {
     throw new Error(
       "❌ ASAAS_API_KEY não definida! Confira seu .env ou painel de variáveis."
     );
   }
-  const apiKey = rawEnvKey.startsWith("$") ? rawEnvKey : "$" + rawEnvKey;
-  const baseUrl = process.env.ASAAS_API_URL;
+  const keyHeader = apiKey.startsWith("$") ? apiKey : "$" + apiKey;
 
-  if (!apiKey || !baseUrl) {
+  if (!keyHeader || !baseUrl) {
     return NextResponse.json(
       { error: "Chave da API Asaas ou URL não configurada" },
       { status: 500 }
@@ -75,7 +96,7 @@ export async function POST(req: NextRequest) {
         method: "GET",
         headers: {
           accept: "application/json",
-          "access-token": apiKey,
+          "access-token": keyHeader,
           "User-Agent": "qg3",
         },
       }
@@ -109,7 +130,7 @@ export async function POST(req: NextRequest) {
         headers: {
           accept: "application/json",
           "Content-Type": "application/json",
-          "access-token": apiKey,
+          "access-token": keyHeader,
           "User-Agent": "qg3",
         },
         body: JSON.stringify(clientePayload),
@@ -139,7 +160,7 @@ export async function POST(req: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "access-token": apiKey,
+        "access-token": keyHeader,
         "User-Agent": "qg3",
       },
       body: JSON.stringify({

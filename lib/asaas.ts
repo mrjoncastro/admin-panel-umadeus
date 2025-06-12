@@ -31,19 +31,20 @@ export type CreateCheckoutParams = {
 };
 
 export async function createCheckout(
-  params: CreateCheckoutParams
+  params: CreateCheckoutParams,
+  apiKey: string,
+  baseUrl = process.env.ASAAS_API_URL
 ): Promise<string> {
-  const baseUrl = process.env.ASAAS_API_URL;
-  const rawKey = process.env.ASAAS_API_KEY;
+  const rawKey = apiKey;
 
-  console.log("🔑 ASAAAS_API_URL:", baseUrl);
+  console.log("🔑 ASAAS_API_URL:", baseUrl);
   console.log("🔑 ASAAS_API_KEY:", rawKey);
 
   if (!baseUrl || !rawKey) {
     throw new Error("Asaas não configurado");
   }
 
-  const apiKey = rawKey.startsWith("$") ? rawKey : `$${rawKey}`;
+  const finalKey = rawKey.startsWith("$") ? rawKey : `$${rawKey}`;
   const url = buildCheckoutUrl(baseUrl);
 
   const payload = {
@@ -88,7 +89,7 @@ export async function createCheckout(
     headers: {
       accept: "application/json",
       "Content-Type": "application/json",
-      "access-token": apiKey,
+      "access-token": finalKey,
       "User-Agent": "qg3",
     },
     body: JSON.stringify(payload),

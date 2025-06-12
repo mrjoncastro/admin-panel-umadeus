@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createCheckout } from "@/lib/asaas";
+import createPocketBase from "@/lib/pocketbase";
 
 const checkoutSchema = z.object({
   valor: z.number(),
@@ -62,6 +63,29 @@ export async function POST(req: NextRequest) {
       paymentMethods,
     } = parse.data;
 
+    const pb = createPocketBase();
+    if (!pb.authStore.isValid) {
+      await pb.admins.authWithPassword(
+        process.env.PB_ADMIN_EMAIL!,
+        process.env.PB_ADMIN_PASSWORD!
+      );
+    }
+
+    const host = req.headers.get("host")?.split(":" )[0] ?? "";
+    let apiKey = process.env.ASAAS_API_KEY || "";
+    try {
+      if (host) {
+        const clienteRecord = await pb
+          .collection("m24_clientes")
+          .getFirstListItem(`dominio = "${host}"`);
+        if (clienteRecord?.asaas_api_key) {
+          apiKey = clienteRecord.asaas_api_key;
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+
     console.log("🔧 Chamando createCheckout com:", {
       valor,
       itens,
@@ -72,15 +96,18 @@ export async function POST(req: NextRequest) {
       paymentMethods,
     });
 
-    const checkoutUrl = await createCheckout({
-      valor,
-      itens,
-      successUrl,
-      errorUrl,
-      cliente,
-      installments,
-      paymentMethods,
-    });
+    const checkoutUrl = await createCheckout(
+      {
+        valor,
+        itens,
+        successUrl,
+        errorUrl,
+        cliente,
+        installments,
+        paymentMethods,
+      },
+      apiKey
+    );
 
     console.log("✅ Checkout criado com sucesso:", checkoutUrl);
 
