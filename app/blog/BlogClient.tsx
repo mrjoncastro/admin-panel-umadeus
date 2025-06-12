@@ -19,7 +19,7 @@ interface Post {
 const POSTS_PER_PAGE = 6;
 
 export default function BlogClient() {
-  const nomeCliente = "M24";
+  const nomeCliente = "{nomeCliente}"; // Busque em m24_cliente o nome do cliente";
 
   const introText = {
     title: "Criamos este espaço porque acreditamos no poder do conhecimento.",
