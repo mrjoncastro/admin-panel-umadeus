@@ -71,10 +71,12 @@ export default function ListaInscricoesPage() {
 
     const baseFiltro = `cliente='${tenantId}'`;
     const filtro =
-      user.role === "coordenador" ? baseFiltro : `campo='${user.campo}' && ${baseFiltro}`;
+      user.role === "coordenador"
+        ? baseFiltro
+        : `campo='${user.campo}' && ${baseFiltro}`;
+    console.log("Filtro aplicado:", filtro);
 
-    pb
-      .collection("inscricoes")
+    pb.collection("inscricoes")
       .getFullList({ sort: "-created", filter: filtro, expand: "campo,pedido" })
       .then((res) => {
         const lista = res.map((r) => ({
@@ -101,8 +103,7 @@ export default function ListaInscricoesPage() {
       .finally(() => setLoading(false));
 
     if (user.role === "coordenador") {
-      pb
-        .collection("campos")
+      pb.collection("campos")
         .getFullList({ sort: "nome", filter: `cliente='${tenantId}'` })
         .then(() => {
           // noop
@@ -179,13 +180,11 @@ export default function ListaInscricoesPage() {
       }
 
       // 4. Atualizar inscrição com o ID do pedido
-      await pb
-        .collection("inscricoes")
-        .update(id, {
-          pedido: pedido.id, // ✅ atualiza campo pedido
-          status: "aguardando_pagamento",
-          confirmado_por_lider: true,
-        });
+      await pb.collection("inscricoes").update(id, {
+        pedido: pedido.id, // ✅ atualiza campo pedido
+        status: "aguardando_pagamento",
+        confirmado_por_lider: true,
+      });
 
       // Atualizar estado local das inscrições
       setInscricoes((prev) =>
