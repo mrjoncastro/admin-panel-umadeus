@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { useState } from 'react';
+import { within, userEvent, expect } from 'storybook/test';
 import ModalAnimated from '../components/ModalAnimated';
 
 const meta = {
@@ -12,7 +13,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: { open: true, children: 'Exemplo' },
+  args: { open: false, children: 'Exemplo' },
   render: (args) => {
     const [open, setOpen] = useState(args.open);
     return (
@@ -30,5 +31,14 @@ export const Default: Story = {
         </ModalAnimated>
       </div>
     );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const openButton = canvas.getByRole('button', { name: /abrir modal/i });
+    await userEvent.click(openButton);
+    await expect(canvas.getByText(/Conteúdo do modal/i)).toBeInTheDocument();
+    const closeButton = canvas.getByRole('button', { name: /fechar/i });
+    await userEvent.click(closeButton);
+    await expect(canvas.queryByText(/Conteúdo do modal/i)).not.toBeInTheDocument();
   },
 };
