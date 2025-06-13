@@ -36,15 +36,33 @@ export default function SignUpForm({
 
   // Busca os campos disponíveis
   useEffect(() => {
-    pb.collection("campos")
-      .getFullList({ sort: "nome" })
-      .then((res) => {
+    async function loadCampos() {
+      try {
+        let tenantId = localStorage.getItem("tenant_id");
+        if (!tenantId) {
+          const cliente = await pb
+            .collection("m24_clientes")
+            .getFirstListItem(`dominio='${window.location.hostname}'`);
+          tenantId = cliente?.id;
+          if (tenantId) {
+            localStorage.setItem("tenant_id", tenantId);
+          }
+        }
+
+        if (!tenantId) return;
+
+        const res = await pb.collection("campos").getFullList({
+          sort: "nome",
+          filter: `cliente='${tenantId}'`,
+        });
         const lista = res.map((item) => ({ id: item.id, nome: item.nome }));
         setCampos(lista);
-      })
-      .catch(() => {
+      } catch {
         console.warn("Erro ao carregar os campos");
-      });
+      }
+    }
+
+    loadCampos();
   }, [pb]);
 
   useEffect(() => {
