@@ -227,7 +227,7 @@ export default function Header() {
                             onClick={handleLogout}
                             className="w-full text-left flex items-center gap-2 px-4 py-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-900 cursor-pointer"
                           >
-                            <LogOut size={16} /> Sair
+                            <LogOut size={16} /> Sairs
                           </button>
                         </li>
                       </motion.ul>
