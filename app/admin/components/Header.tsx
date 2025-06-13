@@ -16,6 +16,9 @@ import {
   Sun,
   Moon,
   Settings,
+  Wallet,
+  PiggyBank,
+  ArrowLeftRight,
 } from "lucide-react";
 import { useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
@@ -55,6 +58,7 @@ export default function Header() {
   const pb = useMemo(() => createPocketBase(), []);
   const [menuAberto, setMenuAberto] = useState(false);
   const [perfilAberto, setPerfilAberto] = useState(false);
+  const [financeiroAberto, setFinanceiroAberto] = useState(false);
   const [mostrarModalSenha, setMostrarModalSenha] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const { config } = useAppConfig();
@@ -111,6 +115,54 @@ export default function Header() {
                 </Link>
               );
             })}
+
+          {isLoggedIn && user?.role === "coordenador" && (
+            <Popover.Root
+              open={financeiroAberto}
+              onOpenChange={setFinanceiroAberto}
+            >
+              <Popover.Trigger asChild>
+                <button className="flex items-center gap-1 hover:opacity-90">
+                  <Wallet size={18} />
+                  <span>Financeiro</span>
+                  <ChevronDown size={14} />
+                </button>
+              </Popover.Trigger>
+              <AnimatePresence>
+                {financeiroAberto && (
+                  <Popover.Portal forceMount>
+                    <Popover.Content asChild side="bottom" align="start">
+                      <motion.ul
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="mt-2 w-48 bg-white text-[var(--foreground)] dark:bg-zinc-900 dark:text-white rounded-lg shadow z-50 text-sm py-2 space-y-2"
+                      >
+                        <li>
+                          <Link
+                            href="/admin/financeiro/saldo"
+                            onClick={() => setFinanceiroAberto(false)}
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                          >
+                            <PiggyBank size={16} /> Saldo
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/admin/financeiro/transferencias"
+                            onClick={() => setFinanceiroAberto(false)}
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                          >
+                            <ArrowLeftRight size={16} /> Transferência
+                          </Link>
+                        </li>
+                      </motion.ul>
+                    </Popover.Content>
+                  </Popover.Portal>
+                )}
+              </AnimatePresence>
+            </Popover.Root>
+          )}
 
           <button
             onClick={toggleTheme}
@@ -220,6 +272,25 @@ export default function Header() {
                   </Link>
                 );
               })}
+
+            {isLoggedIn && user?.role === "coordenador" && (
+              <>
+                <Link
+                  href="/admin/financeiro/saldo"
+                  onClick={() => setMenuAberto(false)}
+                  className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)]"
+                >
+                  Saldo
+                </Link>
+                <Link
+                  href="/admin/financeiro/transferencias"
+                  onClick={() => setMenuAberto(false)}
+                  className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)]"
+                >
+                  Transferência
+                </Link>
+              </>
+            )}
 
             <button
               onClick={() => {
