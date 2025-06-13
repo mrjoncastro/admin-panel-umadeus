@@ -31,3 +31,7 @@ Resposta:
 ```
 
 A rota retorna o objeto da transferência criado pelo Asaas.
+
+## Extrato de Movimentações
+
+Na página **Saldo** é possível listar o extrato financeiro usando o endpoint `/admin/api/asaas/extrato`. Utilize os botões **Exportar PDF** ou **Exportar XLSM** para salvar os dados.

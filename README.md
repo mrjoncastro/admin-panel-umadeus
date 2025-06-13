@@ -179,6 +179,20 @@ Envia uma transferência do saldo do Asaas para a conta bancária cadastrada. Re
 
 Essas rotas utilizam a chave do Asaas de cada cliente (tenant) conforme descrito em [docs/plano-negocio.md](docs/plano-negocio.md).
 
+### Endpoint `/admin/api/asaas/extrato`
+
+Retorna as movimentações financeiras do período informado:
+
+```bash
+GET /admin/api/asaas/extrato?start=2025-01-01&end=2025-01-31
+```
+
+Resposta de exemplo:
+
+```json
+{ "data": [] }
+```
+
 ### Coleção `compras`
 
 Registra as compras feitas na loja. Campos principais:
