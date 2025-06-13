@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { buildCheckoutUrl } from '../lib/asaas';
 import { POST } from '../app/admin/api/asaas/checkout/route';
 import { NextRequest } from 'next/server';
+vi.mock('../lib/apiAuth', () => ({ requireRole: vi.fn() }))
+import { requireRole } from '../lib/apiAuth'
 
 describe('buildCheckoutUrl', () => {
   it('normaliza barra ao final', () => {
@@ -14,6 +16,14 @@ describe('checkout route', () => {
   const originalEnv = process.env;
   beforeEach(() => {
     process.env = { ...originalEnv, ASAAS_API_URL: 'https://asaas', ASAAS_API_KEY: 'key' };
+    (requireRole as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue({
+      pb: {
+        authStore: { isValid: true },
+        admins: { authWithPassword: vi.fn() },
+        collection: () => ({ getFirstListItem: vi.fn() })
+      } as any,
+      user: { role: 'coordenador' }
+    });
   });
   afterEach(() => {
     process.env = originalEnv;
