@@ -95,3 +95,4 @@
 ## [2025-06-13] Documentadas seções de LoadingOverlay, SmoothTabs e ModalAnimated no design system.
 ## [2025-06-12] Corrigido uso da variável PB_URL na rota de recuperação de link. Agora utiliza NEXT_PUBLIC_PB_URL e README/.env.example atualizados. Impacto: padronização das variáveis de ambiente.
 ## [2025-06-14] Removidas entradas duplicadas de dependências e atualizado package-lock.json.
+## [2025-06-14] Personalizacao salva em m24_clientes.cor_primaria

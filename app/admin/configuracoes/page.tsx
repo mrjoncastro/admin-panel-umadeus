@@ -114,12 +114,33 @@ export default function ConfiguracoesPage() {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (isBlockedColor(primaryColor)) {
       setError("Cor inválida. Escolha uma cor mais escura ou mais viva.");
       return;
     }
     updateConfig({ font, primaryColor, logoUrl });
+
+    try {
+      const token = localStorage.getItem("pb_token");
+      const user = localStorage.getItem("pb_user");
+      await fetch("/admin/api/configuracoes", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "X-PB-User": user ?? "",
+        },
+        body: JSON.stringify({
+          cor_primaria: primaryColor,
+          logo_url: logoUrl,
+          font,
+        }),
+      });
+    } catch (err) {
+      console.error("Erro ao salvar configura\u00e7\u00f5es:", err);
+    }
+
     setError("");
   };
 
