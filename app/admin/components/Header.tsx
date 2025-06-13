@@ -39,16 +39,8 @@ const getNavLinks = (role?: string) => {
 
   return [
     { href: "/admin/dashboard", label: "Painel" },
-    { href: "/admin/inscricoes", label: "Inscrições" },
-    { href: "/admin/pedidos", label: "Pedidos" },
     { href: "/admin/compras", label: "Compras" },
-    { href: "/admin/usuarios", label: "Usuários" },
-    { href: "/admin/campos", label: "Campos" },
-    { href: "/admin/produtos", label: "Produtos" },
-    { href: "/admin/eventos", label: "Eventos" },
-    { href: "/admin/posts", label: "Posts" },
     { href: "/loja", label: "Ver loja" },
-
   ];
 };
 
@@ -59,11 +51,26 @@ export default function Header() {
   const [menuAberto, setMenuAberto] = useState(false);
   const [perfilAberto, setPerfilAberto] = useState(false);
   const [financeiroAberto, setFinanceiroAberto] = useState(false);
+  const [gestaoAberto, setGestaoAberto] = useState(false);
+  const [gerenciamentoAberto, setGerenciamentoAberto] = useState(false);
   const [mostrarModalSenha, setMostrarModalSenha] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const { config } = useAppConfig();
 
   const navLinks = getNavLinks(user?.role);
+
+  const gestaoEventosLinks = [
+    { href: "/admin/eventos", label: "Eventos" },
+    { href: "/admin/inscricoes", label: "Inscrições" },
+    { href: "/admin/pedidos", label: "Pedidos" },
+  ];
+
+  const gerenciamentoLinks = [
+    { href: "/admin/usuarios", label: "Usuários" },
+    { href: "/admin/produtos", label: "Produtos" },
+    { href: "/admin/posts", label: "Posts" },
+    { href: "/admin/campos", label: "Campos" },
+  ];
 
   const handleLogout = () => {
     pb.authStore.clear();
@@ -115,6 +122,83 @@ export default function Header() {
                 </Link>
               );
             })}
+
+          {isLoggedIn && (
+            <Popover.Root open={gestaoAberto} onOpenChange={setGestaoAberto}>
+              <Popover.Trigger asChild>
+                <button className="flex items-center gap-1 hover:opacity-90">
+                  <span>Gestão de Eventos</span>
+                  <ChevronDown size={14} />
+                </button>
+              </Popover.Trigger>
+              <AnimatePresence>
+                {gestaoAberto && (
+                  <Popover.Portal forceMount>
+                    <Popover.Content asChild side="bottom" align="start">
+                      <motion.ul
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="mt-2 w-48 bg-white text-[var(--foreground)] dark:bg-zinc-900 dark:text-white rounded-lg shadow z-50 text-sm py-2 space-y-2"
+                      >
+                        {gestaoEventosLinks.map(({ href, label }) => (
+                          <li key={href}>
+                            <Link
+                              href={href}
+                              onClick={() => setGestaoAberto(false)}
+                              className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                            >
+                              {label}
+                            </Link>
+                          </li>
+                        ))}
+                      </motion.ul>
+                    </Popover.Content>
+                  </Popover.Portal>
+                )}
+              </AnimatePresence>
+            </Popover.Root>
+          )}
+
+          {isLoggedIn && (
+            <Popover.Root
+              open={gerenciamentoAberto}
+              onOpenChange={setGerenciamentoAberto}
+            >
+              <Popover.Trigger asChild>
+                <button className="flex items-center gap-1 hover:opacity-90">
+                  <span>Gerenciamento</span>
+                  <ChevronDown size={14} />
+                </button>
+              </Popover.Trigger>
+              <AnimatePresence>
+                {gerenciamentoAberto && (
+                  <Popover.Portal forceMount>
+                    <Popover.Content asChild side="bottom" align="start">
+                      <motion.ul
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="mt-2 w-48 bg-white text-[var(--foreground)] dark:bg-zinc-900 dark:text-white rounded-lg shadow z-50 text-sm py-2 space-y-2"
+                      >
+                        {gerenciamentoLinks.map(({ href, label }) => (
+                          <li key={href}>
+                            <Link
+                              href={href}
+                              onClick={() => setGerenciamentoAberto(false)}
+                              className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                            >
+                              {label}
+                            </Link>
+                          </li>
+                        ))}
+                      </motion.ul>
+                    </Popover.Content>
+                  </Popover.Portal>
+                )}
+              </AnimatePresence>
+            </Popover.Root>
+          )}
 
           {isLoggedIn && user?.role === "coordenador" && (
             <Popover.Root
@@ -253,25 +337,56 @@ export default function Header() {
       {menuAberto && (
         <div className="md:hidden bg-[var(--text-header-primary)] px-6 pb-4">
           <nav className="flex flex-col gap-2">
-            {isLoggedIn &&
-              navLinks.map(({ href, label }) => {
-                const active =
-                  href === "/admin/produtos"
-                    ? pathname.startsWith("/admin/produtos")
-                    : pathname === href;
-                return (
+            {isLoggedIn && (
+              <>
+                {navLinks.map(({ href, label }) => {
+                  const active =
+                    href === "/admin/produtos"
+                      ? pathname.startsWith("/admin/produtos")
+                      : pathname === href;
+                  return (
+                    <Link
+                      key={href}
+                      href={href}
+                      onClick={() => setMenuAberto(false)}
+                      className={`transition px-4 py-2 rounded-md text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] ${
+                        active ? "bg-[var(--background)] text-[var(--foreground)]" : ""
+                      }`}
+                    >
+                      {label}
+                    </Link>
+                  );
+                })}
+
+                <span className="mt-2 text-xs uppercase font-semibold opacity-70">
+                  Gestão de Eventos
+                </span>
+                {gestaoEventosLinks.map(({ href, label }) => (
                   <Link
                     key={href}
                     href={href}
                     onClick={() => setMenuAberto(false)}
-                    className={`transition px-4 py-2 rounded-md text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] ${
-                      active ? "bg-[var(--background)] text-[var(--foreground)]" : ""
-                    }`}
+                    className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] rounded-md"
                   >
                     {label}
                   </Link>
-                );
-              })}
+                ))}
+
+                <span className="mt-2 text-xs uppercase font-semibold opacity-70">
+                  Gerenciamento
+                </span>
+                {gerenciamentoLinks.map(({ href, label }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setMenuAberto(false)}
+                    className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] rounded-md"
+                  >
+                    {label}
+                  </Link>
+                ))}
+              </>
+            )}
 
             {isLoggedIn && user?.role === "coordenador" && (
               <>
