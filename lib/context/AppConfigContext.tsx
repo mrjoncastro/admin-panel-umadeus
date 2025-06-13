@@ -1,11 +1,6 @@
 "use client";
 import * as React from "react";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { generatePrimaryShades } from "@/utils/primaryShades";
 import createPocketBase from "@/lib/pocketbase";
 
@@ -52,41 +47,11 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
         return;
       } catch {
         if (typeof window === "undefined") return;
-
-    async function loadConfig() {
-      const token = localStorage.getItem("pb_token");
-      const user = localStorage.getItem("pb_user");
-
-      if (token && user) {
-        try {
-          const res = await fetch("/admin/api/configuracoes", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "X-PB-User": user,
-            },
-          });
-          if (res.ok) {
-            const data = await res.json();
-            setConfig({
-              font: data.font || defaultConfig.font,
-              primaryColor: data.cor_primaria || defaultConfig.primaryColor,
-              logoUrl: data.logo_url || defaultConfig.logoUrl,
-            });
-            return;
-          }
-        } catch {
-          /* ignore */
-        }
       }
 
-      const stored = localStorage.getItem("app_config");
-          if (stored) setConfig(JSON.parse(stored));
+      if (typeof window !== "undefined") {
+        loadConfig();
       }
-    }
-
-    if (typeof window !== "undefined") {
-      loadConfig();
-    }
     }
 
     loadConfig();
