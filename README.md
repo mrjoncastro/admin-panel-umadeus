@@ -181,6 +181,8 @@ O sistema possui três níveis de usuário:
 - **Usuário** – cliente final que realiza compras e visualiza a área do cliente em `/loja/cliente`.
 
 Somente coordenadores podem acessar a página `/admin/compras` para visualizar as compras realizadas.
+Coordenadores também visualizam as métricas financeiras completas no painel.
+Líderes veem apenas a quantidade de inscrições e pedidos do seu campo.
 
 ## Blog e CMS
 

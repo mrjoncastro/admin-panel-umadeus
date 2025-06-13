@@ -97,3 +97,4 @@
 ## [2025-06-14] Removidas entradas duplicadas de dependências e atualizado package-lock.json.
 ## [2025-06-14] Personalizacao salva em m24_clientes.cor_primaria
 ## [2025-06-13] Documentada persistência das configurações no design system.
+## [2025-06-13] Especificado no README que apenas coordenadores visualizam métricas financeiras; líderes veem somente contagens de inscrições e pedidos.
