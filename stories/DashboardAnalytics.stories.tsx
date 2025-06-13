@@ -17,6 +17,7 @@ const meta = {
   argTypes: {
     inscricoes: { control: 'object' },
     pedidos: { control: 'object' },
+    mostrarFinanceiro: { control: 'boolean' },
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof DashboardAnalytics>;
@@ -56,9 +57,28 @@ export const Default: Story = {
         // Adicione outros campos obrigatórios do tipo Pedido aqui se necessário
       } as unknown as Pedido,
     ],
+    mostrarFinanceiro: true,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByRole('button', { name: /exportar csv/i })).toBeInTheDocument();
+  },
+};
+
+export const SemFinanceiro: Story = {
+  args: {
+    inscricoes: [
+      { id: '1', created: '2024-01-01', nome: 'João', telefone: '11999999999' },
+    ],
+    pedidos: [
+      {
+        id: '1',
+        created: '2024-01-01',
+        valor: '100',
+        status: 'pago',
+        expand: { campo: { id: '1', nome: 'Campo 1' } },
+      } as unknown as Pedido,
+    ],
+    mostrarFinanceiro: false,
   },
 };

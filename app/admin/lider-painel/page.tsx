@@ -159,14 +159,13 @@ export default function LiderDashboardPage() {
           <p>Cancelados: {totais.pedidos.cancelado}</p>
         </div>
 
-        <div className="card p-6 text-center">
-          <h3 className="text-lg font-semibold mb-2">Total Arrecadado</h3>
-          <p className="text-xl font-bold text-green-700">
-            R$ {totais.pedidos.valorTotal.toFixed(2).replace(".", ",")}
-          </p>
-        </div>
+        {/* Removido card de Total Arrecadado */}
       </div>
-      <DashboardAnalytics inscricoes={inscricoes} pedidos={pedidos} />
+      <DashboardAnalytics
+        inscricoes={inscricoes}
+        pedidos={pedidos}
+        mostrarFinanceiro={false}
+      />
       <div className="flex justify-center items-center gap-4 mt-4">
         <button
           className="btn btn-primary px-3 py-1"
