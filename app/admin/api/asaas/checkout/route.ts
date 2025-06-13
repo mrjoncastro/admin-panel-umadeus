@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createCheckout } from "@/lib/asaas";
-import createPocketBase from "@/lib/pocketbase";
+import { requireRole } from "@/lib/apiAuth";
 
 const checkoutSchema = z.object({
   valor: z.number(),
@@ -41,6 +41,14 @@ const checkoutSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const auth = requireRole(req, "coordenador");
+
+  if ("error" in auth) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
+  }
+
+  const { pb } = auth;
+
   try {
     console.log("📥 Recebendo requisição POST em /asaas/checkout");
 
@@ -69,7 +77,6 @@ export async function POST(req: NextRequest) {
       paymentMethods,
     } = parse.data;
 
-    const pb = createPocketBase();
     if (
       process.env.PB_ADMIN_EMAIL &&
       process.env.PB_ADMIN_PASSWORD &&

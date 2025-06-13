@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createPocketBase } from "@/lib/pocketbase";
+import { requireRole } from "@/lib/apiAuth";
 import { logInfo } from "@/lib/logger";
 import { buildExternalReference } from "@/lib/asaas";
 
 export async function POST(req: NextRequest) {
-  const pb = createPocketBase();
+  const auth = requireRole(req, "coordenador");
+
+  if ("error" in auth) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
+  }
+
+  const { pb } = auth;
   const baseUrl = process.env.ASAAS_API_URL;
 
   let apiKey = process.env.ASAAS_API_KEY || "";
