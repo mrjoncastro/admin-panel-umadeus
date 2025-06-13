@@ -101,3 +101,4 @@
 ## [2025-06-13] Especificado no README que apenas coordenadores visualizam métricas financeiras; líderes veem somente contagens de inscrições e pedidos.
 ## [2025-06-13] DashboardAnalytics agora aceita mostrarFinanceiro para ocultar seções com valores
 ## [2025-06-16] Páginas Saldo e Transferências criadas com extrato exportável em PDF/XLSM. README e guia atualizados.
+## [2025-06-16] Rota /admin/api/asaas/extrato atualizada para requireClienteFromHost e docs revisados.

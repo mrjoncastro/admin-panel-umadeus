@@ -1,4 +1,14 @@
-import { redirect } from "next/navigation";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useAuthContext } from "@/lib/context/AuthContext";
+
+interface Saldo {
+  disponivel: number;
+  aLiberar: number;
+  totalRecebido: number;
+}
 
 export default function FinanceiroPage() {
   const { tenantId, isLoggedIn } = useAuthContext();

@@ -192,6 +192,8 @@ Resposta de exemplo:
 ```json
 { "data": [] }
 ```
+Use `start` e `end` (AAAA-MM-DD) para filtrar o período. A rota usa
+`requireClienteFromHost` para obter a chave do cliente e definir o `User-Agent`.
 
 ### Coleção `compras`
 
