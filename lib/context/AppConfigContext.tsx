@@ -2,6 +2,7 @@
 import * as React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { generatePrimaryShades } from "@/utils/primaryShades";
+import createPocketBase from "@/lib/pocketbase";
 
 export type AppConfig = {
   font: string;
@@ -29,8 +30,30 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
   const [config, setConfig] = useState<AppConfig>(defaultConfig);
 
   useEffect(() => {
-    const stored = localStorage.getItem("app_config");
-    if (stored) setConfig(JSON.parse(stored));
+    async function loadConfig() {
+      try {
+        const pb = createPocketBase();
+        const dominio = window.location.hostname;
+        const cliente = await pb
+          .collection("m24_clientes")
+          .getFirstListItem(`dominio='${dominio}'`);
+        const cfg: AppConfig = {
+          font: cliente.font || defaultConfig.font,
+          primaryColor: cliente.cor_primaria || defaultConfig.primaryColor,
+          logoUrl: cliente.logo_url || defaultConfig.logoUrl,
+        };
+        setConfig(cfg);
+        localStorage.setItem("app_config", JSON.stringify(cfg));
+        return;
+      } catch {
+        const stored = localStorage.getItem("app_config");
+        if (stored) setConfig(JSON.parse(stored));
+      }
+    }
+
+    if (typeof window !== "undefined") {
+      loadConfig();
+    }
   }, []);
 
   useEffect(() => {

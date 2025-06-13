@@ -188,4 +188,6 @@ Execute `npm run storybook` para iniciar a interface e validar os componentes. Q
 
 O portal permite ajustar fonte, cor primária e logotipo dinamicamente. As configurações são gerenciadas pelo `AppConfigProvider` (`lib/context/AppConfigContext.tsx`), que salva as preferências no `localStorage`.
 
+As personalizações agora também são persistidas na coleção `m24_clientes.cor_primaria`, evitando perda de dados entre dispositivos.
+
 Além de definir `--accent`, o provedor gera uma paleta HSL e expõe as variáveis `--primary-50` … `--primary-900`. Essas variáveis são mapeadas para classes Tailwind (`bg-primary-*`, `text-primary-*`), eliminando a necessidade de usar `bg-[var(--primary-600)]` ou `text-[var(--primary-500)]`.
