@@ -82,10 +82,8 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `NEXT_PUBLIC_PB_URL` - URL do PocketBase
 - `PB_ADMIN_EMAIL` - e-mail do administrador do PocketBase
 - `PB_ADMIN_PASSWORD` - senha do administrador
-- `ASAAS_API_KEY` - (opcional) chave padrão da API do Asaas
-- `ASAAS_WEBHOOK_SECRET` - segredo para validar webhooks do Asaas
 - `ASAAS_API_URL` - URL base da API do Asaas (ex.: `https://api-sandbox.asaas.com/api/v3/`)
-- `NEXT_PUBLIC_SITE_URL` - endereço do site (opcional)
+- `NEXT_PUBLIC_SITE_URL` - endereço do site do cliente
 
 Os servidores identificam automaticamente o tenant pelo domínio de cada requisição usando `getTenantFromHost`.
 
