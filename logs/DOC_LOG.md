@@ -97,3 +97,4 @@
 ## [2025-06-14] Removidas entradas duplicadas de dependências e atualizado package-lock.json.
 ## [2025-06-14] Personalizacao salva em m24_clientes.cor_primaria
 ## [2025-06-13] Documentada persistência das configurações no design system.
+## [2025-06-15] Documentadas rotas de saldo e transferencia do Asaas no README e novo guia saldo-transferencia-asaas.md.

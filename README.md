@@ -149,6 +149,38 @@ A resposta contém o campo `link` com o URL gerado. O `externalReference` enviad
 { "link": "https://asaas.com/..." }
 ```
 
+### Endpoint `/admin/api/asaas/saldo`
+
+Faça uma requisição `GET` para obter o saldo da subconta do cliente atual:
+
+```bash
+GET /admin/api/asaas/saldo
+```
+
+Resposta de exemplo:
+
+```json
+{ "saldo": 1234.56 }
+```
+
+### Endpoint `/admin/api/asaas/transferencia`
+
+Envia uma transferência do saldo do Asaas para a conta bancária cadastrada. Requisição `POST` com o seguinte payload:
+
+```json
+{
+  "valor": 150.75,
+  "bankAccountId": "acc_123",
+  "descricao": "Repasse loja junho/2025"
+}
+```
+
+- **valor** – valor a transferir em reais.
+- **bankAccountId** – código da conta bancária de destino.
+- **descricao** – texto opcional para identificar a transferência.
+
+Essas rotas utilizam a chave do Asaas de cada cliente (tenant) conforme descrito em [docs/plano-negocio.md](docs/plano-negocio.md).
+
 ### Coleção `compras`
 
 Registra as compras feitas na loja. Campos principais:
