@@ -1,40 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireRole } from "@/lib/apiAuth";
+import { requireClienteFromHost } from "@/lib/clienteAuth";
 import { logInfo } from "@/lib/logger";
 import { buildExternalReference } from "@/lib/asaas";
 
 export async function POST(req: NextRequest) {
-  const auth = requireRole(req, "coordenador");
+  const auth = await requireClienteFromHost(req);
 
   if ("error" in auth) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
-
-  const { pb } = auth;
+  const { pb, cliente } = auth;
   const baseUrl = process.env.ASAAS_API_URL;
 
-  let apiKey = process.env.ASAAS_API_KEY || "";
-  let userAgent = "qg3";
-  try {
-    const host = req.headers.get("host")?.split(":" )[0] ?? "";
-    if (!pb.authStore.isValid) {
-      await pb.admins.authWithPassword(
-        process.env.PB_ADMIN_EMAIL!,
-        process.env.PB_ADMIN_PASSWORD!
-      );
-    }
-    if (host) {
-      const clienteRecord = await pb
-        .collection("m24_clientes")
-        .getFirstListItem(`dominio = "${host}"`);
-      if (clienteRecord?.asaas_api_key) {
-        apiKey = clienteRecord.asaas_api_key;
-        userAgent = clienteRecord?.nome || userAgent;
-      }
-    }
-  } catch {
-    /* ignore */
-  }
+  const userAgent = cliente.nome || "qg3";
+  const apiKey = cliente.asaas_api_key || process.env.ASAAS_API_KEY || "";
 
   if (!apiKey) {
     throw new Error(
