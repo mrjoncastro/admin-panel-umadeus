@@ -18,6 +18,7 @@ const BarChart = dynamic(() => import("react-chartjs-2").then((m) => m.Bar), {
 interface DashboardAnalyticsProps {
   inscricoes: Inscricao[];
   pedidos: Pedido[];
+  mostrarFinanceiro?: boolean;
 }
 
 function groupByDate(
@@ -41,7 +42,11 @@ function groupByDate(
   return { labels: dates, data: dates.map((d) => counts[d]) };
 }
 
-export default function DashboardAnalytics({ inscricoes, pedidos }: DashboardAnalyticsProps) {
+export default function DashboardAnalytics({
+  inscricoes,
+  pedidos,
+  mostrarFinanceiro = true,
+}: DashboardAnalyticsProps) {
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
 
@@ -144,7 +149,9 @@ export default function DashboardAnalytics({ inscricoes, pedidos }: DashboardAna
 
   return (
     <div className="card mb-8">
-      <h3 className="text-lg font-semibold mb-4 dark:text-gray-100">Análises Temporais e Financeiras</h3>
+      <h3 className="text-lg font-semibold mb-4 dark:text-gray-100">
+        Análises Temporais{mostrarFinanceiro ? ' e Financeiras' : ''}
+      </h3>
       <div className="flex flex-wrap gap-4 items-center mb-6">
         <div className="flex items-center gap-2">
           <label className="text-sm dark:text-gray-100" htmlFor="inicio">Início:</label>
@@ -193,18 +200,20 @@ export default function DashboardAnalytics({ inscricoes, pedidos }: DashboardAna
           </div>
         </div>
       </div>
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="card p-4 flex flex-col justify-center items-center">
-          <p className="text-sm dark:text-gray-100">Média de Valor por Pedido</p>
-          <p className="text-2xl font-bold dark:text-gray-100">R$ {mediaValor.toFixed(2).replace(".", ",")}</p>
-        </div>
-        <div className="card p-4">
-          <h4 className="font-medium mb-2 dark:text-gray-100">Arrecadação por Campo</h4>
-          <div className="aspect-video">
-            <BarChart data={arrecadacaoChart} options={{ responsive: true, maintainAspectRatio: false }} />
+      {mostrarFinanceiro && (
+        <div className="grid md:grid-cols-2 gap-6">
+          <div className="card p-4 flex flex-col justify-center items-center">
+            <p className="text-sm dark:text-gray-100">Média de Valor por Pedido</p>
+            <p className="text-2xl font-bold dark:text-gray-100">R$ {mediaValor.toFixed(2).replace(".", ",")}</p>
+          </div>
+          <div className="card p-4">
+            <h4 className="font-medium mb-2 dark:text-gray-100">Arrecadação por Campo</h4>
+            <div className="aspect-video">
+              <BarChart data={arrecadacaoChart} options={{ responsive: true, maintainAspectRatio: false }} />
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
