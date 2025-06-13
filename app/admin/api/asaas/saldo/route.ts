@@ -9,26 +9,36 @@ export async function GET(req: NextRequest) {
 
   const { pb } = auth;
   const baseUrl = process.env.ASAAS_API_URL;
-  let apiKey = process.env.ASAAS_API_KEY || "";
+  let apiKey = "";
 
   try {
-    const host = req.headers.get("host")?.split(":" )[0] ?? "";
+    const host = req.headers.get("host")?.split(":")[0] ?? "";
+    console.log("🌐 Host capturado:", host);
+
     if (!pb.authStore.isValid) {
       await pb.admins.authWithPassword(
         process.env.PB_ADMIN_EMAIL!,
         process.env.PB_ADMIN_PASSWORD!
       );
     }
+
     if (host) {
       const clienteRecord = await pb
         .collection("m24_clientes")
         .getFirstListItem(`dominio = "${host}"`);
+      console.log("📄 Registro do cliente:", clienteRecord);
+
       if (clienteRecord?.asaas_api_key) {
         apiKey = clienteRecord.asaas_api_key;
+        console.log("🔑 Chave Asaas capturada do cliente:", apiKey);
+      } else {
+        console.warn("⚠️ Cliente encontrado, mas sem chave Asaas.");
       }
+    } else {
+      console.warn("⚠️ Host não identificado na requisição.");
     }
-  } catch {
-    /* ignore */
+  } catch (err) {
+    console.error("❌ Erro ao obter chave Asaas:", err);
   }
 
   if (!baseUrl || !apiKey) {
@@ -39,6 +49,8 @@ export async function GET(req: NextRequest) {
   }
 
   const keyHeader = apiKey.startsWith("$") ? apiKey : `$${apiKey}`;
+  console.log("🔑 ASAAS_API_URL:", baseUrl);
+  console.log("🔑 ASAAS_API_KEY final:", keyHeader);
 
   try {
     const res = await fetch(`${baseUrl}/finance/balance`, {
