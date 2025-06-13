@@ -16,9 +16,6 @@ import {
   Sun,
   Moon,
   Settings,
-  Wallet,
-  PiggyBank,
-  ArrowLeftRight,
 } from "lucide-react";
 import { useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
@@ -115,7 +112,9 @@ export default function Header() {
                   key={href}
                   href={href}
                   className={`transition px-3 py-1 rounded-full hover:bg-[var(--background)] hover:text-[var(--foreground)] cursor-pointer ${
-                    active ? "bg-[var(--background)] text-[var(--foreground)]" : ""
+                    active
+                      ? "bg-[var(--background)] text-[var(--foreground)]"
+                      : ""
                   }`}
                 >
                   {label}
@@ -207,7 +206,6 @@ export default function Header() {
             >
               <Popover.Trigger asChild>
                 <button className="flex items-center gap-1 hover:opacity-90">
-                  <Wallet size={18} />
                   <span>Financeiro</span>
                   <ChevronDown size={14} />
                 </button>
@@ -228,7 +226,7 @@ export default function Header() {
                             onClick={() => setFinanceiroAberto(false)}
                             className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
                           >
-                            <PiggyBank size={16} /> Saldo
+                            Saldo
                           </Link>
                         </li>
                         <li>
@@ -237,7 +235,7 @@ export default function Header() {
                             onClick={() => setFinanceiroAberto(false)}
                             className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
                           >
-                            <ArrowLeftRight size={16} /> Transferência
+                            Transferência
                           </Link>
                         </li>
                       </motion.ul>
@@ -259,9 +257,7 @@ export default function Header() {
           {isLoggedIn && (
             <Popover.Root open={perfilAberto} onOpenChange={setPerfilAberto}>
               <Popover.Trigger asChild>
-                <button
-                  className="flex items-center gap-2 text-sm font-semibold hover:opacity-90"
-                >
+                <button className="flex items-center gap-2 text-sm font-semibold hover:opacity-90">
                   <User size={18} />
                   <span className="cursor-pointer">
                     Olá, {user?.nome?.split(" ")[0]}
@@ -292,7 +288,8 @@ export default function Header() {
                             href="/admin/configuracoes"
                             className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
                           >
-                            <Settings size={16} />Configurações
+                            <Settings size={16} />
+                            Configurações
                           </Link>
                         </li>
                         <li>
@@ -335,7 +332,7 @@ export default function Header() {
 
       {/* Menu Mobile */}
       {menuAberto && (
-        <div className="md:hidden bg-[var(--text-header-primary)] px-6 pb-4">
+        <div className="md:hidden bg-[var(--background)] text-[var(--foreground)] px-6 pb-4">
           <nav className="flex flex-col gap-2">
             {isLoggedIn && (
               <>
@@ -350,7 +347,9 @@ export default function Header() {
                       href={href}
                       onClick={() => setMenuAberto(false)}
                       className={`transition px-4 py-2 rounded-md text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] ${
-                        active ? "bg-[var(--background)] text-[var(--foreground)]" : ""
+                        active
+                          ? "bg-[var(--background)] text-[var(--foreground)]"
+                          : ""
                       }`}
                     >
                       {label}
