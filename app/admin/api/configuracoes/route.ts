@@ -1,6 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/apiAuth";
-import { getTenantFromHost } from "@/lib/getTenantFromHost";
+
+export async function GET(req: NextRequest) {
+  const auth = requireRole(req, "coordenador");
+  if ("error" in auth) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
+  }
+  const { pb, user } = auth;
+  try {
+    const cliente = await pb
+      .collection("m24_clientes")
+      .getOne(user.cliente);
+    return NextResponse.json(
+      {
+        cor_primaria: cliente.cor_primaria ?? "",
+        logo_url: cliente.logo_url ?? "",
+        font: cliente.font ?? "",
+      },
+      { status: 200 }
+    );
+  } catch (err) {
+    console.error("Erro ao obter configuracoes:", err);
+    return NextResponse.json({ error: "Erro ao obter" }, { status: 500 });
+  }
+}
 
 export async function PUT(req: NextRequest) {
   const auth = requireRole(req, "coordenador");
@@ -8,32 +31,16 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
   const { pb, user } = auth;
-
-  let tenantId = (user as Record<string, unknown>).cliente as string | null;
-  if (!tenantId) {
-    tenantId = await getTenantFromHost();
-  }
-
-  if (!tenantId) {
-    return NextResponse.json(
-      { error: "Cliente n\u00e3o encontrado" },
-      { status: 400 }
-    );
-  }
-
   try {
     const { cor_primaria, logo_url, font } = await req.json();
-    const data: Record<string, unknown> = {};
-    if (cor_primaria !== undefined) data.cor_primaria = cor_primaria;
-    if (logo_url !== undefined) data.logo_url = logo_url;
-    if (font !== undefined) data.font = font;
-    await pb.collection("m24_clientes").update(tenantId, data);
-    return NextResponse.json({ sucesso: true });
+    const cliente = await pb.collection("m24_clientes").update(user.cliente, {
+      cor_primaria,
+      logo_url,
+      font,
+    });
+    return NextResponse.json(cliente, { status: 200 });
   } catch (err) {
-    console.error("Erro ao salvar configura\u00e7\u00f5es:", err);
-    return NextResponse.json(
-      { error: "Erro ao salvar configura\u00e7\u00f5es" },
-      { status: 500 }
-    );
+    console.error("Erro ao atualizar configuracoes:", err);
+    return NextResponse.json({ error: "Erro ao atualizar" }, { status: 500 });
   }
 }

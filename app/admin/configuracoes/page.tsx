@@ -1,6 +1,7 @@
 "use client";
-import { useState, useRef, ChangeEvent } from "react";
+import { useState, useRef, ChangeEvent, useCallback } from "react";
 import { useAppConfig } from "@/lib/context/AppConfigContext";
+import { useAuthContext } from "@/lib/context/AuthContext";
 import Image from "next/image";
 
 // Lista de tons proibidos (branco, quase branco, preto, quase preto)
@@ -70,6 +71,15 @@ const fontes = [
 
 export default function ConfiguracoesPage() {
   const { config, updateConfig } = useAppConfig();
+  const { user: ctxUser } = useAuthContext();
+  const getAuth = useCallback(() => {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
+    const raw =
+      typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
+    const user = raw ? JSON.parse(raw) : ctxUser;
+    return { token, user } as const;
+  }, [ctxUser]);
   const [font, setFont] = useState(config.font);
   const [primaryColor, setPrimaryColor] = useState(config.primaryColor);
   const [logoUrl, setLogoUrl] = useState(config.logoUrl);
@@ -119,6 +129,24 @@ export default function ConfiguracoesPage() {
       setError("Cor inválida. Escolha uma cor mais escura ou mais viva.");
       return;
     }
+
+    const { token, user } = getAuth();
+    if (token && user) {
+      await fetch("/admin/api/configuracoes", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "X-PB-User": JSON.stringify(user),
+        },
+        body: JSON.stringify({
+          cor_primaria: primaryColor,
+          logo_url: logoUrl,
+          font,
+        }),
+      });
+    }
+
     updateConfig({ font, primaryColor, logoUrl });
 
     try {

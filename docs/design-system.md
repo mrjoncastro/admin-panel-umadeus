@@ -186,7 +186,9 @@ Execute `npm run storybook` para iniciar a interface e validar os componentes. Q
 
 ## Personalização
 
-O portal permite ajustar fonte, cor primária e logotipo dinamicamente. As configurações são gerenciadas pelo `AppConfigProvider` (`lib/context/AppConfigContext.tsx`), que salva as preferências no `localStorage`.
+O portal permite ajustar fonte, cor primária e logotipo dinamicamente. As configurações são gerenciadas pelo `AppConfigProvider` (`lib/context/AppConfigContext.tsx`).
+Ao montar, o provedor busca as preferências em `/admin/api/configuracoes` e, caso a requisição falhe, utiliza o valor salvo no `localStorage`.
+Quando `updateConfig` é chamado, os dados são enviados para essa mesma rota e gravados no `localStorage`, mantendo navegador e PocketBase sincronizados.
 
 As personalizações agora também são persistidas na coleção `m24_clientes.cor_primaria`, evitando perda de dados entre dispositivos.
 
