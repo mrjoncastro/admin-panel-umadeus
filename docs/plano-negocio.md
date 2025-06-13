@@ -123,3 +123,156 @@ As rotas de servidor (`/api`) chamam `getTenantFromHost` para identificar o clie
 ---
 
 > Toda integração com o Asaas deve buscar e utilizar a API Key da subconta correta do cliente (tenant) em todas as etapas (criação de cobrança, consultas, webhooks, etc). O sistema deve garantir o isolamento completo das operações financeiras entre clientes, tanto nas requisições quanto no processamento dos eventos retornados pelo Asaas. O campo `externalReference` deve ser sempre preenchido com um identificador claro que contenha a origem da transação (cliente, usuário e, se aplicável, inscrição).
+
+# Requisitos Funcionais - Módulo Financeiro (Integração com Asaas)
+
+## 📃 User Stories
+
+### Transferências externas (Pix ou TED)
+
+* **Como** usuário administrador da conta, **quero** realizar uma transferência externa para conta bancária ou chave Pix, **para** sacar saldo ou enviar valores externos.
+
+  * Deve suportar: valor, conta bancária (banco, agência, conta, tipo), ou chave Pix (tipo e valor), agendamento opcional, descrição e `externalReference`.
+
+### Transferência interna (entre contas Asaas)
+
+* **Como** usuário administrador, **quero** transferir entre minha conta Asaas e subcontas vinculadas, **para** distribuir saldos.
+
+  * Deve solicitar `walletId` da conta de destino, com transferência imediata e sem custos.
+
+### Consultar transferências
+
+* **Como** administrador, **quero** listar todas as transferências feitas, **para** acompanhar histórico com paginação e filtros.
+* **Como** administrador, **quero** recuperar detalhes de uma transferência específica por `id`, **para** analisar status e dados retornados.
+
+### Cancelar transferência agendada
+
+* **Como** administrador, **quero** cancelar uma transferência agendada externa antes da execução, **para** evitar envio indevido.
+
+### Consultar saldo da conta
+
+* **Como** administrador, **quero** recuperar meu saldo atual disponível via API, **para** tomar decisões financeiras.
+
+### Outras informações financeiras
+
+* **Como** administrador, **quero** ver estatísticas de cobranças e valores de split, **para** analisar receitas e repasses.
+
+---
+
+## 🔍 Caso de Uso – “Fazer transferência externa via Pix/TED”
+
+* **Nome**: Transferência Externa
+
+* **Atores**: Administrador
+
+* **Pré-condição**:
+
+  * Usuário autenticado com permissão `transfer.create`
+  * Saldo disponível ≥ valor solicitado
+
+* **Fluxo Principal**:
+
+  1. Usuário escolhe “Transferência Externa” na UI
+  2. Seleciona método: “Conta bancária” ou “Pix”
+  3. Preenche dados: valor, conta/chave Pix, data opcional e descrição
+  4. (Opcional) Insere `externalReference`
+  5. Confirma e clica em “Enviar”
+  6. Sistema chama `POST /v3/transfers`
+
+     * Se `pixAddressKey`: Pix
+     * Se `bankAccount`: TED
+  7. Exibe status (sucesso ou erro)
+
+* **Fluxos Alternativos**:
+
+  * Dados inválidos: mostrar mensagem por campo
+  * Erro HTTP 409: exibir erro de duplicidade
+
+* **Requisitos Funcionais**:
+
+  1. Validar campos obrigatórios (valor > 0, dados bancários ou Pix)
+  2. Suportar `externalReference`
+  3. Escolha automática entre Pix/TED conforme dados
+  4. Tratar status HTTP e exibir resposta
+  5. Permitir cancelamento de transferências agendadas
+
+* **Riscos**:
+
+  * HTTP 409 por duplicidade
+  * Uso incorreto da chave Pix pode redirecionar fundos
+
+---
+
+## 📆 Caso de Uso – “Consultar saldo”
+
+* **Nome**: Visualizar Saldo
+
+* **Atores**: Administrador
+
+* **Pré-condição**: Conta autenticada
+
+* **Fluxo Principal**:
+
+  1. Usuário acessa aba Financeiro
+  2. Seleciona “Ver Saldo”
+  3. Chama `GET /v3/account/balance`
+  4. Exibe: saldo disponível, saldo em processamento, limite, etc.
+
+* **Requisitos Funcionais**:
+
+  * Mostrar todos os campos retornados pela API
+  * Atualizar informação em tempo real
+
+* **Riscos**:
+
+  * Necessária interpretação correta de cada campo financeiro
+
+---
+
+## ✅ Sumário dos Requisitos
+
+| ID       | User Story                         | Endpoint Asaas            | Requisitos principais                                           |
+| -------- | ---------------------------------- | ------------------------- | --------------------------------------------------------------- |
+| US-FT-01 | Transferência externa Pix/TED      | POST /v3/transfers        | valor, conta/chave, agendamento, descrição, `externalReference` |
+| US-FT-02 | Transferência interna entre contas | POST /v3/transfers        | `walletId`, transferência imediata                              |
+| US-FT-03 | Listar transferências              | GET /v3/transfers         | paginação, filtros                                              |
+| US-FT-04 | Detalhes da transferência          | GET /v3/transfers/{id}    | status, dados da operação                                       |
+| US-FT-05 | Cancelar transferência             | DELETE /v3/transfers/{id} | antes da execução                                               |
+| US-FT-06 | Consultar saldo                    | GET /v3/account/balance   | mostrar todos os campos da resposta                             |
+| US-FT-07 | Estatísticas e split               | GET endpoints financeiros | dados consolidados                                              |
+
+---
+
+## 📌 Requisitos Não Funcionais
+
+1. **Desempenho**:
+
+   * As operações de listagem e consulta devem responder em até 2 segundos para até 100 itens.
+   * Transferências devem ser registradas em até 1 segundo após confirmação.
+
+2. **Segurança**:
+
+   * Todas as chamadas à API devem ser autenticadas via token seguro.
+   * Dados bancários devem ser criptografados em trânsito e em repouso.
+
+3. **Disponibilidade**:
+
+   * O sistema deve estar disponível 99,5% do tempo mensal.
+   * API de integração com o Asaas deve ter fallback para indisponibilidade temporária.
+
+4. **Escalabilidade**:
+
+   * A aplicação deve ser capaz de suportar 1000 transferências simultâneas sem degradação.
+
+5. **Auditabilidade**:
+
+   * Toda solicitação de transferência deve ser registrada com timestamp, IP de origem e identificador do usuário.
+
+6. **Usabilidade**:
+
+   * A UI deve fornecer mensagens de erro claras em caso de falha.
+   * Campos devem ter validação instantânea no frontend.
+
+7. **Conformidade**:
+
+   * O módulo financeiro deve seguir as diretrizes da LGPD e normas do BACEN para operações financeiras eletrônicas.
