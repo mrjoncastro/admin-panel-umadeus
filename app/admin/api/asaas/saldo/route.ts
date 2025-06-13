@@ -10,6 +10,7 @@ export async function GET(req: NextRequest) {
   const { pb } = auth;
   const baseUrl = process.env.ASAAS_API_URL;
   let apiKey = process.env.ASAAS_API_KEY || "";
+  let userAgent = "qg3";
 
   try {
     const host = req.headers.get("host")?.split(":" )[0] ?? "";
@@ -25,6 +26,7 @@ export async function GET(req: NextRequest) {
         .getFirstListItem(`dominio = "${host}"`);
       if (clienteRecord?.asaas_api_key) {
         apiKey = clienteRecord.asaas_api_key;
+        userAgent = clienteRecord?.nome || userAgent;
       }
     }
   } catch {
@@ -38,6 +40,8 @@ export async function GET(req: NextRequest) {
     );
   }
 
+  console.log("🔑 API Key utilizada:", apiKey);
+
   const keyHeader = apiKey.startsWith("$") ? apiKey : `$${apiKey}`;
 
   try {
@@ -45,7 +49,7 @@ export async function GET(req: NextRequest) {
       headers: {
         accept: "application/json",
         "access-token": keyHeader,
-        "User-Agent": "qg3",
+        "User-Agent": userAgent,
       },
     });
 

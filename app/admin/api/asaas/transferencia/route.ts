@@ -2,8 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/apiAuth";
 import createPocketBase from "@/lib/pocketbase";
 
-async function getApiKey(req: NextRequest, pb: ReturnType<typeof createPocketBase>) {
+async function getApiInfo(
+  req: NextRequest,
+  pb: ReturnType<typeof createPocketBase>,
+) {
   let apiKey = process.env.ASAAS_API_KEY || "";
+  let userAgent = "qg3";
   try {
     const host = req.headers.get("host")?.split(":" )[0] ?? "";
     if (!pb.authStore.isValid) {
@@ -18,12 +22,13 @@ async function getApiKey(req: NextRequest, pb: ReturnType<typeof createPocketBas
         .getFirstListItem(`dominio = "${host}"`);
       if (clienteRecord?.asaas_api_key) {
         apiKey = clienteRecord.asaas_api_key;
+        userAgent = clienteRecord?.nome || userAgent;
       }
     }
   } catch {
     /* ignore */
   }
-  return apiKey;
+  return { apiKey, userAgent };
 }
 
 export async function POST(req: NextRequest) {
@@ -33,7 +38,7 @@ export async function POST(req: NextRequest) {
   }
   const { pb } = auth;
   const baseUrl = process.env.ASAAS_API_URL;
-  const apiKey = await getApiKey(req, pb);
+  const { apiKey, userAgent } = await getApiInfo(req, pb);
 
   if (!baseUrl || !apiKey) {
     return NextResponse.json(
@@ -41,6 +46,8 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
+
+  console.log("🔑 API Key utilizada:", apiKey);
 
   const keyHeader = apiKey.startsWith("$") ? apiKey : `$${apiKey}`;
 
@@ -52,7 +59,7 @@ export async function POST(req: NextRequest) {
         accept: "application/json",
         "Content-Type": "application/json",
         "access-token": keyHeader,
-        "User-Agent": "qg3",
+        "User-Agent": userAgent,
       },
       body: JSON.stringify(body),
     });
@@ -84,7 +91,7 @@ export async function DELETE(req: NextRequest) {
   }
   const { pb } = auth;
   const baseUrl = process.env.ASAAS_API_URL;
-  const apiKey = await getApiKey(req, pb);
+  const { apiKey, userAgent } = await getApiInfo(req, pb);
 
   if (!baseUrl || !apiKey) {
     return NextResponse.json(
@@ -98,6 +105,8 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: "Id obrigatório" }, { status: 400 });
   }
 
+  console.log("🔑 API Key utilizada:", apiKey);
+
   const keyHeader = apiKey.startsWith("$") ? apiKey : `$${apiKey}`;
 
   try {
@@ -106,7 +115,7 @@ export async function DELETE(req: NextRequest) {
       headers: {
         accept: "application/json",
         "access-token": keyHeader,
-        "User-Agent": "qg3",
+        "User-Agent": userAgent,
       },
     });
 

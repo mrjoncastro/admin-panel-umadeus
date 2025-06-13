@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
   const baseUrl = process.env.ASAAS_API_URL;
 
   let apiKey = process.env.ASAAS_API_KEY || "";
+  let userAgent = "qg3";
   try {
     const host = req.headers.get("host")?.split(":" )[0] ?? "";
     if (!pb.authStore.isValid) {
@@ -28,6 +29,7 @@ export async function POST(req: NextRequest) {
         .getFirstListItem(`dominio = "${host}"`);
       if (clienteRecord?.asaas_api_key) {
         apiKey = clienteRecord.asaas_api_key;
+        userAgent = clienteRecord?.nome || userAgent;
       }
     }
   } catch {
@@ -39,6 +41,8 @@ export async function POST(req: NextRequest) {
       "❌ ASAAS_API_KEY não definida! Confira seu .env ou painel de variáveis."
     );
   }
+  console.log("🔑 API Key utilizada:", apiKey);
+
   const keyHeader = apiKey.startsWith("$") ? apiKey : "$" + apiKey;
 
   if (!keyHeader || !baseUrl) {
@@ -104,7 +108,7 @@ export async function POST(req: NextRequest) {
         headers: {
           accept: "application/json",
           "access-token": keyHeader,
-          "User-Agent": "qg3",
+          "User-Agent": userAgent,
         },
       }
     );
@@ -138,7 +142,7 @@ export async function POST(req: NextRequest) {
           accept: "application/json",
           "Content-Type": "application/json",
           "access-token": keyHeader,
-          "User-Agent": "qg3",
+          "User-Agent": userAgent,
         },
         body: JSON.stringify(clientePayload),
       });
@@ -181,7 +185,7 @@ export async function POST(req: NextRequest) {
       headers: {
         "Content-Type": "application/json",
         "access-token": keyHeader,
-        "User-Agent": "qg3",
+        "User-Agent": userAgent,
       },
       body: JSON.stringify({
         customer: clienteId,

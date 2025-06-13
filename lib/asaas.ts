@@ -46,12 +46,14 @@ export type CreateCheckoutParams = {
 export async function createCheckout(
   params: CreateCheckoutParams,
   apiKey: string,
+  agentUser = "qg3",
   baseUrl = process.env.ASAAS_API_URL
 ): Promise<string> {
   const rawKey = apiKey;
 
   console.log("🔑 ASAAS_API_URL:", baseUrl);
   console.log("🔑 ASAAS_API_KEY:", rawKey);
+  console.log("👤 User-Agent:", agentUser);
 
   if (!baseUrl || !rawKey) {
     throw new Error("Asaas não configurado");
@@ -110,7 +112,7 @@ export async function createCheckout(
       accept: "application/json",
       "Content-Type": "application/json",
       "access-token": finalKey,
-      "User-Agent": "qg3",
+      "User-Agent": agentUser,
     },
     body: JSON.stringify(payload),
   });
