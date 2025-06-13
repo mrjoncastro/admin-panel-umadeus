@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createCheckout } from "@/lib/asaas";
-import { requireRole } from "@/lib/apiAuth";
+import { requireClienteFromHost } from "@/lib/clienteAuth";
 
 const checkoutSchema = z.object({
   valor: z.number(),
@@ -41,13 +41,13 @@ const checkoutSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const auth = requireRole(req, "coordenador");
+  const auth = await requireClienteFromHost(req);
 
   if ("error" in auth) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
-  const { pb } = auth;
+  const { pb, cliente } = auth;
 
   try {
     console.log("📥 Recebendo requisição POST em /asaas/checkout");
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
       clienteId,
       usuarioId,
       inscricaoId,
-      cliente,
+      cliente: clienteInfo,
       installments,
       paymentMethods,
     } = parse.data;
@@ -87,21 +87,8 @@ export async function POST(req: NextRequest) {
         process.env.PB_ADMIN_PASSWORD
       );
     }
-
-    const host = req.headers.get("host")?.split(":" )[0] ?? "";
-    let apiKey = process.env.ASAAS_API_KEY || "";
-    try {
-      if (host) {
-        const clienteRecord = await pb
-          .collection("m24_clientes")
-          .getFirstListItem(`dominio = "${host}"`);
-        if (clienteRecord?.asaas_api_key) {
-          apiKey = clienteRecord.asaas_api_key;
-        }
-      }
-    } catch {
-      /* ignore */
-    }
+    const apiKey = cliente.asaas_api_key || process.env.ASAAS_API_KEY || "";
+    const userAgent = cliente.nome || "qg3";
 
     console.log("🔧 Chamando createCheckout com:", {
       valor,
@@ -111,10 +98,12 @@ export async function POST(req: NextRequest) {
       clienteId,
       usuarioId,
       inscricaoId,
-      cliente,
+      clienteInfo,
       installments,
       paymentMethods,
     });
+
+    console.log("🔑 API Key utilizada:", apiKey);
 
     const checkoutUrl = await createCheckout(
       {
@@ -125,11 +114,12 @@ export async function POST(req: NextRequest) {
         clienteId,
         usuarioId,
         inscricaoId,
-        cliente,
+        cliente: clienteInfo,
         installments,
         paymentMethods,
       },
       apiKey,
+      userAgent,
     );
 
     console.log("✅ Checkout criado com sucesso:", checkoutUrl);

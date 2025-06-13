@@ -25,7 +25,7 @@ export default function FinanceiroPage() {
     const fetchSaldo = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/admin/api/financeiro/saldo?tenantId=${tenantId}`);
+        const res = await fetch(`/admin/api/asaas/saldo`);
         if (res.ok) {
           const data = await res.json();
           setSaldo(data);
@@ -50,19 +50,25 @@ export default function FinanceiroPage() {
             <div className="card p-6 text-center">
               <h3 className="text-lg font-semibold mb-2">Saldo Disponível</h3>
               <p className="text-xl font-bold">
-                {saldo ? `R$ ${saldo.disponivel.toFixed(2)}` : "—"}
+                {typeof saldo?.disponivel === "number"
+                  ? `R$ ${saldo.disponivel.toFixed(2)}`
+                  : "—"}
               </p>
             </div>
             <div className="card p-6 text-center">
               <h3 className="text-lg font-semibold mb-2">A Liberar</h3>
               <p className="text-xl font-bold">
-                {saldo ? `R$ ${saldo.aLiberar.toFixed(2)}` : "—"}
+                {typeof saldo?.aLiberar === "number"
+                  ? `R$ ${saldo.aLiberar.toFixed(2)}`
+                  : "—"}
               </p>
             </div>
             <div className="card p-6 text-center">
               <h3 className="text-lg font-semibold mb-2">Total Recebido</h3>
               <p className="text-xl font-bold">
-                {saldo ? `R$ ${saldo.totalRecebido.toFixed(2)}` : "—"}
+                {typeof saldo?.totalRecebido === "number"
+                  ? `R$ ${saldo.totalRecebido.toFixed(2)}`
+                  : "—"}
               </p>
             </div>
           </div>
