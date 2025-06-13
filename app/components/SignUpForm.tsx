@@ -110,145 +110,146 @@ export default function SignUpForm({
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-6 max-w-2xl mx-auto px-4 py-6 bg-white/5 rounded-xl"
-    >
-      <h2 className="text-xl font-semibold text-center text-white">
-        Criar Conta
-      </h2>
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 py-8 sm:px-6">
+      <div className="relative z-10 w-full max-w-lg p-6 sm:p-8 bg-animated rounded-2xl backdrop-blur-md text-gray-200 shadow-lg">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <h2 className="text-2xl font-semibold text-center text-white">
+            Criar Conta
+          </h2>
 
-      {erro && <p className="text-sm text-center text-red-400">{erro}</p>}
+          {erro && <p className="text-sm text-center text-red-400">{erro}</p>}
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <input
-          type="text"
-          placeholder="Nome completo"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-          className="input-base"
-          required
-        />
-        <input
-          type="email"
-          placeholder="E-mail"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="input-base"
-          required
-        />
-        <input
-          type="text"
-          placeholder="Telefone"
-          value={telefone}
-          onChange={(e) => setTelefone(e.target.value)}
-          className="input-base"
-          required
-        />
-        <input
-          type="text"
-          placeholder="CPF"
-          value={cpf}
-          onChange={(e) => setCpf(e.target.value)}
-          className="input-base"
-          required
-        />
-        
-        <input
-          type="date"
-          placeholder="Data de Nascimento"
-          value={dataNascimento}
-          onChange={(e) => setDataNascimento(e.target.value)}
-          className="input-base"
-          required
-        />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input
+              type="text"
+              placeholder="Nome completo"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              className="input-base w-full rounded-md px-4 py-2"
+              required
+            />
+            <input
+              type="email"
+              placeholder="E-mail"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="input-base w-full rounded-md px-4 py-2"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Telefone"
+              value={telefone}
+              onChange={(e) => setTelefone(e.target.value)}
+              className="input-base w-full rounded-md px-4 py-2"
+              required
+            />
+            <input
+              type="text"
+              placeholder="CPF"
+              value={cpf}
+              onChange={(e) => setCpf(e.target.value)}
+              className="input-base w-full rounded-md px-4 py-2"
+              required
+            />
+            <input
+              type="date"
+              value={dataNascimento}
+              onChange={(e) => setDataNascimento(e.target.value)}
+              className="input-base w-full rounded-md px-4 py-2"
+              required
+            />
+            <select
+              value={campo}
+              onChange={(e) => setCampo(e.target.value)}
+              className="input-base w-full rounded-md px-4 py-2"
+              required
+            >
+              <option value="">Selecione o campo</option>
+              {campos.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nome}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              placeholder="CEP"
+              value={cep}
+              onChange={(e) => setCep(e.target.value)}
+              className="input-base w-full rounded-md px-4 py-2"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Endereço"
+              value={endereco}
+              onChange={(e) => setEndereco(e.target.value)}
+              className="input-base w-full rounded-md px-4 py-2"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Número"
+              value={numero}
+              onChange={(e) => setNumero(e.target.value)}
+              className="input-base w-full rounded-md px-4 py-2"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Cidade"
+              value={cidade}
+              onChange={(e) => setCidade(e.target.value)}
+              className="input-base w-full rounded-md px-4 py-2"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Estado"
+              value={estado}
+              onChange={(e) => setEstado(e.target.value)}
+              className="input-base w-full rounded-md px-4 py-2"
+              required
+            />
+          </div>
 
-        <select
-          value={campo}
-          onChange={(e) => setCampo(e.target.value)}
-          className="input-base"
-          required
-        >
-          <option value="">Selecione o campo</option>
-          {campos.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.nome}
-            </option>
-          ))}
-        </select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input
+              type="password"
+              placeholder="Senha"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              className="input-base w-full rounded-md px-4 py-2"
+              required
+            />
+            <input
+              type="password"
+              placeholder="Confirme a senha"
+              value={senhaConfirm}
+              onChange={(e) => setSenhaConfirm(e.target.value)}
+              className="input-base w-full rounded-md px-4 py-2"
+              required
+            />
+          </div>
 
-        <input
-          type="text"
-          placeholder="CEP"
-          value={cep}
-          onChange={(e) => setCep(e.target.value)}
-          className="input-base"
-          required
-        />
-        <input
-          type="text"
-          placeholder="Endereço"
-          value={endereco}
-          onChange={(e) => setEndereco(e.target.value)}
-          className="input-base"
-          required
-        />
-        <input
-          type="text"
-          placeholder="Número"
-          value={numero}
-          onChange={(e) => setNumero(e.target.value)}
-          className="input-base"
-          required
-        />
-        <input
-          type="text"
-          placeholder="Cidade"
-          value={cidade}
-          onChange={(e) => setCidade(e.target.value)}
-          className="input-base"
-          required
-        />
-        <input
-          type="text"
-          placeholder="Estado"
-          value={estado}
-          onChange={(e) => setEstado(e.target.value)}
-          className="input-base"
-          required
-        />
+          <button
+            type="submit"
+            disabled={loading}
+            className={`btn btn-primary w-full rounded-md py-2 text-white font-semibold ${
+              loading ? "opacity-50" : ""
+            }`}
+          >
+            {loading ? "Enviando..." : "Criar conta"}
+          </button>
+
+          {children && (
+            <div className="text-sm text-gray-300 text-center mt-4">
+              {children}
+            </div>
+          )}
+        </form>
       </div>
-
-      <div className="grid md:grid-cols-2 gap-4">
-        <input
-          type="password"
-          placeholder="Senha"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          className="input-base"
-          required
-        />
-        <input
-          type="password"
-          placeholder="Confirme a senha"
-          value={senhaConfirm}
-          onChange={(e) => setSenhaConfirm(e.target.value)}
-          className="input-base"
-          required
-        />
-      </div>
-
-      <button
-        type="submit"
-        disabled={loading}
-        className={`btn btn-primary w-full ${loading ? "opacity-50" : ""}`}
-      >
-        {loading ? "Enviando..." : "Criar conta"}
-      </button>
-
-      {children && (
-        <div className="text-sm text-gray-300 text-center">{children}</div>
-      )}
-    </form>
+    </div>
   );
 }

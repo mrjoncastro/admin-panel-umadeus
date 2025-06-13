@@ -53,7 +53,7 @@ function LoginClient() {
         </div>
 
         {/* Lado direito com formulário */}
-        <div className="w-full md:w-1/2 flex flex-col justify-center items-center px-6 md:px-5 py-3 bg-[var(--background)] text-[var(--text-primary)]">
+        <div className="w-full md:w-1/2 flex flex-col justify-center items-center px-6 md:px-5 py-3 text-[var(--text-primary)]">
           <div className="w-full max-w-md">
             {/* Formulário */}
             <div>

@@ -67,9 +67,9 @@ export default function LoginForm({
   }
 
   return (
-    <div className="relative h-screen flex items-center justify-center overflow-hidden">
-      <div className="relative z-10 w-full max-w-sm p-[var(--space-lg)] bg-primary-900 rounded-xl backdrop-blur-md text-gray-200">
-        <div className="flex flex-col items-center gap-2 mb-6">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6">
+      <div className="relative z-10 w-full max-w-sm sm:max-w-md p-6 sm:p-8 bg-animated rounded-2xl backdrop-blur-md text-gray-200 shadow-lg">
+        <div className="flex flex-col items-center gap-3 mb-6">
           <Image
             src="/img/logo_umadeus_branco.png"
             alt="Logo UMADEUS"
@@ -83,7 +83,7 @@ export default function LoginForm({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-3xl font-bold text-center mb-2"
+          className="text-2xl sm:text-3xl font-bold text-center text-gray-300 mb-2"
         >
           Bem-vindo!
         </motion.h1>
@@ -92,7 +92,7 @@ export default function LoginForm({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-center text-sm text-gray-300 mb-6"
+          className="text-center text-sm sm:text-base text-gray-300 mb-6"
         >
           Acesse o painel
         </motion.p>
@@ -104,14 +104,14 @@ export default function LoginForm({
             e.preventDefault();
             handleLogin();
           }}
-          className="space-y-[var(--space-md)]"
+          className="space-y-6"
         >
           <input
             type="email"
             placeholder="E-mail"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="input-base"
+            className="input-base w-full rounded-md px-4 py-2"
             required
           />
           <input
@@ -119,25 +119,28 @@ export default function LoginForm({
             placeholder="Senha"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
-            className="input-base"
+            className="input-base w-full rounded-md px-4 py-2"
             required
           />
+
           <div className="text-right text-sm">
             <button
               type="button"
               onClick={() => setMostrarModal(true)}
-              className="underline text-[var(--color-secondary)] hover:text-white transition"
+              className="underline text-gray-300 hover:text-white transition"
             >
               Esqueci minha senha
             </button>
           </div>
+
           {children && (
             <div className="text-sm text-gray-300 text-center">{children}</div>
           )}
+
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`btn block mx-auto ${
+            className={`btn w-full rounded-md py-2 font-semibold text-white transition ${
               isSubmitting
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-[var(--accent)]"
@@ -146,6 +149,7 @@ export default function LoginForm({
             {isSubmitting ? "Entrando..." : "Entrar"}
           </button>
         </form>
+
         {mostrarModal && (
           <RedefinirSenhaModal onClose={() => setMostrarModal(false)} />
         )}
