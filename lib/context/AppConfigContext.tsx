@@ -1,6 +1,11 @@
 "use client";
 import * as React from "react";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { generatePrimaryShades } from "@/utils/primaryShades";
 
 export type AppConfig = {
@@ -29,8 +34,39 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
   const [config, setConfig] = useState<AppConfig>(defaultConfig);
 
   useEffect(() => {
-    const stored = localStorage.getItem("app_config");
-    if (stored) setConfig(JSON.parse(stored));
+    if (typeof window === "undefined") return;
+
+    async function loadConfig() {
+      const token = localStorage.getItem("pb_token");
+      const user = localStorage.getItem("pb_user");
+
+      if (token && user) {
+        try {
+          const res = await fetch("/admin/api/configuracoes", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "X-PB-User": user,
+            },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setConfig({
+              font: data.font || defaultConfig.font,
+              primaryColor: data.cor_primaria || defaultConfig.primaryColor,
+              logoUrl: data.logo_url || defaultConfig.logoUrl,
+            });
+            return;
+          }
+        } catch {
+          /* ignore */
+        }
+      }
+
+      const stored = localStorage.getItem("app_config");
+      if (stored) setConfig(JSON.parse(stored));
+    }
+
+    loadConfig();
   }, []);
 
   useEffect(() => {
@@ -47,8 +83,30 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
     });
   }, [config]);
 
-  const updateConfig = (cfg: Partial<AppConfig>) =>
-    setConfig((prev) => ({ ...prev, ...cfg }));
+  const updateConfig = (cfg: Partial<AppConfig>) => {
+    const newCfg = { ...config, ...cfg };
+    setConfig(newCfg);
+
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("pb_token");
+      const user = localStorage.getItem("pb_user");
+      if (token && user) {
+        fetch("/admin/api/configuracoes", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            "X-PB-User": user,
+          },
+          body: JSON.stringify({
+            cor_primaria: newCfg.primaryColor,
+            logo_url: newCfg.logoUrl,
+            font: newCfg.font,
+          }),
+        }).catch((err) => console.error("Erro ao salvar config:", err));
+      }
+    }
+  };
 
   return (
     <AppConfigContext.Provider value={{ config, updateConfig }}>

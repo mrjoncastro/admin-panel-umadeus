@@ -186,6 +186,8 @@ Execute `npm run storybook` para iniciar a interface e validar os componentes. Q
 
 ## Personalização
 
-O portal permite ajustar fonte, cor primária e logotipo dinamicamente. As configurações são gerenciadas pelo `AppConfigProvider` (`lib/context/AppConfigContext.tsx`), que salva as preferências no `localStorage`.
+O portal permite ajustar fonte, cor primária e logotipo dinamicamente. As configurações são gerenciadas pelo `AppConfigProvider` (`lib/context/AppConfigContext.tsx`).
+Ao montar, o provedor busca as preferências em `/admin/api/configuracoes` e, caso a requisição falhe, utiliza o valor salvo no `localStorage`.
+Quando `updateConfig` é chamado, os dados são enviados para essa mesma rota e gravados no `localStorage`, mantendo navegador e PocketBase sincronizados.
 
 Além de definir `--accent`, o provedor gera uma paleta HSL e expõe as variáveis `--primary-50` … `--primary-900`. Essas variáveis são mapeadas para classes Tailwind (`bg-primary-*`, `text-primary-*`), eliminando a necessidade de usar `bg-[var(--primary-600)]` ou `text-[var(--primary-500)]`.
