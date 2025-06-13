@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
   const keyHeader = apiKey.startsWith("$") ? apiKey : `$${apiKey}`;
 
   try {
-    const res = await fetch(`${baseUrl}/account/balance`, {
+    const res = await fetch(`${baseUrl}/finance/balance`, {
       headers: {
         accept: "application/json",
         "access-token": keyHeader,
