@@ -84,6 +84,7 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `PB_ADMIN_PASSWORD` - senha do administrador
 - `ASAAS_API_URL` - URL base da API do Asaas (ex.: `https://api-sandbox.asaas.com/api/v3/`)
 - `NEXT_PUBLIC_SITE_URL` - endereço do site do cliente
+- `NEXT_PUBLIC_BRASILAPI_URL` - base para chamadas à BrasilAPI
 
 Os servidores identificam automaticamente o tenant pelo domínio de cada requisição usando `getTenantFromHost`.
 
