@@ -14,19 +14,17 @@ export async function GET(req: NextRequest) {
   if (!baseUrl || !apiKey) {
     return NextResponse.json(
       { error: "Asaas não configurado" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 
   const start = req.nextUrl.searchParams.get("start");
   const end = req.nextUrl.searchParams.get("end");
 
-  console.log("\ud83d\udd11 API Key utilizada:", apiKey);
-
   const keyHeader = apiKey.startsWith("$") ? apiKey : `$${apiKey}`;
   const url = new URL(`${baseUrl}/financialTransactions`);
   url.searchParams.set("offset", "0");
-  url.searchParams.set("limit", "10");
+  url.searchParams.set("limit", "50");
   if (start) url.searchParams.set("startDate", start);
   if (end) url.searchParams.set("finishDate", end);
   url.searchParams.set("order", "asc");
@@ -45,7 +43,7 @@ export async function GET(req: NextRequest) {
       console.error("Erro ao consultar extrato:", errorBody);
       return NextResponse.json(
         { error: "Falha ao consultar extrato" },
-        { status: 500 },
+        { status: 500 }
       );
     }
 
@@ -55,7 +53,7 @@ export async function GET(req: NextRequest) {
     console.error("Erro inesperado ao consultar extrato:", err);
     return NextResponse.json(
       { error: "Erro ao consultar extrato" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
