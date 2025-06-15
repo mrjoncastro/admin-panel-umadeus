@@ -40,6 +40,6 @@ Para filtrar, informe `start` e `end` (AAAA-MM-DD):
 ```bash
 GET /admin/api/asaas/extrato?start=2025-01-01&end=2025-01-31
 ```
-Essa rota consulta `${ASAAS_API_URL}/finance/transactions`,
-enviando a chave do cliente obtida via `requireClienteFromHost` e o mesmo
-`User-Agent` utilizado no saldo.
+Essa rota consulta `${ASAAS_API_URL}/financialTransactions`, aplicando os
+parâmetros `offset=0`, `limit=10` e `order=asc`. A chave do cliente é obtida via
+`requireClienteFromHost` e o mesmo `User-Agent` utilizado no saldo.
