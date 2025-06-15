@@ -56,3 +56,4 @@
 ## [2025-06-12] Ajustado carregamento de gêneros e imagens no detalhe do produto - dev - 6fd0697
 ## [2025-06-13] Implementadas rotas de saldo e transferência Asaas com verificação de permissão - dev - 7c89834
 ## [2025-06-13] Corrigido erro "saldo undefined" na página Financeiro - dev - f8df755
+## [2025-06-15] Corrigido erro "Cannot read properties of undefined (reading 'toFixed')" em SaldoPage - dev - edbc5b2
