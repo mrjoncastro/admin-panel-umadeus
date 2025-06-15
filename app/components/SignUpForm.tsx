@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
-import createPocketBase from "@/lib/pocketbase"; // ajuste para seu caminho real
+import createPocketBase from "@/lib/pocketbase";
 
 const VIA_CEP_URL =
   process.env.NEXT_PUBLIC_VIA_CEP_URL || "https://viacep.com.br/ws";

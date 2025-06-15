@@ -104,3 +104,4 @@
 ## [2025-06-16] Rota /admin/api/asaas/extrato atualizada para requireClienteFromHost e docs revisados.
 ## [2025-06-16] README e guia atualizados mencionando uso de /finance/transactions no extrato com mesmo cabeçalho de saldo.
 ## [2025-06-16] Extrato agora usa /financialTransactions e define offset, limit e order=asc.
+## [2025-06-15] Removido comentário redundante em SignUpForm.tsx
