@@ -31,6 +31,8 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     async function loadConfig() {
+      if (typeof window === "undefined") return;
+
       try {
         const pb = createPocketBase();
         const dominio = window.location.hostname;
@@ -46,12 +48,36 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem("app_config", JSON.stringify(cfg));
         return;
       } catch {
-        if (typeof window === "undefined") return;
+        /* ignore */
       }
 
-      if (typeof window !== "undefined") {
-        loadConfig();
+      const token = localStorage.getItem("pb_token");
+      const user = localStorage.getItem("pb_user");
+
+      if (token && user) {
+        try {
+          const res = await fetch("/admin/api/configuracoes", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "X-PB-User": user,
+            },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setConfig({
+              font: data.font || defaultConfig.font,
+              primaryColor: data.cor_primaria || defaultConfig.primaryColor,
+              logoUrl: data.logo_url || defaultConfig.logoUrl,
+            });
+            return;
+          }
+        } catch {
+          /* ignore */
+        }
       }
+
+      const stored = localStorage.getItem("app_config");
+      if (stored) setConfig(JSON.parse(stored));
     }
 
     loadConfig();
