@@ -21,8 +21,10 @@ export async function GET(req: NextRequest) {
   const start = req.nextUrl.searchParams.get("start");
   const end = req.nextUrl.searchParams.get("end");
 
+  console.log("\ud83d\udd11 API Key utilizada:", apiKey);
+
   const keyHeader = apiKey.startsWith("$") ? apiKey : `$${apiKey}`;
-  const url = new URL(`${baseUrl}/financialTransactions`);
+  const url = new URL(`${baseUrl}/finance/transactions`);
   if (start) url.searchParams.set("startDate", start);
   if (end) url.searchParams.set("endDate", end);
 

@@ -102,3 +102,4 @@
 ## [2025-06-13] DashboardAnalytics agora aceita mostrarFinanceiro para ocultar seções com valores
 ## [2025-06-16] Páginas Saldo e Transferências criadas com extrato exportável em PDF/XLSM. README e guia atualizados.
 ## [2025-06-16] Rota /admin/api/asaas/extrato atualizada para requireClienteFromHost e docs revisados.
+## [2025-06-16] README e guia atualizados mencionando uso de /finance/transactions no extrato com mesmo cabeçalho de saldo.
