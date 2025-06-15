@@ -198,6 +198,11 @@ e consulta `${ASAAS_API_URL}/financialTransactions` com os parâmetros padrão
 `offset=0`, `limit=10` e `order=asc`, enviando os mesmos cabeçalhos utilizados
 em `/admin/api/asaas/saldo`.
 
+### Cadastro de Contas Bancárias
+
+O painel possui o modal `BankAccountModal` para registrar contas bancárias do cliente. O campo **Banco** utiliza busca na BrasilAPI (`NEXT_PUBLIC_BRASILAPI_URL`) e preenche automaticamente `bankCode` e `ispb`. Ao enviar o formulário os dados são salvos na coleção `clientes_contas_bancarias` relacionados ao usuário autenticado e ao tenant.
+
+
 ### Coleção `compras`
 
 Registra as compras feitas na loja. Campos principais:
