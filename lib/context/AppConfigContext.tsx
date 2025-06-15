@@ -36,6 +36,8 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     async function loadConfig() {
+      if (typeof window === "undefined") return;
+
       try {
         const pb = createPocketBase();
         const dominio = window.location.hostname;
@@ -51,9 +53,9 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem("app_config", JSON.stringify(cfg));
         return;
       } catch {
-        if (typeof window === "undefined") return;
+        /* ignore */
+      }
 
-    async function loadConfig() {
       const token = localStorage.getItem("pb_token");
       const user = localStorage.getItem("pb_user");
 
@@ -80,13 +82,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
       }
 
       const stored = localStorage.getItem("app_config");
-          if (stored) setConfig(JSON.parse(stored));
-      }
-    }
-
-    if (typeof window !== "undefined") {
-      loadConfig();
-    }
+      if (stored) setConfig(JSON.parse(stored));
     }
 
     loadConfig();
