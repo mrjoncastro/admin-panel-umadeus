@@ -128,3 +128,4 @@
 ## [2025-06-20] Atualizado guia e README de transferências incluindo suporte a PIX e formato `value` do payload.
 ## [2025-06-23] Inscricoes exibem titulo do evento via expand; tipos atualizados.
 ## [2025-06-16] Painel do líder permite selecionar evento e link publico inclui eventoId
+## [2025-06-16] Execução de npm run lint e npm run build registrou erros de lint que impediram o build.
