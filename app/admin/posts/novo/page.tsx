@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
-import { marked } from "marked";
 import PostContentEditor from "../components/PostContentEditor";
 
 export default function NovoPostPage() {
@@ -31,7 +30,7 @@ export default function NovoPostPage() {
         </button>
         <article
           className="prose prose-neutral max-w-none"
-          dangerouslySetInnerHTML={{ __html: marked.parse(conteudo) }}
+          dangerouslySetInnerHTML={{ __html: conteudo }}
         />
       </main>
     );
