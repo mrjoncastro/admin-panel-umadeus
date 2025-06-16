@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
   if (accountId) {
     try {
       const c = await pb
-        .collection("m24_clientes")
+        .collection("clientes_config")
         .getFirstListItem(`asaas_account_id = "${accountId}"`);
       clienteApiKey = c?.asaas_api_key ?? null;
       clienteId = c?.id ?? null;
@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
 
   if (!clienteApiKey && clienteId) {
     try {
-      const c = await pb.collection("m24_clientes").getOne(clienteId);
+      const c = await pb.collection("clientes_config").getOne(clienteId);
       clienteApiKey = c?.asaas_api_key ?? null;
       clienteNome = c?.nome ?? null;
     } catch {

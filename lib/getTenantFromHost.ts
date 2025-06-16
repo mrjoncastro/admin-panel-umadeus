@@ -9,7 +9,7 @@ export async function getTenantFromHost(): Promise<string | null> {
   const pb = createPocketBase();
   try {
     const cliente = await pb
-      .collection("m24_clientes")
+      .collection("clientes_config")
       .getFirstListItem(`dominio='${host}'`);
     return cliente?.id ?? null;
   } catch {

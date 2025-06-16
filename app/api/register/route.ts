@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Dados inv\u00E1lidos" }, { status: 400 });
     }
     try {
-      await pb.collection("m24_clientes").getOne(String(cliente));
+      await pb.collection("clientes_config").getOne(String(cliente));
     } catch {
       return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
     }

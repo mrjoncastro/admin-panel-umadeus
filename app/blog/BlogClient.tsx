@@ -30,14 +30,14 @@ export default function BlogClient() {
         const tenantId = localStorage.getItem("tenant_id");
         if (tenantId) {
           const c = await pb
-            .collection("m24_clientes")
+            .collection("clientes_config")
             .getOne<Cliente>(tenantId);
           setNomeCliente(c.nome ?? "");
           return;
         }
         const dominio = window.location.hostname;
         const c = await pb
-          .collection("m24_clientes")
+          .collection("clientes_config")
           .getFirstListItem<Cliente>(`dominio='${dominio}'`);
         localStorage.setItem("tenant_id", c.id);
         setNomeCliente(c.nome ?? "");

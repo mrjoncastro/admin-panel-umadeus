@@ -88,7 +88,7 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 
 Os servidores identificam automaticamente o tenant pelo domínio de cada requisição usando `getTenantFromHost`.
 
-Cada registro em `m24_clientes` contém o campo `asaas_api_key`. A aplicação busca a chave correta deste cliente antes de criar cobranças ou checkouts, garantindo que cada subconta do Asaas seja utilizada separadamente.
+Cada registro em `clientes_config` contém o campo `asaas_api_key`. A aplicação busca a chave correta deste cliente antes de criar cobranças ou checkouts, garantindo que cada subconta do Asaas seja utilizada separadamente.
 
 Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utilizar o SDK oficial.
 

@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   const { pb, user } = auth;
   try {
     const cliente = await pb
-      .collection("m24_clientes")
+      .collection("clientes_config")
       .getOne(user.cliente);
     return NextResponse.json(
       {
@@ -34,7 +34,7 @@ export async function PUT(req: NextRequest) {
   const { pb, user } = auth;
   try {
     const { cor_primary, logo_url, font } = await req.json();
-    const cliente = await pb.collection("m24_clientes").update(user.cliente, {
+    const cliente = await pb.collection("clientes_config").update(user.cliente, {
       cor_primary,
       logo_url,
       font,

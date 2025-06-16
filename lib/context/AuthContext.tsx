@@ -104,7 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const dominio = window.location.hostname;
     try {
       const cliente = await pb
-        .collection("m24_clientes")
+        .collection("clientes_config")
         .getFirstListItem(`dominio='${dominio}'`);
       localStorage.setItem("tenant_id", cliente.id);
       setTenantId(cliente.id);
@@ -137,7 +137,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let clienteId: string | null = null;
     try {
       const cliente = await pb
-        .collection("m24_clientes")
+        .collection("clientes_config")
         .getFirstListItem(`dominio='${dominio}'`);
       clienteId = cliente.id;
       localStorage.setItem("tenant_id", clienteId);
