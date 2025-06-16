@@ -108,3 +108,7 @@
 ## [2025-06-17] BankAccountModal criado com busca BrasilAPI e registro em clientes_contas_bancarias. Documentação e testes adicionados.
 ## [2025-06-16] Documentada variavel NEXT_PUBLIC_BRASILAPI_URL e formulario usa BrasilAPI
 ## [2025-06-16] Botão Nova conta integrado à página de Transferências com o BankAccountModal.
+
+## [2025-06-17] BankAccountModal criado com busca BrasilAPI e registro em clientes_contas_bancarias. Documentação e testes adicionados.
+## [2025-06-16] Botão Nova conta integrado à página de Transferências com o BankAccountModal.
+## [2025-06-17] Ajustado z-index do ModalAnimated para sobrepor a navbar e documentado no README.

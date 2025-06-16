@@ -25,7 +25,7 @@ export default function ModalAnimated({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[120]"
               />
             </Dialog.Overlay>
             <Dialog.Content asChild>
@@ -34,7 +34,7 @@ export default function ModalAnimated({
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-zinc-900 text-black dark:text-white p-6 rounded-xl z-50"
+                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-zinc-900 text-black dark:text-white p-6 rounded-xl z-[130]"
               >
                 {children}
               </motion.div>
