@@ -1,7 +1,10 @@
 /* @vitest-environment jsdom */
 import { describe, it, expect, vi, expectTypeOf } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import type { ClienteContaBancariaRecord } from '../lib/bankAccounts';
+import type {
+  ClienteContaBancariaRecord,
+  PixKeyRecord,
+} from '../lib/bankAccounts';
 import TransferenciaForm from '@/app/admin/financeiro/transferencias/components/TransferenciaForm';
 
 vi.mock('../lib/hooks/usePocketBase', () => ({
@@ -16,17 +19,23 @@ const contasMock: ClienteContaBancariaRecord[] = [
   { id: '1', accountName: 'Conta 1', ownerName: 'Fulano' },
   { id: '2', accountName: 'Conta 2', ownerName: 'Beltrano' },
 ];
+const pixMock: PixKeyRecord[] = [
+  { id: '3', pixAddressKey: 'a@b.com', pixAddressKeyType: 'email' },
+];
 vi.mock('../lib/bankAccounts', () => ({
   getBankAccountsByTenant: vi.fn().mockResolvedValue(contasMock),
+  getPixKeysByTenant: vi.fn().mockResolvedValue(pixMock),
 }));
 
 describe('TransferenciaForm', () => {
-  it('renderiza lista de contas bancarias', async () => {
+  it('renderiza contas bancarias e chaves pix', async () => {
     render(<TransferenciaForm />);
     const options = await screen.findAllByRole('option');
-    expect(options).toHaveLength(3);
+    expect(options).toHaveLength(1 + contasMock.length + pixMock.length);
     expect(options[1].textContent).toContain('Conta 1');
     expect(options[2].textContent).toContain('Conta 2');
+    expect(options[3].textContent).toContain('PIX');
     expectTypeOf(contasMock).toEqualTypeOf<ClienteContaBancariaRecord[]>();
+    expectTypeOf(pixMock).toEqualTypeOf<PixKeyRecord[]>();
   });
 });

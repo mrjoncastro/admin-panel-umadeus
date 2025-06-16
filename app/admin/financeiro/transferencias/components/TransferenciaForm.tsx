@@ -3,7 +3,12 @@
 import { useState, useEffect } from "react";
 import usePocketBase from "@/lib/hooks/usePocketBase";
 import { useAuthContext } from "@/lib/context/AuthContext";
-import { getBankAccountsByTenant, type ClienteContaBancariaRecord } from "@/lib/bankAccounts";
+import {
+  getBankAccountsByTenant,
+  getPixKeysByTenant,
+  type ClienteContaBancariaRecord,
+  type PixKeyRecord,
+} from "@/lib/bankAccounts";
 
 interface TransferenciaFormProps {
   onTransfer?: (destino: string, valor: number) => Promise<void> | void;
@@ -14,7 +19,10 @@ export default function TransferenciaForm({
 }: TransferenciaFormProps) {
   const [destino, setDestino] = useState("");
   const [valor, setValor] = useState("");
-  const [contas, setContas] = useState<ClienteContaBancariaRecord[]>([]);
+  type ContaOption =
+    | (ClienteContaBancariaRecord & { kind: "bank" })
+    | (PixKeyRecord & { kind: "pix" });
+  const [contas, setContas] = useState<ContaOption[]>([]);
   const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
   const pb = usePocketBase();
@@ -22,8 +30,16 @@ export default function TransferenciaForm({
 
   useEffect(() => {
     if (!tenantId) return;
-    getBankAccountsByTenant(pb, tenantId)
-      .then(setContas)
+    Promise.all([
+      getBankAccountsByTenant(pb, tenantId),
+      getPixKeysByTenant(pb, tenantId),
+    ])
+      .then(([banks, pix]) =>
+        setContas([
+          ...banks.map((b) => ({ ...b, kind: "bank" as const })),
+          ...pix.map((p) => ({ ...p, kind: "pix" as const })),
+        ])
+      )
       .catch(() => setContas([]));
   }, [pb, tenantId]);
 
@@ -55,8 +71,10 @@ export default function TransferenciaForm({
       >
         <option value="">Selecione a conta</option>
         {contas.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.accountName} / {c.ownerName}
+          <option key={`${c.kind}-${c.id}`} value={c.id}>
+            {c.kind === "bank"
+              ? `Conta Banc\u00e1ria: ${c.accountName} / ${c.ownerName}`
+              : `PIX: ${c.pixAddressKey}`}
           </option>
         ))}
       </select>
