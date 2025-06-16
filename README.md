@@ -220,6 +220,8 @@ em `/admin/api/asaas/saldo`.
 O painel possui o modal `BankAccountModal` para registrar contas bancárias do cliente. O campo **Banco** utiliza busca na BrasilAPI (`NEXT_PUBLIC_BRASILAPI_URL`) e preenche automaticamente `bankCode` e `ispb`. Ao enviar o formulário os dados são salvos na coleção `clientes_contas_bancarias` relacionados ao usuário autenticado e ao tenant.
 Na página **Transferências**, um botão **Nova conta** abre este modal para facilitar o cadastro durante o fluxo de transferências.
 
+O componente está localizado em `app/admin/financeiro/transferencia/components/modals/BankAccountModal.tsx` e o formulário de envio fica em `app/admin/financeiro/transferencia/components/TransferenciaForm.tsx`.
+
 
 ### Cadastro de Contas Bancárias
 

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { within, userEvent, expect } from 'storybook/test';
-import TransferenciaForm from '../components/TransferenciaForm';
+import TransferenciaForm from '../app/admin/financeiro/transferencia/components/TransferenciaForm';
 
 const meta = {
   title: 'Design System/TransferenciaForm',

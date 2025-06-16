@@ -113,3 +113,4 @@
 ## [2025-06-16] Botão Nova conta integrado à página de Transferências com o BankAccountModal.
 ## [2025-06-17] Ajustado z-index do ModalAnimated para sobrepor a navbar e documentado no README.
 ## [2025-06-16] Adicionada rota /admin/api/asaas/estatisticas e exemplos de uso no README e guia de saldo.
+## [2025-06-18] TransferenciaForm e BankAccountModal movidos para app/admin/financeiro/transferencia. README atualizado com novos caminhos.
