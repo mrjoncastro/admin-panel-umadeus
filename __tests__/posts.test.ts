@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { getPosts } from '../lib/posts/getPosts'
 import { getRelatedPosts } from '../lib/posts/getRelatedPosts'
-import { getRecentPostsClient } from '../lib/posts/getRecentPostsClient'
+import { getRecentPostsPB } from '../lib/posts/getRecentPostsPB'
 
 describe('posts utilities', () => {
   it('getPosts retorna lista ordenada', async () => {
@@ -17,13 +17,13 @@ describe('posts utilities', () => {
     expect(suggestions[0].slug).toBe('segundo-post')
   })
 
-  it('getRecentPostsClient busca e limita a 3 posts', async () => {
-    const mockData = [{}, {}, {}, {}]
-    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve(mockData) })
-    // @ts-ignore
-    global.fetch = fetchMock
-    const recent = await getRecentPostsClient()
-    expect(fetchMock).toHaveBeenCalledWith('/posts.json', { cache: 'no-store' })
-    expect(recent).toHaveLength(3)
+  it('getRecentPostsPB busca via PocketBase e limita a 3', async () => {
+    const items = [{}, {}, {}, {}]
+    const getList = vi.fn().mockResolvedValue({ items })
+    const pbMock = { collection: vi.fn(() => ({ getList })) }
+    const recent = await getRecentPostsPB(3, pbMock as any)
+    expect(pbMock.collection).toHaveBeenCalledWith('posts')
+    expect(getList).toHaveBeenCalledWith(1, 3, { sort: '-date' })
+    expect(recent).toEqual(items)
   })
 })
