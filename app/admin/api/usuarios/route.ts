@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/apiAuth";
 import { logInfo } from "@/lib/logger";
+import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function GET(req: NextRequest) {
   const auth = requireRole(req, "coordenador");
@@ -22,9 +23,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(usuarios);
   } catch (err: unknown) {
     if (err instanceof Error) {
-      console.error("❌ Erro em /api/usuarios:", err.message);
+      await logConciliacaoErro(`Erro em /api/usuarios: ${err.message}`);
     } else {
-      console.error("❌ Erro desconhecido em /api/usuarios.");
+      await logConciliacaoErro("Erro desconhecido em /api/usuarios.");
     }
 
     return NextResponse.json(
@@ -72,9 +73,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(novoUsuario, { status: 201 });
   } catch (err: unknown) {
     if (err instanceof Error) {
-      console.error("❌ Erro em /api/usuarios:", err.message);
+      await logConciliacaoErro(`Erro em /api/usuarios: ${err.message}`);
     } else {
-      console.error("❌ Erro desconhecido em /api/usuarios.");
+      await logConciliacaoErro("Erro desconhecido em /api/usuarios.");
     }
 
     return NextResponse.json(

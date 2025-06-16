@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createPocketBase } from "@/lib/pocketbase";
+import { logConciliacaoErro } from "@/lib/server/logger";
 
 interface DadosInscricao {
   nome: string;
@@ -121,7 +122,7 @@ export async function POST(req: NextRequest) {
       responsavel: liderId,
     });
   } catch (err: unknown) {
-    console.error("❌ Erro ao criar inscrição:", err);
+    await logConciliacaoErro(`Erro ao criar inscrição: ${String(err)}`);
     return NextResponse.json(
       { erro: "Erro ao processar a inscrição." },
       { status: 500 }

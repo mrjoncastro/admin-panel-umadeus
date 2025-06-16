@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/apiAuth";
+import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function PUT(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -19,7 +20,7 @@ export async function PUT(req: NextRequest) {
     const categoria = await pb.collection("categorias").update(id, { nome, slug });
     return NextResponse.json(categoria, { status: 200 });
   } catch (err) {
-    console.error("Erro ao atualizar categoria:", err);
+    await logConciliacaoErro(`Erro ao atualizar categoria: ${String(err)}`);
     return NextResponse.json({ error: "Erro ao atualizar" }, { status: 500 });
   }
 }
@@ -37,7 +38,7 @@ export async function DELETE(req: NextRequest) {
     await pb.collection("categorias").delete(id);
     return NextResponse.json({ sucesso: true }, { status: 200 });
   } catch (err) {
-    console.error("Erro ao excluir categoria:", err);
+    await logConciliacaoErro(`Erro ao excluir categoria: ${String(err)}`);
     return NextResponse.json({ error: "Erro ao excluir" }, { status: 500 });
   }
 }

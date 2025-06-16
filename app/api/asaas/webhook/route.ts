@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
   }
 
-  console.log("🔑 API Key utilizada:", clienteApiKey);
+  logConciliacaoErro(`Webhook recebido com API Key: ${clienteApiKey}`);
 
   const keyHeader = clienteApiKey.startsWith("$")
     ? clienteApiKey
