@@ -6,7 +6,7 @@ Este guia explica como consultar o saldo e realizar transferências usando as ro
 
 1. **Permissões** – apenas coordenadores autenticados podem acessar essas rotas.
 2. **externalReference** – todas as transações devem incluir um `externalReference` no formato `cliente_<idCliente>_usuario_<idUsuario>[_inscricao_<id>]`, conforme [docs/plano-negocio.md](./plano-negocio.md).
-3. **Chave API** – a aplicação busca a `asaas_api_key` da subconta do cliente (tenant) antes de contatar o Asaas, garantindo o isolamento multi-tenant.
+3. **Chave API** – a aplicação identifica o cliente pelo domínio em `clientes_config` e busca `asaas_api_key` e `asaas_account_id` em `m24_clientes` antes de contatar o Asaas, garantindo o isolamento multi-tenant.
 
 ## Consulta de Saldo
 

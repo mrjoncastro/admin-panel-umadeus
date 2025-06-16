@@ -25,7 +25,12 @@ Implementamos a base multi-tenant do sistema no banco usando PocketBase, já pre
 | `responsavel_email` | E-mail de contato do responsável. |
 | `ativo` | Indica se o cliente está ativo no sistema. |
 | `created` | Data de criação do cadastro. |
-### 2. Coleções filhas (usuarios, produtos, pedidos, inscricoes)
+
+### 2. clientes_config
+- Mapeia cada domínio para o ID do cliente correspondente (`cliente`).
+- Serve de ponte para que funções como `getTenantFromHost` identifiquem o tenant a partir do hostname.
+
+### 3. Coleções filhas (usuarios, produtos, pedidos, inscricoes)
 - Todas possuem campo de relação obrigatória `cliente` (referência à coleção `clientes`).
 - Isso garante que todo registro esteja sempre vinculado a um cliente.
 
@@ -46,7 +51,7 @@ Implementamos a base multi-tenant do sistema no banco usando PocketBase, já pre
 
 - O escopo do usuário (coordenador, lider, usuario) deve ser respeitado dentro do tenant.
 
-As rotas de servidor (`/api`) chamam `getTenantFromHost` para identificar o cliente pelo domínio da requisição, garantindo o isolamento automático entre tenants.
+As rotas de servidor (`/api`) chamam `getTenantFromHost` para identificar o cliente pelo domínio. Essa função consulta `clientes_config` e retorna o ID que será usado para buscar as credenciais em `m24_clientes`.
 
 ## Benefícios
 
