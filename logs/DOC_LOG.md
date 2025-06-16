@@ -129,3 +129,5 @@
 ## [2025-06-23] Inscricoes exibem titulo do evento via expand; tipos atualizados.
 ## [2025-06-16] Painel do líder permite selecionar evento e link publico inclui eventoId
 ## [2025-06-16] Execução de npm run lint e npm run build registrou erros de lint que impediram o build.
+
+## [2025-06-16] Rota de inscrições agora aceita eventoId no corpo e campo evento armazena o ID. OrderFlow e testes atualizados. Lint e build executados com erros em arquivos não relacionados.
