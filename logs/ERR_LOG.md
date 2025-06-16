@@ -57,3 +57,7 @@
 ## [2025-06-13] Implementadas rotas de saldo e transferência Asaas com verificação de permissão - dev - 7c89834
 ## [2025-06-13] Corrigido erro "saldo undefined" na página Financeiro - dev - f8df755
 ## [2025-06-15] Corrigido erro "Cannot read properties of undefined (reading 'toFixed')" em SaldoPage - dev - edbc5b2
+## [2025-06-16] Erro ao atualizar produto p0470fjbh9yj96k: ClientResponseError 400: Failed to update record. | host: https://umadeus-production.up.railway.app | user: 1yd52dql17e5c0j - development
+## [2025-06-16] Erro ao atualizar produto p0470fjbh9yj96k: ClientResponseError 400: Failed to update record. | host: https://umadeus-production.up.railway.app | user: 1yd52dql17e5c0j - development
+## [2025-06-16] Erro ao atualizar produto p0470fjbh9yj96k: ClientResponseError 400: Failed to update record. | host: https://umadeus-production.up.railway.app | user: 1yd52dql17e5c0j - development
+## [2025-06-16] Erro ao atualizar produto p0470fjbh9yj96k: ClientResponseError 400: Failed to update record. | host: https://umadeus-production.up.railway.app | user: 1yd52dql17e5c0j - development

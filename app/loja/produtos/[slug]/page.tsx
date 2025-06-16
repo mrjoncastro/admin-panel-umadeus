@@ -111,4 +111,15 @@ export default function ProdutoDetalhe() {
       </Suspense>
     </main>
   );
+} catch (err) {
+  console.error("PUT /produtos - erro:", err);
+  // Mostrar resposta detalhada
+  const anyErr = err as any;
+  if (anyErr?.response) {
+    console.error("PocketBase erro detalhado:", JSON.stringify(anyErr.response, null, 2));
+  }
+  await logConciliacaoErro(
+    `Erro ao atualizar produto ${id}: ${String(err)} | host: ${pb.baseUrl} | user: ${user.id}`,
+  );
+  return NextResponse.json({ error: anyErr?.response || String(err) }, { status: 400 });
 }
