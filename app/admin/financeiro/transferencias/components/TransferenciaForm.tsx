@@ -58,7 +58,7 @@ export default function TransferenciaForm({
           value={destino}
           onChange={(e) => setDestino(e.target.value)}
         >
-          <option value="">Selecione o banco</option>
+          <option value="">Selecione a conta bancaria</option>
           {bancos
             .filter(
               (b, idx, arr) =>
