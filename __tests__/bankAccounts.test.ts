@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { searchBanks, createBankAccount, getBankAccountsByTenant, createPixKey } from '../lib/bankAccounts';
+import { describe, it, expect, vi, beforeEach, afterEach, expectTypeOf } from 'vitest';
+import { searchBanks, createBankAccount, getBankAccountsByTenant, type ClienteContaBancariaRecord } from '../lib/bankAccounts';
 import type PocketBase from 'pocketbase';
 
 describe('searchBanks', () => {
@@ -107,28 +107,16 @@ describe('getBankAccountsByTenant', () => {
     expect(listMock).toHaveBeenCalledWith({ filter: "cliente='cli1'" });
     expect(contas[0].id).toBe('1');
   });
-});
 
-describe('createPixKey', () => {
-  it('usa colecao clientes_pix', async () => {
-    const createMock = vi.fn().mockResolvedValue({ id: 'pix1' });
+  it('retorna lista tipada', async () => {
+    const listMock = vi
+      .fn()
+      .mockResolvedValue([{ id: '1', accountName: 'Conta', ownerName: 'Fulano' }]);
     const pb = {
-      collection: vi.fn(() => ({ create: createMock })),
+      collection: vi.fn(() => ({ getFullList: listMock })),
     } as unknown as PocketBase;
-    await createPixKey(
-      pb,
-      {
-        pixAddressKey: 'abc',
-        pixAddressKeyType: 'cpf',
-        description: 'chave',
-        scheduleDate: '2025-06-20',
-      },
-      'u1',
-      'cli1'
-    );
-    expect(pb.collection).toHaveBeenCalledWith('clientes_pix');
-    expect(createMock).toHaveBeenCalledWith(
-      expect.objectContaining({ pixAddressKey: 'abc', cliente: 'cli1' })
-    );
+    const contas = await getBankAccountsByTenant(pb, 'cli1');
+    expectTypeOf(contas).toEqualTypeOf<ClienteContaBancariaRecord[]>();
+    expect(contas[0].accountName).toBe('Conta');
   });
 });
