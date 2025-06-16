@@ -14,7 +14,7 @@ export default function LayoutWrapper({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isInscricaoPublica = /^\/inscricoes\/[^/]+$/.test(pathname);
+  const isInscricaoPublica = /^\/inscricoes\/[^/]+\/[^/]+$/.test(pathname);
 
   const { isLoggedIn, user } = useAuthContext();
 
