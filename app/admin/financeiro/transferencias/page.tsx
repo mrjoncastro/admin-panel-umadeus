@@ -12,11 +12,15 @@ export default function TransferenciasPage() {
   const [mensagem, setMensagem] = useState("");
   const [openAccountModal, setOpenAccountModal] = useState(false);
 
-  async function handleTransfer(destino: string, valor: number) {
+  async function handleTransfer(
+    destino: string,
+    valor: number,
+    description: string
+  ) {
     const res = await fetch("/admin/api/asaas/transferencia", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ bankAccountId: destino, valor }),
+      body: JSON.stringify({ bankAccountId: destino, valor, description }),
     });
     if (res.ok) {
       setMensagem("Transferência enviada!");

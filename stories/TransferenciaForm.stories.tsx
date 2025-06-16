@@ -16,13 +16,13 @@ type Story = StoryObj<typeof meta>;
 
 export const Sucesso: Story = {
   args: {
-    onTransfer: async () => {},
+    onTransfer: async (_d: string, _v: number, _desc: string) => {},
   },
 };
 
 export const ErroTransferencia: Story = {
   args: {
-    onTransfer: async () => {
+    onTransfer: async (_d: string, _v: number, _desc: string) => {
       throw new Error('fail');
     },
   },
