@@ -104,3 +104,7 @@
 ## [2025-06-16] Rota /admin/api/asaas/extrato atualizada para requireClienteFromHost e docs revisados.
 ## [2025-06-16] README e guia atualizados mencionando uso de /finance/transactions no extrato com mesmo cabeçalho de saldo.
 ## [2025-06-16] Extrato agora usa /financialTransactions e define offset, limit e order=asc.
+
+## [2025-06-17] BankAccountModal criado com busca BrasilAPI e registro em clientes_contas_bancarias. Documentação e testes adicionados.
+## [2025-06-16] Botão Nova conta integrado à página de Transferências com o BankAccountModal.
+## [2025-06-17] Ajustado z-index do ModalAnimated para sobrepor a navbar e documentado no README.
