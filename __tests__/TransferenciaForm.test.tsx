@@ -1,7 +1,7 @@
 /* @vitest-environment jsdom */
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import TransferenciaForm from '@/components/TransferenciaForm';
+import TransferenciaForm from '@/app/admin/financeiro/transferencias/components/TransferenciaForm';
 
 vi.mock('../lib/hooks/usePocketBase', () => ({
   default: () => ({})
