@@ -6,7 +6,6 @@ import { isExternalUrl } from "@/utils/isExternalUrl";
 import type { Metadata } from "next";
 import { getRelatedPostsFromPB } from "@/lib/posts/getRelatedPostsFromPB";
 import { getPostBySlug } from "@/lib/posts/getPostBySlug";
-import { getPostsFromPB } from "@/lib/posts/getPostsFromPB";
 import NextPostButton from "@/app/blog/components/NextPostButton";
 import PostSuggestions from "@/app/blog/components/PostSuggestions";
 import Script from "next/script";
@@ -17,7 +16,9 @@ interface Params {
   slug: string;
 }
 
-
+export async function generateStaticParams() {
+  return [];
+}
 
 export async function generateMetadata({
   params,
@@ -55,17 +56,19 @@ export default async function BlogPostPage({
   const post = await getPostBySlug(slug);
   if (!post) return notFound();
 
-  const { nextPost, suggestions } = await getRelatedPostsFromPB(
+  const { nextPost, suggestions: rawSuggestions } = await getRelatedPostsFromPB(
     slug,
     post.category || ""
   );
-  const safeSuggestions = suggestions.map((s) => ({
-    ...s,
-    summary: s.summary || "",
-    thumbnail: s.thumbnail || "",
-    category: s.category || "",
+  const suggestions = rawSuggestions.map((p) => ({
+    slug: p.slug,
+    title: p.title,
+    summary: p.summary || "",
+    thumbnail: p.thumbnail || "",
+    category: p.category || "",
   }));
   const mdxContent = post.content || "";
+  const content = mdxContent;
 
   const words = mdxContent.split(/\s+/).length;
   const readingTime = Math.ceil(words / 200);
