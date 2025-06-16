@@ -116,3 +116,4 @@
 ## [2025-06-18] TransferenciaForm e BankAccountModal movidos para app/admin/financeiro/transferencia. README atualizado com novos caminhos.
 ## [2025-06-18] BankAccountModal inclui campo accountName e opcao Conta Salario. Testes e README atualizados.
 ## [2025-06-18] Texto do README corrigido para descrever accountName como nome da conta e placeholder ajustado.
+## [2025-06-17] Formulário de transferência agora lista contas do tenant via getBankAccountsByTenant. README atualizado.

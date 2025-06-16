@@ -219,6 +219,16 @@ em `/admin/api/asaas/saldo`.
 
 O painel possui o modal `BankAccountModal` para registrar contas bancárias do cliente. O formulário possui campo **Nome da conta** (`accountName`) para o usuário identificar a conta cadastrada. O campo **Banco** utiliza busca na BrasilAPI (`NEXT_PUBLIC_BRASILAPI_URL`) e preenche automaticamente `bankCode` e `ispb`. Ao enviar o formulário os dados são salvos na coleção `clientes_contas_bancarias` relacionados ao usuário autenticado e ao tenant. A seleção de tipo de conta inclui a opção **Conta Salário**.
 Na página **Transferências**, um botão **Nova conta** abre este modal para facilitar o cadastro durante o fluxo de transferências. O `ModalAnimated` recebeu um `z-index` superior para evitar que elementos fixos como a navbar sobreponham o conteúdo do modal.
+O painel possui o modal `BankAccountModal` para registrar contas bancárias do cliente. O campo **Banco** utiliza busca na BrasilAPI (`NEXT_PUBLIC_BRASILAPI_URL`) e preenche automaticamente `bankCode` e `ispb`. Ao enviar o formulário os dados são salvos na coleção `clientes_contas_bancarias` relacionados ao usuário autenticado e ao tenant.
+Na página **Transferências**, um botão **Nova conta** abre este modal para facilitar o cadastro durante o fluxo de transferências.
+
+
+### Cadastro de Contas Bancárias
+
+O painel possui o modal `BankAccountModal` para registrar contas bancárias do cliente. O campo **Banco** utiliza busca na BrasilAPI (`NEXT_PUBLIC_BRASILAPI_URL`) e preenche automaticamente `bankCode` e `ispb`. Ao enviar o formulário os dados são salvos na coleção `clientes_contas_bancarias` relacionados ao usuário autenticado e ao tenant.
+Na página **Transferências**, um botão **Nova conta** abre este modal para facilitar o cadastro durante o fluxo de transferências.
+Ao acessar essa página, o formulário de transferência agora consulta a coleção `clientes_contas_bancarias` filtrando pelo tenant e exibe um `<select>` com `accountName` e `ownerName` de cada conta cadastrada.
+O `ModalAnimated` recebeu um `z-index` superior para evitar que elementos fixos como a navbar sobreponham o conteúdo do modal.
 
 
 ### Coleção `compras`

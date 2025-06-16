@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
-const BRASILAPI_URL =
-  process.env.NEXT_PUBLIC_BRASILAPI_URL || "https://brasilapi.com.br/api";
+import usePocketBase from "@/lib/hooks/usePocketBase";
+import { useAuthContext } from "@/lib/context/AuthContext";
+import { getBankAccountsByTenant, type ClienteContaBancariaRecord } from "@/lib/bankAccounts";
 
 interface TransferenciaFormProps {
   onTransfer?: (destino: string, valor: number) => Promise<void> | void;
@@ -14,22 +14,18 @@ export default function TransferenciaForm({
 }: TransferenciaFormProps) {
   const [destino, setDestino] = useState("");
   const [valor, setValor] = useState("");
-  const [bancos, setBancos] = useState<{ ispb: string; nome: string }[]>([]);
+  const [contas, setContas] = useState<ClienteContaBancariaRecord[]>([]);
   const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
+  const pb = usePocketBase();
+  const { tenantId } = useAuthContext();
 
   useEffect(() => {
-    fetch(`${BRASILAPI_URL}/banks/v1`)
-      .then((res) => (res.ok ? res.json() : []))
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setBancos(data);
-        }
-      })
-      .catch(() => {
-        console.warn("Erro ao carregar bancos da BrasilAPI");
-      });
-  }, []);
+    if (!tenantId) return;
+    getBankAccountsByTenant(pb, tenantId)
+      .then(setContas)
+      .catch(() => setContas([]));
+  }, [pb, tenantId]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -52,33 +48,18 @@ export default function TransferenciaForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-sm">
       {erro && <p className="text-sm text-error-600">{erro}</p>}
-      {bancos.length ? (
-        <select
-          className="input-base"
-          value={destino}
-          onChange={(e) => setDestino(e.target.value)}
-        >
-          <option value="">Selecione a conta bancaria</option>
-          {bancos
-            .filter(
-              (b, idx, arr) =>
-                b.ispb && arr.findIndex((x) => x.ispb === b.ispb) === idx
-            )
-            .map((b) => (
-              <option key={b.ispb} value={b.ispb}>
-                {b.nome}
-              </option>
-            ))}
-        </select>
-      ) : (
-        <input
-          type="text"
-          className="input-base"
-          placeholder="Destinat\u00e1rio"
-          value={destino}
-          onChange={(e) => setDestino(e.target.value)}
-        />
-      )}
+      <select
+        className="input-base"
+        value={destino}
+        onChange={(e) => setDestino(e.target.value)}
+      >
+        <option value="">Selecione a conta</option>
+        {contas.map((c) => (
+          <option key={c.id} value={c.id}>
+            {c.accountName} / {c.ownerName}
+          </option>
+        ))}
+      </select>
       <input
         type="number"
         className="input-base"
