@@ -65,8 +65,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json(produto, { status: 200 });
   } catch (err: unknown) {
-    // Para TS não reclamar:
-    const pocketError = (err as { response?: unknown })?.response || err;
+    const pocketError = (err as { response?: unknown } | undefined)?.response || err;
     console.error("PUT /produtos - erro:", err);
     console.error(
       "PocketBase erro detalhado:",

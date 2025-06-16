@@ -112,3 +112,5 @@ export default function ProdutoDetalhe() {
     </main>
   );
 }
+*/
+}

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireClienteFromHost } from "@/lib/clienteAuth";
-import { logInfo } from "@/lib/logger";
 import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function POST(req: NextRequest) {
@@ -19,8 +18,6 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     );
   }
-
-  logInfo("🔑 API Key utilizada:", apiKey);
 
   const keyHeader = apiKey.startsWith("$") ? apiKey : `$${apiKey}`;
 
@@ -80,8 +77,6 @@ export async function DELETE(req: NextRequest) {
   if (!id) {
     return NextResponse.json({ error: "Id obrigatório" }, { status: 400 });
   }
-
-  logInfo("🔑 API Key utilizada:", apiKey);
 
   const keyHeader = apiKey.startsWith("$") ? apiKey : `$${apiKey}`;
 

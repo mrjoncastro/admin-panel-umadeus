@@ -125,3 +125,4 @@
 ## [2025-06-16] Corrigida atualização de slug e cores ao editar produto.
 ## [2025-06-22] Domínios agora mapeados em `clientes_config`; credenciais Asaas mantidas em `m24_clientes`. Documentação e exemplos atualizados.
 ## [2025-06-22] Documentacao revisada para indicar que cor_primaria, logo_url e font ficam em clientes_config
+## [2025-06-20] Atualizado guia e README de transferências incluindo suporte a PIX e formato `value` do payload.
