@@ -17,7 +17,22 @@ GET /admin/api/asaas/saldo
 Resposta:
 
 ```json
-{ "saldo": 1234.56 }
+{ "balance": 1234.56 }
+```
+
+## Estatísticas de Cobranças
+
+Utilize esta rota para obter valores agregados das cobranças no Asaas. Todos os
+parâmetros enviados são repassados para `/finance/payment/statistics`.
+
+```bash
+GET /admin/api/asaas/estatisticas?status=PENDING
+```
+
+Resposta:
+
+```json
+{ "quantity": 1, "value": 50, "netValue": 48.01 }
 ```
 
 ## Transferência de Saldo
