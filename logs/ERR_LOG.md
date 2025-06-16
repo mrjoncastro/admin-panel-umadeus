@@ -62,3 +62,7 @@
 ## [2025-06-16] Erro ao atualizar produto p0470fjbh9yj96k: ClientResponseError 400: Failed to update record. | host: https://umadeus-production.up.railway.app | user: 1yd52dql17e5c0j - development
 ## [2025-06-16] Erro ao atualizar produto p0470fjbh9yj96k: ClientResponseError 400: Failed to update record. | host: https://umadeus-production.up.railway.app | user: 1yd52dql17e5c0j - development
 ## [2025-06-16] Erro ao atualizar configuracoes: ClientResponseError 400: Failed to update record. - development
+## [2025-06-16] Erro ao criar transferência: {"errors":[{"code":"invalid_action","description":"A sua conta ainda não está totalmente aprovada para utilizar o Pix."}]} - development
+## [2025-06-16] Erro ao atualizar configuracoes: ClientResponseError 404: The requested resource wasn't found. - development
+## [2025-06-16] Erro ao atualizar configuracoes: ClientResponseError 404: The requested resource wasn't found. - development
+## [2025-06-16] Erro ao atualizar configuracoes: ClientResponseError 404: The requested resource wasn't found. - development

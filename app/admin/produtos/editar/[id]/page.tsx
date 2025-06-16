@@ -198,6 +198,13 @@ export default function EditarProdutoPage() {
       formData.append("categoria", catValue);
     }
 
+    // <<< AQUI O CONSOLE!
+    console.log("---- FormData a ser enviado ----");
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+    console.log("-------------------------------");
+
     const { token, user } = getAuth();
     const res = await fetch(`/admin/api/produtos/${id}`, {
       method: "PUT",
