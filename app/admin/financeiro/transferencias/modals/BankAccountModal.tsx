@@ -12,6 +12,11 @@ import {
   createPixKey,
   Bank,
 } from "@/lib/bankAccounts";
+import {
+  isValidCPF,
+  isValidCNPJ,
+  isValidDate,
+} from "@/utils/validators";
 
 interface BankAccountModalProps {
   open: boolean;
@@ -71,6 +76,15 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+    setErro("");
+    if (cpfCnpj && !isValidCPF(cpfCnpj) && !isValidCNPJ(cpfCnpj)) {
+      setErro("CPF/CNPJ inválido.");
+      return;
+    }
+    if (ownerBirthDate && !isValidDate(ownerBirthDate)) {
+      setErro("Data de nascimento inválida.");
+      return;
+    }
     try {
       if (type === "pix") {
         await createPixKey(
