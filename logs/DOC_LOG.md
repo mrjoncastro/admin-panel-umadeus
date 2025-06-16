@@ -134,3 +134,4 @@
 
 ## [2025-06-16] Conflito resolvido em InscricaoPage; diretorios antigos removidos e lint/build executados com sucesso.
 ## [2025-06-16] Formulário de inscrições reutilizado nos eventos. Dropdown de campos adicionado. Lint e build executados com falhas.
+## [2025-06-16] Removida pasta app/loja/inscricoes; link de inscricao aponta para /loja/eventos e redirect corrigido. Lint e build sem erros.

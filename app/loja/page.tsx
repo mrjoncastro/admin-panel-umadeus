@@ -76,7 +76,7 @@ export default function Home() {
             espiritual. Faça já sua inscrição no maior encontro jovem do ano!
           </p>
           <Link
-            href="/loja/inscricoes"
+            href="/loja/eventos"
             className="inline-block bg-white text-primary-600 px-8 py-3 rounded-full font-semibold transition text-lg hover:bg-gray-100"
           >
             Inscreva-se agora
