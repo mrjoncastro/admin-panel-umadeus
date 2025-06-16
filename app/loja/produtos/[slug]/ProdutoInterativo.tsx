@@ -203,7 +203,9 @@ export default function ProdutoInterativo({
           />
           {coresList.length > 0 && (
             <div className="mt-4">
-              <p className="text-sm mb-2 text-[var(--text-primary)]/70">Cores disponíveis:</p>
+              <p className="text-sm mb-2 text-[var(--text-primary)]/70">
+                Cores disponíveis:
+              </p>
               <div className="flex gap-2">
                 {coresList.map((c) => (
                   <button
@@ -242,7 +244,9 @@ export default function ProdutoInterativo({
           />
           {coresList.length > 0 && (
             <div className="mt-4">
-              <p className="text-sm mb-2 text-[var(--text-primary)]/70">Cores disponíveis:</p>
+              <p className="text-sm mb-2 text-[var(--text-primary)]/70">
+                Cores disponíveis:
+              </p>
               <div className="flex gap-2">
                 {coresList.map((c) => (
                   <button
@@ -263,25 +267,16 @@ export default function ProdutoInterativo({
         </div>
         {/* Botões em linha */}
         <div className="flex flex-col md:flex-row gap-3 mt-4">
-          <button
-            onClick={() => {
-              if (!isLoggedIn) {
-                router.push("/login?redirect=/loja/checkout");
-              } else {
-                router.push("/loja/checkout");
-              }
-            }}
-            className="w-full md:w-auto btn btn-primary text-center"
-          >
-            Quero essa pra brilhar no Congresso!
-          </button>
           <div className="w-full md:w-auto">
             <AddToCartButton
               produto={{
                 ...produto,
                 imagens: Array.isArray(produto.imagens)
                   ? produto.imagens
-                  : imagens[genero] || imagens["default"] || imagens[firstImgKey] || [],
+                  : imagens[genero] ||
+                    imagens["default"] ||
+                    imagens[firstImgKey] ||
+                    [],
                 generos: [genero],
                 tamanhos: [tamanho],
                 cores: cor ? [cor] : [],
@@ -299,7 +294,8 @@ export default function ProdutoInterativo({
           <div>
             <h2 className="font-semibold text-base">Envio e devolução</h2>
             <p>
-              Entrega rápida em todo o Brasil. Trocas grátis em até 7 dias após o recebimento.
+              Entrega rápida em todo o Brasil. Trocas grátis em até 7 dias após
+              o recebimento.
             </p>
           </div>
           <div className="divide-y divide-[var(--accent-900)]/10 mt-4">
