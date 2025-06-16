@@ -125,11 +125,15 @@ export default function ProdutoInterativo({
   );
   const [genero, setGenero] = useState(generosNorm[0]);
   const [tamanho, setTamanho] = useState(tamanhos[0]);
-  const coresList = Array.isArray(produto.cores)
-    ? produto.cores
-    : typeof produto.cores === "string"
-    ? produto.cores.split(",").map((c: string) => c.trim())
-    : [];
+  const coresList = Array.from(
+    new Set(
+      Array.isArray(produto.cores)
+        ? produto.cores
+        : typeof produto.cores === "string"
+        ? produto.cores.split(",").map((c: string) => c.trim())
+        : []
+    )
+  );
   const [cor, setCor] = useState(coresList[0] || "");
   const [indexImg, setIndexImg] = useState(0);
   const pauseRef = useRef(false);
@@ -172,7 +176,7 @@ export default function ProdutoInterativo({
         <div className="flex gap-3 mt-4">
           {imgs.map((src, i) => (
             <Image
-              key={i}
+              key={src}
               src={src}
               alt={`Miniatura ${i + 1}`}
               width={64}
