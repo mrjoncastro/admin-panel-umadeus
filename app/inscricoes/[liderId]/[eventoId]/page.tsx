@@ -23,12 +23,8 @@ interface FormFields {
 
 export default function InscricaoPage() {
   const params = useParams();
-<<<<<<<< HEAD:app/inscricoes/[lider]/page.tsx
-  const lid = (params as { lider: string }).lider as string;
-========
   const liderId = params.liderId as string;
   const eventoId = params.eventoId as string;
->>>>>>>> origin/codex/mover-arquivo-e-implementar-evento:app/inscricoes/[liderId]/[eventoId]/page.tsx
 
   const [form, setForm] = useState<FormFields>({
     nome: "",
