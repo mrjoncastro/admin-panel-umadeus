@@ -19,7 +19,7 @@ export async function searchBanks(query: string, fetchFn: typeof fetch = fetch):
 import type PocketBase from 'pocketbase';
 
 export interface BankAccount {
-  ownerName: string;
+  accountName: string;
   cpfCnpj: string;
   ownerBirthDate: string;
   bankName: string;

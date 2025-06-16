@@ -16,7 +16,7 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
   const pb = usePocketBase();
   const user = pb.authStore.model as unknown as UserModel | null;
 
-  const [ownerName, setOwnerName] = useState("");
+  const [accountName, setAccountName] = useState("");
   const [cpfCnpj, setCpfCnpj] = useState("");
   const [ownerBirthDate, setOwnerBirthDate] = useState("");
   const [bankName, setBankName] = useState("");
@@ -58,7 +58,7 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
       await createBankAccount(
         pb,
         {
-          ownerName,
+          accountName,
           cpfCnpj,
           ownerBirthDate,
           bankName,
@@ -88,9 +88,9 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
         <Dialog.Description className="sr-only">Formulário de conta bancária</Dialog.Description>
         <input
           className="input-base"
-          placeholder="Nome do titular"
-          value={ownerName}
-          onChange={(e) => setOwnerName(e.target.value)}
+          placeholder="Nome da conta"
+          value={accountName}
+          onChange={(e) => setAccountName(e.target.value)}
           required
         />
         <input
@@ -165,6 +165,7 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
         >
           <option value="conta_corrente">Conta Corrente</option>
           <option value="conta_poupanca">Conta Poupança</option>
+          <option value="conta_salario">Conta Salário</option>
         </select>
         {erro && <p className="text-error-600 text-sm">{erro}</p>}
         <div className="flex justify-end gap-2 pt-2">
