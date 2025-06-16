@@ -131,3 +131,4 @@
 ## [2025-06-16] Execução de npm run lint e npm run build registrou erros de lint que impediram o build.
 
 ## [2025-06-16] Rota de inscrições agora aceita eventoId no corpo e campo evento armazena o ID. OrderFlow e testes atualizados. Lint e build executados com erros em arquivos não relacionados.
+## [2025-06-16] Formulário de inscrições reutilizado nos eventos. Dropdown de campos adicionado. Lint e build executados com falhas.
