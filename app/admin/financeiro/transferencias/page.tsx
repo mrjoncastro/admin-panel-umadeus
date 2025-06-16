@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { useState } from "react";
 import TransferenciaForm from "@/components/TransferenciaForm";
-import BankAccountModal from "@/components/modals/BankAccountModal";
+import BankAccountModal from "@/app/components/modals/BankAccountModal";
 
 export default function TransferenciasPage() {
   const { isLoggedIn } = useAuthContext();

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ModalAnimated from "../ModalAnimated";
+import ModalAnimated from "@/components/ModalAnimated";
 import usePocketBase from "@/lib/hooks/usePocketBase";
 import type { UserModel } from "@/types/UserModel";
 import { searchBanks, createBankAccount, Bank } from "@/lib/bankAccounts";
