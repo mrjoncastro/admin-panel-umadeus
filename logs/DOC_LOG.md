@@ -123,3 +123,4 @@
 ## [2025-06-21] Cadastro de produtos envia campos slug e cores
 
 ## [2025-06-16] Corrigida atualização de slug e cores ao editar produto.
+## [2025-06-22] Domínios agora mapeados em `clientes_config`; credenciais Asaas mantidas em `m24_clientes`. Documentação e exemplos atualizados.

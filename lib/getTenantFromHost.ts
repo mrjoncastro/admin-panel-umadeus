@@ -8,10 +8,10 @@ export async function getTenantFromHost(): Promise<string | null> {
 
   const pb = createPocketBase();
   try {
-    const cliente = await pb
-      .collection("m24_clientes")
+    const cfg = await pb
+      .collection("clientes_config")
       .getFirstListItem(`dominio='${host}'`);
-    return cliente?.id ?? null;
+    return cfg?.cliente ?? null;
   } catch {
     return null;
   }
