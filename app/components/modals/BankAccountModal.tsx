@@ -88,7 +88,7 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
         <Dialog.Description className="sr-only">Formulário de conta bancária</Dialog.Description>
         <input
           className="input-base"
-          placeholder="Nome do titular"
+          placeholder="Nome da conta"
           value={accountName}
           onChange={(e) => setAccountName(e.target.value)}
           required
