@@ -91,9 +91,9 @@ export default function BlogHeroCarousel() {
 
         {/* Dots */}
         <div className="mt-4 flex gap-2 justify-center">
-          {posts.map((_, index) => (
+          {posts.map((post, index) => (
             <span
-              key={index}
+              key={post.slug}
               className={`w-2.5 h-2.5 rounded-full ${
                 index === currentIndex ? "bg-primary-600" : "bg-white/50"
               }`}
