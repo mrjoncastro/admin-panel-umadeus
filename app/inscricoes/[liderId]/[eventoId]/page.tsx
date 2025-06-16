@@ -23,7 +23,8 @@ interface FormFields {
 
 export default function InscricaoPage() {
   const params = useParams();
-  const lid = params.id as string;
+  const liderId = params.liderId as string;
+  const eventoId = params.eventoId as string;
 
   const [form, setForm] = useState<FormFields>({
     nome: "",
@@ -40,11 +41,12 @@ export default function InscricaoPage() {
   const [mensagem, setMensagem] = useState("");
   const [campoNome, setCampoNome] = useState("");
   const [confirmado, setConfirmado] = useState(false);
+  const [evento, setEvento] = useState<{ titulo: string; descricao: string } | null>(null);
 
   useEffect(() => {
-    if (!lid) return;
+    if (!liderId) return;
 
-    fetch(`/admin/api/lider/${lid}`)
+    fetch(`/admin/api/lider/${liderId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data?.campo) {
@@ -54,7 +56,19 @@ export default function InscricaoPage() {
         }
       })
       .catch(() => setMensagem("❌ Erro ao buscar dados do líder."));
-  }, [lid]);
+  }, [liderId]);
+
+  useEffect(() => {
+    if (!eventoId) return;
+    fetch(`/api/eventos/${eventoId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.titulo) {
+          setEvento({ titulo: data.titulo, descricao: data.descricao });
+        }
+      })
+      .catch(() => {});
+  }, [eventoId]);
 
   const maskCPF = (value: string) =>
     value
@@ -98,7 +112,7 @@ export default function InscricaoPage() {
       const resposta = await fetch("/admin/api/inscricoes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, liderId: lid }),
+        body: JSON.stringify({ ...form, liderId, eventoId }),
       });
 
       const result = await resposta.json();
@@ -115,7 +129,8 @@ export default function InscricaoPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             ...form,
-            liderId: lid,
+            liderId,
+            eventoId,
             inscricaoId: result.inscricaoId,
           }),
         });
@@ -152,8 +167,11 @@ export default function InscricaoPage() {
       </div>
 
       <h1 className="text-2xl font-extrabold text-purple-700 mb-3 text-center">
-        Inscrição para o Congresso UMADEUS 2K25
+        {evento ? `Inscrição para ${evento.titulo}` : "Inscrição"}
       </h1>
+      {evento?.descricao && (
+        <p className="text-center text-sm text-gray-600 mb-2">{evento.descricao}</p>
+      )}
       {campoNome && (
         <p className="mb-4 text-center text-sm text-gray-500">
           Campo responsável: <span className="font-medium">{campoNome}</span>

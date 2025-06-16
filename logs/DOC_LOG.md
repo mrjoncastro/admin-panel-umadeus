@@ -126,3 +126,4 @@
 ## [2025-06-22] Domínios agora mapeados em `clientes_config`; credenciais Asaas mantidas em `m24_clientes`. Documentação e exemplos atualizados.
 ## [2025-06-22] Documentacao revisada para indicar que cor_primary, logo_url e font ficam em clientes_config
 ## [2025-06-20] Atualizado guia e README de transferências incluindo suporte a PIX e formato `value` do payload.
+## [2025-06-16] Execução de npm run lint e npm run build registrou erros de lint que impediram o build.
