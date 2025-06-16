@@ -5,13 +5,18 @@ import ModalAnimated from "../ModalAnimated";
 import usePocketBase from "@/lib/hooks/usePocketBase";
 import type { UserModel } from "@/types/UserModel";
 import { searchBanks, createBankAccount, Bank } from "@/lib/bankAccounts";
+import * as Dialog from "@radix-ui/react-dialog";
+
 
 interface BankAccountModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-export default function BankAccountModal({ open, onClose }: BankAccountModalProps) {
+export default function BankAccountModal({
+  open,
+  onClose,
+}: BankAccountModalProps) {
   const pb = usePocketBase();
   const user = pb.authStore.model as unknown as UserModel | null;
 
@@ -35,7 +40,14 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
     }
     const timeout = setTimeout(() => {
       searchBanks(bankName)
-        .then(setBanks)
+        .then((res) => {
+          // Remove bancos duplicados ou sem ispb
+          const uniqueBanks = res.filter(
+            (b, i, arr) =>
+              b.ispb && b.name && arr.findIndex((x) => x.ispb === b.ispb) === i
+          );
+          setBanks(uniqueBanks);
+        })
         .catch(() => setBanks([]));
     }, 300);
     return () => clearTimeout(timeout);
@@ -81,7 +93,9 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
   return (
     <ModalAnimated open={open} onOpenChange={(v) => !v && onClose()}>
       <form onSubmit={handleSubmit} className="space-y-3 w-80">
-        <h3 className="text-lg font-semibold text-center">Adicionar Conta</h3>
+        <Dialog.Title asChild>
+          <h3 className="text-lg font-semibold text-center">Adicionar Conta</h3>
+        </Dialog.Title>
         <input
           className="input-base"
           placeholder="Nome do titular"
@@ -113,9 +127,14 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
             required
           />
           <datalist id="bank-list">
-            {banks.map((b) => (
-              <option key={b.ispb} value={b.name} />
-            ))}
+            {banks
+              .filter(
+                (b, i, arr) =>
+                  b.ispb && arr.findIndex((x) => x.ispb === b.ispb) === i
+              )
+              .map((b, idx) => (
+                <option key={`${b.ispb}-${idx}`} value={b.name} />
+              ))}
           </datalist>
         </div>
         <input

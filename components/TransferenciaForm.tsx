@@ -59,11 +59,16 @@ export default function TransferenciaForm({
           onChange={(e) => setDestino(e.target.value)}
         >
           <option value="">Selecione o banco</option>
-          {bancos.map((b) => (
-            <option key={b.ispb} value={b.ispb}>
-              {b.nome}
-            </option>
-          ))}
+          {bancos
+            .filter(
+              (b, idx, arr) =>
+                b.ispb && arr.findIndex((x) => x.ispb === b.ispb) === idx
+            )
+            .map((b) => (
+              <option key={b.ispb} value={b.ispb}>
+                {b.nome}
+              </option>
+            ))}
         </select>
       ) : (
         <input
