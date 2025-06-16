@@ -106,3 +106,4 @@
 ## [2025-06-16] Extrato agora usa /financialTransactions e define offset, limit e order=asc.
 
 ## [2025-06-17] BankAccountModal criado com busca BrasilAPI e registro em clientes_contas_bancarias. Documentação e testes adicionados.
+## [2025-06-16] Botão Nova conta integrado à página de Transferências com o BankAccountModal.
