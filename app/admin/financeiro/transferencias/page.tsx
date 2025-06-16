@@ -5,6 +5,7 @@ import { useAuthContext } from "@/lib/context/AuthContext";
 import { useState, useEffect } from "react";
 import TransferenciaForm from "@/app/admin/financeiro/transferencias/components/TransferenciaForm";
 import BankAccountModal from "@/app/admin/financeiro/transferencias/modals/BankAccountModal";
+import type { PixKeyRecord } from "@/lib/bankAccounts";
 
 export default function TransferenciasPage() {
   const { isLoggedIn } = useAuthContext();
@@ -15,12 +16,27 @@ export default function TransferenciasPage() {
   async function handleTransfer(
     destino: string,
     valor: number,
-    description: string
+    description: string,
+    isPix: boolean,
+    pixKey?: PixKeyRecord
   ) {
+    const payload: Record<string, unknown> = { value: valor };
+    if (isPix && pixKey) {
+      payload.pixAddressKey = pixKey.pixAddressKey;
+      payload.pixAddressKeyType = pixKey.pixAddressKeyType;
+      if (description) payload.description = description;
+      const schedule = (pixKey as Record<string, unknown>).scheduleDate;
+      if (typeof schedule === "string" && schedule) {
+        payload.scheduleDate = schedule;
+      }
+    } else {
+      payload.bankAccountId = destino;
+      if (description) payload.description = description;
+    }
     const res = await fetch("/admin/api/asaas/transferencia", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ bankAccountId: destino, valor, description }),
+      body: JSON.stringify(payload),
     });
     if (res.ok) {
       setMensagem("Transferência enviada!");

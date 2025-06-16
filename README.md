@@ -182,17 +182,34 @@ Resposta de exemplo:
 
 Envia uma transferência do saldo do Asaas para a conta bancária cadastrada. Requisição `POST` com o seguinte payload:
 
+Para contas bancárias:
+
 ```json
 {
-  "valor": 150.75,
+  "value": 150.75,
   "bankAccountId": "acc_123",
-  "descricao": "Repasse loja junho/2025"
+  "description": "Repasse loja junho/2025"
 }
 ```
 
-- **valor** – valor a transferir em reais.
-- **bankAccountId** – código da conta bancária de destino.
-- **descricao** – texto opcional para identificar a transferência.
+Para PIX:
+
+```json
+{
+  "value": 150.75,
+  "pixAddressKey": "a@b.com",
+  "pixAddressKeyType": "email",
+  "description": "Repasse loja junho/2025",
+  "scheduleDate": "2025-08-20"
+}
+```
+
+- **value** – valor a transferir em reais.
+- **bankAccountId** – código da conta bancária de destino (quando conta bancária).
+- **pixAddressKey** – chave PIX de destino.
+- **pixAddressKeyType** – tipo da chave PIX (`cpf`, `email`, `phone` etc.).
+- **description** – texto opcional para identificar a transferência.
+- **scheduleDate** – data de agendamento (opcional e apenas para PIX).
 
 Essas rotas utilizam a chave do Asaas de cada cliente (tenant) conforme descrito em [docs/plano-negocio.md](docs/plano-negocio.md).
 

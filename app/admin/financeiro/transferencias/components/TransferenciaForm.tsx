@@ -14,7 +14,9 @@ interface TransferenciaFormProps {
   onTransfer?: (
     destino: string,
     valor: number,
-    description: string
+    description: string,
+    isPix: boolean,
+    pixKey?: PixKeyRecord
   ) => Promise<void> | void;
 }
 
@@ -61,7 +63,8 @@ export default function TransferenciaForm({
     }
     setLoading(true);
     try {
-      await onTransfer?.(destino, parsed, description);
+      const pixKey = isPix ? (selected as PixKeyRecord & { kind: "pix" }) : undefined;
+      await onTransfer?.(destino, parsed, description, isPix, pixKey);
     } catch {
       setErro("Erro ao transferir.");
     } finally {

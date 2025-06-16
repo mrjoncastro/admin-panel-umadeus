@@ -37,11 +37,26 @@ Resposta:
 
 ## Transferência de Saldo
 
+
+Para contas bancárias:
+
 ```json
 {
-  "valor": 150.75,
+  "value": 150.75,
   "bankAccountId": "acc_123",
-  "descricao": "Repasse loja junho/2025"
+  "description": "Repasse loja junho/2025"
+}
+```
+
+Para chaves PIX:
+
+```json
+{
+  "value": 150.75,
+  "pixAddressKey": "a@b.com",
+  "pixAddressKeyType": "email",
+  "description": "Repasse loja junho/2025",
+  "scheduleDate": "2025-08-20" // opcional
 }
 ```
 

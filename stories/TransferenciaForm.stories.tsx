@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { within, userEvent, expect } from 'storybook/test';
 import TransferenciaForm from '../app/admin/financeiro/transferencias/components/TransferenciaForm';
+import type { PixKeyRecord } from '../lib/bankAccounts';
 
 const meta = {
   title: 'Design System/TransferenciaForm',
@@ -16,13 +17,25 @@ type Story = StoryObj<typeof meta>;
 
 export const Sucesso: Story = {
   args: {
-    onTransfer: async (_d: string, _v: number, _desc: string) => {},
+    onTransfer: async (
+      _d: string,
+      _v: number,
+      _desc: string,
+      _isPix: boolean,
+      _pix?: PixKeyRecord
+    ) => {},
   },
 };
 
 export const ErroTransferencia: Story = {
   args: {
-    onTransfer: async (_d: string, _v: number, _desc: string) => {
+    onTransfer: async (
+      _d: string,
+      _v: number,
+      _desc: string,
+      _isPix: boolean,
+      _pix?: PixKeyRecord
+    ) => {
       throw new Error('fail');
     },
   },
