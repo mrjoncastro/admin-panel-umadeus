@@ -62,11 +62,6 @@ export interface PixKey {
   scheduleDate: string;
 }
 
-export interface ClienteContaBancariaRecord {
-  id: string;
-  accountName: string;
-  ownerName: string;
-}
 
 export async function createPixKey(
   pb: PocketBase,
