@@ -34,9 +34,7 @@ export default function ModalAnimated({
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-               bg-white dark:bg-zinc-900 text-black dark:text-white 
-               p-6 rounded-xl z-[130]"
+                className="bg-white dark:bg-zinc-900 text-black dark:text-white p-6 rounded-xl z-[130]"
               >
                 {children}
               </motion.div>
