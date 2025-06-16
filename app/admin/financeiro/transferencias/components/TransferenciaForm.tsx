@@ -11,7 +11,11 @@ import {
 } from "@/lib/bankAccounts";
 
 interface TransferenciaFormProps {
-  onTransfer?: (destino: string, valor: number) => Promise<void> | void;
+  onTransfer?: (
+    destino: string,
+    valor: number,
+    description: string
+  ) => Promise<void> | void;
 }
 
 export default function TransferenciaForm({
@@ -19,6 +23,7 @@ export default function TransferenciaForm({
 }: TransferenciaFormProps) {
   const [destino, setDestino] = useState("");
   const [valor, setValor] = useState("");
+  const [description, setDescription] = useState("");
   type ContaOption =
     | (ClienteContaBancariaRecord & { kind: "bank" })
     | (PixKeyRecord & { kind: "pix" });
@@ -27,6 +32,9 @@ export default function TransferenciaForm({
   const [loading, setLoading] = useState(false);
   const pb = usePocketBase();
   const { tenantId } = useAuthContext();
+
+  const selected = contas.find((c) => c.id === destino);
+  const isPix = selected?.kind === "pix";
 
   useEffect(() => {
     if (!tenantId) return;
@@ -53,7 +61,7 @@ export default function TransferenciaForm({
     }
     setLoading(true);
     try {
-      await onTransfer?.(destino, parsed);
+      await onTransfer?.(destino, parsed, description);
     } catch {
       setErro("Erro ao transferir.");
     } finally {
@@ -78,6 +86,14 @@ export default function TransferenciaForm({
           </option>
         ))}
       </select>
+      {isPix && (
+        <input
+          className="input-base"
+          placeholder="Descrição"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+      )}
       <input
         type="number"
         className="input-base"

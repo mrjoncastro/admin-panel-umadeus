@@ -1,6 +1,6 @@
 /* @vitest-environment jsdom */
 import { describe, it, expect, vi, expectTypeOf } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import type {
   ClienteContaBancariaRecord,
   PixKeyRecord,
@@ -37,5 +37,12 @@ describe('TransferenciaForm', () => {
     expect(options[3].textContent).toContain('PIX');
     expectTypeOf(contasMock).toEqualTypeOf<ClienteContaBancariaRecord[]>();
     expectTypeOf(pixMock).toEqualTypeOf<PixKeyRecord[]>();
+  });
+
+  it('exibe campo de descrição ao selecionar PIX', async () => {
+    render(<TransferenciaForm />);
+    const select = await screen.findByRole('combobox');
+    fireEvent.change(select, { target: { value: '3' } });
+    expect(screen.getByPlaceholderText('Descrição')).toBeInTheDocument();
   });
 });
