@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach, expectTypeOf } from 'vitest';
-import { searchBanks, createBankAccount, getBankAccountsByTenant, type ClienteContaBancariaRecord } from '../lib/bankAccounts';
+import { searchBanks, createBankAccount, createPixKey, getBankAccountsByTenant, type ClienteContaBancariaRecord } from '../lib/bankAccounts';
 import type PocketBase from 'pocketbase';
 
 describe('searchBanks', () => {
@@ -92,6 +92,48 @@ describe('createBankAccount', () => {
     );
     expect(createMock).toHaveBeenCalledWith(
       expect.objectContaining({ ownerName: 'Titular', accountName: 'Conta Salario', bankAccountType: 'conta_salario' })
+    );
+  });
+});
+
+describe('createPixKey', () => {
+  it('chama a coleção clientes_pix', async () => {
+    const createMock = vi.fn().mockResolvedValue({ id: '1' });
+    const pb = {
+      collection: vi.fn(() => ({ create: createMock })),
+    } as unknown as PocketBase;
+    await createPixKey(
+      pb,
+      {
+        pixAddressKey: 'chave@pix.com',
+        pixAddressKeyType: 'email',
+        description: 'Test',
+        scheduleDate: '2024-01-01',
+      },
+      'u1',
+      'cli1'
+    );
+    expect(pb.collection).toHaveBeenCalledWith('clientes_pix');
+  });
+
+  it('inclui usuario e cliente no payload', async () => {
+    const createMock = vi.fn().mockResolvedValue({ id: '1' });
+    const pb = {
+      collection: vi.fn(() => ({ create: createMock })),
+    } as unknown as PocketBase;
+    await createPixKey(
+      pb,
+      {
+        pixAddressKey: 'a1',
+        pixAddressKeyType: 'cpf',
+        description: 'Desc',
+        scheduleDate: '2024-02-02',
+      },
+      'user2',
+      'client2'
+    );
+    expect(createMock).toHaveBeenCalledWith(
+      expect.objectContaining({ usuario: 'user2', cliente: 'client2' })
     );
   });
 });
