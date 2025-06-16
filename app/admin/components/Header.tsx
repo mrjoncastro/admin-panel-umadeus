@@ -64,11 +64,18 @@ export default function Header() {
     { href: "/loja", label: "Ver loja" },
   ];
 
-  const gerenciamentoLinks = [
-    { href: "/admin/usuarios", label: "Usuários" },
-    { href: "/admin/posts", label: "Posts" },
-    { href: "/admin/campos", label: "Campos" },
-  ];
+  const gerenciamentoLinks =
+    user?.role === "lider"
+      ? [
+          { href: "/admin/posts", label: "Posts" },
+          { href: "/admin/inscricoes", label: "Inscrições" },
+          { href: "/admin/pedidos", label: "Pedidos" },
+        ]
+      : [
+          { href: "/admin/usuarios", label: "Usuários" },
+          { href: "/admin/posts", label: "Posts" },
+          { href: "/admin/campos", label: "Campos" },
+        ];
 
   const handleLogout = () => {
     pb.authStore.clear();
