@@ -59,11 +59,11 @@ export default async function BlogPostPage({
     slug,
     post.category || ""
   );
-  const formattedSuggestions = suggestions.map((p) => ({
-    ...p,
-    summary: p.summary || "",
-    thumbnail: p.thumbnail || "",
-    category: p.category || "",
+  const safeSuggestions = suggestions.map((s) => ({
+    ...s,
+    summary: s.summary || "",
+    thumbnail: s.thumbnail || "",
+    category: s.category || "",
   }));
   const mdxContent = post.content || "";
 
@@ -181,7 +181,7 @@ export default async function BlogPostPage({
         {nextPost && <NextPostButton slug={nextPost.slug} />}
       </main>
 
-      <PostSuggestions posts={formattedSuggestions} />
+      <PostSuggestions posts={safeSuggestions} />
       <Footer />
 
       {/* JSON-LD Schema para SEO */}
