@@ -34,6 +34,7 @@ export type Inscricao = {
       telefone?: string;
       cpf?: string;
     };
+    evento?: Evento;
   };
 };
 

@@ -76,13 +76,17 @@ export default function ListaInscricoesPage() {
         : `campo='${user.campo}' && ${baseFiltro}`;
 
     pb.collection("inscricoes")
-      .getFullList({ sort: "-created", filter: filtro, expand: "campo,pedido" })
+      .getFullList({
+        sort: "-created",
+        filter: filtro,
+        expand: "campo,evento,pedido",
+      })
       .then((res) => {
         const lista = res.map((r) => ({
           id: r.id,
           nome: r.nome,
           telefone: r.telefone,
-          evento: r.evento,
+          evento: r.expand?.evento?.titulo,
           cpf: r.cpf,
           status: r.status,
           created: r.created,
