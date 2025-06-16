@@ -36,6 +36,7 @@ export default function ModalAnimated({
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 className="bg-white dark:bg-zinc-900 text-black dark:text-white p-6 rounded-xl z-[130]"
               >
+                <Dialog.Title className="sr-only">Modal</Dialog.Title>
                 {children}
               </motion.div>
             </Dialog.Content>

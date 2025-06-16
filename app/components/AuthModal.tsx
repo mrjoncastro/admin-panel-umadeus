@@ -36,6 +36,7 @@ export default function AuthModal({
                 exit={{ opacity: 0, scale: 0.95 }}
                 className="bg-white dark:bg-zinc-900 text-black dark:text-white p-6 rounded-xl shadow-xl w-full max-w-md relative"
               >
+                <Dialog.Title className="sr-only">Autenticação</Dialog.Title>
                 <button
                   onClick={onClose}
                   className="absolute top-2 right-2 text-xl leading-none"
