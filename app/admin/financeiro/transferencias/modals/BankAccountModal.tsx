@@ -6,6 +6,7 @@ import ModalAnimated from "@/components/ModalAnimated";
 import usePocketBase from "@/lib/hooks/usePocketBase";
 import type { UserModel } from "@/types/UserModel";
 import { searchBanks, createBankAccount, Bank } from "@/lib/bankAccounts";
+import { isValidCPF, isValidCNPJ, isValidDate } from "@/utils/validators";
 
 interface BankAccountModalProps {
   open: boolean;
@@ -60,6 +61,28 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+    setErro("");
+    if (
+      !ownerName ||
+      !accountName ||
+      !cpfCnpj ||
+      !ownerBirthDate ||
+      !bankName ||
+      !bankCode ||
+      !agency ||
+      !account
+    ) {
+      setErro("Preencha todos os campos.");
+      return;
+    }
+    if (!isValidCPF(cpfCnpj) && !isValidCNPJ(cpfCnpj)) {
+      setErro("CPF/CNPJ inválido.");
+      return;
+    }
+    if (!isValidDate(ownerBirthDate)) {
+      setErro("Data de nascimento inválida.");
+      return;
+    }
     try {
       await createBankAccount(
         pb,
