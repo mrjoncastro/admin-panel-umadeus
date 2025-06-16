@@ -2,9 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TransferenciaForm from "@/components/TransferenciaForm";
-import BankAccountModal from "@/components/modals/BankAccountModal";
+import BankAccountModal from "@/app/components/modals/BankAccountModal";
 
 export default function TransferenciasPage() {
   const { isLoggedIn } = useAuthContext();
@@ -25,10 +25,11 @@ export default function TransferenciasPage() {
     }
   }
 
-  if (!isLoggedIn) {
-    router.replace("/login");
-    return null;
-  }
+  useEffect(() => {
+    if (!isLoggedIn) router.replace("/login");
+  }, [isLoggedIn, router]);
+
+  if (!isLoggedIn) return null;
 
   return (
     <main className="max-w-lg mx-auto px-4 py-8">
