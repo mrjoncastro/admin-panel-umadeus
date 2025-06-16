@@ -166,7 +166,7 @@ export default function Header() {
             >
               <Popover.Trigger asChild>
                 <button className="flex items-center gap-1 hover:opacity-90">
-                  <span>Gerenciamento</span>
+                  <span>Administração</span>
                   <ChevronDown size={14} />
                 </button>
               </Popover.Trigger>
@@ -372,7 +372,7 @@ export default function Header() {
                 ))}
 
                 <span className="mt-2 text-xs uppercase font-semibold opacity-70">
-                  Gerenciamento
+                  Administração
                 </span>
                 {gerenciamentoLinks.map(({ href, label }) => (
                   <Link
