@@ -31,7 +31,7 @@ describe('createBankAccount', () => {
     await createBankAccount(
       pb,
       {
-        ownerName: 'a',
+        accountName: 'a',
         cpfCnpj: 'b',
         ownerBirthDate: 'c',
         bankName: 'd',
@@ -47,7 +47,38 @@ describe('createBankAccount', () => {
     );
     expect(pb.collection).toHaveBeenCalledWith('clientes_contas_bancarias');
     expect(createMock).toHaveBeenCalledWith(
-      expect.objectContaining({ usuario: 'u1', cliente: 'cli1' })
+      expect.objectContaining({
+        usuario: 'u1',
+        cliente: 'cli1',
+        accountName: 'a',
+      })
+    );
+  });
+
+  it('inclui accountName no payload', async () => {
+    const createMock = vi.fn().mockResolvedValue({ id: '1' });
+    const pb = {
+      collection: vi.fn(() => ({ create: createMock })),
+    } as unknown as PocketBase;
+    await createBankAccount(
+      pb,
+      {
+        accountName: 'Conta Salario',
+        cpfCnpj: 'b',
+        ownerBirthDate: 'c',
+        bankName: 'd',
+        bankCode: '1',
+        ispb: '2',
+        agency: '3',
+        account: '4',
+        accountDigit: '5',
+        bankAccountType: 'conta_salario',
+      },
+      'u1',
+      'cli1'
+    );
+    expect(createMock).toHaveBeenCalledWith(
+      expect.objectContaining({ accountName: 'Conta Salario', bankAccountType: 'conta_salario' })
     );
   });
 });
