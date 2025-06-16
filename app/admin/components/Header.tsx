@@ -63,6 +63,7 @@ export default function Header() {
     { href: "/admin/compras", label: "Compras" },
     { href: "/loja", label: "Ver loja" },
   ];
+
   const gerenciamentoLinks =
     user?.role === "lider"
       ? [

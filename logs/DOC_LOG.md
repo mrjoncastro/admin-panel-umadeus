@@ -138,3 +138,4 @@
 ## [2025-06-24] Removido script generatePostsJson e atualizados testes para buscar posts via PocketBase.
 ## [2025-06-24] Ajustada regex no LayoutWrapper para ocultar Header em rotas de inscrições públicas. Lint e build executados com erros em app/blog/post/[slug]/page.tsx.
 ## [2025-06-16] Link de inscrição por usuário agora inclui eventoId selecionado. Dropdown de eventos ativos adicionado em /admin/usuarios. Lint e build executados com sucesso.
+## [2025-06-25] Links de administração ajustados por papel no Header. Teste criado para validar comportamentos. Lint e build executados.
