@@ -117,3 +117,4 @@
 ## [2025-06-18] Texto do README corrigido para descrever accountName como nome da conta e placeholder ajustado.
 ## [2025-06-18] BankAccountModal agora possui campos ownerName e accountName, ispb oculto e lista inicial de bancos; README atualizado.
 ## [2025-06-19] Implementada funcao getBankAccountsByTenant e testes atualizados.
+## [2025-06-20] BankAccountModal passa a cadastrar chaves PIX via createPixKey. README documentado.

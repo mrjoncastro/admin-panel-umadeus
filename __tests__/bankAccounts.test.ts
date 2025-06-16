@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { searchBanks, createBankAccount, getBankAccountsByTenant } from '../lib/bankAccounts';
+import { searchBanks, createBankAccount, getBankAccountsByTenant, createPixKey } from '../lib/bankAccounts';
 import type PocketBase from 'pocketbase';
 
 describe('searchBanks', () => {
@@ -106,5 +106,29 @@ describe('getBankAccountsByTenant', () => {
     expect(pb.collection).toHaveBeenCalledWith('clientes_contas_bancarias');
     expect(listMock).toHaveBeenCalledWith({ filter: "cliente='cli1'" });
     expect(contas[0].id).toBe('1');
+  });
+});
+
+describe('createPixKey', () => {
+  it('usa colecao clientes_pix', async () => {
+    const createMock = vi.fn().mockResolvedValue({ id: 'pix1' });
+    const pb = {
+      collection: vi.fn(() => ({ create: createMock })),
+    } as unknown as PocketBase;
+    await createPixKey(
+      pb,
+      {
+        pixAddressKey: 'abc',
+        pixAddressKeyType: 'cpf',
+        description: 'chave',
+        scheduleDate: '2025-06-20',
+      },
+      'u1',
+      'cli1'
+    );
+    expect(pb.collection).toHaveBeenCalledWith('clientes_pix');
+    expect(createMock).toHaveBeenCalledWith(
+      expect.objectContaining({ pixAddressKey: 'abc', cliente: 'cli1' })
+    );
   });
 });

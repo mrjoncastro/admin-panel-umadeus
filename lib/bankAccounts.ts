@@ -48,11 +48,41 @@ export async function createBankAccount(
   return pb.collection('clientes_contas_bancarias').create(data);
 }
 
+export interface PixKey {
+  pixAddressKey: string;
+  pixAddressKeyType: string;
+  description: string;
+  scheduleDate: string;
+}
+
+export interface ClienteContaBancariaRecord {
+  id: string;
+  accountName: string;
+  ownerName: string;
+}
+
+export async function createPixKey(
+  pb: PocketBase,
+  pix: PixKey,
+  userId: string,
+  clienteId: string
+) {
+  const data = {
+    ...pix,
+    usuario: userId,
+    cliente: clienteId,
+  };
+  return pb.collection('clientes_pix').create(data);
+}
+
 export async function getBankAccountsByTenant(
   pb: PocketBase,
   tenantId: string
 ) {
   return pb
     .collection('clientes_contas_bancarias')
-    .getFullList({ filter: `cliente='${tenantId}'` });
+    .getFullList<ClienteContaBancariaRecord>({
+      filter: `cliente='${tenantId}'`,
+      sort: 'accountName',
+    });
 }
