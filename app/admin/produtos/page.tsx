@@ -7,6 +7,16 @@ import Link from "next/link";
 import type { Produto } from "@/types";
 import { ModalProduto } from "./novo/ModalProduto";
 
+function slugify(str: string) {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "")
+    .replace(/-+/g, "-");
+}
+
 const PRODUTOS_POR_PAGINA = 10;
 
 export default function AdminProdutosPage() {
@@ -75,6 +85,15 @@ export default function AdminProdutosPage() {
     }
     if (form.descricao) formData.set("descricao", String(form.descricao));
     if (form.detalhes) formData.set("detalhes", String(form.detalhes));
+    if (!form.slug && form.nome) {
+      form.slug = slugify(String(form.nome));
+    }
+    if (form.slug) formData.set("slug", String(form.slug));
+    if (Array.isArray(form.cores)) {
+      formData.set("cores", (form.cores as string[]).join(","));
+    } else if (form.cores) {
+      formData.set("cores", String(form.cores));
+    }
     formData.set("ativo", String(form.ativo ? "true" : "false"));
     if (form.imagens && form.imagens instanceof FileList) {
       Array.from(form.imagens).forEach((file) =>
