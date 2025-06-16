@@ -9,6 +9,7 @@ interface DadosInscricao {
   cpf: string;
   data_nascimento: string;
   genero: string;
+  /** ID do evento */
   evento: string;
   campo: string;
   criado_por: string;
@@ -33,6 +34,8 @@ export async function POST(req: NextRequest) {
       produto,
       genero,
       liderId,
+      eventoId,
+      evento: eventoBody,
     } = body;
 
     // Limpa CPF e telefone
@@ -40,6 +43,8 @@ export async function POST(req: NextRequest) {
     const telefoneNumerico = telefone.replace(/\D/g, "");
 
     // Validação de campos obrigatórios
+    const eventoIdFinal: string | undefined = eventoId || eventoBody;
+
     const camposObrigatorios = [
       nome,
       email,
@@ -48,6 +53,7 @@ export async function POST(req: NextRequest) {
       data_nascimento,
       genero,
       liderId,
+      eventoIdFinal,
     ];
 
     if (camposObrigatorios.some((campo) => !campo || campo.trim() === "")) {
@@ -100,7 +106,7 @@ export async function POST(req: NextRequest) {
       cpf: cpfNumerico,
       data_nascimento,
       genero,
-      evento: "Congresso UMADEUS 2K25",
+      evento: eventoIdFinal!,
       campo: campoId,
       criado_por: liderId,
       status: "pendente",

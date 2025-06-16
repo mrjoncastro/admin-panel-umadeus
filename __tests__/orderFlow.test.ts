@@ -8,6 +8,7 @@ const dadosValidos = {
   cpf: '12345678900',
   data_nascimento: '2000-01-01',
   genero: 'masculino',
+  evento: 'evt1',
   liderId: 'lider1',
   produto: 'Somente Pulseira',
   tamanho: 'M'
@@ -23,6 +24,9 @@ describe('Fluxo de inscrição e pedido', () => {
   it('falha quando campos obrigatórios estão vazios', () => {
     expect(() =>
       criarInscricao({ ...dadosValidos, nome: '' })
+    ).toThrow()
+    expect(() =>
+      criarInscricao({ ...dadosValidos, evento: '' })
     ).toThrow()
   })
 

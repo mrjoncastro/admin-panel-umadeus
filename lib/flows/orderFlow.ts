@@ -7,6 +7,7 @@ export type DadosInscricao = {
   cpf: string
   data_nascimento: string
   genero: string
+  evento: string
   liderId: string
   produto: string
   tamanho?: string
@@ -22,7 +23,8 @@ export function criarInscricao(dados: DadosInscricao): Inscricao {
     dados.cpf,
     dados.data_nascimento,
     dados.genero,
-    dados.liderId
+    dados.liderId,
+    dados.evento
   ]
 
   if (obrigatorios.some(v => !v || v.trim() === '')) {
@@ -34,7 +36,7 @@ export function criarInscricao(dados: DadosInscricao): Inscricao {
     nome: dados.nome,
     telefone: dados.telefone,
     cpf: dados.cpf,
-    evento: 'Congresso UMADEUS 2K25',
+    evento: dados.evento,
     tamanho: dados.tamanho,
     produto: dados.produto,
     genero: dados.genero,
