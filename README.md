@@ -276,23 +276,16 @@ Líderes veem apenas a quantidade de inscrições e pedidos do seu campo.
 
 ## Blog e CMS
 
-Os arquivos de conteúdo ficam dentro da pasta `posts/` na raiz do projeto. Cada
-arquivo `.mdx` representa um post do blog.
+Os posts agora ficam na coleção `posts` do PocketBase, em vez de arquivos `.mdx`.
 
-Para criar ou editar posts pelo painel admin:
+Para criar ou editar um post pelo painel admin:
 
 1. Acesse `/admin` e realize o login.
-2. No menu lateral, clique em **Posts** e escolha **Novo Post** ou selecione um
-   existente para editar.
-3. Preencha título, resumo, categoria, autor, data de publicação, caso seja uma edição informe: post editado por {autor}, em {data de edição}, thumbnail e o conteúdo em Markdown.
-4. Salve para publicar ou atualizar o post.
+2. No menu lateral, clique em **Posts** e escolha **Novo Post** ou selecione um existente.
+3. Preencha os campos recomendados (`title`, `slug`, `summary`, `content`, `category`, `thumbnail`, `keywords`, `date`, `cliente` etc.).
+4. Salve para publicar ou atualizar.
 
-Após salvar as alterações, execute o comando abaixo para gerar
-`/public/posts.json` com a lista de posts:
-
-```bash
-npm run generate-posts
-```
+O front-end consome os posts diretamente do banco, portanto não é mais necessário executar `generate-posts`.
 
 ## Testes
 
