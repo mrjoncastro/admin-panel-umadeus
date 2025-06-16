@@ -120,3 +120,5 @@
 ## [2025-06-20] BankAccountModal passa a cadastrar chaves PIX via createPixKey. README documentado.
 ## [2025-06-16] Adicionados logs nas rotas de produtos registrando host do PocketBase e usuario
 ## [2025-06-16] Removidos consoles restantes das rotas de API
+
+## [2025-06-16] Corrigida atualização de slug e cores ao editar produto.

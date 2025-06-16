@@ -10,6 +10,17 @@ interface Categoria {
   slug: string;
 }
 
+// Função para gerar slug automático
+function slugify(str: string) {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "")
+    .replace(/-+/g, "-");
+}
+
 export default function EditarProdutoPage() {
   const { id } = useParams<{ id: string }>();
   const { user: ctxUser, isLoggedIn } = useAuthContext();
@@ -141,6 +152,9 @@ export default function EditarProdutoPage() {
     const formElement = e.currentTarget as HTMLFormElement;
     const formData = new FormData(formElement);
 
+    const slug = slugify(formElement.nome.value);
+    formData.set("slug", slug);
+
     // Tratamento específico para o campo de imagens
     const imagensInput = formElement.querySelector<HTMLInputElement>(
       "input[name='imagens']"
@@ -154,10 +168,7 @@ export default function EditarProdutoPage() {
     }
 
     // Trata o campo de cores: insere como string separada por vírgula
-    formData.delete("cores");
-    if (cores.length > 0) {
-      formData.append("cores", cores.join(","));
-    }
+    formData.set("cores", cores.join(","));
     // Normaliza checkboxes e arrays
     const ativoChecked = formElement.querySelector<HTMLInputElement>(
       "input[name='ativo']"
