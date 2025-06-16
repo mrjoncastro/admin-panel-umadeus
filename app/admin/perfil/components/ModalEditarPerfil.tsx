@@ -70,17 +70,19 @@ export default function ModalEditarPerfil({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm"
-            />
-          </Dialog.Overlay>
-          <Dialog.Content asChild>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white dark:bg-zinc-900 text-black dark:text-white p-6 rounded-xl shadow-xl w-full max-w-md space-y-5"
+              className="fixed inset-0 flex items-center justify-center bg-black/60 dark:bg-black/80 backdrop-blur-sm"
             >
-            <h3 className="text-xl font-semibold text-center">Editar Perfil</h3>
+              <Dialog.Content asChild>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="bg-white dark:bg-zinc-900 text-black dark:text-white p-6 rounded-xl shadow-xl w-full max-w-md space-y-5"
+                >
+                  <Dialog.Description className="sr-only">Formulário de perfil</Dialog.Description>
+                  <Dialog.Title asChild>
+                    <h3 className="text-xl font-semibold text-center">Editar Perfil</h3>
+                  </Dialog.Title>
 
         <input
           type="text"
@@ -183,8 +185,10 @@ export default function ModalEditarPerfil({
             Salvar
           </button>
         </div>
+                </motion.div>
+              </Dialog.Content>
             </motion.div>
-          </Dialog.Content>
+            </Dialog.Overlay>
         </Dialog.Portal>
       </AnimatePresence>
     </Dialog.Root>

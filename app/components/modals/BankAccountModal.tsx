@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
 import ModalAnimated from "@/components/ModalAnimated";
 import usePocketBase from "@/lib/hooks/usePocketBase";
 import type { UserModel } from "@/types/UserModel";
@@ -81,7 +82,10 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
   return (
     <ModalAnimated open={open} onOpenChange={(v) => !v && onClose()}>
       <form onSubmit={handleSubmit} className="space-y-3 w-80">
-        <h3 className="text-lg font-semibold text-center">Adicionar Conta</h3>
+        <Dialog.Title asChild>
+          <h3 className="text-lg font-semibold text-center">Adicionar Conta</h3>
+        </Dialog.Title>
+        <Dialog.Description className="sr-only">Formulário de conta bancária</Dialog.Description>
         <input
           className="input-base"
           placeholder="Nome do titular"

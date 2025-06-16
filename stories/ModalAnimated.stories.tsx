@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { useState } from 'react';
+import * as Dialog from '@radix-ui/react-dialog';
 import { within, userEvent, expect } from 'storybook/test';
 import ModalAnimated from '../components/ModalAnimated';
 
@@ -23,7 +24,11 @@ export const Default: Story = {
         </button>
         <ModalAnimated {...args} open={open} onOpenChange={setOpen}>
           <div className="text-center space-y-4">
-            <p>Conteúdo do modal</p>
+          <Dialog.Title asChild>
+            <h3 className="font-semibold">Exemplo</h3>
+          </Dialog.Title>
+          <Dialog.Description className="sr-only">Descrição do modal de exemplo</Dialog.Description>
+          <p>Conteúdo do modal</p>
             <button onClick={() => setOpen(false)} className="btn btn-secondary">
               Fechar
             </button>
