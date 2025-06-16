@@ -5,27 +5,18 @@ import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import EditorToolbar from "./EditorToolbar";
 import { useEffect } from "react";
-// @ts-expect-error: turndown não possui tipos TypeScript oficiais
-import TurndownService from "turndown";
-import { marked } from "marked";
-
-// Função para converter markdown em HTML para o editor
-function markdownToHtml(md: string) {
-  return marked.parse(md || "");
-}
-
-// Função para converter HTML do editor em markdown ao salvar
-const turndownService = new TurndownService();
 
 type Props = {
-  value: string; // markdown inicial
-  onChange: (markdown: string) => void;
+  /** HTML inicial do editor */
+  value: string;
+  /** Dispara sempre que o HTML é atualizado */
+  onChange: (html: string) => void;
 };
 
 export default function PostMarkdownEditor({ value, onChange }: Props) {
   const editor = useEditor({
     extensions: [StarterKit, Image, Link],
-    content: markdownToHtml(value),
+    content: value,
     editorProps: {
       attributes: {
         class:
@@ -33,19 +24,17 @@ export default function PostMarkdownEditor({ value, onChange }: Props) {
       },
     },
     onUpdate: ({ editor }) => {
-      // Obtém HTML do editor e converte para Markdown
+      // Retorna o HTML do editor sempre que atualizado
       const html = editor.getHTML();
-      const markdown = turndownService.turndown(html);
-      onChange(markdown);
+      onChange(html);
     },
   });
 
   // Atualiza quando o valor externo ou o editor mudam
   useEffect(() => {
     if (editor && value) {
-      const html = markdownToHtml(value);
-      if (html !== editor.getHTML()) {
-        editor.commands.setContent(html, false);
+      if (value !== editor.getHTML()) {
+        editor.commands.setContent(value, false);
       }
     }
   }, [value, editor]);

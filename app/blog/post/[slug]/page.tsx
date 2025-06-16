@@ -2,8 +2,6 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import { notFound } from "next/navigation";
-import { evaluate } from "xdm";
-import * as runtime from "react/jsx-runtime";
 import Footer from "@/app/components/Footer";
 import Image from "next/image";
 import { Share2, Clock } from "lucide-react";
@@ -66,10 +64,9 @@ export default async function BlogPostPage({
   const raw = fs.readFileSync(filePath, "utf8");
   const { content, data } = matter(raw);
   const { nextPost, suggestions } = getRelatedPosts(slug, data.category);
-  const evaluated = await evaluate(content, { ...runtime });
-  const Content = evaluated.default;
 
-  const words = content.split(/\s+/).length;
+  const plainText = content.replace(/<[^>]+>/g, "");
+  const words = plainText.split(/\s+/).length;
   const readingTime = Math.ceil(words / 200);
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://m24saude.com.br";
@@ -176,10 +173,11 @@ export default async function BlogPostPage({
           <p className="mb-8 text-[1.125rem] text-neutral-700">{data.summary}</p>
         )}
 
-        <article className="prose prose-neutral max-w-none">
-          <Content />
-          {nextPost && <NextPostButton slug={nextPost.slug} />}
-        </article>
+        <article
+          className="prose prose-neutral max-w-none"
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
+        {nextPost && <NextPostButton slug={nextPost.slug} />}
       </main>
 
       <PostSuggestions posts={suggestions} />
