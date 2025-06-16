@@ -16,6 +16,7 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
   const pb = usePocketBase();
   const user = pb.authStore.model as unknown as UserModel | null;
 
+  const [ownerName, setOwnerName] = useState("");
   const [accountName, setAccountName] = useState("");
   const [cpfCnpj, setCpfCnpj] = useState("");
   const [ownerBirthDate, setOwnerBirthDate] = useState("");
@@ -30,8 +31,13 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
   const [erro, setErro] = useState("");
 
   useEffect(() => {
+    searchBanks("")
+      .then(setBanks)
+      .catch(() => setBanks([]));
+  }, []);
+
+  useEffect(() => {
     if (!bankName) {
-      setBanks([]);
       return;
     }
     const timeout = setTimeout(() => {
@@ -58,6 +64,7 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
       await createBankAccount(
         pb,
         {
+          ownerName,
           accountName,
           cpfCnpj,
           ownerBirthDate,
@@ -86,6 +93,13 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
           <h3 className="text-lg font-semibold text-center">Adicionar Conta</h3>
         </Dialog.Title>
         <Dialog.Description className="sr-only">Formulário de conta bancária</Dialog.Description>
+        <input
+          className="input-base"
+          placeholder="Nome do titular"
+          value={ownerName}
+          onChange={(e) => setOwnerName(e.target.value)}
+          required
+        />
         <input
           className="input-base"
           placeholder="Nome da conta"
@@ -129,13 +143,7 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
           readOnly
           required
         />
-        <input
-          className="input-base"
-          placeholder="ISPB"
-          value={ispb}
-          readOnly
-          required
-        />
+        <input type="hidden" value={ispb} readOnly />
         <input
           className="input-base"
           placeholder="Agência"

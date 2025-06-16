@@ -20,6 +20,16 @@ describe('searchBanks', () => {
     expect(fetchMock).toHaveBeenCalledWith('https://brasil/api/banks/v1?search=Bank');
     expect(banks[0].code).toBe(10);
   });
+
+  it('lista inicial quando query vazia', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve(Array.from({ length: 20 }, (_, i) => ({ ispb: String(i), name: `Bank${i}`, code: i }))),
+    });
+    const banks = await searchBanks('', fetchMock);
+    expect(fetchMock).toHaveBeenCalledWith('https://brasil/api/banks/v1');
+    expect(banks.length).toBe(15);
+  });
 });
 
 describe('createBankAccount', () => {
@@ -31,6 +41,7 @@ describe('createBankAccount', () => {
     await createBankAccount(
       pb,
       {
+        ownerName: 'Titular',
         accountName: 'a',
         cpfCnpj: 'b',
         ownerBirthDate: 'c',
@@ -50,6 +61,7 @@ describe('createBankAccount', () => {
       expect.objectContaining({
         usuario: 'u1',
         cliente: 'cli1',
+        ownerName: 'Titular',
         accountName: 'a',
       })
     );
@@ -63,6 +75,7 @@ describe('createBankAccount', () => {
     await createBankAccount(
       pb,
       {
+        ownerName: 'Titular',
         accountName: 'Conta Salario',
         cpfCnpj: 'b',
         ownerBirthDate: 'c',
@@ -78,7 +91,7 @@ describe('createBankAccount', () => {
       'cli1'
     );
     expect(createMock).toHaveBeenCalledWith(
-      expect.objectContaining({ accountName: 'Conta Salario', bankAccountType: 'conta_salario' })
+      expect.objectContaining({ ownerName: 'Titular', accountName: 'Conta Salario', bankAccountType: 'conta_salario' })
     );
   });
 });
