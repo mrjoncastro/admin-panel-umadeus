@@ -47,3 +47,12 @@ export async function createBankAccount(
   };
   return pb.collection('clientes_contas_bancarias').create(data);
 }
+
+export async function getBankAccountsByTenant(
+  pb: PocketBase,
+  tenantId: string
+) {
+  return pb
+    .collection('clientes_contas_bancarias')
+    .getFullList({ filter: `cliente='${tenantId}'` });
+}
