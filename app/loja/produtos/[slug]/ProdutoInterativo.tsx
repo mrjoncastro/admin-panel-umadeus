@@ -176,7 +176,7 @@ export default function ProdutoInterativo({
         <div className="flex gap-3 mt-4">
           {imgs.map((src, i) => (
             <Image
-              key={src}
+              key={i + 1}
               src={src}
               alt={`Miniatura ${i + 1}`}
               width={64}
