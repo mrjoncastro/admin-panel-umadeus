@@ -6,19 +6,17 @@ import { isExternalUrl } from "@/utils/isExternalUrl";
 import type { Metadata } from "next";
 import { getRelatedPostsFromPB } from "@/lib/posts/getRelatedPostsFromPB";
 import { getPostBySlug } from "@/lib/posts/getPostBySlug";
-import { getPostsFromPB, type PostRecord } from "@/lib/posts/getPostsFromPB";
 import NextPostButton from "@/app/blog/components/NextPostButton";
 import PostSuggestions from "@/app/blog/components/PostSuggestions";
 import Script from "next/script";
+
+export const dynamic = "force-dynamic";
 
 interface Params {
   slug: string;
 }
 
-export async function generateStaticParams() {
-  const posts = await getPostsFromPB();
-  return posts.map((p) => ({ slug: p.slug }));
-}
+
 
 export async function generateMetadata({
   params,
@@ -61,8 +59,7 @@ export default async function BlogPostPage({
     post.category || ""
   );
   const mdxContent = post.content || "";
-  const evaluated = await evaluate(mdxContent, { ...runtime });
-  const Content = evaluated.default;
+  const content = mdxContent;
 
   const words = mdxContent.split(/\s+/).length;
   const readingTime = Math.ceil(words / 200);
@@ -74,7 +71,7 @@ export default async function BlogPostPage({
     "@type": "BlogPosting",
     headline: post.title,
     description: post.summary || "",
-    image: isExternalUrl(post.thumbnail)
+    image: isExternalUrl(post.thumbnail || "")
       ? post.thumbnail
       : `${siteUrl}${post.thumbnail || "/img/og-default.jpg"}`,
     author: {
@@ -178,7 +175,15 @@ export default async function BlogPostPage({
         {nextPost && <NextPostButton slug={nextPost.slug} />}
       </main>
 
-      <PostSuggestions posts={suggestions} />
+      <PostSuggestions
+        posts={suggestions.map((s) => ({
+          slug: s.slug,
+          title: s.title,
+          summary: s.summary || "",
+          thumbnail: s.thumbnail || "",
+          category: s.category || "",
+        }))}
+      />
       <Footer />
 
       {/* JSON-LD Schema para SEO */}

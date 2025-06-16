@@ -63,12 +63,18 @@ export default function Header() {
     { href: "/admin/compras", label: "Compras" },
     { href: "/loja", label: "Ver loja" },
   ];
-
-  const gerenciamentoLinks = [
-    { href: "/admin/usuarios", label: "Usuários" },
-    { href: "/admin/posts", label: "Posts" },
-    { href: "/admin/campos", label: "Campos" },
-  ];
+  const gerenciamentoLinks =
+    user?.role === "lider"
+      ? [
+          { href: "/admin/posts", label: "Posts" },
+          { href: "/admin/inscricoes", label: "Inscrições" },
+          { href: "/admin/pedidos", label: "Pedidos" },
+        ]
+      : [
+          { href: "/admin/usuarios", label: "Usuários" },
+          { href: "/admin/posts", label: "Posts" },
+          { href: "/admin/campos", label: "Campos" },
+        ];
 
   const handleLogout = () => {
     pb.authStore.clear();
@@ -124,7 +130,7 @@ export default function Header() {
             })}
 
           {/* Gestão de Eventos */}
-          {isLoggedIn && (
+          {isLoggedIn && user?.role === "coordenador" && (
             <Popover.Root open={gestaoAberto} onOpenChange={setGestaoAberto}>
               <Popover.Trigger asChild>
                 <button className="flex items-center gap-1 hover:opacity-90">
@@ -162,7 +168,7 @@ export default function Header() {
           )}
 
           {/* Gestão da Loja */}
-          {isLoggedIn && (
+          {isLoggedIn && user?.role === "coordenador" && (
             <Popover.Root
               open={gestaoLojaAberto}
               onOpenChange={setGestaoLojaAberto}
@@ -404,33 +410,37 @@ export default function Header() {
                   );
                 })}
 
-                <span className="mt-2 text-xs uppercase font-semibold opacity-70">
-                  Gestão de Eventos
-                </span>
-                {gestaoEventosLinks.map(({ href, label }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    onClick={() => setMenuAberto(false)}
-                    className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] rounded-md"
-                  >
-                    {label}
-                  </Link>
-                ))}
+                {user?.role === "coordenador" && (
+                  <>
+                    <span className="mt-2 text-xs uppercase font-semibold opacity-70">
+                      Gestão de Eventos
+                    </span>
+                    {gestaoEventosLinks.map(({ href, label }) => (
+                      <Link
+                        key={href}
+                        href={href}
+                        onClick={() => setMenuAberto(false)}
+                        className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] rounded-md"
+                      >
+                        {label}
+                      </Link>
+                    ))}
 
-                <span className="mt-2 text-xs uppercase font-semibold opacity-70">
-                  Gestão da Loja
-                </span>
-                {gestaoLojaLinks.map(({ href, label }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    onClick={() => setMenuAberto(false)}
-                    className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] rounded-md"
-                  >
-                    {label}
-                  </Link>
-                ))}
+                    <span className="mt-2 text-xs uppercase font-semibold opacity-70">
+                      Gestão da Loja
+                    </span>
+                    {gestaoLojaLinks.map(({ href, label }) => (
+                      <Link
+                        key={href}
+                        href={href}
+                        onClick={() => setMenuAberto(false)}
+                        className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] rounded-md"
+                      >
+                        {label}
+                      </Link>
+                    ))}
+                  </>
+                )}
 
                 <span className="mt-2 text-xs uppercase font-semibold opacity-70">
                   Administração
