@@ -6,20 +6,23 @@ export interface Bank {
 }
 
 export async function searchBanks(query: string, fetchFn: typeof fetch = fetch): Promise<Bank[]> {
-  if (!query) return [];
   const base = process.env.NEXT_PUBLIC_BRASILAPI_URL || '';
-  const url = `${base}/api/banks/v1?search=${encodeURIComponent(query)}`;
+  const url = query
+    ? `${base}/api/banks/v1?search=${encodeURIComponent(query)}`
+    : `${base}/api/banks/v1`;
   const res = await fetchFn(url);
   if (!res.ok) {
     throw new Error('Erro ao consultar bancos');
   }
-  return (await res.json()) as Bank[];
+  const data = (await res.json()) as Bank[];
+  return query ? data : data.slice(0, 15);
 }
 
 import type PocketBase from 'pocketbase';
 
 export interface BankAccount {
   ownerName: string;
+  accountName: string;
   cpfCnpj: string;
   ownerBirthDate: string;
   bankName: string;

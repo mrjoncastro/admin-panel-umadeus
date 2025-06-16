@@ -113,3 +113,6 @@
 ## [2025-06-16] Botão Nova conta integrado à página de Transferências com o BankAccountModal.
 ## [2025-06-17] Ajustado z-index do ModalAnimated para sobrepor a navbar e documentado no README.
 ## [2025-06-16] Adicionada rota /admin/api/asaas/estatisticas e exemplos de uso no README e guia de saldo.
+## [2025-06-18] BankAccountModal inclui campo accountName e opcao Conta Salario. Testes e README atualizados.
+## [2025-06-18] Texto do README corrigido para descrever accountName como nome da conta e placeholder ajustado.
+## [2025-06-18] BankAccountModal agora possui campos ownerName e accountName, ispb oculto e lista inicial de bancos; README atualizado.

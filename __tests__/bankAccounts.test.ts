@@ -20,6 +20,16 @@ describe('searchBanks', () => {
     expect(fetchMock).toHaveBeenCalledWith('https://brasil/api/banks/v1?search=Bank');
     expect(banks[0].code).toBe(10);
   });
+
+  it('lista inicial quando query vazia', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve(Array.from({ length: 20 }, (_, i) => ({ ispb: String(i), name: `Bank${i}`, code: i }))),
+    });
+    const banks = await searchBanks('', fetchMock);
+    expect(fetchMock).toHaveBeenCalledWith('https://brasil/api/banks/v1');
+    expect(banks.length).toBe(15);
+  });
 });
 
 describe('createBankAccount', () => {
@@ -31,7 +41,8 @@ describe('createBankAccount', () => {
     await createBankAccount(
       pb,
       {
-        ownerName: 'a',
+        ownerName: 'Titular',
+        accountName: 'a',
         cpfCnpj: 'b',
         ownerBirthDate: 'c',
         bankName: 'd',
@@ -47,7 +58,40 @@ describe('createBankAccount', () => {
     );
     expect(pb.collection).toHaveBeenCalledWith('clientes_contas_bancarias');
     expect(createMock).toHaveBeenCalledWith(
-      expect.objectContaining({ usuario: 'u1', cliente: 'cli1' })
+      expect.objectContaining({
+        usuario: 'u1',
+        cliente: 'cli1',
+        ownerName: 'Titular',
+        accountName: 'a',
+      })
+    );
+  });
+
+  it('inclui accountName no payload', async () => {
+    const createMock = vi.fn().mockResolvedValue({ id: '1' });
+    const pb = {
+      collection: vi.fn(() => ({ create: createMock })),
+    } as unknown as PocketBase;
+    await createBankAccount(
+      pb,
+      {
+        ownerName: 'Titular',
+        accountName: 'Conta Salario',
+        cpfCnpj: 'b',
+        ownerBirthDate: 'c',
+        bankName: 'd',
+        bankCode: '1',
+        ispb: '2',
+        agency: '3',
+        account: '4',
+        accountDigit: '5',
+        bankAccountType: 'conta_salario',
+      },
+      'u1',
+      'cli1'
+    );
+    expect(createMock).toHaveBeenCalledWith(
+      expect.objectContaining({ ownerName: 'Titular', accountName: 'Conta Salario', bankAccountType: 'conta_salario' })
     );
   });
 });
