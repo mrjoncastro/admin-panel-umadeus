@@ -4,7 +4,6 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Suspense } from "react";
 
-import { useAuthContext } from "@/lib/context/AuthContext";
 import createPocketBase from "@/lib/pocketbase";
 import ProdutoInterativo from "./ProdutoInterativo";
 import type { Produto as ProdutoBase } from "@/types";
@@ -16,7 +15,6 @@ export default function ProdutoDetalhe() {
   const { slug } = useParams<{ slug: string }>();
   const [produto, setProduto] = useState<ProdutoBase | null>(null);
   const [erro, setErro] = useState(false);
-  const { isLoggedIn } = useAuthContext();
 
   useEffect(() => {
     if (!slug) return;
@@ -106,7 +104,6 @@ export default function ProdutoDetalhe() {
           preco={produto.preco}
           descricao={produto.descricao}
           produto={produto}
-          isLoggedIn={isLoggedIn}
         />
       </Suspense>
     </main>
