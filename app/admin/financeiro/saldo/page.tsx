@@ -7,10 +7,8 @@ import { saveAs } from "file-saver";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 
-interface Saldo {
-  disponivel: number;
-  aLiberar: number;
-  totalRecebido: number;
+interface Statistics {
+  netValue: number;
 }
 
 interface ExtratoItem {
@@ -24,7 +22,8 @@ interface ExtratoItem {
 export default function SaldoPage() {
   const { isLoggedIn } = useAuthContext();
   const router = useRouter();
-  const [saldo, setSaldo] = useState<Saldo | null>(null);
+  const [saldoDisponivel, setSaldoDisponivel] = useState<number | null>(null);
+  const [aLiberar, setALiberar] = useState<number | null>(null);
   const [extrato, setExtrato] = useState<ExtratoItem[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -38,7 +37,15 @@ export default function SaldoPage() {
         setLoading(true);
         const saldoRes = await fetch("/admin/api/asaas/saldo");
         if (saldoRes.ok) {
-          setSaldo(await saldoRes.json());
+          const data: { balance: number } = await saldoRes.json();
+          setSaldoDisponivel(data.balance);
+        }
+        const statsRes = await fetch(
+          "/admin/api/asaas/estatisticas?status=PENDING",
+        );
+        if (statsRes.ok) {
+          const stats: Statistics = await statsRes.json();
+          setALiberar(stats.netValue);
         }
         const extratoRes = await fetch("/admin/api/asaas/extrato");
         if (extratoRes.ok) {
@@ -87,25 +94,15 @@ export default function SaldoPage() {
             <div className="card p-6 text-center">
               <h3 className="text-lg font-semibold mb-2">Saldo Disponível</h3>
               <p className="text-xl font-bold">
-                {typeof saldo?.disponivel === "number"
-                  ? `R$ ${saldo.disponivel.toFixed(2)}`
+                {typeof saldoDisponivel === "number"
+                  ? `R$ ${saldoDisponivel.toFixed(2)}`
                   : "—"}
               </p>
             </div>
             <div className="card p-6 text-center">
               <h3 className="text-lg font-semibold mb-2">A Liberar</h3>
               <p className="text-xl font-bold">
-                {typeof saldo?.aLiberar === "number"
-                  ? `R$ ${saldo.aLiberar.toFixed(2)}`
-                  : "—"}
-              </p>
-            </div>
-            <div className="card p-6 text-center">
-              <h3 className="text-lg font-semibold mb-2">Total Recebido</h3>
-              <p className="text-xl font-bold">
-                {typeof saldo?.totalRecebido === "number"
-                  ? `R$ ${saldo.totalRecebido.toFixed(2)}`
-                  : "—"}
+                {typeof aLiberar === "number" ? `R$ ${aLiberar.toFixed(2)}` : "—"}
               </p>
             </div>
           </div>

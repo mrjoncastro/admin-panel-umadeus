@@ -4,16 +4,15 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
 
-interface Saldo {
-  disponivel: number;
-  aLiberar: number;
-  totalRecebido: number;
+interface Statistics {
+  netValue: number;
 }
 
 export default function FinanceiroPage() {
   const { tenantId, isLoggedIn } = useAuthContext();
   const router = useRouter();
-  const [saldo, setSaldo] = useState<Saldo | null>(null);
+  const [saldoDisponivel, setSaldoDisponivel] = useState<number | null>(null);
+  const [aLiberar, setALiberar] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -25,10 +24,17 @@ export default function FinanceiroPage() {
     const fetchSaldo = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/admin/api/asaas/saldo`);
-        if (res.ok) {
-          const data = await res.json();
-          setSaldo(data);
+        const saldoRes = await fetch(`/admin/api/asaas/saldo`);
+        if (saldoRes.ok) {
+          const data: { balance: number } = await saldoRes.json();
+          setSaldoDisponivel(data.balance);
+        }
+        const statsRes = await fetch(
+          `/admin/api/asaas/estatisticas?status=PENDING`,
+        );
+        if (statsRes.ok) {
+          const stats: Statistics = await statsRes.json();
+          setALiberar(stats.netValue);
         }
       } catch (err) {
         console.error("Erro ao obter saldo:", err);
@@ -50,25 +56,15 @@ export default function FinanceiroPage() {
             <div className="card p-6 text-center">
               <h3 className="text-lg font-semibold mb-2">Saldo Disponível</h3>
               <p className="text-xl font-bold">
-                {typeof saldo?.disponivel === "number"
-                  ? `R$ ${saldo.disponivel.toFixed(2)}`
+                {typeof saldoDisponivel === "number"
+                  ? `R$ ${saldoDisponivel.toFixed(2)}`
                   : "—"}
               </p>
             </div>
             <div className="card p-6 text-center">
               <h3 className="text-lg font-semibold mb-2">A Liberar</h3>
               <p className="text-xl font-bold">
-                {typeof saldo?.aLiberar === "number"
-                  ? `R$ ${saldo.aLiberar.toFixed(2)}`
-                  : "—"}
-              </p>
-            </div>
-            <div className="card p-6 text-center">
-              <h3 className="text-lg font-semibold mb-2">Total Recebido</h3>
-              <p className="text-xl font-bold">
-                {typeof saldo?.totalRecebido === "number"
-                  ? `R$ ${saldo.totalRecebido.toFixed(2)}`
-                  : "—"}
+                {typeof aLiberar === "number" ? `R$ ${aLiberar.toFixed(2)}` : "—"}
               </p>
             </div>
           </div>

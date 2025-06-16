@@ -159,7 +159,23 @@ GET /admin/api/asaas/saldo
 Resposta de exemplo:
 
 ```json
-{ "saldo": 1234.56 }
+{ "balance": 1234.56 }
+```
+
+### Endpoint `/admin/api/asaas/estatisticas`
+
+Consulta estatísticas de cobranças através de `/finance/payment/statistics`.
+Todos os parâmetros da requisição são repassados ao Asaas, permitindo filtros
+como `status`, `billingType` e datas.
+
+```bash
+GET /admin/api/asaas/estatisticas?status=PENDING
+```
+
+Resposta de exemplo:
+
+```json
+{ "quantity": 1, "value": 50, "netValue": 48.01 }
 ```
 
 ### Endpoint `/admin/api/asaas/transferencia`
