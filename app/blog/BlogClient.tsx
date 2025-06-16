@@ -176,7 +176,7 @@ export default function BlogClient() {
 
                   {[...Array(totalPages)].map((_, i) => (
                     <button
-                      key={i}
+                      key={`page-${i + 1}`}
                       onClick={() => handlePageChange(i + 1)}
                       className={`px-3 py-2 text-sm rounded ${
                         currentPage === i + 1
