@@ -23,7 +23,8 @@ interface FormFields {
 
 export default function InscricaoPage() {
   const params = useParams();
-  const lid = params.id as string;
+  const { lider } = params as { lider: string; evento: string };
+  const lid = lider;
 
   const [form, setForm] = useState<FormFields>({
     nome: "",

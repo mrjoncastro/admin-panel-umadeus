@@ -1,7 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import type { Produto } from "@/types";
 
 import AddToCartButton from "./AddToCartButton";
@@ -104,7 +103,6 @@ export default function ProdutoInterativo({
   preco,
   descricao,
   produto,
-  isLoggedIn,
 }: {
   imagens: Record<string, string[]>;
   generos: string[];
@@ -113,7 +111,6 @@ export default function ProdutoInterativo({
   preco: number;
   descricao?: string;
   produto: Produto;
-  isLoggedIn: boolean;
 }) {
   // Padronização dos gêneros:
   const generosNorm = generos.map((g) =>
@@ -137,7 +134,6 @@ export default function ProdutoInterativo({
   const [cor, setCor] = useState(coresList[0] || "");
   const [indexImg, setIndexImg] = useState(0);
   const pauseRef = useRef(false);
-  const router = useRouter();
 
   const firstImgKey = Object.keys(imagens)[0];
   const imgs = imagens[genero] || imagens["default"] || imagens[firstImgKey];
