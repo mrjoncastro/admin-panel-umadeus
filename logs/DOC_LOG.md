@@ -113,3 +113,4 @@
 ## [2025-06-16] Botão Nova conta integrado à página de Transferências com o BankAccountModal.
 ## [2025-06-17] Ajustado z-index do ModalAnimated para sobrepor a navbar e documentado no README.
 ## [2025-06-16] Adicionada rota /admin/api/asaas/estatisticas e exemplos de uso no README e guia de saldo.
+## [2025-06-17] Formulário de transferência agora lista contas do tenant via getBankAccountsByTenant. README atualizado.

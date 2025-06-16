@@ -44,3 +44,21 @@ export async function createBankAccount(
   };
   return pb.collection('clientes_contas_bancarias').create(data);
 }
+
+export interface ClienteContaBancariaRecord {
+  id: string;
+  accountName: string;
+  ownerName: string;
+}
+
+export async function getBankAccountsByTenant(
+  pb: PocketBase,
+  tenantId: string
+) {
+  return pb
+    .collection('clientes_contas_bancarias')
+    .getFullList<ClienteContaBancariaRecord>({
+      filter: `cliente='${tenantId}'`,
+      sort: 'accountName',
+    });
+}
