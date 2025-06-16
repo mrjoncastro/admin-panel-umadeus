@@ -77,6 +77,22 @@ export async function createPixKey(
   return pb.collection('clientes_pix').create(data);
 }
 
+export interface PixKeyRecord {
+  id: string;
+  pixAddressKey: string;
+  pixAddressKeyType: string;
+  [key: string]: unknown;
+}
+
+export async function getPixKeysByTenant(
+  pb: PocketBase,
+  tenantId: string
+): Promise<PixKeyRecord[]> {
+  return pb
+    .collection('clientes_pix')
+    .getFullList({ filter: `cliente='${tenantId}'` }) as Promise<PixKeyRecord[]>;
+}
+
 export async function getBankAccountsByTenant(
   pb: PocketBase,
   tenantId: string
