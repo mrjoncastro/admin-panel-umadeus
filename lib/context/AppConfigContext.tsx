@@ -41,7 +41,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
           .getFirstListItem(`dominio='${dominio}'`);
         const cfg: AppConfig = {
           font: cliente.font || defaultConfig.font,
-          primaryColor: cliente.cor_primaria || defaultConfig.primaryColor,
+          primaryColor: cliente.cor_primary || defaultConfig.primaryColor,
           logoUrl: cliente.logo_url || defaultConfig.logoUrl,
         };
         setConfig(cfg);
@@ -66,7 +66,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
             const data = await res.json();
             setConfig({
               font: data.font || defaultConfig.font,
-              primaryColor: data.cor_primaria || defaultConfig.primaryColor,
+              primaryColor: data.cor_primary || defaultConfig.primaryColor,
               logoUrl: data.logo_url || defaultConfig.logoUrl,
             });
             return;
@@ -113,7 +113,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
             "X-PB-User": user,
           },
           body: JSON.stringify({
-            cor_primaria: newCfg.primaryColor,
+            cor_primary: newCfg.primaryColor,
             logo_url: newCfg.logoUrl,
             font: newCfg.font,
           }),

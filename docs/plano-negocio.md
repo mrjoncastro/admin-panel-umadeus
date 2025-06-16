@@ -20,7 +20,7 @@ Implementamos a base multi-tenant do sistema no banco usando PocketBase, já pre
 | `verificado` | Confirma se o domínio está validado. |
 | `modo_validacao` | Método adotado para validação do domínio. |
 | `logo_url` | URL do logotipo exibido na plataforma. |
-| `cor_primaria` | Cor principal utilizada na personalização. |
+| `cor_primary` | Cor principal utilizada na personalização. |
 | `responsavel_nome` | Nome da pessoa responsável. |
 | `responsavel_email` | E-mail de contato do responsável. |
 | `ativo` | Indica se o cliente está ativo no sistema. |
