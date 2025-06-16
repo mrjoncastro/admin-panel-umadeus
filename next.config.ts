@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
   redirects: async () => [
     {
       source: "/inscricao",
-      destination: "/loja/inscricoes",
+      destination: "/loja/eventos",
       permanent: true,
     },
   ],

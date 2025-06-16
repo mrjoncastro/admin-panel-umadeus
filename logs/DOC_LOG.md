@@ -133,3 +133,4 @@
 ## [2025-06-16] Rota de inscrições agora aceita eventoId no corpo e campo evento armazena o ID. OrderFlow e testes atualizados. Lint e build executados com erros em arquivos não relacionados.
 
 ## [2025-06-16] Conflito resolvido em InscricaoPage; diretorios antigos removidos e lint/build executados com sucesso.
+## [2025-06-16] Removida pasta app/loja/inscricoes; link de inscricao aponta para /loja/eventos e redirect corrigido. Lint e build sem erros.
