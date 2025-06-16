@@ -25,7 +25,15 @@ export default function DetalheCompraAdmin() {
     if (!authChecked) return;
     pb.collection("compras")
       .getOne<Compra>(id)
-      .then(setCompra)
+      .then((data) => {
+        const itens = Array.isArray(data.itens)
+          ? data.itens.map((i) => {
+              if ("id" in i || "sku" in i) return i;
+              return { ...i, _uuid: crypto.randomUUID() };
+            })
+          : [];
+        setCompra({ ...data, itens });
+      })
       .catch(() => setCompra(null))
       .finally(() => setLoading(false));
   }, [authChecked, pb, id]);
@@ -58,9 +66,13 @@ export default function DetalheCompraAdmin() {
       <div>
         <h3 className="font-bold mt-4 mb-2">Itens</h3>
         <ul className="list-disc list-inside space-y-1 text-sm">
-          {compra.itens.map((item, idx) => (
-            <li key={idx}>{JSON.stringify(item)}</li>
-          ))}
+          {compra.itens.map((item) => {
+            const key =
+              (item as Record<string, unknown>).id ??
+              (item as Record<string, unknown>).sku ??
+              (item as Record<string, unknown>)._uuid;
+            return <li key={String(key)}>{JSON.stringify(item)}</li>;
+          })}
         </ul>
       </div>
     </main>
