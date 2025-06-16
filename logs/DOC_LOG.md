@@ -105,18 +105,18 @@
 ## [2025-06-16] README e guia atualizados mencionando uso de /finance/transactions no extrato com mesmo cabeçalho de saldo.
 ## [2025-06-16] Extrato agora usa /financialTransactions e define offset, limit e order=asc.
 
-## [2025-06-17] BankAccountModal criado com busca BrasilAPI e registro em clientes_contas_bancarias. Documentação e testes adicionados.
+## [2025-06-16] BankAccountModal criado com busca BrasilAPI e registro em clientes_contas_bancarias. Documentação e testes adicionados.
 ## [2025-06-16] Documentada variavel NEXT_PUBLIC_BRASILAPI_URL e formulario usa BrasilAPI
 ## [2025-06-16] Botão Nova conta integrado à página de Transferências com o BankAccountModal.
 
-## [2025-06-17] BankAccountModal criado com busca BrasilAPI e registro em clientes_contas_bancarias. Documentação e testes adicionados.
+## [2025-06-16] BankAccountModal criado com busca BrasilAPI e registro em clientes_contas_bancarias. Documentação e testes adicionados.
 ## [2025-06-16] Botão Nova conta integrado à página de Transferências com o BankAccountModal.
-## [2025-06-17] Ajustado z-index do ModalAnimated para sobrepor a navbar e documentado no README.
+## [2025-06-16] Ajustado z-index do ModalAnimated para sobrepor a navbar e documentado no README.
 ## [2025-06-16] Adicionada rota /admin/api/asaas/estatisticas e exemplos de uso no README e guia de saldo.
-## [2025-06-18] BankAccountModal inclui campo accountName e opcao Conta Salario. Testes e README atualizados.
-## [2025-06-18] Texto do README corrigido para descrever accountName como nome da conta e placeholder ajustado.
-## [2025-06-18] BankAccountModal agora possui campos ownerName e accountName, ispb oculto e lista inicial de bancos; README atualizado.
-## [2025-06-19] Implementada funcao getBankAccountsByTenant e testes atualizados.
-## [2025-06-20] BankAccountModal passa a cadastrar chaves PIX via createPixKey. README documentado.
+## [2025-06-16] BankAccountModal inclui campo accountName e opcao Conta Salario. Testes e README atualizados.
+## [2025-06-16] Texto do README corrigido para descrever accountName como nome da conta e placeholder ajustado.
+## [2025-06-16] BankAccountModal agora possui campos ownerName e accountName, ispb oculto e lista inicial de bancos; README atualizado.
+## [2025-06-16] Implementada funcao getBankAccountsByTenant e testes atualizados.
+## [2025-06-16] BankAccountModal passa a cadastrar chaves PIX via createPixKey. README documentado.
 ## [2025-06-16] Adicionados logs nas rotas de produtos registrando host do PocketBase e usuario
 ## [2025-06-16] Removidos consoles restantes das rotas de API

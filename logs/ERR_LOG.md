@@ -61,3 +61,4 @@
 ## [2025-06-16] Erro ao atualizar produto p0470fjbh9yj96k: ClientResponseError 400: Failed to update record. | host: https://umadeus-production.up.railway.app | user: 1yd52dql17e5c0j - development
 ## [2025-06-16] Erro ao atualizar produto p0470fjbh9yj96k: ClientResponseError 400: Failed to update record. | host: https://umadeus-production.up.railway.app | user: 1yd52dql17e5c0j - development
 ## [2025-06-16] Erro ao atualizar produto p0470fjbh9yj96k: ClientResponseError 400: Failed to update record. | host: https://umadeus-production.up.railway.app | user: 1yd52dql17e5c0j - development
+## [2025-06-16] Erro ao atualizar configuracoes: ClientResponseError 400: Failed to update record. - development
