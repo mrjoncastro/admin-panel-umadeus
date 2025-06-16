@@ -34,6 +34,13 @@ export interface BankAccount {
   bankAccountType: string;
 }
 
+export interface ClienteContaBancariaRecord {
+  id: string;
+  accountName: string;
+  ownerName: string;
+  [key: string]: unknown;
+}
+
 export async function createBankAccount(
   pb: PocketBase,
   account: BankAccount,
@@ -51,8 +58,10 @@ export async function createBankAccount(
 export async function getBankAccountsByTenant(
   pb: PocketBase,
   tenantId: string
-) {
+): Promise<ClienteContaBancariaRecord[]> {
   return pb
     .collection('clientes_contas_bancarias')
-    .getFullList({ filter: `cliente='${tenantId}'` });
+    .getFullList({ filter: `cliente='${tenantId}'` }) as Promise<
+    ClienteContaBancariaRecord[]
+  >;
 }
