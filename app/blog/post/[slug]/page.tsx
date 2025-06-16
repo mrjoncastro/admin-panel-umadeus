@@ -6,6 +6,7 @@ import { isExternalUrl } from "@/utils/isExternalUrl";
 import type { Metadata } from "next";
 import { getRelatedPostsFromPB } from "@/lib/posts/getRelatedPostsFromPB";
 import { getPostBySlug } from "@/lib/posts/getPostBySlug";
+import { getPostsFromPB } from "@/lib/posts/getPostsFromPB";
 import NextPostButton from "@/app/blog/components/NextPostButton";
 import PostSuggestions from "@/app/blog/components/PostSuggestions";
 import Script from "next/script";
@@ -58,8 +59,13 @@ export default async function BlogPostPage({
     slug,
     post.category || ""
   );
+  const formattedSuggestions = suggestions.map((p) => ({
+    ...p,
+    summary: p.summary || "",
+    thumbnail: p.thumbnail || "",
+    category: p.category || "",
+  }));
   const mdxContent = post.content || "";
-  const content = mdxContent;
 
   const words = mdxContent.split(/\s+/).length;
   const readingTime = Math.ceil(words / 200);
@@ -170,20 +176,12 @@ export default async function BlogPostPage({
 
         <article
           className="prose prose-neutral max-w-none"
-          dangerouslySetInnerHTML={{ __html: content }}
+          dangerouslySetInnerHTML={{ __html: mdxContent }}
         />
         {nextPost && <NextPostButton slug={nextPost.slug} />}
       </main>
 
-      <PostSuggestions
-        posts={suggestions.map((s) => ({
-          slug: s.slug,
-          title: s.title,
-          summary: s.summary || "",
-          thumbnail: s.thumbnail || "",
-          category: s.category || "",
-        }))}
-      />
+      <PostSuggestions posts={formattedSuggestions} />
       <Footer />
 
       {/* JSON-LD Schema para SEO */}

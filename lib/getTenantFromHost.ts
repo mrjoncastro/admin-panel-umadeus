@@ -2,8 +2,13 @@ import { headers } from "next/headers";
 import createPocketBase from "@/lib/pocketbase";
 
 export async function getTenantFromHost(): Promise<string | null> {
-  const headerList = await headers();
-  const host = headerList.get("host")?.split(":")[0] ?? "";
+  let host = "";
+  try {
+    const headerList = await headers();
+    host = headerList.get("host")?.split(":")[0] ?? "";
+  } catch {
+    return null;
+  }
   if (!host) return null;
 
   const pb = createPocketBase();
