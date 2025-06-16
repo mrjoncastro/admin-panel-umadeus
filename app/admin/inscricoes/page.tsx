@@ -158,6 +158,7 @@ export default function ListaInscricoesPage() {
         tamanho: inscricao.tamanho,
         genero: inscricao.genero,
         email: inscricao.email,
+        cliente: tenantId,
         campo: campo?.id,
         responsavel: inscricao.criado_por,
       });
@@ -209,6 +210,7 @@ export default function ListaInscricoesPage() {
           evento: inscricao.evento,
           liderId: campo?.responsavel,
           pedidoId: pedido.id,
+          cliente: tenantId,
           valor: pedido.valor,
           url_pagamento: checkout.url,
         }),
