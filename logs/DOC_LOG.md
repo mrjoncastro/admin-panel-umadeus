@@ -137,3 +137,4 @@
 ## [2025-06-16] Removida pasta app/loja/inscricoes; link de inscricao aponta para /loja/eventos e redirect corrigido. Lint e build sem erros.
 ## [2025-06-24] Removido script generatePostsJson e atualizados testes para buscar posts via PocketBase.
 ## [2025-06-24] Ajustada regex no LayoutWrapper para ocultar Header em rotas de inscrições públicas. Lint e build executados com erros em app/blog/post/[slug]/page.tsx.
+## [2025-06-16] Botão de inscrição adicionado nos cards de eventos e formulário exibido sob demanda. Teste atualizado. Lint sem erros e build com falha em posts.

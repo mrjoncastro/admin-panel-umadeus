@@ -18,6 +18,7 @@ interface Evento {
 
 export default function EventosPage() {
   const [eventos, setEventos] = useState<Evento[]>([]);
+  const [selectedEventoId, setSelectedEventoId] = useState<string | null>(null);
 
   useEffect(() => {
     const tenantId = localStorage.getItem("tenant_id");
@@ -61,11 +62,17 @@ export default function EventosPage() {
               <p className="text-sm text-gray-600">{evento.descricao}</p>
               <p className="text-sm font-medium text-gray-800">{formatDate(evento.data)}</p>
               <p className="text-sm text-gray-500">{evento.cidade}</p>
+              <button
+                className="btn btn-primary mt-2"
+                onClick={() => setSelectedEventoId(evento.id)}
+              >
+                Inscrever
+              </button>
             </div>
           </div>
         ))}
       </div>
-      <InscricaoForm />
+      {selectedEventoId && <InscricaoForm eventoId={selectedEventoId} />}
     </main>
   );
 }

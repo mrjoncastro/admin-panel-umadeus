@@ -7,7 +7,11 @@ interface Campo {
   nome: string;
 }
 
-export default function InscricaoForm() {
+interface InscricaoFormProps {
+  eventoId: string;
+}
+
+export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
   const [status, setStatus] = useState<
     "idle" | "sending" | "success" | "error"
   >("idle");
@@ -59,6 +63,7 @@ export default function InscricaoForm() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-8">
+        <input type="hidden" name="evento" value={eventoId} />
         <div className="grid md:grid-cols-2 gap-10">
           {/* Dados Pessoais */}
           <section>
