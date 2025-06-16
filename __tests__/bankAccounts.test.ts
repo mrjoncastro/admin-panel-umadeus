@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { searchBanks, createBankAccount } from '../lib/bankAccounts';
+import { searchBanks, createBankAccount, getBankAccountsByTenant } from '../lib/bankAccounts';
 import type PocketBase from 'pocketbase';
 
 describe('searchBanks', () => {
@@ -93,5 +93,18 @@ describe('createBankAccount', () => {
     expect(createMock).toHaveBeenCalledWith(
       expect.objectContaining({ ownerName: 'Titular', accountName: 'Conta Salario', bankAccountType: 'conta_salario' })
     );
+  });
+});
+
+describe('getBankAccountsByTenant', () => {
+  it('filtra por cliente', async () => {
+    const listMock = vi.fn().mockResolvedValue([{ id: '1', cliente: 'cli1' }]);
+    const pb = {
+      collection: vi.fn(() => ({ getFullList: listMock })),
+    } as unknown as PocketBase;
+    const contas = await getBankAccountsByTenant(pb, 'cli1');
+    expect(pb.collection).toHaveBeenCalledWith('clientes_contas_bancarias');
+    expect(listMock).toHaveBeenCalledWith({ filter: "cliente='cli1'" });
+    expect(contas[0].id).toBe('1');
   });
 });
