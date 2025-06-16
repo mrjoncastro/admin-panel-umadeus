@@ -2,24 +2,16 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { getPostsClientPB, type PostClientRecord } from "@/lib/posts/getPostsClientPB";
 
-interface Post {
-  title: string;
-  date: string;
-  summary: string;
-  slug: string;
-  thumbnail?: string | null;
-  category?: string | null;
-}
+type Post = PostClientRecord;
 
 export default function BlogHeroCarousel() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    fetch("/posts.json")
-      .then((res) => res.json())
-      .then((data) => setPosts(data.slice(0, 3)));
+    getPostsClientPB().then((data) => setPosts(data.slice(0, 3)));
   }, []);
 
   useEffect(() => {
