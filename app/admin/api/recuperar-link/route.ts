@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   try {
     const { cpf, telefone, cliente } = await req.json();
 
-    console.log("📨 Dados recebidos:", { cpf, telefone });
+    logInfo("📨 Dados recebidos:", { cpf, telefone });
 
     if (!cpf && !telefone) {
       logInfo("⚠️ CPF ou telefone não fornecido");
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (!pb.authStore.isValid) {
-      console.log("🔐 Autenticando como admin...");
+      logInfo("🔐 Autenticando como admin...");
       await pb.admins.authWithPassword(
         process.env.PB_ADMIN_EMAIL!,
         process.env.PB_ADMIN_PASSWORD!
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
 
     const filtroBase = cpf ? `cpf = "${cpf}"` : `telefone = "${telefone}"`;
     const filtro = `${filtroBase} && cliente='${cliente}'`;
-    console.log("🔎 Filtro usado:", filtro);
+    logInfo("🔎 Filtro usado:", filtro);
 
     const inscricoes = await pb.collection("inscricoes").getFullList({
       filter: filtro,
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     logInfo(`📋 ${inscricoes.length} inscrição(ões) encontrada(s)`);
 
     if (!inscricoes.length) {
-      console.warn("❌ Nenhuma inscrição encontrada.");
+      logInfo("❌ Nenhuma inscrição encontrada.");
       return NextResponse.json(
         { error: "Inscrição não encontrada. Por favor faça a inscrição." },
         { status: 404 }
@@ -63,26 +63,26 @@ export async function POST(req: NextRequest) {
     logInfo("🧾 Pedido expandido com sucesso");
 
     if (inscricao.status === "cancelado") {
-      console.log("❌ Inscrição recusada pela liderança.");
+      logInfo("❌ Inscrição recusada pela liderança.");
       return NextResponse.json({ status: "recusado" });
     }
 
     if (!inscricao.confirmado_por_lider || !pedido) {
-      console.log("⏳ Inscrição aguardando confirmação da liderança.");
+      logInfo("⏳ Inscrição aguardando confirmação da liderança.");
       return NextResponse.json({ status: "aguardando_confirmacao" });
     }
 
     if (pedido.status === "pago") {
-      console.log("✅ Pagamento já confirmado.");
+      logInfo("✅ Pagamento já confirmado.");
       return NextResponse.json({ status: "pago" });
     }
 
     if (pedido.status === "cancelado") {
-      console.log("❌ Pedido cancelado.");
+      logInfo("❌ Pedido cancelado.");
       return NextResponse.json({ status: "cancelado" });
     }
 
-    console.log("⏳ Pagamento pendente. Link:", pedido.link_pagamento);
+    logInfo("⏳ Pagamento pendente. Link:", pedido.link_pagamento);
 
     return NextResponse.json({
       status: "pendente",

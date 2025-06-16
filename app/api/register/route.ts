@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import createPocketBase from "@/lib/pocketbase";
 import { logInfo } from "@/lib/logger";
+import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
@@ -26,9 +27,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(novoUsuario, { status: 201 });
   } catch (err: unknown) {
     if (err instanceof Error) {
-      console.error("\u274C Erro em /api/register:", err.message);
+      await logConciliacaoErro(`Erro em /api/register: ${err.message}`);
     } else {
-      console.error("\u274C Erro desconhecido em /api/register.");
+      await logConciliacaoErro("Erro desconhecido em /api/register.");
     }
     return NextResponse.json(
       { erro: "Erro ao processar a requisi\u00E7\u00E3o." },

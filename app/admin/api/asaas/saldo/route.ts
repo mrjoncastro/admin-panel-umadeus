@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireClienteFromHost } from "@/lib/clienteAuth";
+import { logInfo } from "@/lib/logger";
+import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function GET(req: NextRequest) {
   const auth = await requireClienteFromHost(req);
@@ -19,11 +21,11 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  console.log("🔑 API Key utilizada:", apiKey);
+  logInfo("🔑 API Key utilizada:", apiKey);
 
   const keyHeader = apiKey.startsWith("$") ? apiKey : `$${apiKey}`;
-  console.log("🔑 ASAAS_API_URL:", baseUrl);
-  console.log("🔑 ASAAS_API_KEY final:", keyHeader);
+  logInfo("🔑 ASAAS_API_URL:", baseUrl);
+  logInfo("🔑 ASAAS_API_KEY final:", keyHeader);
 
   try {
     const res = await fetch(`${baseUrl}/finance/balance`, {
@@ -36,7 +38,7 @@ export async function GET(req: NextRequest) {
 
     if (!res.ok) {
       const errorBody = await res.text();
-      console.error("Erro ao consultar saldo Asaas:", errorBody);
+      await logConciliacaoErro(`Erro ao consultar saldo Asaas: ${errorBody}`);
       return NextResponse.json(
         { error: "Falha ao consultar saldo" },
         { status: 500 },
@@ -46,7 +48,7 @@ export async function GET(req: NextRequest) {
     const data = await res.json();
     return NextResponse.json(data);
   } catch (err) {
-    console.error("Erro inesperado ao consultar saldo:", err);
+    await logConciliacaoErro(`Erro inesperado ao consultar saldo: ${String(err)}`);
     return NextResponse.json(
       { error: "Erro ao consultar saldo" },
       { status: 500 },

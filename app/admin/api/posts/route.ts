@@ -3,6 +3,7 @@ import path from "path";
 import fs from "fs";
 import { writeFile, mkdir } from "fs/promises";
 import matter from "gray-matter";
+import { logConciliacaoErro } from "@/lib/server/logger";
 
 function slugify(text: string) {
   return text
@@ -52,7 +53,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ slug, thumbnail });
   } catch (err) {
-    console.error("Erro ao salvar post:", err);
+    await logConciliacaoErro(`Erro ao salvar post: ${String(err)}`);
     return NextResponse.json(
       { error: "Erro ao salvar post." },
       { status: 500 }

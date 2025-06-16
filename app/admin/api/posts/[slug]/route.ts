@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function GET(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -38,7 +39,7 @@ export async function GET(req: NextRequest) {
       content,
     });
   } catch (err) {
-    console.error("Erro ao carregar post:", err);
+    await logConciliacaoErro(`Erro ao carregar post: ${String(err)}`);
     return NextResponse.json(
       { error: "Erro ao carregar post." },
       { status: 500 }

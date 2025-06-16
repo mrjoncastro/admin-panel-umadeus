@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/apiAuth";
+import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function GET(req: NextRequest) {
   const auth = requireRole(req, "coordenador");
@@ -14,7 +15,7 @@ export async function GET(req: NextRequest) {
     });
     return NextResponse.json(categorias, { status: 200 });
   } catch (err) {
-    console.error("Erro ao listar categorias:", err);
+    await logConciliacaoErro(`Erro ao listar categorias: ${String(err)}`);
     return NextResponse.json({ error: "Erro ao listar" }, { status: 500 });
   }
 }
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest) {
       .create({ nome, slug, cliente: user.cliente });
     return NextResponse.json(categoria, { status: 201 });
   } catch (err) {
-    console.error("Erro ao criar categoria:", err);
+    await logConciliacaoErro(`Erro ao criar categoria: ${String(err)}`);
     return NextResponse.json({ error: "Erro ao criar" }, { status: 500 });
   }
 }

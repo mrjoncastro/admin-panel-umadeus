@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import createPocketBase from "@/lib/pocketbase";
 import { EventoRecord, atualizarStatus } from "@/lib/events";
+import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function GET(req: NextRequest) {
   const pb = createPocketBase();
@@ -17,7 +18,7 @@ export async function GET(req: NextRequest) {
     }));
     return NextResponse.json(comUrls);
   } catch (err) {
-    console.error("Erro ao listar eventos:", err);
+    await logConciliacaoErro(`Erro ao listar eventos: ${String(err)}`);
     return NextResponse.json([], { status: 500 });
   }
 }

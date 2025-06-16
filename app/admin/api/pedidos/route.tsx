@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import createPocketBase from "@/lib/pocketbase";
 import { PRECO_PULSEIRA, PRECO_KIT } from "@/lib/constants";
+import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
@@ -52,7 +53,7 @@ export async function POST(req: NextRequest) {
       status: pedido.status,
     });
   } catch (err: unknown) {
-    console.error("❌ Erro ao criar pedido:", err);
+    await logConciliacaoErro(`Erro ao criar pedido: ${String(err)}`);
     return NextResponse.json(
       { erro: "Erro ao criar pedido." },
       { status: 500 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireClienteFromHost } from "@/lib/clienteAuth";
 import { logInfo } from "@/lib/logger";
 import { buildExternalReference } from "@/lib/asaas";
+import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function POST(req: NextRequest) {
   const auth = await requireClienteFromHost(req);
@@ -20,7 +21,7 @@ export async function POST(req: NextRequest) {
       "❌ ASAAS_API_KEY não definida! Confira seu .env ou painel de variáveis."
     );
   }
-  console.log("🔑 API Key utilizada:", apiKey);
+  logInfo("🔑 API Key utilizada:", apiKey);
 
   const keyHeader = apiKey.startsWith("$") ? apiKey : "$" + apiKey;
 
@@ -129,10 +130,9 @@ export async function POST(req: NextRequest) {
       const raw = await clienteResponse.text();
 
       if (!clienteResponse.ok) {
-        console.error("❌ Erro ao criar cliente:", {
-          status: clienteResponse.status,
-          body: raw,
-        });
+        await logConciliacaoErro(
+          `Erro ao criar cliente: status ${clienteResponse.status} | ${raw}`,
+        );
         throw new Error("Erro ao criar cliente");
       }
 
@@ -178,10 +178,9 @@ export async function POST(req: NextRequest) {
 
     if (!cobrancaResponse.ok) {
       const errorText = await cobrancaResponse.text();
-      console.error("❌ Erro ao criar cobrança:", {
-        status: cobrancaResponse.status,
-        body: errorText,
-      });
+      await logConciliacaoErro(
+        `Erro ao criar cobrança: status ${cobrancaResponse.status} | ${errorText}`,
+      );
       throw new Error("Erro ao criar cobrança");
     }
 
@@ -196,7 +195,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: link });
   } catch (err: unknown) {
-    console.error("❌ Erro ao gerar link de pagamento Asaas:", err);
+    await logConciliacaoErro(
+      `Erro ao gerar link de pagamento Asaas: ${String(err)}`,
+    );
     return NextResponse.json(
       { error: "Erro ao gerar link de pagamento" },
       { status: 500 }
