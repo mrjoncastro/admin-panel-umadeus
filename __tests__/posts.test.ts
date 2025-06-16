@@ -45,3 +45,4 @@ describe('posts utilities with PocketBase', () => {
     expect(nextPost?.slug).toBe('segundo-post')
   })
 })
+ })
