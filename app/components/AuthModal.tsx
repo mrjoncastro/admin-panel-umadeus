@@ -27,16 +27,17 @@ export default function AuthModal({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm" />
-            </Dialog.Overlay>
-            <Dialog.Content asChild>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-white dark:bg-zinc-900 text-black dark:text-white p-6 rounded-xl shadow-xl w-full max-w-md relative"
+                className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm"
               >
-                <Dialog.Title className="sr-only">Autenticação</Dialog.Title>
+                <Dialog.Content asChild>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    className="bg-white dark:bg-zinc-900 text-black dark:text-white p-6 rounded-xl shadow-xl w-full max-w-md relative"
+                  >
+                    <Dialog.Title className="sr-only">Autenticação</Dialog.Title>
+                    <Dialog.Description className="sr-only">Formulário de autenticação</Dialog.Description>
                 <button
                   onClick={onClose}
                   className="absolute top-2 right-2 text-xl leading-none"
@@ -61,6 +62,8 @@ export default function AuthModal({
                 {view === "login" ? <LoginForm /> : <SignUpForm onSuccess={onClose} />}
               </motion.div>
             </Dialog.Content>
+          </motion.div>
+            </Dialog.Overlay>
           </Dialog.Portal>
         )}
       </AnimatePresence>

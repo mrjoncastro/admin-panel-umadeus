@@ -85,6 +85,7 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
         <Dialog.Title asChild>
           <h3 className="text-lg font-semibold text-center">Adicionar Conta</h3>
         </Dialog.Title>
+        <Dialog.Description className="sr-only">Formulário de conta bancária</Dialog.Description>
         <input
           className="input-base"
           placeholder="Nome do titular"
