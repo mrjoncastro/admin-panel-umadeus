@@ -95,7 +95,7 @@
 ## [2025-06-13] Documentadas seções de LoadingOverlay, SmoothTabs e ModalAnimated no design system.
 ## [2025-06-12] Corrigido uso da variável PB_URL na rota de recuperação de link. Agora utiliza NEXT_PUBLIC_PB_URL e README/.env.example atualizados. Impacto: padronização das variáveis de ambiente.
 ## [2025-06-14] Removidas entradas duplicadas de dependências e atualizado package-lock.json.
-## [2025-06-14] Personalizacao salva em m24_clientes.cor_primaria
+## [2025-06-14] Personalizacao salva nos campos cor_primaria, logo_url e font da colecao m24_clientes
 ## [2025-06-13] Documentada persistência das configurações no design system.
 ## [2025-06-15] Documentadas rotas de saldo e transferencia do Asaas no README e novo guia saldo-transferencia-asaas.md.
 ## [2025-06-13] Especificado no README que apenas coordenadores visualizam métricas financeiras; líderes veem somente contagens de inscrições e pedidos.
@@ -123,3 +123,4 @@
 ## [2025-06-21] Cadastro de produtos envia campos slug e cores
 
 ## [2025-06-16] Corrigida atualização de slug e cores ao editar produto.
+## [2025-06-22] Documentacao revisada para indicar que cor_primaria, logo_url e font ficam em m24_clientes
