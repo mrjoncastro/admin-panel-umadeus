@@ -27,7 +27,7 @@ export default function Home() {
           const host = window.location.hostname;
           try {
             const cliente = await pb
-              .collection("m24_clientes")
+              .collection("clientes_config")
               .getFirstListItem(`dominio='${host}'`);
             tenantId = cliente.id;
             localStorage.setItem("tenant_id", tenantId);

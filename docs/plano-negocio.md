@@ -4,7 +4,7 @@ Implementamos a base multi-tenant do sistema no banco usando PocketBase, já pre
 
 ## Estrutura das Coleções
 
-### 1. m24_clientes
+### 1. clientes_config
 - Cadastro central de cada cliente (tenant).
 - Campo `documento` (CPF ou CNPJ) obrigatório e único, para identificação fiscal e integrações.
 
@@ -64,7 +64,7 @@ As rotas de servidor (`/api`) chamam `getTenantFromHost` para identificar o clie
 ## 1. Uso de Subcontas e API Key do Asaas
 
 * **Cada cliente (tenant) possui sua própria subconta no Asaas.**
-* Para cada subconta, armazene com segurança a respectiva **API Key** (ex: campo `asaas_api_key` na coleção `m24_clientes`).
+* Para cada subconta, armazene com segurança a respectiva **API Key** (ex: campo `asaas_api_key` na coleção `clientes_config`).
 * Toda operação de cobrança, consulta ou emissão de pagamento deve sempre utilizar a **API Key da subconta do cliente envolvido**.
 * **Nunca exponha a API Key de nenhuma subconta no frontend.** Toda requisição ao Asaas deve ser feita via backend, buscando a chave correta do cliente antes de qualquer chamada.
 
@@ -78,7 +78,7 @@ As rotas de servidor (`/api`) chamam `getTenantFromHost` para identificar o clie
 * Ao receber uma notificação:
 
   1. **Identifique a subconta do evento** (usando `accountId` do payload ou relacionando pelo `id_pagamento` ao pedido/inscrição).
-  2. Busque no banco o cliente dono da subconta (`m24_clientes.asaas_api_key` ou `m24_clientes.asaas_account_id`).
+  2. Busque no banco o cliente dono da subconta (`clientes_config.asaas_api_key` ou `clientes_config.asaas_account_id`).
   3. Atualize registros apenas desse cliente.
   4. Registre/logue o evento para conciliação.
 
@@ -88,7 +88,7 @@ As rotas de servidor (`/api`) chamam `getTenantFromHost` para identificar o clie
 
   ```js
   // Exemplo: buscar chave da subconta
-  const cliente = await pb.collection('m24_clientes').getOne(CLIENTE_ID)
+  const cliente = await pb.collection('clientes_config').getOne(CLIENTE_ID)
   const apiKey = cliente.asaas_api_key
   // Usar apiKey na autenticação das chamadas
   ```

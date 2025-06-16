@@ -41,7 +41,7 @@ export default function SignUpForm({
         let tenantId = localStorage.getItem("tenant_id");
         if (!tenantId) {
           const cliente = await pb
-            .collection("m24_clientes")
+            .collection("clientes_config")
             .getFirstListItem(`dominio='${window.location.hostname}'`);
           tenantId = cliente?.id;
           if (tenantId) {

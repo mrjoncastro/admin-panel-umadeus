@@ -37,7 +37,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
         const pb = createPocketBase();
         const dominio = window.location.hostname;
         const cliente = await pb
-          .collection("m24_clientes")
+          .collection("clientes_config")
           .getFirstListItem(`dominio='${dominio}'`);
         const cfg: AppConfig = {
           font: cliente.font || defaultConfig.font,

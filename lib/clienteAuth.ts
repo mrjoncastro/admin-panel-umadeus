@@ -31,7 +31,7 @@ export async function requireClienteFromHost(
 
   try {
     const cliente = await pb
-      .collection("m24_clientes")
+      .collection("clientes_config")
       .getFirstListItem(`dominio = \"${host}\"`);
     if (!cliente) {
       return { error: "Cliente n\u00e3o encontrado", status: 404 };
