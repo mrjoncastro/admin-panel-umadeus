@@ -84,6 +84,7 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `PB_ADMIN_PASSWORD` - senha do administrador
 - `ASAAS_API_URL` - URL base da API do Asaas (ex.: `https://api-sandbox.asaas.com/api/v3/`)
 - `NEXT_PUBLIC_SITE_URL` - endereço do site do cliente
+- `NEXT_PUBLIC_BRASILAPI_URL` - base para chamadas à BrasilAPI
 
 Os servidores identificam automaticamente o tenant pelo domínio de cada requisição usando `getTenantFromHost`.
 
@@ -192,6 +193,11 @@ Resposta de exemplo:
 ```json
 { "data": [] }
 ```
+Use `start` e `end` (AAAA-MM-DD) para filtrar o período. A rota usa
+`requireClienteFromHost` para obter a chave do cliente, define o `User-Agent`
+e consulta `${ASAAS_API_URL}/financialTransactions` com os parâmetros padrão
+`offset=0`, `limit=10` e `order=asc`, enviando os mesmos cabeçalhos utilizados
+em `/admin/api/asaas/saldo`.
 
 ### Coleção `compras`
 

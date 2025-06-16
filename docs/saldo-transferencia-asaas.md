@@ -35,3 +35,11 @@ A rota retorna o objeto da transferência criado pelo Asaas.
 ## Extrato de Movimentações
 
 Na página **Saldo** é possível listar o extrato financeiro usando o endpoint `/admin/api/asaas/extrato`. Utilize os botões **Exportar PDF** ou **Exportar XLSM** para salvar os dados.
+Para filtrar, informe `start` e `end` (AAAA-MM-DD):
+
+```bash
+GET /admin/api/asaas/extrato?start=2025-01-01&end=2025-01-31
+```
+Essa rota consulta `${ASAAS_API_URL}/financialTransactions`, aplicando os
+parâmetros `offset=0`, `limit=10` e `order=asc`. A chave do cliente é obtida via
+`requireClienteFromHost` e o mesmo `User-Agent` utilizado no saldo.

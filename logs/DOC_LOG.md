@@ -101,3 +101,7 @@
 ## [2025-06-13] Especificado no README que apenas coordenadores visualizam métricas financeiras; líderes veem somente contagens de inscrições e pedidos.
 ## [2025-06-13] DashboardAnalytics agora aceita mostrarFinanceiro para ocultar seções com valores
 ## [2025-06-16] Páginas Saldo e Transferências criadas com extrato exportável em PDF/XLSM. README e guia atualizados.
+## [2025-06-16] Rota /admin/api/asaas/extrato atualizada para requireClienteFromHost e docs revisados.
+## [2025-06-16] README e guia atualizados mencionando uso de /finance/transactions no extrato com mesmo cabeçalho de saldo.
+## [2025-06-16] Extrato agora usa /financialTransactions e define offset, limit e order=asc.
+## [2025-06-16] Documentada variavel NEXT_PUBLIC_BRASILAPI_URL e formulario usa BrasilAPI

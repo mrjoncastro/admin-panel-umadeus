@@ -62,6 +62,7 @@ export async function POST(req: NextRequest) {
 
   let clienteApiKey: string | null = null;
   let clienteId: string | null = null;
+  let clienteNome: string | null = null;
   let usuarioId: string | null = null;
   let inscricaoId: string | null = null;
   const accountId = payment?.accountId || body.accountId;
@@ -72,6 +73,7 @@ export async function POST(req: NextRequest) {
         .getFirstListItem(`asaas_account_id = "${accountId}"`);
       clienteApiKey = c?.asaas_api_key ?? null;
       clienteId = c?.id ?? null;
+      clienteNome = c?.nome ?? null;
     } catch {
       /* ignore */
     }
@@ -93,6 +95,7 @@ export async function POST(req: NextRequest) {
     try {
       const c = await pb.collection("m24_clientes").getOne(clienteId);
       clienteApiKey = c?.asaas_api_key ?? null;
+      clienteNome = c?.nome ?? null;
     } catch {
       /* ignore */
     }
@@ -102,6 +105,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Cliente não encontrado" }, { status: 404 });
   }
 
+  console.log("🔑 API Key utilizada:", clienteApiKey);
+
   const keyHeader = clienteApiKey.startsWith("$")
     ? clienteApiKey
     : `$${clienteApiKey}`;
@@ -110,7 +115,7 @@ export async function POST(req: NextRequest) {
     headers: {
       accept: "application/json",
       "access-token": keyHeader,
-      "User-Agent": "qg3",
+      "User-Agent": clienteNome ?? "qg3",
     },
   });
 
