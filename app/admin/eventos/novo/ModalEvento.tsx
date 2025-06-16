@@ -51,9 +51,11 @@ export function ModalEvento<T extends Record<string, unknown>>({
               >
                 <form onSubmit={handleSubmit} className="p-6 space-y-5" autoComplete="off">
           <div className="flex justify-between items-center mb-3">
-            <h2 className="text-xl font-bold" style={{ fontFamily: "var(--font-heading)" }}>
-              {initial?.titulo ? "Editar Evento" : "Novo Evento"}
-            </h2>
+            <Dialog.Title asChild>
+              <h2 className="text-xl font-bold" style={{ fontFamily: "var(--font-heading)" }}>
+                {initial?.titulo ? "Editar Evento" : "Novo Evento"}
+              </h2>
+            </Dialog.Title>
             <button
               type="button"
               className="text-lg px-3 py-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800"

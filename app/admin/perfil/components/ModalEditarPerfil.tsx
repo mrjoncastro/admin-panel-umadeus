@@ -80,7 +80,9 @@ export default function ModalEditarPerfil({
               exit={{ opacity: 0, scale: 0.95 }}
               className="bg-white dark:bg-zinc-900 text-black dark:text-white p-6 rounded-xl shadow-xl w-full max-w-md space-y-5"
             >
-            <h3 className="text-xl font-semibold text-center">Editar Perfil</h3>
+            <Dialog.Title asChild>
+              <h3 className="text-xl font-semibold text-center">Editar Perfil</h3>
+            </Dialog.Title>
 
         <input
           type="text"
