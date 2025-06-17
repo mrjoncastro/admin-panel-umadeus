@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import createPocketBase from "@/lib/pocketbase";
+import getTenantFromClient from "@/lib/getTenantFromClient";
 import ProdutoInterativo from "./ProdutoInterativo";
 import type { Produto as ProdutoBase } from "@/types";
 
@@ -19,21 +20,24 @@ export default function ProdutoDetalhe() {
   useEffect(() => {
     if (!slug) return;
     const pb = createPocketBase();
-    const tenantId = localStorage.getItem("tenant_id");
-    pb
-      .collection("produtos")
-      .getFirstListItem<ProdutoPB>(`slug = '${slug}' && cliente='${tenantId}'`)
-      .then((p: ProdutoPB) => {
-        const imgs = Array.isArray(p.imagens)
-          ? p.imagens.map((img) => pb.files.getURL(p, img))
-          : Object.fromEntries(
-              Object.entries(p.imagens as Record<string, string[]>).map(
-                ([g, arr]) => [g, arr.map((img) => pb.files.getURL(p, img))]
-              )
-            );
-        setProduto({ ...p, imagens: imgs } as ProdutoBase);
-      })
-      .catch(() => setErro(true));
+    async function carregarProduto() {
+      const tenantId = await getTenantFromClient();
+      pb
+        .collection("produtos")
+        .getFirstListItem<ProdutoPB>(`slug = '${slug}' && cliente='${tenantId}'`)
+        .then((p: ProdutoPB) => {
+          const imgs = Array.isArray(p.imagens)
+            ? p.imagens.map((img) => pb.files.getURL(p, img))
+            : Object.fromEntries(
+                Object.entries(p.imagens as Record<string, string[]>).map(
+                  ([g, arr]) => [g, arr.map((img) => pb.files.getURL(p, img))]
+                )
+              );
+          setProduto({ ...p, imagens: imgs } as ProdutoBase);
+        })
+        .catch(() => setErro(true));
+    }
+    carregarProduto();
   }, [slug]);
 
   if (erro) {
