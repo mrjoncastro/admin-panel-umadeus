@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
   try {
     const cliente = await pb
       .collection("clientes_config")
-      .getOne(user.cliente);
+      .getFirstListItem(`cliente='${user.cliente}'`);
     return NextResponse.json(
       {
         cor_primary: cliente.cor_primary ?? "",
@@ -34,12 +34,15 @@ export async function PUT(req: NextRequest) {
   const { pb, user } = auth;
   try {
     const { cor_primary, logo_url, font } = await req.json();
-    const cliente = await pb.collection("clientes_config").update(user.cliente, {
+    const cliente = await pb
+      .collection("clientes_config")
+      .getFirstListItem(`cliente='${user.cliente}'`);
+    const atualizado = await pb.collection("clientes_config").update(cliente.id, {
       cor_primary,
       logo_url,
       font,
     });
-    return NextResponse.json(cliente, { status: 200 });
+    return NextResponse.json(atualizado, { status: 200 });
   } catch (err) {
     await logConciliacaoErro(`Erro ao atualizar configuracoes: ${String(err)}`);
     return NextResponse.json({ error: "Erro ao atualizar" }, { status: 500 });
