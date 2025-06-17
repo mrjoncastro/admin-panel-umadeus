@@ -248,6 +248,7 @@ export default function EditarProdutoPage() {
             name="nome"
             placeholder="Ex: Camiseta Básica Preta"
             defaultValue={String(initial.nome)}
+            maxLength={30}
             required
           />
           <input
@@ -427,6 +428,7 @@ export default function EditarProdutoPage() {
             rows={2}
             placeholder="Ex: Camiseta 100% algodão, confortável, não desbota."
             defaultValue={String(initial.descricao || "")}
+            maxLength={150}
             required
           />
           <span className="text-xs text-gray-400 ml-1">

@@ -76,8 +76,21 @@ export default function EditarEventoPage() {
         Editar Evento
       </h1>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input className="input-base" name="titulo" defaultValue={String(initial.titulo)} required />
-        <textarea className="input-base" name="descricao" rows={2} defaultValue={String(initial.descricao)} required />
+        <input
+          className="input-base"
+          name="titulo"
+          defaultValue={String(initial.titulo)}
+          maxLength={30}
+          required
+        />
+        <textarea
+          className="input-base"
+          name="descricao"
+          rows={2}
+          defaultValue={String(initial.descricao)}
+          maxLength={150}
+          required
+        />
         <input className="input-base" name="data" type="date" defaultValue={String(initial.data)} required />
         <input className="input-base" name="cidade" defaultValue={String(initial.cidade)} required />
         <input type="file" name="imagem" accept="image/*" className="input-base" />
