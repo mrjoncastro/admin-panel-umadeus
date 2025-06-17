@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from "react";
 
+const N8N_WEBHOOK_URL =
+  process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || "https://SEU_WEBHOOK_DO_N8N";
+
 interface Campo {
   id: string;
   nome: string;
@@ -32,7 +35,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
     const data = new FormData(form);
 
     try {
-      const response = await fetch("https://SEU_WEBHOOK_DO_N8N", {
+      const response = await fetch(N8N_WEBHOOK_URL, {
         method: "POST",
         body: JSON.stringify(Object.fromEntries(data)),
         headers: { "Content-Type": "application/json" },
