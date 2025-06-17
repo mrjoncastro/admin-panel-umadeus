@@ -4,6 +4,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { generatePrimaryShades } from "@/utils/primaryShades";
 import createPocketBase from "@/lib/pocketbase";
 
+const STALE_TIME = 1000 * 60 * 60; // 1 hour
+
 export type AppConfig = {
   font: string;
   primaryColor: string;
@@ -31,69 +33,90 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
   const [configId, setConfigId] = useState<string | null>(null);
 
   useEffect(() => {
-    async function loadConfig() {
-      if (typeof window === "undefined") return;
+    if (typeof window === "undefined") return;
 
+    const cached = localStorage.getItem("app_config");
+    if (cached) {
       try {
-        const tenantRes = await fetch("/api/tenant");
-        if (tenantRes.ok) {
-          const { tenantId } = await tenantRes.json();
-          if (tenantId) {
-            const pb = createPocketBase();
-            const cliente = await pb
-              .collection("clientes_config")
-              .getFirstListItem(`cliente='${tenantId}'`);
-            setConfigId(cliente.id);
-            const cfg: AppConfig = {
-              font: cliente.font || defaultConfig.font,
-              primaryColor: cliente.cor_primary || defaultConfig.primaryColor,
-              logoUrl: cliente.logo_url || defaultConfig.logoUrl,
-            };
-            setConfig(cfg);
-            localStorage.setItem("app_config", JSON.stringify(cfg));
-            return;
-          }
-        }
+        setConfig(JSON.parse(cached));
       } catch {
         /* ignore */
       }
+    }
 
-      const token = localStorage.getItem("pb_token");
-      const user = localStorage.getItem("pb_user");
+    async function refreshConfig() {
+      const storedTime = localStorage.getItem("app_config_time");
+      const isStale =
+        !storedTime || Date.now() - Number(storedTime) > STALE_TIME;
 
-      if (token && user) {
+      if (!cached || isStale) {
         try {
-          const res = await fetch("/admin/api/configuracoes", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "X-PB-User": user,
-            },
-          });
-          if (res.ok) {
-            const data = await res.json();
-            setConfig({
-              font: data.font || defaultConfig.font,
-              primaryColor: data.cor_primary || defaultConfig.primaryColor,
-              logoUrl: data.logo_url || defaultConfig.logoUrl,
-            });
-            return;
+          const tenantRes = await fetch("/api/tenant");
+          if (tenantRes.ok) {
+            const { tenantId } = await tenantRes.json();
+            if (tenantId) {
+              const pb = createPocketBase();
+              const cliente = await pb
+                .collection("clientes_config")
+                .getOne(String(tenantId));
+              const cfg: AppConfig = {
+                font: cliente.font || defaultConfig.font,
+                primaryColor:
+                  cliente.cor_primary || defaultConfig.primaryColor,
+                logoUrl: cliente.logo_url || defaultConfig.logoUrl,
+              };
+              setConfig(cfg);
+              localStorage.setItem("app_config", JSON.stringify(cfg));
+              localStorage.setItem("app_config_time", Date.now().toString());
+              return;
+            }
           }
         } catch {
           /* ignore */
         }
-      }
 
-      const stored = localStorage.getItem("app_config");
-      if (stored) setConfig(JSON.parse(stored));
+        const token = localStorage.getItem("pb_token");
+        const user = localStorage.getItem("pb_user");
+
+        if (token && user) {
+          try {
+            const res = await fetch("/admin/api/configuracoes", {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "X-PB-User": user,
+              },
+            });
+            if (res.ok) {
+              const data = await res.json();
+              const cfg = {
+                font: data.font || defaultConfig.font,
+                primaryColor:
+                  data.cor_primary || defaultConfig.primaryColor,
+                logoUrl: data.logo_url || defaultConfig.logoUrl,
+              };
+              setConfig(cfg);
+              localStorage.setItem("app_config", JSON.stringify(cfg));
+              localStorage.setItem(
+                "app_config_time",
+                Date.now().toString()
+              );
+              return;
+            }
+          } catch {
+            /* ignore */
+          }
+        }
+      }
     }
 
-    loadConfig();
+    refreshConfig();
   }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     localStorage.setItem("app_config", JSON.stringify(config));
+    localStorage.setItem("app_config_time", Date.now().toString());
     document.documentElement.style.setProperty("--font-body", config.font);
     document.documentElement.style.setProperty("--font-heading", config.font);
     document.documentElement.style.setProperty("--accent", config.primaryColor);
