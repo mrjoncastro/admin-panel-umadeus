@@ -38,16 +38,9 @@ export default function SignUpForm({
   useEffect(() => {
     async function loadCampos() {
       try {
-        let tenantId = localStorage.getItem("tenant_id");
-        if (!tenantId) {
-          const cliente = await pb
-            .collection("clientes_config")
-            .getFirstListItem(`dominio='${window.location.hostname}'`);
-          tenantId = cliente?.id;
-          if (tenantId) {
-            localStorage.setItem("tenant_id", tenantId);
-          }
-        }
+        const resTenant = await fetch("/api/tenant");
+        const data = resTenant.ok ? await resTenant.json() : { tenantId: null };
+        const tenantId = data.tenantId;
 
         if (!tenantId) return;
 
