@@ -51,7 +51,7 @@ export type CreateCheckoutParams = {
 export async function createCheckout(
   params: CreateCheckoutParams,
   apiKey: string,
-  agentUser = "qg3",
+  agentUser: string,
   baseUrl = process.env.ASAAS_API_URL
 ): Promise<string> {
   const rawKey = apiKey;
@@ -73,9 +73,9 @@ export async function createCheckout(
     billingTypes: params.paymentMethods ?? ["CREDIT_CARD", "PIX"],
     chargeTypes: ["DETACHED", "INSTALLMENT"],
     callback: {
-      successUrl: "https://m24saude.com.br/asaas/sucesso",
-      cancelUrl: "https://m24saude.com.br/asaas/cancelado",
-      expiredUrl: "https://m24saude.com.br/asaas/expirado",
+      successUrl: params.successUrl,
+      cancelUrl: params.errorUrl,
+      expiredUrl: params.errorUrl,
     },
     minutesToExpire: 15,
     items: params.itens.map((i) => ({
