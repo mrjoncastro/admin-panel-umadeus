@@ -44,7 +44,7 @@ function LoginClient() {
             />
           </div>
           <h2 className="text-xl md:text-2xl text-center font-semibold">
-            <TypingEffect text="Insira um texto aqui"/>
+            <TypingEffect text=" "/>
           </h2>
         </div>
 
