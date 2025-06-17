@@ -10,7 +10,7 @@ export default function AddToCartButton({ produto }: { produto: Produto }) {
       onClick={() => addItem(produto)}
       className="block w-full btn btn-primary"
     >
-      <ShoppingCart size={20} />
+      <ShoppingCart size={20} /> Adicionar ao Carrinho
     </button>
   );
 }
