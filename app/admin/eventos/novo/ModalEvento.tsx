@@ -68,8 +68,22 @@ export function ModalEvento<T extends Record<string, unknown>>({
             </button>
           </div>
 
-        <input className="input-base" name="titulo" placeholder="Título" defaultValue={initial.titulo || ""} required />
-        <textarea className="input-base" name="descricao" rows={2} defaultValue={initial.descricao || ""} required />
+        <input
+          className="input-base"
+          name="titulo"
+          placeholder="Título"
+          defaultValue={initial.titulo || ""}
+          maxLength={30}
+          required
+        />
+        <textarea
+          className="input-base"
+          name="descricao"
+          rows={2}
+          defaultValue={initial.descricao || ""}
+          maxLength={150}
+          required
+        />
         <input className="input-base" name="data" type="date" defaultValue={initial.data || ""} required />
         <input className="input-base" name="cidade" defaultValue={initial.cidade || ""} required />
         <input type="file" name="imagem" accept="image/*" className="input-base" />

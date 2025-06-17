@@ -6,6 +6,10 @@ import { Suspense, useState, useEffect } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { CheckCircle } from "lucide-react";
 import { hexToPtName } from "@/utils/colorNamePt";
+import {
+  MAX_ITEM_DESCRIPTION_LENGTH,
+  MAX_ITEM_NAME_LENGTH,
+} from "@/lib/constants";
 
 function formatCurrency(n: number) {
   return `R$ ${n.toFixed(2).replace(".", ",")}`;
@@ -90,8 +94,8 @@ function CheckoutContent() {
             }
           }
           return {
-            name: i.nome,
-            description: i.descricao,
+            name: i.nome.slice(0, MAX_ITEM_NAME_LENGTH),
+            description: i.descricao?.slice(0, MAX_ITEM_DESCRIPTION_LENGTH),
             quantity: i.quantidade,
             value: i.preco,
             fotoBase64,

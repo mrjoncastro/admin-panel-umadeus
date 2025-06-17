@@ -1,3 +1,8 @@
+import {
+  MAX_ITEM_DESCRIPTION_LENGTH,
+  MAX_ITEM_NAME_LENGTH,
+} from "./constants";
+
 export function buildCheckoutUrl(baseUrl: string): string {
   return baseUrl.replace(/\/$/, "") + "/checkouts";
 }
@@ -78,8 +83,8 @@ export async function createCheckout(
     },
     minutesToExpire: 10,
     items: params.itens.map((i) => ({
-      description: i.description ?? i.name,
-      name: i.name,
+      description: (i.description ?? i.name).slice(0, MAX_ITEM_DESCRIPTION_LENGTH),
+      name: i.name.slice(0, MAX_ITEM_NAME_LENGTH),
       quantity: i.quantity,
       value: i.value,
     })),

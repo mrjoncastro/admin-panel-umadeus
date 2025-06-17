@@ -4,14 +4,18 @@ import { createCheckout } from "@/lib/asaas";
 import { requireClienteFromHost } from "@/lib/clienteAuth";
 import { logInfo } from "@/lib/logger";
 import { logConciliacaoErro } from "@/lib/server/logger";
+import {
+  MAX_ITEM_DESCRIPTION_LENGTH,
+  MAX_ITEM_NAME_LENGTH,
+} from "@/lib/constants";
 
 const checkoutSchema = z.object({
   valor: z.number(),
   itens: z
     .array(
       z.object({
-        name: z.string(),
-        description: z.string().optional(),
+        name: z.string().max(MAX_ITEM_NAME_LENGTH),
+        description: z.string().max(MAX_ITEM_DESCRIPTION_LENGTH).optional(),
         quantity: z.number(),
         value: z.number(),
         fotoBase64: z.string().optional().nullable(),

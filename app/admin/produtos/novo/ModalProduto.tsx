@@ -215,6 +215,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
                 name="nome"
                 placeholder="Ex: Camiseta Básica Preta"
                 defaultValue={initial.nome || ""}
+                maxLength={30}
                 required
               />
             </div>
@@ -338,6 +339,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
                 placeholder="Ex: Camiseta 100% algodão, confortável, não desbota."
                 defaultValue={initial.descricao || ""}
                 rows={2}
+                maxLength={150}
                 required
               />
               <span className="text-xs text-gray-400 ml-1">
