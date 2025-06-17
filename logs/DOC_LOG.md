@@ -138,3 +138,4 @@
 ## [2025-06-24] Removido script generatePostsJson e atualizados testes para buscar posts via PocketBase.
 ## [2025-06-24] Ajustada regex no LayoutWrapper para ocultar Header em rotas de inscrições públicas. Lint e build executados com erros em app/blog/post/[slug]/page.tsx.
 ## [2025-06-16] Link de inscrição por usuário agora inclui eventoId selecionado. Dropdown de eventos ativos adicionado em /admin/usuarios. Lint e build executados com sucesso.
+## [2025-06-16] Documentada variavel NEXT_PUBLIC_N8N_WEBHOOK_URL e InscricaoForm usa URL do env. Impacto: integração n8n configurável.
