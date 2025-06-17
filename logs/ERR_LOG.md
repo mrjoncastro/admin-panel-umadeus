@@ -64,3 +64,4 @@
 ## [2025-06-17] Erro ao obter configuracoes: ClientResponseError 404: The requested resource wasn't found. - development
 ## [2025-06-25] Erro 404 ao buscar clientes_config por ID em /admin/api/configuracoes; corrigido consultando por campo cliente - dev - a259f55
 
+## [2025-06-26] Consulta por ID na clientes_config gerava 404. Commit c58e7c1 mudou para filtrar por campo cliente.
