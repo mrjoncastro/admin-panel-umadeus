@@ -115,4 +115,6 @@
 
 ## [2025-06-17] Atualizado Header removendo links de Inscricoes e Pedidos para lideres. Lint sem erros; build falhou em app/blog/post/[slug]/page.tsx.
 ## [2025-06-17] Menu Configurações restrito a coordenadores no Header e mobile. Lint e build executados com sucesso.
-## [2025-06-17] Criado util getTenantFromClient reutilizado nas páginas de eventos e produto. Testes adicionados. Lint e build executados com sucesso.
+## [2025-06-17] Adicionada utilidade getTenantFromClient, atualizadas páginas da loja para buscá-lo e novos testes.
+- Lint: sem erros
+- Build: sucesso

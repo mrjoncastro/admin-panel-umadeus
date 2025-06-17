@@ -22,7 +22,7 @@ export default function EventosPage() {
   const [selectedEventoId, setSelectedEventoId] = useState<string | null>(null);
 
   useEffect(() => {
-    async function carregarEventos() {
+    async function fetchEventos() {
       const tenantId = await getTenantFromClient();
       fetch(`/api/eventos?tenant=${tenantId ?? ""}`)
         .then((r) => r.json())
@@ -33,7 +33,7 @@ export default function EventosPage() {
           console.error("Erro ao carregar eventos:", err);
         });
     }
-    carregarEventos();
+    fetchEventos();
   }, []);
 
   return (

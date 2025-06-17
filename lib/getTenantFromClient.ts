@@ -1,11 +1,11 @@
 import createPocketBase from "@/lib/pocketbase";
 
 export async function getTenantFromClient(): Promise<string | null> {
-  const pb = createPocketBase();
-  let tenantId = localStorage.getItem("tenant_id");
-
+  const storedTenant = localStorage.getItem("tenant_id");
+  let tenantId = storedTenant;
   if (!tenantId) {
     const host = window.location.hostname;
+    const pb = createPocketBase();
     try {
       const cliente = await pb
         .collection("clientes_config")
@@ -16,8 +16,6 @@ export async function getTenantFromClient(): Promise<string | null> {
       tenantId = null;
     }
   }
-
   return tenantId;
 }
-
 export default getTenantFromClient;

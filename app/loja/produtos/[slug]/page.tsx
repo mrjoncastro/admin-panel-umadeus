@@ -20,11 +20,13 @@ export default function ProdutoDetalhe() {
   useEffect(() => {
     if (!slug) return;
     const pb = createPocketBase();
-    async function carregarProduto() {
-      const tenantId = await getTenantFromClient();
+    getTenantFromClient().then((tenantId) => {
+      const filter = tenantId
+        ? `slug = '${slug}' && cliente='${tenantId}'`
+        : `slug = '${slug}'`;
       pb
         .collection("produtos")
-        .getFirstListItem<ProdutoPB>(`slug = '${slug}' && cliente='${tenantId}'`)
+        .getFirstListItem<ProdutoPB>(filter)
         .then((p: ProdutoPB) => {
           const imgs = Array.isArray(p.imagens)
             ? p.imagens.map((img) => pb.files.getURL(p, img))
@@ -36,8 +38,7 @@ export default function ProdutoDetalhe() {
           setProduto({ ...p, imagens: imgs } as ProdutoBase);
         })
         .catch(() => setErro(true));
-    }
-    carregarProduto();
+    });
   }, [slug]);
 
   if (erro) {
