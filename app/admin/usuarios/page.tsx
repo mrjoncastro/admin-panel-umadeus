@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useToast } from "@/lib/context/ToastContext";
 import Link from "next/link";
 import type { Evento } from "@/types";
 import LoadingOverlay from "@/components/LoadingOverlay";
@@ -18,9 +19,9 @@ interface Usuario {
 }
 
 export default function UsuariosPage() {
+  const { showError } = useToast();
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [loading, setLoading] = useState(true);
-  const [mensagem, setMensagem] = useState("");
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [eventoId, setEventoId] = useState("");
 
@@ -39,7 +40,7 @@ export default function UsuariosPage() {
 
         if (!res.ok) {
           const erro = await res.json();
-          setMensagem("Erro ao buscar usuários: " + erro.error);
+          showError("Erro ao buscar usuários: " + erro.error);
           return;
         }
 
@@ -47,7 +48,7 @@ export default function UsuariosPage() {
         setUsuarios(data);
       } catch (error) {
         console.error("❌ Erro ao carregar usuários:", error);
-        setMensagem("Erro inesperado ao carregar usuários.");
+        showError("Erro inesperado ao carregar usuários.");
       } finally {
         setLoading(false);
       }
@@ -107,12 +108,6 @@ export default function UsuariosPage() {
           </Link>
         </div>
       </div>
-
-      {mensagem && (
-        <div className="mb-4 text-sm text-red-600 text-center">
-          {mensagem}
-        </div>
-      )}
 
       {loading ? (
         <LoadingOverlay show={true} text="Carregando usuários..." />

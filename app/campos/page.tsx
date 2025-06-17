@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { logInfo } from "@/lib/logger";
+import { useToast } from "@/lib/context/ToastContext";
 
 interface Campo {
   id: string;
@@ -9,10 +10,10 @@ interface Campo {
 }
 
 export default function GerenciarCamposPage() {
+  const { showError, showSuccess } = useToast();
   const [campos, setCampos] = useState<Campo[]>([]);
   const [nome, setNome] = useState("");
   const [editandoId, setEditandoId] = useState<string | null>(null);
-  const [mensagem, setMensagem] = useState("");
   const [loading, setLoading] = useState(false);
 
   const token =
@@ -26,7 +27,7 @@ export default function GerenciarCamposPage() {
       logInfo("🔐 Iniciando carregamento de campos...");
       if (!token || !user) {
         logInfo("⚠️ Usuário ou token ausente.");
-        setMensagem("Usuário não autenticado.");
+        showError("Usuário não autenticado.");
         return;
       }
 
@@ -43,22 +44,23 @@ export default function GerenciarCamposPage() {
 
         if (!res.ok) {
           console.error("❌ Erro ao buscar campos:", data);
-          setMensagem("Erro: " + data.error);
+          showError("Erro: " + data.error);
           return;
         }
 
         if (!Array.isArray(data)) {
           logInfo("⚠️ Resposta inesperada", data);
-          setMensagem("Dados inválidos recebidos.");
+          showError("Dados inválidos recebidos.");
           return;
         }
 
         setCampos(data);
-        setMensagem(`✅ ${data.length} campos carregados.`);
+        showSuccess(`${data.length} campos carregados.`);
       } catch (err: unknown) {
         if (err instanceof Error) {
           console.error("Erro:", err.message);
         }
+        showError("Erro ao carregar campos.");
       }
     }
 
@@ -68,10 +70,9 @@ export default function GerenciarCamposPage() {
   async function handleCriarOuAtualizar(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    setMensagem("");
 
     if (!token || !user) {
-      setMensagem("Usuário não autenticado.");
+      showError("Usuário não autenticado.");
       return;
     }
 
@@ -92,18 +93,19 @@ export default function GerenciarCamposPage() {
       const data = await res.json();
 
       if (res.ok) {
-        setMensagem(editandoId ? "✅ Campo atualizado" : "✅ Campo criado");
+        showSuccess(editandoId ? "Campo atualizado" : "Campo criado");
         setNome("");
         setEditandoId(null);
         await fetchCampos(); // chamada separada para carregar após salvar
       } else {
-        setMensagem("Erro: " + data.error);
+        showError("Erro: " + data.error);
         console.error("❌ Erro no envio:", data);
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error("Erro:", err.message);
       }
+      showError("Erro ao enviar dados.");
     } finally {
       setLoading(false);
     }
@@ -130,7 +132,7 @@ export default function GerenciarCamposPage() {
     if (!confirm("Tem certeza que deseja excluir este campo?")) return;
 
     if (!token || !user) {
-      setMensagem("Usuário não autenticado.");
+      showError("Usuário não autenticado.");
       return;
     }
 
@@ -146,16 +148,17 @@ export default function GerenciarCamposPage() {
       const data = await res.json();
 
       if (res.ok) {
-        setMensagem("✅ Campo excluído com sucesso");
+        showSuccess("Campo excluído com sucesso");
         await fetchCampos();
       } else {
-        setMensagem("Erro: " + data.error);
+        showError("Erro: " + data.error);
         console.error("❌ Erro ao excluir:", data);
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error("Erro:", err.message);
       }
+      showError("Erro ao excluir campo.");
     }
   }
 
@@ -167,10 +170,6 @@ export default function GerenciarCamposPage() {
   return (
     <main className="max-w-xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-4">Gerenciar Campos de Atuação</h1>
-
-      {mensagem && (
-        <div className="mb-4 text-sm text-center text-gray-800">{mensagem}</div>
-      )}
 
       {/* Formulário de criação/edição */}
       <form onSubmit={handleCriarOuAtualizar} className="space-y-4 mb-6">
