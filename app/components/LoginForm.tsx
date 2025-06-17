@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import Image from "next/image";
 import RedefinirSenhaModal from "@/app/admin/components/RedefinirSenhaModal";
+import { useToast } from "@/lib/context/ToastContext";
 import "@/app/globals.css"; // Certifique-se de que o CSS global está importado
 
 export default function LoginForm({
@@ -20,9 +21,9 @@ export default function LoginForm({
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [erro, setErro] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mostrarModal, setMostrarModal] = useState(false);
+  const { showError } = useToast();
 
   // Redirecionamento pós-login
   useEffect(() => {
@@ -44,7 +45,6 @@ export default function LoginForm({
   }
 
   const handleLogin = async () => {
-    setErro("");
     setIsSubmitting(true);
 
     try {
@@ -52,7 +52,7 @@ export default function LoginForm({
       // Redirecionamento ocorre no useEffect
     } catch (e) {
       console.error("❌ Erro no login:", e);
-      setErro("Credenciais inválidas.");
+      showError("Credenciais inválidas.");
     } finally {
       setIsSubmitting(false);
     }
@@ -97,7 +97,6 @@ export default function LoginForm({
           Acesse o painel
         </motion.p>
 
-        {erro && <p className="text-sm text-center mb-4 text-error">{erro}</p>}
 
         <form
           onSubmit={(e) => {
