@@ -16,8 +16,6 @@ const baseLinks = [
   { href: "/loja/produtos", label: "Produtos" },
   { href: "/blog", label: "Blog" },
   { href: "/loja/eventos", label: "Eventos" },
-  { href: "/loja/faq", label: "FAQ" },
-  { href: "/loja/contato", label: "Contato" },
 ];
 
 export default function Header() {

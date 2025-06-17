@@ -17,16 +17,7 @@ export default function Footer() {
         <div>
           <h4 className="font-semibold mb-2">Links Úteis</h4>
           <ul className="space-y-1">
-            <li>
-              <Link href="/faq" className="hover:underline">
-                FAQ
-              </Link>
-            </li>
-            <li>
-              <Link href="/contato" className="hover:underline">
-                Contato
-              </Link>
-            </li>
+            {/* FAQ e Contato removidos */}
             <li>
               <Link href="/privacidade" className="hover:underline">
                 Política de Privacidade

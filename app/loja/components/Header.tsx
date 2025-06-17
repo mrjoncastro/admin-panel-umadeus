@@ -9,8 +9,6 @@ export default function Header() {
   const links = [
     { href: "/loja", label: "Início" },
     { href: "/loja/eventos", label: "Eventos" },
-    { href: "/loja/faq", label: "FAQ" },
-    { href: "/loja/contato", label: "Contato" },
   ];
 
   return (
