@@ -68,7 +68,7 @@ export default async function BlogPostPage({
     category: p.category || "",
   }));
   const mdxContent = post.content || "";
-  const content = mdxContent;
+  const safeSuggestions = suggestions;
 
   const words = mdxContent.split(/\s+/).length;
   const readingTime = Math.ceil(words / 200);
