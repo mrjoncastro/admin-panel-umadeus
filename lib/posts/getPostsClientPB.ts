@@ -15,20 +15,9 @@ export interface PostClientRecord {
 
 export async function getPostsClientPB(): Promise<PostClientRecord[]> {
   const pb = createPocketBase();
-  let tenantId = localStorage.getItem("tenant_id");
-
-  if (!tenantId) {
-    const host = window.location.hostname;
-    try {
-      const cliente = await pb
-        .collection("clientes_config")
-        .getFirstListItem(`dominio='${host}'`);
-      tenantId = cliente.id;
-      localStorage.setItem("tenant_id", tenantId);
-    } catch {
-      tenantId = null;
-    }
-  }
+  const res = await fetch("/api/tenant");
+  const data = (await res.json()) as { tenantId: string | null };
+  const tenantId = data.tenantId;
 
   const list = await pb.collection("posts").getFullList<PostClientRecord>({
     sort: "-date",

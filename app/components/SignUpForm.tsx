@@ -44,9 +44,6 @@ export default function SignUpForm({
             .collection("clientes_config")
             .getFirstListItem(`dominio='${window.location.hostname}'`);
           tenantId = cliente?.id;
-          if (tenantId) {
-            localStorage.setItem("tenant_id", tenantId);
-          }
         }
 
         if (!tenantId) return;
