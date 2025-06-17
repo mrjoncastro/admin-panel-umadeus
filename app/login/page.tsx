@@ -1,6 +1,8 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
+import Image from "next/image";
+import { useAppConfig } from "@/lib/context/AppConfigContext";
 
 export default function LoginPage() {
   return (
@@ -18,6 +20,7 @@ import LayoutWrapper from "../components/LayoutWrapper";
 function LoginClient() {
   "use client";
   const searchParams = useSearchParams();
+  const { config } = useAppConfig();
   const initial = searchParams.get("view") === "signup" ? "signup" : "login";
   const [view, setView] = useState<"login" | "signup">(initial);
   const redirectTo = searchParams.get("redirect") || undefined;
@@ -32,20 +35,13 @@ function LoginClient() {
         {/* Lado esquerdo com animação e ícone */}
         <div className="w-1/2 hidden md:flex flex-col justify-center items-center bg-animated text-[var(--text-header-primary)] p-12 space-y-6">
           <div className="w-28 h-28 animate-bounce">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-full h-full"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 3v2.25M15.75 3v2.25M8.25 3v2.25M12 8.25v13.5m0 0l-3-3m3 3l3-3"
-              />
-            </svg>
+            <Image
+              src={config.logoUrl || "/img/logo_umadeus_branco.png"}
+              alt="Logo do cliente"
+              width={112}
+              height={112}
+              className="w-full h-full object-contain"
+            />
           </div>
           <h2 className="text-xl md:text-2xl text-center font-semibold">
             <TypingEffect text="Insira um texto aqui"/>
