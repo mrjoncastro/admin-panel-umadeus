@@ -1,28 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import createPocketBase from "@/lib/pocketbase";
 import { getUserFromHeaders } from "@/lib/getUserFromHeaders";
 import { logInfo } from "@/lib/logger";
 import { getTenantFromHost } from "@/lib/getTenantFromHost";
 import { logConciliacaoErro } from "@/lib/server/logger";
 
-export async function GET(req: NextRequest) {
-  const auth = await getUserFromHeaders(req);
-
-  if ("error" in auth) {
-    return NextResponse.json({ error: auth.error }, { status: 401 });
-  }
-
-  const { user, pbSafe } = auth;
-
-  const tenantId =
-    (user && (user as { cliente?: string }).cliente) ||
-    (await getTenantFromHost());
-
-  if (user.role !== "coordenador") {
-    return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
-  }
+export async function GET() {
+  const pb = createPocketBase();
+  const tenantId = await getTenantFromHost();
 
   try {
-    const campos = await pbSafe.collection("campos").getFullList({
+    const campos = await pb.collection("campos").getFullList({
       sort: "nome",
       filter: tenantId ? `cliente='${tenantId}'` : undefined,
     });
