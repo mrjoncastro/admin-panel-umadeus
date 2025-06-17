@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import LoadingOverlay from "@/components/LoadingOverlay";
-import InscricaoForm from "../components/InscricaoForm";
+import InscricaoForm from "@/app/loja/components/InscricaoForm";
 
 interface Evento {
   id: string;
