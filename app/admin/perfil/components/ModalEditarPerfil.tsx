@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import createPocketBase from "@/lib/pocketbase";
+import { useToast } from "@/lib/context/ToastContext";
 
 export default function ModalEditarPerfil({
   onClose,
@@ -25,15 +26,11 @@ export default function ModalEditarPerfil({
   const [cep, setCep] = useState(String(user?.cep || ""));
   const [cidade, setCidade] = useState(String(user?.cidade || ""));
 
-  const [mensagem, setMensagem] = useState("");
-  const [erro, setErro] = useState("");
+  const { showSuccess, showError } = useToast();
 
   const handleUpdate = async () => {
-    setMensagem("");
-    setErro("");
-
     if (!user?.id) {
-      setErro("Sessão inválida.");
+      showError("Sessão inválida.");
       return;
     }
 
@@ -51,10 +48,10 @@ export default function ModalEditarPerfil({
         role: user.role,
       });
 
-      setMensagem("Perfil atualizado com sucesso.");
+      showSuccess("Perfil atualizado com sucesso.");
     } catch (err) {
       console.error(err);
-      setErro("Erro ao atualizar perfil. Verifique os dados.");
+      showError("Erro ao atualizar perfil. Verifique os dados.");
     }
   };
 
@@ -168,8 +165,6 @@ export default function ModalEditarPerfil({
           </p>
         </div>
 
-        {mensagem && <p className="text-green-500 text-sm">{mensagem}</p>}
-        {erro && <p className="text-red-500 text-sm">{erro}</p>}
 
         <div className="flex justify-end gap-2 pt-2">
           <button
