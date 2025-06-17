@@ -125,4 +125,6 @@
 ## [2025-06-27] Página de detalhes dos eventos adicionada em /loja/eventos/[id] com formulário pré-preenchido. Botão da listagem atualizado.
 ## [2025-06-27] InscricaoForm agora carrega dados do usuario, consulta CEP pela URL configurada e envia para o webhook mesmo em caso de erro. Lint e build executados com sucesso.
 ## [2025-06-17] Carrinho agora diferencia variações por ID único e páginas de carrinho/checkout exibem itens separadamente.
+
+## [2025-06-17] Criado endpoint /loja/api/inscricoes e página de confirmação; formulário atualizado para usar nova rota. Lint e build executados.
 ## [2025-06-28] Inclusão do bairro no autofill do InscricaoForm.
