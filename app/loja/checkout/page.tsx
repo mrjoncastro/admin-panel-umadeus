@@ -15,7 +15,7 @@ function CheckoutContent() {
   const { itens, clearCart } = useCart();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { isLoggedIn, user } = useAuthContext();
+  const { isLoggedIn, user, tenantId } = useAuthContext();
 
   const [nome, setNome] = useState(user?.nome || "");
   const [telefone, setTelefone] = useState(String(user?.telefone ?? ""));
@@ -99,11 +99,17 @@ function CheckoutContent() {
         })
       );
 
+      if (!tenantId || !user?.id) {
+        throw new Error("Autenticação inválida");
+      }
+
       const payload = {
         valor: total,
         itens: itensPayload,
         successUrl: `${window.location.origin}/loja/sucesso?pedido=${pedidoId}`,
         errorUrl: `${window.location.origin}/loja/sucesso?pedido=${pedidoId}`,
+        clienteId: tenantId,
+        usuarioId: user.id,
         cliente: {
           nome,
           email,
