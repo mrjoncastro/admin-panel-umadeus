@@ -35,7 +35,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    void (async () => {
+    async function fetchInitialConfig() {
       try {
         const tenantRes = await fetch("/api/tenant");
         if (tenantRes.ok) {
@@ -52,21 +52,23 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
             };
             setConfigId(cliente.id);
             setConfig(cfg);
-            setConfigId(cliente.id);
             localStorage.setItem("app_config", JSON.stringify(cfg));
+            localStorage.setItem("app_config_time", Date.now().toString());
             return;
           }
         }
       } catch {
         /* ignore */
       }
-    })();
-    const cached = localStorage.getItem("app_config");
-    if (cached) {
-      try {
-        setConfig(JSON.parse(cached));
-      } catch {
-        /* ignore */
+
+      // fallback para cache local
+      const cached = localStorage.getItem("app_config");
+      if (cached) {
+        try {
+          setConfig(JSON.parse(cached));
+        } catch {
+          /* ignore */
+        }
       }
     }
 
@@ -74,6 +76,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
       const storedTime = localStorage.getItem("app_config_time");
       const isStale =
         !storedTime || Date.now() - Number(storedTime) > STALE_TIME;
+      const cached = localStorage.getItem("app_config");
 
       if (!cached || isStale) {
         try {
@@ -87,13 +90,11 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
                 .getFirstListItem(`cliente='${tenantId}'`);
               const cfg: AppConfig = {
                 font: cliente.font || defaultConfig.font,
-                primaryColor:
-                  cliente.cor_primary || defaultConfig.primaryColor,
+                primaryColor: cliente.cor_primary || defaultConfig.primaryColor,
                 logoUrl: cliente.logo_url || defaultConfig.logoUrl,
               };
               setConfigId(cliente.id);
               setConfig(cfg);
-              setConfigId(cliente.id);
               localStorage.setItem("app_config", JSON.stringify(cfg));
               localStorage.setItem("app_config_time", Date.now().toString());
               return;
@@ -103,6 +104,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
           /* ignore */
         }
 
+        // Fallback: tenta pelo /admin/api/configuracoes
         const token = localStorage.getItem("pb_token");
         const user = localStorage.getItem("pb_user");
 
@@ -118,8 +120,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
               const data = await res.json();
               const cfg = {
                 font: data.font || defaultConfig.font,
-                primaryColor:
-                  data.cor_primary || defaultConfig.primaryColor,
+                primaryColor: data.cor_primary || defaultConfig.primaryColor,
                 logoUrl: data.logo_url || defaultConfig.logoUrl,
               };
               try {
@@ -135,10 +136,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
               setConfig(cfg);
               setConfigId(data.id);
               localStorage.setItem("app_config", JSON.stringify(cfg));
-              localStorage.setItem(
-                "app_config_time",
-                Date.now().toString()
-              );
+              localStorage.setItem("app_config_time", Date.now().toString());
               return;
             }
           } catch {
@@ -148,8 +146,8 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-      refreshConfig();
-    })();
+    fetchInitialConfig();
+    refreshConfig();
   }, []);
 
   useEffect(() => {
