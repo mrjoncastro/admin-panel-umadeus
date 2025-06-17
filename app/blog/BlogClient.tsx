@@ -27,8 +27,8 @@ export default function BlogClient() {
           if (id) {
             const c = await pb
               .collection("clientes_config")
-              .getOne<Cliente>(id);
-            setNomeCliente(c.nome ?? "");
+              .getFirstListItem<Cliente>(`cliente='${id}'`);
+            setNomeCliente(c?.nome ?? "");
           } else {
             setNomeCliente("");
           }
