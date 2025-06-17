@@ -65,6 +65,7 @@ export async function createCheckout(
     params.usuarioId,
     params.inscricaoId
   );
+  const parsedValor = Number(params.valor);
 
   const payload = {
     billingTypes: params.paymentMethods ?? ["CREDIT_CARD", "PIX"],

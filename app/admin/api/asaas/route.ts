@@ -182,7 +182,7 @@ export async function POST(req: NextRequest) {
       split: [
         {
           walletId: process.env.WALLETID_M24,
-          fixedValue: parsedValor * 0.07,
+          fixedValue: Number((parsedValor * 0.07).toFixed(2)),
         },
       ],
       externalReference,

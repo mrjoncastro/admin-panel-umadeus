@@ -69,3 +69,4 @@
 
 ## [2025-06-17] Limite de caracteres para checkout implementado - dev - 66b7255
 
+## [2025-06-17] Erro ao criar inscrição: ClientResponseError 400: Failed to create record. - development
