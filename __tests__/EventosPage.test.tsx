@@ -3,10 +3,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { vi } from 'vitest';
 import EventosPage from '@/app/loja/eventos/page';
 
-vi.mock('@/lib/getTenantFromClient', () => ({
-  __esModule: true,
-  default: vi.fn().mockResolvedValue('t1')
-}));
 
 vi.mock('next/image', () => ({
   __esModule: true,
@@ -18,7 +14,6 @@ vi.mock('next/image', () => ({
 
 describe('EventosPage', () => {
   it('exibe formulario apos clicar em Inscrever', async () => {
-    localStorage.setItem('tenant_id', 't1');
     global.fetch = vi
       .fn()
       .mockResolvedValueOnce({
@@ -36,8 +31,7 @@ describe('EventosPage', () => {
     expect(select).toBeInTheDocument();
   });
 
-  it('carrega eventos quando localStorage esta vazio', async () => {
-    localStorage.removeItem('tenant_id');
+  it('carrega eventos', async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce({
@@ -49,7 +43,6 @@ describe('EventosPage', () => {
     render(<EventosPage />);
 
     await screen.findByRole('heading', { name: /eventos umadeus/i });
-    expect(fetchMock).toHaveBeenCalledWith('/api/eventos?tenant=t1');
-    expect(localStorage.getItem('tenant_id')).toBe('t1');
+    expect(fetchMock).toHaveBeenCalledWith('/api/eventos');
   });
 });
