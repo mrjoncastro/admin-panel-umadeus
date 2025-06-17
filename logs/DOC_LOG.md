@@ -118,3 +118,5 @@
 ## [2025-06-17] Adicionada utilidade getTenantFromClient, atualizadas páginas da loja para buscá-lo e novos testes.
 - Lint: sem erros
 - Build: sucesso
+
+## [2025-06-17] Inclusao de eventoId nas inscricoes e ajuste no ModalEditarInscricao para selecionar eventos do tenant.

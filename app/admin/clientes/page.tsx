@@ -12,19 +12,25 @@ export default function ClientesPage() {
   const pb = useMemo(() => createPocketBase(), []);
   const { tenantId } = useAuthContext();
   const { showError, showSuccess } = useToast();
-  const [clientes, setClientes] = useState<Inscricao[]>([]);
+  const [clientes, setClientes] = useState<(Inscricao & { eventoId?: string })[]>([]);
   const [loading, setLoading] = useState(true);
-  const [clienteEmEdicao, setClienteEmEdicao] = useState<Inscricao | null>(null);
+  const [clienteEmEdicao, setClienteEmEdicao] =
+    useState<(Inscricao & { eventoId?: string }) | null>(null);
 
   useEffect(() => {
     async function fetchClientes() {
       try {
         const lista = await pb.collection("inscricoes").getFullList<Inscricao>({
-          expand: "pedido",
+          expand: "pedido,evento",
           sort: "-created",
           filter: `cliente='${tenantId}'`,
         });
-        setClientes(lista);
+        const mapped = lista.map((c) => ({
+          ...c,
+          eventoId: c.evento,
+          evento: c.expand?.evento?.titulo || c.evento,
+        }));
+        setClientes(mapped);
       } catch (err) {
         console.error("Erro ao carregar clientes", err);
         showError("Erro ao carregar clientes");
@@ -36,12 +42,19 @@ export default function ClientesPage() {
     fetchClientes();
   }, [pb, tenantId, showError]);
 
-  const salvarEdicao = async (atualizada: Partial<Inscricao>) => {
+  const salvarEdicao = async (
+    atualizada: Partial<Inscricao & { eventoId?: string }>
+  ) => {
     if (!clienteEmEdicao) return;
     try {
-      await pb.collection("inscricoes").update(clienteEmEdicao.id, atualizada);
+      await pb.collection("inscricoes").update(clienteEmEdicao.id, {
+        ...atualizada,
+        evento: atualizada.eventoId ?? clienteEmEdicao.eventoId,
+      });
       setClientes((prev) =>
-        prev.map((c) => (c.id === clienteEmEdicao.id ? { ...c, ...atualizada } : c))
+        prev.map((c) =>
+          c.id === clienteEmEdicao.id ? { ...c, ...atualizada } : c
+        )
       );
       showSuccess("Cliente atualizado");
     } catch (err) {
@@ -60,7 +73,7 @@ export default function ClientesPage() {
       <ListaClientes clientes={clientes} onEdit={setClienteEmEdicao} />
       {clienteEmEdicao && (
         <ModalEditarInscricao
-          inscricao={clienteEmEdicao}
+          inscricao={clienteEmEdicao as Inscricao & { eventoId: string }}
           onClose={() => setClienteEmEdicao(null)}
           onSave={salvarEdicao}
         />

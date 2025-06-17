@@ -26,7 +26,10 @@ type Inscricao = {
   nome: string;
   telefone: string;
   cpf: string;
+  /** Título do evento para exibição */
   evento: string;
+  /** ID do evento */
+  eventoId: string;
   status: StatusInscricao;
   created: string;
   campo?: string;
@@ -112,6 +115,7 @@ export default function ListaInscricoesPage() {
           nome: r.nome,
           telefone: r.telefone,
           evento: r.expand?.evento?.titulo,
+          eventoId: r.evento,
           cpf: r.cpf,
           status: r.status,
           created: r.created,
@@ -527,10 +531,13 @@ export default function ListaInscricoesPage() {
         <ModalEditarInscricao
           inscricao={inscricaoEmEdicao}
           onClose={() => setInscricaoEmEdicao(null)}
-          onSave={async (dadosAtualizados: Partial<Inscricao>) => {
-            await pb
-              .collection("inscricoes")
-              .update(inscricaoEmEdicao.id, dadosAtualizados);
+          onSave={async (
+            dadosAtualizados: Partial<Inscricao & { eventoId: string }>
+          ) => {
+            await pb.collection("inscricoes").update(inscricaoEmEdicao.id, {
+              ...dadosAtualizados,
+              evento: dadosAtualizados.eventoId ?? inscricaoEmEdicao.eventoId,
+            });
             setInscricoes((prev) =>
               prev.map((i) =>
                 i.id === inscricaoEmEdicao.id
