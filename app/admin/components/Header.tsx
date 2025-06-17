@@ -60,7 +60,7 @@ export default function Header() {
 
   const gestaoLojaLinks = [
     { href: "/admin/produtos", label: "Produtos" },
-    { href: "/admin/compras", label: "Compras" },
+    { href: "/admin/compras", label: "Vendas" },
     { href: "/loja", label: "Ver loja" },
   ];
   const gerenciamentoLinks =
