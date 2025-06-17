@@ -58,7 +58,7 @@ Antes de rodar o lint ou o TypeScript (`tsc`), execute `npm install` para garant
 - A navegação mobile inclui botão "voltar ao topo" para facilitar a rolagem.
 - Formulários de busca de pedidos e inscrições se adaptam ao tipo de usuário, permitindo busca pelo nome do inscrito.
 - Usuários podem alternar entre os temas claro e escuro.
-- Toasts informam sucesso ou erro das ações.
+- Toasts são o padrão de feedback, informando sucesso ou erro das ações.
 - Tabelas e botões minimalistas mantêm a aparência consistente.
 - O dashboard traz gráficos temporais de inscrições e pedidos, além de ticket médio e receita por campo para coordenadores e líderes.
 - Os gráficos permitem filtrar por período e exportar os dados em CSV ou XLSX.
