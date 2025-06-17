@@ -17,30 +17,27 @@ const POSTS_PER_PAGE = 6;
 export default function BlogClient() {
   const [nomeCliente, setNomeCliente] = useState("");
 
-  useEffect(() => {
-    const pb = createPocketBase();
-    async function fetchCliente() {
-      try {
-        const tenantId = localStorage.getItem("tenant_id");
-        if (tenantId) {
-          const c = await pb
-            .collection("clientes_config")
-            .getOne<Cliente>(tenantId);
-          setNomeCliente(c.nome ?? "");
-          return;
+    useEffect(() => {
+      const pb = createPocketBase();
+      async function fetchCliente() {
+        try {
+          const res = await fetch("/api/tenant");
+          const data = (await res.json()) as { tenantId: string | null };
+          const id = data.tenantId;
+          if (id) {
+            const c = await pb
+              .collection("clientes_config")
+              .getOne<Cliente>(id);
+            setNomeCliente(c.nome ?? "");
+          } else {
+            setNomeCliente("");
+          }
+        } catch (err) {
+          console.error("Erro ao buscar nome do cliente:", err);
         }
-        const dominio = window.location.hostname;
-        const c = await pb
-          .collection("clientes_config")
-          .getFirstListItem<Cliente>(`dominio='${dominio}'`);
-        localStorage.setItem("tenant_id", c.id);
-        setNomeCliente(c.nome ?? "");
-      } catch (err) {
-        console.error("Erro ao buscar nome do cliente:", err);
       }
-    }
-    fetchCliente();
-  }, []);
+      fetchCliente();
+    }, []);
 
   const introText = {
     title: "Criamos este espaço porque acreditamos no poder do conhecimento.",

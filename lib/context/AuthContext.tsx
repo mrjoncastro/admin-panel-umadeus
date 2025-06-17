@@ -106,7 +106,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const cliente = await pb
         .collection("clientes_config")
         .getFirstListItem(`dominio='${dominio}'`);
-      localStorage.setItem("tenant_id", cliente.id);
       setTenantId(cliente.id);
     } catch {
       setTenantId(null);
@@ -140,7 +139,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .collection("clientes_config")
         .getFirstListItem(`dominio='${dominio}'`);
       clienteId = cliente.id;
-      localStorage.setItem("tenant_id", clienteId);
       setTenantId(clienteId);
     } catch {
       setTenantId(null);
