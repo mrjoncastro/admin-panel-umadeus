@@ -10,6 +10,17 @@ interface Categoria {
   slug: string;
 }
 
+// Função para gerar slug automático
+function slugify(str: string) {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "")
+    .replace(/-+/g, "-");
+}
+
 export default function EditarProdutoPage() {
   const { id } = useParams<{ id: string }>();
   const { user: ctxUser, isLoggedIn } = useAuthContext();
@@ -141,6 +152,9 @@ export default function EditarProdutoPage() {
     const formElement = e.currentTarget as HTMLFormElement;
     const formData = new FormData(formElement);
 
+    const slug = slugify(formElement.nome.value);
+    formData.set("slug", slug);
+
     // Tratamento específico para o campo de imagens
     const imagensInput = formElement.querySelector<HTMLInputElement>(
       "input[name='imagens']"
@@ -154,10 +168,7 @@ export default function EditarProdutoPage() {
     }
 
     // Trata o campo de cores: insere como string separada por vírgula
-    formData.delete("cores");
-    if (cores.length > 0) {
-      formData.append("cores", cores.join(","));
-    }
+    formData.set("cores", cores.join(","));
     // Normaliza checkboxes e arrays
     const ativoChecked = formElement.querySelector<HTMLInputElement>(
       "input[name='ativo']"
@@ -186,6 +197,13 @@ export default function EditarProdutoPage() {
     if (catValue) {
       formData.append("categoria", catValue);
     }
+
+    // <<< AQUI O CONSOLE!
+    console.log("---- FormData a ser enviado ----");
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+    console.log("-------------------------------");
 
     const { token, user } = getAuth();
     const res = await fetch(`/admin/api/produtos/${id}`, {
@@ -227,6 +245,7 @@ export default function EditarProdutoPage() {
           <input
             className="input-base"
             name="nome"
+            placeholder="Ex: Camiseta Básica Preta"
             defaultValue={String(initial.nome)}
             required
           />
@@ -235,6 +254,7 @@ export default function EditarProdutoPage() {
             name="preco"
             type="number"
             step="0.01"
+            placeholder="Ex: 39.90"
             defaultValue={String(initial.preco)}
             required
           />
@@ -242,8 +262,12 @@ export default function EditarProdutoPage() {
             className="input-base"
             name="checkout_url"
             type="url"
+            placeholder="Ex: https://loja.com/produto"
             defaultValue={String(initial.checkout_url || "")}
           />
+          <span className="text-xs text-gray-400 ml-1">
+            Link externo para checkout (opcional)
+          </span>
         </fieldset>
 
         {/* Categoria */}
@@ -262,6 +286,9 @@ export default function EditarProdutoPage() {
               </option>
             ))}
           </select>
+          <span className="text-xs text-gray-400 ml-1">
+            Caso a categoria não exista, adicione pelo cadastro de categorias.
+          </span>
         </fieldset>
 
         {/* Cores */}
@@ -309,6 +336,9 @@ export default function EditarProdutoPage() {
             )}
           </div>
           <input type="hidden" name="cores" value={cores.join(",")} />
+          <span className="text-xs text-gray-400 ml-1">
+            Adicione as variações de cor do produto.
+          </span>
         </fieldset>
 
         {/* Variações */}
@@ -345,6 +375,9 @@ export default function EditarProdutoPage() {
                 );
               })}
             </div>
+            <span className="text-xs text-gray-400 ml-1">
+              Selecione todos os tamanhos disponíveis.
+            </span>
           </div>
 
           <div>
@@ -377,6 +410,9 @@ export default function EditarProdutoPage() {
                 );
               })}
             </div>
+            <span className="text-xs text-gray-400 ml-1">
+              Marque os públicos para o produto.
+            </span>
           </div>
         </fieldset>
 
@@ -388,15 +424,23 @@ export default function EditarProdutoPage() {
             className="input-base"
             name="descricao"
             rows={2}
+            placeholder="Ex: Camiseta 100% algodão, confortável, não desbota."
             defaultValue={String(initial.descricao || "")}
             required
           />
+          <span className="text-xs text-gray-400 ml-1">
+            Breve descrição que será exibida na loja.
+          </span>
           <textarea
             className="input-base"
             name="detalhes"
             rows={2}
+            placeholder="Detalhes adicionais: tabela de medidas, instruções de lavagem, etc."
             defaultValue={String(initial.detalhes || "")}
           />
+          <span className="text-xs text-gray-400 ml-1">
+            Informações extras, se desejar.
+          </span>
         </fieldset>
 
         {/* Upload de imagens */}
@@ -409,6 +453,9 @@ export default function EditarProdutoPage() {
             accept="image/*"
             className="input-base"
           />
+          <span className="text-xs text-gray-400 ml-1">
+            Selecione uma ou mais imagens do produto.
+          </span>
         </fieldset>
 
         {/* Produto ativo */}

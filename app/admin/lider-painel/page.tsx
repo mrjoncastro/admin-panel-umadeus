@@ -43,7 +43,7 @@ export default function LiderDashboardPage() {
             .collection("inscricoes")
             .getList(page, perPage, {
               filter: `campo="${campoId}" && cliente='${tenantId}'`,
-              expand: "campo,criado_por,pedido",
+              expand: "campo,evento,criado_por,pedido",
               signal,
             }),
           pb
@@ -64,7 +64,7 @@ export default function LiderDashboardPage() {
           id: r.id,
           nome: r.nome,
           telefone: r.telefone,
-          evento: r.evento,
+          evento: r.expand?.evento?.titulo,
           status: r.status,
           created: r.created,
           campo: r.campo,
@@ -93,7 +93,7 @@ export default function LiderDashboardPage() {
           created: r.created,
           campo: r.campo,
           genero: r.genero,
-          evento: r.evento,
+          evento: r.expand?.evento?.titulo,
           data_nascimento: r.data_nascimento,
           responsavel: r.responsavel,
           expand: {

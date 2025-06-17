@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
-import { marked } from "marked";
 import PostContentEditor from "../../components/PostContentEditor";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
@@ -135,7 +134,7 @@ export default function EditarPostPage() {
 
           <article
             className="prose prose-neutral max-w-none"
-            dangerouslySetInnerHTML={{ __html: marked.parse(conteudo) }}
+            dangerouslySetInnerHTML={{ __html: conteudo }}
           />
         </main>
         <Footer />

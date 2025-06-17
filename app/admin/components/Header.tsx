@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import createPocketBase from "@/lib/pocketbase";
 import Image from "next/image";
 import {
@@ -17,7 +17,6 @@ import {
   Moon,
   Settings,
 } from "lucide-react";
-import { useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/lib/context/ThemeContext";
@@ -34,11 +33,7 @@ const getNavLinks = (role?: string) => {
     ];
   }
 
-  return [
-    { href: "/admin/dashboard", label: "Painel" },
-    { href: "/admin/compras", label: "Compras" },
-    { href: "/loja", label: "Ver loja" },
-  ];
+  return [{ href: "/admin/dashboard", label: "Painel" }];
 };
 
 export default function Header() {
@@ -49,6 +44,7 @@ export default function Header() {
   const [perfilAberto, setPerfilAberto] = useState(false);
   const [financeiroAberto, setFinanceiroAberto] = useState(false);
   const [gestaoAberto, setGestaoAberto] = useState(false);
+  const [gestaoLojaAberto, setGestaoLojaAberto] = useState(false);
   const [gerenciamentoAberto, setGerenciamentoAberto] = useState(false);
   const [mostrarModalSenha, setMostrarModalSenha] = useState(false);
   const { theme, toggleTheme } = useTheme();
@@ -62,12 +58,23 @@ export default function Header() {
     { href: "/admin/pedidos", label: "Pedidos" },
   ];
 
-  const gerenciamentoLinks = [
-    { href: "/admin/usuarios", label: "Usuários" },
+  const gestaoLojaLinks = [
     { href: "/admin/produtos", label: "Produtos" },
-    { href: "/admin/posts", label: "Posts" },
-    { href: "/admin/campos", label: "Campos" },
+    { href: "/admin/compras", label: "Compras" },
+    { href: "/loja", label: "Ver loja" },
   ];
+  const gerenciamentoLinks =
+    user?.role === "lider"
+      ? [
+          { href: "/admin/posts", label: "Posts" },
+          { href: "/admin/inscricoes", label: "Inscrições" },
+          { href: "/admin/pedidos", label: "Pedidos" },
+        ]
+      : [
+          { href: "/admin/usuarios", label: "Usuários" },
+          { href: "/admin/posts", label: "Posts" },
+          { href: "/admin/campos", label: "Campos" },
+        ];
 
   const handleLogout = () => {
     pb.authStore.clear();
@@ -122,7 +129,8 @@ export default function Header() {
               );
             })}
 
-          {isLoggedIn && (
+          {/* Gestão de Eventos */}
+          {isLoggedIn && user?.role === "coordenador" && (
             <Popover.Root open={gestaoAberto} onOpenChange={setGestaoAberto}>
               <Popover.Trigger asChild>
                 <button className="flex items-center gap-1 hover:opacity-90">
@@ -159,6 +167,48 @@ export default function Header() {
             </Popover.Root>
           )}
 
+          {/* Gestão da Loja */}
+          {isLoggedIn && user?.role === "coordenador" && (
+            <Popover.Root
+              open={gestaoLojaAberto}
+              onOpenChange={setGestaoLojaAberto}
+            >
+              <Popover.Trigger asChild>
+                <button className="flex items-center gap-1 hover:opacity-90">
+                  <span>Gestão da Loja</span>
+                  <ChevronDown size={14} />
+                </button>
+              </Popover.Trigger>
+              <AnimatePresence>
+                {gestaoLojaAberto && (
+                  <Popover.Portal forceMount>
+                    <Popover.Content asChild side="bottom" align="start">
+                      <motion.ul
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="mt-2 w-48 bg-white text-[var(--foreground)] dark:bg-zinc-900 dark:text-white rounded-lg shadow z-50 text-sm py-2 space-y-2"
+                      >
+                        {gestaoLojaLinks.map(({ href, label }) => (
+                          <li key={href}>
+                            <Link
+                              href={href}
+                              onClick={() => setGestaoLojaAberto(false)}
+                              className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                            >
+                              {label}
+                            </Link>
+                          </li>
+                        ))}
+                      </motion.ul>
+                    </Popover.Content>
+                  </Popover.Portal>
+                )}
+              </AnimatePresence>
+            </Popover.Root>
+          )}
+
+          {/* Administração */}
           {isLoggedIn && (
             <Popover.Root
               open={gerenciamentoAberto}
@@ -166,7 +216,7 @@ export default function Header() {
             >
               <Popover.Trigger asChild>
                 <button className="flex items-center gap-1 hover:opacity-90">
-                  <span>Gerenciamento</span>
+                  <span>Administração</span>
                   <ChevronDown size={14} />
                 </button>
               </Popover.Trigger>
@@ -199,6 +249,7 @@ export default function Header() {
             </Popover.Root>
           )}
 
+          {/* Financeiro */}
           {isLoggedIn && user?.role === "coordenador" && (
             <Popover.Root
               open={financeiroAberto}
@@ -246,6 +297,7 @@ export default function Header() {
             </Popover.Root>
           )}
 
+          {/* Tema */}
           <button
             onClick={toggleTheme}
             aria-label="Alternar tema"
@@ -254,6 +306,7 @@ export default function Header() {
             {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 
+          {/* Perfil */}
           {isLoggedIn && (
             <Popover.Root open={perfilAberto} onOpenChange={setPerfilAberto}>
               <Popover.Trigger asChild>
@@ -308,7 +361,7 @@ export default function Header() {
                             onClick={handleLogout}
                             className="w-full text-left flex items-center gap-2 px-4 py-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-900 cursor-pointer"
                           >
-                            <LogOut size={16} /> Sairs
+                            <LogOut size={16} /> Sair
                           </button>
                         </li>
                       </motion.ul>
@@ -357,22 +410,40 @@ export default function Header() {
                   );
                 })}
 
-                <span className="mt-2 text-xs uppercase font-semibold opacity-70">
-                  Gestão de Eventos
-                </span>
-                {gestaoEventosLinks.map(({ href, label }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    onClick={() => setMenuAberto(false)}
-                    className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] rounded-md"
-                  >
-                    {label}
-                  </Link>
-                ))}
+                {user?.role === "coordenador" && (
+                  <>
+                    <span className="mt-2 text-xs uppercase font-semibold opacity-70">
+                      Gestão de Eventos
+                    </span>
+                    {gestaoEventosLinks.map(({ href, label }) => (
+                      <Link
+                        key={href}
+                        href={href}
+                        onClick={() => setMenuAberto(false)}
+                        className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] rounded-md"
+                      >
+                        {label}
+                      </Link>
+                    ))}
+
+                    <span className="mt-2 text-xs uppercase font-semibold opacity-70">
+                      Gestão da Loja
+                    </span>
+                    {gestaoLojaLinks.map(({ href, label }) => (
+                      <Link
+                        key={href}
+                        href={href}
+                        onClick={() => setMenuAberto(false)}
+                        className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] rounded-md"
+                      >
+                        {label}
+                      </Link>
+                    ))}
+                  </>
+                )}
 
                 <span className="mt-2 text-xs uppercase font-semibold opacity-70">
-                  Gerenciamento
+                  Administração
                 </span>
                 {gerenciamentoLinks.map(({ href, label }) => (
                   <Link

@@ -40,20 +40,23 @@ export function ModalEvento<T extends Record<string, unknown>>({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
-            </Dialog.Overlay>
-            <Dialog.Content asChild>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                className="rounded-xl card max-w-lg w-full border-0 p-0 bg-white dark:bg-zinc-900 z-[9999]"
+                className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm"
               >
-                <form onSubmit={handleSubmit} className="p-6 space-y-5" autoComplete="off">
-          <div className="flex justify-between items-center mb-3">
-            <h2 className="text-xl font-bold" style={{ fontFamily: "var(--font-heading)" }}>
-              {initial?.titulo ? "Editar Evento" : "Novo Evento"}
-            </h2>
+                <Dialog.Content asChild>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    className="rounded-xl card max-w-lg w-full border-0 p-0 bg-white dark:bg-zinc-900 z-[9999]"
+                  >
+                    <Dialog.Description className="sr-only">Formulário de evento</Dialog.Description>
+                    <form onSubmit={handleSubmit} className="p-6 space-y-5" autoComplete="off">
+                      <div className="flex justify-between items-center mb-3">
+                        <Dialog.Title asChild>
+                          <h2 className="text-xl font-bold" style={{ fontFamily: "var(--font-heading)" }}>
+                            {initial?.titulo ? "Editar Evento" : "Novo Evento"}
+                          </h2>
+                        </Dialog.Title>
             <button
               type="button"
               className="text-lg px-3 py-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800"
@@ -85,6 +88,8 @@ export function ModalEvento<T extends Record<string, unknown>>({
                 </form>
               </motion.div>
             </Dialog.Content>
+          </motion.div>
+            </Dialog.Overlay>
           </Dialog.Portal>
         )}
       </AnimatePresence>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/apiAuth";
+import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function GET(req: NextRequest) {
   const auth = requireRole(req, "coordenador");
@@ -14,7 +15,7 @@ export async function GET(req: NextRequest) {
     });
     return NextResponse.json(compras, { status: 200 });
   } catch (err) {
-    console.error("Erro ao listar compras:", err);
+    await logConciliacaoErro(`Erro ao listar compras: ${String(err)}`);
     return NextResponse.json({ error: "Erro ao listar" }, { status: 500 });
   }
 }
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
     const compra = await pb.collection("compras").create(data);
     return NextResponse.json(compra, { status: 201 });
   } catch (err) {
-    console.error("Erro ao criar compra:", err);
+    await logConciliacaoErro(`Erro ao criar compra: ${String(err)}`);
     return NextResponse.json({ error: "Erro ao criar" }, { status: 500 });
   }
 }

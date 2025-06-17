@@ -1,7 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import type { Produto } from "@/types";
 
 import AddToCartButton from "./AddToCartButton";
@@ -104,7 +103,6 @@ export default function ProdutoInterativo({
   preco,
   descricao,
   produto,
-  isLoggedIn,
 }: {
   imagens: Record<string, string[]>;
   generos: string[];
@@ -113,7 +111,6 @@ export default function ProdutoInterativo({
   preco: number;
   descricao?: string;
   produto: Produto;
-  isLoggedIn: boolean;
 }) {
   // Padronização dos gêneros:
   const generosNorm = generos.map((g) =>
@@ -125,15 +122,18 @@ export default function ProdutoInterativo({
   );
   const [genero, setGenero] = useState(generosNorm[0]);
   const [tamanho, setTamanho] = useState(tamanhos[0]);
-  const coresList = Array.isArray(produto.cores)
-    ? produto.cores
-    : typeof produto.cores === "string"
-    ? produto.cores.split(",").map((c: string) => c.trim())
-    : [];
+  const coresList = Array.from(
+    new Set(
+      Array.isArray(produto.cores)
+        ? produto.cores
+        : typeof produto.cores === "string"
+        ? produto.cores.split(",").map((c: string) => c.trim())
+        : []
+    )
+  );
   const [cor, setCor] = useState(coresList[0] || "");
   const [indexImg, setIndexImg] = useState(0);
   const pauseRef = useRef(false);
-  const router = useRouter();
 
   const firstImgKey = Object.keys(imagens)[0];
   const imgs = imagens[genero] || imagens["default"] || imagens[firstImgKey];
@@ -172,7 +172,7 @@ export default function ProdutoInterativo({
         <div className="flex gap-3 mt-4">
           {imgs.map((src, i) => (
             <Image
-              key={i}
+              key={i + 1}
               src={src}
               alt={`Miniatura ${i + 1}`}
               width={64}
@@ -199,7 +199,9 @@ export default function ProdutoInterativo({
           />
           {coresList.length > 0 && (
             <div className="mt-4">
-              <p className="text-sm mb-2 text-[var(--text-primary)]/70">Cores disponíveis:</p>
+              <p className="text-sm mb-2 text-[var(--text-primary)]/70">
+                Cores disponíveis:
+              </p>
               <div className="flex gap-2">
                 {coresList.map((c) => (
                   <button
@@ -238,7 +240,9 @@ export default function ProdutoInterativo({
           />
           {coresList.length > 0 && (
             <div className="mt-4">
-              <p className="text-sm mb-2 text-[var(--text-primary)]/70">Cores disponíveis:</p>
+              <p className="text-sm mb-2 text-[var(--text-primary)]/70">
+                Cores disponíveis:
+              </p>
               <div className="flex gap-2">
                 {coresList.map((c) => (
                   <button
@@ -259,25 +263,16 @@ export default function ProdutoInterativo({
         </div>
         {/* Botões em linha */}
         <div className="flex flex-col md:flex-row gap-3 mt-4">
-          <button
-            onClick={() => {
-              if (!isLoggedIn) {
-                router.push("/login?redirect=/loja/checkout");
-              } else {
-                router.push("/loja/checkout");
-              }
-            }}
-            className="w-full md:w-auto btn btn-primary text-center"
-          >
-            Quero essa pra brilhar no Congresso!
-          </button>
           <div className="w-full md:w-auto">
             <AddToCartButton
               produto={{
                 ...produto,
                 imagens: Array.isArray(produto.imagens)
                   ? produto.imagens
-                  : imagens[genero] || imagens["default"] || imagens[firstImgKey] || [],
+                  : imagens[genero] ||
+                    imagens["default"] ||
+                    imagens[firstImgKey] ||
+                    [],
                 generos: [genero],
                 tamanhos: [tamanho],
                 cores: cor ? [cor] : [],
@@ -295,7 +290,8 @@ export default function ProdutoInterativo({
           <div>
             <h2 className="font-semibold text-base">Envio e devolução</h2>
             <p>
-              Entrega rápida em todo o Brasil. Trocas grátis em até 7 dias após o recebimento.
+              Entrega rápida em todo o Brasil. Trocas grátis em até 7 dias após
+              o recebimento.
             </p>
           </div>
           <div className="divide-y divide-[var(--accent-900)]/10 mt-4">

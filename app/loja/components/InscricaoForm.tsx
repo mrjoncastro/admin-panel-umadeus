@@ -1,11 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function InscricaoPage() {
+interface Campo {
+  id: string;
+  nome: string;
+}
+
+interface InscricaoFormProps {
+  eventoId: string;
+}
+
+export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
   const [status, setStatus] = useState<
     "idle" | "sending" | "success" | "error"
   >("idle");
+  const [campos, setCampos] = useState<Campo[]>([]);
+
+  useEffect(() => {
+    fetch("/api/campos")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => (Array.isArray(data) ? setCampos(data) : setCampos([])))
+      .catch((err) => console.error("Erro ao carregar campos:", err));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -46,6 +63,7 @@ export default function InscricaoPage() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-8">
+        <input type="hidden" name="evento" value={eventoId} />
         <div className="grid md:grid-cols-2 gap-10">
           {/* Dados Pessoais */}
           <section>
@@ -119,6 +137,18 @@ export default function InscricaoPage() {
                     className="input-base"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block mb-1 text-sm font-medium">Campo*</label>
+                <select name="campo" required className="input-base">
+                  <option value="">Selecione</option>
+                  {campos.map((campo) => (
+                    <option key={campo.id} value={campo.id}>
+                      {campo.nome}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>
@@ -258,3 +288,4 @@ export default function InscricaoPage() {
     </main>
   );
 }
+

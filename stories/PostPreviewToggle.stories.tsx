@@ -1,11 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { userEvent, within, expect } from 'storybook/test';
 import { useState } from 'react';
-import { marked } from 'marked';
 import PostContentEditor from '../app/admin/posts/components/PostContentEditor';
 
 function Demo() {
-  const [content, setContent] = useState('# Título');
+  const [content, setContent] = useState('<h1>Título</h1>');
   const [preview, setPreview] = useState(false);
 
   return preview ? (
@@ -13,7 +12,7 @@ function Demo() {
       <button onClick={() => setPreview(false)}>Editar</button>
       <article
         className="prose prose-neutral max-w-none"
-        dangerouslySetInnerHTML={{ __html: marked.parse(content) }}
+        dangerouslySetInnerHTML={{ __html: content }}
       />
     </div>
   ) : (

@@ -11,7 +11,7 @@ const meta = {
     onChange: { action: 'changed' },
   },
   args: {
-    value: '# Post de Exemplo\n\nEdite o conte\u00fado...',
+    value: '<h1>Post de Exemplo</h1>\n<p>Edite o conteúdo...</p>',
     onChange: fn(),
   },
 } satisfies Meta<typeof PostContentEditor>;

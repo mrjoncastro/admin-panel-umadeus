@@ -95,7 +95,7 @@
 ## [2025-06-13] Documentadas seções de LoadingOverlay, SmoothTabs e ModalAnimated no design system.
 ## [2025-06-12] Corrigido uso da variável PB_URL na rota de recuperação de link. Agora utiliza NEXT_PUBLIC_PB_URL e README/.env.example atualizados. Impacto: padronização das variáveis de ambiente.
 ## [2025-06-14] Removidas entradas duplicadas de dependências e atualizado package-lock.json.
-## [2025-06-14] Personalizacao salva em m24_clientes.cor_primaria
+## [2025-06-14] Personalizacao salva nos campos cor_primary, logo_url e font da colecao clientes_config
 ## [2025-06-13] Documentada persistência das configurações no design system.
 ## [2025-06-15] Documentadas rotas de saldo e transferencia do Asaas no README e novo guia saldo-transferencia-asaas.md.
 ## [2025-06-13] Especificado no README que apenas coordenadores visualizam métricas financeiras; líderes veem somente contagens de inscrições e pedidos.
@@ -104,6 +104,10 @@
 ## [2025-06-16] Rota /admin/api/asaas/extrato atualizada para requireClienteFromHost e docs revisados.
 ## [2025-06-16] README e guia atualizados mencionando uso de /finance/transactions no extrato com mesmo cabeçalho de saldo.
 ## [2025-06-16] Extrato agora usa /financialTransactions e define offset, limit e order=asc.
+
+## [2025-06-16] BankAccountModal criado com busca BrasilAPI e registro em clientes_contas_bancarias. Documentação e testes adicionados.
+## [2025-06-16] Documentada variavel NEXT_PUBLIC_BRASILAPI_URL e formulario usa BrasilAPI
+## [2025-06-16] Botão Nova conta integrado à página de Transferências com o BankAccountModal.
 
 ## [2025-06-17] BankAccountModal criado com busca BrasilAPI e registro em clientes_contas_bancarias. Documentação e testes adicionados.
 ## [2025-06-16] Documentada variavel NEXT_PUBLIC_BRASILAPI_URL e formulario usa BrasilAPI

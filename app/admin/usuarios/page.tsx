@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import type { Evento } from "@/types";
 
 interface Usuario {
   id: string;
@@ -19,6 +20,8 @@ export default function UsuariosPage() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
   const [loading, setLoading] = useState(true);
   const [mensagem, setMensagem] = useState("");
+  const [eventos, setEventos] = useState<Evento[]>([]);
+  const [eventoId, setEventoId] = useState("");
 
   useEffect(() => {
     async function fetchUsuarios() {
@@ -52,13 +55,56 @@ export default function UsuariosPage() {
     fetchUsuarios();
   }, []);
 
+  useEffect(() => {
+    async function fetchEventos() {
+      try {
+        const token = localStorage.getItem("pb_token");
+        const user = localStorage.getItem("pb_user");
+        const res = await fetch("/admin/api/eventos", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-PB-User": user ?? "",
+          },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        const ativos = Array.isArray(data)
+          ? data.filter((e: Evento) => e.status !== "realizado")
+          : [];
+        setEventos(ativos);
+        if (ativos.length > 0) setEventoId(ativos[0].id);
+      } catch (err) {
+        console.error("Erro ao carregar eventos:", err);
+      }
+    }
+
+    fetchEventos();
+  }, []);
+
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <h2 className="heading">Usuários Cadastrados</h2>
-        <Link href="/admin/usuarios/novo" className="btn btn-primary">
-          + Adicionar Novo Usuário
-        </Link>
+        <div className="flex items-center gap-4">
+          {eventos.length > 0 ? (
+            <select
+              value={eventoId}
+              onChange={(e) => setEventoId(e.target.value)}
+              className="border rounded p-2 text-sm bg-white shadow-sm"
+            >
+              {eventos.map((ev) => (
+                <option key={ev.id} value={ev.id}>
+                  {ev.titulo}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <span className="text-sm text-gray-500">Nenhum evento ativo</span>
+          )}
+          <Link href="/admin/usuarios/novo" className="btn btn-primary">
+            + Adicionar Novo Usuário
+          </Link>
+        </div>
       </div>
 
       {mensagem && (
@@ -90,13 +136,19 @@ export default function UsuariosPage() {
                   <td>{usuario.expand?.campo?.nome ?? "—"}</td>
                   <td>
                     {usuario.role === "lider" ? (
-                      <Link
-                        href={`/inscricoes/${usuario.id}`}
-                        className="text-blue-600 hover:underline"
-                        target="_blank"
-                      >
-                        Ver link
-                      </Link>
+                      eventos.length > 0 ? (
+                        <Link
+                          href={`/inscricoes/${usuario.id}/${eventoId}`}
+                          className="text-blue-600 hover:underline"
+                          target="_blank"
+                        >
+                          Ver link
+                        </Link>
+                      ) : (
+                        <span className="text-gray-400 text-xs">
+                          Nenhum evento ativo
+                        </span>
+                      )
                     ) : (
                       <span className="text-gray-400">—</span>
                     )}

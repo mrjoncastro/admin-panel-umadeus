@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createPocketBase } from "@/lib/pocketbase";
+import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function GET(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -22,9 +23,9 @@ export async function GET(req: NextRequest) {
     });
   } catch (err: unknown) {
     if (err instanceof Error) {
-      console.error("❌ Erro em /api/lider/[id]:", err.message);
+      await logConciliacaoErro(`Erro em /api/lider/[id]: ${err.message}`);
     } else {
-      console.error("❌ Erro desconhecido em /api/lider/[id].");
+      await logConciliacaoErro("Erro desconhecido em /api/lider/[id].");
     }
 
     return NextResponse.json(

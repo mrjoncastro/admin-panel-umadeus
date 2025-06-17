@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/apiAuth";
+import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function PUT(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -28,7 +29,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json(campo, { status: 200 });
   } catch (err: unknown) {
-    console.error("Erro:", err);
+    await logConciliacaoErro(`Erro: ${String(err)}`);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }
@@ -53,7 +54,7 @@ export async function DELETE(req: NextRequest) {
     await pb.collection("campos").delete(id);
     return NextResponse.json({ sucesso: true }, { status: 200 });
   } catch (err: unknown) {
-    console.error("Erro:", err);
+    await logConciliacaoErro(`Erro: ${String(err)}`);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

@@ -2,24 +2,16 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { getPostsClientPB, type PostClientRecord } from "@/lib/posts/getPostsClientPB";
 
-interface Post {
-  title: string;
-  date: string;
-  summary: string;
-  slug: string;
-  thumbnail?: string | null;
-  category?: string | null;
-}
+type Post = PostClientRecord;
 
 export default function BlogHeroCarousel() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    fetch("/posts.json")
-      .then((res) => res.json())
-      .then((data) => setPosts(data.slice(0, 3)));
+    getPostsClientPB().then((data) => setPosts(data.slice(0, 3)));
   }, []);
 
   useEffect(() => {
@@ -91,9 +83,9 @@ export default function BlogHeroCarousel() {
 
         {/* Dots */}
         <div className="mt-4 flex gap-2 justify-center">
-          {posts.map((_, index) => (
+          {posts.map((post, index) => (
             <span
-              key={index}
+              key={post.slug}
               className={`w-2.5 h-2.5 rounded-full ${
                 index === currentIndex ? "bg-primary-600" : "bg-white/50"
               }`}

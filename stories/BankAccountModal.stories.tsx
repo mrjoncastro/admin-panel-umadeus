@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { within, expect, fn } from 'storybook/test';
-import BankAccountModal from '../components/modals/BankAccountModal';
+import BankAccountModal from '@/app/admin/financeiro/transferencias/modals/BankAccountModal';
 import { AuthProvider } from '../lib/context/AuthContext';
 import { ThemeProvider } from '../lib/context/ThemeContext';
 

@@ -2,6 +2,7 @@ Este repositório reúne portal institucional, blog, loja virtual e painel admin
 Visitantes navegam pelo portal e pelo blog, realizam compras na loja e os coordenadores gerenciam tudo pelo admin.
 Consulte [arquitetura.md](arquitetura.md) para entender a divisão de pastas e responsabilidades.
 Para personalizar a interface utilize as orientações de [docs/design-system.md](docs/design-system.md).
+As preferências de fonte, cor e logotipo ficam nos campos `font`, `cor_primary` e `logo_url` da coleção `clientes_config`.
 Para um passo a passo inicial do sistema consulte [docs/iniciar-tour.md](docs/iniciar-tour.md).
 Coordenadores podem iniciar o tour clicando no ícone de mapa ao lado do sino de notificações no painel admin ou acessando `/iniciar-tour` diretamente.
 
@@ -86,9 +87,9 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `NEXT_PUBLIC_SITE_URL` - endereço do site do cliente
 - `NEXT_PUBLIC_BRASILAPI_URL` - base para chamadas à BrasilAPI
 
-Os servidores identificam automaticamente o tenant pelo domínio de cada requisição usando `getTenantFromHost`.
+Os servidores identificam automaticamente o tenant pelo domínio de cada requisição usando `getTenantFromHost`, que consulta a coleção `clientes_config` para descobrir o ID do cliente.
 
-Cada registro em `m24_clientes` contém o campo `asaas_api_key`. A aplicação busca a chave correta deste cliente antes de criar cobranças ou checkouts, garantindo que cada subconta do Asaas seja utilizada separadamente.
+Com esse ID, o backend acessa `m24_clientes` e obtém as credenciais `asaas_api_key` e `asaas_account_id` da subconta correspondente, garantindo que cada domínio utilize sua própria chave Asaas.
 
 Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utilizar o SDK oficial.
 
@@ -159,24 +160,57 @@ GET /admin/api/asaas/saldo
 Resposta de exemplo:
 
 ```json
-{ "saldo": 1234.56 }
+{ "balance": 1234.56 }
+```
+
+### Endpoint `/admin/api/asaas/estatisticas`
+
+Consulta estatísticas de cobranças através de `/finance/payment/statistics`.
+Todos os parâmetros da requisição são repassados ao Asaas, permitindo filtros
+como `status`, `billingType` e datas.
+
+```bash
+GET /admin/api/asaas/estatisticas?status=PENDING
+```
+
+Resposta de exemplo:
+
+```json
+{ "quantity": 1, "value": 50, "netValue": 48.01 }
 ```
 
 ### Endpoint `/admin/api/asaas/transferencia`
 
 Envia uma transferência do saldo do Asaas para a conta bancária cadastrada. Requisição `POST` com o seguinte payload:
 
+Para contas bancárias:
+
 ```json
 {
-  "valor": 150.75,
+  "value": 150.75,
   "bankAccountId": "acc_123",
-  "descricao": "Repasse loja junho/2025"
+  "description": "Repasse loja junho/2025"
 }
 ```
 
-- **valor** – valor a transferir em reais.
-- **bankAccountId** – código da conta bancária de destino.
-- **descricao** – texto opcional para identificar a transferência.
+Para PIX:
+
+```json
+{
+  "value": 150.75,
+  "pixAddressKey": "a@b.com",
+  "pixAddressKeyType": "email",
+  "description": "Repasse loja junho/2025",
+  "scheduleDate": "2025-08-20"
+}
+```
+
+- **value** – valor a transferir em reais.
+- **bankAccountId** – código da conta bancária de destino (quando conta bancária).
+- **pixAddressKey** – chave PIX de destino.
+- **pixAddressKeyType** – tipo da chave PIX (`cpf`, `email`, `phone` etc.).
+- **description** – texto opcional para identificar a transferência.
+- **scheduleDate** – data de agendamento (opcional e apenas para PIX).
 
 Essas rotas utilizam a chave do Asaas de cada cliente (tenant) conforme descrito em [docs/plano-negocio.md](docs/plano-negocio.md).
 
@@ -201,7 +235,8 @@ em `/admin/api/asaas/saldo`.
 
 ### Cadastro de Contas Bancárias
 
-O painel possui o modal `BankAccountModal` para registrar contas bancárias do cliente. O campo **Banco** utiliza busca na BrasilAPI (`NEXT_PUBLIC_BRASILAPI_URL`) e preenche automaticamente `bankCode` e `ispb`. Ao enviar o formulário os dados são salvos na coleção `clientes_contas_bancarias` relacionados ao usuário autenticado e ao tenant.
+O painel possui o modal `BankAccountModal` para registrar contas bancárias do cliente. O formulário possui campos **Nome do titular** (`ownerName`) e **Nome da conta** (`accountName`) para identificar a conta cadastrada. O campo **Banco** possui filtragem que consulta a BrasilAPI (`NEXT_PUBLIC_BRASILAPI_URL`); quando vazio, apresenta uma lista inicial com quinze bancos. Ao escolher um banco, `bankCode` e `ispb` são preenchidos automaticamente (este último fica oculto no formulário). Agora é possível alternar entre **Conta Bancária** e **PIX** por meio de abas com `SmoothTabs`. Quando selecionado PIX, o modal exibe os campos `pixAddressKey`, `pixAddressKeyType`, `description` e `scheduleDate`. O envio salva na coleção `clientes_pix` ou `clientes_contas_bancarias` conforme o tipo escolhido. A seleção de tipo de conta inclui a opção **Conta Salário**.
+Na página **Transferências**, um botão **Nova conta** abre este modal para facilitar o cadastro durante o fluxo de transferências. O `ModalAnimated` recebeu um `z-index` superior para evitar que elementos fixos como a navbar sobreponham o conteúdo do modal.
 
 
 ### Coleção `compras`
@@ -241,23 +276,16 @@ Líderes veem apenas a quantidade de inscrições e pedidos do seu campo.
 
 ## Blog e CMS
 
-Os arquivos de conteúdo ficam dentro da pasta `posts/` na raiz do projeto. Cada
-arquivo `.mdx` representa um post do blog.
+Os posts agora ficam na coleção `posts` do PocketBase, em vez de arquivos `.mdx`.
 
-Para criar ou editar posts pelo painel admin:
+Para criar ou editar um post pelo painel admin:
 
 1. Acesse `/admin` e realize o login.
-2. No menu lateral, clique em **Posts** e escolha **Novo Post** ou selecione um
-   existente para editar.
-3. Preencha título, resumo, categoria, autor, data de publicação, caso seja uma edição informe: post editado por {autor}, em {data de edição}, thumbnail e o conteúdo em Markdown.
-4. Salve para publicar ou atualizar o post.
+2. No menu lateral, clique em **Posts** e escolha **Novo Post** ou selecione um existente.
+3. Preencha os campos recomendados (`title`, `slug`, `summary`, `content`, `category`, `thumbnail`, `keywords`, `date`, `cliente` etc.).
+4. Salve para publicar ou atualizar.
 
-Após salvar as alterações, execute o comando abaixo para gerar
-`/public/posts.json` com a lista de posts:
-
-```bash
-npm run generate-posts
-```
+O front-end consome os posts diretamente do banco, portanto não é mais necessário executar `generate-posts`.
 
 ## Testes
 

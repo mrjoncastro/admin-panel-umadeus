@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/apiAuth";
+import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function GET(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -28,9 +29,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(usuario, { status: 200 });
   } catch (err: unknown) {
     if (err instanceof Error) {
-      console.error("❌ Erro em /api/usuarios/[id]:", err.message);
+      await logConciliacaoErro(`Erro em /api/usuarios/[id]: ${err.message}`);
     } else {
-      console.error("❌ Erro desconhecido em /api/usuarios/[id]");
+      await logConciliacaoErro("Erro desconhecido em /api/usuarios/[id]");
     }
 
     return NextResponse.json(

@@ -6,20 +6,23 @@ export interface Bank {
 }
 
 export async function searchBanks(query: string, fetchFn: typeof fetch = fetch): Promise<Bank[]> {
-  if (!query) return [];
   const base = process.env.NEXT_PUBLIC_BRASILAPI_URL || '';
-  const url = `${base}/api/banks/v1?search=${encodeURIComponent(query)}`;
+  const url = query
+    ? `${base}/api/banks/v1?search=${encodeURIComponent(query)}`
+    : `${base}/api/banks/v1`;
   const res = await fetchFn(url);
   if (!res.ok) {
     throw new Error('Erro ao consultar bancos');
   }
-  return (await res.json()) as Bank[];
+  const data = (await res.json()) as Bank[];
+  return query ? data : data.slice(0, 15);
 }
 
 import type PocketBase from 'pocketbase';
 
 export interface BankAccount {
   ownerName: string;
+  accountName: string;
   cpfCnpj: string;
   ownerBirthDate: string;
   bankName: string;
@@ -29,6 +32,13 @@ export interface BankAccount {
   account: string;
   accountDigit: string;
   bankAccountType: string;
+}
+
+export interface ClienteContaBancariaRecord {
+  id: string;
+  accountName: string;
+  ownerName: string;
+  [key: string]: unknown;
 }
 
 export async function createBankAccount(
@@ -43,4 +53,53 @@ export async function createBankAccount(
     cliente: clienteId,
   };
   return pb.collection('clientes_contas_bancarias').create(data);
+}
+
+export interface PixKey {
+  pixAddressKey: string;
+  pixAddressKeyType: string;
+  description: string;
+  scheduleDate: string;
+}
+
+
+export async function createPixKey(
+  pb: PocketBase,
+  pix: PixKey,
+  userId: string,
+  clienteId: string
+) {
+  const data = {
+    ...pix,
+    usuario: userId,
+    cliente: clienteId,
+  };
+  return pb.collection('clientes_pix').create(data);
+}
+
+export interface PixKeyRecord {
+  id: string;
+  pixAddressKey: string;
+  pixAddressKeyType: string;
+  [key: string]: unknown;
+}
+
+export async function getPixKeysByTenant(
+  pb: PocketBase,
+  tenantId: string
+): Promise<PixKeyRecord[]> {
+  return pb
+    .collection('clientes_pix')
+    .getFullList({ filter: `cliente='${tenantId}'` }) as Promise<PixKeyRecord[]>;
+}
+
+export async function getBankAccountsByTenant(
+  pb: PocketBase,
+  tenantId: string
+): Promise<ClienteContaBancariaRecord[]> {
+  return pb
+    .collection('clientes_contas_bancarias')
+    .getFullList({ filter: `cliente='${tenantId}'` }) as Promise<
+    ClienteContaBancariaRecord[]
+  >;
 }

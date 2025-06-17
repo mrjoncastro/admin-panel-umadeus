@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createCheckout } from "@/lib/asaas";
 import { requireClienteFromHost } from "@/lib/clienteAuth";
+import { logInfo } from "@/lib/logger";
+import { logConciliacaoErro } from "@/lib/server/logger";
 
 const checkoutSchema = z.object({
   valor: z.number(),
@@ -50,14 +52,17 @@ export async function POST(req: NextRequest) {
   const { pb, cliente } = auth;
 
   try {
-    console.log("📥 Recebendo requisição POST em /asaas/checkout");
+    logInfo("📥 Recebendo requisição POST em /asaas/checkout");
 
     const body = await req.json();
-    console.log("🧾 Body recebido:\n", JSON.stringify(body, null, 2));
+    logInfo("🧾 Body recebido:\n" + JSON.stringify(body, null, 2));
 
     const parse = checkoutSchema.safeParse(body);
     if (!parse.success) {
-      console.warn("⚠️ Dados inválidos recebidos:", parse.error.flatten());
+      logInfo(
+        "⚠️ Dados inválidos recebidos: " +
+          JSON.stringify(parse.error.flatten()),
+      );
       return NextResponse.json(
         { error: "Dados inválidos" },
         { status: 400 }
@@ -90,7 +95,7 @@ export async function POST(req: NextRequest) {
     const apiKey = cliente.asaas_api_key || process.env.ASAAS_API_KEY || "";
     const userAgent = cliente.nome || "qg3";
 
-    console.log("🔧 Chamando createCheckout com:", {
+    logInfo("🔧 Chamando createCheckout com:", {
       valor,
       itens,
       successUrl,
@@ -103,7 +108,7 @@ export async function POST(req: NextRequest) {
       paymentMethods,
     });
 
-    console.log("🔑 API Key utilizada:", apiKey);
+    logInfo("🔑 API Key utilizada:", apiKey);
 
     const checkoutUrl = await createCheckout(
       {
@@ -122,11 +127,11 @@ export async function POST(req: NextRequest) {
       userAgent,
     );
 
-    console.log("✅ Checkout criado com sucesso:", checkoutUrl);
+    logInfo("✅ Checkout criado com sucesso:", checkoutUrl);
 
     return NextResponse.json({ checkoutUrl });
   } catch (err) {
-    console.error("❌ Erro no checkout:", err);
+    await logConciliacaoErro(`Erro no checkout: ${String(err)}`);
     return NextResponse.json(
       { error: "Erro ao processar checkout" },
       { status: 500 }

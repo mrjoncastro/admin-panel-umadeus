@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireClienteFromHost } from "@/lib/clienteAuth";
+import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function GET(req: NextRequest) {
   const auth = await requireClienteFromHost(req);
@@ -40,7 +41,7 @@ export async function GET(req: NextRequest) {
 
     if (!res.ok) {
       const errorBody = await res.text();
-      console.error("Erro ao consultar extrato:", errorBody);
+      await logConciliacaoErro(`Erro ao consultar extrato: ${errorBody}`);
       return NextResponse.json(
         { error: "Falha ao consultar extrato" },
         { status: 500 }
@@ -50,7 +51,7 @@ export async function GET(req: NextRequest) {
     const data = await res.json();
     return NextResponse.json(data);
   } catch (err) {
-    console.error("Erro inesperado ao consultar extrato:", err);
+    await logConciliacaoErro(`Erro inesperado ao consultar extrato: ${String(err)}`);
     return NextResponse.json(
       { error: "Erro ao consultar extrato" },
       { status: 500 }

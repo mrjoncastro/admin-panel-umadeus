@@ -14,17 +14,24 @@ export interface SmoothTabsProps {
   tabs: TabItem[];
   defaultValue?: string;
   className?: string;
+  onChange?: (value: string) => void;
 }
 
 export default function SmoothTabs({
   tabs,
   defaultValue,
   className,
+  onChange,
 }: SmoothTabsProps) {
   const [active, setActive] = useState(defaultValue ?? tabs[0]?.value);
 
+  const handleChange = (value: string) => {
+    setActive(value);
+    onChange?.(value);
+  };
+
   return (
-    <Tabs.Root value={active} onValueChange={setActive} className={className}>
+    <Tabs.Root value={active} onValueChange={handleChange} className={className}>
       <Tabs.List className="relative flex border-b border-neutral-300">
         {tabs.map(({ value, label }) => (
           <Tabs.Trigger

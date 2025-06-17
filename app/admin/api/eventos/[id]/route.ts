@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/apiAuth";
+import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function GET(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -14,7 +15,7 @@ export async function GET(req: NextRequest) {
     const evento = await pb.collection("eventos").getOne(id);
     return NextResponse.json(evento, { status: 200 });
   } catch (err) {
-    console.error("Erro ao obter evento:", err);
+    await logConciliacaoErro(`Erro ao obter evento: ${String(err)}`);
     return NextResponse.json({ error: "Erro ao obter" }, { status: 500 });
   }
 }
@@ -33,7 +34,7 @@ export async function PUT(req: NextRequest) {
     const evento = await pb.collection("eventos").update(id, formData);
     return NextResponse.json(evento, { status: 200 });
   } catch (err) {
-    console.error("Erro ao atualizar evento:", err);
+    await logConciliacaoErro(`Erro ao atualizar evento: ${String(err)}`);
     return NextResponse.json({ error: "Erro ao atualizar" }, { status: 500 });
   }
 }
@@ -51,7 +52,7 @@ export async function DELETE(req: NextRequest) {
     await pb.collection("eventos").delete(id);
     return NextResponse.json({ sucesso: true }, { status: 200 });
   } catch (err) {
-    console.error("Erro ao excluir evento:", err);
+    await logConciliacaoErro(`Erro ao excluir evento: ${String(err)}`);
     return NextResponse.json({ error: "Erro ao excluir" }, { status: 500 });
   }
 }

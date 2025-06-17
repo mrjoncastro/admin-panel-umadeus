@@ -4,6 +4,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { formatDate } from "@/utils/formatDate";
+import InscricaoForm from "../components/InscricaoForm";
 
 interface Evento {
   id: string;
@@ -17,19 +18,20 @@ interface Evento {
 
 export default function EventosPage() {
   const [eventos, setEventos] = useState<Evento[]>([]);
+  const [selectedEventoId, setSelectedEventoId] = useState<string | null>(null);
 
   useEffect(() => {
     const tenantId = localStorage.getItem("tenant_id");
     fetch(`/api/eventos?tenant=${tenantId ?? ""}`)
       .then((r) => r.json())
-      .then((data) => Array.isArray(data) ? setEventos(data) : setEventos([]))
+      .then((data) => (Array.isArray(data) ? setEventos(data) : setEventos([])))
       .catch((err) => {
         console.error("Erro ao carregar eventos:", err);
       });
   }, []);
 
   return (
-    <main className="px-4 py-10 md:px-16">
+    <main className="px-4 py-10 md:px-16 space-y-10">
       <h1 className="text-3xl font-bold text-center mb-10">Eventos UMADEUS</h1>
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {eventos.map((evento) => (
@@ -60,10 +62,18 @@ export default function EventosPage() {
               <p className="text-sm text-gray-600">{evento.descricao}</p>
               <p className="text-sm font-medium text-gray-800">{formatDate(evento.data)}</p>
               <p className="text-sm text-gray-500">{evento.cidade}</p>
+              <button
+                className="btn btn-primary mt-2"
+                onClick={() => setSelectedEventoId(evento.id)}
+              >
+                Inscrever
+              </button>
             </div>
           </div>
         ))}
       </div>
+      {selectedEventoId && <InscricaoForm eventoId={selectedEventoId} />}
     </main>
   );
 }
+

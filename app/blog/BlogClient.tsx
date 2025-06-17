@@ -8,15 +8,9 @@ import Link from "next/link";
 import Image from "next/image";
 import createPocketBase from "@/lib/pocketbase";
 import type { Cliente } from "@/types";
+import { getPostsClientPB, type PostClientRecord } from "@/lib/posts/getPostsClientPB";
 
-interface Post {
-  title: string;
-  date: string;
-  summary: string;
-  slug: string;
-  thumbnail?: string | null;
-  category?: string | null;
-}
+type Post = PostClientRecord;
 
 const POSTS_PER_PAGE = 6;
 
@@ -30,14 +24,14 @@ export default function BlogClient() {
         const tenantId = localStorage.getItem("tenant_id");
         if (tenantId) {
           const c = await pb
-            .collection("m24_clientes")
+            .collection("clientes_config")
             .getOne<Cliente>(tenantId);
           setNomeCliente(c.nome ?? "");
           return;
         }
         const dominio = window.location.hostname;
         const c = await pb
-          .collection("m24_clientes")
+          .collection("clientes_config")
           .getFirstListItem<Cliente>(`dominio='${dominio}'`);
         localStorage.setItem("tenant_id", c.id);
         setNomeCliente(c.nome ?? "");
@@ -62,11 +56,10 @@ export default function BlogClient() {
     searchParams.get("categoria")?.toLowerCase() || "";
 
   useEffect(() => {
-    fetch("/posts.json")
-      .then((res) => res.json())
+    getPostsClientPB()
       .then(setPosts)
       .catch((err) => {
-        console.error("Erro ao carregar posts.json:", err);
+        console.error("Erro ao carregar posts:", err);
       });
   }, []);
 
@@ -176,7 +169,7 @@ export default function BlogClient() {
 
                   {[...Array(totalPages)].map((_, i) => (
                     <button
-                      key={i}
+                      key={`page-${i + 1}`}
                       onClick={() => handlePageChange(i + 1)}
                       className={`px-3 py-2 text-sm rounded ${
                         currentPage === i + 1

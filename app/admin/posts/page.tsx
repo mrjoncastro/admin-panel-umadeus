@@ -4,13 +4,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import Link from "next/link";
+import { getPostsClientPB, type PostClientRecord } from "@/lib/posts/getPostsClientPB";
 
-interface Post {
-  title: string;
-  slug: string;
-  date: string;
-  category?: string | null;
-}
+type Post = PostClientRecord;
 
 const POSTS_PER_PAGE = 10;
 
@@ -28,8 +24,7 @@ export default function AdminPostsPage() {
   }, [isLoggedIn, user, router]);
 
   useEffect(() => {
-    fetch("/posts.json")
-      .then((res) => res.json())
+    getPostsClientPB()
       .then(setPosts)
       .catch((err) => {
         console.error("Erro ao carregar posts:", err);

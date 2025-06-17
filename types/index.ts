@@ -34,6 +34,7 @@ export type Inscricao = {
       telefone?: string;
       cpf?: string;
     };
+    evento?: Evento;
   };
 };
 
@@ -126,7 +127,7 @@ export type Cliente = {
   verificado?: boolean;
   modo_validacao?: "wildcard" | "manual" | "cloudflare_api";
   logo_url?: string;
-  cor_primaria?: string;
+  cor_primary?: string;
   responsavel_nome?: string;
   responsavel_email?: string;
   ativo?: boolean;

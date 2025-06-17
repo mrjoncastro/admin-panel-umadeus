@@ -140,7 +140,7 @@ export default function ConfiguracoesPage() {
           "X-PB-User": JSON.stringify(user),
         },
         body: JSON.stringify({
-          cor_primaria: primaryColor,
+          cor_primary: primaryColor,
           logo_url: logoUrl,
           font,
         }),
@@ -160,7 +160,7 @@ export default function ConfiguracoesPage() {
           "X-PB-User": user ?? "",
         },
         body: JSON.stringify({
-          cor_primaria: primaryColor,
+          cor_primary: primaryColor,
           logo_url: logoUrl,
           font,
         }),

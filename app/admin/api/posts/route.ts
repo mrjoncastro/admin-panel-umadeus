@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import path from "path";
-import fs from "fs";
-import { writeFile, mkdir } from "fs/promises";
-import matter from "gray-matter";
+import { logConciliacaoErro } from "@/lib/server/logger";
+import createPocketBase from "@/lib/pocketbase";
+import { getTenantFromHost } from "@/lib/getTenantFromHost";
 
 function slugify(text: string) {
   return text
@@ -31,28 +30,36 @@ export async function POST(req: NextRequest) {
     }
 
     const slug = slugify(title);
+    const pb = createPocketBase();
+    const tenantId = await getTenantFromHost();
 
-    const postsDir = path.join(process.cwd(), "posts");
-    if (!fs.existsSync(postsDir)) {
-      await mkdir(postsDir, { recursive: true });
-    }
-
-    const frontMatter = {
+    const data = {
       title,
+      slug,
       summary,
       category,
+      content,
       date,
-      ...(thumbnail && { thumbnail }),
-      ...(keywords && { keywords }),
-    } as Record<string, string>;
+      thumbnail,
+      keywords: keywords
+        .split(",")
+        .map((k) => k.trim())
+        .filter(Boolean),
+      cliente: tenantId,
+    };
 
-    const mdxContent = `${matter.stringify(content, frontMatter)}\n`;
-    const postPath = path.join(postsDir, `${slug}.mdx`);
-    await writeFile(postPath, mdxContent, "utf8");
+    try {
+      const existing = await pb
+        .collection("posts")
+        .getFirstListItem(`slug='${slug}' && cliente='${tenantId}'`);
+      await pb.collection("posts").update(existing.id, data);
+    } catch {
+      await pb.collection("posts").create(data);
+    }
 
     return NextResponse.json({ slug, thumbnail });
   } catch (err) {
-    console.error("Erro ao salvar post:", err);
+    await logConciliacaoErro(`Erro ao salvar post: ${String(err)}`);
     return NextResponse.json(
       { error: "Erro ao salvar post." },
       { status: 500 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUserFromHeaders } from "@/lib/getUserFromHeaders";
 import { logInfo } from "@/lib/logger";
 import { getTenantFromHost } from "@/lib/getTenantFromHost";
+import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function GET(req: NextRequest) {
   const auth = await getUserFromHeaders(req);
@@ -29,9 +30,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(campos, { status: 200 });
   } catch (err: unknown) {
     if (err instanceof Error) {
-      console.error("❌ Erro em /api/campos:", err.message);
+      await logConciliacaoErro(`Erro em /api/campos: ${err.message}`);
     } else {
-      console.error("❌ Erro desconhecido em /api/campos.");
+      await logConciliacaoErro("Erro desconhecido em /api/campos.");
     }
 
     return NextResponse.json(
@@ -75,9 +76,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(campo, { status: 201 });
   } catch (err: unknown) {
     if (err instanceof Error) {
-      console.error("❌ Erro em /api/campos:", err.message);
+      await logConciliacaoErro(`Erro em /api/campos: ${err.message}`);
     } else {
-      console.error("❌ Erro desconhecido em /api/campos.");
+      await logConciliacaoErro("Erro desconhecido em /api/campos.");
     }
 
     return NextResponse.json(

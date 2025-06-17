@@ -5,13 +5,9 @@ import Image from "next/image";
 import { isExternalUrl } from "@/utils/isExternalUrl";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { getPostsClientPB, type PostClientRecord } from "@/lib/posts/getPostsClientPB";
 
-interface Post {
-  title: string;
-  slug: string;
-  thumbnail?: string | null;
-  category?: string | null;
-}
+type Post = PostClientRecord;
 
 export default function BlogSidebar() {
   const [popular, setPopular] = useState<Post[]>([]);
@@ -20,15 +16,11 @@ export default function BlogSidebar() {
   const current = searchParams.get("categoria")?.toLowerCase();
 
   useEffect(() => {
-    fetch("/posts.json")
-      .then((res) => res.json())
-      .then((posts: Post[]) => {
-        setPopular(posts.slice(0, 3));
-        const unique = [
-          ...new Set(posts.map((p: Post) => p.category).filter(Boolean)),
-        ];
-        setCategories(unique as string[]);
-      });
+    getPostsClientPB().then((posts: Post[]) => {
+      setPopular(posts.slice(0, 3));
+      const unique = [...new Set(posts.map((p) => p.category).filter(Boolean))];
+      setCategories(unique as string[]);
+    });
   }, [setPopular, setCategories]);
 
   return (

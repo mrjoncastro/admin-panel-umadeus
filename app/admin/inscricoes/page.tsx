@@ -11,6 +11,7 @@ import TooltipIcon from "../components/TooltipIcon";
 import { useToast } from "@/lib/context/ToastContext";
 import { PRECO_PULSEIRA, PRECO_KIT } from "@/lib/constants";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import type { Evento } from "@/types";
 
 const statusBadge = {
   pendente: "bg-yellow-100 text-yellow-800",
@@ -46,6 +47,8 @@ export default function ListaInscricoesPage() {
   const [linkPublico, setLinkPublico] = useState("");
   const [loading, setLoading] = useState(true);
   const [copiado, setCopiado] = useState(false);
+  const [eventos, setEventos] = useState<Evento[]>([]);
+  const [eventoId, setEventoId] = useState("");
   const [filtroStatus, setFiltroStatus] = useState("");
   const [filtroBusca, setFiltroBusca] = useState("");
   const [inscricaoEmEdicao, setInscricaoEmEdicao] = useState<Inscricao | null>(
@@ -67,7 +70,28 @@ export default function ListaInscricoesPage() {
     pb.autoCancellation(false);
 
     setRole(user.role);
-    setLinkPublico(`${window.location.origin}/inscricoes/${user.id}`);
+
+    pb
+      .collection("eventos")
+      .getFullList<Evento>({
+        sort: "-data",
+        filter: `cliente='${tenantId}' && status!='realizado'`,
+      })
+      .then((evs) => {
+        setEventos(evs);
+        if (evs.length > 0) {
+          setEventoId(evs[0].id);
+          setLinkPublico(
+            `${window.location.origin}/inscricoes/${user.id}/${evs[0].id}`
+          );
+        } else {
+          setLinkPublico(`${window.location.origin}/inscricoes/${user.id}`);
+        }
+      })
+      .catch(() => {
+        showError("Erro ao carregar eventos.");
+        setLinkPublico(`${window.location.origin}/inscricoes/${user.id}`);
+      });
 
     const baseFiltro = `cliente='${tenantId}'`;
     const filtro =
@@ -76,13 +100,17 @@ export default function ListaInscricoesPage() {
         : `campo='${user.campo}' && ${baseFiltro}`;
 
     pb.collection("inscricoes")
-      .getFullList({ sort: "-created", filter: filtro, expand: "campo,pedido" })
+      .getFullList({
+        sort: "-created",
+        filter: filtro,
+        expand: "campo,evento,pedido",
+      })
       .then((res) => {
         const lista = res.map((r) => ({
           id: r.id,
           nome: r.nome,
           telefone: r.telefone,
-          evento: r.evento,
+          evento: r.expand?.evento?.titulo,
           cpf: r.cpf,
           status: r.status,
           created: r.created,
@@ -110,6 +138,17 @@ export default function ListaInscricoesPage() {
         .catch(() => {});
     }
   }, [pb, tenantId, user, showError]);
+
+  useEffect(() => {
+    if (!user) return;
+    if (eventoId) {
+      setLinkPublico(
+        `${window.location.origin}/inscricoes/${user.id}/${eventoId}`
+      );
+    } else {
+      setLinkPublico(`${window.location.origin}/inscricoes/${user.id}`);
+    }
+  }, [eventoId, user]);
 
   const copiarLink = async () => {
     try {
@@ -158,6 +197,7 @@ export default function ListaInscricoesPage() {
         tamanho: inscricao.tamanho,
         genero: inscricao.genero,
         email: inscricao.email,
+        cliente: tenantId,
         campo: campo?.id,
         responsavel: inscricao.criado_por,
       });
@@ -209,6 +249,7 @@ export default function ListaInscricoesPage() {
           evento: inscricao.evento,
           liderId: campo?.responsavel,
           pedidoId: pedido.id,
+          cliente: tenantId,
           valor: pedido.valor,
           url_pagamento: checkout.url,
         }),
@@ -285,6 +326,19 @@ export default function ListaInscricoesPage() {
         <div className="mb-6 bg-gray-50 border border-gray-200 p-4 rounded-lg text-sm shadow-sm">
           <p className="font-semibold mb-2">📎 Link de inscrição pública:</p>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+            {eventos.length > 0 && (
+              <select
+                value={eventoId}
+                onChange={(e) => setEventoId(e.target.value)}
+                className="border rounded p-2 text-xs bg-white shadow-sm"
+              >
+                {eventos.map((ev) => (
+                  <option key={ev.id} value={ev.id}>
+                    {ev.titulo}
+                  </option>
+                ))}
+              </select>
+            )}
             <input
               readOnly
               value={linkPublico}
@@ -296,7 +350,7 @@ export default function ListaInscricoesPage() {
           </div>
           {copiado && (
             <span className="text-green-600 text-xs animate-pulse mt-1 block">
-              ✅ Link copiado
+              ✅ Link copiado: {linkPublico}
             </span>
           )}
         </div>

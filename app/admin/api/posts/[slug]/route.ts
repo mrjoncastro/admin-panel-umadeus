@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
+import { logConciliacaoErro } from "@/lib/server/logger";
+import createPocketBase from "@/lib/pocketbase";
+import { getTenantFromHost } from "@/lib/getTenantFromHost";
 
 export async function GET(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -14,31 +14,29 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const filePath = path.join(process.cwd(), "posts", `${slug}.mdx`);
-
-  if (!fs.existsSync(filePath)) {
-    return NextResponse.json({ error: "Post não encontrado." }, { status: 404 });
-  }
+  const pb = createPocketBase();
+  const tenantId = await getTenantFromHost();
 
   try {
-    const raw = fs.readFileSync(filePath, "utf8");
-    const { data, content } = matter(raw);
+    const post = await pb
+      .collection("posts")
+      .getFirstListItem(`slug='${slug}' && cliente='${tenantId}'`);
 
-    const keywords = Array.isArray(data.keywords)
-      ? data.keywords.join(", ")
-      : data.keywords ?? "";
+    const keywords = Array.isArray(post.keywords)
+      ? post.keywords.join(", ")
+      : post.keywords ?? "";
 
     return NextResponse.json({
-      title: data.title ?? "",
-      summary: data.summary ?? "",
-      category: data.category ?? "",
-      date: data.date ?? "",
-      thumbnail: data.thumbnail ?? data.headerImage ?? "",
+      title: post.title ?? "",
+      summary: post.summary ?? "",
+      category: post.category ?? "",
+      date: post.date ?? "",
+      thumbnail: post.thumbnail ?? "",
       keywords,
-      content,
+      content: post.content ?? "",
     });
   } catch (err) {
-    console.error("Erro ao carregar post:", err);
+    await logConciliacaoErro(`Erro ao carregar post: ${String(err)}`);
     return NextResponse.json(
       { error: "Erro ao carregar post." },
       { status: 500 }
