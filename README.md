@@ -5,6 +5,7 @@ Para personalizar a interface utilize as orientações de [docs/design-system.md
 As preferências de fonte, cor e logotipo ficam nos campos `font`, `cor_primary` e `logo_url` da coleção `clientes_config`.
 Para um passo a passo inicial do sistema consulte [docs/iniciar-tour.md](docs/iniciar-tour.md).
 Coordenadores podem iniciar o tour clicando no ícone de mapa ao lado do sino de notificações no painel admin ou acessando `/iniciar-tour` diretamente.
+Líderes encontram mais detalhes em [docs/lider-dashboard.md](docs/lider-dashboard.md).
 
 ## Primeiros Passos
 

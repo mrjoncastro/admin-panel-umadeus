@@ -122,3 +122,4 @@
 - Lint: falhou (next not found)
 - Build: falhou (next not found)
 ## [2025-06-25] Links de administração ajustados por papel no Header. Teste criado para validar comportamentos. Lint e build executados.
+## [2025-06-17] Adicionado docs/lider-dashboard.md e link no README
