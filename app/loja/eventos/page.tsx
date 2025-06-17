@@ -21,13 +21,17 @@ export default function EventosPage() {
   const [selectedEventoId, setSelectedEventoId] = useState<string | null>(null);
 
   useEffect(() => {
-    const tenantId = localStorage.getItem("tenant_id");
-    fetch(`/api/eventos?tenant=${tenantId ?? ""}`)
-      .then((r) => r.json())
-      .then((data) => (Array.isArray(data) ? setEventos(data) : setEventos([])))
-      .catch((err) => {
-        console.error("Erro ao carregar eventos:", err);
-      });
+    async function fetchEventos() {
+      fetch("/api/eventos")
+        .then((r) => r.json())
+        .then((data) => {
+          setEventos(Array.isArray(data) ? data : []);
+        })
+        .catch((err) => {
+          console.error("Erro ao carregar eventos:", err);
+        });
+    }
+    fetchEventos();
   }, []);
 
   return (

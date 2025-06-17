@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 interface Categoria {
   id: string;
@@ -144,7 +145,7 @@ export default function EditarProdutoPage() {
     }
   }, [initial?.cores, initial?.categoria]);
   if (loading || !initial) {
-    return <p className="p-4">Carregando...</p>;
+    return <LoadingOverlay show={true} text="Carregando..." />;
   }
 
   async function handleSubmit(e: React.FormEvent) {

@@ -109,33 +109,16 @@
 ## [2025-06-16] Documentada variavel NEXT_PUBLIC_BRASILAPI_URL e formulario usa BrasilAPI
 ## [2025-06-16] Botão Nova conta integrado à página de Transferências com o BankAccountModal.
 
-## [2025-06-16] BankAccountModal criado com busca BrasilAPI e registro em clientes_contas_bancarias. Documentação e testes adicionados.
-## [2025-06-16] Botão Nova conta integrado à página de Transferências com o BankAccountModal.
-## [2025-06-16] Ajustado z-index do ModalAnimated para sobrepor a navbar e documentado no README.
-## [2025-06-16] Adicionada rota /admin/api/asaas/estatisticas e exemplos de uso no README e guia de saldo.
-## [2025-06-16] BankAccountModal inclui campo accountName e opcao Conta Salario. Testes e README atualizados.
-## [2025-06-16] Texto do README corrigido para descrever accountName como nome da conta e placeholder ajustado.
-## [2025-06-16] BankAccountModal agora possui campos ownerName e accountName, ispb oculto e lista inicial de bancos; README atualizado.
-## [2025-06-16] Implementada funcao getBankAccountsByTenant e testes atualizados.
-## [2025-06-16] BankAccountModal passa a cadastrar chaves PIX via createPixKey. README documentado.
-## [2025-06-16] Adicionados logs nas rotas de produtos registrando host do PocketBase e usuario
-## [2025-06-16] Removidos consoles restantes das rotas de API
-## [2025-06-21] Cadastro de produtos envia campos slug e cores
+## [2025-06-17] BankAccountModal criado com busca BrasilAPI e registro em clientes_contas_bancarias. Documentação e testes adicionados.
+## [2025-06-16] Documentada variavel NEXT_PUBLIC_BRASILAPI_URL e formulario usa BrasilAPI
+## [2025-06-16] Documentada variavel NEXT_PUBLIC_N8N_WEBHOOK_URL e InscricaoForm usa URL do env. Impacto: integração n8n configurável.
 
-## [2025-06-16] Corrigida atualização de slug e cores ao editar produto.
-## [2025-06-22] Domínios agora mapeados em `clientes_config`; credenciais Asaas mantidas em `m24_clientes`. Documentação e exemplos atualizados.
-## [2025-06-22] Documentacao revisada para indicar que cor_primary, logo_url e font ficam em clientes_config
-## [2025-06-20] Atualizado guia e README de transferências incluindo suporte a PIX e formato `value` do payload.
-## [2025-06-23] Inscricoes exibem titulo do evento via expand; tipos atualizados.
-## [2025-06-16] Painel do líder permite selecionar evento e link publico inclui eventoId
-## [2025-06-16] Execução de npm run lint e npm run build registrou erros de lint que impediram o build.
-
-## [2025-06-16] Rota de inscrições agora aceita eventoId no corpo e campo evento armazena o ID. OrderFlow e testes atualizados. Lint e build executados com erros em arquivos não relacionados.
-
-## [2025-06-16] Conflito resolvido em InscricaoPage; diretorios antigos removidos e lint/build executados com sucesso.
-## [2025-06-16] Formulário de inscrições reutilizado nos eventos. Dropdown de campos adicionado. Lint e build executados com falhas.
-## [2025-06-16] Removida pasta app/loja/inscricoes; link de inscricao aponta para /loja/eventos e redirect corrigido. Lint e build sem erros.
-## [2025-06-24] Removido script generatePostsJson e atualizados testes para buscar posts via PocketBase.
-## [2025-06-24] Ajustada regex no LayoutWrapper para ocultar Header em rotas de inscrições públicas. Lint e build executados com erros em app/blog/post/[slug]/page.tsx.
-## [2025-06-16] Link de inscrição por usuário agora inclui eventoId selecionado. Dropdown de eventos ativos adicionado em /admin/usuarios. Lint e build executados com sucesso.
+## [2025-06-17] Atualizado Header removendo links de Inscricoes e Pedidos para lideres. Lint sem erros; build falhou em app/blog/post/[slug]/page.tsx.
+## [2025-06-17] Menu Configurações restrito a coordenadores no Header e mobile. Lint e build executados com sucesso.
+## [2025-06-17] Adicionada utilidade getTenantFromClient, atualizadas páginas da loja para buscá-lo e novos testes.
+- Lint: sem erros
+- Build: sucesso
+## [2025-06-17] Removido utilidade getTenantFromClient e páginas ajustadas para usar getTenantFromHost.
+- Lint: falhou (next not found)
+- Build: falhou (next not found)
 ## [2025-06-25] Links de administração ajustados por papel no Header. Teste criado para validar comportamentos. Lint e build executados.

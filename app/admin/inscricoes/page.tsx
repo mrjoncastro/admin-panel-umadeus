@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import createPocketBase from "@/lib/pocketbase";
+import { useEffect, useState } from "react";
 import { Copy } from "lucide-react";
 import { saveAs } from "file-saver";
+import LoadingOverlay from "@/components/LoadingOverlay";
 import ModalEditarInscricao from "./componentes/ModalEdit";
 import ModalVisualizarPedido from "./componentes/ModalVisualizarPedido";
 import { CheckCircle, XCircle, Pencil, Trash2, Eye } from "lucide-react";
 import TooltipIcon from "../components/TooltipIcon";
 import { useToast } from "@/lib/context/ToastContext";
 import { PRECO_PULSEIRA, PRECO_KIT } from "@/lib/constants";
-import { useAuthContext } from "@/lib/context/AuthContext";
+import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
 import type { Evento } from "@/types";
 
 const statusBadge = {
@@ -27,7 +27,10 @@ type Inscricao = {
   nome: string;
   telefone: string;
   cpf: string;
+  /** Título do evento para exibição */
   evento: string;
+  /** ID do evento */
+  eventoId: string;
   status: StatusInscricao;
   created: string;
   campo?: string;
@@ -40,8 +43,8 @@ type Inscricao = {
 };
 
 export default function ListaInscricoesPage() {
-  const pb = useMemo(() => createPocketBase(), []);
-  const { user, tenantId } = useAuthContext();
+  const { user, pb, authChecked } = useAuthGuard(["coordenador", "lider"]);
+  const tenantId = user?.cliente || "";
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
   const [role, setRole] = useState("");
   const [linkPublico, setLinkPublico] = useState("");
@@ -61,6 +64,8 @@ export default function ListaInscricoesPage() {
       : "Buscar por nome, telefone ou CPF";
 
   useEffect(() => {
+    if (!authChecked) return;
+
     if (!user) {
       showError("Sessão expirada ou inválida.");
       setLoading(false);
@@ -111,6 +116,7 @@ export default function ListaInscricoesPage() {
           nome: r.nome,
           telefone: r.telefone,
           evento: r.expand?.evento?.titulo,
+          eventoId: r.evento,
           cpf: r.cpf,
           status: r.status,
           created: r.created,
@@ -137,7 +143,7 @@ export default function ListaInscricoesPage() {
         })
         .catch(() => {});
     }
-  }, [pb, tenantId, user, showError]);
+  }, [authChecked, pb, tenantId, user, showError]);
 
   useEffect(() => {
     if (!user) return;
@@ -315,7 +321,7 @@ export default function ListaInscricoesPage() {
   );
 
   if (loading)
-    return <p className="p-6 text-center text-sm">Carregando inscrições...</p>;
+    return <LoadingOverlay show={true} text="Carregando inscrições..." />;
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">
@@ -526,10 +532,13 @@ export default function ListaInscricoesPage() {
         <ModalEditarInscricao
           inscricao={inscricaoEmEdicao}
           onClose={() => setInscricaoEmEdicao(null)}
-          onSave={async (dadosAtualizados: Partial<Inscricao>) => {
-            await pb
-              .collection("inscricoes")
-              .update(inscricaoEmEdicao.id, dadosAtualizados);
+          onSave={async (
+            dadosAtualizados: Partial<Inscricao & { eventoId: string }>
+          ) => {
+            await pb.collection("inscricoes").update(inscricaoEmEdicao.id, {
+              ...dadosAtualizados,
+              evento: dadosAtualizados.eventoId ?? inscricaoEmEdicao.eventoId,
+            });
             setInscricoes((prev) =>
               prev.map((i) =>
                 i.id === inscricaoEmEdicao.id

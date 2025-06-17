@@ -1,23 +1,40 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 export default function EditarEventoPage() {
   const { id } = useParams<{ id: string }>();
-  const { user, isLoggedIn } = useAuthContext();
+  const { user: ctxUser, isLoggedIn } = useAuthContext();
+  const getAuth = useCallback(() => {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
+    const raw =
+      typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
+    const user = raw ? JSON.parse(raw) : ctxUser;
+    return { token, user } as const;
+  }, [ctxUser]);
   const router = useRouter();
   const [initial, setInitial] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isLoggedIn || !user || user.role !== "coordenador") {
+    const { token, user } = getAuth();
+    if (!isLoggedIn || !token || !user || user.role !== "coordenador") {
       router.replace("/login");
     }
-  }, [isLoggedIn, user, router]);
+  }, [isLoggedIn, router, getAuth]);
 
   useEffect(() => {
-    fetch(`/admin/api/eventos/${id}`)
+    const { token, user } = getAuth();
+    if (!isLoggedIn || !token || !user || user.role !== "coordenador") return;
+    fetch(`/admin/api/eventos/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-PB-User": JSON.stringify(user),
+      },
+    })
       .then((r) => r.json())
       .then((data) => {
         setInitial({
@@ -29,17 +46,25 @@ export default function EditarEventoPage() {
         });
       })
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, isLoggedIn, getAuth]);
 
   if (loading || !initial) {
-    return <p className="p-4">Carregando...</p>;
+    return <LoadingOverlay show={true} text="Carregando..." />;
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const formElement = e.currentTarget as HTMLFormElement;
     const formData = new FormData(formElement);
-    const res = await fetch(`/admin/api/eventos/${id}`, { method: "PUT", body: formData });
+    const { token, user } = getAuth();
+    const res = await fetch(`/admin/api/eventos/${id}`, {
+      method: "PUT",
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-PB-User": JSON.stringify(user),
+      },
+    });
     if (res.ok) {
       router.push("/admin/eventos");
     }

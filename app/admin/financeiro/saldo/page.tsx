@@ -4,6 +4,7 @@ import { useAuthContext } from "@/lib/context/AuthContext";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { saveAs } from "file-saver";
+import LoadingOverlay from "@/components/LoadingOverlay";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 
@@ -87,7 +88,7 @@ export default function SaldoPage() {
     <main className="max-w-5xl mx-auto px-4 py-8">
       <h2 className="heading mb-6">Saldo</h2>
       {loading ? (
-        <p className="text-center">Carregando...</p>
+        <LoadingOverlay show={true} text="Carregando..." />
       ) : (
         <>
           <div className="grid gap-6 md:grid-cols-3 mb-8">

@@ -3,33 +3,40 @@ import { render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
 import ListaInscricoesPage from '@/app/admin/inscricoes/page'
 
-vi.mock('@/lib/pocketbase', () => ({
-  __esModule: true,
-  default: vi.fn(() => ({
-    autoCancellation: vi.fn(),
-    collection: () => ({
-      getFullList: vi.fn().mockResolvedValue([
-        {
-          id: '1',
-          nome: 'Fulano',
-          telefone: '999999',
-          cpf: '123',
-          evento: 'evt1',
-          status: 'pendente',
-          created: '2025-01-01',
-          expand: {
-            campo: { nome: 'Campo 1', id: 'c1' },
-            evento: { titulo: 'Congresso Teste' },
-            pedido: { id: 'p1', status: 'pago', valor: 10 },
-          },
-        },
-      ]),
-    }),
+const pbMock = {
+  autoCancellation: vi.fn(),
+  collection: vi.fn((name: string) => ({
+    getFullList: vi.fn().mockResolvedValue(
+      name === 'inscricoes'
+        ? [
+            {
+              id: '1',
+              nome: 'Fulano',
+              telefone: '999999',
+              cpf: '123',
+              evento: 'evt1',
+              status: 'pendente',
+              created: '2025-01-01',
+              expand: {
+                campo: { nome: 'Campo 1', id: 'c1' },
+                evento: { titulo: 'Congresso Teste' },
+                pedido: { id: 'p1', status: 'pago', valor: 10 },
+              },
+            },
+          ]
+        : name === 'eventos'
+        ? [{ id: 'evt1', titulo: 'Congresso Teste' }]
+        : []
+    ),
   })),
-}))
+};
 
-vi.mock('@/lib/context/AuthContext', () => ({
-  useAuthContext: () => ({ user: { id: 'u1', role: 'coordenador' }, tenantId: 't1' }),
+vi.mock('@/lib/hooks/useAuthGuard', () => ({
+  useAuthGuard: () => ({
+    user: { id: 'u1', role: 'coordenador', cliente: 't1' },
+    pb: pbMock,
+    authChecked: true,
+  }),
 }))
 
 vi.mock('@/lib/context/ToastContext', () => ({

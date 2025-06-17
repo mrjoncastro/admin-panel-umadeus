@@ -56,19 +56,17 @@ export default async function BlogPostPage({
   const post = await getPostBySlug(slug);
   if (!post) return notFound();
 
-  const { nextPost, suggestions: rawSuggestions } = await getRelatedPostsFromPB(
+  const { nextPost, suggestions } = await getRelatedPostsFromPB(
     slug,
     post.category || ""
   );
-  const suggestions = rawSuggestions.map((p) => ({
-    slug: p.slug,
-    title: p.title,
-    summary: p.summary || "",
-    thumbnail: p.thumbnail || "",
-    category: p.category || "",
+  const safeSuggestions = suggestions.map((s) => ({
+    ...s,
+    summary: s.summary || "",
+    thumbnail: s.thumbnail || "",
+    category: s.category || "",
   }));
   const mdxContent = post.content || "";
-  const content = mdxContent;
 
   const words = mdxContent.split(/\s+/).length;
   const readingTime = Math.ceil(words / 200);

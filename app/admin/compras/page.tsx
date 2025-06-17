@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
+import LoadingOverlay from "@/components/LoadingOverlay";
 import { Compra } from "@/types";
 
 export default function ComprasPage() {
@@ -40,7 +41,7 @@ export default function ComprasPage() {
   }
 
   if (loading) {
-    return <p className="p-6 text-center text-sm">Carregando compras...</p>;
+    return <LoadingOverlay show={true} text="Carregando compras..." />;
   }
 
   return (

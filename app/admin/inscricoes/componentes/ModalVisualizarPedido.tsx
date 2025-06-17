@@ -2,6 +2,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { X, Copy } from "lucide-react";
 import createPocketBase from "@/lib/pocketbase";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 interface Props {
   pedidoId: string;
@@ -105,7 +106,7 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
         </h3>
 
         {loading || !pedido ? (
-          <p className="text-sm text-gray-500 text-center">Carregando...</p>
+          <LoadingOverlay show={true} text="Carregando..." />
         ) : (
           <div className="space-y-2 text-sm text-gray-700">
             <p><strong>ID:</strong> {pedido.id}</p>

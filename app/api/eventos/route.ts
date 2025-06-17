@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import createPocketBase from "@/lib/pocketbase";
 import { EventoRecord, atualizarStatus } from "@/lib/events";
 import { logConciliacaoErro } from "@/lib/server/logger";
-
-export async function GET(req: NextRequest) {
+import { getTenantFromHost } from "@/lib/getTenantFromHost";
+export async function GET() {
   const pb = createPocketBase();
-  const tenant = req.nextUrl.searchParams.get("tenant") || undefined;
+  const tenant = await getTenantFromHost();
   try {
     const eventos = await pb.collection("eventos").getFullList<EventoRecord>({
       sort: "-data",

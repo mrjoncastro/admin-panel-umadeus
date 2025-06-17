@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { ModalEvento } from "./novo/ModalEvento";
@@ -59,15 +60,23 @@ export default function AdminEventosPage() {
   async function handleNovoEvento(form: Record<string, unknown>) {
     const { token, user } = getAuth();
     if (!isLoggedIn || !user || user.role !== "coordenador") return;
+    const formData = new FormData();
+    if (form.titulo) formData.set("titulo", String(form.titulo));
+    if (form.descricao) formData.set("descricao", String(form.descricao));
+    if (form.data) formData.set("data", String(form.data));
+    if (form.cidade) formData.set("cidade", String(form.cidade));
+    if (form.status) formData.set("status", String(form.status));
+    if (form.imagem instanceof File) {
+      formData.append("imagem", form.imagem);
+    }
     try {
       const res = await fetch("/admin/api/eventos", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
           "X-PB-User": JSON.stringify(user),
         },
-        body: JSON.stringify(form),
+        body: formData,
       });
       if (res.ok) {
         const data = await res.json();
@@ -81,6 +90,19 @@ export default function AdminEventosPage() {
     } finally {
       setModalOpen(false);
     }
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm("Confirma excluir?")) return;
+    const { token, user } = getAuth();
+    await fetch(`/admin/api/eventos/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-PB-User": JSON.stringify(user),
+      },
+    });
+    setEventos((prev) => prev.filter((e) => e.id !== id));
   }
 
   return (
@@ -107,12 +129,13 @@ export default function AdminEventosPage() {
               <th>Título</th>
               <th>Data</th>
               <th>Status</th>
+              <th className="text-right">Ações</th>
             </tr>
           </thead>
           <tbody>
             {eventos.length === 0 ? (
               <tr>
-                <td colSpan={3} className="text-center py-6 text-neutral-400">
+                <td colSpan={4} className="text-center py-6 text-neutral-400">
                   Nenhum evento cadastrado.
                 </td>
               </tr>
@@ -122,6 +145,23 @@ export default function AdminEventosPage() {
                   <td>{ev.titulo}</td>
                   <td>{ev.data ? formatDate(ev.data) : "—"}</td>
                   <td>{ev.status ?? "—"}</td>
+                  <td>
+                    <div className="flex justify-end gap-2">
+                      <Link
+                        href={`/admin/eventos/editar/${ev.id}`}
+                        className="btn"
+                      >
+                        Editar
+                      </Link>
+                      <button
+                        className="btn"
+                        style={{ color: "var(--accent)" }}
+                        onClick={() => handleDelete(ev.id)}
+                      >
+                        Excluir
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))
             )}

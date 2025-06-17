@@ -3,14 +3,11 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Suspense } from "react";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
-import createPocketBase from "@/lib/pocketbase";
+
 import ProdutoInterativo from "./ProdutoInterativo";
 import type { Produto as ProdutoBase } from "@/types";
-
-interface ProdutoPB extends Omit<ProdutoBase, "imagens"> {
-  imagens: string[] | Record<string, string[]>;
-}
 export default function ProdutoDetalhe() {
   const { slug } = useParams<{ slug: string }>();
   const [produto, setProduto] = useState<ProdutoBase | null>(null);
@@ -18,20 +15,10 @@ export default function ProdutoDetalhe() {
 
   useEffect(() => {
     if (!slug) return;
-    const pb = createPocketBase();
-    const tenantId = localStorage.getItem("tenant_id");
-    pb
-      .collection("produtos")
-      .getFirstListItem<ProdutoPB>(`slug = '${slug}' && cliente='${tenantId}'`)
-      .then((p: ProdutoPB) => {
-        const imgs = Array.isArray(p.imagens)
-          ? p.imagens.map((img) => pb.files.getURL(p, img))
-          : Object.fromEntries(
-              Object.entries(p.imagens as Record<string, string[]>).map(
-                ([g, arr]) => [g, arr.map((img) => pb.files.getURL(p, img))]
-              )
-            );
-        setProduto({ ...p, imagens: imgs } as ProdutoBase);
+    fetch(`/api/produtos/${slug}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((p: ProdutoBase) => {
+        setProduto(p);
       })
       .catch(() => setErro(true));
   }, [slug]);
@@ -55,7 +42,7 @@ export default function ProdutoDetalhe() {
   if (!produto) {
     return (
       <main className="font-sans px-4 md:px-16 py-10">
-        <div>Carregando...</div>
+        <LoadingOverlay show={true} text="Carregando..." />
       </main>
     );
   }
@@ -95,7 +82,7 @@ export default function ProdutoDetalhe() {
       >
         &lt; voltar
       </Link>
-      <Suspense fallback={<div>Carregando...</div>}>
+      <Suspense fallback={<LoadingOverlay show={true} text="Carregando..." />}>
         <ProdutoInterativo
           imagens={imagens}
           generos={generos}

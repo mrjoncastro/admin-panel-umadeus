@@ -2,19 +2,20 @@
 
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 // Ajuste o path aqui conforme a localização real do arquivo:
 const RedefinirSenhaClient = dynamic(
   () => import("./RedefinirSenhaClient"),
   {
     ssr: false,
-    loading: () => <p>Carregando...</p>,
+    loading: () => <LoadingOverlay show={true} text="Carregando..." />,
   }
 );
 
 export default function RedefinirSenhaPage() {
   return (
-    <Suspense fallback={<p>Carregando...</p>}>
+    <Suspense fallback={<LoadingOverlay show={true} text="Carregando..." />}>
       <RedefinirSenhaClient />
     </Suspense>
   );

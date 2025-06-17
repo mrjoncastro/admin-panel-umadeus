@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import LoadingOverlay from "@/components/LoadingOverlay";
 import { useAuthContext } from "@/lib/context/AuthContext";
 
 interface Statistics {
@@ -49,7 +50,7 @@ export default function FinanceiroPage() {
     <main className="max-w-4xl mx-auto px-4 py-8">
       <h2 className="heading mb-6">Financeiro</h2>
       {loading ? (
-        <p className="text-center">Carregando...</p>
+        <LoadingOverlay show={true} text="Carregando..." />
       ) : (
         <>
           <div className="grid gap-6 md:grid-cols-3 mb-8">

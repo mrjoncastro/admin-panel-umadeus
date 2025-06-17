@@ -1,12 +1,13 @@
 "use client";
 
-import { FormEvent } from "react";
-import { Inscricao } from "@/types";
+import { FormEvent, useEffect, useState } from "react";
+import { Inscricao, Evento } from "@/types";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 type Props = {
-  inscricao: Inscricao;
+  inscricao: Inscricao & { eventoId: string };
   onClose: () => void;
-  onSave: (inscricaoAtualizada: Partial<Inscricao>) => void;
+  onSave: (inscricaoAtualizada: Partial<Inscricao & { eventoId: string }>) => void;
 };
 
 
@@ -15,17 +16,36 @@ export default function ModalEditarInscricao({
   onClose,
   onSave,
 }: Props) {
+  const { user, pb } = useAuth();
+  const [eventos, setEventos] = useState<Evento[]>([]);
+
+  useEffect(() => {
+    if (!user) return;
+    pb
+      .collection("eventos")
+      .getFullList<Evento>({
+        sort: "-data",
+        filter: `cliente='${user.cliente}' && status!='realizado'`,
+      })
+      .then((evs) => setEventos(evs))
+      .catch(() => setEventos([]));
+  }, [pb, user]);
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
-    const atualizada: Partial<Inscricao> = {
+    const eventoId = formData.get("evento")?.toString();
+    const eventoSelecionado = eventos.find((ev) => ev.id === eventoId);
+
+    const atualizada: Partial<Inscricao & { eventoId: string }> = {
       nome: formData.get("nome")?.toString() || "",
       telefone: formData.get("telefone")?.toString() || "",
       status: formData.get("status") as "pendente" | "confirmado" | "cancelado",
       tamanho: formData.get("tamanho")?.toString(),
       genero: formData.get("genero")?.toString(),
-      evento: formData.get("evento")?.toString(),
+      eventoId: eventoId || inscricao.eventoId,
+      evento: eventoSelecionado?.titulo || inscricao.evento,
     };
 
     onSave(atualizada);
@@ -70,7 +90,21 @@ export default function ModalEditarInscricao({
             <option value="feminino">Feminino</option>
           </Select>
 
-          <Input name="evento" label="Evento" defaultValue={inscricao.evento} />
+          <Select
+            name="evento"
+            label="Evento"
+            defaultValue={
+              inscricao.eventoId ||
+              eventos.find((ev) => ev.titulo === inscricao.evento)?.id ||
+              ""
+            }
+          >
+            {eventos.map((ev) => (
+              <option key={ev.id} value={ev.id}>
+                {ev.titulo}
+              </option>
+            ))}
+          </Select>
 
           <div className="flex justify-end gap-2 pt-4">
             <button

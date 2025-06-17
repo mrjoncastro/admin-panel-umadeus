@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Evento } from "@/types";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 interface Usuario {
   id: string;
@@ -114,7 +115,7 @@ export default function UsuariosPage() {
       )}
 
       {loading ? (
-        <p className="text-center text-gray-600">Carregando usuários...</p>
+        <LoadingOverlay show={true} text="Carregando usuários..." />
       ) : (
         <div className="overflow-auto rounded-lg border bg-white border-gray-300 dark:bg-neutral-950 dark:border-gray-700 shadow-sm">
           <table className="table-base">
