@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useToast } from "@/lib/context/ToastContext";
 
 // ✅ Validação formal de CPF
 function validarCPF(cpf: string): boolean {
@@ -23,9 +24,9 @@ function validarCPF(cpf: string): boolean {
 
 export default function RecuperarPagamentoPage() {
   const [cpfOuTelefone, setCpfOuTelefone] = useState("");
-  const [resultado, setResultado] = useState("");
   const [link, setLink] = useState("");
   const [carregando, setCarregando] = useState(false);
+  const { showSuccess, showError } = useToast();
 
   const aplicarMascara = (valor: string): string => {
     const numeros = valor.replace(/\D/g, "");
@@ -54,7 +55,6 @@ export default function RecuperarPagamentoPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setResultado("");
     setLink("");
     setCarregando(true);
 
@@ -73,25 +73,25 @@ export default function RecuperarPagamentoPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setResultado(data.error || "Erro ao buscar inscrição.");
+        showError(data.error || "Erro ao buscar inscrição.");
       } else if (data.status === "pago") {
-        setResultado("✅ Seu pagamento já foi confirmado.");
+        showSuccess("Seu pagamento já foi confirmado.");
       } else if (data.status === "cancelado") {
-        setResultado("❌ Esse pedido foi cancelado.");
+        showError("Esse pedido foi cancelado.");
       } else if (data.status === "recusado") {
-        setResultado(
-          "🚫 Sua inscrição foi recusada. Entre em contato com a liderança local."
+        showError(
+          "Sua inscrição foi recusada. Entre em contato com a liderança local."
         );
       } else if (data.status === "aguardando_confirmacao") {
-        setResultado(
-          "⌛ Sua inscrição aguarda a confirmação da liderança. Assim que for validada você receberá o link de pagamento."
+        showSuccess(
+          "Sua inscrição aguarda a confirmação da liderança. Assim que for validada você receberá o link de pagamento."
         );
       } else if (data.status === "pendente" && data.link_pagamento) {
-        setResultado("🔗 Clique no botão abaixo para finalizar o pagamento:");
         setLink(data.link_pagamento);
+        showSuccess("Link de pagamento recuperado.");
       }
     } catch {
-      setResultado("Erro ao tentar recuperar o link.");
+      showError("Erro ao tentar recuperar o link.");
     } finally {
       setCarregando(false);
     }
@@ -126,19 +126,16 @@ export default function RecuperarPagamentoPage() {
         </button>
       </form>
 
-      {resultado && (
-        <div className="mt-6 text-center text-sm space-y-2">
-          <p>{resultado}</p>
-          {link && (
-            <a
-              href={link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block mt-2 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-md transition"
-            >
-              Ir para o pagamento
-            </a>
-          )}
+      {link && (
+        <div className="mt-6 text-center text-sm">
+          <a
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-md transition"
+          >
+            Ir para o pagamento
+          </a>
         </div>
       )}
     </div>
