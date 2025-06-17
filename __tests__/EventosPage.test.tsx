@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { vi } from 'vitest';
 import EventosPage from '@/app/loja/eventos/page';
 
+
 vi.mock('next/image', () => ({
   __esModule: true,
   default: (props: any) => {
@@ -13,7 +14,6 @@ vi.mock('next/image', () => ({
 
 describe('EventosPage', () => {
   it('exibe formulario apos clicar em Inscrever', async () => {
-    localStorage.setItem('tenant_id', 't1');
     global.fetch = vi
       .fn()
       .mockResolvedValueOnce({
@@ -29,5 +29,20 @@ describe('EventosPage', () => {
     fireEvent.click(button);
     const select = await screen.findByRole('combobox', { name: /campo/i });
     expect(select).toBeInTheDocument();
+  });
+
+  it('carrega eventos', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve([])
+      });
+    global.fetch = fetchMock;
+
+    render(<EventosPage />);
+
+    await screen.findByRole('heading', { name: /eventos umadeus/i });
+    expect(fetchMock).toHaveBeenCalledWith('/api/eventos');
   });
 });
