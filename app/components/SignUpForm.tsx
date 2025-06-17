@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import { useToast } from "@/lib/context/ToastContext";
+import type { ClientResponseError } from "pocketbase";
 import createPocketBase from "@/lib/pocketbase"; // ajuste para seu caminho real
 
 const VIA_CEP_URL =
@@ -31,7 +33,7 @@ export default function SignUpForm({
   const [cidade, setCidade] = useState("");
   const [senha, setSenha] = useState("");
   const [senhaConfirm, setSenhaConfirm] = useState("");
-  const [erro, setErro] = useState("");
+  const { showError, showSuccess } = useToast();
   const [loading, setLoading] = useState(false);
 
   // Busca os campos disponíveis
@@ -64,7 +66,7 @@ export default function SignUpForm({
     fetch(`${VIA_CEP_URL}/${cleanCep}/json/`)
       .then(async (res) => {
         if (!res.ok) {
-          setErro("CEP n\u00e3o encontrado.");
+          showError("CEP n\u00e3o encontrado.");
           setEndereco("");
           setCidade("");
           setEstado("");
@@ -79,21 +81,19 @@ export default function SignUpForm({
         setEstado(data.uf || "");
       })
       .catch(() => {
-        setErro("Erro ao buscar o CEP.");
+        showError("Erro ao buscar o CEP.");
       });
-  }, [cep]);
+  }, [cep, showError]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setErro("");
-
     if (senha !== senhaConfirm) {
-      setErro("As senhas não coincidem.");
+      showError("As senhas não coincidem.");
       return;
     }
 
     if (!campo) {
-      setErro("Selecione um campo.");
+      showError("Selecione um campo.");
       return;
     }
 
@@ -111,10 +111,20 @@ export default function SignUpForm({
         cidade,
         senha
       );
+      showSuccess("Conta criada com sucesso!");
       onSuccess?.();
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Erro no cadastro:", err);
-      setErro("Não foi possível criar a conta.");
+      const e = err as ClientResponseError;
+      const data = e.response?.data as
+        | { telefone?: { message: string }; cpf?: { message: string } }
+        | undefined;
+      const dupMsg = data?.telefone?.message || data?.cpf?.message;
+      if (dupMsg) {
+        showError(dupMsg);
+      } else {
+        showError("Não foi possível criar a conta.");
+      }
     } finally {
       setLoading(false);
     }
@@ -128,7 +138,7 @@ export default function SignUpForm({
             Criar Conta
           </h2>
 
-          {erro && <p className="text-sm text-center text-red-400">{erro}</p>}
+
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
