@@ -62,4 +62,5 @@
 ## [2025-06-16] Erro ao atualizar configuracoes: ClientResponseError 404: The requested resource wasn't found. - development
 ## [2025-06-17] Erro ao criar transferência: {"errors":[{"code":"invalid_action","description":"A sua conta ainda não está totalmente aprovada para utilizar o Pix."}]} - development
 ## [2025-06-17] Erro ao obter configuracoes: ClientResponseError 404: The requested resource wasn't found. - development
+## [2025-06-25] Erro 404 ao buscar clientes_config por ID em /admin/api/configuracoes; corrigido consultando por campo cliente - dev - a259f55
 
