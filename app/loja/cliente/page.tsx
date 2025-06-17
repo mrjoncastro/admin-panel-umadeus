@@ -1,9 +1,29 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
+import type { Inscricao } from "@/types";
 
 export default function AreaCliente() {
-  const { user, authChecked } = useAuthGuard(["usuario"]);
+  const { user, pb, authChecked } = useAuthGuard(["usuario"]);
+  const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
+
+  useEffect(() => {
+    if (!authChecked || !user) return;
+    const token = pb.authStore.token;
+    fetch("/loja/api/minhas-inscricoes", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-PB-User": JSON.stringify(user),
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setInscricoes(Array.isArray(data) ? data : []))
+      .catch((err) => {
+        console.error("Erro ao carregar inscricoes", err);
+        setInscricoes([]);
+      });
+  }, [authChecked, user, pb]);
 
   if (!authChecked) return null;
 
@@ -89,6 +109,32 @@ export default function AreaCliente() {
                     Ver detalhes
                   </a>
                   <button className="btn btn-primary">Recomprar</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+
+      <section className="card">
+        <h2 className="text-xl font-bold mb-4">Minhas Inscrições</h2>
+        <table className="table-base">
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Evento</th>
+              <th>Data</th>
+            </tr>
+          </thead>
+          <tbody>
+            {inscricoes.map((i) => (
+              <tr key={i.id}>
+                <td className="capitalize">{i.status}</td>
+                <td>{i.expand?.evento?.titulo || "-"}</td>
+                <td>
+                  {i.created
+                    ? new Date(i.created).toLocaleDateString("pt-BR")
+                    : "-"}
                 </td>
               </tr>
             ))}
