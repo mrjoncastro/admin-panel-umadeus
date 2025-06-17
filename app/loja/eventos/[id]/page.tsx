@@ -1,9 +1,4 @@
-"use client";
-
 import Image from "next/image";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import LoadingOverlay from "@/components/LoadingOverlay";
 import InscricaoForm from "@/app/loja/components/InscricaoForm";
 
 interface Evento {
@@ -13,29 +8,27 @@ interface Evento {
   imagem?: string;
 }
 
-export default function EventoDetalhePage() {
-  const { id } = useParams<{ id: string }>();
-  const [evento, setEvento] = useState<Evento | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [erro, setErro] = useState(false);
+async function getEvento(id: string): Promise<Evento | null> {
+  try {
+    const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+    const res = await fetch(`${base}/api/eventos/${id}`, {
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as Evento;
+  } catch {
+    return null;
+  }
+}
+export default async function EventoDetalhePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const evento = await getEvento(id);
 
-  useEffect(() => {
-    if (!id) return;
-    fetch(`/api/eventos/${id}`)
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((data: Evento) => {
-        setEvento(data);
-        setLoading(false);
-      })
-      .catch(() => {
-        setErro(true);
-        setLoading(false);
-      });
-  }, [id]);
-
-  if (loading) return <LoadingOverlay show={true} text="Carregando..." />;
-
-  if (erro || !evento) {
+  if (!evento) {
     return (
       <main className="px-4 py-10 md:px-16 font-sans">
         <p className="text-center text-red-500">Evento não encontrado.</p>
