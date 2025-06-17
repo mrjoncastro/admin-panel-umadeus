@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { useState, useEffect } from "react";
+import { useToast } from "@/lib/context/ToastContext";
 import TransferenciaForm from "@/app/admin/financeiro/transferencias/components/TransferenciaForm";
 import BankAccountModal from "@/app/admin/financeiro/transferencias/modals/BankAccountModal";
 import type { PixKeyRecord } from "@/lib/bankAccounts";
@@ -10,7 +11,7 @@ import type { PixKeyRecord } from "@/lib/bankAccounts";
 export default function TransferenciasPage() {
   const { isLoggedIn } = useAuthContext();
   const router = useRouter();
-  const [mensagem, setMensagem] = useState("");
+  const { showSuccess, showError } = useToast();
   const [openAccountModal, setOpenAccountModal] = useState(false);
 
   async function handleTransfer(
@@ -39,9 +40,9 @@ export default function TransferenciasPage() {
       body: JSON.stringify(payload),
     });
     if (res.ok) {
-      setMensagem("Transferência enviada!");
+      showSuccess("Transferência enviada!");
     } else {
-      setMensagem("Erro ao transferir.");
+      showError("Erro ao transferir.");
     }
   }
 
@@ -54,7 +55,6 @@ export default function TransferenciasPage() {
   return (
     <main className="max-w-lg mx-auto px-4 py-8">
       <h2 className="heading mb-6">Transferências</h2>
-      {mensagem && <p className="mb-4">{mensagem}</p>}
       <button
         type="button"
         className="btn btn-secondary mb-4"
