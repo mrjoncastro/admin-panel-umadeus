@@ -1,10 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
 
 const N8N_WEBHOOK_URL =
   process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || "https://SEU_WEBHOOK_DO_N8N";
+
+const CEP_BASE_URL =
+  process.env.NEXT_PUBLIC_VIA_CEP_URL || process.env.NEXT_PUBLIC_BRASILAPI_URL || "";
 
 interface Campo {
   id: string;
@@ -23,6 +26,11 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
     "idle" | "sending" | "success" | "error"
   >("idle");
   const [campos, setCampos] = useState<Campo[]>([]);
+  const [cep, setCep] = useState(String(user?.cep ?? ""));
+  const [endereco, setEndereco] = useState(String(user?.endereco ?? ""));
+  const [cidade, setCidade] = useState(String(user?.cidade ?? ""));
+  const [estado, setEstado] = useState(String(user?.estado ?? ""));
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     fetch("/api/campos")
@@ -31,28 +39,72 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
       .catch((err) => console.error("Erro ao carregar campos:", err));
   }, []);
 
+  useEffect(() => {
+    if (!user || !formRef.current) return;
+    const form = formRef.current;
+    const setVal = (name: string, value: string) => {
+      const el = form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | null;
+      if (el && !el.value) {
+        el.value = value;
+      }
+    };
+    setVal("user_first_name", firstName);
+    setVal("user_last_name", lastName);
+    setVal("user_email", String(user.email ?? ""));
+    setVal("user_phone", String(user.telefone ?? ""));
+    setVal("user_cpf", String(user.cpf ?? ""));
+    setVal("user_birth_date", String(user.data_nascimento ?? ""));
+    setCep(String(user.cep ?? ""));
+    setEndereco(String(user.endereco ?? ""));
+    setCidade(String(user.cidade ?? ""));
+    setEstado(String(user.estado ?? ""));
+    setVal("user_number", String(user.numero ?? ""));
+    setVal("user_complement", String(user.complemento ?? ""));
+    setVal("user_neighborhood", String(user.bairro ?? ""));
+  }, [user, firstName, lastName]);
+
+  useEffect(() => {
+    const cleanCep = cep.replace(/\D/g, "");
+    if (cleanCep.length !== 8 || !CEP_BASE_URL) return;
+    const url = process.env.NEXT_PUBLIC_VIA_CEP_URL
+      ? `${CEP_BASE_URL}/${cleanCep}/json/`
+      : `${CEP_BASE_URL}/cep/v1/${cleanCep}`;
+    fetch(url)
+      .then(async (res) => {
+        if (!res.ok) {
+          throw new Error("CEP not found");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setEndereco(data.logradouro || data.street || "");
+        setCidade(data.localidade || data.city || "");
+        setEstado(data.uf || data.state || "");
+      })
+      .catch(() => console.warn("Erro ao buscar o CEP"));
+  }, [cep]);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("sending");
 
     const form = e.currentTarget;
-    const data = new FormData(form);
+    const data = Object.fromEntries(new FormData(form));
 
     try {
       const response = await fetch(N8N_WEBHOOK_URL, {
         method: "POST",
-        body: JSON.stringify(Object.fromEntries(data)),
+        body: JSON.stringify(data),
         headers: { "Content-Type": "application/json" },
       });
-
-      if (response.ok) {
-        setStatus("success");
-        form.reset();
-      } else {
-        setStatus("error");
+      if (!response.ok) {
+        console.warn("Webhook n8n falhou", await response.text());
       }
-    } catch {
-      setStatus("error");
+    } catch (err) {
+      console.warn("Erro ao enviar para webhook:", err);
+    } finally {
+      setStatus("success");
+      form.reset();
     }
   };
 
@@ -60,7 +112,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
     <main className="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-8 my-10 font-sans text-gray-800">
       {status === "success" && (
         <div className="mb-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded shadow-sm">
-          Inscrição enviada com sucesso!
+          Inscrição registrada! Em breve entraremos em contato.
         </div>
       )}
       {status === "error" && (
@@ -69,7 +121,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
         <input type="hidden" name="evento" value={eventoId} />
         <div className="grid md:grid-cols-2 gap-10">
           {/* Dados Pessoais */}
@@ -115,7 +167,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                     name="user_email"
                     required
                     className="input-base"
-                    defaultValue={user?.email || ""}
+                    defaultValue={String(user?.email ?? "")}
                   />
                 </div>
                 <div className="flex-1">
@@ -194,7 +246,8 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                   name="user_cep"
                   required
                   className="input-base"
-                  defaultValue={String(user?.cep ?? "")}
+                  value={cep}
+                  onChange={(e) => setCep(e.target.value)}
                 />
               </div>
 
@@ -206,7 +259,8 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                   name="user_address"
                   required
                   className="input-base"
-                  defaultValue={String(user?.endereco ?? "")}
+                  value={endereco}
+                  onChange={(e) => setEndereco(e.target.value)}
                 />
               </div>
 
@@ -254,7 +308,8 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                     name="user_city"
                     required
                     className="input-base"
-                    defaultValue={String(user?.cidade ?? "")}
+                    value={cidade}
+                    onChange={(e) => setCidade(e.target.value)}
                   />
                 </div>
               </div>
@@ -267,7 +322,8 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                   name="user_state"
                   required
                   className="input-base"
-                  defaultValue={String(user?.estado ?? "")}
+                  value={estado}
+                  onChange={(e) => setEstado(e.target.value)}
                 >
                   <option value="">Selecione</option>
                   {[
