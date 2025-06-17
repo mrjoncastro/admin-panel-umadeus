@@ -55,42 +55,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let unsubscribe = () => {};
+    async function loadAuth() {
     try {
       const token = localStorage.getItem("pb_token");
       const rawUser = localStorage.getItem("pb_user");
-      const storedTenant = localStorage.getItem("tenant_id");
 
-      if (token && rawUser) {
-        const parsedRecord = JSON.parse(rawUser) as RecordModel;
-        pb.authStore.save(token, parsedRecord);
-        updateBaseAuth(token, parsedRecord);
+        if (token && rawUser) {
+          const parsedRecord = JSON.parse(rawUser) as RecordModel;
+          pb.authStore.save(token, parsedRecord);
+          updateBaseAuth(token, parsedRecord);
 
-        setUser(parsedRecord as unknown as UserModel);
-        setTenantId(storedTenant);
-        setIsLoggedIn(true);
+          setUser(parsedRecord as unknown as UserModel);
+          setIsLoggedIn(true);
+        }
+        const tenantRes = await fetch("/api/tenant");
+        if (tenantRes.ok) {
+          const { tenantId } = await tenantRes.json();
+          setTenantId(tenantId);
+        } else {
+          setTenantId(null);
+        }
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          console.error("Erro ao carregar auth:", err.message);
+        }
+        pb.authStore.clear();
+        clearBaseAuth();
+        localStorage.removeItem("pb_token");
+        localStorage.removeItem("pb_user");
+        localStorage.removeItem("tenant_id");
+        setUser(null);
+        setTenantId(null);
+        setIsLoggedIn(false);
       }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error("Erro ao carregar auth:", err.message);
-      }
-      pb.authStore.clear();
-      clearBaseAuth();
-      localStorage.removeItem("pb_token");
-      localStorage.removeItem("pb_user");
-      localStorage.removeItem("tenant_id");
-      setUser(null);
-      setTenantId(null);
-      setIsLoggedIn(false);
+
+      unsubscribe = pb.authStore.onChange(() => {
+        localStorage.setItem("pb_token", pb.authStore.token);
+        localStorage.setItem("pb_user", JSON.stringify(pb.authStore.model));
+        updateBaseAuth(pb.authStore.token, pb.authStore.model);
+      });
+    } finally {
+      setIsLoading(false);
     }
 
-    const unsubscribe = pb.authStore.onChange(() => {
-      localStorage.setItem("pb_token", pb.authStore.token);
-      localStorage.setItem("pb_user", JSON.stringify(pb.authStore.model));
-      updateBaseAuth(pb.authStore.token, pb.authStore.model);
-    });
-
-    setIsLoading(false);
-
+    loadAuth();
     return () => {
       unsubscribe();
     };
@@ -101,12 +110,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const model = pb.authStore.model as unknown as UserModel;
 
-    const dominio = window.location.hostname;
     try {
-      const cliente = await pb
-        .collection("clientes_config")
-        .getFirstListItem(`dominio='${dominio}'`);
-      setTenantId(cliente.id);
+      const tenantRes = await fetch("/api/tenant");
+      if (tenantRes.ok) {
+        const { tenantId } = await tenantRes.json();
+        setTenantId(tenantId);
+      } else {
+        setTenantId(null);
+      }
     } catch {
       setTenantId(null);
     }
@@ -132,14 +143,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     cidade: string,
     password: string
   ) => {
-    const dominio = window.location.hostname;
     let clienteId: string | null = null;
     try {
-      const cliente = await pb
-        .collection("clientes_config")
-        .getFirstListItem(`dominio='${dominio}'`);
-      clienteId = cliente.id;
-      setTenantId(clienteId);
+      const tenantRes = await fetch("/api/tenant");
+      if (tenantRes.ok) {
+        const data = await tenantRes.json();
+        clienteId = data.tenantId;
+        setTenantId(clienteId);
+      } else {
+        setTenantId(null);
+      }
     } catch {
       setTenantId(null);
     }
