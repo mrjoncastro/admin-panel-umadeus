@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from "react";
 import { X, Copy } from "lucide-react";
 import createPocketBase from "@/lib/pocketbase";
 import LoadingOverlay from "@/components/LoadingOverlay";
+import { useToast } from "@/lib/context/ToastContext";
 
 interface Props {
   pedidoId: string;
@@ -36,16 +37,16 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
   const [loading, setLoading] = useState(true);
   const [reenviando, setReenviando] = useState(false);
   const [copiando, setCopiando] = useState(false);
-  const [mensagem, setMensagem] = useState("");
   const [urlPagamento, setUrlPagamento] = useState("");
+  const { showSuccess, showError } = useToast();
 
   useEffect(() => {
     pb.collection("pedidos")
       .getOne(pedidoId, { expand: "id_inscricao,campo,responsavel" })
       .then((res) => setPedido(res as unknown as PedidoExpandido))
-      .catch(() => setMensagem("Erro ao carregar dados do pedido"))
+      .catch(() => showError("Erro ao carregar dados do pedido"))
       .finally(() => setLoading(false));
-  }, [pb, pedidoId]);
+  }, [pb, pedidoId, showError]);
 
   const reenviarPagamento = async () => {
     if (!pedido?.id || !pedido?.valor || !pedido?.expand?.id_inscricao) return;
@@ -76,9 +77,9 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
         }),
       });
 
-      setMensagem("✅ Link reenviado com sucesso!");
+      showSuccess("Link reenviado com sucesso!");
     } catch {
-      setMensagem("❌ Erro ao reenviar link.");
+      showError("Erro ao reenviar link.");
     } finally {
       setReenviando(false);
     }
@@ -147,8 +148,6 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
                 ✅ Link copiado!
               </p>
             )}
-
-            {mensagem && <p className="mt-3 text-center text-sm">{mensagem}</p>}
           </div>
         )}
       </div>
