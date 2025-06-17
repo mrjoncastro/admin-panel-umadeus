@@ -26,13 +26,7 @@ function CheckoutContent() {
   const [cep, setCep] = useState("");
   const [cidade, setCidade] = useState("");
   const [numero, setNumero] = useState(String(user?.numero ?? ""));
-  interface UsuarioExtra {
-    data_nascimento?: string;
-  }
 
-  const [dataNascimento, setDataNascimento] = useState(
-    String((user as UsuarioExtra)?.data_nascimento ?? "")
-  );
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
 
   useEffect(() => {
@@ -46,7 +40,6 @@ function CheckoutContent() {
       setCep(String(user.cep ?? ""));
       setCidade(String(user.cidade ?? ""));
       setCpf(String(user.cpf ?? ""));
-      setDataNascimento(String((user as UsuarioExtra).data_nascimento ?? ""));
     }
   }, [user]);
 
@@ -236,7 +229,9 @@ function CheckoutContent() {
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Endereço</label>
+              <label className="block text-xs text-gray-500 mb-1">
+                Endereço
+              </label>
               <input
                 type="text"
                 value={typeof endereco === "string" ? endereco : ""}
@@ -293,18 +288,6 @@ function CheckoutContent() {
                 required
               />
             </div>
-            <div>
-              <label className="block text-xs text-gray-500 mb-1">
-                Data de nascimento
-              </label>
-              <input
-                type="date"
-                value={dataNascimento}
-                onChange={(e) => setDataNascimento(e.target.value)}
-                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
-                required
-              />
-            </div>
           </form>
         </section>
         {/* Bloco DIREITO: Resumo do pedido */}
@@ -325,7 +308,9 @@ function CheckoutContent() {
                     {item.tamanhos?.[0] || "-"} | Cor:{" "}
                     {item.cores?.[0] ? hexToPtName(item.cores[0]) : "-"}
                   </div>
-                  <div className="text-xs text-gray-400">Qtd: {item.quantidade}</div>
+                  <div className="text-xs text-gray-400">
+                    Qtd: {item.quantidade}
+                  </div>
                 </div>
                 <div className="font-semibold">
                   {formatCurrency(item.preco * item.quantidade)}
