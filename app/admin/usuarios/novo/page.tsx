@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useToast } from "@/lib/context/ToastContext";
 
 interface Campo {
   id: string;
@@ -24,6 +25,7 @@ function formatCpf(value: string) {
 }
 
 export default function NovoUsuarioPage() {
+  const { showError, showSuccess } = useToast();
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -33,7 +35,6 @@ export default function NovoUsuarioPage() {
   const [role, setRole] = useState("usuario");
   const [campoId, setCampoId] = useState("");
   const [campos, setCampos] = useState<Campo[]>([]);
-  const [mensagem, setMensagem] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("pb_token");
@@ -47,7 +48,7 @@ export default function NovoUsuarioPage() {
     })
       .then((res) => res.json())
       .then((data) => setCampos(data))
-      .catch(() => setMensagem("❌ Erro ao carregar os campos."));
+      .catch(() => showError("Erro ao carregar os campos."));
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -79,7 +80,7 @@ export default function NovoUsuarioPage() {
     const data = await res.json();
 
     if (res.ok) {
-      setMensagem("✅ Usuário cadastrado com sucesso!");
+      showSuccess("Usuário cadastrado com sucesso!");
       setNome("");
       setEmail("");
       setSenha("");
@@ -89,23 +90,13 @@ export default function NovoUsuarioPage() {
       setRole("usuario");
       setCampoId("");
     } else {
-      setMensagem("❌ Erro: " + (data?.error || "Erro desconhecido"));
+      showError("Erro: " + (data?.error || "Erro desconhecido"));
     }
   }
 
   return (
     <main className="max-w-xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-4">Cadastrar Novo Usuário</h1>
-
-      {mensagem && (
-        <div
-          className={`mb-4 text-sm ${
-            mensagem.startsWith("✅") ? "text-green-600" : "text-red-600"
-          }`}
-        >
-          {mensagem}
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <input

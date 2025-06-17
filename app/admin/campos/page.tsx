@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useToast } from "@/lib/context/ToastContext";
 import { useRouter } from "next/navigation";
 
 interface Campo {
@@ -9,10 +10,10 @@ interface Campo {
 }
 
 export default function GerenciarCamposPage() {
+  const { showError, showSuccess } = useToast();
   const [campos, setCampos] = useState<Campo[]>([]);
   const [nome, setNome] = useState("");
   const [editandoId, setEditandoId] = useState<string | null>(null);
-  const [mensagem, setMensagem] = useState("");
   const [loading, setLoading] = useState(false);
   const [camposCarregados, setCamposCarregados] = useState(false);
   const router = useRouter();
@@ -45,19 +46,19 @@ export default function GerenciarCamposPage() {
         const data = await res.json();
 
         if (!res.ok) {
-          setMensagem("Erro: " + data.error);
+          showError("Erro: " + data.error);
           return;
         }
 
         if (!Array.isArray(data)) {
-          setMensagem("Dados inválidos recebidos.");
+          showError("Dados inválidos recebidos.");
           return;
         }
 
         setCampos(data);
         setCamposCarregados(true); // Só carrega uma vez!
       } catch (err) {
-        setMensagem("Erro ao carregar campos.");
+        showError("Erro ao carregar campos.");
         console.error(err);
       }
     };
@@ -68,10 +69,9 @@ export default function GerenciarCamposPage() {
   async function handleCriarOuAtualizar(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    setMensagem("");
 
     if (!token || !user || user.role !== "coordenador") {
-      setMensagem("Usuário não autenticado.");
+      showError("Usuário não autenticado.");
       setLoading(false);
       return;
     }
@@ -95,18 +95,19 @@ export default function GerenciarCamposPage() {
       const data = await res.json();
 
       if (res.ok) {
-        setMensagem(editandoId ? "✅ Campo atualizado" : "✅ Campo criado");
+        showSuccess(editandoId ? "Campo atualizado" : "Campo criado");
         setNome("");
         setEditandoId(null);
         await fetchCampos(); // chamada separada para carregar após salvar
       } else {
-        setMensagem("Erro: " + data.error);
+        showError("Erro: " + data.error);
         console.error("❌ Erro no envio:", data);
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error("Erro:", err.message);
       }
+      showError("Erro ao enviar dados.");
     } finally {
       setLoading(false);
     }
@@ -195,7 +196,7 @@ export default function GerenciarCamposPage() {
     try {
       setLoading(true);
       if (!token || !user || user.role !== "coordenador") {
-        setMensagem("Usuário não autenticado.");
+        showError("Usuário não autenticado.");
         setLoading(false);
         return;
       }
@@ -208,13 +209,13 @@ export default function GerenciarCamposPage() {
       });
       if (!res.ok) {
         const data = await res.json();
-        setMensagem("Erro: " + (data.error || "Não foi possível excluir."));
+        showError("Erro: " + (data.error || "Não foi possível excluir."));
       } else {
-        setMensagem("Campo excluído com sucesso.");
+        showSuccess("Campo excluído com sucesso.");
         setCampos((prev) => prev.filter((c) => c.id !== id));
       }
     } catch {
-      setMensagem("Erro ao excluir campo.");
+      showError("Erro ao excluir campo.");
     } finally {
       setLoading(false);
     }
@@ -230,8 +231,6 @@ export default function GerenciarCamposPage() {
           + Novo Campo
         </button>
       </div>
-
-      {mensagem && <div className="mb-4 text-sm text-center">{mensagem}</div>}
 
       {mostrarFormulario && (
         <form
