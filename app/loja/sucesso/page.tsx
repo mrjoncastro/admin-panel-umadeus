@@ -1,50 +1,53 @@
-"use client";
-
-import { useSearchParams } from "next/navigation";
+import { CheckCircle } from "lucide-react";
 import Link from "next/link";
-import { Suspense } from "react";
 
-function SucessoContent() {
-  const searchParams = useSearchParams();
-  const pedido = searchParams.get("pedido");
+type SucessoConfirmacaoProps = {
+  mensagem?: string;
+  acaoPrimaria?: { label: string; href: string };
+  acaoSecundaria?: { label: string; href: string };
+};
 
+export default function SucessoConfirmacao({
+  mensagem,
+  acaoPrimaria,
+  acaoSecundaria,
+}: SucessoConfirmacaoProps) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white px-4">
-      <div className="w-full max-w-sm border rounded-lg shadow-sm p-6 text-center">
-        <h1 className="text-xl font-semibold mb-2">Compra confirmada</h1>
-        <p className="text-gray-700 mb-2">
-          {pedido ? (
-            <>Seu pedido <b>#{pedido}</b> foi processado com sucesso.</>
-          ) : (
-            <>Sua compra foi processada com sucesso.</>
-          )}
-        </p>
-        <div className="text-xs text-gray-500 mb-4">
-          Verifique seu e-mail para detalhes do pagamento.
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-gray-100 to-gray-200 px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center">
+        <div className="mb-4 animate-bounce">
+          <CheckCircle className="text-green-600" size={56} />
         </div>
-        <div className="flex flex-col gap-2 mb-2">
-          <Link
-            href="/loja"
-            className="block w-full rounded bg-black text-white py-2 text-sm hover:bg-gray-800 transition"
-          >
-            Continuar comprando
-          </Link>
-          <Link
-            href="/loja/cliente"
-            className="block w-full rounded border py-2 text-sm text-black hover:bg-gray-100 transition"
-          >
-            Meus pedidos
-          </Link>
+        <h1 className="text-2xl font-bold text-gray-900 mb-1">Tudo certo!</h1>
+        <div className="text-gray-600 text-base mb-2">
+          {mensagem || "Sua ação foi realizada com sucesso."}
+        </div>
+        <div className="text-gray-500 text-xs mb-6">
+          Você receberá mais informações em breve por e-mail ou mensagem.
+        </div>
+        <div className="flex flex-col gap-3 w-full">
+          {acaoPrimaria && (
+            <Link
+              href={acaoPrimaria.href}
+              className="w-full inline-flex justify-center items-center px-4 py-3 rounded-xl bg-green-600 text-white text-base font-medium hover:bg-green-700 transition"
+            >
+              {acaoPrimaria.label}
+            </Link>
+          )}
+          {acaoSecundaria && (
+            <Link
+              href={acaoSecundaria.href}
+              className="w-full inline-flex justify-center items-center px-4 py-3 rounded-xl border border-gray-300 text-gray-700 text-base font-medium bg-white hover:bg-gray-100 transition"
+            >
+              {acaoSecundaria.label}
+            </Link>
+          )}
+        </div>
+        <div className="mt-8 text-xs text-gray-400 text-center">
+          Precisa de ajuda? <a href="/suporte" className="underline hover:text-black">Fale conosco</a>
         </div>
       </div>
     </div>
   );
 }
-
-export default function SucessoPage() {
-  return (
-    <Suspense>
-      <SucessoContent />
-    </Suspense>
-  );
-}
+ 
