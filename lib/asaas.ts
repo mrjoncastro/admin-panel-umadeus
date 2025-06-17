@@ -51,10 +51,6 @@ export async function createCheckout(
 ): Promise<string> {
   const rawKey = apiKey;
 
-  console.log("🔑 ASAAS_API_URL:", baseUrl);
-  console.log("🔑 ASAAS_API_KEY:", rawKey);
-  console.log("👤 User-Agent:", agentUser);
-
   if (!baseUrl || !rawKey) {
     throw new Error("Asaas não configurado");
   }
@@ -76,7 +72,7 @@ export async function createCheckout(
       cancelUrl: "https://m24saude.com.br/asaas/cancelado",
       expiredUrl: "https://m24saude.com.br/asaas/expirado",
     },
-    minutesToExpire: 10,
+    minutesToExpire: 15,
     items: params.itens.map((i) => ({
       description: i.description ?? i.name,
       name: i.name,
@@ -98,7 +94,9 @@ export async function createCheckout(
     customFields:
       (params.itens
         .map((item, idx) =>
-          item.fotoBase64 ? { name: `item${idx + 1}Foto`, value: item.fotoBase64 } : null
+          item.fotoBase64
+            ? { name: `item${idx + 1}Foto`, value: item.fotoBase64 }
+            : null
         )
         .filter(Boolean) as { name: string; value: string }[]) || undefined,
     split: [
