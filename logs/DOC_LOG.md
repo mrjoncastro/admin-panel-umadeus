@@ -122,3 +122,4 @@
 - Lint: falhou (next not found)
 - Build: falhou (next not found)
 ## [2025-06-25] Links de administração ajustados por papel no Header. Teste criado para validar comportamentos. Lint e build executados.
+## [2025-06-26] Documentada sequência de carregamento de personalização no design system. Lint e build executados.
