@@ -9,6 +9,24 @@ export default function AreaCliente() {
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
   const [compras, setCompras] = useState<Compra[]>([]);
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
+  const concluirPagamento = async (id: string) => {
+    if (!user) return;
+    try {
+      const res = await fetch(`/loja/api/compras/${id}/reenviar`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${pb.authStore.token}`,
+          "X-PB-User": JSON.stringify(user),
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Erro ao gerar link");
+      alert(`URL de pagamento: ${data.url}`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erro ao gerar link";
+      alert(msg);
+    }
+  };
 
   useEffect(() => {
     if (!authChecked || !user) return;
@@ -103,6 +121,15 @@ export default function AreaCliente() {
                   >
                     Ver detalhes
                   </a>
+                  {c.status === "pendente" && (
+                    <button
+                      type="button"
+                      onClick={() => concluirPagamento(c.id)}
+                      className="btn btn-secondary"
+                    >
+                      Concluir Pagamento
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
