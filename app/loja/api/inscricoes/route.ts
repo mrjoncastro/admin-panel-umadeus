@@ -7,16 +7,13 @@ import { logConciliacaoErro } from "@/lib/server/logger";
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
   const tenantId = await getTenantFromHost();
-  console.log("Tenant ID detectado:", tenantId);
 
   try {
     const data = await req.json();
-    console.log("Dados recebidos:", data);
 
     const nome = `${data.user_first_name || ""} ${
       data.user_last_name || ""
     }`.trim();
-    console.log("Nome gerado:", nome);
 
     const registroParaCriar = {
       nome,
@@ -31,11 +28,7 @@ export async function POST(req: NextRequest) {
       ...(tenantId ? { cliente: tenantId } : {}),
     };
 
-    console.log("Registro a ser criado:", registroParaCriar);
-
     const record = await pb.collection("inscricoes").create(registroParaCriar);
-
-    console.log("Registro criado com sucesso:", record);
 
     return NextResponse.json(record, { status: 201 });
   } catch (err: unknown) {
@@ -43,12 +36,6 @@ export async function POST(req: NextRequest) {
 
     let detalhes: unknown = null;
     if (err instanceof ClientResponseError) {
-      console.error("URL chamada:", err.url);
-      console.error("Status HTTP:", err.status);
-      console.error(
-        "Resposta do PocketBase:",
-        JSON.stringify(err.response, null, 2)
-      );
       detalhes = err.response;
       if (err.originalError) {
         console.error("Erro original:", err.originalError);
@@ -56,14 +43,10 @@ export async function POST(req: NextRequest) {
     } else if (err && typeof err === "object") {
       const errorData = err as Record<string, unknown>;
       if ("url" in errorData) console.error("URL chamada:", errorData.url);
-      if ("status" in errorData) console.error("Status HTTP:", errorData.status);
-      if ("response" in errorData) {
-        console.error(
-          "Resposta do PocketBase:",
-          JSON.stringify(errorData.response, null, 2)
-        );
-        detalhes = errorData.response;
-      }
+      if ("status" in errorData)
+        if ("response" in errorData) {
+          detalhes = errorData.response;
+        }
       if ("originalError" in errorData) {
         console.error("Erro original:", errorData.originalError);
       }
