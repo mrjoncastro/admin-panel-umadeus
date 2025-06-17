@@ -9,36 +9,33 @@ function SucessoContent() {
   const pedido = searchParams.get("pedido");
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-100 via-white to-primary-200 px-6">
-      <div className="max-w-md w-full bg-white shadow-xl rounded-2xl p-8 text-center space-y-6 border border-primary-300">
-        <h1 className="text-3xl font-extrabold text-[var(--accent)]">
-          🎉 Compra Confirmada!
-        </h1>
-
-        <p className="text-gray-700 text-base leading-relaxed">
+    <div className="min-h-screen flex items-center justify-center bg-white px-4">
+      <div className="w-full max-w-sm border rounded-lg shadow-sm p-6 text-center">
+        <h1 className="text-xl font-semibold mb-2">Compra confirmada</h1>
+        <p className="text-gray-700 mb-2">
           {pedido ? (
-            <>Seu pedido <strong>#{pedido}</strong> foi processado com sucesso.</>
+            <>Seu pedido <b>#{pedido}</b> foi processado com sucesso.</>
           ) : (
             <>Sua compra foi processada com sucesso.</>
           )}
         </p>
-
-        <div className="text-sm text-gray-500">
-          Verifique seu e-mail para os detalhes do pagamento.
+        <div className="text-xs text-gray-500 mb-4">
+          Verifique seu e-mail para detalhes do pagamento.
         </div>
-
-        <div className="pt-4 flex flex-col gap-2">
-          <Link href="/loja" className="btn btn-primary">
+        <div className="flex flex-col gap-2 mb-2">
+          <Link
+            href="/loja"
+            className="block w-full rounded bg-black text-white py-2 text-sm hover:bg-gray-800 transition"
+          >
             Continuar comprando
           </Link>
-          <Link href="/loja/cliente" className="btn btn-secondary">
-            Ver meus pedidos
+          <Link
+            href="/loja/cliente"
+            className="block w-full rounded border py-2 text-sm text-black hover:bg-gray-100 transition"
+          >
+            Meus pedidos
           </Link>
         </div>
-
-        <p className="text-xs text-gray-400 italic mt-6">
-          #UMADEUS2025 — Juntos na missão 💜
-        </p>
       </div>
     </div>
   );
