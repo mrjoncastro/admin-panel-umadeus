@@ -2,9 +2,9 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { formatDate } from "@/utils/formatDate";
-import InscricaoForm from "../components/InscricaoForm";
 
 interface Evento {
   id: string;
@@ -18,7 +18,6 @@ interface Evento {
 
 export default function EventosPage() {
   const [eventos, setEventos] = useState<Evento[]>([]);
-  const [selectedEventoId, setSelectedEventoId] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchEventos() {
@@ -66,17 +65,13 @@ export default function EventosPage() {
               <p className="text-sm text-gray-600">{evento.descricao}</p>
               <p className="text-sm font-medium text-gray-800">{formatDate(evento.data)}</p>
               <p className="text-sm text-gray-500">{evento.cidade}</p>
-              <button
-                className="btn btn-primary mt-2"
-                onClick={() => setSelectedEventoId(evento.id)}
-              >
+              <Link href={`/loja/eventos/${evento.id}`} className="btn btn-primary mt-2">
                 Inscrever
-              </button>
+              </Link>
             </div>
           </div>
         ))}
       </div>
-      {selectedEventoId && <InscricaoForm eventoId={selectedEventoId} />}
     </main>
   );
 }

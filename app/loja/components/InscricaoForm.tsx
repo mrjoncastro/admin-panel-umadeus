@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useAuthContext } from "@/lib/context/AuthContext";
 
 const N8N_WEBHOOK_URL =
   process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || "https://SEU_WEBHOOK_DO_N8N";
@@ -15,6 +16,9 @@ interface InscricaoFormProps {
 }
 
 export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
+  const { user } = useAuthContext();
+  const firstName = user?.nome?.split(" ")[0] || "";
+  const lastName = user?.nome?.split(" ").slice(1).join(" ") || "";
   const [status, setStatus] = useState<
     "idle" | "sending" | "success" | "error"
   >("idle");
@@ -85,6 +89,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                     name="user_first_name"
                     required
                     className="input-base"
+                    defaultValue={firstName}
                   />
                 </div>
                 <div className="flex-1">
@@ -95,6 +100,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                     name="user_last_name"
                     required
                     className="input-base"
+                    defaultValue={lastName}
                   />
                 </div>
               </div>
@@ -109,6 +115,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                     name="user_email"
                     required
                     className="input-base"
+                    defaultValue={user?.email || ""}
                   />
                 </div>
                 <div className="flex-1">
@@ -120,6 +127,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                     name="user_phone"
                     required
                     className="input-base"
+                    defaultValue={String(user?.telefone ?? "")}
                   />
                 </div>
               </div>
@@ -127,7 +135,12 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1">
                   <label className="block mb-1 text-sm font-medium">CPF*</label>
-                  <input name="user_cpf" required className="input-base" />
+                  <input
+                    name="user_cpf"
+                    required
+                    className="input-base"
+                    defaultValue={String(user?.cpf ?? "")}
+                  />
                 </div>
                 <div className="flex-1">
                   <label className="block mb-1 text-sm font-medium">
@@ -138,6 +151,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                     name="user_birth_date"
                     required
                     className="input-base"
+                    defaultValue={String(user?.data_nascimento ?? "")}
                   />
                 </div>
               </div>
@@ -176,14 +190,24 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
             <div className="flex flex-col gap-4">
               <div>
                 <label className="block mb-1 text-sm font-medium">CEP*</label>
-                <input name="user_cep" required className="input-base" />
+                <input
+                  name="user_cep"
+                  required
+                  className="input-base"
+                  defaultValue={String(user?.cep ?? "")}
+                />
               </div>
 
               <div>
                 <label className="block mb-1 text-sm font-medium">
                   Endereço*
                 </label>
-                <input name="user_address" required className="input-base" />
+                <input
+                  name="user_address"
+                  required
+                  className="input-base"
+                  defaultValue={String(user?.endereco ?? "")}
+                />
               </div>
 
               <div className="flex flex-col md:flex-row gap-4">
@@ -191,13 +215,22 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                   <label className="block mb-1 text-sm font-medium">
                     Número*
                   </label>
-                  <input name="user_number" required className="input-base" />
+                  <input
+                    name="user_number"
+                    required
+                    className="input-base"
+                    defaultValue={String(user?.numero ?? "")}
+                  />
                 </div>
                 <div className="flex-1">
                   <label className="block mb-1 text-sm font-medium">
                     Complemento
                   </label>
-                  <input name="user_complement" className="input-base" />
+                  <input
+                    name="user_complement"
+                    className="input-base"
+                    defaultValue={String(user?.complemento ?? "")}
+                  />
                 </div>
               </div>
 
@@ -210,13 +243,19 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                     name="user_neighborhood"
                     required
                     className="input-base"
+                    defaultValue={String(user?.bairro ?? "")}
                   />
                 </div>
                 <div className="flex-1">
                   <label className="block mb-1 text-sm font-medium">
                     Cidade*
                   </label>
-                  <input name="user_city" required className="input-base" />
+                  <input
+                    name="user_city"
+                    required
+                    className="input-base"
+                    defaultValue={String(user?.cidade ?? "")}
+                  />
                 </div>
               </div>
 
@@ -224,7 +263,12 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                 <label className="block mb-1 text-sm font-medium">
                   Estado*
                 </label>
-                <select name="user_state" required className="input-base">
+                <select
+                  name="user_state"
+                  required
+                  className="input-base"
+                  defaultValue={String(user?.estado ?? "")}
+                >
                   <option value="">Selecione</option>
                   {[
                     "AC",
