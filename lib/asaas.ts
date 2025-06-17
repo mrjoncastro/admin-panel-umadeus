@@ -101,6 +101,12 @@ export async function createCheckout(
           item.fotoBase64 ? { name: `item${idx + 1}Foto`, value: item.fotoBase64 } : null
         )
         .filter(Boolean) as { name: string; value: string }[]) || undefined,
+    split: [
+      {
+        walletId: process.env.WALLETID_M24,
+        percentageValue: 7,
+      },
+    ],
     externalReference,
   };
 

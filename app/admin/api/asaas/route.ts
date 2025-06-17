@@ -172,6 +172,12 @@ export async function POST(req: NextRequest) {
         value: parsedValor,
         dueDate: dueDateStr,
         description: pedido.produto || "Produto",
+        split: [
+          {
+            walletId: process.env.WALLETID_M24,
+            percentageValue: 7,
+          },
+        ],
         externalReference,
       }),
     });

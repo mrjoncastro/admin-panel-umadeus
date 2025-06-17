@@ -15,7 +15,7 @@ describe('buildCheckoutUrl', () => {
 describe('checkout route', () => {
   const originalEnv = process.env;
   beforeEach(() => {
-    process.env = { ...originalEnv, ASAAS_API_URL: 'https://asaas', ASAAS_API_KEY: 'key' };
+    process.env = { ...originalEnv, ASAAS_API_URL: 'https://asaas', ASAAS_API_KEY: 'key', WALLETID_M24: 'wallet' };
     (requireRole as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue({
       pb: {
         authStore: { isValid: true },
