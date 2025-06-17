@@ -34,7 +34,8 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    (async () => {
+
+    void (async () => {
       try {
         const tenantRes = await fetch("/api/tenant");
         if (tenantRes.ok) {
@@ -51,6 +52,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
             };
             setConfigId(cliente.id);
             setConfig(cfg);
+            setConfigId(cliente.id);
             localStorage.setItem("app_config", JSON.stringify(cfg));
             return;
           }
@@ -58,14 +60,15 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
       } catch {
         /* ignore */
       }
-      const cached = localStorage.getItem("app_config");
-      if (cached) {
-        try {
-          setConfig(JSON.parse(cached));
-        } catch {
-          /* ignore */
-        }
+    })();
+    const cached = localStorage.getItem("app_config");
+    if (cached) {
+      try {
+        setConfig(JSON.parse(cached));
+      } catch {
+        /* ignore */
       }
+    }
 
     async function refreshConfig() {
       const storedTime = localStorage.getItem("app_config_time");
@@ -90,6 +93,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
               };
               setConfigId(cliente.id);
               setConfig(cfg);
+              setConfigId(cliente.id);
               localStorage.setItem("app_config", JSON.stringify(cfg));
               localStorage.setItem("app_config_time", Date.now().toString());
               return;
@@ -129,6 +133,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
                 /* ignore */
               }
               setConfig(cfg);
+              setConfigId(data.id);
               localStorage.setItem("app_config", JSON.stringify(cfg));
               localStorage.setItem(
                 "app_config_time",
