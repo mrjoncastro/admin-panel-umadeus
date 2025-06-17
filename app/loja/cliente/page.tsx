@@ -2,58 +2,49 @@
 
 import { useEffect, useState } from "react";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
-import type { Inscricao } from "@/types";
+import type { Inscricao, Compra, Pedido } from "@/types";
 
 export default function AreaCliente() {
   const { user, pb, authChecked } = useAuthGuard(["usuario"]);
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
+  const [compras, setCompras] = useState<Compra[]>([]);
+  const [pedidos, setPedidos] = useState<Pedido[]>([]);
 
   useEffect(() => {
     if (!authChecked || !user) return;
     const token = pb.authStore.token;
-    fetch("/loja/api/minhas-inscricoes", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "X-PB-User": JSON.stringify(user),
-      },
-    })
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      "X-PB-User": JSON.stringify(user),
+    };
+
+    fetch("/loja/api/minhas-inscricoes", { headers })
       .then((res) => res.json())
       .then((data) => setInscricoes(Array.isArray(data) ? data : []))
       .catch((err) => {
         console.error("Erro ao carregar inscricoes", err);
         setInscricoes([]);
       });
+
+    fetch("/loja/api/compras", { headers })
+      .then((res) => res.json())
+      .then((data) => setCompras(Array.isArray(data) ? data : []))
+      .catch((err) => {
+        console.error("Erro ao carregar compras", err);
+        setCompras([]);
+      });
+
+    fetch("/loja/api/pedidos", { headers })
+      .then((res) => res.json())
+      .then((data) => setPedidos(Array.isArray(data) ? data : []))
+      .catch((err) => {
+        console.error("Erro ao carregar pedidos", err);
+        setPedidos([]);
+      });
   }, [authChecked, user, pb]);
 
   if (!authChecked) return null;
 
-  const pedidos = [
-    {
-      id: "1",
-      data: "10/06/2025",
-      status: "pago",
-      pagamento: "Cartão",
-    },
-    {
-      id: "2",
-      data: "02/06/2025",
-      status: "pendente",
-      pagamento: "Boleto",
-    },
-  ];
-
-  const pagamentos = [
-    {
-      id: "1",
-      valor: "R$ 199,90",
-      status: "pago",
-    },
-    {
-      id: "2",
-      valor: "R$ 59,90",
-      status: "pendente",
-    },
-  ];
 
   return (
     <main className="p-8 text-platinum font-sans space-y-10">
@@ -95,20 +86,23 @@ export default function AreaCliente() {
             </tr>
           </thead>
           <tbody>
-            {pedidos.map((p) => (
-              <tr key={p.id}>
-                <td>#{p.id}</td>
-                <td>{p.data}</td>
-                <td>{p.status}</td>
-                <td>{p.pagamento}</td>
+            {compras.map((c) => (
+              <tr key={c.id}>
+                <td>#{c.id}</td>
+                <td>
+                  {c.created
+                    ? new Date(c.created).toLocaleDateString("pt-BR")
+                    : "-"}
+                </td>
+                <td className="capitalize">{c.status}</td>
+                <td>{c.metodo_pagamento}</td>
                 <td className="flex gap-2">
                   <a
-                    href={`/loja/compras/${p.id}`}
+                    href={`/loja/compras/${c.id}`}
                     className="btn btn-secondary"
                   >
                     Ver detalhes
                   </a>
-                  <button className="btn btn-primary">Recomprar</button>
                 </td>
               </tr>
             ))}
@@ -154,11 +148,11 @@ export default function AreaCliente() {
             </tr>
           </thead>
           <tbody>
-            {pagamentos.map((p) => (
+            {pedidos.map((p) => (
               <tr key={p.id}>
-                <td>{p.id}</td>
-                <td>{p.valor}</td>
-                <td>{p.status}</td>
+                <td>{p.id_pagamento || p.id}</td>
+                <td>R$ {Number(p.valor).toFixed(2)}</td>
+                <td className="capitalize">{p.status}</td>
                 <td className="flex gap-2">
                   <button className="btn btn-secondary">Reenviar boleto</button>
                 </td>
