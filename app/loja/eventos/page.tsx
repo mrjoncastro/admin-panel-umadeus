@@ -22,15 +22,11 @@ export default function EventosPage() {
 
   useEffect(() => {
     async function fetchEventos() {
-        fetch("/api/eventos")
-          .then((r) => r.json())
-          .then((data) => {
-            if (Array.isArray(data)) {
-              setEventos(data);
-            } else {
-              setEventos([]);
-            }
-          })
+      fetch("/api/eventos")
+        .then((r) => r.json())
+        .then((data) => {
+          setEventos(Array.isArray(data) ? data : []);
+        })
         .catch((err) => {
           console.error("Erro ao carregar eventos:", err);
         });
