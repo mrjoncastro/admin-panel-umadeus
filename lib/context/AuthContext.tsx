@@ -60,7 +60,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const token = localStorage.getItem("pb_token");
         const rawUser = localStorage.getItem("pb_user");
-        console.log("[Auth] token:", token, "rawUser:", rawUser);
 
         if (token && rawUser) {
           const parsedRecord = JSON.parse(rawUser) as RecordModel;
@@ -74,14 +73,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (tenantRes.ok) {
           const { tenantId } = await tenantRes.json();
           setTenantId(tenantId);
-          console.log("[Auth] tenantId carregado:", tenantId);
         } else {
           setTenantId(null);
-          console.warn("[Auth] tenantRes não OK.");
         }
       } catch (err: unknown) {
         if (err instanceof Error) {
-          console.error("Erro ao carregar auth:", err.message);
         }
         pb.authStore.clear();
         clearBaseAuth();
@@ -117,7 +113,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (tenantRes.ok) {
         const { tenantId } = await tenantRes.json();
         setTenantId(tenantId);
-        console.log("[login] tenantId:", tenantId);
       } else {
         setTenantId(null);
       }
@@ -153,7 +148,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const data = await tenantRes.json();
         clienteId = data.tenantId;
         setTenantId(clienteId);
-        console.log("[signUp] clienteId:", clienteId);
       } else {
         setTenantId(null);
       }
@@ -189,7 +183,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
     setTenantId(null);
     setIsLoggedIn(false);
-    console.log("[logout] Deslogado com sucesso!");
   };
 
   return (

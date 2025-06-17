@@ -114,7 +114,6 @@ export async function createCheckout(
     externalReference,
   };
 
-  console.log("📦 Payload enviado ao Asaas:", payload);
 
   const res = await fetch(url, {
     method: "POST",
@@ -138,7 +137,6 @@ export async function createCheckout(
   const checkoutUrl: string | undefined =
     data?.invoiceUrl || data?.checkoutUrl || data?.link;
 
-  console.log("🔗 URL do checkout gerada:", checkoutUrl);
 
   if (!checkoutUrl) {
     throw new Error("checkoutUrl ausente");
