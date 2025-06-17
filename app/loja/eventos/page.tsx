@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { formatDate } from "@/utils/formatDate";
 import InscricaoForm from "../components/InscricaoForm";
+import getTenantFromClient from "@/lib/getTenantFromClient";
 
 interface Evento {
   id: string;
@@ -21,13 +22,18 @@ export default function EventosPage() {
   const [selectedEventoId, setSelectedEventoId] = useState<string | null>(null);
 
   useEffect(() => {
-    const tenantId = localStorage.getItem("tenant_id");
-    fetch(`/api/eventos?tenant=${tenantId ?? ""}`)
-      .then((r) => r.json())
-      .then((data) => (Array.isArray(data) ? setEventos(data) : setEventos([])))
-      .catch((err) => {
-        console.error("Erro ao carregar eventos:", err);
-      });
+    async function carregarEventos() {
+      const tenantId = await getTenantFromClient();
+      fetch(`/api/eventos?tenant=${tenantId ?? ""}`)
+        .then((r) => r.json())
+        .then((data) =>
+          Array.isArray(data) ? setEventos(data) : setEventos([])
+        )
+        .catch((err) => {
+          console.error("Erro ao carregar eventos:", err);
+        });
+    }
+    carregarEventos();
   }, []);
 
   return (
