@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 
-const N8N_WEBHOOK_URL =
-  process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || "https://SEU_WEBHOOK_DO_N8N";
 
 const CEP_BASE_URL =
   process.env.NEXT_PUBLIC_VIA_CEP_URL || process.env.NEXT_PUBLIC_BRASILAPI_URL || "";
@@ -84,6 +83,8 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
       .catch(() => console.warn("Erro ao buscar o CEP"));
   }, [cep]);
 
+  const router = useRouter();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("sending");
@@ -92,19 +93,21 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
     const data = Object.fromEntries(new FormData(form));
 
     try {
-      const response = await fetch(N8N_WEBHOOK_URL, {
+      const response = await fetch("/loja/api/inscricoes", {
         method: "POST",
         body: JSON.stringify(data),
         headers: { "Content-Type": "application/json" },
       });
+
       if (!response.ok) {
-        console.warn("Webhook n8n falhou", await response.text());
+        throw new Error("Falha ao salvar inscrição");
       }
-    } catch (err) {
-      console.warn("Erro ao enviar para webhook:", err);
-    } finally {
+
       setStatus("success");
-      form.reset();
+      router.push("/loja/inscricoes/confirmacao");
+    } catch (err) {
+      console.warn("Erro ao enviar inscrição:", err);
+      setStatus("error");
     }
   };
 
