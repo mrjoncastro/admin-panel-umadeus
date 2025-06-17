@@ -34,19 +34,24 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
       if (typeof window === "undefined") return;
 
       try {
-        const pb = createPocketBase();
-        const dominio = window.location.hostname;
-        const cliente = await pb
-          .collection("clientes_config")
-          .getFirstListItem(`dominio='${dominio}'`);
-        const cfg: AppConfig = {
-          font: cliente.font || defaultConfig.font,
-          primaryColor: cliente.cor_primary || defaultConfig.primaryColor,
-          logoUrl: cliente.logo_url || defaultConfig.logoUrl,
-        };
-        setConfig(cfg);
-        localStorage.setItem("app_config", JSON.stringify(cfg));
-        return;
+        const tenantRes = await fetch("/api/tenant");
+        if (tenantRes.ok) {
+          const { tenantId } = await tenantRes.json();
+          if (tenantId) {
+            const pb = createPocketBase();
+            const cliente = await pb
+              .collection("clientes_config")
+              .getOne(String(tenantId));
+            const cfg: AppConfig = {
+              font: cliente.font || defaultConfig.font,
+              primaryColor: cliente.cor_primary || defaultConfig.primaryColor,
+              logoUrl: cliente.logo_url || defaultConfig.logoUrl,
+            };
+            setConfig(cfg);
+            localStorage.setItem("app_config", JSON.stringify(cfg));
+            return;
+          }
+        }
       } catch {
         /* ignore */
       }
