@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
 import DashboardAnalytics from "../components/DashboardAnalytics";
 import type { Inscricao, Pedido } from "@/types";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 export default function LiderDashboardPage() {
   const { user, pb, authChecked } = useAuthGuard(["lider"]);
@@ -125,7 +126,7 @@ export default function LiderDashboardPage() {
   }, [pb, authChecked, user, page]);
 
   if (loading) {
-    return <p className="p-6 text-center text-sm">Carregando dashboard...</p>;
+    return <LoadingOverlay show={true} text="Carregando dashboard..." />;
   }
 
   return (

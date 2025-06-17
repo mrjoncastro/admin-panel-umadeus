@@ -1,9 +1,10 @@
 import { Suspense } from "react";
 import BlogClient from "./BlogClient";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 export default function BlogPage() {
   return (
-    <Suspense fallback={<p className="text-center py-10">Carregando posts...</p>}>
+    <Suspense fallback={<LoadingOverlay show={true} text="Carregando posts..." />}>
       <BlogClient />
     </Suspense>
   );

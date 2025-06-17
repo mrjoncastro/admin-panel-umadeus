@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Copy } from "lucide-react";
 import { saveAs } from "file-saver";
+import LoadingOverlay from "@/components/LoadingOverlay";
 import ModalEditarInscricao from "./componentes/ModalEdit";
 import ModalVisualizarPedido from "./componentes/ModalVisualizarPedido";
 import { CheckCircle, XCircle, Pencil, Trash2, Eye } from "lucide-react";
@@ -320,7 +321,7 @@ export default function ListaInscricoesPage() {
   );
 
   if (loading)
-    return <p className="p-6 text-center text-sm">Carregando inscrições...</p>;
+    return <LoadingOverlay show={true} text="Carregando inscrições..." />;
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">

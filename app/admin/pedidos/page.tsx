@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
 import { Pedido } from "@/types";
 import { saveAs } from "file-saver";
+import LoadingOverlay from "@/components/LoadingOverlay";
 import ModalEditarPedido from "./componentes/ModalEditarPedido";
 import { useToast } from "@/lib/context/ToastContext";
 
@@ -114,7 +115,7 @@ export default function PedidosPage() {
   };
 
   if (!authChecked || loading) {
-    return <p className="p-6 text-center text-sm">Carregando pedidos...</p>;
+    return <LoadingOverlay show={true} text="Carregando pedidos..." />;
   }
 
   return (

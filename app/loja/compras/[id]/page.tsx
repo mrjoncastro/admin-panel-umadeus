@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
+import LoadingOverlay from "@/components/LoadingOverlay";
 import type { Compra } from "@/types";
 
 function formatCurrency(v: number) {
@@ -41,7 +42,7 @@ export default function DetalheCompraUsuario() {
   if (!authChecked) return null;
 
   if (loading) {
-    return <p className="p-6 text-center text-sm">Carregando compra...</p>;
+    return <LoadingOverlay show={true} text="Carregando compra..." />;
   }
 
   if (!compra) {

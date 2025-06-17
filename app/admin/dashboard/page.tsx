@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Inscricao, Pedido } from "@/types";
 import DashboardResumo from "./components/DashboardResumo";
 import DashboardAnalytics from "../components/DashboardAnalytics";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 export default function DashboardPage() {
   const { user, pb, authChecked } = useAuthGuard(["coordenador", "lider"]);
@@ -118,9 +119,7 @@ export default function DashboardPage() {
   return (
     <main className="min-h-screen  p-4 md:p-6">
       {!authChecked || !user || loading ? (
-        <p className="text-center text-xl font-semibold dark:text-gray-100">
-          Carregando painel...
-        </p>
+        <LoadingOverlay show={true} text="Carregando painel..." />
       ) : (
         <>
           <div className="mb-6 text-center dark:text-gray-100">

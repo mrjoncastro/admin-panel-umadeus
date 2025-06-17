@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 export default function EditarEventoPage() {
   const { id } = useParams<{ id: string }>();
@@ -48,7 +49,7 @@ export default function EditarEventoPage() {
   }, [id, isLoggedIn, getAuth]);
 
   if (loading || !initial) {
-    return <p className="p-4">Carregando...</p>;
+    return <LoadingOverlay show={true} text="Carregando..." />;
   }
 
   async function handleSubmit(e: React.FormEvent) {

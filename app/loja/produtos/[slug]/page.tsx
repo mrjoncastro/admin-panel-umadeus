@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Suspense } from "react";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 
 import ProdutoInterativo from "./ProdutoInterativo";
@@ -41,7 +42,7 @@ export default function ProdutoDetalhe() {
   if (!produto) {
     return (
       <main className="font-sans px-4 md:px-16 py-10">
-        <div>Carregando...</div>
+        <LoadingOverlay show={true} text="Carregando..." />
       </main>
     );
   }
@@ -81,7 +82,7 @@ export default function ProdutoDetalhe() {
       >
         &lt; voltar
       </Link>
-      <Suspense fallback={<div>Carregando...</div>}>
+      <Suspense fallback={<LoadingOverlay show={true} text="Carregando..." />}>
         <ProdutoInterativo
           imagens={imagens}
           generos={generos}

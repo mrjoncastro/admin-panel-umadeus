@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import createPocketBase from "@/lib/pocketbase";
 import ListaClientes from "./components/ListaClientes";
 import ModalEditarInscricao from "../inscricoes/componentes/ModalEdit";
+import LoadingOverlay from "@/components/LoadingOverlay";
 import type { Inscricao } from "@/types";
 import { useToast } from "@/lib/context/ToastContext";
 import { useAuthContext } from "@/lib/context/AuthContext";
@@ -65,7 +66,7 @@ export default function ClientesPage() {
     }
   };
 
-  if (loading) return <p className="p-6 text-center text-sm">Carregando clientes...</p>;
+  if (loading) return <LoadingOverlay show={true} text="Carregando clientes..." />;
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
