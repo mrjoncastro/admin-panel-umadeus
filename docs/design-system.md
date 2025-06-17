@@ -189,12 +189,12 @@ Execute `npm run storybook` para iniciar a interface e validar os componentes. Q
 O portal permite ajustar fonte, cor primária e logotipo dinamicamente. As configurações são gerenciadas pelo `AppConfigProvider` (`lib/context/AppConfigContext.tsx`).
 Ao montar, o provedor executa a seguinte sequência:
 
-1. lê as preferências gravadas no `localStorage`;
-2. requisita `/api/tenant` para descobrir o tenant;
-3. consulta a coleção `clientes_config` filtrando pelo campo `cliente` (e não pelo ID do registro);
-4. se o usuário estiver autenticado, utiliza `/admin/api/configuracoes` como fallback.
+1. verifica se há valores no `localStorage`;
+2. consulta `/api/tenant` para descobrir o ID do cliente;
+3. carrega a coleção `clientes_config` **filtrando pelo campo `cliente`**, e não pelo ID do documento;
+4. caso o usuário esteja autenticado, permite editar as preferências via `/admin/api/configuracoes`.
 
-Quando `updateConfig` é chamado, os dados são gravados nesse mesmo local e no `localStorage`, mantendo navegador e PocketBase sincronizados.
+Quando `updateConfig` é chamado, os dados são enviados para essa mesma rota e gravados no `localStorage`, mantendo navegador e PocketBase sincronizados.
 
 As personalizações são persistidas nos campos `logo_url`, `cor_primary` e `font` da coleção `clientes_config`, evitando perda de dados entre dispositivos.
 
