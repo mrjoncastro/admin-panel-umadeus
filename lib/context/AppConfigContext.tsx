@@ -41,7 +41,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
             const pb = createPocketBase();
             const cliente = await pb
               .collection("clientes_config")
-              .getOne(String(tenantId));
+              .getFirstListItem(`cliente='${tenantId}'`);
             const cfg: AppConfig = {
               font: cliente.font || defaultConfig.font,
               primaryColor: cliente.cor_primary || defaultConfig.primaryColor,
