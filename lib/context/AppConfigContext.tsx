@@ -28,6 +28,7 @@ const AppConfigContext = createContext<AppConfigContextType>({
 
 export function AppConfigProvider({ children }: { children: React.ReactNode }) {
   const [config, setConfig] = useState<AppConfig>(defaultConfig);
+  const [configId, setConfigId] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadConfig() {
@@ -41,7 +42,8 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
             const pb = createPocketBase();
             const cliente = await pb
               .collection("clientes_config")
-              .getOne(String(tenantId));
+              .getFirstListItem(`cliente='${tenantId}'`);
+            setConfigId(cliente.id);
             const cfg: AppConfig = {
               font: cliente.font || defaultConfig.font,
               primaryColor: cliente.cor_primary || defaultConfig.primaryColor,
@@ -109,7 +111,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("pb_token");
       const user = localStorage.getItem("pb_user");
-      if (token && user) {
+      if (token && user && configId) {
         fetch("/admin/api/configuracoes", {
           method: "PUT",
           headers: {
@@ -118,6 +120,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
             "X-PB-User": user,
           },
           body: JSON.stringify({
+            id: configId,
             cor_primary: newCfg.primaryColor,
             logo_url: newCfg.logoUrl,
             font: newCfg.font,
