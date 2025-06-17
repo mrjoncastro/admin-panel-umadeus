@@ -35,6 +35,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    void (async () => {
       try {
         const tenantRes = await fetch("/api/tenant");
         if (tenantRes.ok) {
@@ -50,6 +51,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
               logoUrl: cliente.logo_url || defaultConfig.logoUrl,
             };
             setConfig(cfg);
+            setConfigId(cliente.id);
             localStorage.setItem("app_config", JSON.stringify(cfg));
             return;
           }
@@ -57,6 +59,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
       } catch {
         /* ignore */
       }
+    })();
     const cached = localStorage.getItem("app_config");
     if (cached) {
       try {
@@ -88,6 +91,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
                 logoUrl: cliente.logo_url || defaultConfig.logoUrl,
               };
               setConfig(cfg);
+              setConfigId(cliente.id);
               localStorage.setItem("app_config", JSON.stringify(cfg));
               localStorage.setItem("app_config_time", Date.now().toString());
               return;
@@ -117,6 +121,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
                 logoUrl: data.logo_url || defaultConfig.logoUrl,
               };
               setConfig(cfg);
+              setConfigId(data.id);
               localStorage.setItem("app_config", JSON.stringify(cfg));
               localStorage.setItem(
                 "app_config_time",

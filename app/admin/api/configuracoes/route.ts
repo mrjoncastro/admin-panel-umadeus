@@ -12,9 +12,9 @@ export async function GET(req: NextRequest) {
     const cfg = await pb
       .collection("clientes_config")
       .getFirstListItem(`cliente='${user.cliente}'`);
-      .getFirstListItem(`cliente='${user.cliente}'`);
     return NextResponse.json(
       {
+        id: cfg.id,
         cor_primary: cfg.cor_primary ?? "",
         logo_url: cfg.logo_url ?? "",
         font: cfg.font ?? "",
@@ -35,10 +35,6 @@ export async function PUT(req: NextRequest) {
   const { pb, user } = auth;
   try {
     const { cor_primary, logo_url, font } = await req.json();
-    const current = await pb
-      .collection("clientes_config")
-      .getFirstListItem(`cliente='${user.cliente}'`);
-    const cliente = await pb.collection("clientes_config").update(current.id, {
     const cfg = await pb
       .collection("clientes_config")
       .getFirstListItem(`cliente='${user.cliente}'`);
