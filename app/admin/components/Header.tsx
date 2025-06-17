@@ -336,15 +336,17 @@ export default function Header() {
                             <User size={16} /> Visualizar perfil
                           </Link>
                         </li>
-                        <li>
-                          <Link
-                            href="/admin/configuracoes"
-                            className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
-                          >
-                            <Settings size={16} />
-                            Configurações
-                          </Link>
-                        </li>
+                        {user?.role === "coordenador" && (
+                          <li>
+                            <Link
+                              href="/admin/configuracoes"
+                              className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                            >
+                              <Settings size={16} />
+                              Configurações
+                            </Link>
+                          </li>
+                        )}
                         <li>
                           <button
                             onClick={() => {
@@ -495,13 +497,15 @@ export default function Header() {
                 >
                   Perfil
                 </Link>
-                <Link
-                  href="/admin/configuracoes"
-                  onClick={() => setMenuAberto(false)}
-                  className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)]"
-                >
-                  Configurações
-                </Link>
+                  {user?.role === "coordenador" && (
+                    <Link
+                      href="/admin/configuracoes"
+                      onClick={() => setMenuAberto(false)}
+                      className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)]"
+                    >
+                      Configurações
+                    </Link>
+                  )}
                 <button
                   onClick={() => {
                     setMenuAberto(false);
