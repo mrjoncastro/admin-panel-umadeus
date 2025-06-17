@@ -30,6 +30,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
   const [endereco, setEndereco] = useState(String(user?.endereco ?? ""));
   const [cidade, setCidade] = useState(String(user?.cidade ?? ""));
   const [estado, setEstado] = useState(String(user?.estado ?? ""));
+  const [bairro, setBairro] = useState(String(user?.bairro ?? ""));
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -58,6 +59,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
     setEndereco(String(user.endereco ?? ""));
     setCidade(String(user.cidade ?? ""));
     setEstado(String(user.estado ?? ""));
+    setBairro(String(user.bairro ?? ""));
     setVal("user_number", String(user.numero ?? ""));
     setVal("user_complement", String(user.complemento ?? ""));
     setVal("user_neighborhood", String(user.bairro ?? ""));
@@ -80,6 +82,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
         setEndereco(data.logradouro || data.street || "");
         setCidade(data.localidade || data.city || "");
         setEstado(data.uf || data.state || "");
+        setBairro(data.bairro || data.neighborhood || "");
       })
       .catch(() => console.warn("Erro ao buscar o CEP"));
   }, [cep]);
@@ -297,7 +300,8 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                     name="user_neighborhood"
                     required
                     className="input-base"
-                    defaultValue={String(user?.bairro ?? "")}
+                    value={bairro}
+                    onChange={(e) => setBairro(e.target.value)}
                   />
                 </div>
                 <div className="flex-1">
