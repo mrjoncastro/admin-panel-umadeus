@@ -1,16 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import createPocketBase from "@/lib/pocketbase";
+import { useEffect, useRef, useState } from "react";
+import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
 import DashboardAnalytics from "../components/DashboardAnalytics";
 import type { Inscricao, Pedido } from "@/types";
 
 export default function LiderDashboardPage() {
-  const router = useRouter();
-  const { user, isLoggedIn, tenantId } = useAuthContext();
-  const pb = useMemo(() => createPocketBase(), []);
+  const { user, pb, authChecked } = useAuthGuard(["lider"]);
 
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
@@ -25,10 +21,7 @@ export default function LiderDashboardPage() {
   const isMounted = useRef(true);
 
   useEffect(() => {
-    if (!isLoggedIn || !user || user.role !== "lider") {
-      router.replace("/login");
-      return;
-    }
+    if (!authChecked || !user) return;
 
     const controller = new AbortController();
     const signal = controller.signal;
@@ -39,20 +32,16 @@ export default function LiderDashboardPage() {
 
         const perPage = 50;
         const [inscricoesRes, pedidosRes] = await Promise.all([
-          pb
-            .collection("inscricoes")
-            .getList(page, perPage, {
-              filter: `campo="${campoId}" && cliente='${tenantId}'`,
-              expand: "campo,evento,criado_por,pedido",
-              signal,
-            }),
-          pb
-            .collection("pedidos")
-            .getList(page, perPage, {
-              filter: `campo="${campoId}" && cliente='${tenantId}'`,
-              expand: "campo,criado_por",
-              signal,
-            }),
+          pb.collection("inscricoes").getList(page, perPage, {
+            filter: `campo="${campoId}" && cliente='${user?.cliente}'`,
+            expand: "campo,evento,criado_por,pedido",
+            signal,
+          }),
+          pb.collection("pedidos").getList(page, perPage, {
+            filter: `campo="${campoId}" && cliente='${user?.cliente}'`,
+            expand: "campo,criado_por",
+            signal,
+          }),
         ]);
         const rawInscricoes = inscricoesRes.items;
         const rawPedidos = pedidosRes.items;
@@ -133,7 +122,7 @@ export default function LiderDashboardPage() {
       isMounted.current = false;
       controller.abort();
     };
-  }, [pb, isLoggedIn, tenantId, user, router, page]);
+  }, [pb, authChecked, user, page]);
 
   if (loading) {
     return <p className="p-6 text-center text-sm">Carregando dashboard...</p>;
