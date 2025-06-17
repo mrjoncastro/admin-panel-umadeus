@@ -25,7 +25,7 @@ export default function EventosPage() {
       fetch("/api/eventos")
         .then((r) => r.json())
         .then((data) => {
-          Array.isArray(data) ? setEventos(data) : setEventos([]);
+          setEventos(Array.isArray(data) ? data : []);
         })
         .catch((err) => {
           console.error("Erro ao carregar eventos:", err);
