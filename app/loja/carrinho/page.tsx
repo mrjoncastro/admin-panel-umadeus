@@ -59,7 +59,7 @@ export default function CarrinhoPage() {
         </h1>
         <ul className="divide-y divide-gray-100 mb-6">
           {itens.map((item) => (
-            <li key={item.id} className="flex items-center gap-4 py-5">
+            <li key={item.variationId} className="flex items-center gap-4 py-5">
               {item.imagens?.[0] && (
                 <Image
                   src={item.imagens[0]}
@@ -83,7 +83,7 @@ export default function CarrinhoPage() {
                 {formatCurrency(item.preco * item.quantidade)}
               </div>
               <button
-                onClick={() => removeItem(item.id)}
+                onClick={() => removeItem(item.variationId)}
                 className="ml-2 text-xs text-gray-400 hover:text-red-500 hover:underline transition"
                 title="Remover item"
               >

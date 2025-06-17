@@ -298,7 +298,7 @@ function CheckoutContent() {
           <ul className="divide-y divide-gray-100 mb-5">
             {itens.map((item) => (
               <li
-                key={item.id}
+                key={item.variationId}
                 className="flex items-center justify-between py-4"
               >
                 <div>

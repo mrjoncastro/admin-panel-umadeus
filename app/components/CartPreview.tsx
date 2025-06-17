@@ -20,7 +20,7 @@ export default function CartPreview() {
     <div className="card bg-[var(--background)] text-sm shadow-lg w-64">
       <ul className="divide-y divide-neutral-200 dark:divide-neutral-700 max-h-48 overflow-y-auto">
         {itens.map((item) => (
-          <li key={item.id} className="flex items-center gap-2 py-2">
+          <li key={item.variationId} className="flex items-center gap-2 py-2">
             {item.imagens?.[0] && (
               <Image
                 src={item.imagens[0]}
