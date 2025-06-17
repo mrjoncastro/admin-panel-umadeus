@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { logInfo } from "@/lib/logger";
+import { useToast } from "@/lib/context/ToastContext";
 
 const PRODUTOS = [
   { nome: "Kit Camisa + Pulseira", valor: 50.0 },
@@ -26,6 +27,8 @@ export default function InscricaoPage() {
   const liderId = params.liderId as string;
   const eventoId = params.eventoId as string;
 
+  const { showError, showSuccess } = useToast();
+
   const [form, setForm] = useState<FormFields>({
     nome: "",
     email: "",
@@ -38,9 +41,7 @@ export default function InscricaoPage() {
   });
 
   const [loading, setLoading] = useState(false);
-  const [mensagem, setMensagem] = useState("");
   const [campoNome, setCampoNome] = useState("");
-  const [confirmado, setConfirmado] = useState(false);
   const [evento, setEvento] = useState<{ titulo: string; descricao: string } | null>(null);
 
   useEffect(() => {
@@ -52,11 +53,11 @@ export default function InscricaoPage() {
         if (data?.campo) {
           setCampoNome(data.campo);
         } else {
-          setMensagem("❌ Link inválido ou expirado.");
+          showError("❌ Link inválido ou expirado.");
         }
       })
-      .catch(() => setMensagem("❌ Erro ao buscar dados do líder."));
-  }, [liderId]);
+      .catch(() => showError("❌ Erro ao buscar dados do líder."));
+  }, [liderId, showError]);
 
   useEffect(() => {
     if (!eventoId) return;
@@ -104,7 +105,6 @@ export default function InscricaoPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setMensagem("");
     setLoading(true);
 
     try {
@@ -118,7 +118,7 @@ export default function InscricaoPage() {
       const result = await resposta.json();
 
       if (!resposta.ok) {
-        setMensagem(`❌ ${result.erro || "Erro ao salvar inscrição."}`);
+        showError(`❌ ${result.erro || "Erro ao salvar inscrição."}`);
         return;
       }
 
@@ -142,13 +142,12 @@ export default function InscricaoPage() {
       }
 
       // 3. Exibe mensagem de sucesso
-      setMensagem(
+      showSuccess(
         "✅ Inscrição enviada com sucesso! Em breve você receberá o link de pagamento."
       );
-      setConfirmado(true);
     } catch (erro) {
       console.error("❌ Erro no handleSubmit:", erro);
-      setMensagem("❌ Erro ao processar inscrição.");
+      showError("❌ Erro ao processar inscrição.");
     } finally {
       setLoading(false);
     }
@@ -178,8 +177,7 @@ export default function InscricaoPage() {
         </p>
       )}
 
-      {!mensagem && (
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
             name="nome"
@@ -317,19 +315,6 @@ export default function InscricaoPage() {
             {loading ? "Enviando..." : "Finalizar inscrição"}
           </button>
         </form>
-      )}
-
-      {mensagem && (
-        <div className="mt-6 text-sm text-center text-gray-800 space-y-2">
-          <p>{mensagem}</p>
-          {confirmado && (
-            <p className="text-xs text-gray-500 italic">
-              Você receberá o link de pagamento assim que sua inscrição for
-              validada.
-            </p>
-          )}
-        </div>
-      )}
     </div>
   );
 }
