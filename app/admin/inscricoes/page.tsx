@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import createPocketBase from "@/lib/pocketbase";
+import { useEffect, useState } from "react";
 import { Copy } from "lucide-react";
 import { saveAs } from "file-saver";
 import ModalEditarInscricao from "./componentes/ModalEdit";
@@ -10,7 +9,7 @@ import { CheckCircle, XCircle, Pencil, Trash2, Eye } from "lucide-react";
 import TooltipIcon from "../components/TooltipIcon";
 import { useToast } from "@/lib/context/ToastContext";
 import { PRECO_PULSEIRA, PRECO_KIT } from "@/lib/constants";
-import { useAuthContext } from "@/lib/context/AuthContext";
+import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
 import type { Evento } from "@/types";
 
 const statusBadge = {
@@ -40,8 +39,8 @@ type Inscricao = {
 };
 
 export default function ListaInscricoesPage() {
-  const pb = useMemo(() => createPocketBase(), []);
-  const { user, tenantId } = useAuthContext();
+  const { user, pb, authChecked } = useAuthGuard(["coordenador", "lider"]);
+  const tenantId = user?.cliente || "";
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
   const [role, setRole] = useState("");
   const [linkPublico, setLinkPublico] = useState("");
@@ -61,6 +60,8 @@ export default function ListaInscricoesPage() {
       : "Buscar por nome, telefone ou CPF";
 
   useEffect(() => {
+    if (!authChecked) return;
+
     if (!user) {
       showError("Sessão expirada ou inválida.");
       setLoading(false);
@@ -137,7 +138,7 @@ export default function ListaInscricoesPage() {
         })
         .catch(() => {});
     }
-  }, [pb, tenantId, user, showError]);
+  }, [authChecked, pb, tenantId, user, showError]);
 
   useEffect(() => {
     if (!user) return;
