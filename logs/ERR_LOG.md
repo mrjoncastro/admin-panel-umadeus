@@ -65,3 +65,4 @@
 ## [2025-06-25] Erro 404 ao buscar clientes_config por ID em /admin/api/configuracoes; corrigido consultando por campo cliente - dev - a259f55
 
 ## [2025-06-26] Consulta por ID na clientes_config gerava 404. Commit c58e7c1 mudou para filtrar por campo cliente.
+## [2025-06-17] Erro ao criar transferência: {"errors":[{"code":"invalid_action","description":"A sua conta ainda não está totalmente aprovada para utilizar o Pix."}]} - development

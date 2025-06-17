@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       telefone: String(data.user_phone).replace(/\D/g, ""),
       cpf: String(data.user_cpf).replace(/\D/g, ""),
       data_nascimento: data.user_birth_date,
-      genero: (data.user_gender).toLowerCase(),
+      genero: data.user_gender.toLowerCase(),
       campo: data.campo,
       evento: data.evento,
       status: "pendente",
@@ -37,27 +37,31 @@ export async function POST(req: NextRequest) {
     console.log("Registro criado com sucesso:", record);
 
     return NextResponse.json(record, { status: 201 });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Erro ao criar inscrição:", err);
 
     // Detalhes específicos do erro ClientResponseError do PocketBase
+    let detalhes: unknown = null;
     if (err && typeof err === "object") {
-      if (err.url) console.error("URL chamada:", err.url);
-      if (err.status) console.error("Status HTTP:", err.status);
-      if (err.response) {
+      const errorData = err as Record<string, unknown>;
+      if ("url" in errorData) console.error("URL chamada:", errorData.url);
+      if ("status" in errorData)
+        console.error("Status HTTP:", errorData.status);
+      if ("response" in errorData) {
         console.error(
           "Resposta do PocketBase:",
-          JSON.stringify(err.response, null, 2)
+          JSON.stringify(errorData.response, null, 2)
         );
+        detalhes = errorData.response;
       }
-      if (err.originalError) {
-        console.error("Erro original:", err.originalError);
+      if ("originalError" in errorData) {
+        console.error("Erro original:", errorData.originalError);
       }
     }
 
     await logConciliacaoErro(`Erro ao criar inscrição na loja: ${String(err)}`);
     return NextResponse.json(
-      { error: "Erro ao salvar", detalhes: err?.response ?? null },
+      { error: "Erro ao salvar", detalhes },
       { status: 500 }
     );
   }
