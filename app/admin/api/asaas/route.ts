@@ -116,6 +116,12 @@ export async function POST(req: NextRequest) {
         postalCode: "41770055",
       };
 
+      // LOG do payload enviado para o Asaas (criação do cliente)
+      logInfo(
+        "➡️ Payload enviado para criar cliente no Asaas:",
+        clientePayload
+      );
+
       const clienteResponse = await fetch(`${baseUrl}/customers`, {
         method: "POST",
         headers: {
@@ -129,9 +135,12 @@ export async function POST(req: NextRequest) {
 
       const raw = await clienteResponse.text();
 
+      // Log da resposta do Asaas (criação do cliente)
+      logInfo("⬅️ Resposta recebida do Asaas (cliente):", raw);
+
       if (!clienteResponse.ok) {
         await logConciliacaoErro(
-          `Erro ao criar cliente: status ${clienteResponse.status} | ${raw}`,
+          `Erro ao criar cliente: status ${clienteResponse.status} | ${raw}`
         );
         throw new Error("Erro ao criar cliente");
       }
@@ -158,6 +167,29 @@ export async function POST(req: NextRequest) {
       String(usuarioIdRef),
       inscricao.id
     );
+    logInfo("🔧 Chamando createCheckout com:", {
+      pedido,
+      externalReference,
+    });
+
+    // Payload de pagamento
+    const paymentPayload = {
+      customer: clienteId,
+      billingType: "UNDEFINED",
+      value: parsedValor,
+      dueDate: dueDateStr,
+      description: pedido.produto || "Produto",
+      split: [
+        {
+          walletId: process.env.WALLETID_M24,
+          fixedValue: parsedValor * 0.07,
+        },
+      ],
+      externalReference,
+    };
+
+    // LOG do payload enviado para criar cobrança no Asaas
+    logInfo("➡️ Payload enviado para criar cobrança no Asaas:", paymentPayload);
 
     const cobrancaResponse = await fetch(`${baseUrl}/payments`, {
       method: "POST",
@@ -166,31 +198,21 @@ export async function POST(req: NextRequest) {
         "access-token": keyHeader,
         "User-Agent": userAgent,
       },
-      body: JSON.stringify({
-        customer: clienteId,
-        billingType: "BOLETO",
-        value: parsedValor,
-        dueDate: dueDateStr,
-        description: pedido.produto || "Produto",
-        split: [
-          {
-            walletId: process.env.WALLETID_M24,
-            percentageValue: 7,
-          },
-        ],
-        externalReference,
-      }),
+      body: JSON.stringify(paymentPayload),
     });
 
+    // Log da resposta do Asaas (pagamento)
+    const cobrancaRaw = await cobrancaResponse.clone().text();
+    logInfo("⬅️ Resposta recebida do Asaas (cobrança):", cobrancaRaw);
+
     if (!cobrancaResponse.ok) {
-      const errorText = await cobrancaResponse.text();
       await logConciliacaoErro(
-        `Erro ao criar cobrança: status ${cobrancaResponse.status} | ${errorText}`,
+        `Erro ao criar cobrança: status ${cobrancaResponse.status} | ${cobrancaRaw}`
       );
       throw new Error("Erro ao criar cobrança");
     }
 
-    const cobranca = await cobrancaResponse.json();
+    const cobranca = JSON.parse(cobrancaRaw);
     const link = cobranca.invoiceUrl || cobranca.bankSlipUrl;
     logInfo("✅ Cobrança criada. Link: " + link);
 
@@ -202,7 +224,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ url: link });
   } catch (err: unknown) {
     await logConciliacaoErro(
-      `Erro ao gerar link de pagamento Asaas: ${String(err)}`,
+      `Erro ao gerar link de pagamento Asaas: ${String(err)}`
     );
     return NextResponse.json(
       { error: "Erro ao gerar link de pagamento" },

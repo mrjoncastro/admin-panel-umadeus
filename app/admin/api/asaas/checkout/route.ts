@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
       );
     }
     const apiKey = cliente.asaas_api_key || process.env.ASAAS_API_KEY || "";
-    const userAgent = cliente.nome || "qg3";
+    const userAgent = cliente.nome;
 
     logInfo("🔧 Chamando createCheckout com:", {
       valor,

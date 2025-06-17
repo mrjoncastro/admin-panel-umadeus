@@ -68,3 +68,4 @@
 ## [2025-06-17] Erro ao criar transferência: {"errors":[{"code":"invalid_action","description":"A sua conta ainda não está totalmente aprovada para utilizar o Pix."}]} - development
 
 ## [2025-06-17] Limite de caracteres para checkout implementado - dev - 66b7255
+
