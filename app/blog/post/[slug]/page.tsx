@@ -68,6 +68,7 @@ export default async function BlogPostPage({
   }));
   const safeSuggestions = suggestions;
   const mdxContent = post.content || "";
+  const safeSuggestions = suggestions;
 
   const words = mdxContent.split(/\s+/).length;
   const readingTime = Math.ceil(words / 200);

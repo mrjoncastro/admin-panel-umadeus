@@ -1,18 +1,14 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
-import { useAuthContext } from "@/lib/context/AuthContext";
+import { useEffect, useState } from "react";
+import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
 import { Pedido } from "@/types";
-import createPocketBase from "@/lib/pocketbase";
 import { saveAs } from "file-saver";
 import ModalEditarPedido from "./componentes/ModalEditarPedido";
 import { useToast } from "@/lib/context/ToastContext";
 
 export default function PedidosPage() {
-  const router = useRouter();
-  const { user, isLoggedIn, tenantId } = useAuthContext();
-  const pb = useMemo(() => createPocketBase(), []);
+  const { user, pb, authChecked } = useAuthGuard(["coordenador", "lider"]);
 
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,20 +27,13 @@ export default function PedidosPage() {
       ? "Buscar por produto, email, nome ou campo"
       : "Buscar por nome ou email";
 
-  // Redireciona se não for coordenador
   useEffect(() => {
-    if (!isLoggedIn || !user) {
-      router.replace("/login");
-    }
-  }, [isLoggedIn, user, router]);
-
-  useEffect(() => {
-    if (!user) return;
+    if (!authChecked || !user) return;
 
     const fetchPedidos = async () => {
       setLoading(true);
       try {
-        const baseFiltro = `cliente='${tenantId}'`;
+        const baseFiltro = `cliente='${user.cliente}'`;
         const filtro =
           user.role === "coordenador"
             ? baseFiltro
@@ -67,7 +56,7 @@ export default function PedidosPage() {
     };
 
     fetchPedidos();
-  }, [pb, pagina, ordem, tenantId, user, showError]);
+  }, [pb, pagina, ordem, user, authChecked, showError]);
 
   const pedidosFiltrados = pedidos.filter((p) => {
     const matchStatus = filtroStatus === "" || p.status === filtroStatus;
@@ -124,7 +113,7 @@ export default function PedidosPage() {
     cancelado: "bg-red-100 text-red-800",
   };
 
-  if (loading) {
+  if (!authChecked || loading) {
     return <p className="p-6 text-center text-sm">Carregando pedidos...</p>;
   }
 
