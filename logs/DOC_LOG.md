@@ -130,3 +130,4 @@
 
 ## [2025-06-17] Criado endpoint /loja/api/inscricoes e página de confirmação; formulário atualizado para usar nova rota. Lint e build executados.
 ## [2025-06-28] Inclusão do bairro no autofill do InscricaoForm.
+## [2025-06-17] Tratamento de erro em /loja/api/inscricoes aprimorado usando ClientResponseError. Lint e build executados.
