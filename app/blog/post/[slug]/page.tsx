@@ -67,7 +67,9 @@ export default async function BlogPostPage({
     thumbnail: p.thumbnail || "",
     category: p.category || "",
   }));
+  const safeSuggestions = suggestions;
   const mdxContent = post.content || "";
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const content = mdxContent;
 
   const words = mdxContent.split(/\s+/).length;
