@@ -30,10 +30,9 @@ export async function POST(req: NextRequest) {
   const { pb, user } = auth;
   logInfo("PocketBase host:", pb.baseUrl);
   try {
-    const data = await req.json();
-    const evento = await pb
-      .collection("eventos")
-      .create({ ...data, cliente: user.cliente });
+    const formData = await req.formData();
+    formData.set("cliente", user.cliente as string);
+    const evento = await pb.collection("eventos").create(formData);
     return NextResponse.json(evento, { status: 201 });
   } catch (err) {
     await logConciliacaoErro(`Erro ao criar evento: ${String(err)}`);
