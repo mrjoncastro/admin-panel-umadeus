@@ -10,6 +10,7 @@ export async function GET() {
     const eventos = await pb.collection("eventos").getFullList<EventoRecord>({
       sort: "-data",
       filter: tenant ? `cliente='${tenant}'` : undefined,
+      expand: "produtos",
     });
     await atualizarStatus(eventos, pb);
     const comUrls = eventos.map((e) => ({
