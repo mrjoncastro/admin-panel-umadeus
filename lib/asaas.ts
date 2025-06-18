@@ -75,10 +75,13 @@ export async function createCheckout(
     params.installments,
   );
 
+  const isInstallmentCredit =
+    params.paymentMethod === "credito" && params.installments > 1;
+
   const payload = {
     billingTypes:
       params.paymentMethods ?? [toAsaasBilling(params.paymentMethod)],
-    chargeTypes: ["DETACHED", "INSTALLMENT"],
+    chargeTypes: isInstallmentCredit ? ["INSTALLMENT"] : ["DETACHED"],
     callback: {
       successUrl: params.successUrl,
       cancelUrl: params.errorUrl,
@@ -106,7 +109,9 @@ export async function createCheckout(
       city: params.cliente.cidade,
       cpfCnpj: params.cliente.cpf,
     },
-    installment: { maxInstallmentCount: params.installments },
+    ...(isInstallmentCredit
+      ? { installment: { maxInstallmentCount: params.installments } }
+      : {}),
     customFields:
       (params.itens
         .map((item, idx) =>
