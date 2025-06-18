@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireClienteFromHost } from "@/lib/clienteAuth";
 import { logInfo } from "@/lib/logger";
 import { buildExternalReference } from "@/lib/asaas";
+import { calculateGross, PaymentMethod } from "@/lib/asaasFees";
 import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function POST(req: NextRequest) {
@@ -33,17 +34,23 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { pedidoId, valor } = await req.json();
-    logInfo("📦 Dados recebidos:", { pedidoId, valor });
+    const { pedidoId, valorLiquido, paymentMethod, installments = 1 } =
+      await req.json();
+    logInfo("📦 Dados recebidos:", {
+      pedidoId,
+      valorLiquido,
+      paymentMethod,
+      installments,
+    });
 
-    if (!pedidoId || valor === undefined || valor === null) {
+    if (!pedidoId || valorLiquido === undefined || valorLiquido === null) {
       return NextResponse.json(
-        { error: "pedidoId e valor são obrigatórios" },
+        { error: "pedidoId e valorLiquido são obrigatórios" },
         { status: 400 }
       );
     }
 
-    const parsedValor = Number(valor);
+    const parsedValor = Number(valorLiquido);
     if (!isFinite(parsedValor) || parsedValor <= 0) {
       return NextResponse.json(
         { error: "Valor deve ser numérico e positivo" },
@@ -173,16 +180,22 @@ export async function POST(req: NextRequest) {
     });
 
     // Payload de pagamento
+    const { gross, margin } = calculateGross(
+      parsedValor,
+      paymentMethod as PaymentMethod,
+      installments,
+    );
+
     const paymentPayload = {
       customer: clienteId,
       billingType: "UNDEFINED",
-      value: parsedValor,
+      value: gross,
       dueDate: dueDateStr,
       description: pedido.produto || "Produto",
       split: [
         {
           walletId: process.env.WALLETID_M24,
-          fixedValue: Number((parsedValor * 0.07).toFixed(2)),
+          fixedValue: margin,
         },
       ],
       externalReference,
@@ -217,8 +230,15 @@ export async function POST(req: NextRequest) {
     logInfo("✅ Cobrança criada. Link: " + link);
 
     // 🔹 Atualizar pedido
+    const taxaAplicada = Number((gross - parsedValor * 1.07).toFixed(2));
     await pb.collection("pedidos").update(pedido.id, {
       link_pagamento: link,
+      valorLiquidoDesejado: parsedValor,
+      valorBruto: gross,
+      taxaAplicada,
+      margemPlataforma: margin,
+      formaPagamento: paymentMethod,
+      parcelas: installments,
     });
 
     return NextResponse.json({ url: link });

@@ -31,7 +31,8 @@ describe('checkout route', () => {
   });
 
   const basePayload = {
-    valor: 10,
+    valorLiquido: 10,
+    paymentMethod: 'pix',
     itens: [
       {
         name: 'p',
@@ -83,6 +84,8 @@ describe('checkout route', () => {
     expect(sentBody.externalReference).toBe(
       'cliente_cli1_usuario_user1_inscricao_ins1'
     );
+    expect(sentBody.value).toBe(12.69);
+    expect(sentBody.split[0].fixedValue).toBe(0.7);
     expect(data.checkoutUrl).toBe('url');
   });
 
@@ -91,7 +94,7 @@ describe('checkout route', () => {
       method: 'POST',
       body: JSON.stringify({
         ...basePayload,
-        valor: 'a',
+        valorLiquido: 'a',
         itens: [],
       })
     });

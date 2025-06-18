@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/apiAuth";
 import { createCheckout } from "@/lib/asaas";
+import type { PaymentMethod } from "@/lib/asaasFees";
 import type { Compra } from "@/types";
 
 interface UsuarioInfo {
@@ -79,7 +80,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const checkoutUrl = await createCheckout(
       {
-        valor: Number(compra.valor_total),
+        valorLiquido: Number(compra.valor_total),
+        paymentMethod:
+          compra.metodo_pagamento === "cartao"
+            ? "credito"
+            : (compra.metodo_pagamento as PaymentMethod),
         itens,
         successUrl: `${req.nextUrl.origin}/loja/sucesso?compra=${compra.id}`,
         errorUrl: `${req.nextUrl.origin}/loja/sucesso?compra=${compra.id}`,
