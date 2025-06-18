@@ -49,7 +49,7 @@ export default function NovoUsuarioPage() {
       .then((res) => res.json())
       .then((data) => setCampos(data))
       .catch(() => showError("Erro ao carregar os campos."));
-  }, []);
+  }, [showError]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

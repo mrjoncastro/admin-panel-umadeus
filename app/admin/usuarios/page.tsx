@@ -55,7 +55,7 @@ export default function UsuariosPage() {
     }
 
     fetchUsuarios();
-  }, []);
+  }, [showError]);
 
   useEffect(() => {
     async function fetchEventos() {
