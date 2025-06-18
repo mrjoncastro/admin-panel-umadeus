@@ -17,6 +17,7 @@ import {
   isValidCNPJ,
   isValidDate,
 } from "@/utils/validators";
+import { useToast } from "@/lib/context/ToastContext";
 
 interface BankAccountModalProps {
   open: boolean;
@@ -44,7 +45,7 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
   const [pixAddressKeyType, setPixAddressKeyType] = useState("cpf");
   const [description, setDescription] = useState("");
   const [scheduleDate, setScheduleDate] = useState("");
-  const [erro, setErro] = useState("");
+  const { showError, showSuccess } = useToast();
 
   useEffect(() => {
     searchBanks("")
@@ -76,13 +77,12 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-    setErro("");
     if (cpfCnpj && !isValidCPF(cpfCnpj) && !isValidCNPJ(cpfCnpj)) {
-      setErro("CPF/CNPJ inválido.");
+      showError("CPF/CNPJ inválido.");
       return;
     }
     if (ownerBirthDate && !isValidDate(ownerBirthDate)) {
-      setErro("Data de nascimento inválida.");
+      showError("Data de nascimento inválida.");
       return;
     }
     try {
@@ -118,10 +118,11 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
           (user as UserModel & { cliente?: string }).cliente || user.id
         );
       }
+      showSuccess("Conta salva!");
       onClose();
     } catch (err) {
       console.error(err);
-      setErro("Erro ao salvar.");
+      showError("Erro ao salvar.");
     }
   };
 
@@ -266,7 +267,6 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
             },
           ]}
         />
-        {erro && <p className="text-error-600 text-sm">{erro}</p>}
         <div className="flex justify-end gap-2 pt-2">
           <button type="button" className="btn btn-secondary" onClick={onClose}>
             Cancelar
