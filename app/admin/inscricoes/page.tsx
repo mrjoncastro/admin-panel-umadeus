@@ -10,7 +10,7 @@ import { CheckCircle, XCircle, Pencil, Trash2, Eye } from "lucide-react";
 import TooltipIcon from "../components/TooltipIcon";
 import { useToast } from "@/lib/context/ToastContext";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
-import type { Evento, Inscricao as InscricaoRecord, Pedido } from "@/types";
+import type { Evento, Inscricao as InscricaoRecord, Pedido, Produto } from "@/types";
 
 const statusBadge = {
   pendente: "bg-yellow-100 text-yellow-800",
@@ -197,7 +197,7 @@ export default function ListaInscricoesPage() {
       const campo = inscricao.expand?.campo as CampoExpand | undefined;
 
       // 🔹 2. Carregar produto escolhido
-      let produtoRecord: Record<string, any> | undefined;
+      let produtoRecord: Produto | undefined;
       try {
         produtoRecord = await pb
           .collection("produtos")
@@ -209,7 +209,7 @@ export default function ListaInscricoesPage() {
               .collection("eventos")
               .getOne(inscricao.evento, { expand: "produtos" });
             const lista = Array.isArray(ev.expand?.produtos)
-              ? (ev.expand.produtos as Record<string, any>[])
+              ? (ev.expand.produtos as Produto[])
               : [];
             produtoRecord = lista.find((p) => p.nome === inscricao.produto);
           }

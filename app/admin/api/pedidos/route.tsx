@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import createPocketBase from "@/lib/pocketbase";
 import { logConciliacaoErro } from "@/lib/server/logger";
-import type { Inscricao, Pedido } from "@/types";
+import type { Inscricao, Pedido, Produto } from "@/types";
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     const campoId = inscricao.expand?.campo?.id;
     const responsavelId = inscricao.expand?.criado_por;
 
-    let produtoRecord: Record<string, any> | undefined;
+    let produtoRecord: Produto | undefined;
     try {
       produtoRecord = await pb
         .collection("produtos")
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
             .collection("eventos")
             .getOne(inscricao.evento, { expand: "produtos" });
           const lista = Array.isArray(ev.expand?.produtos)
-            ? (ev.expand.produtos as Record<string, any>[])
+            ? (ev.expand.produtos as Produto[])
             : [];
           produtoRecord = lista.find((p) => p.nome === inscricao.produto);
         }
