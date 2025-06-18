@@ -23,6 +23,7 @@ export default function TransferenciasPage() {
   ) {
     const payload: Record<string, unknown> = { value: valor };
     if (isPix && pixKey) {
+      payload.operationType = "PIX";
       payload.pixAddressKey = pixKey.pixAddressKey;
       payload.pixAddressKeyType = pixKey.pixAddressKeyType;
       if (description) payload.description = description;
