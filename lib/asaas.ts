@@ -1,5 +1,6 @@
 import { MAX_ITEM_DESCRIPTION_LENGTH, MAX_ITEM_NAME_LENGTH } from "./constants";
 import { calculateGross, PaymentMethod } from "./asaasFees";
+import { toAsaasBilling } from "./paymentMethodMap";
 
 export function buildCheckoutUrl(baseUrl: string): string {
   return baseUrl.replace(/\/$/, "") + "/checkouts";
@@ -75,7 +76,8 @@ export async function createCheckout(
   );
 
   const payload = {
-    billingTypes: params.paymentMethods ?? ["CREDIT_CARD", "PIX"],
+    billingTypes:
+      params.paymentMethods ?? [toAsaasBilling(params.paymentMethod)],
     chargeTypes: ["DETACHED", "INSTALLMENT"],
     callback: {
       successUrl: params.successUrl,

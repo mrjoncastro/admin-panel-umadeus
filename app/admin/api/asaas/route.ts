@@ -3,6 +3,7 @@ import { requireClienteFromHost } from "@/lib/clienteAuth";
 import { logInfo } from "@/lib/logger";
 import { buildExternalReference } from "@/lib/asaas";
 import { calculateGross, PaymentMethod } from "@/lib/asaasFees";
+import { toAsaasBilling } from "@/lib/paymentMethodMap";
 import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function POST(req: NextRequest) {
@@ -188,7 +189,7 @@ export async function POST(req: NextRequest) {
 
     const paymentPayload = {
       customer: clienteId,
-      billingType: "UNDEFINED",
+      billingType: toAsaasBilling(paymentMethod as PaymentMethod),
       value: gross,
       dueDate: dueDateStr,
       description: pedido.produto || "Produto",
