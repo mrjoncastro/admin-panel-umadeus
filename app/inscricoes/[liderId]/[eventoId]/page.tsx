@@ -6,6 +6,7 @@ import Link from "next/link";
 import { logInfo } from "@/lib/logger";
 import { useToast } from "@/lib/context/ToastContext";
 import { calculateGross, type PaymentMethod } from "@/lib/asaasFees";
+import { useAppConfig } from "@/lib/context/AppConfigContext";
 
 interface Produto {
   nome: string;
@@ -34,6 +35,7 @@ export default function InscricaoPage() {
   const eventoId = params.eventoId as string;
 
   const { showError, showSuccess } = useToast();
+  const { config } = useAppConfig();
 
   const [produtos, setProdutos] = useState<Produto[]>([]);
 
@@ -184,7 +186,16 @@ export default function InscricaoPage() {
         );
       }
 
-      // 3. Exibe mensagem de sucesso
+      // 3. Redireciona se já houver link de pagamento
+      if (result.link_pagamento) {
+        showSuccess(
+          "✅ Inscrição enviada com sucesso! Redirecionando para pagamento..."
+        );
+        window.location.href = result.link_pagamento;
+        return;
+      }
+
+      // 4. Exibe mensagem de sucesso padrão
       showSuccess(
         "✅ Inscrição enviada com sucesso! Em breve você receberá o link de pagamento."
       );
@@ -389,18 +400,20 @@ export default function InscricaoPage() {
           )}
         </div>
 
-          <div className="flex items-start mt-4">
-            <input
-              type="checkbox"
-              required
-              id="confirmacao"
-              className="mt-1 mr-2 accent-purple-600"
-            />
-            <label htmlFor="confirmacao" className="text-sm text-gray-600">
-              Estou ciente de que minha inscrição só será confirmada após a
-              liberação do pagamento pela liderança.
-            </label>
-          </div>
+          {config.confirmaInscricoes && (
+            <div className="flex items-start mt-4">
+              <input
+                type="checkbox"
+                required
+                id="confirmacao"
+                className="mt-1 mr-2 accent-purple-600"
+              />
+              <label htmlFor="confirmacao" className="text-sm text-gray-600">
+                Estou ciente de que minha inscrição só será confirmada após a
+                liberação do pagamento pela liderança.
+              </label>
+            </div>
+          )}
 
           <button
             type="submit"
