@@ -1,7 +1,6 @@
 import createPocketBase from "@/lib/pocketbase";
 import ProdutosFiltrados from "./ProdutosFiltrados";
 import { getTenantFromHost } from "@/lib/getTenantFromHost";
-import { calculateGross } from "@/lib/asaasFees";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +23,6 @@ export default async function ProdutosPage() {
 
   const produtos = produtosPB.map((p) => ({
     ...p,
-    preco: calculateGross(p.preco, "pix", 1).gross,
     imagens: (p.imagens || []).map((img) => pb.files.getURL(p, img)),
   }));
 

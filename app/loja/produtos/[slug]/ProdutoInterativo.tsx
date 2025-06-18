@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import Image from "next/image";
 import type { Produto } from "@/types";
 import { calculateGross } from "@/lib/asaasFees";
@@ -136,6 +136,11 @@ export default function ProdutoInterativo({
   const [indexImg, setIndexImg] = useState(0);
   const pauseRef = useRef(false);
 
+  const precoBruto = useMemo(
+    () => calculateGross(preco, "pix", 1).gross,
+    [preco],
+  );
+
   const firstImgKey = Object.keys(imagens)[0];
   const imgs = imagens[genero] || imagens["default"] || imagens[firstImgKey];
 
@@ -228,9 +233,7 @@ export default function ProdutoInterativo({
           {nome}
         </h1>
         <p className="text-xl font-semibold text-[var(--text-primary)]">
-          R$ {calculateGross(preco, "pix", 1).gross
-            .toFixed(2)
-            .replace(".", ",")}
+          R$ {precoBruto.toFixed(2).replace(".", ",")}
         </p>
         <div className="hidden md:block">
           <DetalhesSelecao

@@ -17,7 +17,6 @@ export default function CarrinhoPage() {
   const { isLoggedIn } = useAuthContext();
   const router = useRouter();
   const [showPrompt, setShowPrompt] = useState(false);
-  const total = itens.reduce((sum, i) => sum + i.preco * i.quantidade, 0);
   const totalBruto = itens.reduce(
     (sum, i) => sum + calculateGross(i.preco, "pix", 1).gross * i.quantidade,
     0,

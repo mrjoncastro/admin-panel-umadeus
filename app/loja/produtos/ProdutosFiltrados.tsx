@@ -103,35 +103,36 @@ export default function ProdutosFiltrados({
           <button className="btn btn-secondary">Filtrar</button>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filtrados.map((p) => (
-            <div
-              key={p.id}
-              className="bg-white rounded-2xl shadow-lg border border-[var(--accent-900)]/10 flex flex-col items-center p-4 transition hover:shadow-xl"
-            >
-              <div className="w-full aspect-square overflow-hidden rounded-xl mb-2 bg-neutral-100 border border-[var(--accent)]/5 relative">
-                <Image
-                  src={p.imagens[0]}
-                  alt={p.nome}
-                  fill
-                  className="object-cover object-center transition group-hover:scale-105"
-                />
-              </div>
-              <h2 className="text-base font-semibold text-[var(--text-primary)] mb-1 line-clamp-2 text-center">
-                {p.nome}
-              </h2>
-              <p className="text-base font-bold text-[var(--accent-900)] mb-2">
-                R$ {calculateGross(p.preco, "pix", 1).gross
-                  .toFixed(2)
-                  .replace(".", ",")}
-              </p>
-              <Link
-                href={`/loja/produtos/${p.slug}`}
-                className="btn btn-primary w-full text-center mt-auto"
+          {filtrados.map((p) => {
+            const precoBruto = calculateGross(p.preco, "pix", 1).gross;
+            return (
+              <div
+                key={p.id}
+                className="bg-white rounded-2xl shadow-lg border border-[var(--accent-900)]/10 flex flex-col items-center p-4 transition hover:shadow-xl"
               >
-                Ver detalhes
-              </Link>
-            </div>
-          ))}
+                <div className="w-full aspect-square overflow-hidden rounded-xl mb-2 bg-neutral-100 border border-[var(--accent)]/5 relative">
+                  <Image
+                    src={p.imagens[0]}
+                    alt={p.nome}
+                    fill
+                    className="object-cover object-center transition group-hover:scale-105"
+                  />
+                </div>
+                <h2 className="text-base font-semibold text-[var(--text-primary)] mb-1 line-clamp-2 text-center">
+                  {p.nome}
+                </h2>
+                <p className="text-base font-bold text-[var(--accent-900)] mb-2">
+                  R$ {precoBruto.toFixed(2).replace(".", ",")}
+                </p>
+                <Link
+                  href={`/loja/produtos/${p.slug}`}
+                  className="btn btn-primary w-full text-center mt-auto"
+                >
+                  Ver detalhes
+                </Link>
+              </div>
+            );
+          })}
         </div>
       </section>
     </div>
