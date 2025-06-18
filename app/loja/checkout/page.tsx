@@ -6,6 +6,7 @@ import { Suspense, useState, useEffect } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { CheckCircle } from "lucide-react";
 import { hexToPtName } from "@/utils/colorNamePt";
+import { calculateGross, PaymentMethod } from "@/lib/asaasFees";
 import {
   MAX_ITEM_DESCRIPTION_LENGTH,
   MAX_ITEM_NAME_LENGTH,
@@ -32,6 +33,11 @@ function CheckoutContent() {
   const [numero, setNumero] = useState(String(user?.numero ?? ""));
 
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
+  const [installments, setInstallments] = useState(1);
+  const [gross, setGross] = useState(() =>
+    calculateGross(total, "pix", 1).gross
+  );
 
   useEffect(() => {
     if (user) {
@@ -55,6 +61,17 @@ function CheckoutContent() {
 
   const pedidoId = searchParams.get("pedido") || Date.now().toString();
   const total = itens.reduce((sum, i) => sum + i.preco * i.quantidade, 0);
+
+  useEffect(() => {
+    if (paymentMethod !== "credito" && installments !== 1) {
+      setInstallments(1);
+    }
+  }, [paymentMethod, installments]);
+
+  useEffect(() => {
+    const { gross: g } = calculateGross(total, paymentMethod, installments);
+    setGross(g);
+  }, [total, paymentMethod, installments]);
 
   function maskTelefone(valor: string) {
     // Remove tudo que não for número
@@ -108,7 +125,8 @@ function CheckoutContent() {
       }
 
       const payload = {
-        valor: total,
+        valorLiquido: total,
+        paymentMethod,
         itens: itensPayload,
         successUrl: `${window.location.origin}/loja/sucesso?pedido=${pedidoId}`,
         errorUrl: `${window.location.origin}/loja/sucesso?pedido=${pedidoId}`,
@@ -125,7 +143,7 @@ function CheckoutContent() {
           cep,
           cidade,
         },
-        installments: 1,
+        installments,
         paymentMethods: ["PIX", "CREDIT_CARD"],
       };
 
@@ -143,7 +161,13 @@ function CheckoutContent() {
           itens: itensPayload,
           valor_total: total,
           status: "pendente",
-          metodo_pagamento: "pix",
+          metodo_pagamento:
+            paymentMethod === "pix"
+              ? "pix"
+              : paymentMethod === "boleto"
+              ? "boleto"
+              : "cartao",
+          parcelas: installments,
           externalReference: `cliente_${user?.cliente}_usuario_${user?.id}`,
           endereco_entrega: { endereco, numero, estado, cep, cidade },
         }),
@@ -340,6 +364,49 @@ function CheckoutContent() {
             <div className="flex justify-between text-base font-bold pt-1">
               <span>Total</span>
               <span>{formatCurrency(total)}</span>
+            </div>
+          </div>
+          <div className="mt-4 space-y-3">
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">
+                Forma de pagamento
+              </label>
+              <select
+                value={paymentMethod}
+                onChange={(e) =>
+                  setPaymentMethod(e.target.value as PaymentMethod)
+                }
+                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-black focus:outline-none"
+              >
+                <option value="pix">Pix</option>
+                <option value="boleto">Boleto</option>
+                <option value="debito">Débito</option>
+                <option value="credito">Crédito</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Parcelas</label>
+              <select
+                value={installments}
+                onChange={(e) => setInstallments(Number(e.target.value))}
+                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-black focus:outline-none"
+              >
+                {Array.from({ length: 21 }).map((_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    {i + 1}x
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="border-t pt-4 space-y-1">
+            <div className="flex justify-between text-base">
+              <span>Total a pagar</span>
+              <span>{formatCurrency(gross)}</span>
+            </div>
+            <div className="flex justify-between text-sm text-gray-500">
+              <span>Valor da parcela</span>
+              <span>{formatCurrency(gross / installments)}</span>
             </div>
           </div>
           <button
