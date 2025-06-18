@@ -100,7 +100,8 @@ Para **Pix**, com V = R$ 50,00:
 1. O sistema cobra **R$ 55,49**.  
 2. O Asaas desconta R$ 1,99 → sobra R$ 53,50.  
 3. Via `split`, R$ 3,50 (7% de 50) vai para a plataforma.  
-4. R$ 50,00 fica com o coordenador.
+> - O sistema deve atualizar dinamicamente o valor de `G` e os detalhes de split sempre que o usuário alterar forma de pagamento ou número de parcelas.
+> - Ao exibir o "Total a pagar" para o cliente, sempre usar `calculateGross(total, "pix", 1)`. O cálculo com a forma de pagamento selecionada serve apenas para mostrar o valor das parcelas e enviar ao Asaas.
 
 Parcelado em 3x (Cartão 2–6x):
 
