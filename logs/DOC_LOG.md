@@ -135,3 +135,4 @@
 ## [2025-06-17] Tratamento de erro em /loja/api/inscricoes aprimorado usando ClientResponseError. Lint e build executados.
 
 ## [2025-06-17] Atualizada mensagem 409 em inscricoes
+## [2025-06-18] Implementada utilidade de taxas do Asaas e cálculo reverso nas rotas de checkout e cobrança. - Lint: falhou (next not found) - Build: falhou (next not found)
