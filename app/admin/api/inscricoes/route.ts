@@ -141,6 +141,8 @@ export async function POST(req: NextRequest) {
 
     const inscricao = await pb.collection("inscricoes").create(dadosInscricao);
 
+    const evento = await pb.collection("eventos").getOne(eventoIdFinal!);
+
     let link_pagamento: string | undefined;
 
     try {
@@ -148,7 +150,7 @@ export async function POST(req: NextRequest) {
         .collection("clientes_config")
         .getFirstListItem(`cliente='${lider.cliente}'`);
 
-      if (cfg?.confirma_inscricoes === false) {
+      if (cfg?.confirma_inscricoes === false && evento.cobra_inscricao) {
         const base = req.nextUrl.origin;
 
         const pedidoRes = await fetch(`${base}/admin/api/pedidos`, {
