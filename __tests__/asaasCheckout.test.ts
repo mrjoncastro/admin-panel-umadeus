@@ -139,7 +139,7 @@ describe('checkout route', () => {
     await res.json();
     const sentBody = JSON.parse(fetchMock.mock.calls[0][1].body);
     expect(sentBody.billingTypes).toEqual(payload.paymentMethods);
-    expect(sentBody.chargeTypes).toEqual(['INSTALLMENT']);
+    expect(sentBody.chargeTypes).toEqual(['DETACHED', 'INSTALLMENT']);
     expect(sentBody.installment).toEqual({ maxInstallmentCount: 3 });
   });
 
