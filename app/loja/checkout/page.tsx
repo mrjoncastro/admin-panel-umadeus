@@ -50,6 +50,17 @@ function CheckoutContent() {
     [total, paymentMethod, installments]
   );
 
+  // 3️⃣ calcula o subtotal bruto somando o bruto de cada item
+  const displayTotalGross = useMemo(() => {
+    return itens.reduce(
+      (sum, i) =>
+        sum +
+        calculateGross(i.preco, paymentMethod, installments).gross *
+          i.quantidade,
+      0
+    );
+  }, [itens, paymentMethod, installments]);
+
   useEffect(() => {
     if (user) {
       setNome(user.nome || "");
@@ -385,7 +396,7 @@ function CheckoutContent() {
             <div className="flex justify-between">
               <span>Subtotal (bruto)</span>
               {/* TOTAL do carrinho em bruto */}
-              <span>{formatCurrency(totalGross)}</span>
+              <span>{formatCurrency(displayTotalGross)}</span>
             </div>
             {installments > 1 && (
               <div className="flex justify-between text-sm text-gray-500">
@@ -433,7 +444,7 @@ function CheckoutContent() {
           <div className="border-t pt-4 space-y-1">
             <div className="flex justify-between text-base">
               <span>Total a pagar</span>
-              <span>{formatCurrency(totalGross)}</span>
+              <span>{formatCurrency(displayTotalGross)}</span>
             </div>
             {installments > 1 && (
               <div className="flex justify-between text-sm text-gray-500">
