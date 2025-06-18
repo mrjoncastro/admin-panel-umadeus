@@ -80,7 +80,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const checkoutUrl = await createCheckout(
       {
-        valorLiquido: Number(compra.valor_total),
+        valorBruto: Number(compra.valor_total),
         paymentMethod:
           compra.metodo_pagamento === "cartao"
             ? "credito"

@@ -106,14 +106,14 @@ Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utiliza
 2. A função valida os campos e retorna uma inscrição com status `pendente`.
 3. Em seguida `criarPedido` gera o pedido vinculado à inscrição.
 4. Compras feitas na loja enviam o `pedidoId` para o endpoint `/checkouts`, que
-   comunica-se com `/admin/api/asaas` usando `valorLiquido`, `paymentMethod` e
+   comunica-se com `/admin/api/asaas` usando `valorBruto`, `paymentMethod` e
    `installments` para gerar a `url` de pagamento e salvá-la em `link_pagamento`.
 5. O usuário é redirecionado para essa URL para concluir o pagamento.
 
 ### Inscrições x Compras na Loja
 
 * **Inscrições** – após um líder confirmar a inscrição pelo admin, o painel faz
-  uma chamada para `/admin/api/asaas` informando `valorLiquido`, `paymentMethod`
+  uma chamada para `/admin/api/asaas` informando `valorBruto`, `paymentMethod`
   e `installments` para gerar o boleto e salvar o link de pagamento no pedido
   correspondente.
 * **Compras de Loja** – os produtos adicionados ao carrinho são processados na

@@ -72,3 +72,11 @@
 ## [2025-06-17] Erro ao criar inscrição: ClientResponseError 400: Failed to create record. - development
 ## [2025-06-18] Erro no checkout: Error: {"errors":[{"code":"invalid_object","description":"Para gerar cobranças com Pix é necessário criar uma chave Pix no Asaas."},{"code":"invalid_object","description":"O valor total do Split R$ 7,00 excede o valor a receber da cobrança R$ 2,77. O split máximo deve ser menor ou igual ao valor da cobrança menos o desconto."}]} - development
 ## [2025-06-18] Erro no checkout: Error: {"errors":[{"code":"invalid_object","description":"Para gerar cobranças com Pix é necessário criar uma chave Pix no Asaas."}]} - development
+## [2025-06-18] Erro ao criar compra: ClientResponseError 400: Failed to create record. - development
+## [2025-06-18] Erro no checkout: Error: {"errors":[{"code":"invalid_object","description":"O tipo de cobrança DETACHED deve ser informado junto com o tipo de cobrança INSTALLMENT"}]} - development
+## [2025-06-18] Erro ao criar compra: ClientResponseError 400: Failed to create record. - development
+## [2025-06-18] Erro no checkout: Error: {"errors":[{"code":"invalid_object","description":"O tipo de cobrança DETACHED deve ser informado junto com o tipo de cobrança INSTALLMENT"}]} - development
+## [2025-06-18] Erro ao criar compra: ClientResponseError 400: Failed to create record. - development
+## [2025-06-18] Erro no checkout: Error: {"errors":[{"code":"invalid_object","description":"O tipo de cobrança DETACHED deve ser informado junto com o tipo de cobrança INSTALLMENT"}]} - development
+## [2025-06-18] Erro ao criar compra: ClientResponseError 400: Failed to create record. - development
+## [2025-06-18] Erro ao criar compra: ClientResponseError 400: Failed to create record. - development

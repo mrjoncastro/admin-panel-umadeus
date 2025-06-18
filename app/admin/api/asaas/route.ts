@@ -37,25 +37,25 @@ export async function POST(req: NextRequest) {
   try {
     const {
       pedidoId,
-      valorLiquido,
+      valorBruto,
       paymentMethod,
       installments = 1,
     } = await req.json();
     logInfo("📦 Dados recebidos:", {
       pedidoId,
-      valorLiquido,
+      valorBruto,
       paymentMethod,
       installments,
     });
 
-    if (!pedidoId || valorLiquido === undefined || valorLiquido === null) {
+    if (!pedidoId || valorBruto === undefined || valorBruto === null) {
       return NextResponse.json(
-        { error: "pedidoId e valorLiquido são obrigatórios" },
+        { error: "pedidoId e valorBruto são obrigatórios" },
         { status: 400 }
       );
     }
 
-    const parsedValor = Number(valorLiquido);
+    const parsedValor = Number(valorBruto);
     if (!isFinite(parsedValor) || parsedValor <= 0) {
       return NextResponse.json(
         { error: "Valor deve ser numérico e positivo" },
@@ -246,7 +246,7 @@ export async function POST(req: NextRequest) {
     const taxaAplicada = Number((gross - parsedValor - margin).toFixed(2));
     await pb.collection("pedidos").update(pedido.id, {
       link_pagamento: link,
-      valorLiquidoDesejado: parsedValor,
+      valorBrutoDesejado: parsedValor,
       valorBruto: gross,
       taxaAplicada,
       margemPlataforma: margin,

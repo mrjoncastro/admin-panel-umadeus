@@ -64,7 +64,7 @@ G = rac{V(1+M) + F}{1 - P}
    ```
 
 4. **Montagem do Payload para Asaas**  
-   - `value`: deve ser `G` (valor bruto).  
+   - `value`: deve ser `G` (valorBruto).  
    - `split`: repassar **7% de V** para carteira da plataforma.  
    ```ts
    split: [

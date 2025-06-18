@@ -19,10 +19,7 @@ function formatCurrency(n: number) {
 function CheckoutContent() {
   const { itens, clearCart } = useCart();
   const total = itens.reduce((sum, i) => sum + i.preco * i.quantidade, 0);
-  const pixTotal = itens.reduce(
-    (s, i) => s + calculateGross(i.preco, "pix", 1).gross * i.quantidade,
-    0
-  );
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isLoggedIn, user, tenantId } = useAuthContext();
@@ -40,6 +37,7 @@ function CheckoutContent() {
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
   const [installments, setInstallments] = useState(1);
+  const totalGross = calculateGross(total, paymentMethod, installments).gross;
 
   useEffect(() => {
     if (user) {
@@ -68,7 +66,6 @@ function CheckoutContent() {
       setInstallments(1);
     }
   }, [paymentMethod, installments]);
-
 
   function maskTelefone(valor: string) {
     // Remove tudo que não for número
@@ -128,8 +125,14 @@ function CheckoutContent() {
         credito: "CREDIT_CARD",
       } as const;
 
+      const valorBruto = calculateGross(
+        total,
+        paymentMethod,
+        installments
+      ).gross;
+
       const payload = {
-        valorLiquido: total,
+        valorBruto,
         paymentMethod,
         itens: itensPayload,
         successUrl: `${window.location.origin}/loja/sucesso?pedido=${pedidoId}`,
@@ -367,7 +370,7 @@ function CheckoutContent() {
           <div className="border-t pt-4 space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Subtotal</span>
-              <span>{formatCurrency(pixTotal)}</span>
+              <span>{formatCurrency(totalGross)}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Frete</span>
@@ -375,7 +378,7 @@ function CheckoutContent() {
             </div>
             <div className="flex justify-between text-base font-bold pt-1">
               <span>Total</span>
-              <span>{formatCurrency(pixTotal)}</span>
+              <span>{formatCurrency(totalGross)}</span>
             </div>
           </div>
           <div className="mt-4 space-y-3">
@@ -425,9 +428,11 @@ function CheckoutContent() {
               <div className="flex justify-between text-sm text-gray-500">
                 <span>Valor da parcela</span>
                 <span>
-                  {formatCurrency(
-                    calculateGross(total, paymentMethod, installments).gross /
-                      installments,
+                  {installments > 1 && (
+                    <div className="flex justify-between text-sm text-gray-500">
+                      <span>Valor da parcela</span>
+                      <span>{formatCurrency(totalGross / installments)}</span>
+                    </div>
                   )}
                 </span>
               </div>

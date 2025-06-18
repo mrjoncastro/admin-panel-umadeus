@@ -25,7 +25,7 @@ export type CheckoutItem = {
 };
 
 export type CreateCheckoutParams = {
-  valorLiquido: number;
+  valorBruto: number;
   paymentMethod: PaymentMethod;
   installments: number;
   itens: CheckoutItem[];
@@ -68,7 +68,7 @@ export async function createCheckout(
     params.usuarioId,
     params.inscricaoId
   );
-  const parsedValor = Number(params.valorLiquido);
+  const parsedValor = Number(params.valorBruto);
   const { gross, margin } = calculateGross(
     parsedValor,
     params.paymentMethod,
