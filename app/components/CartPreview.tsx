@@ -42,7 +42,7 @@ export default function CartPreview() {
               </p>
             </div>
             <span className="text-xs text-neutral-900 font-semibold">
-              R$ {(item.preco * item.quantidade).toFixed(2).replace(".", ",")}
+              R$ {(total * item.quantidade).toFixed(2).replace(".", ",")}
             </span>
           </li>
         ))}
