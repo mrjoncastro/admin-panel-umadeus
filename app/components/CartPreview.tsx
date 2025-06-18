@@ -42,7 +42,12 @@ export default function CartPreview() {
               </p>
             </div>
             <span className="text-xs text-neutral-900 font-semibold">
-              R$ {(total).toFixed(2).replace(".", ",")}
+              R$
+              {(
+                calculateGross(item.preco, "pix", 1).gross * item.quantidade
+              )
+                .toFixed(2)
+                .replace(".", ",")}
             </span>
           </li>
         ))}

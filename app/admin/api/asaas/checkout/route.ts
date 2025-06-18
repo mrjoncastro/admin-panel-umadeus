@@ -10,7 +10,7 @@ import {
 } from "@/lib/constants";
 
 const checkoutSchema = z.object({
-  valorLiquido: z.number(),
+  valorBruto: z.number(),
   paymentMethod: z.enum(["pix", "boleto", "debito", "credito"]),
   itens: z
     .array(
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
     }
 
     const {
-      valorLiquido,
+      valorBruto,
       paymentMethod,
       itens,
       successUrl,
@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
     const userAgent = cliente.nome;
 
     logInfo("🔧 Chamando createCheckout com:", {
-      valorLiquido,
+      valorBruto,
       paymentMethod,
       itens,
       successUrl,
@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
 
     const checkoutUrl = await createCheckout(
       {
-        valorLiquido,
+        valorBruto,
         paymentMethod,
         itens,
         successUrl,
