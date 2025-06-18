@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import type { Produto } from "@/types";
+import { calculateGross } from "@/lib/asaasFees";
 
 import AddToCartButton from "./AddToCartButton";
 
@@ -227,7 +228,9 @@ export default function ProdutoInterativo({
           {nome}
         </h1>
         <p className="text-xl font-semibold text-[var(--text-primary)]">
-          R$ {preco.toFixed(2).replace(".", ",")}
+          R$ {calculateGross(preco, "pix", 1).gross
+            .toFixed(2)
+            .replace(".", ",")}
         </p>
         <div className="hidden md:block">
           <DetalhesSelecao

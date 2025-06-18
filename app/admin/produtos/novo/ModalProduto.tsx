@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import { calculateGross } from "@/lib/asaasFees";
 import ModalCategoria from "../categorias/ModalCategoria";
 
 export interface ModalProdutoProps<T extends Record<string, unknown>> {
@@ -65,6 +66,9 @@ export function ModalProduto<T extends Record<string, unknown>>({
   // Novos estados para cor
   const [cores, setCores] = useState<string[]>([]);
   const inputHex = useRef<HTMLInputElement | null>(null);
+  const [valorCliente, setValorCliente] = useState(
+    calculateGross(Number(initial.preco ?? 0), "pix", 1).gross
+  );
 
   useEffect(() => {
     if (open) ref.current?.showModal();
@@ -228,8 +232,17 @@ export function ModalProduto<T extends Record<string, unknown>>({
                 type="number"
                 step="0.01"
                 defaultValue={initial.preco || ""}
+                onChange={(e) =>
+                  setValorCliente(
+                    calculateGross(Number(e.target.value || 0), "pix", 1).gross
+                  )
+                }
                 required
               />
+              <span className="text-xs text-gray-500 ml-1">
+                Valor para o cliente: R${" "}
+                {valorCliente.toFixed(2).replace(".", ",")}
+              </span>
             </div>
             <div>
               <label className="label-base">Categoria</label>
