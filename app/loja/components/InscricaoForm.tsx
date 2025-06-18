@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import { useToast } from "@/lib/context/ToastContext";
 
 
 const CEP_BASE_URL =
@@ -19,6 +20,7 @@ interface InscricaoFormProps {
 
 export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
   const { user } = useAuthContext();
+  const { showSuccess, showError } = useToast();
   const firstName = user?.nome?.split(" ")[0] || "";
   const lastName = user?.nome?.split(" ").slice(1).join(" ") || "";
   const [status, setStatus] = useState<
@@ -107,25 +109,17 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
       }
 
       setStatus("success");
+      showSuccess("Inscrição registrada! Em breve entraremos em contato.");
       router.push("/loja/inscricoes/confirmacao");
     } catch (err) {
       console.warn("Erro ao enviar inscrição:", err);
       setStatus("error");
+      showError("Erro ao enviar a inscrição. Tente novamente.");
     }
   };
 
   return (
     <main className="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-8 my-10 font-sans text-gray-800">
-      {status === "success" && (
-        <div className="mb-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded shadow-sm">
-          Inscrição registrada! Em breve entraremos em contato.
-        </div>
-      )}
-      {status === "error" && (
-        <div className="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded shadow-sm">
-          Erro ao enviar a inscrição. Tente novamente.
-        </div>
-      )}
 
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
         <input type="hidden" name="evento" value={eventoId} />

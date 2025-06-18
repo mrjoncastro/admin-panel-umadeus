@@ -91,7 +91,10 @@ export async function POST(req: NextRequest) {
           `telefone="${telefoneNumerico}" || cpf="${cpfNumerico}"`
         );
       return NextResponse.json(
-        { erro: "Telefone ou CPF já cadastrado." },
+        {
+          erro:
+            "Telefone ou CPF já cadastrado. Acesse /admin/inscricoes/recuperar para obter o link.",
+        },
         { status: 409 }
       );
     } catch {

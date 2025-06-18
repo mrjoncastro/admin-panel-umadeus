@@ -1,4 +1,5 @@
 import { MAX_ITEM_DESCRIPTION_LENGTH, MAX_ITEM_NAME_LENGTH } from "./constants";
+import { calculateGross, PaymentMethod } from "./asaasFees";
 
 export function buildCheckoutUrl(baseUrl: string): string {
   return baseUrl.replace(/\/$/, "") + "/checkouts";
@@ -23,7 +24,9 @@ export type CheckoutItem = {
 };
 
 export type CreateCheckoutParams = {
-  valor: number;
+  valorLiquido: number;
+  paymentMethod: PaymentMethod;
+  installments: number;
   itens: CheckoutItem[];
   successUrl: string;
   errorUrl: string;
@@ -41,7 +44,6 @@ export type CreateCheckoutParams = {
     cep: string;
     cidade: string;
   };
-  installments?: number;
   paymentMethods?: ("PIX" | "CREDIT_CARD")[];
 };
 
@@ -65,7 +67,12 @@ export async function createCheckout(
     params.usuarioId,
     params.inscricaoId
   );
-  const parsedValor = Number(params.valor);
+  const parsedValor = Number(params.valorLiquido);
+  const { gross, margin } = calculateGross(
+    parsedValor,
+    params.paymentMethod,
+    params.installments,
+  );
 
   const payload = {
     billingTypes: params.paymentMethods ?? ["CREDIT_CARD", "PIX"],
@@ -76,6 +83,7 @@ export async function createCheckout(
       expiredUrl: params.errorUrl,
     },
     minutesToExpire: 15,
+    value: gross,
     items: params.itens.map((i) => ({
       description: (i.description ?? i.name).slice(
         0,
@@ -96,7 +104,7 @@ export async function createCheckout(
       city: params.cliente.cidade,
       cpfCnpj: params.cliente.cpf,
     },
-    installment: { maxInstallmentCount: params.installments ?? 1 },
+    installment: { maxInstallmentCount: params.installments },
     customFields:
       (params.itens
         .map((item, idx) =>
@@ -108,7 +116,7 @@ export async function createCheckout(
     split: [
       {
         walletId: process.env.WALLETID_M24,
-        fixedValue: Number((parsedValor * 0.07).toFixed(2)),
+        fixedValue: margin,
       },
     ],
     externalReference,

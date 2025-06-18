@@ -1,18 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/apiAuth";
 import { createCheckout } from "@/lib/asaas";
+import type { PaymentMethod } from "@/lib/asaasFees";
 import type { Compra } from "@/types";
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+interface UsuarioInfo {
+  nome?: string;
+  email?: string;
+  telefone?: string;
+  cpf?: string;
+  endereco?: string;
+  numero?: string;
+  estado?: string;
+  cep?: string;
+  cidade?: string;
+}
+
+interface ItemInfo {
+  name?: string;
+  nome?: string;
+  description?: string;
+  descricao?: string;
+  quantity?: number;
+  quantidade?: number;
+  value?: number;
+  preco?: number;
+  valor?: number;
+  [key: string]: unknown;
+}
+
+export async function POST(req: NextRequest): Promise<NextResponse> {
   const auth = requireRole(req, "usuario");
   if ("error" in auth) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
   const { pb, user } = auth;
-  const compraId = params.id;
+  const compraId = req.nextUrl.pathname.split("/").pop() ?? "";
 
   try {
     const compra = await pb.collection("compras").getOne<Compra>(compraId);
@@ -39,12 +62,13 @@ export async function POST(
       );
     }
 
-    const usuario = await pb.collection("usuarios").getOne(user.id);
+    const usuarioData = await pb.collection("usuarios").getOne(user.id);
+    const usuario = usuarioData as UsuarioInfo;
     const cliente = await pb.collection("m24_clientes").getOne(compra.cliente);
 
     const itens = Array.isArray(compra.itens)
       ? compra.itens.map((i) => {
-          const item = i as Record<string, any>;
+          const item = i as ItemInfo;
           return {
             name: String(item.name || item.nome || "Item"),
             description: (item.description || item.descricao) as string | undefined,
@@ -56,7 +80,11 @@ export async function POST(
 
     const checkoutUrl = await createCheckout(
       {
-        valor: Number(compra.valor_total),
+        valorLiquido: Number(compra.valor_total),
+        paymentMethod:
+          compra.metodo_pagamento === "cartao"
+            ? "credito"
+            : (compra.metodo_pagamento as PaymentMethod),
         itens,
         successUrl: `${req.nextUrl.origin}/loja/sucesso?compra=${compra.id}`,
         errorUrl: `${req.nextUrl.origin}/loja/sucesso?compra=${compra.id}`,
@@ -65,13 +93,13 @@ export async function POST(
         cliente: {
           nome: String(usuario.nome || ""),
           email: String(usuario.email || ""),
-          telefone: String((usuario as any).telefone || ""),
-          cpf: String((usuario as any).cpf || ""),
-          endereco: String((usuario as any).endereco || ""),
-          numero: String((usuario as any).numero || ""),
-          estado: String((usuario as any).estado || ""),
-          cep: String((usuario as any).cep || ""),
-          cidade: String((usuario as any).cidade || ""),
+          telefone: String(usuario.telefone ?? ""),
+          cpf: String(usuario.cpf ?? ""),
+          endereco: String(usuario.endereco ?? ""),
+          numero: String(usuario.numero ?? ""),
+          estado: String(usuario.estado ?? ""),
+          cep: String(usuario.cep ?? ""),
+          cidade: String(usuario.cidade ?? ""),
         },
         installments: 1,
         paymentMethods: ["PIX", "CREDIT_CARD"],

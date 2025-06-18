@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import usePocketBase from "@/lib/hooks/usePocketBase";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import { useToast } from "@/lib/context/ToastContext";
 import {
   getBankAccountsByTenant,
   getPixKeysByTenant,
@@ -30,10 +31,10 @@ export default function TransferenciaForm({
     | (ClienteContaBancariaRecord & { kind: "bank" })
     | (PixKeyRecord & { kind: "pix" });
   const [contas, setContas] = useState<ContaOption[]>([]);
-  const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
   const pb = usePocketBase();
   const { tenantId } = useAuthContext();
+  const { showError } = useToast();
 
   const selected = contas.find((c) => c.id === destino);
   const isPix = selected?.kind === "pix";
@@ -55,10 +56,9 @@ export default function TransferenciaForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setErro("");
     const parsed = Number(valor);
     if (!destino || isNaN(parsed) || parsed <= 0) {
-      setErro("Dados inv\u00e1lidos.");
+      showError("Dados inv\u00e1lidos.");
       return;
     }
     setLoading(true);
@@ -66,7 +66,7 @@ export default function TransferenciaForm({
       const pixKey = isPix ? (selected as PixKeyRecord & { kind: "pix" }) : undefined;
       await onTransfer?.(destino, parsed, description, isPix, pixKey);
     } catch {
-      setErro("Erro ao transferir.");
+      showError("Erro ao transferir.");
     } finally {
       setLoading(false);
     }
@@ -74,7 +74,6 @@ export default function TransferenciaForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-sm">
-      {erro && <p className="text-sm text-error-600">{erro}</p>}
       <select
         className="input-base"
         value={destino}

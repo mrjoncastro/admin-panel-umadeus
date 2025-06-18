@@ -1,6 +1,7 @@
 # Contribuindo
 
 Este projeto segue algumas boas práticas para manter a qualidade do código e da documentação.
+Após clonar o repositório, execute `npm install` para instalar o **Next**, o **Vitest** e todas as demais dependências.
 
 ## Validação de código
 

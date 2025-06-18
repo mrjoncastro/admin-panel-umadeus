@@ -36,7 +36,7 @@ describe('POST /admin/api/asaas', () => {
       user: { role: 'coordenador' }
     })
     delete process.env.ASAAS_API_KEY
-    const req = new Request('http://test', { method: 'POST', body: JSON.stringify({ pedidoId:'1', valor:1 }) })
+    const req = new Request('http://test', { method: 'POST', body: JSON.stringify({ pedidoId:'1', valorLiquido:1, paymentMethod:'pix', installments:1 }) })
     await expect(POST(req as unknown as NextRequest)).rejects.toThrow()
   })
 })
