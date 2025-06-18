@@ -3,6 +3,7 @@
 import { useCart } from "@/lib/context/CartContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState, useEffect } from "react";
+import LoadingOverlay from "@/components/LoadingOverlay";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { CheckCircle } from "lucide-react";
 import { hexToPtName } from "@/utils/colorNamePt";
@@ -37,6 +38,7 @@ function CheckoutContent() {
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
   const [installments, setInstallments] = useState(1);
+  const [redirecting, setRedirecting] = useState(false);
 
   // 1. calcula total líquido
   const total = useMemo(
@@ -223,6 +225,7 @@ function CheckoutContent() {
       const data = await res.json();
       const link = data?.checkoutUrl || data?.link;
       if (!res.ok || !link) throw new Error("Falha ao gerar link de pagamento");
+      setRedirecting(true);
       clearCart();
       setTimeout(() => {
         setStatus("success");
@@ -253,7 +256,9 @@ function CheckoutContent() {
   }
 
   return (
-    <main className="min-h-[80vh] flex justify-center items-center py-8">
+    <>
+      <LoadingOverlay show={redirecting} text="Redirecionando..." />
+      <main className="min-h-[80vh] flex justify-center items-center py-8">
       <div className="w-full max-w-5xl bg-neutral-50 rounded-2xl shadow-sm grid grid-cols-1 md:grid-cols-2 gap-10 p-6 md:p-12">
         {/* Bloco ESQUERDO: Info de entrega */}
         <section>
@@ -477,6 +482,7 @@ function CheckoutContent() {
         </section>
       </div>
     </main>
+    </>
   );
 }
 
