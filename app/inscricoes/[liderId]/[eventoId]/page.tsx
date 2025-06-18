@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { logInfo } from "@/lib/logger";
 import { useToast } from "@/lib/context/ToastContext";
+import type { PaymentMethod } from "@/lib/asaasFees";
 
 const PRODUTOS = [
   { nome: "Kit Camisa + Pulseira", valor: 50.0 },
@@ -41,6 +42,8 @@ export default function InscricaoPage() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
+  const [installments, setInstallments] = useState(1);
   const [campoNome, setCampoNome] = useState("");
   const [evento, setEvento] = useState<{ titulo: string; descricao: string } | null>(null);
 
@@ -70,6 +73,12 @@ export default function InscricaoPage() {
       })
       .catch(() => {});
   }, [eventoId]);
+
+  useEffect(() => {
+    if (paymentMethod !== "credito" && installments !== 1) {
+      setInstallments(1);
+    }
+  }, [paymentMethod, installments]);
 
   const maskCPF = (value: string) =>
     value
@@ -112,7 +121,13 @@ export default function InscricaoPage() {
       const resposta = await fetch("/admin/api/inscricoes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, liderId, eventoId }),
+        body: JSON.stringify({
+          ...form,
+          liderId,
+          eventoId,
+          paymentMethod,
+          installments,
+        }),
       });
 
       const result = await resposta.json();
@@ -132,6 +147,8 @@ export default function InscricaoPage() {
             liderId,
             eventoId,
             inscricaoId: result.inscricaoId,
+            paymentMethod,
+            installments,
           }),
         });
       } catch (erro) {
@@ -291,8 +308,41 @@ export default function InscricaoPage() {
                   </option>
                 ))}
               </select>
-            </div>
-          )}
+          </div>
+        )}
+
+        <div>
+          <label className="block font-medium text-sm text-gray-700 mb-1">
+            Forma de pagamento
+          </label>
+          <select
+            value={paymentMethod}
+            onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
+            className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+          >
+            <option value="pix">Pix</option>
+            <option value="boleto">Boleto</option>
+            <option value="credito">Crédito</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block font-medium text-sm text-gray-700 mb-1">
+            Parcelas
+          </label>
+          <select
+            value={installments}
+            onChange={(e) => setInstallments(Number(e.target.value))}
+            disabled={paymentMethod !== "credito"}
+            className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+          >
+            {Array.from({ length: 21 }).map((_, i) => (
+              <option key={i + 1} value={i + 1}>
+                {i + 1}x
+              </option>
+            ))}
+          </select>
+        </div>
 
           <div className="flex items-start mt-4">
             <input

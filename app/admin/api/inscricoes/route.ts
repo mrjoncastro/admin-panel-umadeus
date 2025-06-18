@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createPocketBase } from "@/lib/pocketbase";
 import { logConciliacaoErro } from "@/lib/server/logger";
+import type { PaymentMethod } from "@/lib/asaasFees";
 
 interface DadosInscricao {
   nome: string;
@@ -17,6 +18,8 @@ interface DadosInscricao {
   produto: string;
   tamanho?: string;
   cliente?: string;
+  paymentMethod: PaymentMethod;
+  installments: number;
 }
 
 
@@ -33,6 +36,8 @@ export async function POST(req: NextRequest) {
       tamanho,
       produto,
       genero,
+      paymentMethod = "pix",
+      installments = 1,
       liderId,
       eventoId,
       evento: eventoBody,
@@ -66,6 +71,20 @@ export async function POST(req: NextRequest) {
     if (!["masculino", "feminino"].includes(genero.toLowerCase())) {
       return NextResponse.json(
         { erro: "Gênero inválido. Use 'masculino' ou 'feminino'." },
+        { status: 400 }
+      );
+    }
+
+    if (!["pix", "boleto", "credito"].includes(paymentMethod)) {
+      return NextResponse.json(
+        { erro: "Forma de pagamento inválida." },
+        { status: 400 }
+      );
+    }
+
+    if (installments < 1) {
+      return NextResponse.json(
+        { erro: "Número de parcelas inválido." },
         { status: 400 }
       );
     }
@@ -115,6 +134,8 @@ export async function POST(req: NextRequest) {
       status: "pendente",
       produto,
       cliente: lider.cliente,
+      paymentMethod,
+      installments,
     };
     if (tamanho) dadosInscricao.tamanho = tamanho;
 
