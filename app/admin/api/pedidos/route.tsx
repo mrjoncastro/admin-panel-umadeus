@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import createPocketBase from "@/lib/pocketbase";
-import { PRECO_PULSEIRA, PRECO_KIT } from "@/lib/constants";
 import { logConciliacaoErro } from "@/lib/server/logger";
 
 export async function POST(req: NextRequest) {
@@ -30,17 +29,45 @@ export async function POST(req: NextRequest) {
     const campoId = inscricao.expand?.campo?.id;
     const responsavelId = inscricao.expand?.criado_por;
 
-    const valor =
-      inscricao.produto === "Somente Pulseira" ? PRECO_PULSEIRA : PRECO_KIT;
+    let produtoRecord: Record<string, any> | undefined;
+    try {
+      produtoRecord = await pb
+        .collection("produtos")
+        .getFirstListItem(`nome='${inscricao.produto}'`);
+    } catch {
+      try {
+        if (inscricao.evento) {
+          const ev = await pb
+            .collection("eventos")
+            .getOne(inscricao.evento, { expand: "produtos" });
+          const lista = Array.isArray(ev.expand?.produtos)
+            ? (ev.expand.produtos as Record<string, any>[])
+            : [];
+          produtoRecord = lista.find((p) => p.nome === inscricao.produto);
+        }
+      } catch {
+        // noop - produtoRecord remains undefined
+      }
+    }
+
+    const valor = produtoRecord?.preco ?? 0;
 
     const pedido = await pb.collection("pedidos").create({
       id_inscricao: inscricaoId,
       valor,
       status: "pendente",
-      produto: inscricao.produto || "Kit Camisa + Pulseira",
+      produto: produtoRecord?.nome || inscricao.produto || "Produto",
       cor: "Roxo",
-      tamanho: inscricao.tamanho,
-      genero: inscricao.genero,
+      tamanho:
+        inscricao.tamanho ||
+        (Array.isArray(produtoRecord?.tamanhos)
+          ? produtoRecord?.tamanhos[0]
+          : (produtoRecord?.tamanhos as string | undefined)),
+      genero:
+        inscricao.genero ||
+        (Array.isArray(produtoRecord?.generos)
+          ? produtoRecord?.generos[0]
+          : (produtoRecord?.generos as string | undefined)),
       email: inscricao.email,
       campo: campoId,
       responsavel: responsavelId,
