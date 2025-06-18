@@ -31,9 +31,8 @@ export function calculateGross(
   payment: PaymentMethod,
   installments: number,
 ): { gross: number; margin: number } {
-  const M = 0.07
+  const margin = Number((V * 0.07).toFixed(2))
   const { fixedFee: F, percentFee: P } = getAsaasFees(payment, installments)
-  const gross = Number(((V * (1 + M) + F) / (1 - P)).toFixed(2))
-  const margin = Number((V * M).toFixed(2))
+  const gross = Number(((V + margin + F) / (1 - P)).toFixed(2))
   return { gross, margin }
 }
