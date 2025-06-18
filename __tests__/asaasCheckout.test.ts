@@ -143,6 +143,56 @@ describe('checkout route', () => {
     expect(sentBody.installment).toEqual({ maxInstallmentCount: 3 });
   });
 
+  it('envia dados corretos para boleto', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ checkoutUrl: 'url' }))
+    });
+    global.fetch = fetchMock as unknown as typeof fetch;
+
+    const payload = {
+      ...basePayload,
+      paymentMethod: 'boleto',
+      paymentMethods: ['BOLETO'],
+    };
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+
+    const res = await POST(req as unknown as NextRequest);
+    await res.json();
+    const sentBody = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(sentBody.billingTypes).toEqual(payload.paymentMethods);
+    expect(sentBody.chargeTypes).toEqual(['DETACHED']);
+    expect(sentBody.installment).toBeUndefined();
+  });
+
+  it('envia dados corretos para debito', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ checkoutUrl: 'url' }))
+    });
+    global.fetch = fetchMock as unknown as typeof fetch;
+
+    const payload = {
+      ...basePayload,
+      paymentMethod: 'debito',
+      paymentMethods: ['DEBIT_CARD'],
+    };
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+
+    const res = await POST(req as unknown as NextRequest);
+    await res.json();
+    const sentBody = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(sentBody.billingTypes).toEqual(payload.paymentMethods);
+    expect(sentBody.chargeTypes).toEqual(['DETACHED']);
+    expect(sentBody.installment).toBeUndefined();
+  });
+
   it('retorna 400 quando corpo inválido', async () => {
     const req = new Request('http://test', {
       method: 'POST',

@@ -40,9 +40,6 @@ function CheckoutContent() {
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
   const [installments, setInstallments] = useState(1);
-  const [gross, setGross] = useState(
-    () => calculateGross(total, "pix", 1).gross
-  );
 
   useEffect(() => {
     if (user) {
@@ -72,10 +69,6 @@ function CheckoutContent() {
     }
   }, [paymentMethod, installments]);
 
-  useEffect(() => {
-    const { gross: g } = calculateGross(total, paymentMethod, installments);
-    setGross(g);
-  }, [total, paymentMethod, installments]);
 
   function maskTelefone(valor: string) {
     // Remove tudo que não for número
@@ -128,6 +121,13 @@ function CheckoutContent() {
         throw new Error("Autenticação inválida");
       }
 
+      const paymentMap = {
+        pix: "PIX",
+        boleto: "BOLETO",
+        debito: "DEBIT_CARD",
+        credito: "CREDIT_CARD",
+      } as const;
+
       const payload = {
         valorLiquido: total,
         paymentMethod,
@@ -148,9 +148,13 @@ function CheckoutContent() {
           cidade,
         },
         installments,
-        paymentMethods: [
-          paymentMethod === "pix" ? "PIX" : "CREDIT_CARD",
-        ],
+        paymentMethods: [paymentMap[paymentMethod]],
+        ...(paymentMethod === "credito" && installments > 1
+          ? {
+              chargeTypes: ["INSTALLMENT"],
+              installment: { maxInstallmentCount: installments },
+            }
+          : {}),
       };
 
       const token = localStorage.getItem("pb_token");
@@ -413,12 +417,19 @@ function CheckoutContent() {
           <div className="border-t pt-4 space-y-1">
             <div className="flex justify-between text-base">
               <span>Total a pagar</span>
-              <span>{formatCurrency(gross)}</span>
+              <span>
+                {formatCurrency(calculateGross(total, "pix", 1).gross)}
+              </span>
             </div>
             {installments > 1 && (
               <div className="flex justify-between text-sm text-gray-500">
                 <span>Valor da parcela</span>
-                <span>{formatCurrency(gross / installments)}</span>
+                <span>
+                  {formatCurrency(
+                    calculateGross(total, paymentMethod, installments).gross /
+                      installments,
+                  )}
+                </span>
               </div>
             )}
           </div>
