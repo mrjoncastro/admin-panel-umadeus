@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { logInfo } from "@/lib/logger";
 import { useToast } from "@/lib/context/ToastContext";
-import type { PaymentMethod } from "@/lib/asaasFees";
+import { calculateGross, type PaymentMethod } from "@/lib/asaasFees";
 
 const PRODUTOS = [
   { nome: "Kit Camisa + Pulseira", valor: 50.0 },
@@ -46,6 +46,15 @@ export default function InscricaoPage() {
   const [installments, setInstallments] = useState(1);
   const [campoNome, setCampoNome] = useState("");
   const [evento, setEvento] = useState<{ titulo: string; descricao: string } | null>(null);
+
+  const base = useMemo(
+    () => PRODUTOS.find((p) => p.nome === form.produto)?.valor ?? 0,
+    [form.produto],
+  );
+  const totalGross = useMemo(
+    () => calculateGross(base, paymentMethod, installments).gross,
+    [base, paymentMethod, installments],
+  );
 
   useEffect(() => {
     if (!liderId) return;
@@ -342,6 +351,16 @@ export default function InscricaoPage() {
               </option>
             ))}
           </select>
+          <p className="text-sm mt-1">
+            Total: R$ {totalGross.toFixed(2).replace(".", ",")}
+          </p>
+          {installments > 1 && (
+            <p className="text-xs text-gray-500">
+              Valor da parcela: R$ {(totalGross / installments)
+                .toFixed(2)
+                .replace(".", ",")}
+            </p>
+          )}
         </div>
 
           <div className="flex items-start mt-4">
