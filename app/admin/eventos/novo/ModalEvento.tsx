@@ -55,6 +55,12 @@ export function ModalEvento<T extends Record<string, unknown>>({
   );
   const [produtoModalOpen, setProdutoModalOpen] = useState(false);
 
+  function toggleProduto(id: string) {
+    setSelectedProdutos((prev) =>
+      prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]
+    );
+  }
+
   useEffect(() => {
     setCobraInscricao(Boolean(initial?.cobra_inscricao));
     const inic = (initial as Record<string, unknown>).produtos as string[];
@@ -139,16 +145,7 @@ export function ModalEvento<T extends Record<string, unknown>>({
       "input[name='cobra_inscricao']"
     )?.checked;
 
-    data.produtos = Array.from(
-      formElement.querySelectorAll<HTMLSelectElement>("select[name='produtos']")
-    )[0]
-      ? Array.from(
-          formElement
-            .querySelectorAll<HTMLSelectElement>("select[name='produtos']")[0]
-            .selectedOptions,
-          (o) => o.value
-        )
-      : [];
+    data.produtos = selectedProdutos;
 
     const imgInput = formElement.querySelector(
       "input[name='imagem']"
@@ -237,27 +234,23 @@ export function ModalEvento<T extends Record<string, unknown>>({
         {cobraInscricao && (
           <div>
             <label className="label-base">Produtos para inscrição</label>
-            <div className="flex gap-2">
-              <select
-                name="produtos"
-                multiple
-                value={selectedProdutos}
-                onChange={(e) =>
-                  setSelectedProdutos(
-                    Array.from(e.target.selectedOptions, (o) => o.value)
-                  )
-                }
-                className="input-base flex-1"
-              >
-                {produtos.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.nome}
-                  </option>
-                ))}
-              </select>
+            <div className="flex flex-col gap-2">
+              {produtos.map((p) => (
+                <label className="checkbox-label" key={p.id}>
+                  <input
+                    type="checkbox"
+                    name="produtos"
+                    value={p.id}
+                    checked={selectedProdutos.includes(p.id)}
+                    onChange={() => toggleProduto(p.id)}
+                    className="checkbox-base"
+                  />
+                  {p.nome}
+                </label>
+              ))}
               <button
                 type="button"
-                className="btn btn-secondary whitespace-nowrap"
+                className="btn btn-secondary w-fit"
                 onClick={() => setProdutoModalOpen(true)}
               >
                 + Produto
