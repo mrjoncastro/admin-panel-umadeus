@@ -1,8 +1,11 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { useAppConfig } from "@/lib/context/AppConfigContext";
+import LoginForm from "../components/LoginForm";
+import SignUpForm from "../components/SignUpForm";
+import LayoutWrapper from "../components/LayoutWrapper";
 
 export default function LoginPage() {
   return (
@@ -11,11 +14,6 @@ export default function LoginPage() {
     </Suspense>
   );
 }
-
-import { useSearchParams } from "next/navigation";
-import LoginForm from "../components/LoginForm";
-import SignUpForm from "../components/SignUpForm";
-import LayoutWrapper from "../components/LayoutWrapper";
 
 function LoginClient() {
   "use client";
@@ -31,9 +29,9 @@ function LoginClient() {
 
   return (
     <LayoutWrapper>
-      <div className="min-h-screen flex">
-        <div className="w-full md:w-1/2 flex flex-col justify-center items-center px-6 md:px-5 py-3 text-[var(--text-primary)]">
-          <div className="w-full max-w-md">
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-full max-w-2xl flex flex-col justify-center items-center px-6 md:px-8 py-6 text-[var(--text-primary)]">
+          <div className="w-full">
             {/* Formulário */}
             <div>
               {view === "login" ? (
@@ -67,7 +65,7 @@ function LoginClient() {
   );
 }
 
-// Animação de digitação
+// Opcional: animação de digitação (caso use em outro local)
 function TypingEffect({ text }: { text: string }) {
   const [displayedText, setDisplayedText] = useState("");
   useEffect(() => {
