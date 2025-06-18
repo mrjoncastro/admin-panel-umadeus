@@ -10,12 +10,14 @@ export type AppConfig = {
   font: string;
   primaryColor: string;
   logoUrl: string;
+  confirmaInscricoes: boolean;
 };
 
 const defaultConfig: AppConfig = {
   font: "var(--font-geist)",
   primaryColor: "#7c3aed",
   logoUrl: "/img/logo_umadeus_branco.png",
+  confirmaInscricoes: true,
 };
 
 type AppConfigContextType = {
@@ -49,6 +51,10 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
               font: cliente.font || defaultConfig.font,
               primaryColor: cliente.cor_primary || defaultConfig.primaryColor,
               logoUrl: cliente.logo_url || defaultConfig.logoUrl,
+              confirmaInscricoes:
+                typeof cliente.confirma_inscricoes === "boolean"
+                  ? cliente.confirma_inscricoes
+                  : defaultConfig.confirmaInscricoes,
             };
             setConfigId(cliente.id);
             setConfig(cfg);
@@ -65,7 +71,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
       const cached = localStorage.getItem("app_config");
       if (cached) {
         try {
-          setConfig(JSON.parse(cached));
+          setConfig({ ...defaultConfig, ...JSON.parse(cached) });
         } catch {
           /* ignore */
         }
@@ -92,6 +98,10 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
                 font: cliente.font || defaultConfig.font,
                 primaryColor: cliente.cor_primary || defaultConfig.primaryColor,
                 logoUrl: cliente.logo_url || defaultConfig.logoUrl,
+                confirmaInscricoes:
+                  typeof cliente.confirma_inscricoes === "boolean"
+                    ? cliente.confirma_inscricoes
+                    : defaultConfig.confirmaInscricoes,
               };
               setConfigId(cliente.id);
               setConfig(cfg);
@@ -122,6 +132,10 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
                 font: data.font || defaultConfig.font,
                 primaryColor: data.cor_primary || defaultConfig.primaryColor,
                 logoUrl: data.logo_url || defaultConfig.logoUrl,
+                confirmaInscricoes:
+                  typeof data.confirma_inscricoes === "boolean"
+                    ? data.confirma_inscricoes
+                    : defaultConfig.confirmaInscricoes,
               };
               try {
                 const { cliente } = JSON.parse(user);
@@ -185,6 +199,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
             cor_primary: newCfg.primaryColor,
             logo_url: newCfg.logoUrl,
             font: newCfg.font,
+            confirma_inscricoes: newCfg.confirmaInscricoes,
           }),
         }).catch((err) => console.error("Erro ao salvar config:", err));
       }

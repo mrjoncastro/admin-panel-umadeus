@@ -195,6 +195,6 @@ Ao montar, o provedor executa a seguinte sequência:
 
 Quando `updateConfig` é chamado, os dados são enviados para essa mesma rota e gravados no `localStorage`, mantendo navegador e PocketBase sincronizados.
 
-As personalizações são persistidas nos campos `logo_url`, `cor_primary` e `font` da coleção `clientes_config`, evitando perda de dados entre dispositivos.
+As personalizações são persistidas nos campos `logo_url`, `cor_primary`, `font` e `confirma_inscricoes` da coleção `clientes_config`, evitando perda de dados entre dispositivos.
 
 Além de definir `--accent`, o provedor gera uma paleta HSL e expõe as variáveis `--primary-50` … `--primary-900`. Essas variáveis são mapeadas para classes Tailwind (`bg-primary-*`, `text-primary-*`), eliminando a necessidade de usar `bg-[var(--primary-600)]` ou `text-[var(--primary-500)]`.
