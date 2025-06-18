@@ -116,6 +116,9 @@ export type Evento = {
   status: "realizado" | "em breve";
   cobra_inscricao?: boolean;
   produtos?: string[];
+  expand?: {
+    produtos?: Produto[];
+  };
   created?: string;
   expand?: {
     produtos?: Produto[];
