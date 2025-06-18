@@ -139,3 +139,4 @@
 ## [2025-07-02] Documentação atualizada indicando `npm install` antes de rodar lint, build ou testes. Nota adicionada ao CONTRIBUTING. Impacto: evitar erros por dependências ausentes.
 ## [2025-07-03] Atualizados exemplos de chamadas ao endpoint `/admin/api/asaas` com os campos `valorBruto`, `paymentMethod` e `installments`. Lint e build executados.
 ## [2025-07-04] Adicionada regra de exibição do total no checkout em docs/plano_calculo_cobrancas.md.
+## [2025-07-05] Guia iniciar-tour atualizado explicando checkbox Modo de Demonstração em Configurações. Lint e build executados.

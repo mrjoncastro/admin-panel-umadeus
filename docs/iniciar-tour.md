@@ -27,6 +27,12 @@ Este guia apresenta um passo a passo para novos clientes conhecerem as principai
    - **Campos** – gerenciamento das áreas de atuação.
    - **Configurações** – logo, cores e opções do sistema.
 
+### Modo de Demonstração
+
+Ao acessar **Configurações**, marque o novo checkbox **Modo de Demonstração**
+para ocultar dados reais durante o tour. Desmarque-o quando quiser voltar ao
+uso normal da plataforma.
+
 ## 4. Blog
 
 1. Acesse a aba **Blog** para ler ou criar posts (via admin).
