@@ -40,4 +40,10 @@ describe('CheckoutContent', () => {
     render(<CheckoutPage />);
     expect(screen.queryByText('Valor da parcela')).toBeNull();
   });
+
+  it('desabilita select de parcelas quando forma de pagamento não é crédito', () => {
+    render(<CheckoutPage />);
+    const selects = screen.getAllByRole('combobox');
+    expect(selects[1]).toBeDisabled();
+  });
 });
