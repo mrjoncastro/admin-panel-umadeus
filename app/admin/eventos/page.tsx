@@ -69,18 +69,14 @@ export default function AdminEventosPage() {
     if (form.imagem instanceof File) {
       formData.append("imagem", form.imagem);
     }
-    if (form.cobra_inscricao) {
-      formData.set("cobra_inscricao", "true");
-    } else {
-      formData.set("cobra_inscricao", "false");
-    }
-    if (typeof form.produto_inscricao === "string") {
-      formData.set("produto_inscricao", form.produto_inscricao);
+    if (form.cobra_inscricao !== undefined) {
+      formData.set(
+        "cobra_inscricao",
+        String(form.cobra_inscricao as boolean)
+      );
     }
     if (Array.isArray(form.produtos)) {
-      (form.produtos as string[]).forEach((p) =>
-        formData.append("produtos", p)
-      );
+      (form.produtos as string[]).forEach((p) => formData.append("produtos", p));
     }
     try {
       const res = await fetch("/admin/api/eventos", {

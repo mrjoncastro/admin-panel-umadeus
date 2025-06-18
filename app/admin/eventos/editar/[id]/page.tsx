@@ -22,7 +22,7 @@ export default function EditarEventoPage() {
   const [loading, setLoading] = useState(true);
   const [cobraInscricao, setCobraInscricao] = useState(false);
   const [produtos, setProdutos] = useState<Produto[]>([]);
-  const [selectedProduto, setSelectedProduto] = useState("");
+  const [selectedProdutos, setSelectedProdutos] = useState<string[]>([]);
   const [produtoModalOpen, setProdutoModalOpen] = useState(false);
 
   useEffect(() => {
@@ -51,7 +51,12 @@ export default function EditarEventoPage() {
           status: data.status,
         });
         setCobraInscricao(Boolean(data.cobra_inscricao));
-        setSelectedProduto(data.produto_inscricao || "");
+        const arr = Array.isArray(data.produtos)
+          ? (data.produtos as string[])
+          : data.produto_inscricao
+          ? [data.produto_inscricao as string]
+          : [];
+        setSelectedProdutos(arr);
       })
       .finally(() => setLoading(false));
   }, [id, isLoggedIn, getAuth]);
@@ -112,7 +117,7 @@ export default function EditarEventoPage() {
       if (!res.ok) return;
       const data = await res.json();
       setProdutos((prev) => [data, ...prev]);
-      setSelectedProduto(data.id);
+      setSelectedProdutos((prev) => [...prev, data.id]);
     } catch (err) {
       console.error("Erro ao criar produto:", err);
     } finally {
@@ -128,12 +133,9 @@ export default function EditarEventoPage() {
     e.preventDefault();
     const formElement = e.currentTarget as HTMLFormElement;
     const formData = new FormData(formElement);
-    formData.set("cobra_inscricao", cobraInscricao ? "true" : "false");
-    if (cobraInscricao && selectedProduto) {
-      formData.set("produto_inscricao", selectedProduto);
-    } else {
-      formData.delete("produto_inscricao");
-    }
+    formData.delete("produtos");
+    selectedProdutos.forEach((p) => formData.append("produtos", p));
+    formData.set("cobra_inscricao", String(cobraInscricao));
     const { token, user } = getAuth();
     const res = await fetch(`/admin/api/eventos/${id}`, {
       method: "PUT",
@@ -192,15 +194,19 @@ export default function EditarEventoPage() {
         </div>
         {cobraInscricao && (
           <div>
-            <label className="label-base">Produto para inscrição</label>
+            <label className="label-base">Produtos para inscrição</label>
             <div className="flex gap-2">
               <select
-                name="produto_inscricao"
-                value={selectedProduto}
-                onChange={(e) => setSelectedProduto(e.target.value)}
+                name="produtos"
+                multiple
+                value={selectedProdutos}
+                onChange={(e) =>
+                  setSelectedProdutos(
+                    Array.from(e.target.selectedOptions, (o) => o.value)
+                  )
+                }
                 className="input-base flex-1"
               >
-                <option value="">Selecione o produto</option>
                 {produtos.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.nome}
