@@ -2,7 +2,7 @@
 
 import { useCart } from "@/lib/context/CartContext";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useMemo } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { CheckCircle } from "lucide-react";
 import { hexToPtName } from "@/utils/colorNamePt";
@@ -35,9 +35,6 @@ function CheckoutContent() {
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
   const [installments, setInstallments] = useState(1);
-  const [gross, setGross] = useState(() =>
-    calculateGross(total, "pix", 1).gross
-  );
 
   useEffect(() => {
     if (user) {
@@ -62,16 +59,22 @@ function CheckoutContent() {
   const pedidoId = searchParams.get("pedido") || Date.now().toString();
   const total = itens.reduce((sum, i) => sum + i.preco * i.quantidade, 0);
 
+  const pixTotal = useMemo(
+    () => calculateGross(total, "pix", 1).gross,
+    [total],
+  );
+
+  const installmentGross = useMemo(
+    () => calculateGross(total, paymentMethod, installments).gross,
+    [total, paymentMethod, installments],
+  );
+
   useEffect(() => {
     if (paymentMethod !== "credito" && installments !== 1) {
       setInstallments(1);
     }
   }, [paymentMethod, installments]);
 
-  useEffect(() => {
-    const { gross: g } = calculateGross(total, paymentMethod, installments);
-    setGross(g);
-  }, [total, paymentMethod, installments]);
 
   function maskTelefone(valor: string) {
     // Remove tudo que não for número
@@ -404,11 +407,11 @@ function CheckoutContent() {
           <div className="border-t pt-4 space-y-1">
             <div className="flex justify-between text-base">
               <span>Total a pagar</span>
-              <span>{formatCurrency(gross)}</span>
+              <span>{formatCurrency(pixTotal)}</span>
             </div>
             <div className="flex justify-between text-sm text-gray-500">
               <span>Valor da parcela</span>
-              <span>{formatCurrency(gross / installments)}</span>
+              <span>{formatCurrency(installmentGross / installments)}</span>
             </div>
           </div>
           <button
