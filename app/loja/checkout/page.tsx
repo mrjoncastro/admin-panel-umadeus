@@ -39,6 +39,7 @@ function CheckoutContent() {
   const [gross, setGross] = useState(() =>
     calculateGross(total, "pix", 1).gross
   );
+  const displayGross = calculateGross(total, "pix", 1).gross;
 
   useEffect(() => {
     if (user) {
@@ -403,7 +404,7 @@ function CheckoutContent() {
           <div className="border-t pt-4 space-y-1">
             <div className="flex justify-between text-base">
               <span>Total a pagar</span>
-              <span>{formatCurrency(gross)}</span>
+              <span>{formatCurrency(displayGross)}</span>
             </div>
             {installments > 1 && (
               <div className="flex justify-between text-sm text-gray-500">

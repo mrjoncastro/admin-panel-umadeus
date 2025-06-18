@@ -1,5 +1,5 @@
 /* @vitest-environment jsdom */
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { vi } from 'vitest';
 import CheckoutPage from '@/app/loja/checkout/page';
 
@@ -45,5 +45,13 @@ describe('CheckoutContent', () => {
     render(<CheckoutPage />);
     const selects = screen.getAllByRole('combobox');
     expect(selects[1]).toBeDisabled();
+  });
+
+  it('mantém total a pagar calculado com pix ao mudar forma de pagamento', () => {
+    render(<CheckoutPage />);
+    const selects = screen.getAllByRole('combobox');
+    fireEvent.change(selects[0], { target: { value: 'credito' } });
+    fireEvent.change(selects[1], { target: { value: '2' } });
+    expect(screen.getByText('R$ 12,69')).toBeInTheDocument();
   });
 });
