@@ -1,5 +1,11 @@
+"use client";
+
 import * as Dialog from "@radix-ui/react-dialog";
 import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useCallback } from "react";
+import { useAuthContext } from "@/lib/context/AuthContext";
+import type { Produto } from "@/types";
+import { ModalProduto } from "../../produtos/novo/ModalProduto";
 
 export interface ModalEventoProps<T extends Record<string, unknown>> {
   open: boolean;
@@ -12,6 +18,8 @@ export interface ModalEventoProps<T extends Record<string, unknown>> {
     cidade?: string;
     imagem?: FileList | null;
     status?: "realizado" | "em breve";
+    cobra_inscricao?: boolean;
+    produto_inscricao?: string;
   };
 }
 
@@ -22,6 +30,99 @@ export function ModalEvento<T extends Record<string, unknown>>({
   initial = {},
 }: ModalEventoProps<T>) {
 
+  const { isLoggedIn, user: ctxUser } = useAuthContext();
+  const getAuth = useCallback(() => {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
+    const raw =
+      typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
+    const user = raw ? JSON.parse(raw) : ctxUser;
+    return { token, user } as const;
+  }, [ctxUser]);
+
+  const [cobraInscricao, setCobraInscricao] = useState(
+    Boolean(initial?.cobra_inscricao)
+  );
+  const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [selectedProduto, setSelectedProduto] = useState(
+    (initial as Record<string, unknown>).produto_inscricao as string | ""
+  );
+  const [produtoModalOpen, setProdutoModalOpen] = useState(false);
+
+  useEffect(() => {
+    setCobraInscricao(Boolean(initial?.cobra_inscricao));
+    setSelectedProduto(
+      ((initial as Record<string, unknown>).produto_inscricao as string) || ""
+    );
+  }, [initial, open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const { token, user } = getAuth();
+    if (!isLoggedIn || !token || !user || user.role !== "coordenador") return;
+    fetch("/admin/api/produtos", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "X-PB-User": JSON.stringify(user),
+      },
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        setProdutos(Array.isArray(data) ? data : data.items ?? []);
+      })
+      .catch(() => {
+        setProdutos([]);
+      });
+  }, [open, isLoggedIn, getAuth]);
+
+  async function handleNovoProduto(form: Produto) {
+    const formData = new FormData();
+    formData.set("nome", String(form.nome ?? ""));
+    formData.set("preco", String(form.preco ?? 0));
+    if (form.checkout_url)
+      formData.set("checkout_url", String(form.checkout_url));
+    if (form.categoria) formData.set("categoria", String(form.categoria));
+    if (Array.isArray(form.tamanhos)) {
+      form.tamanhos.forEach((t) => formData.append("tamanhos", t));
+    }
+    if (Array.isArray(form.generos)) {
+      form.generos.forEach((g) => formData.append("generos", g));
+    }
+    if (form.descricao) formData.set("descricao", String(form.descricao));
+    if (form.detalhes) formData.set("detalhes", String(form.detalhes));
+    if (Array.isArray(form.cores)) {
+      formData.set("cores", (form.cores as string[]).join(","));
+    } else if (form.cores) {
+      formData.set("cores", String(form.cores));
+    }
+    formData.set("ativo", String(form.ativo ? "true" : "false"));
+    if (form.imagens && form.imagens instanceof FileList) {
+      Array.from(form.imagens).forEach((file) =>
+        formData.append("imagens", file)
+      );
+    }
+
+    const { token, user } = getAuth();
+    try {
+      const res = await fetch("/admin/api/produtos", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-PB-User": JSON.stringify(user),
+        },
+        body: formData,
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      setProdutos((prev) => [data, ...prev]);
+      setSelectedProduto(data.id);
+    } catch (err) {
+      console.error("Erro ao criar produto:", err);
+    } finally {
+      setProdutoModalOpen(false);
+    }
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const formElement = e.currentTarget as HTMLFormElement;
@@ -31,6 +132,7 @@ export function ModalEvento<T extends Record<string, unknown>>({
   }
 
   return (
+    <>
     <Dialog.Root open={open} onOpenChange={(v) => !v && onClose()}>
       <AnimatePresence>
         {open && (
@@ -91,6 +193,46 @@ export function ModalEvento<T extends Record<string, unknown>>({
           <option value="em breve">Em breve</option>
           <option value="realizado">Realizado</option>
         </select>
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            name="cobra_inscricao"
+            id="cobra_inscricao"
+            className="checkbox-base"
+            checked={cobraInscricao}
+            onChange={(e) => setCobraInscricao(e.target.checked)}
+          />
+          <label htmlFor="cobra_inscricao" className="text-sm font-medium">
+            Realizar cobrança?
+          </label>
+        </div>
+        {cobraInscricao && (
+          <div>
+            <label className="label-base">Produto para inscrição</label>
+            <div className="flex gap-2">
+              <select
+                name="produto_inscricao"
+                value={selectedProduto}
+                onChange={(e) => setSelectedProduto(e.target.value)}
+                className="input-base flex-1"
+              >
+                <option value="">Selecione o produto</option>
+                {produtos.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nome}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                className="btn btn-secondary whitespace-nowrap"
+                onClick={() => setProdutoModalOpen(true)}
+              >
+                + Produto
+              </button>
+            </div>
+          </div>
+        )}
         <div className="flex justify-end gap-3 mt-4">
           <button type="button" className="btn btn-secondary" onClick={onClose}>
             Cancelar
@@ -107,6 +249,14 @@ export function ModalEvento<T extends Record<string, unknown>>({
           </Dialog.Portal>
         )}
       </AnimatePresence>
-    </Dialog.Root>
+      </Dialog.Root>
+    {produtoModalOpen && (
+      <ModalProduto
+        open={produtoModalOpen}
+        onClose={() => setProdutoModalOpen(false)}
+        onSubmit={handleNovoProduto}
+      />
+    )}
+    </>
   );
 }
