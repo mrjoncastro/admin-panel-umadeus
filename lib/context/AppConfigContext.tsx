@@ -17,7 +17,7 @@ const defaultConfig: AppConfig = {
   font: "var(--font-geist)",
   primaryColor: "#7c3aed",
   logoUrl: "/img/logo_umadeus_branco.png",
-  confirmaInscricoes: true,
+  confirmaInscricoes: false,
 };
 
 type AppConfigContextType = {
@@ -52,9 +52,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
               primaryColor: cliente.cor_primary || defaultConfig.primaryColor,
               logoUrl: cliente.logo_url || defaultConfig.logoUrl,
               confirmaInscricoes:
-                typeof cliente.confirma_inscricoes === "boolean"
-                  ? cliente.confirma_inscricoes
-                  : defaultConfig.confirmaInscricoes,
+                cliente.confirma_inscricoes ?? defaultConfig.confirmaInscricoes,
             };
             setConfigId(cliente.id);
             setConfig(cfg);
@@ -71,7 +69,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
       const cached = localStorage.getItem("app_config");
       if (cached) {
         try {
-          setConfig({ ...defaultConfig, ...JSON.parse(cached) });
+          setConfig(JSON.parse(cached));
         } catch {
           /* ignore */
         }
@@ -99,9 +97,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
                 primaryColor: cliente.cor_primary || defaultConfig.primaryColor,
                 logoUrl: cliente.logo_url || defaultConfig.logoUrl,
                 confirmaInscricoes:
-                  typeof cliente.confirma_inscricoes === "boolean"
-                    ? cliente.confirma_inscricoes
-                    : defaultConfig.confirmaInscricoes,
+                  cliente.confirma_inscricoes ?? defaultConfig.confirmaInscricoes,
               };
               setConfigId(cliente.id);
               setConfig(cfg);
@@ -133,9 +129,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
                 primaryColor: data.cor_primary || defaultConfig.primaryColor,
                 logoUrl: data.logo_url || defaultConfig.logoUrl,
                 confirmaInscricoes:
-                  typeof data.confirma_inscricoes === "boolean"
-                    ? data.confirma_inscricoes
-                    : defaultConfig.confirmaInscricoes,
+                  data.confirma_inscricoes ?? defaultConfig.confirmaInscricoes,
               };
               try {
                 const { cliente } = JSON.parse(user);

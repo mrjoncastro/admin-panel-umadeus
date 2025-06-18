@@ -18,10 +18,7 @@ export async function GET(req: NextRequest) {
         cor_primary: cfg.cor_primary ?? "",
         logo_url: cfg.logo_url ?? "",
         font: cfg.font ?? "",
-        confirma_inscricoes:
-          typeof cfg.confirma_inscricoes === "boolean"
-            ? cfg.confirma_inscricoes
-            : true,
+        confirma_inscricoes: cfg.confirma_inscricoes ?? false,
       },
       { status: 200 }
     );
@@ -42,15 +39,12 @@ export async function PUT(req: NextRequest) {
     const cfg = await pb
       .collection("clientes_config")
       .getFirstListItem(`cliente='${user.cliente}'`);
-    const payload: Record<string, unknown> = {
+    const updated = await pb.collection("clientes_config").update(cfg.id, {
       cor_primary,
       logo_url,
       font,
-    };
-    if (typeof confirma_inscricoes === "boolean") {
-      payload.confirma_inscricoes = confirma_inscricoes;
-    }
-    const updated = await pb.collection("clientes_config").update(cfg.id, payload);
+      confirma_inscricoes,
+    });
     return NextResponse.json(updated, { status: 200 });
   } catch (err) {
     await logConciliacaoErro(`Erro ao atualizar configuracoes: ${String(err)}`);
