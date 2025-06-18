@@ -80,3 +80,4 @@
 ## [2025-06-18] Erro no checkout: Error: {"errors":[{"code":"invalid_object","description":"O tipo de cobrança DETACHED deve ser informado junto com o tipo de cobrança INSTALLMENT"}]} - development
 ## [2025-06-18] Erro ao criar compra: ClientResponseError 400: Failed to create record. - development
 ## [2025-06-18] Erro ao criar compra: ClientResponseError 400: Failed to create record. - development
+## [2025-06-18] Erro no checkout: Error: {"errors":[{"code":"invalid_object","description":"O campo successUrl é inválido."},{"code":"invalid_object","description":"O campo cancelUrl é inválido."},{"code":"invalid_object","description":"O campo expiredUrl é inválido."}]} - development

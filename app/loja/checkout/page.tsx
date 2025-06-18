@@ -11,6 +11,7 @@ import {
   MAX_ITEM_DESCRIPTION_LENGTH,
   MAX_ITEM_NAME_LENGTH,
 } from "@/lib/constants";
+import { useMemo } from "react";
 
 function formatCurrency(n: number) {
   return `R$ ${n.toFixed(2).replace(".", ",")}`;
@@ -18,7 +19,6 @@ function formatCurrency(n: number) {
 
 function CheckoutContent() {
   const { itens, clearCart } = useCart();
-  const total = itens.reduce((sum, i) => sum + i.preco * i.quantidade, 0);
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -37,7 +37,18 @@ function CheckoutContent() {
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
   const [installments, setInstallments] = useState(1);
-  const totalGross = calculateGross(total, paymentMethod, installments).gross;
+
+  // 1. calcula total líquido
+  const total = useMemo(
+    () => itens.reduce((sum, i) => sum + i.preco * i.quantidade, 0),
+    [itens]
+  );
+
+  // 2. calcula total bruto
+  const totalGross = useMemo(
+    () => calculateGross(total, paymentMethod, installments).gross,
+    [total, paymentMethod, installments]
+  );
 
   useEffect(() => {
     if (user) {
@@ -52,6 +63,8 @@ function CheckoutContent() {
       setCpf(String(user.cpf ?? ""));
     }
   }, [user]);
+
+  useEffect(() => {}, [total, paymentMethod, installments]);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -361,25 +374,25 @@ function CheckoutContent() {
                 </div>
                 <div className="font-semibold">
                   {formatCurrency(
-                    calculateGross(item.preco, "pix", 1).gross * item.quantidade
-                  )}{" "}
+                    calculateGross(item.preco, paymentMethod, installments)
+                      .gross * item.quantidade
+                  )}
                 </div>
               </li>
             ))}
           </ul>
-          <div className="border-t pt-4 space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Subtotal</span>
+          <div className="border-t pt-4">
+            <div className="flex justify-between">
+              <span>Subtotal (bruto)</span>
+              {/* TOTAL do carrinho em bruto */}
               <span>{formatCurrency(totalGross)}</span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Frete</span>
-              <span className="text-gray-400">--</span>
-            </div>
-            <div className="flex justify-between text-base font-bold pt-1">
-              <span>Total</span>
-              <span>{formatCurrency(totalGross)}</span>
-            </div>
+            {installments > 1 && (
+              <div className="flex justify-between text-sm text-gray-500">
+                <span>Valor da parcela</span>
+                <span>{formatCurrency(totalGross / installments)}</span>
+              </div>
+            )}
           </div>
           <div className="mt-4 space-y-3">
             <div>
@@ -420,9 +433,7 @@ function CheckoutContent() {
           <div className="border-t pt-4 space-y-1">
             <div className="flex justify-between text-base">
               <span>Total a pagar</span>
-              <span>
-                {formatCurrency(calculateGross(total, "pix", 1).gross)}
-              </span>
+              <span>{formatCurrency(totalGross)}</span>
             </div>
             {installments > 1 && (
               <div className="flex justify-between text-sm text-gray-500">
