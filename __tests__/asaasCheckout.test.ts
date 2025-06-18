@@ -31,7 +31,7 @@ describe('checkout route', () => {
   });
 
   const basePayload = {
-    valorLiquido: 10,
+    valorBruto: 10,
     paymentMethod: 'pix',
     paymentMethods: ['PIX'],
     itens: [
@@ -198,7 +198,7 @@ describe('checkout route', () => {
       method: 'POST',
       body: JSON.stringify({
         ...basePayload,
-        valorLiquido: 'a',
+        valorBruto: 'a',
         itens: [],
       })
     });

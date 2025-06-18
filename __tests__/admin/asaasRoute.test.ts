@@ -29,7 +29,7 @@ describe('POST /admin/api/asaas', () => {
       cliente: { asaas_api_key: undefined, nome: 'Cli' }
     })
     delete process.env.ASAAS_API_KEY
-    const req = new Request('http://test', { method: 'POST', body: JSON.stringify({ pedidoId:'1', valorLiquido:1, paymentMethod:'pix', installments:1 }) })
+    const req = new Request('http://test', { method: 'POST', body: JSON.stringify({ pedidoId:'1', valorBruto:1, paymentMethod:'pix', installments:1 }) })
     await expect(POST(req as unknown as NextRequest)).rejects.toThrow()
   })
 
@@ -86,7 +86,7 @@ describe('POST /admin/api/asaas', () => {
 
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({ pedidoId: 'p1', valorLiquido: 10, paymentMethod: 'pix', installments: 1 })
+      body: JSON.stringify({ pedidoId: 'p1', valorBruto: 10, paymentMethod: 'pix', installments: 1 })
     })
 
     const res = await POST(req as unknown as NextRequest)
