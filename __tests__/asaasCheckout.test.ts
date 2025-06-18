@@ -33,6 +33,7 @@ describe('checkout route', () => {
   const basePayload = {
     valorLiquido: 10,
     paymentMethod: 'pix',
+    paymentMethods: ['PIX'],
     itens: [
       {
         name: 'p',
@@ -59,7 +60,6 @@ describe('checkout route', () => {
       cidade: '123',
     },
     installments: 1,
-    // billing types inferred via toAsaasBilling
   };
 
   it('executa POST e retorna checkoutUrl', async () => {
@@ -88,6 +88,28 @@ describe('checkout route', () => {
     expect(sentBody.value).toBe(12.69);
     expect(sentBody.split[0].fixedValue).toBe(0.7);
     expect(data.checkoutUrl).toBe('url');
+  });
+
+  it('usa paymentMethods especificado', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(JSON.stringify({ checkoutUrl: 'url' }))
+    });
+    global.fetch = fetchMock as unknown as typeof fetch;
+
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({
+        ...basePayload,
+        paymentMethod: 'credito',
+        paymentMethods: ['CREDIT_CARD'],
+      })
+    });
+
+    const res = await POST(req as unknown as NextRequest);
+    await res.json();
+    const sentBody = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(sentBody.billingTypes).toEqual(['CREDIT_CARD']);
   });
 
   it('retorna 400 quando corpo inválido', async () => {
