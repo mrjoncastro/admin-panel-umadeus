@@ -2,6 +2,7 @@
 import { render, screen } from "@testing-library/react";
 import { vi, describe, it, expect } from "vitest";
 import CarrinhoPage from "@/app/loja/carrinho/page";
+import CartPreview from "@/app/components/CartPreview";
 import { CartProvider } from "@/lib/context/CartContext";
 import { calculateGross } from "@/lib/asaasFees";
 
@@ -12,6 +13,11 @@ vi.mock("next/image", () => ({
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
+}));
+
+vi.mock("next/link", () => ({
+  __esModule: true,
+  default: ({ children, href }: any) => <a href={href}>{children}</a>,
 }));
 
 vi.mock("@/lib/context/AuthContext", () => ({
@@ -43,6 +49,21 @@ describe("CarrinhoPage", () => {
       </CartProvider>,
     );
     await screen.findByText("Carrinho");
+    expect(
+      screen.getByText(`R$ ${gross.toFixed(2).replace(".", ",")}`),
+    ).toBeInTheDocument();
+  });
+});
+
+describe("CartPreview", () => {
+  it("mostra total bruto calculado", () => {
+    const { preco } = renderWithItem();
+    const gross = calculateGross(preco, "pix", 1).gross;
+    render(
+      <CartProvider>
+        <CartPreview />
+      </CartProvider>,
+    );
     expect(
       screen.getByText(`R$ ${gross.toFixed(2).replace(".", ",")}`),
     ).toBeInTheDocument();

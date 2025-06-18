@@ -3,10 +3,15 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/lib/context/CartContext";
+import { calculateGross } from "@/lib/asaasFees";
 
 export default function CartPreview() {
   const { itens } = useCart();
-  const total = itens.reduce((sum, i) => sum + i.preco * i.quantidade, 0);
+  const total = itens.reduce(
+    (sum, i) =>
+      sum + calculateGross(i.preco, "pix", 1).gross * i.quantidade,
+    0,
+  );
 
   if (itens.length === 0) {
     return (
