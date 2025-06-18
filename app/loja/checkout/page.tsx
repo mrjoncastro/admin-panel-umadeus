@@ -427,14 +427,7 @@ function CheckoutContent() {
             {installments > 1 && (
               <div className="flex justify-between text-sm text-gray-500">
                 <span>Valor da parcela</span>
-                <span>
-                  {installments > 1 && (
-                    <div className="flex justify-between text-sm text-gray-500">
-                      <span>Valor da parcela</span>
-                      <span>{formatCurrency(totalGross / installments)}</span>
-                    </div>
-                  )}
-                </span>
+                <span>{formatCurrency(totalGross / installments)}</span>
               </div>
             )}
           </div>

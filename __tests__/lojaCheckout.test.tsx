@@ -54,4 +54,13 @@ describe('CheckoutContent', () => {
     fireEvent.change(selects[1], { target: { value: '2' } });
     expect(screen.getByText('R$ 12,69')).toBeInTheDocument();
   });
+
+  it('exibe valor da parcela apenas uma vez quando há mais de uma parcela', () => {
+    render(<CheckoutPage />);
+    const selects = screen.getAllByRole('combobox');
+    fireEvent.change(selects[0], { target: { value: 'credito' } });
+    fireEvent.change(selects[1], { target: { value: '2' } });
+    expect(screen.getAllByText('Valor da parcela')).toHaveLength(1);
+    expect(screen.getByText('R$ 5,79')).toBeInTheDocument();
+  });
 });
