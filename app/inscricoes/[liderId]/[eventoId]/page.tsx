@@ -11,11 +11,13 @@ import { useAppConfig } from "@/lib/context/AppConfigContext";
 interface Produto {
   nome: string;
   valor: number;
+  tamanhos?: string[];
 }
 
 interface ProdutoPB {
   nome: string;
   preco: number;
+  tamanhos?: string[] | string;
 }
 
 interface FormFields {
@@ -60,6 +62,10 @@ export default function InscricaoPage() {
     () => produtos.find((p) => p.nome === form.produto)?.valor ?? 0,
     [form.produto, produtos],
   );
+  const current = useMemo(
+    () => produtos.find((p) => p.nome === form.produto),
+    [form.produto, produtos],
+  );
   const totalGross = useMemo(
     () => calculateGross(base, paymentMethod, installments).gross,
     [base, paymentMethod, installments],
@@ -92,11 +98,24 @@ export default function InscricaoPage() {
         const prods = Array.isArray(data?.expand?.produtos)
           ? (data.expand.produtos as ProdutoPB[])
           : [];
-        setProdutos(prods.map((p) => ({ nome: p.nome, valor: p.preco })));
-        if (prods.length > 0) {
-          setForm((prev) => ({ ...prev, produto: prods[0].nome }));
+        const mapped = prods.map((p) => ({
+          nome: p.nome,
+          valor: p.preco,
+          tamanhos: Array.isArray(p.tamanhos)
+            ? p.tamanhos
+            : p.tamanhos
+            ? [p.tamanhos]
+            : undefined,
+        }));
+        setProdutos(mapped);
+        if (mapped.length > 0) {
+          setForm((prev) => ({
+            ...prev,
+            produto: mapped[0].nome,
+            tamanho: "",
+          }));
         } else {
-          setForm((prev) => ({ ...prev, produto: "" }));
+          setForm((prev) => ({ ...prev, produto: "", tamanho: "" }));
         }
       })
       .catch(() => {});
@@ -131,13 +150,16 @@ export default function InscricaoPage() {
     if (name === "cpf") newValue = maskCPF(value);
     if (name === "telefone") newValue = maskTelefone(value);
 
-    setForm((prev) => ({
-      ...prev,
-      [name]: newValue,
-      ...(name === "produto" && value === "Somente Pulseira"
-        ? { tamanho: "" }
-        : {}),
-    }));
+    setForm((prev) => {
+      const updated = { ...prev, [name]: newValue };
+      if (name === "produto") {
+        const prod = produtos.find((p) => p.nome === newValue);
+        if (!prod?.tamanhos?.length) {
+          updated.tamanho = "";
+        }
+      }
+      return updated;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -336,7 +358,7 @@ export default function InscricaoPage() {
             )}
           </div>
 
-          {form.produto !== "Somente Pulseira" && (
+          {current?.tamanhos && (
             <div>
               <label className="block font-medium text-sm text-gray-700 mb-1">
                 Tamanho da camisa
@@ -348,7 +370,7 @@ export default function InscricaoPage() {
                 className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
               >
                 <option value="">Selecione o tamanho da camisa</option>
-                {["PP", "P", "M", "G", "GG"].map((t) => (
+                {current.tamanhos.map((t) => (
                   <option key={t} value={t}>
                     {t}
                   </option>
