@@ -214,7 +214,9 @@ export default function ListaInscricoesPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           pedidoId: pedido.id,
-          valor: pedido.valor,
+          valorLiquido: pedido.valor,
+          paymentMethod: "boleto",
+          installments: 1,
         }),
       });
 
