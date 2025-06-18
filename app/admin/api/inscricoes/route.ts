@@ -141,7 +141,47 @@ export async function POST(req: NextRequest) {
 
     const inscricao = await pb.collection("inscricoes").create(dadosInscricao);
 
-    return NextResponse.json({
+    let link_pagamento: string | undefined;
+
+    try {
+      const cfg = await pb
+        .collection("clientes_config")
+        .getFirstListItem(`cliente='${lider.cliente}'`);
+
+      if (cfg?.confirma_inscricoes === false) {
+        const base = req.nextUrl.origin;
+
+        const pedidoRes = await fetch(`${base}/admin/api/pedidos`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ inscricaoId: inscricao.id }),
+        });
+
+        if (pedidoRes.ok) {
+          const { pedidoId, valor } = await pedidoRes.json();
+
+          const asaasRes = await fetch(`${base}/admin/api/asaas`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              pedidoId,
+              valorBruto: valor,
+              paymentMethod,
+              installments,
+            }),
+          });
+
+          if (asaasRes.ok) {
+            const data = await asaasRes.json();
+            link_pagamento = data.url;
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Erro ao gerar pagamento automático:", e);
+    }
+
+    const responseData: Record<string, unknown> = {
       sucesso: true,
       inscricaoId: inscricao.id,
       nome,
@@ -150,7 +190,13 @@ export async function POST(req: NextRequest) {
       produto,
       genero,
       responsavel: liderId,
-    });
+    };
+
+    if (link_pagamento) {
+      responseData.link_pagamento = link_pagamento;
+    }
+
+    return NextResponse.json(responseData);
   } catch (err: unknown) {
     await logConciliacaoErro(`Erro ao criar inscrição: ${String(err)}`);
     return NextResponse.json(
