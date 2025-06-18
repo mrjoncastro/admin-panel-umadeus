@@ -33,6 +33,15 @@ Ao acessar **Configurações**, marque o novo checkbox **Modo de Demonstração*
 para ocultar dados reais durante o tour. Desmarque-o quando quiser voltar ao
 uso normal da plataforma.
 
+### Confirmação de inscrições
+
+Em **Configurações** há também a opção **Confirmar inscrições manualmente?**. Quando
+ativada, cada inscrição permanece em status pendente até que a liderança a
+aprove na tela **Inscrições**, momento em que o link de pagamento é gerado. Se a
+opção estiver desmarcada, o pedido e a cobrança são criados de forma automática
+logo após o envio do formulário (desde que o evento possua o campo
+`cobra_inscricao` habilitado e um produto de inscrição selecionado).
+
 ## 4. Blog
 
 1. Acesse a aba **Blog** para ler ou criar posts (via admin).
