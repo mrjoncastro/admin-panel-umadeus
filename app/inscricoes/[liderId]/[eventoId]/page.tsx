@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { logInfo } from "@/lib/logger";
 import { useToast } from "@/lib/context/ToastContext";
+import { useAppConfig } from "@/lib/context/AppConfigContext";
 import type { PaymentMethod } from "@/lib/asaasFees";
 
 const PRODUTOS = [
@@ -29,6 +30,7 @@ export default function InscricaoPage() {
   const eventoId = params.eventoId as string;
 
   const { showError, showSuccess } = useToast();
+  const { config } = useAppConfig();
 
   const [form, setForm] = useState<FormFields>({
     nome: "",
@@ -158,10 +160,15 @@ export default function InscricaoPage() {
         );
       }
 
-      // 3. Exibe mensagem de sucesso
-      showSuccess(
-        "✅ Inscrição enviada com sucesso! Em breve você receberá o link de pagamento."
-      );
+      // 3. Se a API retornar URL de pagamento, redireciona
+      if (result.url) {
+        showSuccess("Redirecionando para pagamento...");
+        window.location.href = result.url as string;
+      } else {
+        showSuccess(
+          "✅ Inscrição enviada com sucesso! Em breve você receberá o link de pagamento."
+        );
+      }
     } catch (erro) {
       console.error("❌ Erro no handleSubmit:", erro);
       showError("❌ Erro ao processar inscrição.");
@@ -344,6 +351,7 @@ export default function InscricaoPage() {
           </select>
         </div>
 
+        {config.confirmaInscricoes && (
           <div className="flex items-start mt-4">
             <input
               type="checkbox"
@@ -356,6 +364,7 @@ export default function InscricaoPage() {
               liberação do pagamento pela liderança.
             </label>
           </div>
+        )}
 
           <button
             type="submit"
