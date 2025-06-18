@@ -55,8 +55,8 @@ export default function InscricaoPage() {
   const [evento, setEvento] = useState<{ titulo: string; descricao: string } | null>(null);
 
   const base = useMemo(
-    () => PRODUTOS.find((p) => p.nome === form.produto)?.valor ?? 0,
-    [form.produto],
+    () => produtos.find((p) => p.nome === form.produto)?.valor ?? 0,
+    [form.produto, produtos],
   );
   const totalGross = useMemo(
     () => calculateGross(base, paymentMethod, installments).gross,
