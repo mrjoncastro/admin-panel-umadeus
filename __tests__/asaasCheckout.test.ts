@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { buildCheckoutUrl } from '../lib/asaas';
 import { POST } from '../app/admin/api/asaas/checkout/route';
+import { calculateGross } from '../lib/asaasFees';
 import { NextRequest } from 'next/server';
-vi.mock('../lib/apiAuth', () => ({ requireRole: vi.fn() }))
-import { requireRole } from '../lib/apiAuth'
+vi.mock('../lib/clienteAuth', () => ({ requireClienteFromHost: vi.fn() }))
+import { requireClienteFromHost } from '../lib/clienteAuth'
 
 describe('buildCheckoutUrl', () => {
   it('normaliza barra ao final', () => {
@@ -16,13 +17,13 @@ describe('checkout route', () => {
   const originalEnv = process.env;
   beforeEach(() => {
     process.env = { ...originalEnv, ASAAS_API_URL: 'https://asaas', ASAAS_API_KEY: 'key', WALLETID_M24: 'wallet' };
-    (requireRole as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue({
+    (requireClienteFromHost as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue({
       pb: {
         authStore: { isValid: true },
         admins: { authWithPassword: vi.fn() },
         collection: () => ({ getFirstListItem: vi.fn() })
       } as any,
-      user: { role: 'coordenador' }
+      cliente: { nome: 'Tenant', asaas_api_key: 'key' }
     });
   });
   afterEach(() => {
@@ -87,8 +88,13 @@ describe('checkout route', () => {
     expect(sentBody.billingTypes).toEqual(basePayload.paymentMethods);
     expect(sentBody.chargeTypes).toEqual(['DETACHED']);
     expect(sentBody.installment).toBeUndefined();
-    expect(sentBody.value).toBe(12.69);
-    expect(sentBody.split[0].fixedValue).toBe(0.7);
+    const { gross, margin } = calculateGross(
+      basePayload.valorLiquido,
+      basePayload.paymentMethod as any,
+      basePayload.installments,
+    );
+    expect(sentBody.value).toBe(gross);
+    expect(sentBody.split[0].fixedValue).toBe(margin);
     expect(data.checkoutUrl).toBe('url');
   });
 
