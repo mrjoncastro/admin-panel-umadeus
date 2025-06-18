@@ -41,9 +41,9 @@ describe('CheckoutContent', () => {
     expect(screen.queryByText('Valor da parcela')).toBeNull();
   });
 
-  it('limita opções de parcela a 6x', () => {
+  it('desabilita select de parcelas quando forma de pagamento não é crédito', () => {
     render(<CheckoutPage />);
-    const select = screen.getByLabelText('Parcelas');
-    expect(select.querySelectorAll('option')).toHaveLength(6);
+    const selects = screen.getAllByRole('combobox');
+    expect(selects[1]).toBeDisabled();
   });
 });

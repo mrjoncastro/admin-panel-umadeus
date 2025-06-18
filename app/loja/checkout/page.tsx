@@ -387,11 +387,12 @@ function CheckoutContent() {
             <div>
               <label className="block text-xs text-gray-500 mb-1">Parcelas</label>
               <select
-                value={installments}
-                onChange={(e) => setInstallments(Number(e.target.value))}
-                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-black focus:outline-none"
-              >
-                {Array.from({ length: 6 }).map((_, i) => (
+                  value={installments}
+                  onChange={(e) => setInstallments(Number(e.target.value))}
+                  disabled={paymentMethod !== "credito"}
+                  className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-black focus:outline-none"
+                >
+                {Array.from({ length: 21 }).map((_, i) => (
                   <option key={i + 1} value={i + 1}>
                     {i + 1}x
                   </option>
