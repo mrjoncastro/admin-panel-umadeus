@@ -128,6 +128,12 @@ export default function EditarEventoPage() {
     e.preventDefault();
     const formElement = e.currentTarget as HTMLFormElement;
     const formData = new FormData(formElement);
+    formData.set("cobra_inscricao", cobraInscricao ? "true" : "false");
+    if (cobraInscricao && selectedProduto) {
+      formData.set("produto_inscricao", selectedProduto);
+    } else {
+      formData.delete("produto_inscricao");
+    }
     const { token, user } = getAuth();
     const res = await fetch(`/admin/api/eventos/${id}`, {
       method: "PUT",
