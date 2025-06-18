@@ -81,7 +81,9 @@ export async function createCheckout(
   const payload = {
     billingTypes:
       params.paymentMethods ?? [toAsaasBilling(params.paymentMethod)],
-    chargeTypes: isInstallmentCredit ? ["INSTALLMENT"] : ["DETACHED"],
+    chargeTypes: isInstallmentCredit
+      ? ["DETACHED", "INSTALLMENT"]
+      : ["DETACHED"],
     callback: {
       successUrl: params.successUrl,
       cancelUrl: params.errorUrl,
