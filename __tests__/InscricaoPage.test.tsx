@@ -8,6 +8,10 @@ vi.mock('next/navigation', () => ({
   useParams: () => ({ liderId: 'lid1', eventoId: 'ev1' })
 }));
 
+vi.mock('@/lib/context/AppConfigContext', () => ({
+  useAppConfig: () => ({ config: { confirmaInscricoes: true } }),
+}));
+
 describe('InscricaoPage', () => {
   it('renderiza título do evento', async () => {
     global.fetch = vi

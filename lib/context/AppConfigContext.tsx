@@ -52,7 +52,9 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
               primaryColor: cliente.cor_primary || defaultConfig.primaryColor,
               logoUrl: cliente.logo_url || defaultConfig.logoUrl,
               confirmaInscricoes:
-                cliente.confirma_inscricoes ?? defaultConfig.confirmaInscricoes,
+                cliente.confirmaInscricoes ??
+                cliente.confirma_inscricoes ??
+                defaultConfig.confirmaInscricoes,
             };
             setConfigId(cliente.id);
             setConfig(cfg);
@@ -97,7 +99,9 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
                 primaryColor: cliente.cor_primary || defaultConfig.primaryColor,
                 logoUrl: cliente.logo_url || defaultConfig.logoUrl,
                 confirmaInscricoes:
-                  cliente.confirma_inscricoes ?? defaultConfig.confirmaInscricoes,
+                  cliente.confirmaInscricoes ??
+                  cliente.confirma_inscricoes ??
+                  defaultConfig.confirmaInscricoes,
               };
               setConfigId(cliente.id);
               setConfig(cfg);
@@ -129,7 +133,9 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
                 primaryColor: data.cor_primary || defaultConfig.primaryColor,
                 logoUrl: data.logo_url || defaultConfig.logoUrl,
                 confirmaInscricoes:
-                  data.confirma_inscricoes ?? defaultConfig.confirmaInscricoes,
+                  data.confirmaInscricoes ??
+                  data.confirma_inscricoes ??
+                  defaultConfig.confirmaInscricoes,
               };
               try {
                 const { cliente } = JSON.parse(user);

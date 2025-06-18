@@ -27,7 +27,7 @@ vi.mock('@/lib/context/ThemeContext', () => ({
 
 vi.mock('@/lib/context/AppConfigContext', () => ({
   useAppConfig: () => ({
-    config: { logoUrl: '', font: '', primaryColor: '', confirmaInscricoes: false },
+    config: { logoUrl: '', font: '', primaryColor: '', confirmaInscricoes: true },
   }),
 }));
 
