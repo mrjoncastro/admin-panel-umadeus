@@ -30,7 +30,52 @@ export async function POST(req: NextRequest) {
 
     const record = await pb.collection("inscricoes").create(registroParaCriar);
 
-    return NextResponse.json(record, { status: 201 });
+    let link_pagamento: string | undefined;
+
+    if (tenantId) {
+      try {
+        const cfg = await pb
+          .collection("clientes_config")
+          .getFirstListItem(`cliente='${tenantId}'`);
+
+        if (cfg?.confirma_inscricoes === false) {
+          const base = req.nextUrl.origin;
+
+          const pedidoRes = await fetch(`${base}/admin/api/pedidos`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ inscricaoId: record.id }),
+          });
+
+          if (pedidoRes.ok) {
+            const { pedidoId, valor } = await pedidoRes.json();
+
+            const asaasRes = await fetch(`${base}/admin/api/asaas`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                pedidoId,
+                valorBruto: valor,
+                paymentMethod: "pix",
+                installments: 1,
+              }),
+            });
+
+            if (asaasRes.ok) {
+              const data = await asaasRes.json();
+              link_pagamento = data.url;
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Erro ao gerar pagamento automático:", e);
+      }
+    }
+
+    return NextResponse.json(
+      link_pagamento ? { ...record, link_pagamento } : record,
+      { status: 201 }
+    );
   } catch (err: unknown) {
     console.error("Erro ao criar inscrição:", err);
 
