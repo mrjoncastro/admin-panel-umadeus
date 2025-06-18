@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import { calculateGross } from "@/lib/asaasFees";
 import LoadingOverlay from "@/components/LoadingOverlay";
 
 interface Categoria {
@@ -42,6 +43,13 @@ export default function EditarProdutoPage() {
   const [tamanhos, setTamanhos] = useState<string[]>([]);
   const [generos, setGeneros] = useState<string[]>([]);
   const inputHex = useRef<HTMLInputElement | null>(null);
+  const [valorCliente, setValorCliente] = useState(
+    calculateGross(Number(initial?.preco ?? 0), "pix", 1).gross
+  );
+
+  useEffect(() => {
+    setValorCliente(calculateGross(Number(initial?.preco ?? 0), "pix", 1).gross);
+  }, [initial?.preco]);
 
   useEffect(() => {
     const { token, user } = getAuth();
@@ -258,8 +266,17 @@ export default function EditarProdutoPage() {
             step="0.01"
             placeholder="Ex: 39.90"
             defaultValue={String(initial.preco)}
+            onChange={(e) =>
+              setValorCliente(
+                calculateGross(Number(e.target.value || 0), "pix", 1).gross
+              )
+            }
             required
           />
+          <span className="text-xs text-gray-500 ml-1">
+            Valor para o cliente: R${" "}
+            {valorCliente.toFixed(2).replace(".", ",")}
+          </span>
           <input
             className="input-base"
             name="checkout_url"

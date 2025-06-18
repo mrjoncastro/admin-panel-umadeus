@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { calculateGross } from "@/lib/asaasFees";
 
 const faixasPreco = [
   { label: "Até R$ 50", min: 0, max: 50 },
@@ -119,7 +120,9 @@ export default function ProdutosFiltrados({
                 {p.nome}
               </h2>
               <p className="text-base font-bold text-[var(--accent-900)] mb-2">
-                R$ {p.preco.toFixed(2).replace(".", ",")}
+                R$ {calculateGross(p.preco, "pix", 1).gross
+                  .toFixed(2)
+                  .replace(".", ",")}
               </p>
               <Link
                 href={`/loja/produtos/${p.slug}`}
