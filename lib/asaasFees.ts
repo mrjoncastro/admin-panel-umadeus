@@ -36,3 +36,14 @@ export function calculateGross(
   const gross = Number(((V + margin + F) / (1 - P)).toFixed(2))
   return { gross, margin }
 }
+
+export function calculateNet(
+  G: number,
+  payment: PaymentMethod,
+  installments: number,
+): { net: number; margin: number } {
+  const { fixedFee: F, percentFee: P } = getAsaasFees(payment, installments)
+  const net = Number(((G * (1 - P) - F) / 1.07).toFixed(2))
+  const margin = Number((net * 0.07).toFixed(2))
+  return { net, margin }
+}

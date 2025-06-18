@@ -6,7 +6,7 @@ import { Suspense, useState, useEffect } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { CheckCircle } from "lucide-react";
 import { hexToPtName } from "@/utils/colorNamePt";
-import { calculateGross, PaymentMethod } from "@/lib/asaasFees";
+import { calculateGross, calculateNet, PaymentMethod } from "@/lib/asaasFees";
 import {
   MAX_ITEM_DESCRIPTION_LENGTH,
   MAX_ITEM_NAME_LENGTH,
@@ -128,11 +128,16 @@ function CheckoutContent() {
               /* ignore */
             }
           }
+          const grossUnit = calculateGross(
+            i.preco,
+            paymentMethod,
+            installments,
+          ).gross;
           return {
             name: i.nome.slice(0, MAX_ITEM_NAME_LENGTH),
             description: i.descricao?.slice(0, MAX_ITEM_DESCRIPTION_LENGTH),
             quantity: i.quantidade,
-            value: i.preco,
+            value: grossUnit,
             fotoBase64,
           };
         })
@@ -149,11 +154,11 @@ function CheckoutContent() {
         credito: "CREDIT_CARD",
       } as const;
 
-      const valorBruto = calculateGross(
-        total,
+      const { net: valorBruto } = calculateNet(
+        displayTotalGross,
         paymentMethod,
-        installments
-      ).gross;
+        installments,
+      );
 
       const payload = {
         valorBruto,
@@ -196,7 +201,7 @@ function CheckoutContent() {
         body: JSON.stringify({
           usuario: user?.id,
           itens: itensPayload,
-          valor_total: total,
+          valor_total: displayTotalGross,
           status: "pendente",
           metodo_pagamento:
             paymentMethod === "pix"
