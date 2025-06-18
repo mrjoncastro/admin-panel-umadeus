@@ -30,7 +30,12 @@ export default function DetalheCompraAdmin() {
         const itens = Array.isArray(data.itens)
           ? data.itens.map((i) => {
               if ("id" in i || "sku" in i) return i;
-              return { ...i, _uuid: crypto.randomUUID() };
+              return {
+                ...i,
+                _uuid: globalThis.crypto?.randomUUID
+                  ? globalThis.crypto.randomUUID()
+                  : Math.random().toString(36).slice(2),
+              };
             })
           : [];
         setCompra({ ...data, itens });
