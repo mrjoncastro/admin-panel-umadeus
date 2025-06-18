@@ -84,7 +84,7 @@ describe('checkout route', () => {
     expect(sentBody.externalReference).toBe(
       'cliente_cli1_usuario_user1_inscricao_ins1'
     );
-    expect(sentBody.billingTypes).toEqual(['PIX']);
+    expect(sentBody.billingTypes).toEqual(basePayload.paymentMethods);
     expect(sentBody.chargeTypes).toEqual(['DETACHED']);
     expect(sentBody.installment).toBeUndefined();
     expect(sentBody.value).toBe(12.69);
@@ -99,19 +99,20 @@ describe('checkout route', () => {
     });
     global.fetch = fetchMock as unknown as typeof fetch;
 
+    const payload = {
+      ...basePayload,
+      paymentMethod: 'credito',
+      paymentMethods: ['CREDIT_CARD'],
+    };
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({
-        ...basePayload,
-        paymentMethod: 'credito',
-        paymentMethods: ['CREDIT_CARD'],
-      })
+      body: JSON.stringify(payload)
     });
 
     const res = await POST(req as unknown as NextRequest);
     await res.json();
     const sentBody = JSON.parse(fetchMock.mock.calls[0][1].body);
-    expect(sentBody.billingTypes).toEqual(['CREDIT_CARD']);
+    expect(sentBody.billingTypes).toEqual(payload.paymentMethods);
     expect(sentBody.chargeTypes).toEqual(['DETACHED']);
     expect(sentBody.installment).toBeUndefined();
   });
@@ -123,19 +124,21 @@ describe('checkout route', () => {
     });
     global.fetch = fetchMock as unknown as typeof fetch;
 
+    const payload = {
+      ...basePayload,
+      paymentMethod: 'credito',
+      installments: 3,
+      paymentMethods: ['CREDIT_CARD'],
+    };
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({
-        ...basePayload,
-        paymentMethod: 'credito',
-        installments: 3,
-        paymentMethods: ['CREDIT_CARD'],
-      })
+      body: JSON.stringify(payload)
     });
 
     const res = await POST(req as unknown as NextRequest);
     await res.json();
     const sentBody = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(sentBody.billingTypes).toEqual(payload.paymentMethods);
     expect(sentBody.chargeTypes).toEqual(['INSTALLMENT']);
     expect(sentBody.installment).toEqual({ maxInstallmentCount: 3 });
   });

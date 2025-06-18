@@ -148,7 +148,9 @@ function CheckoutContent() {
           cidade,
         },
         installments,
-        paymentMethods: ["PIX", "CREDIT_CARD"],
+        paymentMethods: [
+          paymentMethod === "pix" ? "PIX" : "CREDIT_CARD",
+        ],
       };
 
       const token = localStorage.getItem("pb_token");
