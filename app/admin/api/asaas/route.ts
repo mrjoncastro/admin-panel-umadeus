@@ -34,8 +34,12 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { pedidoId, valorLiquido, paymentMethod, installments = 1 } =
-      await req.json();
+    const {
+      pedidoId,
+      valorLiquido,
+      paymentMethod,
+      installments = 1,
+    } = await req.json();
     logInfo("📦 Dados recebidos:", {
       pedidoId,
       valorLiquido,
@@ -183,7 +187,7 @@ export async function POST(req: NextRequest) {
     const { gross, margin } = calculateGross(
       parsedValor,
       paymentMethod as PaymentMethod,
-      installments,
+      installments
     );
 
     const paymentPayload = {
@@ -230,7 +234,7 @@ export async function POST(req: NextRequest) {
     logInfo("✅ Cobrança criada. Link: " + link);
 
     // 🔹 Atualizar pedido
-    const taxaAplicada = Number((gross - parsedValor * 1.07).toFixed(2));
+    const taxaAplicada = Number((gross - parsedValor - margin).toFixed(2));
     await pb.collection("pedidos").update(pedido.id, {
       link_pagamento: link,
       valorLiquidoDesejado: parsedValor,
