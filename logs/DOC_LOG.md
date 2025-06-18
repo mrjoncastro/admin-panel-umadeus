@@ -142,3 +142,5 @@
 ## [2025-07-05] Campo `confirma_inscricoes` documentado e suportado pelo AppConfig. Lint e build executados.
 ## [2025-07-05] Guia iniciar-tour atualizado explicando checkbox Modo de Demonstração em Configurações. Lint e build executados.
 ## [2025-07-05] Exibido total bruto na página de inscrição e teste atualizado. Lint e build executados.
+
+## [2025-07-06] Guia iniciar-tour complementado com explicações sobre a opção "Confirmar inscrições manualmente?" e cobranças automáticas em eventos com `cobra_inscricao`. - Lint: falhou (next not found) - Build: falhou (next not found)
