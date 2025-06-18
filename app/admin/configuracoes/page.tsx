@@ -83,6 +83,9 @@ export default function ConfiguracoesPage() {
   const [font, setFont] = useState(config.font);
   const [primaryColor, setPrimaryColor] = useState(config.primaryColor);
   const [logoUrl, setLogoUrl] = useState(config.logoUrl);
+  const [confirmaInscricoes, setConfirmaInscricoes] = useState(
+    config.confirmaInscricoes,
+  );
   const [error, setError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -143,11 +146,12 @@ export default function ConfiguracoesPage() {
           cor_primary: primaryColor,
           logo_url: logoUrl,
           font,
+          confirma_inscricoes: confirmaInscricoes,
         }),
       });
     }
 
-    updateConfig({ font, primaryColor, logoUrl });
+    updateConfig({ font, primaryColor, logoUrl, confirmaInscricoes });
 
     try {
       const token = localStorage.getItem("pb_token");
@@ -163,6 +167,7 @@ export default function ConfiguracoesPage() {
           cor_primary: primaryColor,
           logo_url: logoUrl,
           font,
+          confirma_inscricoes: confirmaInscricoes,
         }),
       });
     } catch (err) {
@@ -249,6 +254,15 @@ export default function ConfiguracoesPage() {
             <span className="text-xs text-neutral-500">Prévia</span>
           </div>
         )}
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={confirmaInscricoes}
+            onChange={(e) => setConfirmaInscricoes(e.target.checked)}
+            className="checkbox-base"
+          />
+          Confirmar inscrições manualmente?
+        </label>
         <div className="mt-4">
           <span className="block mb-1 text-sm">Preview do botão:</span>
           <button

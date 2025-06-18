@@ -18,6 +18,7 @@ export async function GET(req: NextRequest) {
         cor_primary: cfg.cor_primary ?? "",
         logo_url: cfg.logo_url ?? "",
         font: cfg.font ?? "",
+        confirma_inscricoes: cfg.confirma_inscricoes ?? false,
       },
       { status: 200 }
     );
@@ -34,7 +35,7 @@ export async function PUT(req: NextRequest) {
   }
   const { pb, user } = auth;
   try {
-    const { cor_primary, logo_url, font } = await req.json();
+    const { cor_primary, logo_url, font, confirma_inscricoes } = await req.json();
     const cfg = await pb
       .collection("clientes_config")
       .getFirstListItem(`cliente='${user.cliente}'`);
@@ -42,6 +43,7 @@ export async function PUT(req: NextRequest) {
       cor_primary,
       logo_url,
       font,
+      confirma_inscricoes,
     });
     return NextResponse.json(updated, { status: 200 });
   } catch (err) {

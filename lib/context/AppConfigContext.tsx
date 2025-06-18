@@ -10,12 +10,14 @@ export type AppConfig = {
   font: string;
   primaryColor: string;
   logoUrl: string;
+  confirmaInscricoes: boolean;
 };
 
 const defaultConfig: AppConfig = {
   font: "var(--font-geist)",
   primaryColor: "#7c3aed",
   logoUrl: "/img/logo_umadeus_branco.png",
+  confirmaInscricoes: false,
 };
 
 type AppConfigContextType = {
@@ -49,6 +51,8 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
               font: cliente.font || defaultConfig.font,
               primaryColor: cliente.cor_primary || defaultConfig.primaryColor,
               logoUrl: cliente.logo_url || defaultConfig.logoUrl,
+              confirmaInscricoes:
+                cliente.confirma_inscricoes ?? defaultConfig.confirmaInscricoes,
             };
             setConfigId(cliente.id);
             setConfig(cfg);
@@ -92,6 +96,8 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
                 font: cliente.font || defaultConfig.font,
                 primaryColor: cliente.cor_primary || defaultConfig.primaryColor,
                 logoUrl: cliente.logo_url || defaultConfig.logoUrl,
+                confirmaInscricoes:
+                  cliente.confirma_inscricoes ?? defaultConfig.confirmaInscricoes,
               };
               setConfigId(cliente.id);
               setConfig(cfg);
@@ -122,6 +128,8 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
                 font: data.font || defaultConfig.font,
                 primaryColor: data.cor_primary || defaultConfig.primaryColor,
                 logoUrl: data.logo_url || defaultConfig.logoUrl,
+                confirmaInscricoes:
+                  data.confirma_inscricoes ?? defaultConfig.confirmaInscricoes,
               };
               try {
                 const { cliente } = JSON.parse(user);
@@ -185,6 +193,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
             cor_primary: newCfg.primaryColor,
             logo_url: newCfg.logoUrl,
             font: newCfg.font,
+            confirma_inscricoes: newCfg.confirmaInscricoes,
           }),
         }).catch((err) => console.error("Erro ao salvar config:", err));
       }
