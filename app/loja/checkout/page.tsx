@@ -35,6 +35,9 @@ function CheckoutContent() {
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
   const [installments, setInstallments] = useState(1);
+  const [gross, setGross] = useState(
+    () => calculateGross(total, "pix", 1).gross,
+  );
 
   useEffect(() => {
     if (user) {
@@ -58,15 +61,9 @@ function CheckoutContent() {
 
   const pedidoId = searchParams.get("pedido") || Date.now().toString();
   const total = itens.reduce((sum, i) => sum + i.preco * i.quantidade, 0);
-
-  const pixTotal = useMemo(
-    () => calculateGross(total, "pix", 1).gross,
-    [total],
-  );
-
-  const installmentGross = useMemo(
-    () => calculateGross(total, paymentMethod, installments).gross,
-    [total, paymentMethod, installments],
+  const totalBruto = itens.reduce(
+    (sum, i) => sum + calculateGross(i.preco, "pix", 1).gross * i.quantidade,
+    0,
   );
 
   useEffect(() => {
@@ -120,7 +117,7 @@ function CheckoutContent() {
             value: i.preco,
             fotoBase64,
           };
-        })
+        }),
       );
 
       if (!tenantId || !user?.id) {
@@ -170,8 +167,8 @@ function CheckoutContent() {
             paymentMethod === "pix"
               ? "pix"
               : paymentMethod === "boleto"
-              ? "boleto"
-              : "cartao",
+                ? "boleto"
+                : "cartao",
           parcelas: installments,
           externalReference: `cliente_${user?.cliente}_usuario_${user?.id}`,
           endereco_entrega: { endereco, numero, estado, cep, cidade },
@@ -352,7 +349,10 @@ function CheckoutContent() {
                   </div>
                 </div>
                 <div className="font-semibold">
-                  {formatCurrency(item.preco * item.quantidade)}
+                  {formatCurrency(
+                    calculateGross(item.preco, "pix", 1).gross *
+                      item.quantidade,
+                  )}
                 </div>
               </li>
             ))}
@@ -360,7 +360,7 @@ function CheckoutContent() {
           <div className="border-t pt-4 space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Subtotal</span>
-              <span>{formatCurrency(total)}</span>
+              <span>{formatCurrency(totalBruto)}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Frete</span>
@@ -368,7 +368,7 @@ function CheckoutContent() {
             </div>
             <div className="flex justify-between text-base font-bold pt-1">
               <span>Total</span>
-              <span>{formatCurrency(total)}</span>
+              <span>{formatCurrency(totalBruto)}</span>
             </div>
           </div>
           <div className="mt-4 space-y-3">
@@ -390,7 +390,9 @@ function CheckoutContent() {
               </select>
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Parcelas</label>
+              <label className="block text-xs text-gray-500 mb-1">
+                Parcelas
+              </label>
               <select
                 value={installments}
                 onChange={(e) => setInstallments(Number(e.target.value))}
