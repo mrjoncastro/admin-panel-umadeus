@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import createPocketBase from "@/lib/pocketbase";
 import { logConciliacaoErro } from "@/lib/server/logger";
+import type { Inscricao, Pedido } from "@/types";
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
@@ -15,9 +16,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const inscricao = await pb.collection("inscricoes").getOne(inscricaoId, {
-      expand: "campo,criado_por",
-    });
+    const inscricao = await pb
+      .collection("inscricoes")
+      .getOne<Inscricao>(inscricaoId, {
+        expand: "campo,criado_por",
+      });
 
     if (!inscricao) {
       return NextResponse.json(
@@ -52,7 +55,7 @@ export async function POST(req: NextRequest) {
 
     const valor = produtoRecord?.preco ?? 0;
 
-    const pedido = await pb.collection("pedidos").create({
+    const pedido = await pb.collection("pedidos").create<Pedido>({
       id_inscricao: inscricaoId,
       valor,
       status: "pendente",

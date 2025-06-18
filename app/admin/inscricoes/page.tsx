@@ -10,7 +10,7 @@ import { CheckCircle, XCircle, Pencil, Trash2, Eye } from "lucide-react";
 import TooltipIcon from "../components/TooltipIcon";
 import { useToast } from "@/lib/context/ToastContext";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
-import type { Evento } from "@/types";
+import type { Evento, Inscricao as InscricaoRecord, Pedido } from "@/types";
 
 const statusBadge = {
   pendente: "bg-yellow-100 text-yellow-800",
@@ -183,11 +183,18 @@ export default function ListaInscricoesPage() {
       setConfirmandoId(id);
 
       // 🔹 1. Buscar inscrição com expand do campo
-      const inscricao = await pb.collection("inscricoes").getOne(id, {
-        expand: "campo",
-      });
+      const inscricao = await pb
+        .collection("inscricoes")
+        .getOne<InscricaoRecord>(id, {
+          expand: "campo",
+        });
 
-      const campo = inscricao.expand?.campo;
+      type CampoExpand = {
+        id: string;
+        nome: string;
+        responsavel?: string;
+      };
+      const campo = inscricao.expand?.campo as CampoExpand | undefined;
 
       // 🔹 2. Carregar produto escolhido
       let produtoRecord: Record<string, any> | undefined;
@@ -209,7 +216,7 @@ export default function ListaInscricoesPage() {
         } catch {}
       }
 
-      const pedido = await pb.collection("pedidos").create({
+      const pedido = await pb.collection("pedidos").create<Pedido>({
         id_inscricao: id,
         valor: produtoRecord?.preco ?? 0,
         status: "pendente",
@@ -250,7 +257,7 @@ export default function ListaInscricoesPage() {
       }
 
       // 4. Atualizar inscrição com o ID do pedido
-      await pb.collection("inscricoes").update(id, {
+      await pb.collection("inscricoes").update<InscricaoRecord>(id, {
         pedido: pedido.id, // ✅ atualiza campo pedido
         status: "aguardando_pagamento",
         confirmado_por_lider: true,
@@ -560,10 +567,12 @@ export default function ListaInscricoesPage() {
           onSave={async (
             dadosAtualizados: Partial<Inscricao & { eventoId: string }>
           ) => {
-            await pb.collection("inscricoes").update(inscricaoEmEdicao.id, {
-              ...dadosAtualizados,
-              evento: dadosAtualizados.eventoId ?? inscricaoEmEdicao.eventoId,
-            });
+              await pb
+                .collection("inscricoes")
+                .update<InscricaoRecord>(inscricaoEmEdicao.id, {
+                ...dadosAtualizados,
+                evento: dadosAtualizados.eventoId ?? inscricaoEmEdicao.eventoId,
+              });
             setInscricoes((prev) =>
               prev.map((i) =>
                 i.id === inscricaoEmEdicao.id
@@ -594,11 +603,11 @@ export default function ListaInscricoesPage() {
               </button>
               <button
                 onClick={async () => {
-                  await pb
-                    .collection("inscricoes")
-                    .update(inscricaoParaRecusar.id, {
-                      status: "cancelado",
-                    });
+                    await pb
+                      .collection("inscricoes")
+                      .update<InscricaoRecord>(inscricaoParaRecusar.id, {
+                        status: "cancelado",
+                      });
                   setInscricoes((prev) =>
                     prev.map((i) =>
                       i.id === inscricaoParaRecusar.id
