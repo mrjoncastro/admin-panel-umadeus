@@ -444,9 +444,9 @@ function CheckoutContent() {
           <div className="border-t pt-4 space-y-1">
             <div className="flex justify-between text-base">
               <span>Total a pagar</span>
-              <span>{formatCurrency(displayTotalGross)}</span>
+              <span>{formatCurrency(totalGross)}</span>
             </div>
-            {installments > 1 && (
+            {paymentMethod === "credito" && installments > 1 && (
               <div className="flex justify-between text-sm text-gray-500">
                 <span>Valor da parcela</span>
                 <span>{formatCurrency(totalGross / installments)}</span>
