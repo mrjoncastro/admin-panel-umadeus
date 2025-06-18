@@ -112,7 +112,6 @@ export default function EditarProdutoPage() {
           preco: data.preco,
           descricao: data.descricao,
           detalhes: data.detalhes,
-          checkout_url: data.checkout_url,
           tamanhos: tams,
           generos: gens,
           categoria: data.categoria,
@@ -276,17 +275,7 @@ export default function EditarProdutoPage() {
           <span className="text-xs text-gray-500 ml-1">
             Valor para o cliente: R${" "}
             {valorCliente.toFixed(2).replace(".", ",")}
-          </span>
-          <input
-            className="input-base"
-            name="checkout_url"
-            type="url"
-            placeholder="Ex: https://loja.com/produto"
-            defaultValue={String(initial.checkout_url || "")}
-          />
-          <span className="text-xs text-gray-400 ml-1">
-            Link externo para checkout (opcional)
-          </span>
+          </span>      
         </fieldset>
 
         {/* Categoria */}

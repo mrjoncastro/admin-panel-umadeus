@@ -87,7 +87,6 @@ export type Produto = {
   descricao?: string;
   detalhes?: string;
   checkout_url?: string;
-  checkoutUrl?: string; // alias usado no formulário do admin
   ativo?: boolean;
   user_org?: string;
   cliente?: string;
