@@ -135,3 +135,4 @@
 ## [2025-06-17] Tratamento de erro em /loja/api/inscricoes aprimorado usando ClientResponseError. Lint e build executados.
 
 ## [2025-06-17] Atualizada mensagem 409 em inscricoes
+## [2025-07-02] Documentação atualizada indicando `npm install` antes de rodar lint, build ou testes. Nota adicionada ao CONTRIBUTING. Impacto: evitar erros por dependências ausentes.

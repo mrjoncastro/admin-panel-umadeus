@@ -50,7 +50,7 @@ Consulte a [documentação de deploy do Next.js](https://nextjs.org/docs/app/bui
 ## Lint e boas práticas
 
 Execute `npm run lint` para verificar problemas de código. Evite o uso de `any` especificando tipos adequados e sempre inclua todas as dependências utilizadas dentro dos hooks `useEffect`.
-Antes de rodar o lint ou o TypeScript (`tsc`), execute `npm install` para garantir que todas as dependências estejam disponíveis.
+Antes de rodar `npm run lint`, `npm run build` ou `npm run test`, execute `npm install` para garantir que todos os pacotes (como **Next** e **Vitest**) estejam disponíveis.
 
 ## Funcionalidades Adicionais
 
