@@ -32,23 +32,6 @@ function LoginClient() {
   return (
     <LayoutWrapper>
       <div className="min-h-screen flex">
-        {/* Lado esquerdo com animação e ícone */}
-        <div className="w-1/2 hidden md:flex flex-col justify-center items-center bg-animated text-[var(--text-header-primary)] p-12 space-y-6">
-          <div className="w-28 h-28 animate-bounce">
-            <Image
-              src={config.logoUrl || "/img/logo_umadeus_branco.png"}
-              alt="Logo do cliente"
-              width={112}
-              height={112}
-              className="w-full h-full object-contain"
-            />
-          </div>
-          <h2 className="text-xl md:text-2xl text-center font-semibold">
-            <TypingEffect text=" "/>
-          </h2>
-        </div>
-
-        {/* Lado direito com formulário */}
         <div className="w-full md:w-1/2 flex flex-col justify-center items-center px-6 md:px-5 py-3 text-[var(--text-primary)]">
           <div className="w-full max-w-md">
             {/* Formulário */}
