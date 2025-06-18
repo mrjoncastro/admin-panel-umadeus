@@ -409,10 +409,12 @@ function CheckoutContent() {
               <span>Total a pagar</span>
               <span>{formatCurrency(pixTotal)}</span>
             </div>
-            <div className="flex justify-between text-sm text-gray-500">
-              <span>Valor da parcela</span>
-              <span>{formatCurrency(installmentGross / installments)}</span>
-            </div>
+            {installments > 1 && (
+              <div className="flex justify-between text-sm text-gray-500">
+                <span>Valor da parcela</span>
+                <span>{formatCurrency(gross / installments)}</span>
+              </div>
+            )}
           </div>
           <button
             onClick={handleConfirm}
