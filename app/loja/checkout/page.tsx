@@ -2,7 +2,7 @@
 
 import { useCart } from "@/lib/context/CartContext";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState, useEffect, useMemo } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { CheckCircle } from "lucide-react";
 import { hexToPtName } from "@/utils/colorNamePt";
@@ -18,6 +18,7 @@ function formatCurrency(n: number) {
 
 function CheckoutContent() {
   const { itens, clearCart } = useCart();
+  const total = itens.reduce((sum, i) => sum + i.preco * i.quantidade, 0);
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isLoggedIn, user, tenantId } = useAuthContext();
@@ -35,8 +36,8 @@ function CheckoutContent() {
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
   const [installments, setInstallments] = useState(1);
-  const [gross, setGross] = useState(
-    () => calculateGross(total, "pix", 1).gross,
+  const [gross, setGross] = useState(() =>
+    calculateGross(total, "pix", 1).gross
   );
 
   useEffect(() => {
@@ -60,11 +61,6 @@ function CheckoutContent() {
   }, [isLoggedIn, router]);
 
   const pedidoId = searchParams.get("pedido") || Date.now().toString();
-  const total = itens.reduce((sum, i) => sum + i.preco * i.quantidade, 0);
-  const totalBruto = itens.reduce(
-    (sum, i) => sum + calculateGross(i.preco, "pix", 1).gross * i.quantidade,
-    0,
-  );
 
   useEffect(() => {
     if (paymentMethod !== "credito" && installments !== 1) {
@@ -72,6 +68,10 @@ function CheckoutContent() {
     }
   }, [paymentMethod, installments]);
 
+  useEffect(() => {
+    const { gross: g } = calculateGross(total, paymentMethod, installments);
+    setGross(g);
+  }, [total, paymentMethod, installments]);
 
   function maskTelefone(valor: string) {
     // Remove tudo que não for número
@@ -117,7 +117,7 @@ function CheckoutContent() {
             value: i.preco,
             fotoBase64,
           };
-        }),
+        })
       );
 
       if (!tenantId || !user?.id) {
@@ -144,9 +144,7 @@ function CheckoutContent() {
           cidade,
         },
         installments,
-        paymentMethods: [
-          paymentMethod === "pix" ? "PIX" : "CREDIT_CARD",
-        ],
+        paymentMethods: ["PIX", "CREDIT_CARD"],
       };
 
       const token = localStorage.getItem("pb_token");
@@ -167,8 +165,8 @@ function CheckoutContent() {
             paymentMethod === "pix"
               ? "pix"
               : paymentMethod === "boleto"
-                ? "boleto"
-                : "cartao",
+              ? "boleto"
+              : "cartao",
           parcelas: installments,
           externalReference: `cliente_${user?.cliente}_usuario_${user?.id}`,
           endereco_entrega: { endereco, numero, estado, cep, cidade },
@@ -349,10 +347,7 @@ function CheckoutContent() {
                   </div>
                 </div>
                 <div className="font-semibold">
-                  {formatCurrency(
-                    calculateGross(item.preco, "pix", 1).gross *
-                      item.quantidade,
-                  )}
+                  {formatCurrency(item.preco * item.quantidade)}
                 </div>
               </li>
             ))}
@@ -360,7 +355,7 @@ function CheckoutContent() {
           <div className="border-t pt-4 space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Subtotal</span>
-              <span>{formatCurrency(totalBruto)}</span>
+              <span>{formatCurrency(total)}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Frete</span>
@@ -368,7 +363,7 @@ function CheckoutContent() {
             </div>
             <div className="flex justify-between text-base font-bold pt-1">
               <span>Total</span>
-              <span>{formatCurrency(totalBruto)}</span>
+              <span>{formatCurrency(total)}</span>
             </div>
           </div>
           <div className="mt-4 space-y-3">
@@ -390,15 +385,13 @@ function CheckoutContent() {
               </select>
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1">
-                Parcelas
-              </label>
+              <label className="block text-xs text-gray-500 mb-1">Parcelas</label>
               <select
                 value={installments}
                 onChange={(e) => setInstallments(Number(e.target.value))}
                 className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-black focus:outline-none"
               >
-                {Array.from({ length: 21 }).map((_, i) => (
+                {Array.from({ length: 6 }).map((_, i) => (
                   <option key={i + 1} value={i + 1}>
                     {i + 1}x
                   </option>
@@ -409,7 +402,7 @@ function CheckoutContent() {
           <div className="border-t pt-4 space-y-1">
             <div className="flex justify-between text-base">
               <span>Total a pagar</span>
-              <span>{formatCurrency(pixTotal)}</span>
+              <span>{formatCurrency(gross)}</span>
             </div>
             {installments > 1 && (
               <div className="flex justify-between text-sm text-gray-500">

@@ -40,4 +40,10 @@ describe('CheckoutContent', () => {
     render(<CheckoutPage />);
     expect(screen.queryByText('Valor da parcela')).toBeNull();
   });
+
+  it('limita opções de parcela a 6x', () => {
+    render(<CheckoutPage />);
+    const select = screen.getByLabelText('Parcelas');
+    expect(select.querySelectorAll('option')).toHaveLength(6);
+  });
 });
