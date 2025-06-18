@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { useState } from "react";
 import { hexToPtName } from "@/utils/colorNamePt";
+import { calculateGross } from "@/lib/asaasFees";
 
 function formatCurrency(n: number) {
   return `R$ ${n.toFixed(2).replace(".", ",")}`;
@@ -17,6 +18,10 @@ export default function CarrinhoPage() {
   const router = useRouter();
   const [showPrompt, setShowPrompt] = useState(false);
   const total = itens.reduce((sum, i) => sum + i.preco * i.quantidade, 0);
+  const totalBruto = itens.reduce(
+    (sum, i) => sum + calculateGross(i.preco, "pix", 1).gross * i.quantidade,
+    0,
+  );
 
   function handleCheckout() {
     if (!isLoggedIn) {
@@ -80,7 +85,9 @@ export default function CarrinhoPage() {
                 <p className="text-xs text-gray-400">Qtd: {item.quantidade}</p>
               </div>
               <div className="font-semibold text-accent">
-                {formatCurrency(item.preco * item.quantidade)}
+                {formatCurrency(
+                  calculateGross(item.preco, "pix", 1).gross * item.quantidade,
+                )}
               </div>
               <button
                 onClick={() => removeItem(item.variationId)}
@@ -94,7 +101,7 @@ export default function CarrinhoPage() {
         </ul>
         <div className="flex justify-between items-center border-t pt-4 font-semibold text-lg">
           <span>Total</span>
-          <span className="tracking-wider">{formatCurrency(total)}</span>
+          <span className="tracking-wider">{formatCurrency(totalBruto)}</span>
         </div>
         <div className="flex flex-col sm:flex-row justify-end gap-4 mt-8">
           <button
@@ -111,11 +118,11 @@ export default function CarrinhoPage() {
           </button>
           {showPrompt && !isLoggedIn && (
             <div className="text-sm text-center text-gray-600 mt-4 w-full">
-              Para finalizar a compra, é preciso ter uma conta.{' '}
+              Para finalizar a compra, é preciso ter uma conta.{" "}
               <button onClick={goToSignup} className="underline">
                 Criar conta
-              </button>{' '}
-              ou{' '}
+              </button>{" "}
+              ou{" "}
               <button onClick={goToLogin} className="underline">
                 fazer login
               </button>
@@ -127,4 +134,3 @@ export default function CarrinhoPage() {
     </main>
   );
 }
-

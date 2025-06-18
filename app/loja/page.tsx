@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import createPocketBase from "@/lib/pocketbase";
+import { calculateGross } from "@/lib/asaasFees";
 
 interface Produto {
   id: string;
@@ -27,14 +28,13 @@ export default function Home() {
         const filterStr = tenantId
           ? `ativo = true && cliente='${tenantId}'`
           : "ativo = true";
-        const list = await pb
-          .collection("produtos")
-          .getList<Produto>(1, 6, {
-            filter: filterStr,
-            sort: "-created",
-          });
+        const list = await pb.collection("produtos").getList<Produto>(1, 6, {
+          filter: filterStr,
+          sort: "-created",
+        });
         const prods = list.items.map((p) => ({
           ...p,
+          preco: calculateGross(p.preco, "pix", 1).gross,
           imagens: (p.imagens || []).map((img) => pb.files.getURL(p, img)),
         }));
         setProdutosDestaque(prods);
@@ -44,8 +44,6 @@ export default function Home() {
     }
     fetchProdutos();
   }, []);
-
-
 
   return (
     <>
