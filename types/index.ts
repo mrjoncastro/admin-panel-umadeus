@@ -115,14 +115,13 @@ export type Evento = {
   imagem?: string;
   status: "realizado" | "em breve";
   cobra_inscricao?: boolean;
+  /** Produto associado à inscrição do evento */
+  produto_inscricao?: string;
   produtos?: string[];
   expand?: {
     produtos?: Produto[];
   };
   created?: string;
-  expand?: {
-    produtos?: Produto[];
-  };
 };
 
 export type Cliente = {
