@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import createPocketBase from "@/lib/pocketbase";
+import { useToast } from "@/lib/context/ToastContext";
 
 export default function RedefinirSenhaClient() {
   const searchParams = useSearchParams();
@@ -12,28 +13,25 @@ export default function RedefinirSenhaClient() {
 
   const [novaSenha, setNovaSenha] = useState("");
   const [confirmacao, setConfirmacao] = useState("");
-  const [mensagem, setMensagem] = useState("");
-  const [erro, setErro] = useState("");
+  const { showError, showSuccess } = useToast();
 
   useEffect(() => {
-    if (!token) setErro("Token de redefinição inválido ou ausente.");
-  }, [token]);
+    if (!token) showError("Token de redefinição inválido ou ausente.");
+  }, [token, showError]);
 
   const handleSubmit = async () => {
-    setErro("");
-    setMensagem("");
     if (novaSenha !== confirmacao) {
-      setErro("As senhas não coincidem.");
+      showError("As senhas não coincidem.");
       return;
     }
     try {
       await pb
         .collection("usuarios")
         .confirmPasswordReset(token, novaSenha, confirmacao);
-        setMensagem("Senha redefinida com sucesso!");
-        setTimeout(() => router.push("/login"), 2000);
+      showSuccess("Senha redefinida com sucesso!");
+      setTimeout(() => router.push("/login"), 2000);
     } catch {
-      setErro("Não foi possível redefinir. O link pode ter expirado.");
+      showError("Não foi possível redefinir. O link pode ter expirado.");
     }
   };
 
@@ -57,8 +55,7 @@ export default function RedefinirSenhaClient() {
           onChange={(e) => setConfirmacao(e.target.value)}
         />
 
-        {erro && <p className="text-sm text-red-500">{erro}</p>}
-        {mensagem && <p className="text-sm text-green-500">{mensagem}</p>}
+
 
         <button
           onClick={handleSubmit}
