@@ -2,7 +2,6 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useAppConfig } from "@/lib/context/AppConfigContext";
 import LoginForm from "../components/LoginForm";
 import SignUpForm from "../components/SignUpForm";
 import LayoutWrapper from "../components/LayoutWrapper";
@@ -18,7 +17,6 @@ export default function LoginPage() {
 function LoginClient() {
   "use client";
   const searchParams = useSearchParams();
-  const { config } = useAppConfig();
   const initial = searchParams.get("view") === "signup" ? "signup" : "login";
   const [view, setView] = useState<"login" | "signup">(initial);
   const redirectTo = searchParams.get("redirect") || undefined;
@@ -65,17 +63,3 @@ function LoginClient() {
   );
 }
 
-// Opcional: animação de digitação (caso use em outro local)
-function TypingEffect({ text }: { text: string }) {
-  const [displayedText, setDisplayedText] = useState("");
-  useEffect(() => {
-    let i = 0;
-    const interval = setInterval(() => {
-      setDisplayedText((prev) => prev + text[i]);
-      i++;
-      if (i === text.length) clearInterval(interval);
-    }, 40);
-    return () => clearInterval(interval);
-  }, [text]);
-  return <span>{displayedText}</span>;
-}

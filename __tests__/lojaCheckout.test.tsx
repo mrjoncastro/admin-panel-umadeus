@@ -1,0 +1,49 @@
+/* @vitest-environment jsdom */
+import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
+import CheckoutPage from '@/app/loja/checkout/page';
+
+vi.mock('@/lib/context/CartContext', () => ({
+  useCart: () => ({
+    itens: [
+      {
+        id: 'p1',
+        variationId: 'p1-',
+        nome: 'Produto',
+        preco: 10,
+        quantidade: 1,
+        slug: 'prod1',
+        generos: '',
+        tamanhos: '',
+        cores: '',
+      },
+    ],
+    clearCart: vi.fn(),
+  }),
+}));
+
+vi.mock('@/lib/context/AuthContext', () => ({
+  useAuthContext: () => ({
+    isLoggedIn: true,
+    user: { id: 'u1', nome: 'User' },
+    tenantId: 't1',
+  }),
+}));
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ replace: vi.fn(), push: vi.fn() }),
+  useSearchParams: () => ({ get: () => null }),
+}));
+
+describe('CheckoutContent', () => {
+  it('não exibe valor da parcela quando há uma parcela', () => {
+    render(<CheckoutPage />);
+    expect(screen.queryByText('Valor da parcela')).toBeNull();
+  });
+
+  it('limita opções de parcela a 6x', () => {
+    render(<CheckoutPage />);
+    const select = screen.getByLabelText('Parcelas');
+    expect(select.querySelectorAll('option')).toHaveLength(6);
+  });
+});

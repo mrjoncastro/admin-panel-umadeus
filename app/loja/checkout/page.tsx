@@ -18,6 +18,7 @@ function formatCurrency(n: number) {
 
 function CheckoutContent() {
   const { itens, clearCart } = useCart();
+  const total = itens.reduce((sum, i) => sum + i.preco * i.quantidade, 0);
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isLoggedIn, user, tenantId } = useAuthContext();
@@ -60,7 +61,6 @@ function CheckoutContent() {
   }, [isLoggedIn, router]);
 
   const pedidoId = searchParams.get("pedido") || Date.now().toString();
-  const total = itens.reduce((sum, i) => sum + i.preco * i.quantidade, 0);
 
   useEffect(() => {
     if (paymentMethod !== "credito" && installments !== 1) {
@@ -391,7 +391,7 @@ function CheckoutContent() {
                 onChange={(e) => setInstallments(Number(e.target.value))}
                 className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-black focus:outline-none"
               >
-                {Array.from({ length: 21 }).map((_, i) => (
+                {Array.from({ length: 6 }).map((_, i) => (
                   <option key={i + 1} value={i + 1}>
                     {i + 1}x
                   </option>
@@ -404,10 +404,12 @@ function CheckoutContent() {
               <span>Total a pagar</span>
               <span>{formatCurrency(gross)}</span>
             </div>
-            <div className="flex justify-between text-sm text-gray-500">
-              <span>Valor da parcela</span>
-              <span>{formatCurrency(gross / installments)}</span>
-            </div>
+            {installments > 1 && (
+              <div className="flex justify-between text-sm text-gray-500">
+                <span>Valor da parcela</span>
+                <span>{formatCurrency(gross / installments)}</span>
+              </div>
+            )}
           </div>
           <button
             onClick={handleConfirm}
