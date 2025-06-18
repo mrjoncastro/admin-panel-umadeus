@@ -59,7 +59,7 @@ describe('checkout route', () => {
       cidade: '123',
     },
     installments: 1,
-    paymentMethods: ['PIX', 'CREDIT_CARD'],
+    // billing types inferred via toAsaasBilling
   };
 
   it('executa POST e retorna checkoutUrl', async () => {
@@ -84,6 +84,7 @@ describe('checkout route', () => {
     expect(sentBody.externalReference).toBe(
       'cliente_cli1_usuario_user1_inscricao_ins1'
     );
+    expect(sentBody.billingTypes).toEqual(['PIX']);
     expect(sentBody.value).toBe(12.69);
     expect(sentBody.split[0].fixedValue).toBe(0.7);
     expect(data.checkoutUrl).toBe('url');
