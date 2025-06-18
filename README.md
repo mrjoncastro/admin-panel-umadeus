@@ -202,6 +202,7 @@ Para PIX:
   "value": 150.75,
   "pixAddressKey": "a@b.com",
   "pixAddressKeyType": "email",
+  "operationType": "PIX",
   "description": "Repasse loja junho/2025",
   "scheduleDate": "2025-08-20"
 }
