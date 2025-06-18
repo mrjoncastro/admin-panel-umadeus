@@ -114,7 +114,12 @@ export type Evento = {
   cidade: string;
   imagem?: string;
   status: "realizado" | "em breve";
+  cobra_inscricao?: boolean;
+  produtos?: string[];
   created?: string;
+  expand?: {
+    produtos?: Produto[];
+  };
 };
 
 export type Cliente = {

@@ -30,6 +30,12 @@ export async function PUT(req: NextRequest) {
   }
   const { pb } = auth;
   try {
+    const contentType = req.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
+      const body = await req.json();
+      const evento = await pb.collection("eventos").update(id, body);
+      return NextResponse.json(evento, { status: 200 });
+    }
     const formData = await req.formData();
     const evento = await pb.collection("eventos").update(id, formData);
     return NextResponse.json(evento, { status: 200 });

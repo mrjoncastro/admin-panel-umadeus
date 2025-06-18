@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
 
   const pb = createPocketBase();
   try {
-    const evento = await pb.collection("eventos").getOne(id);
+    const evento = await pb.collection("eventos").getOne(id, { expand: "produtos" });
     const withUrl = {
       ...evento,
       imagem: evento.imagem ? pb.files.getURL(evento, evento.imagem) : undefined,

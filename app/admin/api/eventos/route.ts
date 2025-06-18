@@ -30,6 +30,13 @@ export async function POST(req: NextRequest) {
   const { pb, user } = auth;
   logInfo("PocketBase host:", pb.baseUrl);
   try {
+    const contentType = req.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
+      const body = await req.json();
+      body.cliente = user.cliente as string;
+      const evento = await pb.collection("eventos").create(body);
+      return NextResponse.json(evento, { status: 201 });
+    }
     const formData = await req.formData();
     formData.set("cliente", user.cliente as string);
     const evento = await pb.collection("eventos").create(formData);
