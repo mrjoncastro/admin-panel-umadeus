@@ -12,7 +12,9 @@ export async function GET(req: NextRequest) {
   }
   const { pb } = auth;
   try {
-    const evento = await pb.collection("eventos").getOne(id);
+    const evento = await pb.collection("eventos").getOne(id, {
+      expand: "produtos",
+    });
     return NextResponse.json(evento, { status: 200 });
   } catch (err) {
     await logConciliacaoErro(`Erro ao obter evento: ${String(err)}`);
@@ -37,6 +39,13 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json(evento, { status: 200 });
     }
     const formData = await req.formData();
+    if (formData.get("cobra_inscricao") !== null) {
+      const val = formData.get("cobra_inscricao");
+      formData.set("cobra_inscricao", val === "on" ? "true" : String(val));
+    }
+    if (formData.get("produto_inscricao") !== null) {
+      formData.set("produto_inscricao", String(formData.get("produto_inscricao")));
+    }
     const evento = await pb.collection("eventos").update(id, formData);
     return NextResponse.json(evento, { status: 200 });
   } catch (err) {

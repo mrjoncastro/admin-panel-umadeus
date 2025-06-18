@@ -14,6 +14,7 @@ export async function GET(req: NextRequest) {
     const eventos = await pb.collection("eventos").getFullList({
       sort: "-created",
       filter: `cliente='${user.cliente}'`,
+      expand: "produtos",
     });
     return NextResponse.json(eventos, { status: 200 });
   } catch (err) {
@@ -39,6 +40,19 @@ export async function POST(req: NextRequest) {
     }
     const formData = await req.formData();
     formData.set("cliente", user.cliente as string);
+    if (formData.get("cobra_inscricao") !== null) {
+      const val = formData.get("cobra_inscricao");
+      formData.set(
+        "cobra_inscricao",
+        val === "on" ? "true" : String(val)
+      );
+    }
+    if (formData.get("produto_inscricao") !== null) {
+      formData.set(
+        "produto_inscricao",
+        String(formData.get("produto_inscricao"))
+      );
+    }
     const evento = await pb.collection("eventos").create(formData);
     return NextResponse.json(evento, { status: 201 });
   } catch (err) {
