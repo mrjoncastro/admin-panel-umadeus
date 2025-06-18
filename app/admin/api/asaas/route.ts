@@ -191,9 +191,17 @@ export async function POST(req: NextRequest) {
       installments
     );
 
+    const billingType = toAsaasBilling(paymentMethod as PaymentMethod);
+    if (!["PIX", "BOLETO", "CREDIT_CARD"].includes(billingType)) {
+      return NextResponse.json(
+        { error: "Forma de pagamento invalida" },
+        { status: 400 }
+      );
+    }
+
     const paymentPayload = {
       customer: clienteId,
-      billingType: toAsaasBilling(paymentMethod as PaymentMethod),
+      billingType,
       value: gross,
       dueDate: dueDateStr,
       description: pedido.produto || "Produto",
