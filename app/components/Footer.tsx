@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Instagram, MessageCircle  } from "lucide-react";
+import { Instagram, MessageCircle } from "lucide-react";
 import { useAuthContext } from "@/lib/context/AuthContext";
 
 export default function Footer() {
@@ -71,7 +71,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <MessageCircle  size={20} strokeWidth={1.8} />
+                  <MessageCircle size={20} strokeWidth={1.8} />
                   <span className="hidden sm:inline">Fale no WhatsApp</span>
                 </Link>
               </li>
@@ -80,7 +80,7 @@ export default function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="mt-6 text-center text-xs text-gray-400 flex flex-col gap-1">
+        <div className="mt-6 text-center text-xs text-white flex flex-col gap-1">
           <p>
             &copy; {new Date().getFullYear()} UMADEUS. Todos os direitos
             reservados.
@@ -88,12 +88,12 @@ export default function Footer() {
           <p>
             Desenvolvido por{" "}
             <Link
-              href="https://qg3.com.br"
+              href="https://m24saude.com.br"
               className="underline hover:text-white transition"
               target="_blank"
               rel="noopener noreferrer"
             >
-              QG3 Tecnologia
+              M24 Tecnologia
             </Link>
           </p>
         </div>
