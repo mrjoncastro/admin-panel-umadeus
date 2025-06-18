@@ -19,6 +19,9 @@ export interface ModalEventoProps<T extends Record<string, unknown>> {
     imagem?: FileList | null;
     status?: "realizado" | "em breve";
     cobra_inscricao?: boolean;
+    /** produtos relacionados ao evento */
+    produtos?: string[];
+    /** @deprecated uso antigo */
     produto_inscricao?: string;
   };
 }
@@ -44,16 +47,19 @@ export function ModalEvento<T extends Record<string, unknown>>({
     Boolean(initial?.cobra_inscricao)
   );
   const [produtos, setProdutos] = useState<Produto[]>([]);
-  const [selectedProduto, setSelectedProduto] = useState(
-    (initial as Record<string, unknown>).produto_inscricao as string | ""
+  const [selectedProdutos, setSelectedProdutos] = useState<string[]>(
+    (initial as Record<string, unknown>).produtos as string[] ||
+      ((initial as Record<string, unknown>).produto_inscricao
+        ? [(initial as Record<string, unknown>).produto_inscricao as string]
+        : [])
   );
   const [produtoModalOpen, setProdutoModalOpen] = useState(false);
 
   useEffect(() => {
     setCobraInscricao(Boolean(initial?.cobra_inscricao));
-    setSelectedProduto(
-      ((initial as Record<string, unknown>).produto_inscricao as string) || ""
-    );
+    const inic = (initial as Record<string, unknown>).produtos as string[];
+    const single = (initial as Record<string, unknown>).produto_inscricao as string;
+    setSelectedProdutos(inic || (single ? [single] : []));
   }, [initial, open]);
 
   useEffect(() => {
@@ -115,7 +121,7 @@ export function ModalEvento<T extends Record<string, unknown>>({
       if (!res.ok) return;
       const data = await res.json();
       setProdutos((prev) => [data, ...prev]);
-      setSelectedProduto(data.id);
+      setSelectedProdutos((prev) => [...prev, data.id]);
     } catch (err) {
       console.error("Erro ao criar produto:", err);
     } finally {
@@ -126,8 +132,30 @@ export function ModalEvento<T extends Record<string, unknown>>({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const formElement = e.currentTarget as HTMLFormElement;
-    const form = new FormData(formElement);
-    onSubmit(Object.fromEntries(form) as T);
+    const fd = new FormData(formElement);
+    const data: Record<string, unknown> = Object.fromEntries(fd);
+
+    data.cobra_inscricao = formElement.querySelector<HTMLInputElement>(
+      "input[name='cobra_inscricao']"
+    )?.checked;
+
+    data.produtos = Array.from(
+      formElement.querySelectorAll<HTMLSelectElement>("select[name='produtos']")
+    )[0]
+      ? Array.from(
+          formElement
+            .querySelectorAll<HTMLSelectElement>("select[name='produtos']")[0]
+            .selectedOptions,
+          (o) => o.value
+        )
+      : [];
+
+    const imgInput = formElement.querySelector(
+      "input[name='imagem']"
+    ) as HTMLInputElement | null;
+    data.imagem = imgInput?.files && imgInput.files.length > 0 ? imgInput.files[0] : null;
+
+    onSubmit(data as T);
     onClose();
   }
 
@@ -208,15 +236,19 @@ export function ModalEvento<T extends Record<string, unknown>>({
         </div>
         {cobraInscricao && (
           <div>
-            <label className="label-base">Produto para inscrição</label>
+            <label className="label-base">Produtos para inscrição</label>
             <div className="flex gap-2">
               <select
-                name="produto_inscricao"
-                value={selectedProduto}
-                onChange={(e) => setSelectedProduto(e.target.value)}
+                name="produtos"
+                multiple
+                value={selectedProdutos}
+                onChange={(e) =>
+                  setSelectedProdutos(
+                    Array.from(e.target.selectedOptions, (o) => o.value)
+                  )
+                }
                 className="input-base flex-1"
               >
-                <option value="">Selecione o produto</option>
                 {produtos.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.nome}

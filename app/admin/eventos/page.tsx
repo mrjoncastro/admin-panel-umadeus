@@ -69,6 +69,15 @@ export default function AdminEventosPage() {
     if (form.imagem instanceof File) {
       formData.append("imagem", form.imagem);
     }
+    if (form.cobra_inscricao !== undefined) {
+      formData.set(
+        "cobra_inscricao",
+        String(form.cobra_inscricao as boolean)
+      );
+    }
+    if (Array.isArray(form.produtos)) {
+      (form.produtos as string[]).forEach((p) => formData.append("produtos", p));
+    }
     try {
       const res = await fetch("/admin/api/eventos", {
         method: "POST",
