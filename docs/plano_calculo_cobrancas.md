@@ -19,7 +19,6 @@ Este documento descreve a lógica e as fórmulas que o sistema deve usar para ca
 | **Crédito à Vista**  | R$ 0,49           | 2,99% (0,0299)               |
 | **Crédito 2–6x**     | R$ 0,49           | 3,49% (0,0349)               |
 | **Crédito 7–12x**    | R$ 0,49           | 3,99% (0,0399)               |
-| **Crédito 13–21x**   | R$ 0,49           | 4,29% (0,0429)               |
 
 ---
 
@@ -101,7 +100,7 @@ Para **Pix**, com V = R$ 50,00:
 2. O Asaas desconta R$ 1,99 → sobra R$ 53,50.  
 3. Via `split`, R$ 3,50 (7% de 50) vai para a plataforma.  
 > - O sistema deve atualizar dinamicamente o valor de `G` e os detalhes de split sempre que o usuário alterar forma de pagamento ou número de parcelas.
-> - Ao exibir o "Total a pagar" para o cliente, sempre usar `calculateGross(total, "pix", 1)`. O cálculo com a forma de pagamento selecionada serve apenas para mostrar o valor das parcelas e enviar ao Asaas.
+> - Ao exibir o "Total a pagar", usar calculateGross(total, paymentMethod, installments), refletindo a forma de pagamento selecionada.O cálculo com "pix" pode ser usado como referência base ou subtotal comparativo.
 
 Parcelado em 3x (Cartão 2–6x):
 
@@ -120,7 +119,6 @@ Parcelado em 3x (Cartão 2–6x):
 | **Crédito 1x**   | G = (V·1,07 + 0,49) / 0,9701                    | R$ 56,15         |
 | **Crédito 2–6x** | G = (V·1,07 + 0,49) / 0,9651                    | R$ 56,06         |
 | **Crédito 7–12x**| G = (V·1,07 + 0,49) / 0,9601                    | R$ 56,00         |
-| **Crédito 13–21x**| G = (V·1,07 + 0,49) / 0,9571                   | R$ 55,92         |
 
 ---
 
