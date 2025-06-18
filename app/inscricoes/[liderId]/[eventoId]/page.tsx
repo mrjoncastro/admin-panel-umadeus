@@ -7,10 +7,15 @@ import { logInfo } from "@/lib/logger";
 import { useToast } from "@/lib/context/ToastContext";
 import { calculateGross, type PaymentMethod } from "@/lib/asaasFees";
 
-const PRODUTOS = [
-  { nome: "Kit Camisa + Pulseira", valor: 50.0 },
-  { nome: "Somente Pulseira", valor: 10.0 },
-];
+interface Produto {
+  nome: string;
+  valor: number;
+}
+
+interface ProdutoPB {
+  nome: string;
+  preco: number;
+}
 
 interface FormFields {
   nome: string;
@@ -30,6 +35,8 @@ export default function InscricaoPage() {
 
   const { showError, showSuccess } = useToast();
 
+  const [produtos, setProdutos] = useState<Produto[]>([]);
+
   const [form, setForm] = useState<FormFields>({
     nome: "",
     email: "",
@@ -37,7 +44,7 @@ export default function InscricaoPage() {
     cpf: "",
     data_nascimento: "",
     tamanho: "",
-    produto: PRODUTOS[0].nome,
+    produto: "",
     genero: "",
   });
 
@@ -78,6 +85,16 @@ export default function InscricaoPage() {
       .then((data) => {
         if (data?.titulo) {
           setEvento({ titulo: data.titulo, descricao: data.descricao });
+        }
+
+        const prods = Array.isArray(data?.expand?.produtos)
+          ? (data.expand.produtos as ProdutoPB[])
+          : [];
+        setProdutos(prods.map((p) => ({ nome: p.nome, valor: p.preco })));
+        if (prods.length > 0) {
+          setForm((prev) => ({ ...prev, produto: prods[0].nome }));
+        } else {
+          setForm((prev) => ({ ...prev, produto: "" }));
         }
       })
       .catch(() => {});
@@ -285,18 +302,27 @@ export default function InscricaoPage() {
               onChange={handleChange}
               className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
             >
-              {PRODUTOS.map((p) => (
-                <option key={p.nome} value={p.nome}>
-                  {p.nome} - R$ {p.valor.toFixed(2).replace(".", ",")}
-                </option>
-              ))}
+            {produtos.length > 0 ? (
+              <>
+                {produtos.map((p) => (
+                  <option key={p.nome} value={p.nome}>
+                    {p.nome} - R$ {p.valor.toFixed(2).replace(".", ",")}
+                  </option>
+                ))}
+              </>
+            ) : (
+              <option value="">Nenhum produto disponível</option>
+            )}
             </select>
-            <p className="text-xs text-gray-500 mt-1">
-              Valor: R${" "}
-              {PRODUTOS.find((p) => p.nome === form.produto)
-                ?.valor.toFixed(2)
-                .replace(".", ",")}
-            </p>
+            {produtos.length > 0 && (
+              <p className="text-xs text-gray-500 mt-1">
+                Valor: R$ {" "}
+                {produtos
+                  .find((p) => p.nome === form.produto)
+                  ?.valor.toFixed(2)
+                  .replace(".", ",")}
+              </p>
+            )}
           </div>
 
           {form.produto !== "Somente Pulseira" && (
