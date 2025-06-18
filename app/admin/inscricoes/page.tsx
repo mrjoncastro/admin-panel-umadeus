@@ -9,7 +9,6 @@ import ModalVisualizarPedido from "./componentes/ModalVisualizarPedido";
 import { CheckCircle, XCircle, Pencil, Trash2, Eye } from "lucide-react";
 import TooltipIcon from "../components/TooltipIcon";
 import { useToast } from "@/lib/context/ToastContext";
-import { PRECO_PULSEIRA, PRECO_KIT } from "@/lib/constants";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
 import type { Evento } from "@/types";
 
@@ -190,18 +189,42 @@ export default function ListaInscricoesPage() {
 
       const campo = inscricao.expand?.campo;
 
-      // 🔹 2. Definir valor do pedido com base no produto
-      const valorPedido =
-        inscricao.produto === "Somente Pulseira" ? PRECO_PULSEIRA : PRECO_KIT;
+      // 🔹 2. Carregar produto escolhido
+      let produtoRecord: Record<string, any> | undefined;
+      try {
+        produtoRecord = await pb
+          .collection("produtos")
+          .getFirstListItem(`nome='${inscricao.produto}'`);
+      } catch {
+        try {
+          if (inscricao.evento) {
+            const ev = await pb
+              .collection("eventos")
+              .getOne(inscricao.evento, { expand: "produtos" });
+            const lista = Array.isArray(ev.expand?.produtos)
+              ? (ev.expand.produtos as Record<string, any>[])
+              : [];
+            produtoRecord = lista.find((p) => p.nome === inscricao.produto);
+          }
+        } catch {}
+      }
 
       const pedido = await pb.collection("pedidos").create({
         id_inscricao: id,
-        valor: valorPedido,
+        valor: produtoRecord?.preco ?? 0,
         status: "pendente",
-        produto: inscricao.produto || "Kit Camisa + Pulseira",
+        produto: produtoRecord?.nome || inscricao.produto || "Produto",
         cor: "Roxo",
-        tamanho: inscricao.tamanho,
-        genero: inscricao.genero,
+        tamanho:
+          inscricao.tamanho ||
+          (Array.isArray(produtoRecord?.tamanhos)
+            ? produtoRecord?.tamanhos[0]
+            : (produtoRecord?.tamanhos as string | undefined)),
+        genero:
+          inscricao.genero ||
+          (Array.isArray(produtoRecord?.generos)
+            ? produtoRecord?.generos[0]
+            : (produtoRecord?.generos as string | undefined)),
         email: inscricao.email,
         cliente: tenantId,
         campo: campo?.id,

@@ -46,18 +46,23 @@ export function criarInscricao(dados: DadosInscricao): Inscricao {
   }
 }
 
-export function criarPedido(inscricao: Inscricao): Pedido {
-  const valor = inscricao.produto === 'Somente Pulseira' ? 10.0 : 50.0
+export function criarPedido(
+  inscricao: Inscricao,
+  produto: { nome?: string; preco: number; tamanhos?: string[] | string; generos?: string[] | string }
+): Pedido {
+  const first = (v?: string[] | string) =>
+    Array.isArray(v) ? v[0] : v;
+  const valor = produto.preco
 
   return {
     id: `ped_${inscricao.id}`,
     id_pagamento: '',
     id_inscricao: inscricao.id,
-    produto: inscricao.produto || 'Kit Camisa + Pulseira',
-    tamanho: inscricao.tamanho,
+    produto: produto.nome ?? inscricao.produto ?? 'Kit Camisa + Pulseira',
+    tamanho: inscricao.tamanho || first(produto.tamanhos),
     status: 'pendente',
     cor: 'Roxo',
-    genero: inscricao.genero,
+    genero: inscricao.genero || first(produto.generos),
     responsavel: inscricao.criado_por,
     email: dadosEmail(inscricao),
     valor: valor.toFixed(2)
