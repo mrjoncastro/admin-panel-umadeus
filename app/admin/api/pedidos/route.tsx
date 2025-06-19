@@ -34,9 +34,9 @@ export async function POST(req: NextRequest) {
 
     let produtoRecord: Produto | undefined;
     try {
-      produtoRecord = await pb
-        .collection("produtos")
-        .getFirstListItem(`nome='${inscricao.produto}'`);
+      if (inscricao.produto) {
+        produtoRecord = await pb.collection("produtos").getOne(inscricao.produto);
+      }
     } catch {
       try {
         if (inscricao.evento) {
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
           const lista = Array.isArray(ev.expand?.produtos)
             ? (ev.expand.produtos as Produto[])
             : [];
-          produtoRecord = lista.find((p) => p.nome === inscricao.produto);
+          produtoRecord = lista.find((p) => p.id === inscricao.produto);
         }
       } catch {
         // noop - produtoRecord remains undefined

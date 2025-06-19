@@ -201,9 +201,9 @@ export default function ListaInscricoesPage() {
       // 🔹 2. Carregar produto escolhido
       let produtoRecord: Produto | undefined;
       try {
-        produtoRecord = await pb
-          .collection("produtos")
-          .getFirstListItem(`nome='${inscricao.produto}'`);
+        if (inscricao.produto) {
+          produtoRecord = await pb.collection("produtos").getOne(inscricao.produto);
+        }
       } catch {
         try {
           if (inscricao.evento) {
@@ -213,7 +213,7 @@ export default function ListaInscricoesPage() {
             const lista = Array.isArray(ev.expand?.produtos)
               ? (ev.expand.produtos as Produto[])
               : [];
-            produtoRecord = lista.find((p) => p.nome === inscricao.produto);
+            produtoRecord = lista.find((p) => p.id === inscricao.produto);
           }
         } catch {}
       }

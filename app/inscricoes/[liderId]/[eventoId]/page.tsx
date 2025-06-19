@@ -11,12 +11,14 @@ import Spinner from "@/components/Spinner";
 import { Check } from "lucide-react";
 
 interface Produto {
+  id: string;
   nome: string;
   valor: number;
   tamanhos?: string[];
 }
 
 interface ProdutoPB {
+  id: string;
   nome: string;
   preco: number;
   tamanhos?: string[] | string;
@@ -64,11 +66,11 @@ export default function InscricaoPage() {
   } | null>(null);
 
   const base = useMemo(
-    () => produtos.find((p) => p.nome === form.produto)?.valor ?? 0,
+    () => produtos.find((p) => p.id === form.produto)?.valor ?? 0,
     [form.produto, produtos]
   );
   const current = useMemo(
-    () => produtos.find((p) => p.nome === form.produto),
+    () => produtos.find((p) => p.id === form.produto),
     [form.produto, produtos]
   );
   const totalGross = useMemo(
@@ -104,6 +106,7 @@ export default function InscricaoPage() {
           ? (data.expand.produtos as ProdutoPB[])
           : [];
         const mapped = prods.map((p) => ({
+          id: p.id,
           nome: p.nome,
           valor: p.preco,
           tamanhos: Array.isArray(p.tamanhos)
@@ -116,7 +119,7 @@ export default function InscricaoPage() {
         if (mapped.length > 0) {
           setForm((prev) => ({
             ...prev,
-            produto: mapped[0].nome,
+            produto: mapped[0].id,
             tamanho: "",
           }));
         } else {
@@ -158,7 +161,7 @@ export default function InscricaoPage() {
     setForm((prev) => {
       const updated = { ...prev, [name]: newValue };
       if (name === "produto") {
-        const prod = produtos.find((p) => p.nome === newValue);
+        const prod = produtos.find((p) => p.id === newValue);
         if (!prod?.tamanhos?.length) {
           updated.tamanho = "";
         }
@@ -180,6 +183,7 @@ export default function InscricaoPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          produtoId: form.produto,
           liderId,
           eventoId,
           paymentMethod,
@@ -200,6 +204,7 @@ export default function InscricaoPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          produtoId: form.produto,
           liderId,
           eventoId,
           inscricaoId: result.inscricaoId,
@@ -344,7 +349,7 @@ export default function InscricaoPage() {
           >
             {produtos.length > 0 ? (
               produtos.map((p) => (
-                <option key={p.nome} value={p.nome}>
+                <option key={p.id} value={p.id}>
                   {p.nome}
                 </option>
               ))
