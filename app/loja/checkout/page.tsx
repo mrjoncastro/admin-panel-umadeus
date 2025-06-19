@@ -164,20 +164,21 @@ function CheckoutContent() {
         installments
       );
 
-      const firstItem = itens[0] as {
-        nome?: string;
-        tamanho?: string;
-        cor?: string;
-        genero?: string;
-      };
+      const firstItem = itens[0];
       const pedido = await pb.collection("pedidos").create<Pedido>({
         id_pagamento: "",
         id_inscricao: "",
         produto: firstItem?.nome || "Produto",
-        tamanho: firstItem?.tamanho,
+        tamanho: Array.isArray(firstItem?.tamanhos)
+          ? firstItem.tamanhos[0]
+          : (firstItem as any)?.tamanho,
         status: "pendente",
-        cor: firstItem?.cor || "Roxo",
-        genero: firstItem?.genero,
+        cor: Array.isArray(firstItem?.cores)
+          ? firstItem.cores[0] || "Roxo"
+          : (firstItem as any)?.cor || "Roxo",
+        genero: Array.isArray(firstItem?.generos)
+          ? firstItem.generos[0]
+          : (firstItem as any)?.genero,
         responsavel: user.id,
         cliente: tenantId,
         email,
