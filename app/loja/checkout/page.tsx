@@ -15,7 +15,7 @@ import {
 } from "@/lib/constants";
 import { useMemo } from "react";
 import createPocketBase from "@/lib/pocketbase";
-import type { Pedido } from "@/types";
+import type { Pedido, Produto } from "@/types";
 
 function formatCurrency(n: number) {
   return `R$ ${n.toFixed(2).replace(".", ",")}`;
