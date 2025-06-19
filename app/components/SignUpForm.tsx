@@ -5,6 +5,7 @@ import { useAuthContext } from "@/lib/context/AuthContext";
 import { useToast } from "@/lib/context/ToastContext";
 import type { ClientResponseError } from "pocketbase";
 import createPocketBase from "@/lib/pocketbase"; // ajuste para seu caminho real
+import Spinner from "@/components/Spinner";
 
 const VIA_CEP_URL =
   process.env.NEXT_PUBLIC_VIA_CEP_URL || "https://viacep.com.br/ws";
@@ -263,7 +264,14 @@ export default function SignUpForm({
               loading ? "opacity-50" : ""
             }`}
           >
-            {loading ? "Enviando..." : "Criar conta"}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <Spinner className="w-4 h-4" />
+                Enviando...
+              </span>
+            ) : (
+              "Criar conta"
+            )}
           </button>
 
           {children && (
