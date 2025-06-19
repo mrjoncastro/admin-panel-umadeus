@@ -185,21 +185,28 @@ function CheckoutContent() {
         installments
       );
 
-      const firstItem = itens[0];
+      type LegacyItem = Produto & {
+        tamanho?: string;
+        cor?: string;
+        genero?: string;
+      };
+
+      const firstItem = itens[0] as LegacyItem;
+
       const pedido = await pb.collection("pedidos").create<Pedido>({
         id_pagamento: "",
         id_inscricao: "",
         produto: firstItem?.nome || "Produto",
         tamanho: Array.isArray(firstItem?.tamanhos)
           ? firstItem.tamanhos[0]
-          : (firstItem as any)?.tamanho,
+          : firstItem.tamanho,
         status: "pendente",
         cor: Array.isArray(firstItem?.cores)
           ? firstItem.cores[0] || "Roxo"
-          : (firstItem as any)?.cor || "Roxo",
+          : firstItem.cor || "Roxo",
         genero: Array.isArray(firstItem?.generos)
           ? firstItem.generos[0]
-          : (firstItem as any)?.genero,
+          : firstItem.genero,
         responsavel: liderId || user.id,
         cliente: tenantId,
         ...(campoId ? { campo: campoId } : {}),
