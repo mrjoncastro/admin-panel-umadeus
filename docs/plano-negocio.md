@@ -2,124 +2,147 @@
 
 Implementamos a base multi-tenant do sistema no banco usando PocketBase, já preparada para isolamento de dados entre diferentes clientes (tenants) desde o desenvolvimento.
 
-## Estrutura das Coleções
+---
 
-### 1. m24_clientes
-- Cadastro central de cada cliente (tenant).
-- Campo `documento` (CPF ou CNPJ) obrigatório e único, para identificação fiscal e integrações.
+## 1. Estrutura das Coleções
 
+### 1.1. `m24_clientes`
 
-#### Tabela de Campos
+Cadastro central de cada cliente (tenant).
 
-| Campo | Descrição |
-|-------|-----------|
-| `documento` | CPF ou CNPJ do cliente, usado em integrações. |
-| `nome` | Nome ou razão social do cliente. |
-| `dominio` | Endereço principal configurado. |
-| `tipo_dominio` | Indica se o cliente usa subdomínio ou domínio próprio. |
-| `verificado` | Confirma se o domínio está validado. |
-| `modo_validacao` | Método adotado para validação do domínio. |
-| `logo_url` | URL do logotipo exibido na plataforma. |
-| `cor_primary` | Cor principal utilizada na personalização. |
-| `responsavel_nome` | Nome da pessoa responsável. |
-| `responsavel_email` | E-mail de contato do responsável. |
-| `ativo` | Indica se o cliente está ativo no sistema. |
-| `created` | Data de criação do cadastro. |
+- **Campo `documento`** (CPF ou CNPJ) **obrigatório** e **único**, para identificação fiscal e integrações.
+- Outros campos principais:
 
-### 2. clientes_config
-- Mapeia cada domínio para o ID do cliente correspondente (`cliente`).
-- Serve de ponte para que funções como `getTenantFromHost` identifiquem o tenant a partir do hostname.
+  - `nome`: Nome ou razão social do cliente.
+  - `dominio`: Endereço principal configurado.
+  - `tipo_dominio`: `subdominio` ou `proprio`, indicando a forma de domínio.
+  - `verificado`: Boolean, confirma se o domínio está validado.
+  - `modo_validacao`: `manual` ou `wildcard`.
+  - `logo_url`: URL do logotipo exibido na plataforma.
+  - `cor_primary`: Cor principal utilizada na personalização (hex).
+  - `responsavel_nome` e `responsavel_email`: Dados de contato do responsável.
+  - `ativo`: Boolean, indica se o cliente está ativo.
+  - `created`: Timestamp de criação do cadastro.
 
-### 3. Coleções filhas (usuarios, produtos, pedidos, inscricoes)
-- Todas possuem campo de relação obrigatória `cliente` (referência à coleção `clientes`).
-- Isso garante que todo registro esteja sempre vinculado a um cliente.
+#### Tabela de Campos (exemplo)
 
-## Permissões e Lógica Multi-tenant
+| Campo             | Tipo     | Obrigatório | Observações                       |
+| ----------------- | -------- | ----------- | --------------------------------- |
+| documento         | String   | Sim         | CPF ou CNPJ (único)               |
+| nome              | String   | Sim         | Razão social ou nome completo     |
+| dominio           | String   | Não         | Domínio ou subdomínio configurado |
+| tipo_dominio      | Enum     | Não         | `subdominio` / `proprio`          |
+| verificado        | Boolean  | Não         | Indica validação do domínio       |
+| modo_validacao    | Enum     | Sim         | `manual` / `wildcard`             |
+| logo_url          | String   | Não         | URL de exibição do logo           |
+| cor_primary       | String   | Não         | Cor principal (hex)               |
+| responsavel_nome  | String   | Não         | Nome do contato                   |
+| responsavel_email | String   | Não         | Email do contato                  |
+| ativo             | Boolean  | Sim         | Status de ativação                |
+| created           | DateTime | Sim         | Data e hora de criação            |
 
-- Todas queries, leituras e gravações devem ser filtradas pelo campo `cliente`.
-- **É obrigatório que toda criação, edição ou exclusão de usuários, pedidos, inscrições e quaisquer outros registros SEMPRE inclua o campo `cliente`, vinculando corretamente ao cliente (tenant) em questão.**
-- O fluxo de autenticação, consulta ou cadastro deve sempre:
-  1. **Procurar primeiro o cliente** (tenant) usando `documento` (CPF/CNPJ) ou domínio.
-  2. **Isolar todas as operações** usando o ID do cliente (campo `cliente`).
-  3. Garantir que cada usuário veja/edite apenas dados do seu próprio cliente (tenant).
+### 1.2. `clientes_config`
 
-> **Exemplo de filtro em query:**
-> Buscar pedidos apenas do cliente autenticado:
-> ```js
-> pb.collection('pedidos').getFullList({ filter: `cliente='ID_DO_CLIENTE'` })
-> ```
+Mapeia cada domínio para o ID do cliente correspondente (`cliente`).
 
-- O escopo do usuário (coordenador, lider, usuario) deve ser respeitado dentro do tenant.
+| Campo               | Tipo         | Obrigatório | Observações                        |
+| ------------------- | ------------ | ----------- | ---------------------------------- |
+| id                  | String       | Sim         | Identificador único                |
+| dominio             | String       | Sim         | Domínio ou hostname                |
+| cliente             | String (ref) | Sim         | `m24_clientes.id`                  |
+| cor_primary         | String       | Não         | Cor primária para o domínio        |
+| logo_url            | String       | Sim         | URL do logo                        |
+| font                | String       | Não         | Fonte padrão da interface          |
+| nome                | String       | Não         | Nome descritivo da configuração    |
+| confirma_inscricoes | Boolean      | Não         | Habilita confirmação de inscrições |
+| created             | DateTime     | Sim         | Timestamp de criação               |
+| updated             | DateTime     | Sim         | Timestamp da última atualização    |
 
-As rotas de servidor (`/api`) chamam `getTenantFromHost` para identificar o cliente pelo domínio. Essa função consulta `clientes_config` e retorna o ID que será usado para buscar as credenciais em `m24_clientes`.
+### 1.3. Coleções Filhas
 
-## Benefícios
-
-- Estrutura pronta para SaaS: escalável, segura, pronta para deploy em nuvem.
-- Fácil integração com pagamentos, notas fiscais e automações.
-- Permissões e isolamento já padronizados desde o desenvolvimento local.
+Todas as coleções filhas (`usuarios`, `produtos`, `pedidos`, `inscricoes`, etc.) possuem o campo `cliente` (referência a `m24_clientes.id`) **obrigatório**, garantindo que todo dado seja associado a um tenant.
 
 ---
 
-> Adote este padrão multi-tenant em toda a aplicação, SEMPRE consultando, criando e isolando pelo cliente antes de qualquer outra operação — isso inclui obrigatoriamente toda criação, edição e atualização de registros nas coleções filhas. Assim, a transição para produção será transparente e segura.
+## 2. Permissões e Lógica Multi-tenant
 
+1. **Filtro por cliente**: Todas as operações (queries, leituras, gravações) devem usar o campo `cliente` para isolar dados.
+2. **Inclusão obrigatória**: Em criação, edição ou deleção de registros nas coleções filhas, incluir sempre o ID do cliente.
+3. **Identificação do tenant**: Nas rotas de servidor (`/api`), use `getTenantFromHost` para mapear `Host` ➔ `clientes_config` ➔ `m24_clientes.id`.
+4. **Escopo de usuário**: Cada perfil (`coordenador`, `lider`, `usuario`) só acessa dados do seu tenant.
+
+> **Exemplo de filtro**:
+>
+> ```js
+> pb.collection("pedidos").getFullList({ filter: `cliente='ID_DO_CLIENTE'` });
+> ```
+
+---
+
+## 3. Benefícios
+
+- **Pronto para SaaS**: Escalável e seguro, com isolamento de dados.
+- **Integrações**: Facilita integração com pagamentos, notas fiscais e automações.
+- **Permissões**: Isolamento e acesso controlado desde o início.
+
+---
 
 # Integração Multi-tenant com Asaas (Subcontas)
 
-## 1. Uso de Subcontas e API Key do Asaas
+## 4. Uso de Subcontas e API Key do Asaas
 
-* **Cada cliente (tenant) possui sua própria subconta no Asaas.**
-* Para cada subconta, armazene com segurança a respectiva **API Key** (ex: campo `asaas_api_key` na coleção `m24_clientes`).
-* Toda operação de cobrança, consulta ou emissão de pagamento deve sempre utilizar a **API Key da subconta do cliente envolvido**.
-* **Nunca exponha a API Key de nenhuma subconta no frontend.** Toda requisição ao Asaas deve ser feita via backend, buscando a chave correta do cliente antes de qualquer chamada.
+- Cada cliente (tenant) possui sua própria subconta Asaas.
+- Armazene em `m24_clientes.asaas_api_key` e `asaas_account_id` com segurança.
+- Utilize **sempre** essa API Key no backend para cobranças, consultas e pagamentos.
+- **Nunca** exponha a subconta no frontend.
 
-## 2. Webhook do Asaas em ambiente multi-tenant
+## 5. Webhook do Asaas em Ambiente Multi-tenant
 
-* O webhook do Asaas aponta para um único endpoint:
+- Endpoint único:
 
   ```
-  https://SEUDOMINIO.com/api/asaas/webhook
-  ```
-* Ao receber uma notificação:
-
-  1. **Identifique a subconta do evento** (usando `accountId` do payload ou relacionando pelo `id_pagamento` ao pedido/inscrição).
-  2. Busque no banco o cliente dono da subconta (`m24_clientes.asaas_api_key` ou `m24_clientes.asaas_account_id`).
-  3. Atualize registros apenas desse cliente.
-  4. Registre/logue o evento para conciliação.
-
-## 3. Fluxo multi-tenant usando subcontas
-
-* Sempre que interagir com o Asaas, busque a **API Key da subconta** do cliente responsável:
-
-  ```js
-  // Exemplo: buscar chave da subconta
-  const cliente = await pb.collection('m24_clientes').getOne(CLIENTE_ID)
-  const apiKey = cliente.asaas_api_key
-  // Usar apiKey na autenticação das chamadas
+  POST https://SEUDOMINIO.com/api/asaas/webhook
   ```
 
-* O campo `asaas_account_id` também pode ser salvo para facilitar matching no webhook.
+- Fluxo ao receber evento:
 
-* **Ao criar um pedido, envie o campo `externalReference` (externalID) com uma estrutura clara que permita identificar o `cliente`, o `usuario` e, quando aplicável, a `inscricao`. Inclua também o campo `canal` informando a origem do pedido (ex.: `inscricao` ou `loja`).**
+  1. Identificar `accountId` no payload.
+  2. Buscar `m24_clientes` pelo `asaas_account_id`.
+  3. Processar e atualizar somente registros desse cliente.
+  4. Log para conciliação.
 
-  * Exemplo de formato:
+## 6. Fluxo Multi-tenant com Subcontas
 
-    ```json
-    {
-      "externalReference": "cliente_abc123_usuario_xyz789_inscricao_456def"
-    }
-    ```
-  * No webhook, o backend deve extrair esse identificador e usá-lo para localizar com segurança o cliente e o usuário responsáveis pela transação.
+1. Ao qualquer chamada ao Asaas, recupere:
 
-## 4. Segurança
+   ```js
+   const cliente = await pb.collection("m24_clientes").getOne(CLIENTE_ID);
+   const apiKey = cliente.asaas_api_key;
+   ```
 
-* Armazene as API Keys das subcontas em campo seguro. Nunca exponha ao frontend.
-* O backend deve garantir que nenhuma operação de um cliente utilize a API Key de outro.
+2. Use `apiKey` no header de autenticação.
+3. Utilize `asaas_account_id` para matching em webhooks.
+4. Em `externalReference`, inclua identificadores:
+
+   ```json
+   {
+     "externalReference": "cliente_${cliente.id}_usuario_${usuario.id}_inscricao_${inscricao.id}"
+   }
+   ```
+
+## 7. Segurança
+
+- Guarde as subcontas em campos seguros no banco.
+- Backend só usa API Key correta por cliente.
+- Sem cross-tenant leaks.
 
 ---
 
-> Toda integração com o Asaas deve buscar e utilizar a API Key da subconta correta do cliente (tenant) em todas as etapas (criação de cobrança, consultas, webhooks, etc). O sistema deve garantir o isolamento completo das operações financeiras entre clientes, tanto nas requisições quanto no processamento dos eventos retornados pelo Asaas. O campo `externalReference` deve ser sempre preenchido com um identificador claro que contenha a origem da transação (cliente, usuário e, se aplicável, inscrição).
+## 8. Cálculo de Cobranças
 
+- Consulte o arquivo `docs/plano-negocio.md` para detalhes da lógica de cobrança.
 
-## 5. Calculo de Cobranças
-* Leia o arquivo (docs/plano-negocio.md) para compreender a lógica de cobranças.
+---
+
+> **Observação Final:**
+> Adote este padrão multi-tenant em toda aplicação, garantindo que **toda** operação referencie e isole dados pelo `cliente` antes de prosseguir.
