@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Loader2 as Spinner } from "lucide-react";
 import usePocketBase from "@/lib/hooks/usePocketBase";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { useToast } from "@/lib/context/ToastContext";
@@ -104,7 +105,14 @@ export default function TransferenciaForm({
         onChange={(e) => setValor(e.target.value)}
       />
       <button type="submit" className="btn btn-primary" disabled={loading}>
-        {loading ? "Enviando..." : "Transferir"}
+        {loading ? (
+          <span className="flex items-center justify-center gap-2">
+            <Spinner className="w-4 h-4 animate-spin" />
+            Enviando...
+          </span>
+        ) : (
+          "Transferir"
+        )}
       </button>
     </form>
   );
