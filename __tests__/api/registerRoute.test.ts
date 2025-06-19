@@ -19,4 +19,25 @@ describe('POST /api/register', () => {
     const body = await res.json()
     expect(body.error).toBe('Cliente não encontrado')
   })
+
+  it('cria usuario quando dados validos', async () => {
+    getOneMock.mockResolvedValue({ id: 'c1' })
+    createMock.mockResolvedValue({ id: 'u1' })
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({ nome: ' Nome ', email: ' e@t.com ', telefone: ' 9 ', password: 'p', cliente: '1' })
+    })
+    const res = await POST(req as unknown as NextRequest)
+    expect(res.status).toBe(201)
+    expect(createMock).toHaveBeenCalledWith({
+      nome: 'Nome',
+      email: 'e@t.com',
+      cliente: '1',
+      telefone: '9',
+      password: 'p',
+      passwordConfirm: 'p'
+    })
+    const body = await res.json()
+    expect(body).toEqual({ id: 'u1' })
+  })
 })
