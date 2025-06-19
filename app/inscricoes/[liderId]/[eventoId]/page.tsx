@@ -8,6 +8,7 @@ import { useToast } from "@/lib/context/ToastContext";
 import { calculateGross, type PaymentMethod } from "@/lib/asaasFees";
 import { useAppConfig } from "@/lib/context/AppConfigContext";
 import Spinner from "@/components/Spinner";
+import { Check } from "lucide-react";
 
 interface Produto {
   nome: string;
@@ -165,10 +166,12 @@ export default function InscricaoPage() {
       return updated;
     });
   };
+  const [enviado, setEnviado] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    setEnviado(false);
 
     try {
       // 1. Envia os dados para a API de inscrição
@@ -203,23 +206,26 @@ export default function InscricaoPage() {
           paymentMethod,
           installments,
         }),
-      }).catch((erro) =>
-        logInfo("⚠️ Falha ao notificar o n8n", erro)
-      );
+      }).catch((erro) => logInfo("⚠️ Falha ao notificar o n8n", erro));
 
       // 3. Redireciona se já houver link de pagamento
       if (result.link_pagamento) {
         showSuccess(
           "✅ Inscrição enviada com sucesso! Redirecionando para pagamento..."
         );
-        window.location.href = result.link_pagamento;
+        setTimeout(() => {
+          window.location.href = result.link_pagamento;
+        }, 4000); // tempo do toast na tela
         return;
       }
 
-      // 4. Exibe mensagem de sucesso padrão
-      showSuccess(
-        "✅ Inscrição enviada com sucesso! Em breve você receberá o link de pagamento."
-      );
+      // 4. Exibe mensagem de sucesso padrão e redireciona para uma página de obrigado
+      // Sucesso
+      showSuccess("✅ Inscrição enviada com sucesso! Redirecionando...");
+      setEnviado(true);
+      setTimeout(() => {
+        window.location.href = "/inscricoes/obrigado";
+      }, 1500);
     } catch (erro) {
       console.error("❌ Erro no handleSubmit:", erro);
       showError("❌ Erro ao processar inscrição.");
@@ -428,16 +434,30 @@ export default function InscricaoPage() {
 
         <button
           type="submit"
-          disabled={loading}
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          disabled={loading || enviado}
+          className={`w-full font-bold py-2 px-4 rounded-md transition duration-200 ease-in-out flex items-center justify-center gap-2
+      ${
+        enviado
+          ? "bg-green-600 hover:bg-green-700 text-white"
+          : "bg-purple-600 hover:bg-purple-700 text-white"
+      }
+      disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer
+    `}
         >
           {loading ? (
-            <span className="flex items-center justify-center gap-2">
+            <span className="flex items-center gap-2">
               <Spinner className="w-4 h-4" />
               Enviando...
             </span>
+          ) : enviado ? (
+            <>
+              <span>Inscrição enviada</span>
+              <Check className="w-5 h-5 text-white" />
+            </>
           ) : (
-            "Finalizar inscrição"
+            <>
+              <span>Finalizar inscrição</span>
+            </>
           )}
         </button>
       </form>
