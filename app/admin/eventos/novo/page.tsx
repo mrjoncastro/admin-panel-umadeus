@@ -13,8 +13,10 @@ export default function NovoEventoPage() {
   const { showSuccess, showError } = useToast();
   const router = useRouter();
   const getAuth = useCallback(() => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
-    const raw = typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
+    const raw =
+      typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
     const user = raw ? JSON.parse(raw) : ctxUser;
     return { token, user } as const;
   }, [ctxUser]);
@@ -57,7 +59,8 @@ export default function NovoEventoPage() {
     const formData = new FormData();
     formData.set("nome", String(form.nome ?? ""));
     formData.set("preco", String(form.preco ?? 0));
-    if (form.checkout_url) formData.set("checkout_url", String(form.checkout_url));
+    if (form.checkout_url)
+      formData.set("checkout_url", String(form.checkout_url));
     if (form.categoria) formData.set("categoria", String(form.categoria));
     if (Array.isArray(form.tamanhos)) {
       form.tamanhos.forEach((t) => formData.append("tamanhos", t));
@@ -74,7 +77,9 @@ export default function NovoEventoPage() {
     }
     formData.set("ativo", String(form.ativo ? "true" : "false"));
     if (form.imagens && form.imagens instanceof FileList) {
-      Array.from(form.imagens).forEach((file) => formData.append("imagens", file));
+      Array.from(form.imagens).forEach((file) =>
+        formData.append("imagens", file)
+      );
     }
 
     const { token, user } = getAuth();
@@ -102,7 +107,9 @@ export default function NovoEventoPage() {
     e.preventDefault();
     const formElement = e.currentTarget as HTMLFormElement;
     const formData = new FormData(formElement);
-    const imagemInput = formElement.querySelector<HTMLInputElement>("input[name='imagem']");
+    const imagemInput = formElement.querySelector<HTMLInputElement>(
+      "input[name='imagem']"
+    );
     const files = imagemInput?.files;
     formData.delete("imagem");
     if (files && files.length > 0) {
@@ -136,16 +143,41 @@ export default function NovoEventoPage() {
   return (
     <>
       <main className="max-w-xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)" }}>
+        <h1
+          className="text-2xl font-bold mb-4"
+          style={{ fontFamily: "var(--font-heading)" }}
+        >
           Novo Evento
         </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input className="input-base" name="titulo" placeholder="Título" maxLength={30} required />
-          <textarea className="input-base" name="descricao" rows={2} maxLength={150} required />
+          <input
+            className="input-base"
+            name="titulo"
+            placeholder="Título"
+            maxLength={30}
+            required
+          />
+          <textarea
+            className="input-base"
+            name="descricao"
+            rows={2}
+            maxLength={150}
+            required
+          />
           <input className="input-base" name="data" type="date" required />
           <input className="input-base" name="cidade" required />
-          <input type="file" name="imagem" accept="image/*" className="input-base" />
-          <select name="status" defaultValue="em breve" className="input-base" required>
+          <input
+            type="file"
+            name="imagem"
+            accept="image/*"
+            className="input-base"
+          />
+          <select
+            name="status"
+            defaultValue="em breve"
+            className="input-base"
+            required
+          >
             <option value="em breve">Em breve</option>
             <option value="realizado">Realizado</option>
           </select>
@@ -163,32 +195,62 @@ export default function NovoEventoPage() {
             </label>
           </div>
           {cobraInscricao && (
-            <div>
-              <label className="label-base">Produtos para inscrição</label>
-              <div className="flex flex-col gap-2">
-                {produtos.map((p) => (
-                  <label className="checkbox-label" key={p.id}>
-                    <input
-                      type="checkbox"
-                      name="produtos"
-                      value={p.id}
-                      checked={selectedProdutos.includes(p.id)}
-                      onChange={() => toggleProduto(p.id)}
-                      className="checkbox-base"
-                    />
-                    {p.nome}
-                  </label>
-                ))}
+            <div className="mb-2">
+              <label className="block text-base font-bold text-gray-800 mb-2">
+                Produtos para inscrição
+              </label>
+              <div className="flex flex-col gap-3">
+                {produtos.length === 0 ? (
+                  <span className="text-sm text-gray-500 italic px-2">
+                    Nenhum produto cadastrado ainda.
+                  </span>
+                ) : (
+                  produtos.map((p) => (
+                    <label
+                      key={p.id}
+                      className={`
+              flex items-center gap-3 p-4 rounded-xl shadow-sm transition-all
+              border-2 bg-white cursor-pointer select-none
+              ${
+                selectedProdutos.includes(p.id)
+                  ? "border-primary bg-primary ring-2 ring-primary"
+                  : "border-gray-200 hover:border-primary"
+              }
+            `}
+                    >
+                      <input
+                        type="checkbox"
+                        name="produtos"
+                        value={p.id}
+                        checked={selectedProdutos.includes(p.id)}
+                        onChange={() => toggleProduto(p.id)}
+                        className="w-5 h-5 accent-purple-600 rounded-lg transition shadow focus:ring-2 focus:ring-purple-300"
+                      />
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-gray-800 text-base">
+                          {p.nome}
+                        </span>
+                        {p.preco !== undefined && (
+                          <span className="text-xs text-gray-500">
+                            R$ {Number(p.preco).toFixed(2).replace(".", ",")}
+                          </span>
+                        )}
+                      </div>
+                    </label>
+                  ))
+                )}
                 <button
                   type="button"
                   className="btn btn-secondary w-fit"
                   onClick={() => setProdutoModalOpen(true)}
                 >
-                  + Produto
+                  
+                  <span>+ Produto</span>
                 </button>
               </div>
             </div>
           )}
+
           <div className="flex gap-2">
             <button type="submit" className="btn btn-primary flex-1">
               Salvar

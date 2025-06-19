@@ -68,9 +68,15 @@ export default function PedidosPage() {
       buscaGlobal === "" ||
       p.produto.toLowerCase().includes(buscaGlobal.toLowerCase()) ||
       p.email.toLowerCase().includes(buscaGlobal.toLowerCase()) ||
-      p.expand?.campo?.nome?.toLowerCase().includes(buscaGlobal.toLowerCase()) ||
-      p.expand?.id_inscricao?.nome?.toLowerCase().includes(buscaGlobal.toLowerCase()) ||
-      p.expand?.id_inscricao?.cpf?.toLowerCase().includes(buscaGlobal.toLowerCase());
+      p.expand?.campo?.nome
+        ?.toLowerCase()
+        .includes(buscaGlobal.toLowerCase()) ||
+      p.expand?.id_inscricao?.nome
+        ?.toLowerCase()
+        .includes(buscaGlobal.toLowerCase()) ||
+      p.expand?.id_inscricao?.cpf
+        ?.toLowerCase()
+        .includes(buscaGlobal.toLowerCase());
 
     return matchStatus && matchCampo && matchBuscaGlobal;
   });
@@ -84,7 +90,7 @@ export default function PedidosPage() {
       "Cor",
       "Status",
       "Campo",
-      "ID Pagamento",
+      "Canal",
       "Data",
     ];
 
@@ -96,7 +102,7 @@ export default function PedidosPage() {
       p.cor || "",
       p.status,
       p.expand?.campo?.nome || "",
-      p.id_pagamento || "",
+      p.canal || "",
       p.created?.split("T")[0] || "",
     ]);
 
@@ -156,10 +162,7 @@ export default function PedidosPage() {
         >
           Ordenar por data ({ordem === "desc" ? "↓" : "↑"})
         </button>
-        <button
-          onClick={exportarCSV}
-          className="btn btn-primary"
-        >
+        <button onClick={exportarCSV} className="btn btn-primary">
           Exportar CSV
         </button>
       </div>
@@ -179,7 +182,7 @@ export default function PedidosPage() {
                 <th>Cor</th>
                 <th>Status</th>
                 <th>Campo</th>
-                <th>ID Pagamento</th>
+                <th>Canal</th>
                 <th>Ação</th>
               </tr>
             </thead>
@@ -201,7 +204,12 @@ export default function PedidosPage() {
                     </span>
                   </td>
                   <td>{pedido.expand?.campo?.nome || "—"}</td>
-                  <td className="text-xs">{pedido.id_pagamento || "—"}</td>
+                  <td className="text-xs font-medium">
+                    {pedido.canal
+                      ? pedido.canal.charAt(0).toUpperCase() +
+                        pedido.canal.slice(1).toLowerCase()
+                      : "—"}
+                  </td>
                   <td className="space-x-3 text-right">
                     <button
                       onClick={() => setPedidoSelecionado(pedido)}

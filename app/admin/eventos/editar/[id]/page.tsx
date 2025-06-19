@@ -180,90 +180,146 @@ export default function EditarEventoPage() {
 
   return (
     <>
-    <main className="max-w-xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-4" style={{ fontFamily: "var(--font-heading)" }}>
-        Editar Evento
-      </h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          className="input-base"
-          name="titulo"
-          defaultValue={String(initial.titulo)}
-          maxLength={30}
-          required
-        />
-        <textarea
-          className="input-base"
-          name="descricao"
-          rows={2}
-          defaultValue={String(initial.descricao)}
-          maxLength={150}
-          required
-        />
-        <input className="input-base" name="data" type="date" defaultValue={String(initial.data)} required />
-        <input className="input-base" name="cidade" defaultValue={String(initial.cidade)} required />
-        <input type="file" name="imagem" accept="image/*" className="input-base" />
-        <select name="status" defaultValue={String(initial.status)} className="input-base" required>
-          <option value="em breve">Em breve</option>
-          <option value="realizado">Realizado</option>
-        </select>
-        <div className="flex items-center gap-2">
+      <main className="max-w-xl mx-auto px-4 py-8">
+        <h1
+          className="text-2xl font-bold mb-4"
+          style={{ fontFamily: "var(--font-heading)" }}
+        >
+          Editar Evento
+        </h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <input
-            type="checkbox"
-            name="cobra_inscricao"
-            id="cobra_inscricao"
-            className="checkbox-base"
-            checked={cobraInscricao}
-            onChange={(e) => setCobraInscricao(e.target.checked)}
+            className="input-base"
+            name="titulo"
+            defaultValue={String(initial.titulo)}
+            maxLength={30}
+            required
           />
-          <label htmlFor="cobra_inscricao" className="text-sm font-medium">
-            Realizar cobrança?
-          </label>
-        </div>
-        {cobraInscricao && (
-          <div>
-            <label className="label-base">Produtos para inscrição</label>
-            <div className="flex flex-col gap-2">
-              {produtos.map((p) => (
-                <label className="checkbox-label" key={p.id}>
-                  <input
-                    type="checkbox"
-                    name="produtos"
-                    value={p.id}
-                    checked={selectedProdutos.includes(p.id)}
-                    onChange={() => toggleProduto(p.id)}
-                    className="checkbox-base"
-                  />
-                  {p.nome}
-                </label>
-              ))}
-              <button
-                type="button"
-                className="btn btn-secondary w-fit"
-                onClick={() => setProdutoModalOpen(true)}
-              >
-                + Produto
-              </button>
-            </div>
+          <textarea
+            className="input-base"
+            name="descricao"
+            rows={2}
+            defaultValue={String(initial.descricao)}
+            maxLength={150}
+            required
+          />
+          <input
+            className="input-base"
+            name="data"
+            type="date"
+            defaultValue={String(initial.data)}
+            required
+          />
+          <input
+            className="input-base"
+            name="cidade"
+            defaultValue={String(initial.cidade)}
+            required
+          />
+          <input
+            type="file"
+            name="imagem"
+            accept="image/*"
+            className="input-base"
+          />
+          <select
+            name="status"
+            defaultValue={String(initial.status)}
+            className="input-base"
+            required
+          >
+            <option value="em breve">Em breve</option>
+            <option value="realizado">Realizado</option>
+          </select>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              name="cobra_inscricao"
+              id="cobra_inscricao"
+              className="checkbox-base"
+              checked={cobraInscricao}
+              onChange={(e) => setCobraInscricao(e.target.checked)}
+            />
+            <label htmlFor="cobra_inscricao" className="text-sm font-medium">
+              Realizar cobrança?
+            </label>
           </div>
-        )}
-        <div className="flex gap-2">
-          <button type="submit" className="btn btn-primary flex-1">
-            Salvar
-          </button>
-          <button type="button" onClick={() => router.push("/admin/eventos")} className="btn flex-1">
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </main>
-    {produtoModalOpen && (
-      <ModalProduto
-        open={produtoModalOpen}
-        onClose={() => setProdutoModalOpen(false)}
-        onSubmit={handleNovoProduto}
-      />
-    )}
+          {cobraInscricao && (
+            <div>
+              <label className="label-base mb-2 font-semibold text-gray-800">
+                Produtos para inscrição
+              </label>
+              <div className="flex flex-col gap-3">
+                {produtos.length === 0 ? (
+                  <span className="text-xs text-gray-500 italic px-2">
+                    Nenhum produto cadastrado.
+                  </span>
+                ) : (
+                  produtos.map((p) => (
+                    <label
+                      key={p.id}
+                      className={`
+              checkbox-label flex items-center gap-3 rounded-xl border
+              px-3 py-2 shadow-sm transition
+              cursor-pointer select-none
+              ${
+                selectedProdutos.includes(p.id)
+                  ? "border-primary bg-primary ring-2 ring-primary"
+                  : "border-gray-200 hover:border-primary"
+              }
+            `}
+                    >
+                      <input
+                        type="checkbox"
+                        name="produtos"
+                        value={p.id}
+                        checked={selectedProdutos.includes(p.id)}
+                        onChange={() => toggleProduto(p.id)}
+                        className="checkbox-base w-5 h-5 accent-purple-600 rounded-lg transition focus:ring-2 focus:ring-purple-300"
+                      />
+                      <span className="font-medium text-gray-800 text-base">
+                        {p.nome}
+                      </span>
+                      {typeof p.preco !== "undefined" && (
+                        <span className="ml-2 text-xs text-gray-500">
+                          R$ {Number(p.preco).toFixed(2).replace(".", ",")}
+                        </span>
+                      )}
+                    </label>
+                  ))
+                )}
+                <button
+                  type="button"
+                  className="btn btn-secondary w-fit"
+                  onClick={() => setProdutoModalOpen(true)}
+                >
+                  <span>+ Produto</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          <div className="flex gap-2">
+            <button type="submit" className="btn btn-primary flex-1">
+              Salvar
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push("/admin/eventos")}
+              className="btn flex-1"
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </main>
+      {produtoModalOpen && (
+        <ModalProduto
+          open={produtoModalOpen}
+          onClose={() => setProdutoModalOpen(false)}
+          onSubmit={handleNovoProduto}
+        />
+      )}
     </>
   );
 }
