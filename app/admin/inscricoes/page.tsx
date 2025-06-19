@@ -193,14 +193,15 @@ export default function ListaInscricoesPage() {
         .getOne<
           InscricaoRecord & { expand?: { produtos?: Produto | Produto[] } }
         >(id, {
-          expand: "campo,produtos",
+          expand: "campo,produto",
         });
 
       // Dados da inscrição obtidos com expand
 
       // Checar campo correto: produto ou produtos
       type InscricaoWithProdutos = InscricaoRecord & { produtos?: string };
-      const produtoId = inscricao.produto || (inscricao as InscricaoWithProdutos).produtos;
+      const produtoId =
+        inscricao.produto || (inscricao as InscricaoWithProdutos).produtos;
 
       // Extrair produto do expand (array ou objeto)
       let produtoRecord: Produto | undefined = undefined;
@@ -221,8 +222,7 @@ export default function ListaInscricoesPage() {
       if (!produtoRecord && produtoId) {
         try {
           produtoRecord = await pb.collection("produtos").getOne(produtoId);
-        } catch {
-        }
+        } catch {}
       }
 
       // Novo log: garantir que estamos com preço
@@ -249,12 +249,16 @@ export default function ListaInscricoesPage() {
 
       const metodo = insc.paymentMethod ?? "boleto";
       const parcelas = insc.installments ?? 1;
-      const { gross } = calculateGross(produtoRecord.preco, metodo, parcelas);
 
-      // Cria o pedido com o valor do produto
+      // Valor base do produto
+      const precoProduto = Number(produtoRecord?.preco ?? 0);
+
+      // Aqui você pode aplicar algum cálculo se desejar
+      const gross = precoProduto; // ajuste aqui caso queira aplicar taxas/descontos
+
       const pedido = await pb.collection("pedidos").create<Pedido>({
         id_inscricao: id,
-        valor: produtoRecord.preco,
+        valor: precoProduto,
         status: "pendente",
         produto: produtoRecord.nome || "Produto",
         cor: "Roxo",
@@ -275,7 +279,8 @@ export default function ListaInscricoesPage() {
         canal: "inscricao",
       });
 
-      // 🔹 4. Gerar link de pagamento via API do Asaas
+      // 3. Gerar link de pagamento via API do Asaas
+
       const res = await fetch("/admin/api/asaas/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
