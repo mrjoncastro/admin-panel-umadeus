@@ -26,6 +26,7 @@ type Inscricao = {
   id: string;
   nome: string;
   telefone: string;
+  email?: string;
   cpf: string;
   /** Título do evento para exibição */
   evento: string;
