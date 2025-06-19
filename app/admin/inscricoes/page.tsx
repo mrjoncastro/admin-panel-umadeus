@@ -10,6 +10,7 @@ import { CheckCircle, XCircle, Pencil, Trash2, Eye } from "lucide-react";
 import TooltipIcon from "../components/TooltipIcon";
 import { useToast } from "@/lib/context/ToastContext";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
+import { logInfo } from "@/lib/logger";
 import type { Evento, Inscricao as InscricaoRecord, Pedido, Produto } from "@/types";
 
 const statusBadge = {
@@ -277,8 +278,8 @@ export default function ListaInscricoesPage() {
         )
       );
 
-      // 🔹 6. Notificar via n8n webhook
-      await fetch("/admin/api/n8n", {
+      // 🔹 6. Notificar via n8n webhook de forma assíncrona
+      fetch("/admin/api/n8n", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -292,7 +293,9 @@ export default function ListaInscricoesPage() {
           valor: pedido.valor,
           url_pagamento: checkout.url,
         }),
-      });
+      }).catch((err) =>
+        logInfo("⚠️ Falha ao notificar o n8n", err)
+      );
 
       // 🔹 7. Mostrar sucesso visual
       showSuccess("Link de pagamento enviado com sucesso!");

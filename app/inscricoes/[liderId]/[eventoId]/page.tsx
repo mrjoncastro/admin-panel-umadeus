@@ -188,26 +188,21 @@ export default function InscricaoPage() {
         return;
       }
 
-      // 2. Envia notificação para o n8n
-      try {
-        await fetch("/admin/api/n8n", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ...form,
-            liderId,
-            eventoId,
-            inscricaoId: result.inscricaoId,
-            paymentMethod,
-            installments,
-          }),
-        });
-      } catch (erro) {
-        logInfo(
-          "⚠️ Falha ao notificar o n8n (sem impacto no usuário)",
-          erro
-        );
-      }
+      // 2. Envia notificação para o n8n de forma assíncrona
+      fetch("/admin/api/n8n", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          liderId,
+          eventoId,
+          inscricaoId: result.inscricaoId,
+          paymentMethod,
+          installments,
+        }),
+      }).catch((erro) =>
+        logInfo("⚠️ Falha ao notificar o n8n", erro)
+      );
 
       // 3. Redireciona se já houver link de pagamento
       if (result.link_pagamento) {
