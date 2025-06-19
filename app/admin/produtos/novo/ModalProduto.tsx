@@ -4,6 +4,7 @@ import { useEffect, useRef, useCallback, useState } from "react";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { calculateGross } from "@/lib/asaasFees";
 import ModalCategoria from "../categorias/ModalCategoria";
+import { useToast } from "@/lib/context/ToastContext";
 
 export interface ModalProdutoProps<T extends Record<string, unknown>> {
   open: boolean;
@@ -54,6 +55,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
     initial.categoria || ""
   );
   const { isLoggedIn, user: ctxUser } = useAuthContext();
+  const { showSuccess, showError } = useToast();
   const getAuth = useCallback(() => {
     const token =
       typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
@@ -138,8 +140,10 @@ export function ModalProduto<T extends Record<string, unknown>>({
       if (res.ok) {
         setCategorias((prev) => [...prev, data]);
         setSelectedCategoria(data.id);
+        showSuccess("Categoria criada");
       } else {
         console.error(data);
+        showError("Erro ao criar categoria");
       }
     } finally {
       setCategoriaModalOpen(false);
