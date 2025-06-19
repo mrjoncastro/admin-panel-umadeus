@@ -11,6 +11,11 @@ interface UsuarioAuthModel {
   telefone?: string;
   cpf?: string;
   data_nascimento?: string;
+  endereco?: string;
+  numero?: string;
+  estado?: string;
+  cep?: string;
+  cidade?: string;
   role: "coordenador" | "lider" | "usuario" | string;
   campo?: string;
   expand?: {
