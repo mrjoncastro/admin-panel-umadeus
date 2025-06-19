@@ -80,12 +80,16 @@ export async function createCheckout(
     params.paymentMethod,
     params.installments,
   );
-  let margin = initialMargin;
+  let margin = Number(initialMargin.toFixed(2));
 
   // Evita erro do Asaas quando o split excede o valor da cobrança
-  if (margin > gross) {
-    margin = Number(gross.toFixed(2));
+  if (margin >= gross) {
+    margin = Number((gross - 0.01).toFixed(2));
   }
+
+  console.info("✅ Parsed valorBruto:", parsedValor);
+  console.info("✅ Valor bruto calculado:", gross);
+  console.info("✅ Split calculado:", margin);
 
   const isInstallmentCredit =
     params.paymentMethod === "credito" && params.installments > 1;

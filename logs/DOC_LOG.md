@@ -153,3 +153,4 @@
 ## [2025-07-08] Pedidos agora são removidos se a integração com o Asaas falhar. README atualizado explicando que o pedido só é salvo após receber o link de pagamento. Lint e build executados.
 ## [2025-06-19] Adicionada exibição de toasts ao salvar configurações. - Lint: falhou (next not found) - Build: falhou (next not found)
 ## [2025-07-09] Ajustado parsing de valorBruto e validação do split em lib/asaas.ts. Lint e build executados.
+## [2025-07-09] Registrado valorBruto, gross e split nos logs e ajustado limite do split para sempre ser inferior ao total. Lint e build executados.
