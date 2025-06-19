@@ -2,6 +2,7 @@
 import { useState, useRef, ChangeEvent, useCallback } from "react";
 import { useAppConfig } from "@/lib/context/AppConfigContext";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import { useToast } from "@/lib/context/ToastContext";
 import Image from "next/image";
 import { Check } from "lucide-react";
 import ToggleSwitch from "@/components/ToggleSwitch";
@@ -75,6 +76,7 @@ const fontes = [
 export default function ConfiguracoesPage() {
   const { config, updateConfig } = useAppConfig();
   const { user: ctxUser } = useAuthContext();
+  const { showSuccess, showError } = useToast();
   const getAuth = useCallback(() => {
     const token =
       typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
@@ -137,8 +139,13 @@ export default function ConfiguracoesPage() {
     }
 
     const { token, user } = getAuth();
-    if (token && user) {
-      await fetch("/admin/api/configuracoes", {
+    if (!token || !user) {
+      showError("Erro ao salvar configurações");
+      return;
+    }
+
+    try {
+      const res = await fetch("/admin/api/configuracoes", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -152,29 +159,16 @@ export default function ConfiguracoesPage() {
           confirma_inscricoes: confirmaInscricoes,
         }),
       });
-    }
 
-    updateConfig({ font, primaryColor, logoUrl, confirmaInscricoes });
-
-    try {
-      const token = localStorage.getItem("pb_token");
-      const user = localStorage.getItem("pb_user");
-      await fetch("/admin/api/configuracoes", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          "X-PB-User": user ?? "",
-        },
-        body: JSON.stringify({
-          cor_primary: primaryColor,
-          logo_url: logoUrl,
-          font,
-          confirma_inscricoes: confirmaInscricoes,
-        }),
-      });
+      if (res.ok) {
+        updateConfig({ font, primaryColor, logoUrl, confirmaInscricoes });
+        showSuccess("Configurações salvas");
+      } else {
+        showError("Erro ao salvar configurações");
+      }
     } catch (err) {
       console.error("Erro ao salvar configura\u00e7\u00f5es:", err);
+      showError("Erro ao salvar configurações");
     }
 
     setError("");
