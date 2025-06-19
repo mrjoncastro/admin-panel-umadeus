@@ -7,6 +7,17 @@ import { useAuthContext } from "@/lib/context/AuthContext";
 import type { Produto } from "@/types";
 import { ModalProduto } from "../../produtos/novo/ModalProduto";
 
+// Helper to generate slugs consistently
+function slugify(str: string) {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "")
+    .replace(/-+/g, "-");
+}
+
 export interface ModalEventoProps<T extends Record<string, unknown>> {
   open: boolean;
   onClose: () => void;
@@ -90,6 +101,7 @@ export function ModalEvento<T extends Record<string, unknown>>({
   async function handleNovoProduto(form: Produto) {
     const formData = new FormData();
     formData.set("nome", String(form.nome ?? ""));
+    formData.set("slug", slugify(String(form.nome ?? "")));
     formData.set("preco", String(form.preco ?? 0));
     if (form.checkout_url)
       formData.set("checkout_url", String(form.checkout_url));
