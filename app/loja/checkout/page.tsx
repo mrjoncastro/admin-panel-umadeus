@@ -89,7 +89,6 @@ function CheckoutContent() {
     }
   }, [isLoggedIn, router]);
 
-
   useEffect(() => {
     if (paymentMethod !== "credito" && installments !== 1) {
       setInstallments(1);
@@ -136,7 +135,7 @@ function CheckoutContent() {
           const grossUnit = calculateGross(
             i.preco,
             paymentMethod,
-            installments,
+            installments
           ).gross;
           return {
             name: i.nome.slice(0, MAX_ITEM_NAME_LENGTH),
@@ -162,7 +161,7 @@ function CheckoutContent() {
       const { net: valorBruto } = calculateNet(
         displayTotalGross,
         paymentMethod,
-        installments,
+        installments
       );
 
       const firstItem = itens[0] as {
@@ -260,229 +259,227 @@ function CheckoutContent() {
     <>
       <LoadingOverlay show={redirecting} text="Redirecionando..." />
       <main className="min-h-[80vh] flex justify-center items-center py-8">
-      <div className="w-full max-w-5xl bg-neutral-50 rounded-2xl shadow-sm grid grid-cols-1 md:grid-cols-2 gap-10 p-6 md:p-12">
-        {/* Bloco ESQUERDO: Info de entrega */}
-        <section>
-          <h2 className="text-lg font-semibold mb-6 tracking-tight">
-            Informações de entrega
-          </h2>
-          <form
-            className="space-y-5"
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleConfirm();
-            }}
-          >
-            <div className="grid grid-cols-2 gap-4">
+        <div className="w-full max-w-5xl bg-neutral-50 rounded-2xl shadow-sm grid grid-cols-1 md:grid-cols-2 gap-10 p-6 md:p-12">
+          {/* Bloco ESQUERDO: Info de entrega */}
+          <section>
+            <h2 className="text-lg font-semibold mb-6 tracking-tight">
+              Informações de entrega
+            </h2>
+            <form
+              className="space-y-5"
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleConfirm();
+              }}
+            >
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">
+                    Nome
+                  </label>
+                  <input
+                    type="text"
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
+                    className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
+                    placeholder="Seu nome"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">
+                    Telefone
+                  </label>
+                  <input
+                    type="tel"
+                    value={telefone}
+                    onChange={(e) => setTelefone(maskTelefone(e.target.value))}
+                    className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
+                    placeholder="(00) 90000-0000"
+                    required
+                  />
+                </div>
+              </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Nome</label>
+                <label className="block text-xs text-gray-500 mb-1">
+                  E-mail
+                </label>
                 <input
-                  type="text"
-                  value={nome}
-                  onChange={(e) => setNome(e.target.value)}
+                  type="email"
+                  value={typeof email === "string" ? email : ""}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
-                  placeholder="Seu nome"
+                  placeholder="Seu melhor e-mail"
                   required
                 />
               </div>
               <div>
                 <label className="block text-xs text-gray-500 mb-1">
-                  Telefone
+                  Endereço
                 </label>
                 <input
-                  type="tel"
-                  value={telefone}
-                  onChange={(e) => setTelefone(maskTelefone(e.target.value))}
+                  type="text"
+                  value={typeof endereco === "string" ? endereco : ""}
+                  onChange={(e) => setEndereco(e.target.value)}
                   className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
-                  placeholder="(00) 90000-0000"
+                  placeholder="Rua"
                   required
                 />
               </div>
-            </div>
-            <div>
-              <label className="block text-xs text-gray-500 mb-1">E-mail</label>
-              <input
-                type="email"
-                value={typeof email === "string" ? email : ""}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
-                placeholder="Seu melhor e-mail"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-gray-500 mb-1">
-                Endereço
-              </label>
-              <input
-                type="text"
-                value={typeof endereco === "string" ? endereco : ""}
-                onChange={(e) => setEndereco(e.target.value)}
-                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
-                placeholder="Rua"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <input
-                type="text"
-                value={numero}
-                onChange={(e) => setNumero(e.target.value)}
-                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
-                placeholder="Número"
-                required
-              />
-              <input
-                type="text"
-                value={estado}
-                onChange={(e) => setEstado(e.target.value)}
-                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
-                placeholder="Estado"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <input
-                type="text"
-                value={cep}
-                onChange={(e) => setCep(e.target.value)}
-                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
-                placeholder="CEP"
-                required
-              />
-              <input
-                type="text"
-                value={cidade}
-                onChange={(e) => setCidade(e.target.value)}
-                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
-                placeholder="Cidade"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-gray-500 mb-1">CPF</label>
-              <input
-                type="text"
-                value={cpf}
-                onChange={(e) => setCpf(e.target.value)}
-                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
-                placeholder="CPF"
-                required
-              />
-            </div>
-          </form>
-        </section>
-        {/* Bloco DIREITO: Resumo do pedido */}
-        <section>
-          <h2 className="text-lg font-semibold mb-6 tracking-tight">
-            Resumo do pedido
-          </h2>
-          <ul className="divide-y divide-gray-100 mb-5">
-            {itens.map((item) => (
-              <li
-                key={item.variationId}
-                className="flex items-center justify-between py-4"
-              >
-                <div>
-                  <div className="font-medium">{item.nome}</div>
-                  <div className="text-xs text-gray-400">
-                    Modelo: {item.generos?.[0] || "-"} | Tamanho:{" "}
-                    {item.tamanhos?.[0] || "-"} | Cor:{" "}
-                    {item.cores?.[0] ? hexToPtName(item.cores[0]) : "-"}
-                  </div>
-                  <div className="text-xs text-gray-400">
-                    Qtd: {item.quantidade}
-                  </div>
-                </div>
-                <div className="font-semibold">
-                  {formatCurrency(
-                    calculateGross(item.preco, paymentMethod, installments)
-                      .gross * item.quantidade
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
-          <div className="border-t pt-4">
-            <div className="flex justify-between">
-              <span>Subtotal (bruto)</span>
-              {/* TOTAL do carrinho em bruto */}
-              <span>{formatCurrency(displayTotalGross)}</span>
-            </div>
-            {installments > 1 && (
-              <div className="flex justify-between text-sm text-gray-500">
-                <span>Valor da parcela</span>
-                <span>{formatCurrency(totalGross / installments)}</span>
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  value={numero}
+                  onChange={(e) => setNumero(e.target.value)}
+                  className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
+                  placeholder="Número"
+                  required
+                />
+                <input
+                  type="text"
+                  value={estado}
+                  onChange={(e) => setEstado(e.target.value)}
+                  className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
+                  placeholder="Estado"
+                  required
+                />
               </div>
-            )}
-          </div>
-          <div className="mt-4 space-y-3">
-            <div>
-              <label className="block text-xs text-gray-500 mb-1">
-                Forma de pagamento
-              </label>
-              <select
-                value={paymentMethod}
-                onChange={(e) =>
-                  setPaymentMethod(e.target.value as PaymentMethod)
-                }
-                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-black focus:outline-none"
-              >
-                <option value="pix">Pix</option>
-                <option value="boleto">Boleto</option>
-                <option value="debito">Débito</option>
-                <option value="credito">Crédito</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs text-gray-500 mb-1">
-                Parcelas
-              </label>
-              <select
-                value={installments}
-                onChange={(e) => setInstallments(Number(e.target.value))}
-                disabled={paymentMethod !== "credito"}
-                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-black focus:outline-none"
-              >
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <option key={i + 1} value={i + 1}>
-                    {i + 1}x
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="border-t pt-4 space-y-1">
-            <div className="flex justify-between text-base">
-              <span>Total a pagar</span>
-              <span>{formatCurrency(totalGross)}</span>
-            </div>
-            {paymentMethod === "credito" && installments > 1 && (
-              <div className="flex justify-between text-sm text-gray-500">
-                <span>Valor da parcela</span>
-                <span>{formatCurrency(totalGross / installments)}</span>
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  value={cep}
+                  onChange={(e) => setCep(e.target.value)}
+                  className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
+                  placeholder="CEP"
+                  required
+                />
+                <input
+                  type="text"
+                  value={cidade}
+                  onChange={(e) => setCidade(e.target.value)}
+                  className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
+                  placeholder="Cidade"
+                  required
+                />
               </div>
-            )}
-          </div>
-          <button
-            onClick={handleConfirm}
-            disabled={status !== "idle"}
-            className="mt-8 w-full py-3 rounded-xl bg-primary-600 text-white font-medium text-base tracking-wide transition hover:bg-primary-900 active:scale-95 disabled:opacity-50"
-          >
-            {status === "loading" ? (
-              <span className="flex items-center justify-center gap-2">
-                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                Processando...
-              </span>
-            ) : status === "success" ? (
-              <CheckCircle className="w-5 h-5" />
-            ) : (
-              "Confirmar Pedido"
-            )}
-          </button>
-        </section>
-      </div>
-    </main>
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">CPF</label>
+                <input
+                  type="text"
+                  value={cpf}
+                  onChange={(e) => setCpf(e.target.value)}
+                  className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-base focus:border-black focus:outline-none"
+                  placeholder="CPF"
+                  required
+                />
+              </div>
+            </form>
+          </section>
+          {/* Bloco DIREITO: Resumo do pedido */}
+          <section>
+            <h2 className="text-lg font-semibold mb-6 tracking-tight">
+              Resumo do pedido
+            </h2>
+            <ul className="divide-y divide-gray-100 mb-5">
+              {itens.map((item) => (
+                <li
+                  key={item.variationId}
+                  className="flex items-center justify-between py-4"
+                >
+                  <div>
+                    <div className="font-medium">{item.nome}</div>
+                    <div className="text-xs text-gray-400">
+                      Modelo: {item.generos?.[0] || "-"} | Tamanho:{" "}
+                      {item.tamanhos?.[0] || "-"} | Cor:{" "}
+                      {item.cores?.[0] ? hexToPtName(item.cores[0]) : "-"}
+                    </div>
+                    <div className="text-xs text-gray-400">
+                      Qtd: {item.quantidade}
+                    </div>
+                  </div>
+                  <div className="font-semibold">
+                    {formatCurrency(
+                      calculateGross(item.preco, paymentMethod, installments)
+                        .gross * item.quantidade
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <div className="border-t pt-4">
+              <div className="flex justify-between">
+                <span>Subtotal</span>
+                {/* TOTAL do carrinho em bruto */}
+                <span>{formatCurrency(displayTotalGross)}</span>
+              </div>
+            </div>
+            <div className="mt-4 space-y-3">
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">
+                  Forma de pagamento
+                </label>
+                <select
+                  value={paymentMethod}
+                  onChange={(e) =>
+                    setPaymentMethod(e.target.value as PaymentMethod)
+                  }
+                  className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-black focus:outline-none"
+                >
+                  <option value="pix">Pix</option>
+                  <option value="boleto">Boleto</option>
+                  <option value="debito">Débito</option>
+                  <option value="credito">Crédito</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">
+                  Parcelas
+                </label>
+                <select
+                  value={installments}
+                  onChange={(e) => setInstallments(Number(e.target.value))}
+                  disabled={paymentMethod !== "credito"}
+                  className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-black focus:outline-none"
+                >
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <option key={i + 1} value={i + 1}>
+                      {i + 1}x
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="border-t pt-4 space-y-1">
+              <div className="flex justify-between text-base">
+                <span>Total a pagar</span>
+                <span>{formatCurrency(totalGross)}</span>
+              </div>
+              {paymentMethod === "credito" && installments > 1 && (
+                <div className="flex justify-between text-sm text-gray-500">
+                  <span>Valor da parcela</span>
+                  <span>{formatCurrency(totalGross / installments)}</span>
+                </div>
+              )}
+            </div>
+            <button
+              onClick={handleConfirm}
+              disabled={status !== "idle"}
+              className="mt-8 w-full py-3 rounded-xl bg-primary-600 text-white font-medium text-base tracking-wide transition hover:bg-primary-900 active:scale-95 disabled:opacity-50"
+            >
+              {status === "loading" ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  Processando...
+                </span>
+              ) : status === "success" ? (
+                <CheckCircle className="w-5 h-5" />
+              ) : (
+                "Confirmar Pedido"
+              )}
+            </button>
+          </section>
+        </div>
+      </main>
     </>
   );
 }
