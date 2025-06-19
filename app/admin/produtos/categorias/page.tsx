@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import ModalCategoria from "./ModalCategoria";
+import { useToast } from "@/lib/context/ToastContext";
 
 interface Categoria {
   id: string;
@@ -13,6 +14,7 @@ interface Categoria {
 
 export default function CategoriasAdminPage() {
   const { user: ctxUser, isLoggedIn } = useAuthContext();
+  const { showSuccess, showError } = useToast();
   const router = useRouter();
   const getAuth = useCallback(() => {
     const token =
@@ -71,6 +73,7 @@ export default function CategoriasAdminPage() {
       });
       const data = await res.json();
       if (res.ok) {
+        showSuccess(editCategoria ? "Categoria atualizada" : "Categoria criada");
         const auth = getAuth();
         fetch("/admin/api/categorias", {
           headers: {
@@ -85,8 +88,11 @@ export default function CategoriasAdminPage() {
             setCategorias([]);
           });
       } else {
-        console.error(data.error);
+        showError("Erro: " + data.error);
       }
+    } catch (err) {
+      console.error("Erro ao salvar categoria:", err);
+      showError("Erro ao salvar categoria");
     } finally {
       setModalOpen(false);
       setEditCategoria(null);
@@ -96,14 +102,25 @@ export default function CategoriasAdminPage() {
   async function handleDelete(id: string) {
     if (!confirm("Confirma excluir?")) return;
     const { token, user } = getAuth();
-    await fetch(`/admin/api/categorias/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "X-PB-User": JSON.stringify(user),
-      },
-    });
-    setCategorias((prev) => prev.filter((c) => c.id !== id));
+    try {
+      const res = await fetch(`/admin/api/categorias/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-PB-User": JSON.stringify(user),
+        },
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        showError("Erro: " + (data.error || "Não foi possível excluir."));
+        return;
+      }
+      setCategorias((prev) => prev.filter((c) => c.id !== id));
+      showSuccess("Categoria excluída");
+    } catch (err) {
+      console.error("Erro ao excluir categoria:", err);
+      showError("Erro ao excluir categoria");
+    }
   }
 
   return (
