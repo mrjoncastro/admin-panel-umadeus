@@ -8,14 +8,15 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
+import { CheckCircle, XCircle } from "lucide-react";
 
 export type ToastType = "success" | "error";
+const TOAST_DURATION = 4000; // milissegundos
 
 interface ToastContextType {
   showSuccess: (msg: string) => void;
   showError: (msg: string) => void;
 }
-
 const ToastContext = createContext<ToastContextType>({
   showSuccess: () => {},
   showError: () => {},
@@ -28,74 +29,88 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   >([]);
   const [mounted, setMounted] = useState(false);
 
-  // marca que está montado (para usar createPortal com segurança)
-  useEffect(() => {
-    setMounted(true);
+  useEffect(() => setMounted(true), []);
+  useEffect(() => setToasts([]), [pathname]);
+
+  const removeToast = useCallback((id: string) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
 
-  // limpa ao navegar
-  useEffect(() => {
-    setToasts([]);
-  }, [pathname]);
+  const addToast = useCallback(
+    (message: string, type: ToastType) => {
+      const id = globalThis.crypto?.randomUUID
+        ? globalThis.crypto.randomUUID()
+        : Math.random().toString(36).slice(2);
 
-  const addToast = useCallback((message: string, type: ToastType) => {
-    console.log("🆕 [ToastProvider] addToast chamado com:", { message, type });
-    const id = globalThis.crypto?.randomUUID
-      ? globalThis.crypto.randomUUID()
-      : Math.random().toString(36).slice(2);
-
-    setToasts((prev) => {
-      const next = [...prev, { id, message, type }];
-      console.log("📋 [ToastProvider] state toasts após adicionar:", next);
-      return next;
-    });
-
-    setTimeout(() => {
-      setToasts((prev) => {
-        const next = prev.filter((toast) => toast.id !== id);
-        console.log(
-          "⏱ [ToastProvider] removendo toast",
-          id,
-          "→ novo state:",
-          next
-        );
-        return next;
-      });
-    }, 3000);
-  }, []);
+      setToasts((prev) => [...prev, { id, message, type }]);
+      setTimeout(() => {
+        removeToast(id);
+      }, TOAST_DURATION);
+    },
+    [removeToast]
+  );
 
   const showSuccess = useCallback(
-    (msg: string) => {
-      console.log("✅ [ToastProvider] showSuccess:", msg);
-      addToast(msg, "success");
-    },
+    (msg: string) => addToast(msg, "success"),
     [addToast]
   );
-
   const showError = useCallback(
-    (msg: string) => {
-      console.log("❌ [ToastProvider] showError:", msg);
-      addToast(msg, "error");
-    },
+    (msg: string) => addToast(msg, "error"),
     [addToast]
   );
 
-  // debug de render
-  console.log("🖥️ [ToastProvider.render] toasts atuais:", toasts);
-
-  // container dos toasts via portal
   const portal = (
-    <div className="fixed top-4 right-4 space-y-2 z-[9999] pointer-events-none">
+    <div className="fixed inset-x-0 top-6 flex flex-col items-center z-[9999] pointer-events-none">
       {toasts.map((t) => (
         <div
           key={t.id}
-          className={`pointer-events-auto px-4 py-2 rounded text-white shadow ${
-            t.type === "success" ? "bg-green-600" : "bg-red-600"
-          }`}
+          className={`flex items-center gap-2 px-5 py-3 min-w-[200px] max-w-xs rounded-2xl shadow-lg mb-2 
+            bg-white/80 backdrop-blur border border-gray-200 pointer-events-auto
+            transition-all duration-500 animate-slideIn
+            ${
+              t.type === "success"
+                ? "border-green-400 text-green-800"
+                : "border-red-400 text-red-800"
+            }
+          `}
+          style={{
+            boxShadow: "0 8px 24px 0 rgb(0 0 0 / 8%)",
+          }}
+          tabIndex={0}
+          role="alert"
         >
-          {t.message}
+          <span>
+            {t.type === "success" ? (
+              <CheckCircle className="w-5 h-5 text-green-500" />
+            ) : (
+              <XCircle className="w-5 h-5 text-red-500" />
+            )}
+          </span>
+          <span className="flex-1">{t.message}</span>
+          <button
+            className="ml-2 text-gray-400 hover:text-gray-600 focus:outline-none"
+            onClick={() => removeToast(t.id)}
+            aria-label="Fechar aviso"
+          >
+            ×
+          </button>
         </div>
       ))}
+      <style jsx global>{`
+        @keyframes slideIn {
+          from {
+            transform: translateY(-40px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+        .animate-slideIn {
+          animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+      `}</style>
     </div>
   );
 
