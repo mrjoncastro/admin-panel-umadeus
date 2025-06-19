@@ -27,6 +27,7 @@ function CheckoutContent() {
   const router = useRouter();
   const { isLoggedIn, user, tenantId } = useAuthContext();
   const pb = useMemo(() => createPocketBase(), []);
+  const { showSuccess, showError } = useToast();
 
   const [nome, setNome] = useState(user?.nome || "");
   const [telefone, setTelefone] = useState(String(user?.telefone ?? ""));
@@ -223,6 +224,9 @@ function CheckoutContent() {
       const link = data?.checkoutUrl || data?.link;
       if (!res.ok || !link) throw new Error("Falha ao gerar link de pagamento");
       setRedirecting(true);
+      showSuccess(
+        "Pedido registrado! Você será redirecionado para o pagamento."
+      );
       clearCart();
       setTimeout(() => {
         setStatus("success");
