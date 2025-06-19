@@ -48,9 +48,12 @@ export default function ProdutosFiltrados({
     return res;
   }, [busca, faixasSelecionadas, ordem, produtos]); // removed faixasPreco from dependencies
 
+  // To fix the implicit any type for 'checked', add a type annotation:
   function toggleFaixa(label: string) {
-    setFaixasSelecionadas((prev) =>
-      prev.includes(label) ? prev.filter((l) => l !== label) : [...prev, label]
+    setFaixasSelecionadas((prev: string[]) =>
+      prev.includes(label)
+        ? prev.filter((l: string) => l !== label)
+        : [...prev, label]
     );
   }
 

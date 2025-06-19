@@ -151,3 +151,5 @@
 ## [2025-06-18] Erro ao criar compra: ClientResponseError 400: Failed to create record. - development
 
 ## [2025-06-18] Erro no checkout: Error: {"errors":[{"code":"invalid_object","description":"O campo successUrl é inválido."},{"code":"invalid_object","description":"O campo cancelUrl é inválido."},{"code":"invalid_object","description":"O campo expiredUrl é inválido."}]} - development
+## [2025-06-19] Erro ao atualizar configuracoes: ClientResponseError 400: Failed to update record. - development
+

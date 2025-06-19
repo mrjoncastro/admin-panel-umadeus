@@ -3,6 +3,9 @@ import { useState, useRef, ChangeEvent, useCallback } from "react";
 import { useAppConfig } from "@/lib/context/AppConfigContext";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import Image from "next/image";
+import { Check } from "lucide-react";
+import ToggleSwitch from "@/components/ToggleSwitch";
+
 
 // Lista de tons proibidos (branco, quase branco, preto, quase preto)
 const BLOCKED_COLORS = [
@@ -84,7 +87,7 @@ export default function ConfiguracoesPage() {
   const [primaryColor, setPrimaryColor] = useState(config.primaryColor);
   const [logoUrl, setLogoUrl] = useState(config.logoUrl);
   const [confirmaInscricoes, setConfirmaInscricoes] = useState(
-    config.confirmaInscricoes,
+    config.confirmaInscricoes
   );
   const [error, setError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
@@ -180,15 +183,17 @@ export default function ConfiguracoesPage() {
   const isLight = isColorLight(primaryColor);
 
   return (
-    <div className="max-w-xl mx-auto p-6 space-y-8 card">
-      <h1 className="text-2xl font-bold">Configurações do App</h1>
-      <div className="space-y-4">
+    <div className="max-w-lg mx-auto bg-white dark:bg-zinc-900 rounded-3xl shadow-xl p-8 space-y-10 mt-10">
+      <div className="space-y-6">
+        {/* Fonte */}
         <label className="block">
-          <span className="block mb-1">Fonte</span>
+          <span className="block mb-1 text-base font-semibold text-gray-700 dark:text-gray-200">
+            Fonte
+          </span>
           <select
             value={font}
             onChange={(e) => setFont(e.target.value)}
-            className="input-base"
+            className="input-base rounded-xl border-2 border-purple-100 focus:border-purple-400"
             style={{ fontFamily: font }}
           >
             {fontes.map((f) => (
@@ -202,71 +207,91 @@ export default function ConfiguracoesPage() {
             ))}
           </select>
           <span
-            className="mt-2 block text-xs text-neutral-600"
+            className="mt-2 block text-xs text-neutral-500"
             style={{ fontFamily: font }}
           >
-            Prévia da fonte: UMADEUS Portal
+            <span className="font-semibold">Prévia:</span> UMADEUS Portal
           </span>
         </label>
+        {/* Cor Primária */}
         <label className="block">
-          <span className="block mb-1">Cor Primária</span>
-          <input
-            type="color"
-            value={primaryColor}
-            onChange={handleColorChange}
-            className="w-16 h-8 p-0 border-none"
-            style={{ background: primaryColor }}
-          />
-          <span
-            className="inline-block ml-3 align-middle text-xs"
-            style={{ color: primaryColor, fontWeight: 600 }}
-          >
-            {primaryColor}
+          <span className="block mb-1 text-base font-semibold text-gray-700 dark:text-gray-200">
+            Cor Primária
           </span>
+          <div className="flex items-center gap-4">
+            <input
+              type="color"
+              value={primaryColor}
+              onChange={handleColorChange}
+              className="w-12 h-10 rounded-xl border-2 border-purple-200 shadow-sm focus:border-purple-500 transition"
+              style={{ background: primaryColor }}
+            />
+            <span
+              className="text-sm font-mono px-2 py-1 rounded-xl bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700"
+              style={{
+                color: isLight ? "#444" : "#fff",
+                background: isLight ? "#eee" : primaryColor,
+              }}
+            >
+              {primaryColor}
+            </span>
+          </div>
         </label>
-        {error && <div className="text-sm text-red-600">{error}</div>}
+        {error && (
+          <div className="text-sm text-red-600 px-2 py-1 bg-red-50 rounded">
+            {error}
+          </div>
+        )}
+        {/* Logo */}
         <label className="block">
-          <span className="block mb-1">Logo (URL ou Upload)</span>
+          <span className="block mb-1 text-base font-semibold text-gray-700 dark:text-gray-200">
+            Logo <span className="text-xs text-gray-400">(URL ou Upload)</span>
+          </span>
           <input
             type="text"
             value={logoUrl.startsWith("data:") ? "" : logoUrl}
             placeholder="Cole a URL do logo"
             onChange={handleLogoChange}
-            className="input-base mb-2"
+            className="input-base rounded-xl border-2 border-purple-100 focus:border-purple-400 mb-2"
           />
           <input
             ref={fileRef}
             type="file"
             accept="image/*"
             onChange={handleLogoChange}
-            className="input-base"
+            className="input-base rounded-xl border-2 border-purple-100 focus:border-purple-400"
           />
         </label>
         {logoUrl && (
-          <div className="mt-2 flex items-center gap-2">
-            <Image
-              src={logoUrl}
-              alt="Logo"
-              width={64}
-              height={64}
-              className="h-16 w-auto rounded border border-neutral-200 bg-white p-1"
-            />
-            <span className="text-xs text-neutral-500">Prévia</span>
+          <div className="flex items-center gap-3 mt-2">
+            <div className="h-20 w-20 flex items-center justify-center border-2 border-purple-200 bg-white dark:bg-zinc-900 rounded-xl overflow-hidden">
+              <Image
+                src={logoUrl}
+                alt="Logo"
+                width={64}
+                height={64}
+                className="h-16 w-auto"
+                unoptimized
+              />
+            </div>
+            <span className="text-xs text-neutral-500">Prévia do logo</span>
           </div>
         )}
-        <label className="checkbox-label">
-          <input
-            type="checkbox"
-            checked={confirmaInscricoes}
-            onChange={(e) => setConfirmaInscricoes(e.target.checked)}
-            className="checkbox-base"
-          />
-          Confirmar inscrições manualmente?
-        </label>
-        <div className="mt-4">
-          <span className="block mb-1 text-sm">Preview do botão:</span>
+        {/* Confirmação manual */}
+        <ToggleSwitch
+          checked={confirmaInscricoes}
+          onChange={setConfirmaInscricoes}
+          label="Confirmar inscrições manualmente?"
+          className="mt-4"
+        />
+        {/* Preview botão */}
+        <div>
+          <span className="block mb-1 text-sm text-gray-600">
+            Prévia do botão:
+          </span>
           <button
-            className="btn btn-primary w-40"
+            type="button"
+            className="btn btn-primary w-40 flex items-center justify-center gap-2 rounded-2xl shadow-lg"
             style={{
               background: primaryColor,
               color: isLight ? "#222" : "#fff",
@@ -274,13 +299,15 @@ export default function ConfiguracoesPage() {
             }}
             disabled={!!error}
           >
-            Salvar
+            <Check className="w-4 h-4 mr-1" />
+            TESTE
           </button>
         </div>
       </div>
+
       <button
         onClick={handleSave}
-        className="btn btn-primary w-full"
+        className="btn btn-primary w-full mt-2 flex items-center justify-center gap-2 rounded-2xl shadow-xl py-3 text-lg"
         style={{
           background: primaryColor,
           color: isLight ? "#222" : "#fff",
