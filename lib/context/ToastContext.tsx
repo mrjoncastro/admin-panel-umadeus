@@ -26,23 +26,30 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<
     { id: string; message: string; type: ToastType }[]
   >([]);
-  const pathname = usePathname();
-  useEffect(() => setToasts([]), [pathname]);
   const [mounted, setMounted] = useState(false);
+
+  // marca que está montado (para usar createPortal com segurança)
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // limpa ao navegar
+  useEffect(() => {
+    setToasts([]);
+  }, [pathname]);
 
   const addToast = useCallback((message: string, type: ToastType) => {
     console.log("🆕 [ToastProvider] addToast chamado com:", { message, type });
     const id = globalThis.crypto?.randomUUID
       ? globalThis.crypto.randomUUID()
       : Math.random().toString(36).slice(2);
+
     setToasts((prev) => {
       const next = [...prev, { id, message, type }];
       console.log("📋 [ToastProvider] state toasts após adicionar:", next);
       return next;
     });
+
     setTimeout(() => {
       setToasts((prev) => {
         const next = prev.filter((toast) => toast.id !== id);
@@ -64,6 +71,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     },
     [addToast]
   );
+
   const showError = useCallback(
     (msg: string) => {
       console.log("❌ [ToastProvider] showError:", msg);
@@ -72,28 +80,29 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     [addToast]
   );
 
-  // 🚨 DEBUG: saber sempre que o provider renderiza
+  // debug de render
   console.log("🖥️ [ToastProvider.render] toasts atuais:", toasts);
+
+  // container dos toasts via portal
+  const portal = (
+    <div className="fixed top-4 right-4 space-y-2 z-[9999] pointer-events-none">
+      {toasts.map((t) => (
+        <div
+          key={t.id}
+          className={`pointer-events-auto px-4 py-2 rounded text-white shadow ${
+            t.type === "success" ? "bg-green-600" : "bg-red-600"
+          }`}
+        >
+          {t.message}
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <ToastContext.Provider value={{ showSuccess, showError }}>
       {children}
-      {mounted &&
-        createPortal(
-          <div className="fixed top-4 right-4 space-y-2 z-50">
-            {toasts.map((t) => (
-              <div
-                key={t.id}
-                className={`px-4 py-2 rounded text-white shadow ${
-                  t.type === "success" ? "bg-green-600" : "bg-red-600"
-                }`}
-              >
-                {t.message}
-              </div>
-            ))}
-          </div>,
-          document.body
-        )}
+      {mounted && createPortal(portal, document.body)}
     </ToastContext.Provider>
   );
 }
