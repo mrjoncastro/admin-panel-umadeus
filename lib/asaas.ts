@@ -1,5 +1,5 @@
 import { MAX_ITEM_DESCRIPTION_LENGTH, MAX_ITEM_NAME_LENGTH } from "./constants";
-import { calculateGross, PaymentMethod } from "./asaasFees";
+import { calculateGross, PaymentMethod, getAsaasFees } from "./asaasFees";
 import { toAsaasBilling } from "./paymentMethodMap";
 
 export function buildCheckoutUrl(baseUrl: string): string {
@@ -82,14 +82,22 @@ export async function createCheckout(
   );
   let margin = Number(initialMargin.toFixed(2));
 
+  // Valor líquido que restará após as taxas do Asaas
+  const { fixedFee, percentFee } = getAsaasFees(
+    params.paymentMethod,
+    params.installments,
+  );
+  const netAfterFees = Number((gross * (1 - percentFee) - fixedFee).toFixed(2));
+
   // Evita erro do Asaas quando o split excede o valor da cobrança
-  if (margin >= gross) {
-    margin = Number((gross - 0.01).toFixed(2));
+  if (margin >= netAfterFees) {
+    margin = Number((netAfterFees - 0.01).toFixed(2));
   }
 
   console.info("✅ Parsed valorBruto:", parsedValor);
   console.info("✅ Valor bruto calculado:", gross);
   console.info("✅ Split calculado:", margin);
+  console.info("✅ Valor líquido pós-taxas:", netAfterFees);
 
   const isInstallmentCredit =
     params.paymentMethod === "credito" && params.installments > 1;

@@ -152,4 +152,5 @@
 
 ## [2025-06-18] Erro no checkout: Error: {"errors":[{"code":"invalid_object","description":"O campo successUrl é inválido."},{"code":"invalid_object","description":"O campo cancelUrl é inválido."},{"code":"invalid_object","description":"O campo expiredUrl é inválido."}]} - development
 ## [2025-06-19] Erro ao atualizar configuracoes: ClientResponseError 400: Failed to update record. - development
+## [2025-07-09] Erro no checkout: {"errors":[{"code":"invalid_object","description":"O valor total do Split excede o valor a receber"}]} - development
 
