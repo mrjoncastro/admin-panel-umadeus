@@ -37,7 +37,7 @@ Implementamos a base multi-tenant do sistema no banco usando PocketBase, já pre
 ## Permissões e Lógica Multi-tenant
 
 - Todas queries, leituras e gravações devem ser filtradas pelo campo `cliente`.
-- **É obrigatório que toda criação, edição, atualização ou exclusão de usuários, pedidos, inscrições, compras e quaisquer outros registros SEMPRE inclua o campo `cliente`, vinculando corretamente ao cliente (tenant) em questão.**
+- **É obrigatório que toda criação, edição ou exclusão de usuários, pedidos, inscrições e quaisquer outros registros SEMPRE inclua o campo `cliente`, vinculando corretamente ao cliente (tenant) em questão.**
 - O fluxo de autenticação, consulta ou cadastro deve sempre:
   1. **Procurar primeiro o cliente** (tenant) usando `documento` (CPF/CNPJ) ou domínio.
   2. **Isolar todas as operações** usando o ID do cliente (campo `cliente`).
@@ -100,22 +100,13 @@ As rotas de servidor (`/api`) chamam `getTenantFromHost` para identificar o clie
 
 * O campo `asaas_account_id` também pode ser salvo para facilitar matching no webhook.
 
-* **Pedidos estão sempre vinculados a inscrições, enquanto compras realizadas na loja não têm relação com inscrições.**
-
-* **Ao criar um pedido ou compra, envie o campo `externalReference` (externalID) com uma estrutura clara que permita identificar o `cliente`, o `usuario` e, quando aplicável, a `inscricao`.**
+* **Ao criar um pedido, envie o campo `externalReference` (externalID) com uma estrutura clara que permita identificar o `cliente`, o `usuario` e, quando aplicável, a `inscricao`. Inclua também o campo `canal` informando a origem do pedido (ex.: `inscricao` ou `loja`).**
 
   * Exemplo de formato:
 
     ```json
     {
       "externalReference": "cliente_abc123_usuario_xyz789_inscricao_456def"
-    }
-    ```
-  * Para compras sem inscrição:
-
-    ```json
-    {
-      "externalReference": "cliente_abc123_usuario_xyz789"
     }
     ```
   * No webhook, o backend deve extrair esse identificador e usá-lo para localizar com segurança o cliente e o usuário responsáveis pela transação.

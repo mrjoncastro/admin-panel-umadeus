@@ -12,7 +12,6 @@ Este guia apresenta um passo a passo para novos clientes conhecerem as principai
 
 1. Na área pública, explore a vitrine de produtos em **Loja**.
 2. Adicione itens ao carrinho e finalize em **Checkout**.
-3. Após a compra, acompanhe seus pedidos em **Minhas compras**.
 
 ## 3. Painel Administrativo
 
@@ -21,7 +20,6 @@ Este guia apresenta um passo a passo para novos clientes conhecerem as principai
    - **Dashboard** – visão geral de inscrições e vendas.
    - **Inscrições** – lista e aprovação de participantes.
    - **Pedidos** – pagamentos relacionados às inscrições.
-   - **Compras** – histórico de compras na loja.
    - **Produtos** – cadastro e edição de itens.
    - **Clientes** – dados de cada tenant e domínio.
    - **Campos** – gerenciamento das áreas de atuação.
@@ -40,7 +38,9 @@ ativada, cada inscrição permanece em status pendente até que a liderança a
 aprove na tela **Inscrições**, momento em que o link de pagamento é gerado. Se a
 opção estiver desmarcada, o pedido e a cobrança são criados de forma automática
 logo após o envio do formulário (desde que o evento possua o campo
-`cobra_inscricao` habilitado e um produto de inscrição selecionado).
+`cobra_inscricao` habilitado e um produto de inscrição selecionado). Nessa etapa,
+o pedido recebe o campo `canal` com valor `inscricao` para indicar a origem da
+transação.
 
 ## 4. Blog
 

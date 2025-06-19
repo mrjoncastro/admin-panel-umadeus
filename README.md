@@ -104,7 +104,8 @@ Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utiliza
 
 1. O usuário preenche o formulário e os dados são enviados para `criarInscricao`.
 2. A função valida os campos e retorna uma inscrição com status `pendente`.
-3. Em seguida `criarPedido` gera o pedido vinculado à inscrição.
+3. Em seguida `criarPedido` gera o pedido vinculado à inscrição. Nessa criação,
+   o campo `canal` recebe o valor `inscricao` para indicar a origem do pedido.
 4. Compras feitas na loja enviam o `pedidoId` para o endpoint `/checkouts`, que
    comunica-se com `/admin/api/asaas` usando `valorBruto`, `paymentMethod` e
    `installments` para gerar a `url` de pagamento e salvá-la em `link_pagamento`.
@@ -142,6 +143,7 @@ Envie uma requisição `POST` em JSON contendo:
 - **errorUrl** – página de erro ou cancelamento.
 - **clienteId** – ID do cliente (tenant) responsável pelo pagamento.
 - **usuarioId** – ID do usuário que gerou o checkout.
+- **canal** – origem do pedido (ex.: `inscricao`).
 - **inscricaoId** – ID da inscrição relacionada (opcional).
 
 O endpoint utiliza as variáveis de ambiente `ASAAS_API_URL` e `ASAAS_API_KEY`.
@@ -242,28 +244,6 @@ O painel possui o modal `BankAccountModal` para registrar contas bancárias do c
 Na página **Transferências**, um botão **Nova conta** abre este modal para facilitar o cadastro durante o fluxo de transferências. O `ModalAnimated` recebeu um `z-index` superior para evitar que elementos fixos como a navbar sobreponham o conteúdo do modal.
 
 
-### Coleção `compras`
-
-Registra as compras feitas na loja. Campos principais:
-
-- `cliente` – relação obrigatória com o tenant.
-- `usuario` – usuário que realizou a compra.
-- `itens` – JSON com os produtos adquiridos.
-- `valor_total` – soma dos itens.
-- `status` – `pendente`, `pago` ou `cancelado`.
-- `metodo_pagamento` – `pix`, `cartao` ou `boleto`.
-- `checkout_url` – link de pagamento gerado (opcional).
-- `asaas_payment_id` – ID da transação no Asaas (opcional).
-- `externalReference` – identificador único enviado ao Asaas.
-- `endereco_entrega` – dados de entrega (opcional).
-- `created` / `updated` – gerenciados pelo PocketBase.
-
-### Rotas de Compras
-
-- `/admin/compras` – listagem completa de compras (restrito a coordenadores).
-- `/admin/compras/[id]` – detalhes de uma compra.
-- `/loja/compras` – lista "Minhas compras" disponível ao cliente.
-- `/loja/compras/[id]` – página de detalhes acessível pelo usuário.
 
 ## Perfis de Acesso
 
@@ -273,8 +253,7 @@ O sistema possui três níveis de usuário:
 - **Lider** – acesso restrito às inscrições e pedidos do seu campo.
 - **Usuário** – cliente final que realiza compras e visualiza a área do cliente em `/loja/cliente`.
 
-Somente coordenadores podem acessar a página `/admin/compras` para visualizar as compras realizadas.
-Coordenadores também visualizam as métricas financeiras completas no painel.
+Coordenadores visualizam as métricas financeiras completas no painel.
 Líderes veem apenas a quantidade de inscrições e pedidos do seu campo.
 
 ## Blog e CMS

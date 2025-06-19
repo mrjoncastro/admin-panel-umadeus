@@ -1,6 +1,6 @@
 # Plano de Cálculo de Cobranças e Repasse de Margens
 
-Este documento descreve a lógica e as fórmulas que o sistema deve usar para calcular, emitir e registrar cobranças (inscrições ou compras) de forma que:
+Este documento descreve a lógica e as fórmulas que o sistema deve usar para calcular, emitir e registrar cobranças de inscrições de forma que:
 
 1. **O coordenador receba exatamente o valor líquido** que cadastrou.
 2. A plataforma retenha **margem líquida de 7%** sobre esse valor.
@@ -96,9 +96,9 @@ Para **Pix**, com V = R$ 50,00:
 
 **Fluxo:**
 
-1. O sistema cobra **R$ 55,49**.  
-2. O Asaas desconta R$ 1,99 → sobra R$ 53,50.  
-3. Via `split`, R$ 3,50 (7% de 50) vai para a plataforma.  
+> **Observações finais**
+> - Todos os valores devem ser arredondados a dois dígitos (centavos).
+> - Esta lógica se aplica a **inscrições** (cobrança avulsa).
 > - O sistema deve atualizar dinamicamente o valor de `G` e os detalhes de split sempre que o usuário alterar forma de pagamento ou número de parcelas.
 > - Ao exibir o "Total a pagar", usar calculateGross(total, paymentMethod, installments), refletindo a forma de pagamento selecionada.O cálculo com "pix" pode ser usado como referência base ou subtotal comparativo.
 
