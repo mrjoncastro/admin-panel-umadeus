@@ -32,7 +32,6 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 │   ├── lider-painel/      # Painel exclusivo para lideranças locais
 │   ├── obrigado/          # Página de agradecimento
 │   ├── pedidos/           # Gestão de pedidos vinculados à inscrição
-│   ├── compras/           # Gestão de compras da loja
 │   ├── pendente/          # Tela para inscrições pendentes
 │   ├── perfil/            # Tela de perfil do usuário logado
 │   ├── redefinir-senha/   # Recuperação de senha
@@ -48,13 +47,11 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 │   ├── categorias/        # Filtros e páginas de cada categoria de produto
 │   ├── checkout/          # Processo de pagamento e finalização do pedido
 │   ├── cliente/           # Área do cliente com pedidos e dados pessoais
-│   ├── compras/           # Histórico do usuário com suas compras
 │   ├── login/             # Rotas de autenticação da loja
 │   ├── components/        # Componentes reutilizáveis da loja
 │   ├── eventos/           # Formulário de inscrição em eventos
 │   ├── inscricoes/        # Envio e visualização pública (se necessário)
 │   ├── produtos/          # Listagem e detalhes dos produtos
-│   ├── compras/           # Detalhes de compras realizadas
 │   ├── layout.tsx         # Layout público da loja
 │   └── page.tsx           # Home da loja
 ├──
