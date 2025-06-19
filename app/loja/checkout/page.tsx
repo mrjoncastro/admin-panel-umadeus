@@ -43,6 +43,8 @@ function CheckoutContent() {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
   const [installments, setInstallments] = useState(1);
   const [redirecting, setRedirecting] = useState(false);
+  const [campoId, setCampoId] = useState<string | null>(null);
+  const [liderId, setLiderId] = useState<string | null>(null);
 
   // 1. calcula total líquido
   const total = useMemo(
@@ -80,6 +82,25 @@ function CheckoutContent() {
       setCpf(String(user.cpf ?? ""));
     }
   }, [user]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    let ignore = false;
+    pb.collection("usuarios")
+      .getOne(user.id, { expand: "campo" })
+      .then((u) => {
+        if (ignore) return;
+        const campo = (u.expand?.campo as { id?: string; responsavel?: string }) || {};
+        setCampoId((u as unknown as { campo?: string }).campo || campo.id || null);
+        setLiderId(typeof campo.responsavel === "string" ? campo.responsavel : null);
+      })
+      .catch(() => {
+        /* ignore */
+      });
+    return () => {
+      ignore = true;
+    };
+  }, [user?.id, pb]);
 
   useEffect(() => {}, [total, paymentMethod, installments]);
 
@@ -179,8 +200,9 @@ function CheckoutContent() {
         genero: Array.isArray(firstItem?.generos)
           ? firstItem.generos[0]
           : (firstItem as any)?.genero,
-        responsavel: user.id,
+        responsavel: liderId || user.id,
         cliente: tenantId,
+        ...(campoId ? { campo: campoId } : {}),
         email,
         valor: displayTotalGross.toFixed(2),
         canal: "loja",

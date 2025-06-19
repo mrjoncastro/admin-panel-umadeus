@@ -49,6 +49,7 @@ export type Pedido = {
   genero?: string;
   responsavel?: string;
   cliente?: string;
+  campo?: string;
   email: string;
   canal: 'loja' | 'inscricao';
   created?: string;
