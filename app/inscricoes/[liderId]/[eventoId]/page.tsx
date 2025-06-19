@@ -348,33 +348,6 @@ export default function InscricaoPage() {
               <option value="">Nenhum produto disponível</option>
             )}
           </select>
-
-          {/* Valor final fora do select */}
-          {current && (
-            <p className="mt-1 text-sm text-purple-700 font-bold">
-              Total a pagar: R${" "}
-              {calculateGross(current.valor, paymentMethod, installments)
-                .gross.toFixed(2)
-                .replace(".", ",")}
-            </p>
-          )}
-
-          {/* Exibe valor da parcela se for parcelado */}
-          {current && installments > 1 && (
-            <div className="mt-1 text-sm text-gray-700">
-              Parcela:{" "}
-              <b>
-                R${" "}
-                {(
-                  calculateGross(current.valor, paymentMethod, installments)
-                    .gross / installments
-                )
-                  .toFixed(2)
-                  .replace(".", ",")}{" "}
-                x {installments}
-              </b>
-            </div>
-          )}
         </div>
 
         {current?.tamanhos && (
@@ -423,7 +396,7 @@ export default function InscricaoPage() {
             disabled={paymentMethod !== "credito"}
             className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
           >
-            {Array.from({ length: 21 }).map((_, i) => (
+            {Array.from({ length: 6 }).map((_, i) => (
               <option key={i + 1} value={i + 1}>
                 {i + 1}x
               </option>

@@ -444,7 +444,7 @@ function CheckoutContent() {
                 disabled={paymentMethod !== "credito"}
                 className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-black focus:outline-none"
               >
-                {Array.from({ length: 21 }).map((_, i) => (
+                {Array.from({ length: 6 }).map((_, i) => (
                   <option key={i + 1} value={i + 1}>
                     {i + 1}x
                   </option>
