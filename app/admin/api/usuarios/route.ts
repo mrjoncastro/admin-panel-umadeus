@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/apiAuth";
 import { logInfo } from "@/lib/logger";
 import { logConciliacaoErro } from "@/lib/server/logger";
+import { isValidCPF, isValidDate } from "@/utils/validators";
 
 export async function GET(req: NextRequest) {
   const auth = requireRole(req, "coordenador");
@@ -45,12 +46,34 @@ export async function POST(req: NextRequest) {
   const { pb, user } = auth;
 
   try {
-    const { nome, email, password, passwordConfirm, role, campo } =
-      await req.json();
+    const {
+      nome,
+      email,
+      telefone,
+      cpf,
+      data_nascimento,
+      endereco,
+      numero,
+      estado,
+      cep,
+      cidade,
+      password,
+      passwordConfirm,
+      role,
+      campo,
+    } = await req.json();
 
     if (
       !nome ||
       !email ||
+      !telefone ||
+      !cpf ||
+      !data_nascimento ||
+      !endereco ||
+      !numero ||
+      !estado ||
+      !cep ||
+      !cidade ||
       !password ||
       !passwordConfirm ||
       !campo ||
@@ -59,9 +82,40 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Dados inválidos" }, { status: 400 });
     }
 
+    const cpfNumerico = String(cpf).replace(/\D/g, "");
+    const telefoneNumerico = String(telefone).replace(/\D/g, "");
+    const cepNumerico = String(cep).replace(/\D/g, "");
+
+    if (!isValidCPF(cpfNumerico)) {
+      return NextResponse.json({ error: "CPF inválido" }, { status: 400 });
+    }
+
+    if (telefoneNumerico.length < 10) {
+      return NextResponse.json({ error: "Telefone inválido" }, { status: 400 });
+    }
+
+    if (!isValidDate(String(data_nascimento))) {
+      return NextResponse.json(
+        { error: "Data de nascimento inválida" },
+        { status: 400 }
+      );
+    }
+
+    if (cepNumerico.length !== 8) {
+      return NextResponse.json({ error: "CEP inválido" }, { status: 400 });
+    }
+
     const novoUsuario = await pb.collection("usuarios").create({
       nome,
       email,
+      telefone: telefoneNumerico,
+      cpf: cpfNumerico,
+      data_nascimento,
+      endereco,
+      numero,
+      estado,
+      cep: cepNumerico,
+      cidade,
       password,
       passwordConfirm,
       role,
