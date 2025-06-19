@@ -6,8 +6,8 @@ import { logConciliacaoErro } from "@/lib/server/logger";
 export async function POST(req: NextRequest) {
   const pb = createPocketBase();
   try {
-    const { nome, email, telefone, password, cliente } = await req.json();
-    if (!nome || !email || !telefone || !password || !cliente) {
+    const { nome, email, telefone, cpf, data_nascimento, endereco, numero, estado, cep, cidade, password, cliente } = await req.json();
+    if (!nome || !email || !telefone || !cpf || !data_nascimento || !endereco || !numero || !estado || !cep || !cidade || !password || !cliente) {
       return NextResponse.json({ error: "Dados inv\u00E1lidos" }, { status: 400 });
     }
     try {
@@ -20,6 +20,13 @@ export async function POST(req: NextRequest) {
       email: String(email).trim(),
       cliente: String(cliente),
       telefone: String(telefone).trim(),
+      cpf: String(cpf).trim(),
+      data_nascimento: String(data_nascimento),
+      endereco: String(endereco).trim(),
+      numero: String(numero).trim(),
+      estado: String(estado).trim(),
+      cep: String(cep).trim(),
+      cidade: String(cidade).trim(),
       password: String(password),
       passwordConfirm: String(password),
     });
