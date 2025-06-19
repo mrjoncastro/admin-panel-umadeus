@@ -4,6 +4,7 @@ import { X, Copy } from "lucide-react";
 import createPocketBase from "@/lib/pocketbase";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import { useToast } from "@/lib/context/ToastContext";
+import { logInfo } from "@/lib/logger";
 
 interface Props {
   pedidoId: string;
@@ -62,7 +63,7 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
       const { url } = await checkoutRes.json();
       setUrlPagamento(url);
 
-      await fetch("/admin/api/n8n", {
+      fetch("/admin/api/n8n", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -75,7 +76,9 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
           valor: pedido.valor,
           url_pagamento: url,
         }),
-      });
+      }).catch((err) =>
+        logInfo("⚠️ Falha ao notificar o n8n", err)
+      );
 
       showSuccess("Link reenviado com sucesso!");
     } catch {
