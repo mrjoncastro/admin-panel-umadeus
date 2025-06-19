@@ -12,7 +12,12 @@ import { useToast } from "@/lib/context/ToastContext";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
 import { logInfo } from "@/lib/logger";
 import type { PaymentMethod } from "@/lib/asaasFees";
-import type { Evento, Inscricao as InscricaoRecord, Pedido, Produto } from "@/types";
+import type {
+  Evento,
+  Inscricao as InscricaoRecord,
+  Pedido,
+  Produto,
+} from "@/types";
 
 const statusBadge = {
   pendente: "bg-yellow-100 text-yellow-800",
@@ -77,8 +82,7 @@ export default function ListaInscricoesPage() {
 
     setRole(user.role);
 
-    pb
-      .collection("eventos")
+    pb.collection("eventos")
       .getFullList<Evento>({
         sort: "-data",
         filter: `cliente='${tenantId}' && status!='realizado'`,
@@ -184,27 +188,76 @@ export default function ListaInscricoesPage() {
     try {
       setConfirmandoId(id);
 
-      // 🔹 1. Buscar inscrição com expand do campo
+      // 🔹 1. Buscar inscrição com expand do campo e produtos
       const inscricao = await pb
         .collection("inscricoes")
         .getOne<InscricaoRecord>(id, {
-          expand: "campo",
+          expand: "campo,produtos",
         });
+
+      logInfo(`[CONFIRMAR] [${id}] Objeto da inscrição carregado:`, inscricao);
+
+      // Log do campo expandido 'campo'
+      if (inscricao.expand?.campo) {
+        logInfo(`[CONFIRMAR] [${id}] expand.campo:`, inscricao.expand.campo);
+      } else {
+        logInfo(`[CONFIRMAR] [${id}] Não há expand.campo retornado.`);
+      }
+
+      // Log do campo expandido 'produtos'
+      if (inscricao.expand?.produtos) {
+        logInfo(
+          `[CONFIRMAR] [${id}] expand.produtos:`,
+          inscricao.expand.produtos
+        );
+      } else {
+        logInfo(`[CONFIRMAR] [${id}] Não há expand.produtos retornado.`);
+      }
 
       type CampoExpand = {
         id: string;
         nome: string;
         responsavel?: string;
       };
+      type ProdutoExpand = {
+        id: string;
+        nome: string;
+      };
+
       const campo = inscricao.expand?.campo as CampoExpand | undefined;
 
       // 🔹 2. Carregar produto escolhido
       let produtoRecord: Produto | undefined;
       try {
         if (inscricao.produto) {
-          produtoRecord = await pb.collection("produtos").getOne(inscricao.produto);
+          // Se veio expand.produtos e é array, tentar buscar pelo id
+          if (
+            inscricao.expand?.produtos &&
+            Array.isArray(inscricao.expand.produtos)
+          ) {
+            produtoRecord = (inscricao.expand.produtos as ProdutoExpand[]).find(
+              (p) => p.id === inscricao.produto
+            ) as Produto | undefined;
+            logInfo(
+              `[CONFIRMAR] Produto localizado via expand.produtos:`,
+              produtoRecord
+            );
+          } else {
+            // Busca individual (fallback)
+            produtoRecord = await pb
+              .collection("produtos")
+              .getOne(inscricao.produto);
+            logInfo(
+              `[CONFIRMAR] Produto localizado via getOne:`,
+              produtoRecord
+            );
+          }
         }
-      } catch {
+      } catch (e) {
+        logInfo(
+          `[CONFIRMAR] Falha ao localizar produto direto, tentando pelo evento...`,
+          e
+        );
         try {
           if (inscricao.evento) {
             const ev = await pb
@@ -214,8 +267,14 @@ export default function ListaInscricoesPage() {
               ? (ev.expand.produtos as Produto[])
               : [];
             produtoRecord = lista.find((p) => p.id === inscricao.produto);
+            logInfo(
+              `[CONFIRMAR] Produto localizado via evento:`,
+              produtoRecord
+            );
           }
-        } catch {}
+        } catch (ee) {
+          logInfo(`[CONFIRMAR] Falha ao buscar produto pelo evento`, ee);
+        }
       }
 
       const pedido = await pb.collection("pedidos").create<Pedido>({
@@ -238,7 +297,7 @@ export default function ListaInscricoesPage() {
         cliente: tenantId,
         campo: campo?.id,
         responsavel: inscricao.criado_por,
-        canal: 'inscricao',
+        canal: "inscricao",
       });
 
       // 🔹 4. Gerar link de pagamento via API do Asaas
@@ -299,9 +358,7 @@ export default function ListaInscricoesPage() {
           valor: pedido.valor,
           url_pagamento: checkout.url,
         }),
-      }).catch((err) =>
-        logInfo("⚠️ Falha ao notificar o n8n", err)
-      );
+      }).catch((err) => logInfo("⚠️ Falha ao notificar o n8n", err));
 
       // 🔹 7. Mostrar sucesso visual
       showSuccess("Link de pagamento enviado com sucesso!");
@@ -577,9 +634,9 @@ export default function ListaInscricoesPage() {
           onSave={async (
             dadosAtualizados: Partial<Inscricao & { eventoId: string }>
           ) => {
-              await pb
-                .collection("inscricoes")
-                .update<InscricaoRecord>(inscricaoEmEdicao.id, {
+            await pb
+              .collection("inscricoes")
+              .update<InscricaoRecord>(inscricaoEmEdicao.id, {
                 ...dadosAtualizados,
                 evento: dadosAtualizados.eventoId ?? inscricaoEmEdicao.eventoId,
               });
@@ -613,11 +670,11 @@ export default function ListaInscricoesPage() {
               </button>
               <button
                 onClick={async () => {
-                    await pb
-                      .collection("inscricoes")
-                      .update<InscricaoRecord>(inscricaoParaRecusar.id, {
-                        status: "cancelado",
-                      });
+                  await pb
+                    .collection("inscricoes")
+                    .update<InscricaoRecord>(inscricaoParaRecusar.id, {
+                      status: "cancelado",
+                    });
                   setInscricoes((prev) =>
                     prev.map((i) =>
                       i.id === inscricaoParaRecusar.id
