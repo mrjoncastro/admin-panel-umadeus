@@ -156,21 +156,46 @@ export async function createCheckout(
   };
 
 
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      accept: "application/json",
-      "Content-Type": "application/json",
-      "access-token": finalKey,
-      "User-Agent": agentUser,
-    },
-    body: JSON.stringify(payload),
-  });
+  async function send(): Promise<{ ok: boolean; text: string }> {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        "access-token": finalKey,
+        "User-Agent": agentUser,
+      },
+      body: JSON.stringify(payload),
+    });
+    const text = await res.text();
+    console.log("📨 Resposta do Asaas:", text);
+    return { ok: res.ok, text };
+  }
 
-  const text = await res.text();
-  console.log("📨 Resposta do Asaas:", text);
+  let { ok, text } = await send();
 
-  if (!res.ok) {
+  if (!ok) {
+    try {
+      const err = JSON.parse(text) as {
+        errors?: { description?: string }[];
+      };
+      const desc = err.errors?.[0]?.description ?? "";
+      const match = desc.match(/R\$\s*([0-9.,]+)/g);
+      if (match && match.length >= 2) {
+        const allowed = Number(match[1].replace(/[^0-9,]/g, "").replace(/,/, "."));
+        if (!Number.isNaN(allowed)) {
+          const newSplit = Number((allowed - 0.01).toFixed(2));
+          payload.split[0].fixedValue = newSplit;
+          console.info("🔄 Split ajustado para:", newSplit);
+          ({ ok, text } = await send());
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+
+  if (!ok) {
     throw new Error(text);
   }
 

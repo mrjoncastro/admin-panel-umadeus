@@ -154,3 +154,4 @@
 ## [2025-06-19] Erro ao atualizar configuracoes: ClientResponseError 400: Failed to update record. - development
 ## [2025-07-09] Erro no checkout: {"errors":[{"code":"invalid_object","description":"O valor total do Split excede o valor a receber"}]} - development
 
+## [2025-07-09] Resolvido erro de Split no checkout ajustando o valor automaticamente quando a API retorna o limite. Commit: 4285c3777ccd95b6024d424a54fe5528118646a4

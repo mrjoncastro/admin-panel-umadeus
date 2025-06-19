@@ -155,3 +155,5 @@
 ## [2025-07-09] Ajustado parsing de valorBruto e validação do split em lib/asaas.ts. Lint e build executados.
 ## [2025-07-09] Registrado valorBruto, gross e split nos logs e ajustado limite do split para sempre ser inferior ao total. Lint e build executados.
 ## [2025-07-09] Corrigido cálculo do split na rota de checkout considerando o valor líquido pós-taxas. Lint e build executados.
+
+## [2025-07-09] Ajuste automatico do split no checkout ao detectar limite informado pelo Asaas. Lint e build executados.
