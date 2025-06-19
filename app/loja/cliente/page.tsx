@@ -2,33 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
-import { useToast } from "@/lib/context/ToastContext";
-import type { Inscricao, Compra, Pedido } from "@/types";
+import type { Inscricao, Pedido } from "@/types";
 
 export default function AreaCliente() {
   const { user, pb, authChecked } = useAuthGuard(["usuario"]);
   const { showSuccess, showError } = useToast();
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
-  const [compras, setCompras] = useState<Compra[]>([]);
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
-  const concluirPagamento = async (id: string) => {
-    if (!user) return;
-    try {
-      const res = await fetch(`/loja/api/compras/${id}/reenviar`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${pb.authStore.token}`,
-          "X-PB-User": JSON.stringify(user),
-        },
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Erro ao gerar link");
-      showSuccess(`URL de pagamento: ${data.url}`);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Erro ao gerar link";
-      showError(msg);
-    }
-  };
 
   useEffect(() => {
     if (!authChecked || !user) return;
@@ -44,14 +24,6 @@ export default function AreaCliente() {
       .catch((err) => {
         console.error("Erro ao carregar inscricoes", err);
         setInscricoes([]);
-      });
-
-    fetch("/loja/api/compras", { headers })
-      .then((res) => res.json())
-      .then((data) => setCompras(Array.isArray(data) ? data : []))
-      .catch((err) => {
-        console.error("Erro ao carregar compras", err);
-        setCompras([]);
       });
 
     fetch("/loja/api/pedidos", { headers })
@@ -93,51 +65,6 @@ export default function AreaCliente() {
         </div>
       </section>
 
-      <section className="card">
-        <h2 className="text-xl font-bold mb-4">Meus Pedidos</h2>
-        <table className="table-base">
-          <thead>
-            <tr>
-              <th>Número</th>
-              <th>Data</th>
-              <th>Status</th>
-              <th>Pagamento</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {compras.map((c) => (
-              <tr key={c.id}>
-                <td>#{c.id}</td>
-                <td>
-                  {c.created
-                    ? new Date(c.created).toLocaleDateString("pt-BR")
-                    : "-"}
-                </td>
-                <td className="capitalize">{c.status}</td>
-                <td>{c.metodo_pagamento}</td>
-                <td className="flex gap-2">
-                  <a
-                    href={`/loja/compras/${c.id}`}
-                    className="btn btn-secondary"
-                  >
-                    Ver detalhes
-                  </a>
-                  {c.status === "pendente" && (
-                    <button
-                      type="button"
-                      onClick={() => concluirPagamento(c.id)}
-                      className="btn btn-secondary"
-                    >
-                      Concluir Pagamento
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
 
       <section className="card">
         <h2 className="text-xl font-bold mb-4">Minhas Inscrições</h2>
