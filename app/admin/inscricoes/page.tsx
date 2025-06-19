@@ -188,11 +188,11 @@ export default function ListaInscricoesPage() {
     try {
       setConfirmandoId(id);
 
-      // 🔹 1. Buscar inscrição com expand do campo e produtos
+      // 🔹 1. Buscar inscrição com expand do campo e produtos do evento
       const inscricao = await pb
         .collection("inscricoes")
         .getOne<InscricaoRecord>(id, {
-          expand: "campo,produtos",
+          expand: "campo,evento.produtos",
         });
 
       logInfo(`[CONFIRMAR] [${id}] Objeto da inscrição carregado:`, inscricao);
@@ -230,51 +230,18 @@ export default function ListaInscricoesPage() {
       let produtoRecord: Produto | undefined;
       try {
         if (inscricao.produto) {
-          // Se veio expand.produtos e é array, tentar buscar pelo id
-          if (
-            inscricao.expand?.produtos &&
-            Array.isArray(inscricao.expand.produtos)
-          ) {
-            produtoRecord = (inscricao.expand.produtos as ProdutoExpand[]).find(
-              (p) => p.id === inscricao.produto
-            ) as Produto | undefined;
-            logInfo(
-              `[CONFIRMAR] Produto localizado via expand.produtos:`,
-              produtoRecord
-            );
-          } else {
-            // Busca individual (fallback)
-            produtoRecord = await pb
-              .collection("produtos")
-              .getOne(inscricao.produto);
-            logInfo(
-              `[CONFIRMAR] Produto localizado via getOne:`,
-              produtoRecord
-            );
-          }
+          produtoRecord = await pb.collection("produtos").getOne(inscricao.produto);
         }
-      } catch (e) {
-        logInfo(
-          `[CONFIRMAR] Falha ao localizar produto direto, tentando pelo evento...`,
-          e
-        );
+      } catch {
         try {
-          if (inscricao.evento) {
-            const ev = await pb
-              .collection("eventos")
-              .getOne(inscricao.evento, { expand: "produtos" });
-            const lista = Array.isArray(ev.expand?.produtos)
-              ? (ev.expand.produtos as Produto[])
-              : [];
-            produtoRecord = lista.find((p) => p.id === inscricao.produto);
-            logInfo(
-              `[CONFIRMAR] Produto localizado via evento:`,
-              produtoRecord
-            );
-          }
-        } catch (ee) {
-          logInfo(`[CONFIRMAR] Falha ao buscar produto pelo evento`, ee);
-        }
+          const evExpand = inscricao.expand?.evento as
+            | { expand?: { produtos?: Produto[] } }
+            | undefined;
+          const lista = Array.isArray(evExpand?.expand?.produtos)
+            ? (evExpand?.expand?.produtos as Produto[])
+            : [];
+          produtoRecord = lista.find((p) => p.id === inscricao.produto);
+        } catch {}
       }
 
       const pedido = await pb.collection("pedidos").create<Pedido>({
