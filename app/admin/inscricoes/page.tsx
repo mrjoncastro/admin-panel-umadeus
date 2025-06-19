@@ -200,9 +200,12 @@ export default function ListaInscricoesPage() {
       // 🔹 2. Carregar produto escolhido
       let produtoRecord: Produto | undefined;
       try {
+        const produtoFilter = pb.filter("nome = {:nome}", {
+          nome: inscricao.produto,
+        });
         produtoRecord = await pb
           .collection("produtos")
-          .getFirstListItem(`nome='${inscricao.produto}'`);
+          .getFirstListItem<Produto>(produtoFilter);
       } catch {
         try {
           if (inscricao.evento) {
@@ -301,7 +304,8 @@ export default function ListaInscricoesPage() {
       showSuccess("Link de pagamento enviado com sucesso!");
     } catch (err) {
       console.error("Erro ao confirmar inscrição:", err);
-      showError("Erro ao confirmar inscrição e gerar pedido.");
+      const msg = err instanceof Error ? err.message : "Erro ao confirmar inscrição e gerar pedido.";
+      showError(msg);
     } finally {
       setConfirmandoId(null);
     }
