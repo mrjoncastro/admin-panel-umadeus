@@ -27,6 +27,7 @@ function CheckoutContent() {
   const router = useRouter();
   const { isLoggedIn, user, tenantId } = useAuthContext();
   const pb = useMemo(() => createPocketBase(), []);
+  const { showError } = useToast();
 
   const [nome, setNome] = useState(user?.nome || "");
   const [telefone, setTelefone] = useState(String(user?.telefone ?? ""));

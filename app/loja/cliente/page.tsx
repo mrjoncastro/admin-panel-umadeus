@@ -6,7 +6,6 @@ import type { Inscricao, Pedido } from "@/types";
 
 export default function AreaCliente() {
   const { user, pb, authChecked } = useAuthGuard(["usuario"]);
-  const { showSuccess, showError } = useToast();
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
 
