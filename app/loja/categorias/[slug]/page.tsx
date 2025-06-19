@@ -19,9 +19,9 @@ interface Params {
 export default async function CategoriaDetalhe({
   params,
 }: {
-  params: Promise<Params>;
+  params: Params;
 }) {
-  const { slug } = await params;
+  const { slug } = params;
   const pb = createPocketBase();
   const tenantId = await getTenantFromHost();
 
