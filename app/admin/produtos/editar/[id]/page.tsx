@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { calculateGross } from "@/lib/asaasFees";
 import LoadingOverlay from "@/components/LoadingOverlay";
+import { useToast } from "@/lib/context/ToastContext";
 
 interface Categoria {
   id: string;
@@ -27,6 +28,7 @@ export default function EditarProdutoPage() {
   const { id } = useParams<{ id: string }>();
   const { user: ctxUser, isLoggedIn } = useAuthContext();
   const router = useRouter();
+  const { showSuccess, showError } = useToast();
   const getAuth = useCallback(() => {
     const token =
       typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
@@ -214,16 +216,24 @@ export default function EditarProdutoPage() {
     console.log("-------------------------------");
 
     const { token, user } = getAuth();
-    const res = await fetch(`/admin/api/produtos/${id}`, {
-      method: "PUT",
-      body: formData,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "X-PB-User": JSON.stringify(user),
-      },
-    });
-    if (res.ok) {
-      router.push("/admin/produtos");
+    try {
+      const res = await fetch(`/admin/api/produtos/${id}`, {
+        method: "PUT",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-PB-User": JSON.stringify(user),
+        },
+      });
+      if (res.ok) {
+        showSuccess("Produto atualizado");
+        router.push("/admin/produtos");
+      } else {
+        showError("Erro ao atualizar produto");
+      }
+    } catch (err) {
+      console.error("Erro ao atualizar produto:", err);
+      showError("Erro ao atualizar produto");
     }
   }
 

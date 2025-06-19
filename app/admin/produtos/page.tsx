@@ -6,6 +6,7 @@ import { useAuthContext } from "@/lib/context/AuthContext";
 import Link from "next/link";
 import type { Produto } from "@/types";
 import { ModalProduto } from "./novo/ModalProduto";
+import { useToast } from "@/lib/context/ToastContext";
 
 function slugify(str: string) {
   return str
@@ -22,6 +23,7 @@ const PRODUTOS_POR_PAGINA = 10;
 export default function AdminProdutosPage() {
   const { user: ctxUser, isLoggedIn } = useAuthContext();
   const router = useRouter();
+  const { showSuccess, showError } = useToast();
   const getAuth = useCallback(() => {
     const token =
       typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
@@ -114,13 +116,16 @@ export default function AdminProdutosPage() {
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         console.error("Falha ao criar produto", res.status, data);
+        showError("Erro ao criar produto");
         return;
       }
       const data = await res.json();
       console.log("Produto criado:", data);
       setProdutos((prev) => [data, ...prev]);
+      showSuccess("Produto criado");
     } catch (err) {
       console.error("Erro ao criar produto:", err);
+      showError("Erro ao criar produto");
     }
 
     setModalOpen(false);
