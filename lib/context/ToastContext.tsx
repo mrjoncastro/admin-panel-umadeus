@@ -1,5 +1,12 @@
 "use client";
-import { createContext, useContext, useState, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
+import { usePathname } from "next/navigation";
 
 export type ToastType = "success" | "error";
 
@@ -14,9 +21,12 @@ const ToastContext = createContext<ToastContextType>({
 });
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const [toasts, setToasts] = useState<
     { id: string; message: string; type: ToastType }[]
   >([]);
+
+  useEffect(() => setToasts([]), [pathname]);
 
   const addToast = useCallback((message: string, type: ToastType) => {
     const id = globalThis.crypto?.randomUUID
