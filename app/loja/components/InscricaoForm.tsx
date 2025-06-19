@@ -110,7 +110,9 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
 
       setStatus("success");
       showSuccess("Inscrição registrada! Em breve entraremos em contato.");
-      router.push("/loja/inscricoes/confirmacao");
+      setTimeout(() => {
+        router.push("/loja/inscricoes/confirmacao");
+      }, 500);
     } catch (err) {
       console.warn("Erro ao enviar inscrição:", err);
       setStatus("error");

@@ -112,7 +112,9 @@ export default function SignUpForm({
         senha
       );
       showSuccess("Conta criada com sucesso!");
-      onSuccess?.();
+      setTimeout(() => {
+        onSuccess?.();
+      }, 500);
     } catch (err: unknown) {
       console.error("Erro no cadastro:", err);
       const e = err as ClientResponseError;
