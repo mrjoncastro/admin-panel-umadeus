@@ -59,7 +59,7 @@ export default function EditarEventoPage() {
           cidade: data.cidade,
           status: data.status,
         });
-        setExistingImage(data.imagem || null);
+        setExistingImage(data.imagemUrl || null);
         setCobraInscricao(Boolean(data.cobra_inscricao));
         const arr = Array.isArray(data.produtos)
           ? (data.produtos as string[])
@@ -150,8 +150,6 @@ export default function EditarEventoPage() {
     formData.delete("imagem");
     if (files && files.length > 0) {
       formData.append("imagem", files[0]);
-    } else if (existingImage) {
-      formData.append("imagem", existingImage);
     }
     formData.delete("produtos");
     selectedProdutos.forEach((p) => formData.append("produtos", p));
@@ -222,6 +220,13 @@ export default function EditarEventoPage() {
             accept="image/*"
             className="input-base"
           />
+          {existingImage && (
+            <img
+              src={existingImage}
+              alt="Imagem atual"
+              className="w-full max-h-56 object-cover"
+            />
+          )}
           <select
             name="status"
             defaultValue={String(initial.status)}
