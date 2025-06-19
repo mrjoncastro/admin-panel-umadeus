@@ -19,6 +19,7 @@ export default function EditarEventoPage() {
   }, [ctxUser]);
   const router = useRouter();
   const [initial, setInitial] = useState<Record<string, unknown> | null>(null);
+  const [existingImage, setExistingImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [cobraInscricao, setCobraInscricao] = useState(false);
   const [produtos, setProdutos] = useState<Produto[]>([]);
@@ -56,6 +57,7 @@ export default function EditarEventoPage() {
           cidade: data.cidade,
           status: data.status,
         });
+        setExistingImage(data.imagem || null);
         setCobraInscricao(Boolean(data.cobra_inscricao));
         const arr = Array.isArray(data.produtos)
           ? (data.produtos as string[])
@@ -139,6 +141,16 @@ export default function EditarEventoPage() {
     e.preventDefault();
     const formElement = e.currentTarget as HTMLFormElement;
     const formData = new FormData(formElement);
+    const imagemInput = formElement.querySelector<HTMLInputElement>(
+      "input[name='imagem']"
+    );
+    const files = imagemInput?.files;
+    formData.delete("imagem");
+    if (files && files.length > 0) {
+      formData.append("imagem", files[0]);
+    } else if (existingImage) {
+      formData.append("imagem", existingImage);
+    }
     formData.delete("produtos");
     selectedProdutos.forEach((p) => formData.append("produtos", p));
     formData.set("cobra_inscricao", String(cobraInscricao));
