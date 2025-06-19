@@ -1,7 +1,7 @@
 "use client";
 
 import { useCart } from "@/lib/context/CartContext";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Suspense, useState, useEffect } from "react";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import { useAuthContext } from "@/lib/context/AuthContext";
@@ -14,6 +14,8 @@ import {
   MAX_ITEM_NAME_LENGTH,
 } from "@/lib/constants";
 import { useMemo } from "react";
+import createPocketBase from "@/lib/pocketbase";
+import type { Pedido } from "@/types";
 
 function formatCurrency(n: number) {
   return `R$ ${n.toFixed(2).replace(".", ",")}`;
@@ -23,9 +25,8 @@ function CheckoutContent() {
   const { itens, clearCart } = useCart();
 
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { isLoggedIn, user, tenantId } = useAuthContext();
-  const { showError } = useToast();
+  const pb = useMemo(() => createPocketBase(), []);
 
   const [nome, setNome] = useState(user?.nome || "");
   const [telefone, setTelefone] = useState(String(user?.telefone ?? ""));
@@ -87,7 +88,6 @@ function CheckoutContent() {
     }
   }, [isLoggedIn, router]);
 
-  const pedidoId = searchParams.get("pedido") || Date.now().toString();
 
   useEffect(() => {
     if (paymentMethod !== "credito" && installments !== 1) {
@@ -164,12 +164,33 @@ function CheckoutContent() {
         installments,
       );
 
+      const firstItem = itens[0] as {
+        nome?: string;
+        tamanho?: string;
+        cor?: string;
+        genero?: string;
+      };
+      const pedido = await pb.collection("pedidos").create<Pedido>({
+        id_pagamento: "",
+        id_inscricao: "",
+        produto: firstItem?.nome || "Produto",
+        tamanho: firstItem?.tamanho,
+        status: "pendente",
+        cor: firstItem?.cor || "Roxo",
+        genero: firstItem?.genero,
+        responsavel: user.id,
+        cliente: tenantId,
+        email,
+        valor: displayTotalGross.toFixed(2),
+        canal: "loja",
+      });
+
       const payload = {
         valorBruto,
         paymentMethod,
         itens: itensPayload,
-        successUrl: `${window.location.origin}/loja/sucesso?pedido=${pedidoId}`,
-        errorUrl: `${window.location.origin}/loja/sucesso?pedido=${pedidoId}`,
+        successUrl: `${window.location.origin}/loja/sucesso?pedido=${pedido.id}`,
+        errorUrl: `${window.location.origin}/loja/sucesso?pedido=${pedido.id}`,
         clienteId: tenantId,
         usuarioId: user.id,
         cliente: {
@@ -192,32 +213,6 @@ function CheckoutContent() {
             }
           : {}),
       };
-
-      const token = localStorage.getItem("pb_token");
-      const pbUser = localStorage.getItem("pb_user");
-      await fetch("/admin/api/compras", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          "X-PB-User": pbUser ?? "",
-        },
-        body: JSON.stringify({
-          usuario: user?.id,
-          itens: itensPayload,
-          valor_total: displayTotalGross,
-          status: "pendente",
-          metodo_pagamento:
-            paymentMethod === "pix"
-              ? "pix"
-              : paymentMethod === "boleto"
-              ? "boleto"
-              : "cartao",
-          parcelas: installments,
-          externalReference: `cliente_${user?.cliente}_usuario_${user?.id}`,
-          endereco_entrega: { endereco, numero, estado, cep, cidade },
-        }),
-      });
 
       const res = await fetch("/admin/api/asaas/checkout", {
         method: "POST",

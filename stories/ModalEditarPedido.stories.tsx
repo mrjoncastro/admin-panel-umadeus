@@ -26,6 +26,7 @@ const meta = {
       id_pagamento: 'pgto-1',
       id_inscricao: 'insc-1',
       valor: '100',
+      canal: 'inscricao',
       // Adicione outros campos obrigatórios do tipo Pedido, se necessário
     },
     onClose: fn(),

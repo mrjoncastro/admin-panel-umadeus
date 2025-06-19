@@ -42,6 +42,7 @@ export const Default: Story = {
         },
         updated: '2024-01-01',
         user: 'user1',
+        canal: 'inscricao',
         // Adicione outros campos obrigatórios do tipo Pedido aqui se necessário
       } as unknown as Pedido,
       {
@@ -54,6 +55,7 @@ export const Default: Story = {
         },
         updated: '2024-01-02',
         user: 'user2',
+        canal: 'inscricao',
         // Adicione outros campos obrigatórios do tipo Pedido aqui se necessário
       } as unknown as Pedido,
     ],
@@ -77,6 +79,7 @@ export const SemFinanceiro: Story = {
         valor: '100',
         status: 'pago',
         expand: { campo: { id: '1', nome: 'Campo 1' } },
+        canal: 'inscricao',
       } as unknown as Pedido,
     ],
     mostrarFinanceiro: false,
