@@ -44,8 +44,7 @@ Consulte a [documentação de deploy do Next.js](https://nextjs.org/docs/app/bui
 
 1. Instale a Vercel CLI com `npm i -g vercel` e execute `vercel` para vincular o projeto à sua conta.
 2. No painel da Vercel, adicione o domínio desejado em **Settings > Domains**.
-3. Defina a variável `NEXT_PUBLIC_SITE_URL` com o domínio configurado (ex.: `https://meuapp.com`).
-4. Rode `vercel --prod` para publicar e aplique as configurações de DNS indicadas pela própria Vercel.
+3. Rode `vercel --prod` para publicar e aplique as configurações de DNS indicadas pela própria Vercel.
 
 ## Lint e boas práticas
 
@@ -84,7 +83,6 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `PB_ADMIN_EMAIL` - e-mail do administrador do PocketBase
 - `PB_ADMIN_PASSWORD` - senha do administrador
 - `ASAAS_API_URL` - URL base da API do Asaas (ex.: `https://api-sandbox.asaas.com/api/v3/`)
-- `NEXT_PUBLIC_SITE_URL` - endereço do site do cliente
 - `NEXT_PUBLIC_BRASILAPI_URL` - base para chamadas à BrasilAPI
 - `NEXT_PUBLIC_N8N_WEBHOOK_URL` - URL do webhook do n8n para receber inscrições
 
