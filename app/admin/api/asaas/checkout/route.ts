@@ -11,7 +11,7 @@ import {
 
 const checkoutSchema = z.object({
   valorBruto: z.number(),
-  paymentMethod: z.enum(["pix", "boleto", "debito", "credito"]),
+  paymentMethod: z.enum(["pix", "boleto", "credito"]),
   itens: z
     .array(
       z.object({

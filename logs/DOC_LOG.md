@@ -157,3 +157,4 @@
 ## [2025-07-09] Corrigido cálculo do split na rota de checkout considerando o valor líquido pós-taxas. Lint e build executados.
 
 ## [2025-07-09] Ajuste automatico do split no checkout ao detectar limite informado pelo Asaas. Lint e build executados.
+## [2025-07-10] Modalidade de débito removida do checkout e documentação. Lint e build executados.

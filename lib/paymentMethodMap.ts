@@ -6,8 +6,6 @@ export function toAsaasBilling(method: PaymentMethod): string {
       return 'PIX'
     case 'boleto':
       return 'BOLETO'
-    case 'debito':
-      return 'DEBIT_CARD'
     case 'credito':
       return 'CREDIT_CARD'
     default:

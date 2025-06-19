@@ -5,7 +5,6 @@ describe('toAsaasBilling', () => {
   it('converte formas de pagamento', () => {
     expect(toAsaasBilling('pix')).toBe('PIX')
     expect(toAsaasBilling('boleto')).toBe('BOLETO')
-    expect(toAsaasBilling('debito')).toBe('DEBIT_CARD')
     expect(toAsaasBilling('credito')).toBe('CREDIT_CARD')
   })
 })

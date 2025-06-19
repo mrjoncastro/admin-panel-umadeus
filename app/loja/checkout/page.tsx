@@ -155,7 +155,6 @@ function CheckoutContent() {
       const paymentMap = {
         pix: "PIX",
         boleto: "BOLETO",
-        debito: "DEBIT_CARD",
         credito: "CREDIT_CARD",
       } as const;
 
@@ -436,7 +435,6 @@ function CheckoutContent() {
                 >
                   <option value="pix">Pix</option>
                   <option value="boleto">Boleto</option>
-                  <option value="debito">Débito</option>
                   <option value="credito">Crédito</option>
                 </select>
               </div>

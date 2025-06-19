@@ -1,11 +1,10 @@
-export type PaymentMethod = 'pix' | 'boleto' | 'debito' | 'credito'
+export type PaymentMethod = 'pix' | 'boleto' | 'credito'
 
 interface FeeRange { min: number; max: number; fixed: number; percent: number }
 
 const feeTable: Record<PaymentMethod, FeeRange[]> = {
   pix: [{ min: 1, max: 1, fixed: 1.99, percent: 0 }],
   boleto: [{ min: 1, max: 1, fixed: 1.99, percent: 0 }],
-  debito: [{ min: 1, max: 1, fixed: 0.35, percent: 0.0189 }],
   credito: [
     { min: 1, max: 1, fixed: 0.49, percent: 0.0299 },
     { min: 2, max: 6, fixed: 0.49, percent: 0.0349 },
