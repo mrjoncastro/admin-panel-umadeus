@@ -7,6 +7,7 @@ import { logInfo } from "@/lib/logger";
 import { useToast } from "@/lib/context/ToastContext";
 import { calculateGross, type PaymentMethod } from "@/lib/asaasFees";
 import { useAppConfig } from "@/lib/context/AppConfigContext";
+import Spinner from "@/components/Spinner";
 
 interface Produto {
   nome: string;
@@ -442,7 +443,14 @@ export default function InscricaoPage() {
             disabled={loading}
             className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
-            {loading ? "Enviando..." : "Finalizar inscrição"}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <Spinner className="w-4 h-4" />
+                Enviando...
+              </span>
+            ) : (
+              "Finalizar inscrição"
+            )}
           </button>
         </form>
     </div>
