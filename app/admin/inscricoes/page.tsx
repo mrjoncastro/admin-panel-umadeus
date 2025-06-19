@@ -10,8 +10,7 @@ import { CheckCircle, XCircle, Pencil, Trash2, Eye } from "lucide-react";
 import TooltipIcon from "../components/TooltipIcon";
 import { useToast } from "@/lib/context/ToastContext";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
-import { logInfo } from "@/lib/logger";
-import type { PaymentMethod } from "@/lib/asaasFees";
+import { calculateGross, type PaymentMethod } from "@/lib/asaasFees";
 import type {
   Evento,
   Inscricao as InscricaoRecord,
@@ -191,31 +190,17 @@ export default function ListaInscricoesPage() {
       // 1. Buscar inscrição com expand do campo e produtos
       const inscricao = await pb
         .collection("inscricoes")
-        .getOne<InscricaoRecord>(id, {
+        .getOne<
+          InscricaoRecord & { expand?: { produtos?: Produto | Produto[] } }
+        >(id, {
           expand: "campo,produtos",
         });
 
-      logInfo(`[CONFIRMAR] [${id}] Inscrição carregada:`, inscricao);
-
-      // Log do campo expandido 'campo'
-      if (inscricao.expand?.campo) {
-        logInfo(`[CONFIRMAR] [${id}] expand.campo:`, inscricao.expand.campo);
-      } else {
-        logInfo(`[CONFIRMAR] [${id}] Não há expand.campo retornado.`);
-      }
-
-      // Log do campo expandido 'produtos'
-      if (inscricao.expand?.produtos) {
-        logInfo(
-          `[CONFIRMAR] [${id}] expand.produtos:`,
-          inscricao.expand.produtos
-        );
-      } else {
-        logInfo(`[CONFIRMAR] [${id}] Não há expand.produtos retornado.`);
-      }
+      // Dados da inscrição obtidos com expand
 
       // Checar campo correto: produto ou produtos
-      const produtoId = inscricao.produto || inscricao.produtos;
+      type InscricaoWithProdutos = InscricaoRecord & { produtos?: string };
+      const produtoId = inscricao.produto || (inscricao as InscricaoWithProdutos).produtos;
 
       // Extrair produto do expand (array ou objeto)
       let produtoRecord: Produto | undefined = undefined;
@@ -224,34 +209,24 @@ export default function ListaInscricoesPage() {
       if (inscricao.expand?.produtos) {
         if (Array.isArray(inscricao.expand.produtos)) {
           produtoRecord = inscricao.expand.produtos.find(
-            (p: any) => p.id === produtoId || p.id === inscricao.produto
+            (p: Produto) => p.id === produtoId || p.id === inscricao.produto
           );
         } else if (typeof inscricao.expand.produtos === "object") {
           produtoRecord = inscricao.expand.produtos as Produto;
         }
-        logInfo(
-          `[CONFIRMAR] Produto localizado via expand.produtos:`,
-          produtoRecord
-        );
+        // Produto localizado via expand
       }
 
       // Fallback se não achou pelo expand
       if (!produtoRecord && produtoId) {
         try {
           produtoRecord = await pb.collection("produtos").getOne(produtoId);
-          logInfo(`[CONFIRMAR] Produto localizado via getOne:`, produtoRecord);
-        } catch (err) {
-          logInfo(`[CONFIRMAR] Falha getOne produtoId=${produtoId}`, err);
+        } catch {
         }
       }
 
       // Novo log: garantir que estamos com preço
-      logInfo(
-        `[CONFIRMAR] Produto escolhido final:`,
-        produtoRecord,
-        "Preço:",
-        produtoRecord?.preco
-      );
+      // Produto final escolhido a partir do expand ou fallback
 
       // Se mesmo assim não encontrou, aborta!
       if (!produtoRecord || typeof produtoRecord.preco !== "number") {
@@ -263,9 +238,20 @@ export default function ListaInscricoesPage() {
       }
 
       // Obter o campo expandido normalmente
-      const campo = inscricao.expand?.campo;
+      const campo = inscricao.expand?.campo as
+        | { id?: string; responsavel?: string }
+        | undefined;
 
-      // Cria o pedido com o valor correto do produto
+      const insc = inscricao as InscricaoRecord & {
+        paymentMethod?: PaymentMethod;
+        installments?: number;
+      };
+
+      const metodo = insc.paymentMethod ?? "boleto";
+      const parcelas = insc.installments ?? 1;
+      const { gross } = calculateGross(produtoRecord.preco, metodo, parcelas);
+
+      // Cria o pedido com o valor do produto
       const pedido = await pb.collection("pedidos").create<Pedido>({
         id_inscricao: id,
         valor: produtoRecord.preco,
@@ -290,19 +276,14 @@ export default function ListaInscricoesPage() {
       });
 
       // 🔹 4. Gerar link de pagamento via API do Asaas
-      const insc = inscricao as InscricaoRecord & {
-        paymentMethod?: PaymentMethod;
-        installments?: number;
-      };
-
       const res = await fetch("/admin/api/asaas/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           pedidoId: pedido.id,
-          valorBruto: pedido.valor,
-          paymentMethod: insc.paymentMethod ?? "boleto",
-          installments: insc.installments ?? 1,
+          valorBruto: gross,
+          paymentMethod: metodo,
+          installments: parcelas,
         }),
       });
 
@@ -344,15 +325,14 @@ export default function ListaInscricoesPage() {
           liderId: campo?.responsavel,
           pedidoId: pedido.id,
           cliente: tenantId,
-          valor: pedido.valor,
+          valor: gross,
           url_pagamento: checkout.url,
         }),
-      }).catch((err) => logInfo("⚠️ Falha ao notificar o n8n", err));
+      }).catch(() => {});
 
       // 🔹 7. Mostrar sucesso visual
       showSuccess("Link de pagamento enviado com sucesso!");
-    } catch (err) {
-      console.error("Erro ao confirmar inscrição:", err);
+    } catch {
       showError("Erro ao confirmar inscrição e gerar pedido.");
     } finally {
       setConfirmandoId(null);
