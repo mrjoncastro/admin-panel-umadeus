@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { useToast } from "@/lib/context/ToastContext";
+import Spinner from "@/components/Spinner";
 
 
 const CEP_BASE_URL =
@@ -388,7 +389,11 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
           className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-6 rounded-lg uppercase transition"
           disabled={status === "sending"}
         >
-          {status === "sending" ? "Enviando..." : "Enviar inscrição"}
+          {status === "sending" ? (
+            <Spinner className="w-4 h-4" />
+          ) : (
+            "Enviar inscrição"
+          )}
         </button>
       </form>
     </main>
