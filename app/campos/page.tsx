@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { logInfo } from "@/lib/logger";
 import { useToast } from "@/lib/context/ToastContext";
+import Spinner from "@/components/Spinner";
 
 interface Campo {
   id: string;
@@ -184,10 +185,19 @@ export default function GerenciarCamposPage() {
 
         <button
           type="submit"
-          className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition"
+          className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition flex items-center justify-center gap-2"
           disabled={loading}
         >
-          {loading ? "Salvando..." : editandoId ? "Atualizar" : "Cadastrar"}
+          {loading ? (
+            <>
+              <Spinner className="w-4 h-4 border-2 border-white" />
+              Salvando...
+            </>
+          ) : editandoId ? (
+            "Atualizar"
+          ) : (
+            "Cadastrar"
+          )}
         </button>
       </form>
 
