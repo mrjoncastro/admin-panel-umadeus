@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import type { Produto } from "@/types";
@@ -221,9 +222,11 @@ export default function EditarEventoPage() {
             className="input-base"
           />
           {existingImage && (
-            <img
+            <Image
               src={existingImage}
               alt="Imagem atual"
+              width={800}
+              height={224}
               className="w-full max-h-56 object-cover"
             />
           )}

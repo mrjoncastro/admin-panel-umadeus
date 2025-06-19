@@ -23,9 +23,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: Params;
+  params: Promise<Params>;
 }): Promise<Metadata> {
-  const { slug } = params;
+  const { slug } = await params;
   const post = await getPostBySlug(slug);
 
   if (!post) {
@@ -46,13 +46,12 @@ export async function generateMetadata({
   };
 }
 
-// @ts-expect-error Next.js current typings use Promise for params
-async function BlogPostPage({
+export default async function BlogPostPage({
   params,
 }: {
-  params: Params;
+  params: Promise<Params>;
 }) {
-  const { slug } = params;
+  const { slug } = await params;
 
   const post = await getPostBySlug(slug);
   if (!post) return notFound();
@@ -196,4 +195,3 @@ async function BlogPostPage({
   );
 }
 
-export default BlogPostPage;
