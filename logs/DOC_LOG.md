@@ -147,3 +147,4 @@
 
 ## [2025-07-06] Guia iniciar-tour complementado com explicações sobre a opção "Confirmar inscrições manualmente?" e cobranças automáticas em eventos com `cobra_inscricao`. - Lint: falhou (next not found) - Build: falhou (next not found)
 ## [2025-07-07] Payload PIX atualizado com `operationType` e exemplos revisados no README e guia de saldo. - Lint: falhou (next not found) - Build: falhou (next not found)
+## [2025-06-19] Coleção `compras` removida e campo `canal` adicionado ao tipo Pedido. Impacto: simplificação dos registros de vendas.
