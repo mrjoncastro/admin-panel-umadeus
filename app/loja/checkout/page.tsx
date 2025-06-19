@@ -15,7 +15,7 @@ import {
 } from "@/lib/constants";
 import { useMemo } from "react";
 import createPocketBase from "@/lib/pocketbase";
-import type { Pedido } from "@/types";
+import type { Pedido, Produto } from "@/types";
 
 function formatCurrency(n: number) {
   return `R$ ${n.toFixed(2).replace(".", ",")}`;
@@ -43,6 +43,8 @@ function CheckoutContent() {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
   const [installments, setInstallments] = useState(1);
   const [redirecting, setRedirecting] = useState(false);
+  const [campoId, setCampoId] = useState<string | null>(null);
+  const [liderId, setLiderId] = useState<string | null>(null);
 
   // 1. calcula total líquido
   const total = useMemo(
@@ -80,6 +82,25 @@ function CheckoutContent() {
       setCpf(String(user.cpf ?? ""));
     }
   }, [user]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    let ignore = false;
+    pb.collection("usuarios")
+      .getOne(user.id, { expand: "campo" })
+      .then((u) => {
+        if (ignore) return;
+        const campo = (u.expand?.campo as { id?: string; responsavel?: string }) || {};
+        setCampoId((u as unknown as { campo?: string }).campo || campo.id || null);
+        setLiderId(typeof campo.responsavel === "string" ? campo.responsavel : null);
+      })
+      .catch(() => {
+        /* ignore */
+      });
+    return () => {
+      ignore = true;
+    };
+  }, [user?.id, pb]);
 
   useEffect(() => {}, [total, paymentMethod, installments]);
 
@@ -164,22 +185,31 @@ function CheckoutContent() {
         installments
       );
 
-      const firstItem = itens[0] as {
-        nome?: string;
+      type LegacyItem = Produto & {
         tamanho?: string;
         cor?: string;
         genero?: string;
       };
+
+      const firstItem = itens[0] as LegacyItem;
+
       const pedido = await pb.collection("pedidos").create<Pedido>({
         id_pagamento: "",
         id_inscricao: "",
         produto: firstItem?.nome || "Produto",
-        tamanho: firstItem?.tamanho,
+        tamanho: Array.isArray(firstItem?.tamanhos)
+          ? firstItem.tamanhos[0]
+          : firstItem.tamanho,
         status: "pendente",
-        cor: firstItem?.cor || "Roxo",
-        genero: firstItem?.genero,
-        responsavel: user.id,
+        cor: Array.isArray(firstItem?.cores)
+          ? firstItem.cores[0] || "Roxo"
+          : firstItem.cor || "Roxo",
+        genero: Array.isArray(firstItem?.generos)
+          ? firstItem.generos[0]
+          : firstItem.genero,
+        responsavel: liderId || user.id,
         cliente: tenantId,
+        ...(campoId ? { campo: campoId } : {}),
         email,
         valor: displayTotalGross.toFixed(2),
         canal: "loja",

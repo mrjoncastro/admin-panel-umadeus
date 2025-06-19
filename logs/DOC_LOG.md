@@ -159,3 +159,6 @@
 ## [2025-07-09] Ajuste automatico do split no checkout ao detectar limite informado pelo Asaas. Lint e build executados.
 ## [2025-07-10] Modalidade de débito removida do checkout e documentação. Lint e build executados.
 ## [2025-07-11] Removido NEXT_PUBLIC_SITE_URL da página de evento e da documentação. Lint e build executados.
+## [2025-06-19] Checkout agora preenche campo e líder automaticamente ao criar o pedido.
+## [2025-06-19] Corrigido salvamento do tamanho do item no checkout. Lint e build executados.
+## [2025-06-19] Importado o tipo Produto na página de checkout corrigindo erro de compilação. Lint e build executados.
