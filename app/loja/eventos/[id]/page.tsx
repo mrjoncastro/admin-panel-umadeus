@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { headers } from "next/headers";
 import InscricaoForm from "@/app/loja/components/InscricaoForm";
 
 interface Evento {
@@ -10,8 +11,10 @@ interface Evento {
 
 async function getEvento(id: string): Promise<Evento | null> {
   try {
-    const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-    const res = await fetch(`${base}/api/eventos/${id}`, {
+    const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+    const host = headers().get("host");
+    if (!host) return null;
+    const res = await fetch(`${protocol}://${host}/api/eventos/${id}`, {
       cache: "no-store",
     });
     if (!res.ok) return null;
