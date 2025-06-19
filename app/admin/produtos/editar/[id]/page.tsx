@@ -38,6 +38,7 @@ export default function EditarProdutoPage() {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [selectedCategoria, setSelectedCategoria] = useState<string>("");
   const [initial, setInitial] = useState<Record<string, unknown> | null>(null);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [cores, setCores] = useState<string[]>([]);
   const [tamanhos, setTamanhos] = useState<string[]>([]);
@@ -122,7 +123,9 @@ export default function EditarProdutoPage() {
               : Array.isArray(data.cores)
               ? data.cores.join(", ")
               : "",
+          imagens: data.imagens,
         });
+        setExistingImages(Array.isArray(data.imagens) ? data.imagens : []);
         setSelectedCategoria(
           Array.isArray(data.categoria)
             ? data.categoria[0] ?? ""
@@ -173,6 +176,8 @@ export default function EditarProdutoPage() {
       Array.from(arquivos).forEach((file) => {
         formData.append("imagens", file);
       });
+    } else {
+      existingImages.forEach((img) => formData.append("imagens", img));
     }
 
     // Trata o campo de cores: insere como string separada por vírgula
