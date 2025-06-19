@@ -176,6 +176,8 @@ export async function POST(req: NextRequest) {
           if (asaasRes.ok) {
             const data = await asaasRes.json();
             link_pagamento = data.url;
+          } else {
+            await pb.collection("pedidos").delete(pedidoId);
           }
         }
       }

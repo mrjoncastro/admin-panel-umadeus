@@ -115,6 +115,7 @@ function CheckoutContent() {
 
   const handleConfirm = async () => {
     setStatus("loading");
+    let pedidoId: string | undefined;
     try {
       const itensPayload = await Promise.all(
         itens.map(async (i) => {
@@ -184,6 +185,7 @@ function CheckoutContent() {
         valor: displayTotalGross.toFixed(2),
         canal: "loja",
       });
+      pedidoId = pedido.id;
 
       const payload = {
         valorBruto,
@@ -233,10 +235,17 @@ function CheckoutContent() {
           window.location.href = link;
         }, 1000);
       }, 1000);
-    } catch {
-      showError("Erro ao processar pagamento. Tente novamente.");
-      setStatus("idle");
-    }
+      } catch {
+        if (pedidoId) {
+          try {
+            await pb.collection("pedidos").delete(pedidoId);
+          } catch {
+            /* ignore */
+          }
+        }
+        showError("Erro ao processar pagamento. Tente novamente.");
+        setStatus("idle");
+      }
   };
 
   if (itens.length === 0) {

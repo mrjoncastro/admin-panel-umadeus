@@ -149,3 +149,5 @@
 ## [2025-07-07] Payload PIX atualizado com `operationType` e exemplos revisados no README e guia de saldo. - Lint: falhou (next not found) - Build: falhou (next not found)
 ## [2025-06-19] Removida documentação da coleção compras e rotas associadas. Campo `canal` descrito em Pedido. Lint e build executados.
 ## [2025-06-19] Coleção `compras` removida e campo `canal` adicionado ao tipo Pedido. Impacto: simplificação dos registros de vendas.
+
+## [2025-07-08] Pedidos agora são removidos se a integração com o Asaas falhar. README atualizado explicando que o pedido só é salvo após receber o link de pagamento. Lint e build executados.
