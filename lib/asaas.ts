@@ -68,12 +68,24 @@ export async function createCheckout(
     params.usuarioId,
     params.inscricaoId
   );
-  const parsedValor = Number(params.valorBruto);
-  const { gross, margin } = calculateGross(
+  // Aceita valores em string com vírgula ou ponto
+  const parsedValor = Number(String(params.valorBruto).replace(/,/g, "."));
+
+  if (Number.isNaN(parsedValor)) {
+    throw new Error("valorBruto inválido");
+  }
+
+  const { gross, margin: initialMargin } = calculateGross(
     parsedValor,
     params.paymentMethod,
     params.installments,
   );
+  let margin = initialMargin;
+
+  // Evita erro do Asaas quando o split excede o valor da cobrança
+  if (margin > gross) {
+    margin = Number(gross.toFixed(2));
+  }
 
   const isInstallmentCredit =
     params.paymentMethod === "credito" && params.installments > 1;
