@@ -10,7 +10,7 @@ import { CheckCircle, XCircle, Pencil, Trash2, Eye } from "lucide-react";
 import TooltipIcon from "../components/TooltipIcon";
 import { useToast } from "@/lib/context/ToastContext";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
-import { calculateGross, type PaymentMethod } from "@/lib/asaasFees";
+import { type PaymentMethod } from "@/lib/asaasFees";
 import type {
   Evento,
   Inscricao as InscricaoRecord,
@@ -215,7 +215,6 @@ export default function ListaInscricoesPage() {
         } else if (typeof inscricao.expand.produtos === "object") {
           produtoRecord = inscricao.expand.produtos as Produto;
         }
-        // Produto localizado via expand
       }
 
       // Fallback se não achou pelo expand
