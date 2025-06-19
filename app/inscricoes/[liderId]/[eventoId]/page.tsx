@@ -57,19 +57,22 @@ export default function InscricaoPage() {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
   const [installments, setInstallments] = useState(1);
   const [campoNome, setCampoNome] = useState("");
-  const [evento, setEvento] = useState<{ titulo: string; descricao: string } | null>(null);
+  const [evento, setEvento] = useState<{
+    titulo: string;
+    descricao: string;
+  } | null>(null);
 
   const base = useMemo(
     () => produtos.find((p) => p.nome === form.produto)?.valor ?? 0,
-    [form.produto, produtos],
+    [form.produto, produtos]
   );
   const current = useMemo(
     () => produtos.find((p) => p.nome === form.produto),
-    [form.produto, produtos],
+    [form.produto, produtos]
   );
   const totalGross = useMemo(
     () => calculateGross(base, paymentMethod, installments).gross,
-    [base, paymentMethod, installments],
+    [base, paymentMethod, installments]
   );
 
   useEffect(() => {
@@ -203,10 +206,7 @@ export default function InscricaoPage() {
           }),
         });
       } catch (erro) {
-        logInfo(
-          "⚠️ Falha ao notificar o n8n (sem impacto no usuário)",
-          erro
-        );
+        logInfo("⚠️ Falha ao notificar o n8n (sem impacto no usuário)", erro);
       }
 
       // 3. Redireciona se já houver link de pagamento
@@ -246,7 +246,9 @@ export default function InscricaoPage() {
         {evento ? `Inscrição para ${evento.titulo}` : "Inscrição"}
       </h1>
       {evento?.descricao && (
-        <p className="text-center text-sm text-gray-600 mb-2">{evento.descricao}</p>
+        <p className="text-center text-sm text-gray-600 mb-2">
+          {evento.descricao}
+        </p>
       )}
       {campoNome && (
         <p className="mb-4 text-center text-sm text-gray-500">
@@ -255,128 +257,144 @@ export default function InscricaoPage() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          type="text"
+          name="nome"
+          placeholder="Nome completo"
+          value={form.nome}
+          onChange={handleChange}
+          required
+          className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+        />
+
+        <input
+          type="email"
+          name="email"
+          placeholder="E-mail"
+          value={form.email}
+          onChange={handleChange}
+          required
+          className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+        />
+
+        <input
+          type="text"
+          name="telefone"
+          placeholder="Telefone"
+          value={form.telefone}
+          onChange={handleChange}
+          required
+          className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+        />
+
+        <input
+          type="text"
+          name="cpf"
+          placeholder="CPF"
+          value={form.cpf}
+          onChange={handleChange}
+          required
+          className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+        />
+
+        <div>
+          <label className="block font-medium text-sm text-gray-700 mb-1">
+            Gênero
+          </label>
+          <select
+            name="genero"
+            value={form.genero}
+            onChange={handleChange}
+            required
+            className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+          >
+            <option value="">Selecione seu gênero</option>
+            <option value="masculino">Masculino</option>
+            <option value="feminino">Feminino</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block font-medium text-sm text-gray-700 mb-1">
+            Data de Nascimento
+          </label>
           <input
-            type="text"
-            name="nome"
-            placeholder="Nome completo"
-            value={form.nome}
+            type="date"
+            name="data_nascimento"
+            value={form.data_nascimento}
             onChange={handleChange}
             required
             className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
           />
+        </div>
 
-          <input
-            type="email"
-            name="email"
-            placeholder="E-mail"
-            value={form.email}
+        <div>
+          <label className="block font-medium text-sm text-gray-700 mb-1">
+            Produto
+          </label>
+          <select
+            name="produto"
+            value={form.produto}
             onChange={handleChange}
-            required
             className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-          />
-
-          <input
-            type="text"
-            name="telefone"
-            placeholder="Telefone"
-            value={form.telefone}
-            onChange={handleChange}
-            required
-            className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-          />
-
-          <input
-            type="text"
-            name="cpf"
-            placeholder="CPF"
-            value={form.cpf}
-            onChange={handleChange}
-            required
-            className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-          />
-
-          <div>
-            <label className="block font-medium text-sm text-gray-700 mb-1">
-              Gênero
-            </label>
-            <select
-              name="genero"
-              value={form.genero}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-            >
-              <option value="">Selecione seu gênero</option>
-              <option value="masculino">Masculino</option>
-              <option value="feminino">Feminino</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block font-medium text-sm text-gray-700 mb-1">
-              Data de Nascimento
-            </label>
-            <input
-              type="date"
-              name="data_nascimento"
-              value={form.data_nascimento}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-            />
-          </div>
-
-          <div>
-            <label className="block font-medium text-sm text-gray-700 mb-1">
-              Produto
-            </label>
-            <select
-              name="produto"
-              value={form.produto}
-              onChange={handleChange}
-              className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-            >
+          >
             {produtos.length > 0 ? (
-              <>
-                {produtos.map((p) => (
-                  <option key={p.nome} value={p.nome}>
-                    {p.nome} - R$ {p.valor.toFixed(2).replace(".", ",")}
-                  </option>
-                ))}
-              </>
+              produtos.map((p) => (
+                <option key={p.nome} value={p.nome}>
+                  {p.nome}
+                </option>
+              ))
             ) : (
               <option value="">Nenhum produto disponível</option>
             )}
-            </select>
-            {produtos.length > 0 && (
-              <p className="text-xs text-gray-500 mt-1">
-                Valor: R$ {" "}
-                {produtos
-                  .find((p) => p.nome === form.produto)
-                  ?.valor.toFixed(2)
-                  .replace(".", ",")}
-              </p>
-            )}
-          </div>
+          </select>
 
-          {current?.tamanhos && (
-            <div>
-              <label className="block font-medium text-sm text-gray-700 mb-1">
-                Tamanho da camisa
-              </label>
-              <select
-                name="tamanho"
-                value={form.tamanho}
-                onChange={handleChange}
-                className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
-              >
-                <option value="">Selecione o tamanho da camisa</option>
-                {current.tamanhos.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
-                  </option>
-                ))}
-              </select>
+          {/* Valor final fora do select */}
+          {current && (
+            <p className="mt-1 text-sm text-purple-700 font-bold">
+              Total a pagar: R${" "}
+              {calculateGross(current.valor, paymentMethod, installments)
+                .gross.toFixed(2)
+                .replace(".", ",")}
+            </p>
+          )}
+
+          {/* Exibe valor da parcela se for parcelado */}
+          {current && installments > 1 && (
+            <div className="mt-1 text-sm text-gray-700">
+              Parcela:{" "}
+              <b>
+                R${" "}
+                {(
+                  calculateGross(current.valor, paymentMethod, installments)
+                    .gross / installments
+                )
+                  .toFixed(2)
+                  .replace(".", ",")}{" "}
+                x {installments}
+              </b>
+            </div>
+          )}
+        </div>
+
+        {current?.tamanhos && (
+          <div>
+            <label className="block font-medium text-sm text-gray-700 mb-1">
+              Tamanho da camisa
+            </label>
+            <select
+              name="tamanho"
+              value={form.tamanho}
+              onChange={handleChange}
+              className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
+            >
+              <option value="">Selecione o tamanho da camisa</option>
+              {current.tamanhos.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
           </div>
         )}
 
@@ -416,43 +434,42 @@ export default function InscricaoPage() {
           </p>
           {installments > 1 && (
             <p className="text-xs text-gray-500">
-              Valor da parcela: R$ {(totalGross / installments)
-                .toFixed(2)
-                .replace(".", ",")}
+              Valor da parcela: R${" "}
+              {(totalGross / installments).toFixed(2).replace(".", ",")}
             </p>
           )}
         </div>
 
-          {config.confirmaInscricoes && (
-            <div className="flex items-start mt-4">
-              <input
-                type="checkbox"
-                required
-                id="confirmacao"
-                className="mt-1 mr-2 accent-purple-600"
-              />
-              <label htmlFor="confirmacao" className="text-sm text-gray-600">
-                Estou ciente de que minha inscrição só será confirmada após a
-                liberação do pagamento pela liderança.
-              </label>
-            </div>
-          )}
+        {config.confirmaInscricoes && (
+          <div className="flex items-start mt-4">
+            <input
+              type="checkbox"
+              required
+              id="confirmacao"
+              className="mt-1 mr-2 accent-purple-600"
+            />
+            <label htmlFor="confirmacao" className="text-sm text-gray-600">
+              Estou ciente de que minha inscrição só será confirmada após a
+              liberação do pagamento pela liderança.
+            </label>
+          </div>
+        )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-          >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <Spinner className="w-4 h-4" />
-                Enviando...
-              </span>
-            ) : (
-              "Finalizar inscrição"
-            )}
-          </button>
-        </form>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+        >
+          {loading ? (
+            <span className="flex items-center justify-center gap-2">
+              <Spinner className="w-4 h-4" />
+              Enviando...
+            </span>
+          ) : (
+            "Finalizar inscrição"
+          )}
+        </button>
+      </form>
     </div>
   );
 }
