@@ -46,6 +46,7 @@ export type Pedido = {
   tamanho?: string;
   status: "pendente" | "pago" | "cancelado";
   cor: string;
+  canal?: string;
   genero?: string;
   responsavel?: string;
   cliente?: string;

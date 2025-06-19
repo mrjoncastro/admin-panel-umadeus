@@ -39,6 +39,7 @@ describe('Fluxo de inscrição e pedido', () => {
     expect(pedido.id_inscricao).toBe(inscricao.id)
     expect(pedido.valor).toBe('10.00')
     expect(pedido.status).toBe('pendente')
+    expect(pedido.canal).toBe('inscricao')
   })
 
   it('gera pedido para kit completo com valor 50', () => {
@@ -50,5 +51,6 @@ describe('Fluxo de inscrição e pedido', () => {
     expect(pedido.valor).toBe('50.00')
     expect(pedido.email).toBe('sememail@teste.com')
     expect(pedido.status).toBe('pendente')
+    expect(pedido.canal).toBe('inscricao')
   })
 })
