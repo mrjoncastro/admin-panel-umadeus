@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
+import { useToast } from "@/lib/context/ToastContext";
 import type { Inscricao, Compra, Pedido } from "@/types";
 
 export default function AreaCliente() {
   const { user, pb, authChecked } = useAuthGuard(["usuario"]);
+  const { showSuccess, showError } = useToast();
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
   const [compras, setCompras] = useState<Compra[]>([]);
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
@@ -21,10 +23,10 @@ export default function AreaCliente() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Erro ao gerar link");
-      alert(`URL de pagamento: ${data.url}`);
+      showSuccess(`URL de pagamento: ${data.url}`);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Erro ao gerar link";
-      alert(msg);
+      showError(msg);
     }
   };
 

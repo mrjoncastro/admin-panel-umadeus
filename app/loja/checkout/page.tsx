@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState, useEffect } from "react";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import { useAuthContext } from "@/lib/context/AuthContext";
+import { useToast } from "@/lib/context/ToastContext";
 import { CheckCircle } from "lucide-react";
 import { hexToPtName } from "@/utils/colorNamePt";
 import { calculateGross, calculateNet, PaymentMethod } from "@/lib/asaasFees";
@@ -24,6 +25,7 @@ function CheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isLoggedIn, user, tenantId } = useAuthContext();
+  const { showError } = useToast();
 
   const [nome, setNome] = useState(user?.nome || "");
   const [telefone, setTelefone] = useState(String(user?.telefone ?? ""));
@@ -234,7 +236,7 @@ function CheckoutContent() {
         }, 1000);
       }, 1000);
     } catch {
-      alert("Erro ao processar pagamento. Tente novamente.");
+      showError("Erro ao processar pagamento. Tente novamente.");
       setStatus("idle");
     }
   };
