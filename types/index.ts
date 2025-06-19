@@ -50,6 +50,7 @@ export type Pedido = {
   responsavel?: string;
   cliente?: string;
   email: string;
+  canal: 'loja' | 'inscricao';
   created?: string;
   valor: string;
   expand?: {

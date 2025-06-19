@@ -236,6 +236,7 @@ export default function ListaInscricoesPage() {
         cliente: tenantId,
         campo: campo?.id,
         responsavel: inscricao.criado_por,
+        canal: 'inscricao',
       });
 
       // 🔹 4. Gerar link de pagamento via API do Asaas

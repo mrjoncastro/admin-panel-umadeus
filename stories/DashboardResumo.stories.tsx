@@ -31,6 +31,7 @@ const meta = {
         status: 'pago',
         valor: '100',
         expand: { campo: { id: '1', nome: 'Campo 1' } },
+        canal: 'inscricao',
         // Adicione outros campos obrigatórios do tipo Pedido aqui se necessário
       } as unknown as Pedido,
       {
@@ -38,6 +39,7 @@ const meta = {
         status: 'pendente',
         valor: '50',
         expand: { campo: { id: '2', nome: 'Campo 2' } },
+        canal: 'inscricao',
         // Adicione outros campos obrigatórios do tipo Pedido aqui se necessário
       } as unknown as Pedido,
     ],
@@ -61,12 +63,14 @@ export const Default: Story = {
         status: 'pago',
         valor: '100',
         expand: { campo: { id: '1', nome: 'Campo 1' } },
+        canal: 'inscricao',
       } as unknown as Pedido,
       {
         id: '2',
         status: 'pendente',
         valor: '50',
         expand: { campo: { id: '2', nome: 'Campo 2' } },
+        canal: 'inscricao',
       } as unknown as Pedido,
     ],
     filtroStatus: 'pago',

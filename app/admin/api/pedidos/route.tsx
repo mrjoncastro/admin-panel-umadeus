@@ -75,6 +75,7 @@ export async function POST(req: NextRequest) {
       campo: campoId,
       responsavel: responsavelId,
       cliente: inscricao.cliente,
+      canal: 'inscricao',
     });
 
     return NextResponse.json({

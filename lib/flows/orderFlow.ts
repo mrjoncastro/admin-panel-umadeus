@@ -65,6 +65,7 @@ export function criarPedido(
     genero: inscricao.genero || first(produto.generos),
     responsavel: inscricao.criado_por,
     email: dadosEmail(inscricao),
+    canal: 'inscricao',
     valor: valor.toFixed(2)
   }
 }

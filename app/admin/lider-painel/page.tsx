@@ -86,6 +86,7 @@ export default function LiderDashboardPage() {
           evento: r.expand?.evento?.titulo,
           data_nascimento: r.data_nascimento,
           responsavel: r.responsavel,
+          canal: r.canal,
           expand: {
             campo: r.expand?.campo,
             criado_por: r.expand?.criado_por,
