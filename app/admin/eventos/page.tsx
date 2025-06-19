@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { ModalEvento } from "./novo/ModalEvento";
 import { formatDate } from "@/utils/formatDate";
+import { useToast } from "@/lib/context/ToastContext";
 
 interface Evento {
   id: string;
@@ -17,6 +18,7 @@ interface Evento {
 
 export default function AdminEventosPage() {
   const { user: ctxUser, isLoggedIn } = useAuthContext();
+  const { showSuccess, showError } = useToast();
   const router = useRouter();
   const getAuth = useCallback(() => {
     const token = typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
@@ -90,12 +92,15 @@ export default function AdminEventosPage() {
       if (res.ok) {
         const data = await res.json();
         setEventos((prev) => [data, ...prev]);
+        showSuccess("Evento salvo com sucesso");
       } else {
         const data = await res.json().catch(() => ({}));
         console.error("Falha ao criar evento", data);
+        showError("Falha ao salvar evento");
       }
     } catch (err) {
       console.error("Erro ao criar evento:", err);
+      showError("Falha ao salvar evento");
     } finally {
       setModalOpen(false);
     }

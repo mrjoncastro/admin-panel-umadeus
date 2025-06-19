@@ -5,10 +5,12 @@ import { useAuthContext } from "@/lib/context/AuthContext";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import type { Produto } from "@/types";
 import { ModalProduto } from "../../../produtos/novo/ModalProduto";
+import { useToast } from "@/lib/context/ToastContext";
 
 export default function EditarEventoPage() {
   const { id } = useParams<{ id: string }>();
   const { user: ctxUser, isLoggedIn } = useAuthContext();
+  const { showSuccess, showError } = useToast();
   const getAuth = useCallback(() => {
     const token =
       typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
@@ -143,16 +145,24 @@ export default function EditarEventoPage() {
     selectedProdutos.forEach((p) => formData.append("produtos", p));
     formData.set("cobra_inscricao", String(cobraInscricao));
     const { token, user } = getAuth();
-    const res = await fetch(`/admin/api/eventos/${id}`, {
-      method: "PUT",
-      body: formData,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "X-PB-User": JSON.stringify(user),
-      },
-    });
-    if (res.ok) {
-      router.push("/admin/eventos");
+    try {
+      const res = await fetch(`/admin/api/eventos/${id}`, {
+        method: "PUT",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "X-PB-User": JSON.stringify(user),
+        },
+      });
+      if (res.ok) {
+        showSuccess("Evento salvo com sucesso");
+        router.push("/admin/eventos");
+      } else {
+        showError("Falha ao salvar evento");
+      }
+    } catch (err) {
+      console.error("Erro ao salvar evento:", err);
+      showError("Falha ao salvar evento");
     }
   }
 
