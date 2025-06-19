@@ -6,6 +6,7 @@ import {
   useCallback,
   useEffect,
 } from "react";
+import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 
 export type ToastType = "success" | "error";
@@ -25,15 +26,12 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<
     { id: string; message: string; type: ToastType }[]
   >([]);
-
+  const pathname = usePathname();
+  useEffect(() => setToasts([]), [pathname]);
+  const [mounted, setMounted] = useState(false);
   useEffect(() => {
-    console.log(
-      "🔄 [ToastProvider] rota mudou para:",
-      pathname,
-      "→ limpando toasts"
-    );
-    setToasts([]);
-  }, [pathname]);
+    setMounted(true);
+  }, []);
 
   const addToast = useCallback((message: string, type: ToastType) => {
     console.log("🆕 [ToastProvider] addToast chamado com:", { message, type });
@@ -80,14 +78,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={{ showSuccess, showError }}>
       {children}
-      <div className="fixed top-4 right-4 space-y-2 z-50">
-        {(() => {
-          console.log(
-            `🖼️ [ToastProvider.render] renderizando container com ${toasts.length} toasts`
-          );
-          return toasts.map((t) => {
-            console.log("🌟 [ToastProvider.render] renderizando toast:", t);
-            return (
+      {mounted &&
+        createPortal(
+          <div className="fixed top-4 right-4 space-y-2 z-50">
+            {toasts.map((t) => (
               <div
                 key={t.id}
                 className={`px-4 py-2 rounded text-white shadow ${
@@ -96,10 +90,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               >
                 {t.message}
               </div>
-            );
-          });
-        })()}
-      </div>
+            ))}
+          </div>,
+          document.body
+        )}
     </ToastContext.Provider>
   );
 }
