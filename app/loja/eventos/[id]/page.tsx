@@ -12,8 +12,10 @@ interface Evento {
 async function getEvento(id: string): Promise<Evento | null> {
   try {
     const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
-    const host = headers().get("host");
+    const h = await headers();
+    const host = h.get("host");
     if (!host) return null;
+
     const res = await fetch(`${protocol}://${host}/api/eventos/${id}`, {
       cache: "no-store",
     });
