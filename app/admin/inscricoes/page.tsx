@@ -188,14 +188,14 @@ export default function ListaInscricoesPage() {
     try {
       setConfirmandoId(id);
 
-      // 🔹 1. Buscar inscrição com expand do campo e produtos do evento
+      // 1. Buscar inscrição com expand do campo e produtos
       const inscricao = await pb
         .collection("inscricoes")
         .getOne<InscricaoRecord>(id, {
-          expand: "campo,evento.produtos",
+          expand: "campo,produtos",
         });
 
-      logInfo(`[CONFIRMAR] [${id}] Objeto da inscrição carregado:`, inscricao);
+      logInfo(`[CONFIRMAR] [${id}] Inscrição carregada:`, inscricao);
 
       // Log do campo expandido 'campo'
       if (inscricao.expand?.campo) {
@@ -214,52 +214,74 @@ export default function ListaInscricoesPage() {
         logInfo(`[CONFIRMAR] [${id}] Não há expand.produtos retornado.`);
       }
 
-      type CampoExpand = {
-        id: string;
-        nome: string;
-        responsavel?: string;
-      };
-      type ProdutoExpand = {
-        id: string;
-        nome: string;
-      };
+      // Checar campo correto: produto ou produtos
+      const produtoId = inscricao.produto || inscricao.produtos;
 
-      const campo = inscricao.expand?.campo as CampoExpand | undefined;
+      // Extrair produto do expand (array ou objeto)
+      let produtoRecord: Produto | undefined = undefined;
 
-      // 🔹 2. Carregar produto escolhido
-      let produtoRecord: Produto | undefined;
-      try {
-        if (inscricao.produto) {
-          produtoRecord = await pb.collection("produtos").getOne(inscricao.produto);
+      // Se expand já trouxe produtos (array ou objeto)
+      if (inscricao.expand?.produtos) {
+        if (Array.isArray(inscricao.expand.produtos)) {
+          produtoRecord = inscricao.expand.produtos.find(
+            (p: any) => p.id === produtoId || p.id === inscricao.produto
+          );
+        } else if (typeof inscricao.expand.produtos === "object") {
+          produtoRecord = inscricao.expand.produtos as Produto;
         }
-      } catch {
-        try {
-          const evExpand = inscricao.expand?.evento as
-            | { expand?: { produtos?: Produto[] } }
-            | undefined;
-          const lista = Array.isArray(evExpand?.expand?.produtos)
-            ? (evExpand?.expand?.produtos as Produto[])
-            : [];
-          produtoRecord = lista.find((p) => p.id === inscricao.produto);
-        } catch {}
+        logInfo(
+          `[CONFIRMAR] Produto localizado via expand.produtos:`,
+          produtoRecord
+        );
       }
 
+      // Fallback se não achou pelo expand
+      if (!produtoRecord && produtoId) {
+        try {
+          produtoRecord = await pb.collection("produtos").getOne(produtoId);
+          logInfo(`[CONFIRMAR] Produto localizado via getOne:`, produtoRecord);
+        } catch (err) {
+          logInfo(`[CONFIRMAR] Falha getOne produtoId=${produtoId}`, err);
+        }
+      }
+
+      // Novo log: garantir que estamos com preço
+      logInfo(
+        `[CONFIRMAR] Produto escolhido final:`,
+        produtoRecord,
+        "Preço:",
+        produtoRecord?.preco
+      );
+
+      // Se mesmo assim não encontrou, aborta!
+      if (!produtoRecord || typeof produtoRecord.preco !== "number") {
+        showError(
+          "Não foi possível identificar o produto ou o preço da inscrição."
+        );
+        setConfirmandoId(null);
+        return;
+      }
+
+      // Obter o campo expandido normalmente
+      const campo = inscricao.expand?.campo;
+
+      // Cria o pedido com o valor correto do produto
       const pedido = await pb.collection("pedidos").create<Pedido>({
         id_inscricao: id,
-        valor: produtoRecord?.preco ?? 0,
+        valor: produtoRecord.preco,
         status: "pendente",
-        produto: produtoRecord?.nome || inscricao.produto || "Produto",
+        produto: produtoRecord.nome || "Produto",
         cor: "Roxo",
         tamanho:
           inscricao.tamanho ||
-          (Array.isArray(produtoRecord?.tamanhos)
-            ? produtoRecord?.tamanhos[0]
-            : (produtoRecord?.tamanhos as string | undefined)),
+          (Array.isArray(produtoRecord.tamanhos)
+            ? produtoRecord.tamanhos[0]
+            : (produtoRecord.tamanhos as string | undefined)),
         genero:
           inscricao.genero ||
-          (Array.isArray(produtoRecord?.generos)
-            ? produtoRecord?.generos[0]
-            : (produtoRecord?.generos as string | undefined)),
+          (Array.isArray(produtoRecord.generos)
+            ? produtoRecord.generos[0]
+            : (produtoRecord.generos as string | undefined)),
         email: inscricao.email,
         cliente: tenantId,
         campo: campo?.id,
