@@ -184,11 +184,11 @@ export default function ListaInscricoesPage() {
     try {
       setConfirmandoId(id);
 
-      // 🔹 1. Buscar inscrição com expand do campo
+      // 🔹 1. Buscar inscrição com expand do campo e produtos do evento
       const inscricao = await pb
         .collection("inscricoes")
         .getOne<InscricaoRecord>(id, {
-          expand: "campo",
+          expand: "campo,evento.produtos",
         });
 
       type CampoExpand = {
@@ -201,20 +201,18 @@ export default function ListaInscricoesPage() {
       // 🔹 2. Carregar produto escolhido
       let produtoRecord: Produto | undefined;
       try {
-        produtoRecord = await pb
-          .collection("produtos")
-          .getFirstListItem(`nome='${inscricao.produto}'`);
+        if (inscricao.produto) {
+          produtoRecord = await pb.collection("produtos").getOne(inscricao.produto);
+        }
       } catch {
         try {
-          if (inscricao.evento) {
-            const ev = await pb
-              .collection("eventos")
-              .getOne(inscricao.evento, { expand: "produtos" });
-            const lista = Array.isArray(ev.expand?.produtos)
-              ? (ev.expand.produtos as Produto[])
-              : [];
-            produtoRecord = lista.find((p) => p.nome === inscricao.produto);
-          }
+          const evExpand = inscricao.expand?.evento as
+            | { expand?: { produtos?: Produto[] } }
+            | undefined;
+          const lista = Array.isArray(evExpand?.expand?.produtos)
+            ? (evExpand?.expand?.produtos as Produto[])
+            : [];
+          produtoRecord = lista.find((p) => p.id === inscricao.produto);
         } catch {}
       }
 
