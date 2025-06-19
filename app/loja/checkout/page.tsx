@@ -248,6 +248,15 @@ function CheckoutContent() {
   };
 
   if (itens.length === 0) {
+    if (redirecting) {
+      return (
+        <LoadingOverlay
+          show
+          text="Encaminhando para a área de pagamento..."
+        />
+      );
+    }
+
     return (
       <main className="flex flex-col items-center justify-center min-h-[60vh]">
         <h1 className="text-2xl font-semibold mb-4 tracking-tight">
