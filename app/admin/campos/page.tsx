@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useToast } from "@/lib/context/ToastContext";
 import { useRouter } from "next/navigation";
+import Spinner from "@/components/Spinner";
 
 interface Campo {
   id: string;
@@ -249,10 +250,19 @@ export default function GerenciarCamposPage() {
           <div className="flex gap-2">
             <button
               type="submit"
-              className="btn btn-primary flex-1"
+              className="btn btn-primary flex-1 flex items-center justify-center gap-2"
               disabled={loading}
             >
-              {loading ? "Salvando..." : editandoId ? "Atualizar" : "Cadastrar"}
+              {loading ? (
+                <>
+                  <Spinner className="w-4 h-4 border-2 border-white" />
+                  Salvando...
+                </>
+              ) : editandoId ? (
+                "Atualizar"
+              ) : (
+                "Cadastrar"
+              )}
             </button>
             <button
               type="button"

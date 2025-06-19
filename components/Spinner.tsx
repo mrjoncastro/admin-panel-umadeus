@@ -1,22 +1,16 @@
 "use client";
 
-<<<<<<< HEAD
-export interface SpinnerProps {
+interface SpinnerProps {
   className?: string;
 }
 
 export default function Spinner({ className }: SpinnerProps) {
   return (
     <span
-      className={`animate-spin rounded-full border-2 border-t-transparent border-current ${className ?? ""}`}
-=======
-export default function Spinner({ className = "w-5 h-5" }: { className?: string }) {
-  return (
-    <span
       className={
-        `${className} border-2 border-current border-t-transparent rounded-full animate-spin`
+        "inline-block animate-spin rounded-full border-t-transparent " +
+        (className ?? "w-4 h-4 border-2")
       }
->>>>>>> origin/codex/alterar-botão-para-exibir-spinner
     />
   );
 }
