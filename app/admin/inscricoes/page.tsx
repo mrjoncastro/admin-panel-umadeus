@@ -11,6 +11,7 @@ import TooltipIcon from "../components/TooltipIcon";
 import { useToast } from "@/lib/context/ToastContext";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
 import { logInfo } from "@/lib/logger";
+import type { PaymentMethod } from "@/lib/asaasFees";
 import type { Evento, Inscricao as InscricaoRecord, Pedido, Produto } from "@/types";
 
 const statusBadge = {
@@ -241,14 +242,19 @@ export default function ListaInscricoesPage() {
       });
 
       // 🔹 4. Gerar link de pagamento via API do Asaas
+      const insc = inscricao as InscricaoRecord & {
+        paymentMethod?: PaymentMethod;
+        installments?: number;
+      };
+
       const res = await fetch("/admin/api/asaas/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           pedidoId: pedido.id,
           valorBruto: pedido.valor,
-          paymentMethod: "boleto",
-          installments: 1,
+          paymentMethod: insc.paymentMethod ?? "boleto",
+          installments: insc.installments ?? 1,
         }),
       });
 
