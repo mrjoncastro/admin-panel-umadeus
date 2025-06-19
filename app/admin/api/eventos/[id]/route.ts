@@ -15,7 +15,9 @@ export async function GET(req: NextRequest) {
     const evento = await pb.collection("eventos").getOne(id, {
       expand: "produtos",
     });
-    return NextResponse.json(evento, { status: 200 });
+    const imagemUrl =
+      evento.imagem ? pb.files.getURL(evento, evento.imagem) : undefined;
+    return NextResponse.json({ ...evento, imagemUrl }, { status: 200 });
   } catch (err) {
     await logConciliacaoErro(`Erro ao obter evento: ${String(err)}`);
     return NextResponse.json({ error: "Erro ao obter" }, { status: 500 });
