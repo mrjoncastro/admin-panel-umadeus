@@ -309,3 +309,5 @@
 ## [2025-06-20] Adicionados wrappers multi-tenant e restri\u00e7\u00f5es de acesso em rotas e hooks
 
 ## [2025-06-20] Validação de tenant adicionada nas rotas de API e testes atualizados. Lint e build executados.
+
+## [2025-07-13] Adicionado script format:write e CI verificando Prettier apenas nos arquivos alterados.
