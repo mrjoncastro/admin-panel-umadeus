@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { logInfo } from '@/lib/logger'
 import { useToast } from '@/lib/context/ToastContext'
 import Spinner from '@/components/atoms/Spinner'
+import { useAuthContext } from '@/lib/context/AuthContext'
 
 interface Campo {
   id: string
@@ -17,29 +18,19 @@ export default function GerenciarCamposPage() {
   const [editandoId, setEditandoId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const token =
-    typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
-  const userRaw =
-    typeof window !== 'undefined' ? localStorage.getItem('pb_user') : null
-  const user = userRaw ? JSON.parse(userRaw) : null
+  const { isLoggedIn } = useAuthContext()
 
   useEffect(() => {
     async function carregarCampos() {
       logInfo('🔐 Iniciando carregamento de campos...')
-      if (!token || !user) {
-        logInfo('⚠️ Usuário ou token ausente.')
+      if (!isLoggedIn) {
+        logInfo('⚠️ Usuário não autenticado.')
         showError('Usuário não autenticado.')
         return
       }
 
       try {
-        const res = await fetch('/api/campos', {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'X-PB-User': JSON.stringify(user),
-          },
-        })
+        const res = await fetch('/api/campos')
 
         const data = await res.json()
 
@@ -66,13 +57,13 @@ export default function GerenciarCamposPage() {
     }
 
     carregarCampos()
-  }, [token, user, showError, showSuccess])
+  }, [isLoggedIn, showError, showSuccess])
 
   async function handleCriarOuAtualizar(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
 
-    if (!token || !user) {
+    if (!isLoggedIn) {
       showError('Usuário não autenticado.')
       return
     }
@@ -85,8 +76,6 @@ export default function GerenciarCamposPage() {
         method: metodo,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(user),
         },
         body: JSON.stringify({ nome }),
       })
@@ -113,15 +102,10 @@ export default function GerenciarCamposPage() {
   }
 
   const fetchCampos = async () => {
-    if (!token || !user) return
+    if (!isLoggedIn) return
 
     try {
-      const res = await fetch('/api/campos', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(user),
-        },
-      })
+      const res = await fetch('/api/campos')
       const data = await res.json()
       if (res.ok) setCampos(data)
     } catch (err: unknown) {
@@ -132,7 +116,7 @@ export default function GerenciarCamposPage() {
   async function handleExcluir(id: string) {
     if (!confirm('Tem certeza que deseja excluir este campo?')) return
 
-    if (!token || !user) {
+    if (!isLoggedIn) {
       showError('Usuário não autenticado.')
       return
     }
@@ -140,10 +124,6 @@ export default function GerenciarCamposPage() {
     try {
       const res = await fetch(`/api/campos/${id}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(user),
-        },
       })
 
       const data = await res.json()

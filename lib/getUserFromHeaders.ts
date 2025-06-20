@@ -1,10 +1,10 @@
 import type { NextRequest } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
-import type { RecordModel } from 'pocketbase'
+import { getPocketBaseFromRequest } from '@/lib/pbWithAuth'
+import PocketBase, { RecordModel } from 'pocketbase'
 
 type AuthOk = {
   user: RecordModel
-  pbSafe: ReturnType<typeof createPocketBase>
+  pbSafe: PocketBase
 }
 
 type AuthError = {
@@ -12,22 +12,10 @@ type AuthError = {
 }
 
 export function getUserFromHeaders(req: NextRequest): AuthOk | AuthError {
-  const token = req.headers.get('Authorization')?.replace('Bearer ', '')
-  const rawUser = req.headers.get('X-PB-User')
-
-  if (!token || !rawUser) {
+  const pb = getPocketBaseFromRequest(req)
+  const user = pb.authStore.model as RecordModel | null
+  if (!pb.authStore.isValid || !user) {
     return { error: 'Token ou usuário ausente.' }
   }
-
-  try {
-    const parsedUser = JSON.parse(rawUser) as RecordModel
-
-    const pb = createPocketBase()
-    pb.authStore.save(token, parsedUser)
-    pb.autoCancellation(false)
-
-    return { user: parsedUser, pbSafe: pb }
-  } catch {
-    return { error: 'Usuário inválido.' }
-  }
+  return { user, pbSafe: pb }
 }

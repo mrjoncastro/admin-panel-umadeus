@@ -31,15 +31,7 @@ export default function UsuariosPage() {
     if (!authChecked) return
     async function fetchUsuarios() {
       try {
-        const token = localStorage.getItem('pb_token')
-        const user = localStorage.getItem('pb_user')
-
-        const res = await fetch('/admin/api/usuarios', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'X-PB-User': user ?? '',
-          },
-        })
+        const res = await fetch('/admin/api/usuarios')
 
         if (!res.ok) {
           const erro = await res.json()
@@ -64,14 +56,7 @@ export default function UsuariosPage() {
     if (!authChecked) return
     async function fetchEventos() {
       try {
-        const token = localStorage.getItem('pb_token')
-        const user = localStorage.getItem('pb_user')
-        const res = await fetch('/admin/api/eventos', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'X-PB-User': user ?? '',
-          },
-        })
+        const res = await fetch('/admin/api/eventos')
         if (!res.ok) return
         const data = await res.json()
         const ativos = Array.isArray(data)

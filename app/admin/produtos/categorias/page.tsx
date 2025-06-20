@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import ModalCategoria from './ModalCategoria'
@@ -18,36 +18,21 @@ export default function CategoriasAdminPage() {
   const { showSuccess, showError } = useToast()
   const router = useRouter()
   const { authChecked } = useAuthGuard(['coordenador'])
-  const getAuth = useCallback(() => {
-    const token =
-      typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
-    const raw =
-      typeof window !== 'undefined' ? localStorage.getItem('pb_user') : null
-    const user = raw ? JSON.parse(raw) : ctxUser
-    return { token, user } as const
-  }, [ctxUser])
   const [categorias, setCategorias] = useState<Categoria[]>([])
   const [editCategoria, setEditCategoria] = useState<Categoria | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
 
   useEffect(() => {
     if (!authChecked) return
-    const { token, user } = getAuth()
-    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') {
+    if (!isLoggedIn || ctxUser?.role !== 'coordenador') {
       router.replace('/login')
     }
-  }, [isLoggedIn, router, getAuth, authChecked])
+  }, [isLoggedIn, router, ctxUser?.role, authChecked])
 
   useEffect(() => {
     if (!authChecked) return
-    const { token, user } = getAuth()
-    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
-    fetch('/admin/api/categorias', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'X-PB-User': JSON.stringify(user),
-      },
-    })
+    if (!isLoggedIn || ctxUser?.role !== 'coordenador') return
+    fetch('/admin/api/categorias')
       .then((res) => res.json())
       .then((data) => {
         setCategorias(Array.isArray(data) ? data : [])
@@ -56,11 +41,10 @@ export default function CategoriasAdminPage() {
         console.error('Erro ao carregar categorias:', err)
         setCategorias([])
       })
-  }, [isLoggedIn, getAuth, authChecked])
+  }, [isLoggedIn, ctxUser?.role, authChecked])
 
   async function handleSave(form: { nome: string }) {
-    const { token, user } = getAuth()
-    if (!isLoggedIn || !user || user.role !== 'coordenador') return
+    if (!isLoggedIn || ctxUser?.role !== 'coordenador') return
     const metodo = editCategoria ? 'PUT' : 'POST'
     const url = editCategoria
       ? `/admin/api/categorias/${editCategoria.id}`
@@ -70,21 +54,13 @@ export default function CategoriasAdminPage() {
         method: metodo,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(user),
         },
         body: JSON.stringify(form),
       })
       const data = await res.json()
       if (res.ok) {
         showSuccess(editCategoria ? 'Categoria atualizada' : 'Categoria criada')
-        const auth = getAuth()
-        fetch('/admin/api/categorias', {
-          headers: {
-            Authorization: `Bearer ${auth.token}`,
-            'X-PB-User': JSON.stringify(auth.user),
-          },
-        })
+        fetch('/admin/api/categorias')
           .then((r) => r.json())
           .then((cats) => setCategorias(Array.isArray(cats) ? cats : []))
           .catch((err) => {
@@ -105,14 +81,10 @@ export default function CategoriasAdminPage() {
 
   async function handleDelete(id: string) {
     if (!confirm('Confirma excluir?')) return
-    const { token, user } = getAuth()
     try {
       const res = await fetch(`/admin/api/categorias/${id}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(user),
-        },
+        headers: {},
       })
       if (!res.ok) {
         const data = await res.json()
