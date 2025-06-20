@@ -166,3 +166,4 @@
 ## [2025-06-20] Criado components_analysis.yaml listando duplicacoes e lacunas no design system.
 ## [2025-06-20] Componentes base Button, TextField, FormField e InputWithMask criados. ModalProduto passou a usar Button e TextField. Lint e build executados.
 ## [2025-06-21] AppConfigProvider renomeado para TenantProvider com variável `--logo-url`. Design system atualizado. - Lint: falhou (next not found) - Build: falhou (next not found)
+## [2025-06-20] CI configurado com Husky para pre-commit e pre-push rodando formatacao, lint, testes e a11y. Workflow CI adicionado. Lint e build executados.
