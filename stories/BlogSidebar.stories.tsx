@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
-import BlogSidebar from '../app/blog/components/BlogSidebar'
+import BlogSidebar from '@/components/organisms/BlogSidebar'
 import React, { useEffect } from 'react'
 
 interface Post {

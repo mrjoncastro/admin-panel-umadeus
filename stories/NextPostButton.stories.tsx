@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
-import NextPostButton from '../app/blog/components/NextPostButton'
+import NextPostButton from '@/components/molecules/NextPostButton'
 
 const meta = {
   title: 'Blog/NextPostButton',

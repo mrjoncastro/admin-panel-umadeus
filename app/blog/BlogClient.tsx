@@ -2,13 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import dynamic from 'next/dynamic'
-import BlogSidebar from './components/BlogSidebar'
-
-const BlogHeroCarousel = dynamic(
-  () => import('./components/BlogHeroCarousel'),
-  { ssr: false },
-)
+import BlogSidebar from '@/components/organisms/BlogSidebar'
+import BlogHeroCarousel from '@/components/organisms/BlogHeroCarousel'
 import Link from 'next/link'
 import Image from 'next/image'
 import createPocketBase from '@/lib/pocketbase'
