@@ -1,2 +1,6 @@
 export { default as LoadingOverlay } from './LoadingOverlay'
 export { default as ModalAnimated } from './ModalAnimated'
+export { default as BlogHeroCarousel } from './BlogHeroCarousel'
+export { default as BlogSidebar } from './BlogSidebar'
+export { default as PostSuggestions } from './PostSuggestions'
+export { default as InscricaoForm } from './InscricaoForm'

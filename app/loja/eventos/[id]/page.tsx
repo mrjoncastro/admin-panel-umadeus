@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { headers } from 'next/headers'
-import InscricaoForm from '@/app/loja/components/InscricaoForm'
+import InscricaoForm from '@/components/organisms/InscricaoForm'
 
 interface Evento {
   id: string

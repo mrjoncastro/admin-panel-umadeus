@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
-import BlogHeroCarousel from '../app/blog/components/BlogHeroCarousel'
+import BlogHeroCarousel from '@/components/organisms/BlogHeroCarousel'
 import React, { useEffect } from 'react'
 
 interface Post {

@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import BlogSidebar from './components/BlogSidebar'
-import BlogHeroCarousel from './components/BlogHeroCarousel'
+import BlogSidebar from '@/components/organisms/BlogSidebar'
+import BlogHeroCarousel from '@/components/organisms/BlogHeroCarousel'
 import Link from 'next/link'
 import Image from 'next/image'
 import createPocketBase from '@/lib/pocketbase'

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
-import PostSuggestions from '../app/blog/components/PostSuggestions'
+import PostSuggestions from '@/components/organisms/PostSuggestions'
 
 interface Post {
   slug: string
