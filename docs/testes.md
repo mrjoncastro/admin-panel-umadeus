@@ -23,6 +23,14 @@ npm run lint
 npm run test
 ```
 
+Para executar os testes de acessibilidade, utilize:
+
+```bash
+npm run a11y
+```
+
+Os testes de acessibilidade estão localizados em `__tests__/a11y/`.
+
 Antes de rodar `npm run lint`, `npm run build` ou `npm run test`, certifique-se de executar `npm install` para instalar todos os módulos necessários, como **Next** e **Vitest**.
 
 Recomenda-se executar estes comandos antes de abrir um pull request.
