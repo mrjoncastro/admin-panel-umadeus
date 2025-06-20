@@ -323,3 +323,5 @@
 ## [2025-07-15] Metadata dinamico nas rotas publicas da loja e do blog com generateMetadata.
 
 ## [2025-06-20] Adicionada seção sobre SSR e preload no design system, explicando `window.__TENANT_CONFIG__` e o cabeçalho `x-tenant-id`. Impacto: documentação mais completa.
+
+## [2025-06-20] Atualizado inventário de componentes com caminhos corretos e novo item InscricaoFormNoSSR. Lint e build executados mas falharam por 'next' ausente.
