@@ -3,7 +3,7 @@
 import { useCart } from "@/lib/context/CartContext";
 import { useRouter } from "next/navigation";
 import { Suspense, useState, useEffect } from "react";
-import LoadingOverlay from "@/components/LoadingOverlay";
+import LoadingOverlay from "@/components/organisms/LoadingOverlay";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { useToast } from "@/lib/context/ToastContext";
 import { CheckCircle } from "lucide-react";

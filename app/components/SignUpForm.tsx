@@ -5,7 +5,7 @@ import { useAuthContext } from "@/lib/context/AuthContext";
 import { useToast } from "@/lib/context/ToastContext";
 import type { ClientResponseError } from "pocketbase";
 import createPocketBase from "@/lib/pocketbase"; // ajuste para seu caminho real
-import Spinner from "@/components/Spinner";
+import Spinner from "@/components/atoms/Spinner";
 
 const VIA_CEP_URL =
   process.env.NEXT_PUBLIC_VIA_CEP_URL || "https://viacep.com.br/ws";

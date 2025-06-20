@@ -5,7 +5,7 @@ import { useAuthContext } from "@/lib/context/AuthContext";
 import { useToast } from "@/lib/context/ToastContext";
 import Image from "next/image";
 import { Check } from "lucide-react";
-import ToggleSwitch from "@/components/ToggleSwitch";
+import ToggleSwitch from "@/components/atoms/ToggleSwitch";
 
 
 // Lista de tons proibidos (branco, quase branco, preto, quase preto)

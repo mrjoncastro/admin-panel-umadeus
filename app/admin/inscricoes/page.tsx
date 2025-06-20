@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Copy } from "lucide-react";
 import { saveAs } from "file-saver";
-import LoadingOverlay from "@/components/LoadingOverlay";
+import LoadingOverlay from "@/components/organisms/LoadingOverlay";
 import ModalEditarInscricao from "./componentes/ModalEdit";
 import ModalVisualizarPedido from "./componentes/ModalVisualizarPedido";
 import { CheckCircle, XCircle, Pencil, Trash2, Eye } from "lucide-react";

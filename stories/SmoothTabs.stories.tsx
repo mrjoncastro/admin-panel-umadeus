@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import SmoothTabs from '../components/SmoothTabs';
+import SmoothTabs from '../components/molecules/SmoothTabs';
 import { within, userEvent, expect } from 'storybook/test';
 
 const tabs = [

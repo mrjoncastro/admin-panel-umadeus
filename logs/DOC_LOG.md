@@ -166,3 +166,4 @@
 ## [2025-06-20] Criado components_analysis.yaml listando duplicacoes e lacunas no design system.
 ## [2025-06-20] Componentes base Button, TextField, FormField e InputWithMask criados. ModalProduto passou a usar Button e TextField. Lint e build executados.
 ## [2025-06-21] AppConfigProvider renomeado para TenantProvider com variável `--logo-url`. Design system atualizado. - Lint: falhou (next not found) - Build: falhou (next not found)
+## [2025-07-12] Componentes reorganizados em atoms, molecules e organisms. Paths atualizados na documentação. - Lint: falhou (next not found) - Build: falhou (next not found)

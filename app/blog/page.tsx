@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import BlogClient from "./BlogClient";
-import LoadingOverlay from "@/components/LoadingOverlay";
+import LoadingOverlay from "@/components/organisms/LoadingOverlay";
 
 export default function BlogPage() {
   return (

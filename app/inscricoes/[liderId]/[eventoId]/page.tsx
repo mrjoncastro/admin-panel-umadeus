@@ -7,7 +7,7 @@ import { logInfo } from "@/lib/logger";
 import { useToast } from "@/lib/context/ToastContext";
 import { calculateGross, type PaymentMethod } from "@/lib/asaasFees";
 import { useTenant } from "@/lib/context/TenantContext";
-import Spinner from "@/components/Spinner";
+import Spinner from "@/components/atoms/Spinner";
 import { Check } from "lucide-react";
 
 interface Produto {

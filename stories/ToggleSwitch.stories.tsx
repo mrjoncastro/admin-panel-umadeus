@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { useState } from 'react';
-import ToggleSwitch from '../components/ToggleSwitch';
+import ToggleSwitch from '../components/atoms/ToggleSwitch';
 import { TenantProvider } from '../lib/context/TenantContext';
 
 const meta = {
