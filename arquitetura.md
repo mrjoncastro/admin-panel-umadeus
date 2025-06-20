@@ -54,13 +54,19 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 │   ├── produtos/          # Listagem e detalhes dos produtos
 │   ├── layout.tsx         # Layout público da loja
 │   └── page.tsx           # Home da loja
-├──
+├── api/                  # Rotas de API e webhooks
+├── components/           # Componentes compartilhados entre Loja, Admin e Blog
+├── campos/               # Páginas sobre os campos de atuação
+├── iniciar-tour/         # Passo a passo inicial para novos usuários
+├── inscricoes/           # Formulário público de inscrições
+├── login/                # Autenticação geral do sistema
 ├── layout.tsx             # Layout raiz compartilhado
 ├── page.tsx               # Loja do cliente
 ├── globals.css            # CSS global compartilhado
 /posts/                    # Conteúdo do blog em arquivos .mdx
 /scripts/                  # Scripts auxiliares
 /stories/                  # Storybook de componentes
+components/                # Componentes reutilizáveis compartilhados
 
 ---
 
@@ -76,7 +82,7 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 - Roteamento claro e semântica amigável (ex: `/loja/produtos/kit-jovem`)
 - SEO: uso de metadados dinâmicos e URLs limpas
 - Utilizar `next export` para páginas estáticas
-- Separar lógica de exibição (componentes) da lógica de dados (lib/services)
+- Separar lógica de exibição (componentes) da lógica de dados (`lib`/`utils`)
 - Formulários com validação (Zod ou HTML5) + feedback visual
 - Responsivo (mobile-first) com Tailwind
 
@@ -105,7 +111,7 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 - Usar `useMemo`/`useCallback` para evitar renders desnecessários
 - Evitar `any` e manter todos os dados tipados via `types/`
 - Aplicar lazy loading para rotas não críticas (`next/dynamic`)
-- Dividir código entre `/lib`, `/services` e `/hooks` para clareza
+- Dividir código entre `/lib`, `/hooks` e `/utils` para clareza
 - Rodar `next build` e `npm run export` para verificar compatibilidade de build estático
 
 ---

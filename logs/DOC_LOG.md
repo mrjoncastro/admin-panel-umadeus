@@ -161,3 +161,4 @@
 ## [2025-07-11] Removido NEXT_PUBLIC_SITE_URL da página de evento e da documentação. Lint e build executados.
 ## [2025-06-19] Checkout agora preenche campo e líder automaticamente ao criar o pedido.
 ## [2025-06-19] Corrigido salvamento do tamanho do item no checkout. Lint e build executados.
+## [2025-06-20] Documentação da estrutura atualizada com novos diretórios e referência a utils. Lint e build executados.

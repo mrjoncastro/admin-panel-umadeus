@@ -1,6 +1,7 @@
 Este repositório reúne portal institucional, blog, loja virtual e painel administrativo em uma única aplicação Next.js.
 Visitantes navegam pelo portal e pelo blog, realizam compras na loja e os coordenadores gerenciam tudo pelo admin.
 Consulte [arquitetura.md](arquitetura.md) para entender a divisão de pastas e responsabilidades.
+O diretório `components/` na raiz concentra elementos reutilizáveis entre Loja, Admin e Blog.
 Para personalizar a interface utilize as orientações de [docs/design-system.md](docs/design-system.md).
 As preferências de fonte, cor, logotipo e confirmação de inscrições ficam nos campos `font`, `cor_primary`, `logo_url` e `confirma_inscricoes` da coleção `clientes_config`.
 Para um passo a passo inicial do sistema consulte [docs/iniciar-tour.md](docs/iniciar-tour.md).
