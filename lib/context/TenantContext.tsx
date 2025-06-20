@@ -6,32 +6,32 @@ import createPocketBase from "@/lib/pocketbase";
 
 const STALE_TIME = 1000 * 60 * 60; // 1 hour
 
-export type AppConfig = {
+export type TenantConfig = {
   font: string;
   primaryColor: string;
   logoUrl: string;
   confirmaInscricoes: boolean;
 };
 
-const defaultConfig: AppConfig = {
+const defaultConfig: TenantConfig = {
   font: "var(--font-geist)",
   primaryColor: "#7c3aed",
   logoUrl: "/img/logo_umadeus_branco.png",
   confirmaInscricoes: false,
 };
 
-type AppConfigContextType = {
-  config: AppConfig;
-  updateConfig: (cfg: Partial<AppConfig>) => void;
+type TenantContextType = {
+  config: TenantConfig;
+  updateConfig: (cfg: Partial<TenantConfig>) => void;
 };
 
-const AppConfigContext = createContext<AppConfigContextType>({
+const TenantContext = createContext<TenantContextType>({
   config: defaultConfig,
   updateConfig: () => {},
 });
 
-export function AppConfigProvider({ children }: { children: React.ReactNode }) {
-  const [config, setConfig] = useState<AppConfig>(defaultConfig);
+export function TenantProvider({ children }: { children: React.ReactNode }) {
+  const [config, setConfig] = useState<TenantConfig>(defaultConfig);
   const [configId, setConfigId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
             const cliente = await pb
               .collection("clientes_config")
               .getFirstListItem(`cliente='${tenantId}'`);
-            const cfg: AppConfig = {
+            const cfg: TenantConfig = {
               font: cliente.font || defaultConfig.font,
               primaryColor: cliente.cor_primary || defaultConfig.primaryColor,
               logoUrl: cliente.logo_url || defaultConfig.logoUrl,
@@ -94,7 +94,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
               const cliente = await pb
                 .collection("clientes_config")
                 .getFirstListItem(`cliente='${tenantId}'`);
-              const cfg: AppConfig = {
+              const cfg: TenantConfig = {
                 font: cliente.font || defaultConfig.font,
                 primaryColor: cliente.cor_primary || defaultConfig.primaryColor,
                 logoUrl: cliente.logo_url || defaultConfig.logoUrl,
@@ -171,6 +171,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("app_config_time", Date.now().toString());
     document.documentElement.style.setProperty("--font-body", config.font);
     document.documentElement.style.setProperty("--font-heading", config.font);
+    document.documentElement.style.setProperty("--logo-url", config.logoUrl);
     document.documentElement.style.setProperty("--accent", config.primaryColor);
     const shades = generatePrimaryShades(config.primaryColor);
     document.documentElement.style.setProperty("--accent-900", shades["900"]);
@@ -179,7 +180,7 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
     });
   }, [config]);
 
-  const updateConfig = (cfg: Partial<AppConfig>) => {
+  const updateConfig = (cfg: Partial<TenantConfig>) => {
     const newCfg = { ...config, ...cfg };
     setConfig(newCfg);
 
@@ -207,12 +208,12 @@ export function AppConfigProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AppConfigContext.Provider value={{ config, updateConfig }}>
+    <TenantContext.Provider value={{ config, updateConfig }}>
       {children}
-    </AppConfigContext.Provider>
+    </TenantContext.Provider>
   );
 }
 
-export function useAppConfig() {
-  return useContext(AppConfigContext);
+export function useTenant() {
+  return useContext(TenantContext);
 }

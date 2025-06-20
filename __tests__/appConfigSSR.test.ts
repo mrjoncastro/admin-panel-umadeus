@@ -1,14 +1,14 @@
 import * as React from 'react'
 import { describe, it, expect } from 'vitest'
 import { renderToString } from 'react-dom/server'
-import { AppConfigProvider } from '../lib/context/AppConfigContext'
+import { TenantProvider } from '../lib/context/TenantContext'
 
-describe('AppConfigProvider SSR', () => {
+describe('TenantProvider SSR', () => {
   it('renders without crashing in a server environment', () => {
     const render = () =>
       renderToString(
         React.createElement(
-          AppConfigProvider,
+          TenantProvider,
           null,
           React.createElement('div', null, 'SSR')
         )

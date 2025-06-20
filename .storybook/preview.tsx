@@ -1,14 +1,14 @@
 import '../app/globals.css';
-import { AppConfigProvider } from '../lib/context/AppConfigContext';
+import { TenantProvider } from '../lib/context/TenantContext';
 
 import type { Preview } from '@storybook/nextjs'
 
 const preview: Preview = {
   decorators: [
     (Story) => (
-      <AppConfigProvider>
+      <TenantProvider>
         <Story />
-      </AppConfigProvider>
+      </TenantProvider>
     ),
   ],
   parameters: {

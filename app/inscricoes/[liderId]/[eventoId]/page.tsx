@@ -6,7 +6,7 @@ import Link from "next/link";
 import { logInfo } from "@/lib/logger";
 import { useToast } from "@/lib/context/ToastContext";
 import { calculateGross, type PaymentMethod } from "@/lib/asaasFees";
-import { useAppConfig } from "@/lib/context/AppConfigContext";
+import { useTenant } from "@/lib/context/TenantContext";
 import Spinner from "@/components/Spinner";
 import { Check } from "lucide-react";
 
@@ -41,7 +41,7 @@ export default function InscricaoPage() {
   const eventoId = params.eventoId as string;
 
   const { showError, showSuccess } = useToast();
-  const { config } = useAppConfig();
+  const { config } = useTenant();
 
   const [produtos, setProdutos] = useState<Produto[]>([]);
 

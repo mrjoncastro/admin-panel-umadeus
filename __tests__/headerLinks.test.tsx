@@ -25,8 +25,8 @@ vi.mock('@/lib/context/ThemeContext', () => ({
   useTheme: () => ({ theme: 'light', toggleTheme: vi.fn() }),
 }));
 
-vi.mock('@/lib/context/AppConfigContext', () => ({
-  useAppConfig: () => ({
+vi.mock('@/lib/context/TenantContext', () => ({
+  useTenant: () => ({
     config: { logoUrl: '', font: '', primaryColor: '', confirmaInscricoes: true },
   }),
 }));

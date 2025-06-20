@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, ChangeEvent, useCallback } from "react";
-import { useAppConfig } from "@/lib/context/AppConfigContext";
+import { useTenant } from "@/lib/context/TenantContext";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { useToast } from "@/lib/context/ToastContext";
 import Image from "next/image";
@@ -74,7 +74,7 @@ const fontes = [
 ];
 
 export default function ConfiguracoesPage() {
-  const { config, updateConfig } = useAppConfig();
+  const { config, updateConfig } = useTenant();
   const { user: ctxUser } = useAuthContext();
   const { showSuccess, showError } = useToast();
   const getAuth = useCallback(() => {

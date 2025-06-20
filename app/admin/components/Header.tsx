@@ -20,7 +20,7 @@ import {
 import * as Popover from "@radix-ui/react-popover";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/lib/context/ThemeContext";
-import { useAppConfig } from "@/lib/context/AppConfigContext";
+import { useTenant } from "@/lib/context/TenantContext";
 import RedefinirSenhaModal from "./RedefinirSenhaModal";
 
 const getNavLinks = (role?: string) => {
@@ -48,7 +48,7 @@ export default function Header() {
   const [gerenciamentoAberto, setGerenciamentoAberto] = useState(false);
   const [mostrarModalSenha, setMostrarModalSenha] = useState(false);
   const { theme, toggleTheme } = useTheme();
-  const { config } = useAppConfig();
+  const { config } = useTenant();
 
   const navLinks = getNavLinks(user?.role);
 

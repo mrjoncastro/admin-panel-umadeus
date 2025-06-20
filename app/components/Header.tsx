@@ -7,7 +7,7 @@ import CartButton from "./CartButton";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuthContext } from "@/lib/context/AuthContext";
-import { useAppConfig } from "@/lib/context/AppConfigContext";
+import { useTenant } from "@/lib/context/TenantContext";
 
 type UserRole = "visitante" | "usuario" | "lider" | "coordenador";
 
@@ -23,7 +23,7 @@ export default function Header() {
   const [adminOpen, setAdminOpen] = useState(false);
   const [clientOpen, setClientOpen] = useState(false);
   const { user, isLoggedIn, logout } = useAuthContext();
-  const { config } = useAppConfig();
+  const { config } = useTenant();
   const adminMenuRef = useRef<HTMLUListElement>(null);
   const clientMenuRef = useRef<HTMLUListElement>(null);
 

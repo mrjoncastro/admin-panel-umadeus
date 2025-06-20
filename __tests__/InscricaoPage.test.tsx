@@ -8,8 +8,8 @@ vi.mock('next/navigation', () => ({
   useParams: () => ({ liderId: 'lid1', eventoId: 'ev1' })
 }));
 
-vi.mock('@/lib/context/AppConfigContext', () => ({
-  useAppConfig: () => ({ config: { confirmaInscricoes: true } }),
+vi.mock('@/lib/context/TenantContext', () => ({
+  useTenant: () => ({ config: { confirmaInscricoes: true } }),
 }));
 
 describe('InscricaoPage', () => {

@@ -186,7 +186,7 @@ Execute `npm run storybook` para iniciar a interface e validar os componentes. Q
 
 ## Personalização
 
-O portal permite ajustar fonte, cor primária e logotipo dinamicamente. As configurações são gerenciadas pelo `AppConfigProvider` (`lib/context/AppConfigContext.tsx`).
+O portal permite ajustar fonte, cor primária e logotipo dinamicamente. As configurações são gerenciadas pelo `TenantProvider` (`lib/context/TenantContext.tsx`).
 Ao montar, o provedor executa a seguinte sequência:
 
 1. tenta ler as configurações armazenadas no `localStorage`. Se existirem e ainda estiverem válidas, elas são usadas diretamente;
@@ -197,4 +197,4 @@ Quando `updateConfig` é chamado, os dados são enviados para essa mesma rota e 
 
 As personalizações são persistidas nos campos `logo_url`, `cor_primary`, `font` e `confirma_inscricoes` da coleção `clientes_config`, evitando perda de dados entre dispositivos.
 
-Além de definir `--accent`, o provedor gera uma paleta HSL e expõe as variáveis `--primary-50` … `--primary-900`. Essas variáveis são mapeadas para classes Tailwind (`bg-primary-*`, `text-primary-*`), eliminando a necessidade de usar `bg-[var(--primary-600)]` ou `text-[var(--primary-500)]`.
+Além de definir `--accent` e `--logo-url`, o provedor gera uma paleta HSL e expõe as variáveis `--primary-50` … `--primary-900`. Essas variáveis são mapeadas para classes Tailwind (`bg-primary-*`, `text-primary-*`), eliminando a necessidade de usar `bg-[var(--primary-600)]` ou `text-[var(--primary-500)]`.

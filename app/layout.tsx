@@ -3,7 +3,7 @@ import "./globals.css";
 import { AuthProvider } from "@/lib/context/AuthContext";
 import { ThemeProvider } from "@/lib/context/ThemeContext";
 import { ToastProvider } from "@/lib/context/ToastContext";
-import { AppConfigProvider } from "@/lib/context/AppConfigContext";
+import { TenantProvider } from "@/lib/context/TenantContext";
 import { CartProvider } from "@/lib/context/CartContext";
 
 export const metadata = {
@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className="font-sans antialiased">
-        <AppConfigProvider>
+        <TenantProvider>
           <ThemeProvider>
             <AuthProvider>
               <CartProvider>
@@ -36,7 +36,7 @@ export default function RootLayout({
               </CartProvider>
             </AuthProvider>
           </ThemeProvider>
-        </AppConfigProvider>
+        </TenantProvider>
       </body>
     </html>
   );
