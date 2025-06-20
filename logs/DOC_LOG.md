@@ -169,3 +169,4 @@
 ## [2025-06-20] CI configurado com Husky para pre-commit e pre-push rodando formatacao, lint, testes e a11y. Workflow CI adicionado. Lint e build executados.
 ## [2025-07-12] Componentes reorganizados em atoms, molecules e organisms. Paths atualizados na documentação. - Lint: falhou (next not found) - Build: falhou (next not found)
 ## [2025-06-20] Adicionados wrappers multi-tenant e restri\u00e7\u00f5es de acesso em rotas e hooks
+## [2025-06-20] Validação de tenant adicionada nas rotas de API e testes atualizados. Lint e build executados.

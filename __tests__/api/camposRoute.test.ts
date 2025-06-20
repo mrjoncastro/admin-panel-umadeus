@@ -14,11 +14,11 @@ vi.mock('../../lib/getTenantFromHost', () => ({
 }))
 
 describe('GET /api/campos', () => {
-  it('retorna campos sem exigir token', async () => {
+  it('retorna 404 quando domínio não configurado', async () => {
     const req = new Request('http://test')
     const res = await GET(req as unknown as NextRequest)
-    expect(res.status).toBe(200)
+    expect(res.status).toBe(404)
     const body = await res.json()
-    expect(body).toEqual([{ id: '1', nome: 'Campo' }])
+    expect(body.error).toBe('Domínio não configurado')
   })
 })

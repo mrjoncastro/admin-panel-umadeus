@@ -6,10 +6,17 @@ import { getTenantFromHost } from "@/lib/getTenantFromHost";
 export async function GET() {
   const pb = createPocketBase();
   const tenant = await getTenantFromHost();
+
+  if (!tenant) {
+    return NextResponse.json(
+      { error: "Domínio não configurado" },
+      { status: 404 },
+    );
+  }
   try {
     const eventos = await pb.collection("eventos").getFullList<EventoRecord>({
       sort: "-data",
-      filter: tenant ? `cliente='${tenant}'` : undefined,
+      filter: `cliente='${tenant}'`,
       expand: "produtos",
     });
     await atualizarStatus(eventos, pb);

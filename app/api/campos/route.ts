@@ -9,10 +9,17 @@ export async function GET() {
   const pb = createPocketBase();
   const tenantId = await getTenantFromHost();
 
+  if (!tenantId) {
+    return NextResponse.json(
+      { error: "Domínio não configurado" },
+      { status: 404 },
+    );
+  }
+
   try {
     const campos = await pb.collection("campos").getFullList({
       sort: "nome",
-      filter: tenantId ? `cliente='${tenantId}'` : undefined,
+      filter: `cliente='${tenantId}'`,
     });
 
     return NextResponse.json(campos, { status: 200 });

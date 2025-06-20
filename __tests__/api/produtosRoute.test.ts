@@ -13,8 +13,9 @@ vi.mock('../../lib/pocketbase', () => ({
 vi.mock('../../lib/products', () => ({
   filtrarProdutos: vi.fn((p) => p)
 }))
+const getTenantFromHostMock = vi.fn().mockResolvedValue('t1')
 vi.mock('../../lib/getTenantFromHost', () => ({
-  getTenantFromHost: vi.fn().mockResolvedValue(null)
+  getTenantFromHost: getTenantFromHostMock
 }))
 
 describe('GET /api/produtos', () => {
@@ -25,5 +26,15 @@ describe('GET /api/produtos', () => {
     expect(res.status).toBe(500)
     const body = await res.json()
     expect(body).toEqual([])
+  })
+
+  it('retorna 404 quando domínio não configurado', async () => {
+    getTenantFromHostMock.mockResolvedValueOnce(null)
+    const req = new Request('http://test')
+    ;(req as any).nextUrl = new URL('http://test')
+    const res = await GET(req as unknown as NextRequest)
+    expect(res.status).toBe(404)
+    const body = await res.json()
+    expect(body.error).toBe('Domínio não configurado')
   })
 })

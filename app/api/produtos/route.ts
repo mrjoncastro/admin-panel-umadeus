@@ -9,8 +9,15 @@ export async function GET(req: NextRequest) {
   const categoria = req.nextUrl.searchParams.get("categoria") || undefined;
   const tenantId = await getTenantFromHost();
 
+  if (!tenantId) {
+    return NextResponse.json(
+      { error: "Domínio não configurado" },
+      { status: 404 },
+    );
+  }
+
   try {
-    const baseFilter = tenantId ? `ativo = true && cliente='${tenantId}'` : "ativo = true";
+    const baseFilter = `ativo = true && cliente='${tenantId}'`;
     const filterString = categoria
       ? `${baseFilter} && categoria = '${categoria}'`
       : baseFilter;

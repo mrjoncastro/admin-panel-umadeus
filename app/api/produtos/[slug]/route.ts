@@ -6,8 +6,15 @@ import type { Produto } from "@/types";
 export async function GET(req: NextRequest) {
   const pb = createPocketBase();
   const tenantId = await getTenantFromHost();
+
+  if (!tenantId) {
+    return NextResponse.json(
+      { error: "Domínio não configurado" },
+      { status: 404 },
+    );
+  }
   const slug = req.nextUrl.pathname.split("/").pop() ?? "";
-  const filter = tenantId ? `slug = '${slug}' && cliente='${tenantId}'` : `slug = '${slug}'`;
+  const filter = `slug = '${slug}' && cliente='${tenantId}'`;
   try {
     const p = await pb.collection("produtos").getFirstListItem<Produto>(filter);
     const imagens = Array.isArray(p.imagens)
