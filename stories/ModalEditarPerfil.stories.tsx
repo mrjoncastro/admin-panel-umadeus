@@ -29,5 +29,6 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     await expect(canvas.getByText(/Editar Perfil/i)).toBeInTheDocument()
+    await expect(canvas.getByLabelText(/nome completo/i)).toBeInTheDocument()
   },
 }

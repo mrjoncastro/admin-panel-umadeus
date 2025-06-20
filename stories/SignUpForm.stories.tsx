@@ -27,7 +27,8 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     await expect(
-      canvas.getByRole('button', { name: /cadastrar/i }),
+      canvas.getByRole('button', { name: /criar conta/i }),
     ).toBeInTheDocument()
+    await expect(canvas.getByLabelText(/nome completo/i)).toBeInTheDocument()
   },
 }
