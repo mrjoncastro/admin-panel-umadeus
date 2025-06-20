@@ -313,3 +313,5 @@
 ## [2025-07-13] Adicionado script format:write e CI verificando Prettier apenas nos arquivos alterados.
 
 ## [2025-06-20] Atualizacao de formularios para usar FormField e TextField. - Lint: falhou (next not found) - Build: falhou (next not found)
+
+## [2025-07-14] Componentes Header, Footer e LayoutWrapper movidos para `components/templates`. Inventário atualizado.

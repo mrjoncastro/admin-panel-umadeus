@@ -1,7 +1,7 @@
 /* @vitest-environment jsdom */
 import { render, screen, fireEvent } from '@testing-library/react'
 import { vi } from 'vitest'
-import Header from '@/app/admin/components/Header'
+import Header from '@/components/templates/HeaderAdmin'
 import { useAuthContext } from '@/lib/context/AuthContext'
 
 vi.mock('next/image', () => ({

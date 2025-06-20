@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import Footer from '@/app/components/Footer'
+import Footer from '@/components/templates/Footer'
 import Image from 'next/image'
 import { Share2, Clock } from 'lucide-react'
 import { isExternalUrl } from '@/utils/isExternalUrl'

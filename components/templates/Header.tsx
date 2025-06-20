@@ -3,7 +3,7 @@
 import { useMemo, useState, useRef, useEffect } from 'react'
 import { Menu, X, ChevronDown, LogOut } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import CartButton from './CartButton'
+import CartButton from '@/app/components/CartButton'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useAuthContext } from '@/lib/context/AuthContext'

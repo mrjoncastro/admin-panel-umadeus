@@ -1,8 +1,8 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import Header from '@/app/admin/components/Header'
-import Footer from '@/app/components/Footer'
+import Header from './HeaderAdmin'
+import Footer from './Footer'
 import BackToTopButton from '@/app/admin/components/BackToTopButton'
 import NotificationBell from '@/app/admin/components/NotificationBell'
 import TourIcon from '@/app/admin/components/TourIcon'
