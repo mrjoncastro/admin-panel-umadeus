@@ -275,6 +275,8 @@ Consulte [docs/testes.md](docs/testes.md) para instruções completas.
 
 ## Build
 
+Antes de rodar `npm run build`, execute `npm install` para instalar as dependências.
+
 Para gerar o build de produção execute:
 
 ```bash
