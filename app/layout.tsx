@@ -1,5 +1,6 @@
 // app/layout.tsx
 import './globals.css'
+import type { CSSProperties } from 'react'
 import { AuthProvider } from '@/lib/context/AuthContext'
 import { ThemeProvider } from '@/lib/context/ThemeContext'
 import { ToastProvider } from '@/lib/context/ToastContext'
@@ -29,13 +30,22 @@ export default async function RootLayout({
 }) {
   const cfg = await fetchTenantConfig()
   const shades = generatePrimaryShades(cfg.primaryColor)
-  const preload = `window.__TENANT_CONFIG__=${JSON.stringify(cfg)};(function(){const s=document.documentElement.style;s.setProperty('--font-body','${cfg.font}');s.setProperty('--font-heading','${cfg.font}');s.setProperty('--logo-url','${cfg.logoUrl}');s.setProperty('--accent','${cfg.primaryColor}');s.setProperty('--accent-900','${shades['900']}');${Object.entries(
-    shades,
-  )
-    .map(([k, v]) => `s.setProperty('--primary-${k}','${v}');`)
-    .join('')}})();`
+
+  const htmlStyle = {
+    '--font-body': cfg.font,
+    '--font-heading': cfg.font,
+    '--logo-url': cfg.logoUrl,
+    '--accent': cfg.primaryColor,
+    '--accent-900': shades['900'],
+    ...Object.fromEntries(
+      Object.entries(shades).map(([k, v]) => [`--primary-${k}`, v]),
+    ),
+  } as CSSProperties
+
+  const preload = `window.__TENANT_CONFIG__=${JSON.stringify(cfg)};`
+
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" style={htmlStyle}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: preload }} />
       </head>
