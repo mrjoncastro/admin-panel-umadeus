@@ -15,8 +15,11 @@ jobs:
           node-version: 18
           cache: 'npm'
       - run: npm ci
-      - run: npm run format:check
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+      - name: Prettier check
+        run: npx prettier --check ${{ steps.changed-files.outputs.all_changed_files }}
       - run: npm run lint
       - run: npm run test -- --run
       - run: npm run a11y
-

@@ -12,6 +12,7 @@
     "build-storybook": "storybook build",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "format:write": "prettier --write \"{src,components,lib}/**/*.{js,jsx,ts,tsx,css,md}\"",
     "a11y": "vitest run __tests__/a11y.test.tsx",
     "prepare": "husky install"
   },
