@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { within, expect } from 'storybook/test'
-import Footer from '../app/components/Footer'
+import Footer from '../components/templates/Footer'
 import { AuthProvider } from '../lib/context/AuthContext'
 import { ThemeProvider } from '../lib/context/ThemeContext'
 

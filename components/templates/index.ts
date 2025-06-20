@@ -1,2 +1,7 @@
-// templates exports
-export {}
+export { default as Header } from './Header'
+export { default as Footer } from './Footer'
+export { default as LayoutWrapper } from './LayoutWrapper'
+export { default as HeaderAdmin } from './HeaderAdmin'
+export { default as LayoutWrapperAdmin } from './LayoutWrapperAdmin'
+export { default as HeaderLoja } from './HeaderLoja'
+export { default as FooterLoja } from './FooterLoja'

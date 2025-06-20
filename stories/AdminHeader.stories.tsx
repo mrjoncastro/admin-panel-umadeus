@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { within, expect } from 'storybook/test'
-import Header from '../app/admin/components/Header'
+import Header from '../components/templates/HeaderAdmin'
 import { AuthProvider } from '../lib/context/AuthContext'
 import { ThemeProvider } from '../lib/context/ThemeContext'
 

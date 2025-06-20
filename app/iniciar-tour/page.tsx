@@ -1,4 +1,4 @@
-import LayoutWrapper from '../components/LayoutWrapper'
+import LayoutWrapper from '@/components/templates/LayoutWrapper'
 
 export const metadata = {
   title: 'Iniciar Tour',

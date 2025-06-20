@@ -1,6 +1,6 @@
 // app/layout.tsx
 import '@/app/globals.css'
-import LayoutWrapper from './components/LayoutWrapper'
+import LayoutWrapper from '@/components/templates/LayoutWrapperAdmin'
 
 export const metadata = {
   title: 'UMADEUS',

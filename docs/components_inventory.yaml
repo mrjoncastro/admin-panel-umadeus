@@ -39,16 +39,16 @@ components:
     path: app/components/CartPreview.tsx
     category: Molecule
   - name: Footer
-    path: app/components/Footer.tsx
+    path: components/templates/Footer.tsx
     category: Organism
   - name: Header
-    path: app/components/Header.tsx
+    path: components/templates/Header.tsx
     category: Organism
   - name: Hero
     path: app/components/Hero.tsx
     category: Organism
   - name: LayoutWrapper
-    path: app/components/LayoutWrapper.tsx
+    path: components/templates/LayoutWrapper.tsx
     category: Template
   - name: LoginForm
     path: app/components/LoginForm.tsx
@@ -63,10 +63,10 @@ components:
     path: app/admin/components/DashboardAnalytics.tsx
     category: Organism
   - name: HeaderAdmin
-    path: app/admin/components/Header.tsx
+    path: components/templates/HeaderAdmin.tsx
     category: Organism
   - name: LayoutWrapperAdmin
-    path: app/admin/components/LayoutWrapper.tsx
+    path: components/templates/LayoutWrapperAdmin.tsx
     category: Template
   - name: NotificationBell
     path: app/admin/components/NotificationBell.tsx
@@ -111,10 +111,10 @@ components:
     path: app/blog/components/PostSuggestions.tsx
     category: Organism
   - name: HeaderLoja
-    path: app/loja/components/Header.tsx
+    path: components/templates/HeaderLoja.tsx
     category: Organism
   - name: FooterLoja
-    path: app/loja/components/Footer.tsx
+    path: components/templates/FooterLoja.tsx
     category: Organism
   - name: InscricaoForm
     path: app/loja/components/InscricaoForm.tsx

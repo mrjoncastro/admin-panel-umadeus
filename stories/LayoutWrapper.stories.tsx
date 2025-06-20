@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { within, expect } from 'storybook/test'
-import LayoutWrapper from '../app/admin/components/LayoutWrapper'
+import LayoutWrapper from '../components/templates/LayoutWrapperAdmin'
 import { AuthProvider } from '../lib/context/AuthContext'
 import { ThemeProvider } from '../lib/context/ThemeContext'
 

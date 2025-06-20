@@ -314,4 +314,6 @@
 
 ## [2025-06-20] Atualizacao de formularios para usar FormField e TextField. - Lint: falhou (next not found) - Build: falhou (next not found)
 
+## [2025-07-14] Componentes Header, Footer e LayoutWrapper movidos para `components/templates`. Inventário atualizado.
+
 ## [2025-06-20] README orienta executar `npm install` antes de `npm run lint` ou `npm run build`. Workflow CI passa a instalar dependências antes dos scripts. Lint e build executados.

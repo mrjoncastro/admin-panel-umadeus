@@ -21,7 +21,7 @@ import * as Popover from '@radix-ui/react-popover'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from '@/lib/context/ThemeContext'
 import { useTenant } from '@/lib/context/TenantContext'
-import RedefinirSenhaModal from './RedefinirSenhaModal'
+import RedefinirSenhaModal from '@/app/admin/components/RedefinirSenhaModal'
 
 const getNavLinks = (role?: string) => {
   if (role === 'lider') {
