@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import ModalAnimated from "@/components/ModalAnimated";
-import SmoothTabs from "@/components/SmoothTabs";
+import ModalAnimated from "@/components/organisms/ModalAnimated";
+import SmoothTabs from "@/components/molecules/SmoothTabs";
 import usePocketBase from "@/lib/hooks/usePocketBase";
 import type { UserModel } from "@/types/UserModel";
 import {

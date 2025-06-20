@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/lib/context/AuthContext";
 import { useToast } from "@/lib/context/ToastContext";
-import Spinner from "@/components/Spinner";
+import Spinner from "@/components/atoms/Spinner";
 
 
 const CEP_BASE_URL =

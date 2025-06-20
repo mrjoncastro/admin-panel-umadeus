@@ -1,12 +1,12 @@
 components:
 - name: LoadingOverlay
-  path: components/LoadingOverlay.tsx
+  path: components/organisms/LoadingOverlay.tsx
   category: Organism
 - name: ModalAnimated
-  path: components/ModalAnimated.tsx
+  path: components/organisms/ModalAnimated.tsx
   category: Organism
 - name: SmoothTabs
-  path: components/SmoothTabs.tsx
+  path: components/molecules/SmoothTabs.tsx
   category: Molecule
 - name: FormField
   path: components/molecules/FormField.tsx
@@ -15,10 +15,10 @@ components:
   path: components/molecules/InputWithMask.tsx
   category: Molecule
 - name: SaldoCard
-  path: components/SaldoCard.tsx
+  path: components/molecules/SaldoCard.tsx
   category: Molecule
 - name: Spinner
-  path: components/Spinner.tsx
+  path: components/atoms/Spinner.tsx
   category: Atom
 - name: Button
   path: components/atoms/Button.tsx
@@ -27,7 +27,7 @@ components:
   path: components/atoms/TextField.tsx
   category: Atom
 - name: ToggleSwitch
-  path: components/ToggleSwitch.tsx
+  path: components/atoms/ToggleSwitch.tsx
   category: Atom
 - name: AuthModal
   path: app/components/AuthModal.tsx

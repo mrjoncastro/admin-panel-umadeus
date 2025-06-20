@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { logInfo } from "@/lib/logger";
 import { useToast } from "@/lib/context/ToastContext";
-import Spinner from "@/components/Spinner";
+import Spinner from "@/components/atoms/Spinner";
 
 interface Campo {
   id: string;

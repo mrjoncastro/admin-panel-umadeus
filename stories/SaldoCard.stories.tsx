@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import SaldoCard from '../components/SaldoCard';
+import SaldoCard from '../components/molecules/SaldoCard';
 
 const meta = {
   title: 'Design System/SaldoCard',

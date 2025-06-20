@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Suspense } from "react";
-import LoadingOverlay from "@/components/LoadingOverlay";
+import LoadingOverlay from "@/components/organisms/LoadingOverlay";
 
 
 import ProdutoInterativo from "./ProdutoInterativo";

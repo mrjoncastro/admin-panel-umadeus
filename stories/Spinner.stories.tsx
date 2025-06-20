@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import Spinner from '../components/Spinner';
+import Spinner from '../components/atoms/Spinner';
 
 const meta = {
   title: 'Design System/Spinner',

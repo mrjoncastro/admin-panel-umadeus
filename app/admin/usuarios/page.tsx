@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useToast } from "@/lib/context/ToastContext";
 import Link from "next/link";
 import type { Evento } from "@/types";
-import LoadingOverlay from "@/components/LoadingOverlay";
+import LoadingOverlay from "@/components/organisms/LoadingOverlay";
 
 interface Usuario {
   id: string;

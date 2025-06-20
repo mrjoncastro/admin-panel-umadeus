@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { useState } from 'react';
 import { within, userEvent, expect } from 'storybook/test';
-import LoadingOverlay from '../components/LoadingOverlay';
+import LoadingOverlay from '../components/organisms/LoadingOverlay';
 
 const meta = {
   title: 'Design System/LoadingOverlay',

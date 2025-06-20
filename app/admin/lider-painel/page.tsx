@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
 import DashboardAnalytics from "../components/DashboardAnalytics";
 import type { Inscricao, Pedido } from "@/types";
-import LoadingOverlay from "@/components/LoadingOverlay";
+import LoadingOverlay from "@/components/organisms/LoadingOverlay";
 
 export default function LiderDashboardPage() {
   const { user, pb, authChecked } = useAuthGuard(["lider"]);

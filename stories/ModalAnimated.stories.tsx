@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs';
 import { useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { within, userEvent, expect } from 'storybook/test';
-import ModalAnimated from '../components/ModalAnimated';
+import ModalAnimated from '../components/organisms/ModalAnimated';
 
 const meta = {
   title: 'Design System/ModalAnimated',

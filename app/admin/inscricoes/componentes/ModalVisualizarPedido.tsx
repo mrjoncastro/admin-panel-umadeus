@@ -2,7 +2,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { X, Copy } from "lucide-react";
 import createPocketBase from "@/lib/pocketbase";
-import LoadingOverlay from "@/components/LoadingOverlay";
+import LoadingOverlay from "@/components/organisms/LoadingOverlay";
 import { useToast } from "@/lib/context/ToastContext";
 import { logInfo } from "@/lib/logger";
 

@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import createPocketBase from "@/lib/pocketbase";
 import ListaClientes from "./components/ListaClientes";
 import ModalEditarInscricao from "../inscricoes/componentes/ModalEdit";
-import LoadingOverlay from "@/components/LoadingOverlay";
+import LoadingOverlay from "@/components/organisms/LoadingOverlay";
 import type { Inscricao } from "@/types";
 import { useToast } from "@/lib/context/ToastContext";
 import { useAuthContext } from "@/lib/context/AuthContext";

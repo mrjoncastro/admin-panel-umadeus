@@ -15,7 +15,7 @@ summary:
         - { name: LayoutWrapperAdmin, path: app/admin/components/LayoutWrapper.tsx }
     - component: Modal
       instances:
-        - { name: ModalAnimated, path: components/ModalAnimated.tsx }
+        - { name: ModalAnimated, path: components/organisms/ModalAnimated.tsx }
         - { name: AuthModal, path: app/components/AuthModal.tsx }
         - { name: RedefinirSenhaModal, path: app/admin/components/RedefinirSenhaModal.tsx }
         - { name: ModalEditarPerfil, path: app/admin/perfil/components/ModalEditarPerfil.tsx }

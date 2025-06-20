@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAuthContext } from "@/lib/context/AuthContext";
-import LoadingOverlay from "@/components/LoadingOverlay";
+import LoadingOverlay from "@/components/organisms/LoadingOverlay";
 import type { Produto } from "@/types";
 import { ModalProduto } from "../../../produtos/novo/ModalProduto";
 import { useToast } from "@/lib/context/ToastContext";

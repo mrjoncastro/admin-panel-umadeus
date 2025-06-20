@@ -4,7 +4,7 @@ import { useAuthContext } from "@/lib/context/AuthContext";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { saveAs } from "file-saver";
-import LoadingOverlay from "@/components/LoadingOverlay";
+import LoadingOverlay from "@/components/organisms/LoadingOverlay";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 
