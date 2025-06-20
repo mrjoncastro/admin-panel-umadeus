@@ -2,14 +2,14 @@ import { describe, it, expect, vi } from 'vitest'
 import { GET } from '../../app/admin/api/asaas/extrato/route'
 import { NextRequest } from 'next/server'
 
-vi.mock('../../lib/apiAuth', () => ({ requireRole: vi.fn() }))
-import { requireRole } from '../../lib/apiAuth'
+vi.mock('../../lib/clienteAuth', () => ({ requireClienteFromHost: vi.fn() }))
+import { requireClienteFromHost } from '../../lib/clienteAuth'
 
 describe('GET /admin/api/asaas/extrato', () => {
-  it('retorna 403 quando requireRole falha', async () => {
+  it('retorna 403 quando autenticação falha', async () => {
     ;(
-      requireRole as unknown as { mockReturnValue: (v: any) => void }
-    ).mockReturnValue({
+      requireClienteFromHost as unknown as { mockReturnValue: (v: any) => void }
+    ).mockResolvedValue({
       error: 'forbidden',
       status: 403,
     })
@@ -21,14 +21,14 @@ describe('GET /admin/api/asaas/extrato', () => {
 
   it('retorna json quando sucesso', async () => {
     ;(
-      requireRole as unknown as { mockReturnValue: (v: any) => void }
-    ).mockReturnValue({
+      requireClienteFromHost as unknown as { mockReturnValue: (v: any) => void }
+    ).mockResolvedValue({
       pb: {
         authStore: { isValid: true },
         admins: { authWithPassword: vi.fn() },
         collection: () => ({ getFirstListItem: vi.fn() }),
       } as any,
-      user: { role: 'coordenador' },
+      cliente: { nome: 'Cli', asaas_api_key: 'key' },
     })
 
     global.fetch = vi.fn().mockResolvedValue({

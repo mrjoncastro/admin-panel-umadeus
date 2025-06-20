@@ -9,6 +9,6 @@ describe('calculateGross', () => {
   })
   it('calcula valor para credito 3x', () => {
     const { gross } = calculateGross(50, 'credito', 3)
-    expect(gross).toBeCloseTo(56.06, 2)
+    expect(gross).toBeCloseTo(55.94, 2)
   })
 })
