@@ -13,10 +13,11 @@ vi.mock('../../lib/pocketbase', () => ({
 vi.mock('../../lib/products', () => ({
   filtrarProdutos: vi.fn((p) => p),
 }))
-const getTenantFromHostMock = vi.fn()
+let getTenantFromHostMock: any
 vi.mock('../../lib/getTenantFromHost', () => ({
-  getTenantFromHost: getTenantFromHostMock,
+  getTenantFromHost: (...args: any[]) => getTenantFromHostMock(...args),
 }))
+getTenantFromHostMock = vi.fn()
 
 beforeEach(() => {
   getTenantFromHostMock.mockResolvedValue('t1')

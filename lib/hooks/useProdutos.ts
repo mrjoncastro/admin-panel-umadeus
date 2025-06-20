@@ -14,7 +14,7 @@ export default function useProdutos() {
     let active = true
     fetchProdutos(tenantId)
       .then((res) => {
-        if (active) setProdutos(res as Produto[])
+        if (active) setProdutos(res as unknown as Produto[])
       })
       .catch(() => {
         if (active) setProdutos([])

@@ -1,25 +1,24 @@
 import { CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 
-interface SucessoConfirmacaoPageProps {
-  searchParams: {
+export default async function SucessoConfirmacaoPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
     mensagem?: string
     acaoPrimariaLabel?: string
     acaoPrimariaHref?: string
     acaoSecundariaLabel?: string
     acaoSecundariaHref?: string
-  }
-}
-
-export default function SucessoConfirmacaoPage({
-  searchParams: {
+  }>
+}) {
+  const {
     mensagem,
     acaoPrimariaLabel,
     acaoPrimariaHref,
     acaoSecundariaLabel,
     acaoSecundariaHref,
-  },
-}: SucessoConfirmacaoPageProps) {
+  } = await searchParams
   const acaoPrimaria =
     acaoPrimariaLabel && acaoPrimariaHref
       ? { label: acaoPrimariaLabel, href: acaoPrimariaHref }

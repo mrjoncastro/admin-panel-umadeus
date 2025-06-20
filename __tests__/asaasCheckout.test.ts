@@ -160,7 +160,6 @@ describe('checkout route', () => {
     const payload = {
       ...basePayload,
       paymentMethod: 'boleto',
-      paymentMethods: ['BOLETO'],
     }
     const req = new Request('http://test', {
       method: 'POST',
