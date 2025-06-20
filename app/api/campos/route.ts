@@ -10,10 +10,7 @@ export async function GET() {
   const tenantId = await getTenantFromHost()
 
   if (!tenantId) {
-    return NextResponse.json(
-      { error: 'Domínio não configurado' },
-      { status: 404 },
-    )
+    return NextResponse.json({ error: 'Tenant não informado' }, { status: 400 })
   }
 
   try {
@@ -54,6 +51,10 @@ export async function POST(req: NextRequest) {
     (user && (user as { cliente?: string }).cliente) ||
     (await getTenantFromHost())
 
+  if (!tenantId) {
+    return NextResponse.json({ error: 'Tenant não informado' }, { status: 400 })
+  }
+
   try {
     const { nome } = await req.json()
     logInfo('📥 Requisição para criar campo recebida')
@@ -64,7 +65,7 @@ export async function POST(req: NextRequest) {
 
     const campo = await pbSafe
       .collection('campos')
-      .create({ nome, ...(tenantId ? { cliente: tenantId } : {}) })
+      .create({ nome, cliente: tenantId })
 
     logInfo('✅ Campo criado com sucesso')
 
