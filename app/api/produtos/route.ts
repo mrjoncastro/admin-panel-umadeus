@@ -9,10 +9,7 @@ export async function GET(req: NextRequest) {
   const tenantId = await getTenantFromHost()
 
   if (!tenantId) {
-    return NextResponse.json(
-      { error: 'Domínio não configurado' },
-      { status: 404 },
-    )
+    return NextResponse.json({ error: 'Tenant não informado' }, { status: 400 })
   }
 
   try {

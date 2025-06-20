@@ -33,13 +33,13 @@ describe('GET /api/produtos', () => {
     expect(body).toEqual([])
   })
 
-  it('retorna 404 quando domínio não configurado', async () => {
+  it('retorna 400 quando tenant não informado', async () => {
     getTenantFromHostMock.mockResolvedValueOnce(null)
     const req = new Request('http://test')
     ;(req as any).nextUrl = new URL('http://test')
     const res = await GET(req as unknown as NextRequest)
-    expect(res.status).toBe(404)
+    expect(res.status).toBe(400)
     const body = await res.json()
-    expect(body.error).toBe('Domínio não configurado')
+    expect(body.error).toBe('Tenant não informado')
   })
 })
