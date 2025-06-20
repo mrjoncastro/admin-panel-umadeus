@@ -198,3 +198,9 @@ Quando `updateConfig` é chamado, os dados são enviados para essa mesma rota e 
 As personalizações são persistidas nos campos `logo_url`, `cor_primary`, `font` e `confirma_inscricoes` da coleção `clientes_config`, evitando perda de dados entre dispositivos.
 
 Além de definir `--accent` e `--logo-url`, o provedor gera uma paleta HSL e expõe as variáveis `--primary-50` … `--primary-900`. Essas variáveis são mapeadas para classes Tailwind (`bg-primary-*`, `text-primary-*`), eliminando a necessidade de usar `bg-[var(--primary-600)]` ou `text-[var(--primary-500)]`.
+
+### SSR e Preload de Configuracoes
+
+Para evitar flashes de estilo no carregamento, o `app/layout.tsx` insere as variáveis CSS diretamente na tag `<html>` e serializa o objeto `window.__TENANT_CONFIG__`. Esse preload é executado antes da primeira pintura e garante que o `TenantProvider` utilize as mesmas cores e fontes durante a hidratação.
+
+O valor carregado vem da função `fetchTenantConfig`, que depende do cabeçalho `x-tenant-id` inserido pelo [`middleware.ts`](../middleware.ts). Assim cada cliente recebe o tema correto já na resposta do servidor.

@@ -321,3 +321,5 @@
 ## [2025-06-20] README orienta executar `npm install` antes de `npm run lint` ou `npm run build`. Workflow CI passa a instalar dependências antes dos scripts. Lint e build executados.
 
 ## [2025-07-15] Metadata dinamico nas rotas publicas da loja e do blog com generateMetadata.
+
+## [2025-06-20] Adicionada seção sobre SSR e preload no design system, explicando `window.__TENANT_CONFIG__` e o cabeçalho `x-tenant-id`. Impacto: documentação mais completa.
