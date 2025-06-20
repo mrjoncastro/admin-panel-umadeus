@@ -13,7 +13,7 @@ export default function NovoEventoPage() {
   const { user: ctxUser, isLoggedIn } = useAuthContext()
   const { showSuccess, showError } = useToast()
   const router = useRouter()
-  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
+  const { authChecked } = useAuthGuard(['coordenador'])
   const getAuth = useCallback(() => {
     const token =
       typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
@@ -28,8 +28,6 @@ export default function NovoEventoPage() {
   const [selectedProdutos, setSelectedProdutos] = useState<string[]>([])
   const [produtoModalOpen, setProdutoModalOpen] = useState(false)
 
-  if (!authChecked) return null
-
   function toggleProduto(id: string) {
     setSelectedProdutos((prev) =>
       prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id],
@@ -37,13 +35,15 @@ export default function NovoEventoPage() {
   }
 
   useEffect(() => {
+    if (!authChecked) return
     const { token, user } = getAuth()
     if (!isLoggedIn || !token || !user || user.role !== 'coordenador') {
       router.replace('/login')
     }
-  }, [isLoggedIn, router, getAuth])
+  }, [isLoggedIn, router, getAuth, authChecked])
 
   useEffect(() => {
+    if (!authChecked) return
     const { token, user } = getAuth()
     if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
     fetch('/admin/api/produtos', {
@@ -57,7 +57,7 @@ export default function NovoEventoPage() {
         setProdutos(Array.isArray(data) ? data : (data.items ?? []))
       })
       .catch(() => setProdutos([]))
-  }, [isLoggedIn, getAuth])
+  }, [isLoggedIn, getAuth, authChecked])
 
   async function handleNovoProduto(form: Produto) {
     const formData = new FormData()
@@ -143,6 +143,8 @@ export default function NovoEventoPage() {
       showError('Falha ao salvar evento')
     }
   }
+
+  if (!authChecked) return null
 
   return (
     <>

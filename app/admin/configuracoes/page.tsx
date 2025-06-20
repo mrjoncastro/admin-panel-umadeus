@@ -78,7 +78,7 @@ export default function ConfiguracoesPage() {
   const { config, updateConfig } = useTenant()
   const { user: ctxUser } = useAuthContext()
   const { showSuccess, showError } = useToast()
-  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
+  const { authChecked } = useAuthGuard(['coordenador'])
   const getAuth = useCallback(() => {
     const token =
       typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null

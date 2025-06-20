@@ -17,7 +17,7 @@ export default function CategoriasAdminPage() {
   const { user: ctxUser, isLoggedIn } = useAuthContext()
   const { showSuccess, showError } = useToast()
   const router = useRouter()
-  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
+  const { authChecked } = useAuthGuard(['coordenador'])
   const getAuth = useCallback(() => {
     const token =
       typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
@@ -30,16 +30,16 @@ export default function CategoriasAdminPage() {
   const [editCategoria, setEditCategoria] = useState<Categoria | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
 
-  if (!authChecked) return null
-
   useEffect(() => {
+    if (!authChecked) return
     const { token, user } = getAuth()
     if (!isLoggedIn || !token || !user || user.role !== 'coordenador') {
       router.replace('/login')
     }
-  }, [isLoggedIn, router, getAuth])
+  }, [isLoggedIn, router, getAuth, authChecked])
 
   useEffect(() => {
+    if (!authChecked) return
     const { token, user } = getAuth()
     if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
     fetch('/admin/api/categorias', {
@@ -56,7 +56,7 @@ export default function CategoriasAdminPage() {
         console.error('Erro ao carregar categorias:', err)
         setCategorias([])
       })
-  }, [isLoggedIn, getAuth])
+  }, [isLoggedIn, getAuth, authChecked])
 
   async function handleSave(form: { nome: string }) {
     const { token, user } = getAuth()
@@ -126,6 +126,8 @@ export default function CategoriasAdminPage() {
       showError('Erro ao excluir categoria')
     }
   }
+
+  if (!authChecked) return null
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">

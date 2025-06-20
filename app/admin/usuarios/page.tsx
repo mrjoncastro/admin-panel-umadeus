@@ -21,15 +21,14 @@ interface Usuario {
 
 export default function UsuariosPage() {
   const { showError } = useToast()
-  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
+  const { authChecked } = useAuthGuard(['coordenador'])
   const [usuarios, setUsuarios] = useState<Usuario[]>([])
   const [loading, setLoading] = useState(true)
   const [eventos, setEventos] = useState<Evento[]>([])
   const [eventoId, setEventoId] = useState('')
 
-  if (!authChecked) return null
-
   useEffect(() => {
+    if (!authChecked) return
     async function fetchUsuarios() {
       try {
         const token = localStorage.getItem('pb_token')
@@ -59,9 +58,10 @@ export default function UsuariosPage() {
     }
 
     fetchUsuarios()
-  }, [showError])
+  }, [showError, authChecked])
 
   useEffect(() => {
+    if (!authChecked) return
     async function fetchEventos() {
       try {
         const token = localStorage.getItem('pb_token')
@@ -85,7 +85,9 @@ export default function UsuariosPage() {
     }
 
     fetchEventos()
-  }, [])
+  }, [authChecked])
+
+  if (!authChecked) return null
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">

@@ -30,7 +30,7 @@ export default function EditarProdutoPage() {
   const { user: ctxUser, isLoggedIn } = useAuthContext()
   const router = useRouter()
   const { showSuccess, showError } = useToast()
-  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
+  const { authChecked } = useAuthGuard(['coordenador'])
   const getAuth = useCallback(() => {
     const token =
       typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
@@ -52,20 +52,20 @@ export default function EditarProdutoPage() {
     calculateGross(Number(initial?.preco ?? 0), 'pix', 1).gross,
   )
 
-  if (!authChecked) return null
-
   useEffect(() => {
     setValorCliente(calculateGross(Number(initial?.preco ?? 0), 'pix', 1).gross)
   }, [initial?.preco])
 
   useEffect(() => {
+    if (!authChecked) return
     const { token, user } = getAuth()
     if (!isLoggedIn || !token || !user || user.role !== 'coordenador') {
       router.replace('/login')
     }
-  }, [isLoggedIn, router, getAuth])
+  }, [isLoggedIn, router, getAuth, authChecked])
 
   useEffect(() => {
+    if (!authChecked) return
     const { token, user } = getAuth()
     if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
     fetch('/admin/api/categorias', {
@@ -139,7 +139,7 @@ export default function EditarProdutoPage() {
         )
       })
       .finally(() => setLoading(false))
-  }, [id, isLoggedIn, router, getAuth])
+  }, [id, isLoggedIn, router, getAuth, authChecked])
 
   useEffect(() => {
     if (initial?.cores && typeof initial.cores === 'string') {
@@ -254,6 +254,8 @@ export default function EditarProdutoPage() {
   function removeCor(hex: string) {
     setCores(cores.filter((c) => c !== hex))
   }
+
+  if (!authChecked) return null
 
   return (
     <main className="max-w-xl mx-auto px-4 py-8">

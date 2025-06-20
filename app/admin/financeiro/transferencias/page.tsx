@@ -13,10 +13,8 @@ export default function TransferenciasPage() {
   const { isLoggedIn } = useAuthContext()
   const router = useRouter()
   const { showSuccess, showError } = useToast()
-  const { user, pb, authChecked } = useAuthGuard(['coordenador', 'lider'])
+  const { authChecked } = useAuthGuard(['coordenador', 'lider'])
   const [openAccountModal, setOpenAccountModal] = useState(false)
-
-  if (!authChecked) return null
 
   async function handleTransfer(
     destino: string,
@@ -52,10 +50,11 @@ export default function TransferenciasPage() {
   }
 
   useEffect(() => {
+    if (!authChecked) return
     if (!isLoggedIn) router.replace('/login')
-  }, [isLoggedIn, router])
+  }, [isLoggedIn, router, authChecked])
 
-  if (!isLoggedIn) return null
+  if (!authChecked || !isLoggedIn) return null
 
   return (
     <main className="max-w-lg mx-auto px-4 py-8">

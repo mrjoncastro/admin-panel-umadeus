@@ -163,3 +163,4 @@
 ## [2025-06-20] Corrigido erro 'Cannot read properties of undefined (reading 'replace')' em ConfiguracoesPage ajustando funcao isColorLight - dev - 3d07f5f
 
 ## [2025-06-20] Caminho incorreto dos testes de acessibilidade corrigido em package.json - dev - 01d4b28
+## [2025-06-20] Corrigido erro de hidratação e ordem de hooks em UsuariosPage e Layout - dev - 30c0f0f

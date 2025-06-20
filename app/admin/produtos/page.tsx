@@ -25,7 +25,7 @@ export default function AdminProdutosPage() {
   const { user: ctxUser, isLoggedIn } = useAuthContext()
   const router = useRouter()
   const { showSuccess, showError } = useToast()
-  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
+  const { authChecked } = useAuthGuard(['coordenador'])
   const getAuth = useCallback(() => {
     const token =
       typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
@@ -39,16 +39,16 @@ export default function AdminProdutosPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const pathname = usePathname()
 
-  if (!authChecked) return null
-
   useEffect(() => {
+    if (!authChecked) return
     const { token, user } = getAuth()
     if (!isLoggedIn || !token || !user || user.role !== 'coordenador') {
       router.replace('/login')
     }
-  }, [isLoggedIn, router, getAuth])
+  }, [isLoggedIn, router, getAuth, authChecked])
 
   useEffect(() => {
+    if (!authChecked) return
     const { token, user } = getAuth()
     if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
 
@@ -67,7 +67,7 @@ export default function AdminProdutosPage() {
       }
     }
     fetchProdutos()
-  }, [isLoggedIn, getAuth])
+  }, [isLoggedIn, getAuth, authChecked])
 
   const totalPages = Math.ceil(produtos.length / PRODUTOS_POR_PAGINA)
   const paginated = produtos.slice(
@@ -135,6 +135,8 @@ export default function AdminProdutosPage() {
     setModalOpen(false)
     setPage(1)
   }
+
+  if (!authChecked) return null
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">

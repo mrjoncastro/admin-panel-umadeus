@@ -9,19 +9,20 @@ import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 export default function NovoPostPage() {
   const { user: ctxUser, isLoggedIn } = useAuthContext()
   const router = useRouter()
-  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
+  const { authChecked } = useAuthGuard(['coordenador'])
   const [conteudo, setConteudo] = useState('')
   const [preview, setPreview] = useState(false)
   const [thumbnail, setThumbnail] = useState('')
   const [keywords, setKeywords] = useState('')
 
-  if (!authChecked) return null
-
   useEffect(() => {
-    if (!isLoggedIn || !user) {
+    if (!authChecked) return
+    if (!isLoggedIn) {
       router.replace('/login')
     }
-  }, [isLoggedIn, user, router])
+  }, [isLoggedIn, router, authChecked])
+
+  if (!authChecked) return null
 
   if (preview) {
     return (
