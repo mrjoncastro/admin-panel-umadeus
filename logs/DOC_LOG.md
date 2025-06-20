@@ -325,3 +325,5 @@
 ## [2025-06-20] Adicionada seção sobre SSR e preload no design system, explicando `window.__TENANT_CONFIG__` e o cabeçalho `x-tenant-id`. Impacto: documentação mais completa.
 
 ## [2025-06-20] Atualizado inventário de componentes com caminhos corretos e novo item InscricaoFormNoSSR. Lint e build executados mas falharam por 'next' ausente.
+
+## [2025-07-17] README e CONTRIBUTING destacam que `npm install` deve ser executado antes de `npm run lint` ou `npm run build`. Lint e build executados.
