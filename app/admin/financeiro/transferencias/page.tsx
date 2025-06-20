@@ -7,12 +7,16 @@ import { useToast } from '@/lib/context/ToastContext'
 import TransferenciaForm from '@/app/admin/financeiro/transferencias/components/TransferenciaForm'
 import BankAccountModal from '@/app/admin/financeiro/transferencias/modals/BankAccountModal'
 import type { PixKeyRecord } from '@/lib/bankAccounts'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 export default function TransferenciasPage() {
   const { isLoggedIn } = useAuthContext()
   const router = useRouter()
   const { showSuccess, showError } = useToast()
+  const { user, pb, authChecked } = useAuthGuard(['coordenador', 'lider'])
   const [openAccountModal, setOpenAccountModal] = useState(false)
+
+  if (!authChecked) return null
 
   async function handleTransfer(
     destino: string,

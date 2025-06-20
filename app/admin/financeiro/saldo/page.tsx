@@ -7,6 +7,7 @@ import { saveAs } from 'file-saver'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import * as XLSX from 'xlsx'
 import jsPDF from 'jspdf'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 interface Statistics {
   netValue: number
@@ -23,10 +24,13 @@ interface ExtratoItem {
 export default function SaldoPage() {
   const { isLoggedIn } = useAuthContext()
   const router = useRouter()
+  const { user, pb, authChecked } = useAuthGuard(['coordenador', 'lider'])
   const [saldoDisponivel, setSaldoDisponivel] = useState<number | null>(null)
   const [aLiberar, setALiberar] = useState<number | null>(null)
   const [extrato, setExtrato] = useState<ExtratoItem[]>([])
   const [loading, setLoading] = useState(false)
+
+  if (!authChecked) return null
 
   useEffect(() => {
     if (!isLoggedIn) {

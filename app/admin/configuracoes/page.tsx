@@ -6,6 +6,7 @@ import { useToast } from '@/lib/context/ToastContext'
 import Image from 'next/image'
 import { Check } from 'lucide-react'
 import ToggleSwitch from '@/components/atoms/ToggleSwitch'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 // Lista de tons proibidos (branco, quase branco, preto, quase preto)
 const BLOCKED_COLORS = [
@@ -77,6 +78,7 @@ export default function ConfiguracoesPage() {
   const { config, updateConfig } = useTenant()
   const { user: ctxUser } = useAuthContext()
   const { showSuccess, showError } = useToast()
+  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
   const getAuth = useCallback(() => {
     const token =
       typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
@@ -93,6 +95,8 @@ export default function ConfiguracoesPage() {
   )
   const [error, setError] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
+
+  if (!authChecked) return null
 
   // Preview dinâmico
   if (typeof window !== 'undefined') {

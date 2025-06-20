@@ -9,6 +9,7 @@ import Footer from '@/components/templates/Footer'
 import Image from 'next/image'
 import { Clock } from 'lucide-react'
 import { isExternalUrl } from '@/utils/isExternalUrl'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 export default function EditarPostPage() {
   const { slug } = useParams<{ slug: string }>()
@@ -22,8 +23,11 @@ export default function EditarPostPage() {
   const [thumbnail, setThumbnail] = useState('')
   const [keywords, setKeywords] = useState('')
 
-  const { user, isLoggedIn } = useAuthContext()
+  const { user: ctxUser, isLoggedIn } = useAuthContext()
   const router = useRouter()
+  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
+
+  if (!authChecked) return null
 
   useEffect(() => {
     if (!isLoggedIn || !user) {
