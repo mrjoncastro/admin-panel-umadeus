@@ -5,6 +5,8 @@ Após clonar o repositório, execute `npm install` para instalar o **Next**, o *
 
 ## Validação de código
 
+Certifique-se de rodar `npm install` **antes** de executar `npm run lint` ou `npm run build`.
+
 Execute `npm run lint` antes de cada commit para garantir que não há problemas de lint.
 
 ## Atualização da documentação
