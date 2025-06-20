@@ -6,6 +6,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import createPocketBase from '@/lib/pocketbase'
 import { useToast } from '@/lib/context/ToastContext'
+import { FormField, TextField, InputWithMask } from '@/components'
 
 export default function ModalEditarPerfil({
   onClose,
@@ -85,89 +86,119 @@ export default function ModalEditarPerfil({
                     </h3>
                   </Dialog.Title>
 
-                  <input
-                    type="text"
-                    placeholder="Nome completo"
-                    className={inputStyle}
-                    value={String(nome)}
-                    onChange={(e) => setNome(e.target.value)}
-                  />
+                  <FormField label="Nome completo" htmlFor="perfil-nome">
+                    <TextField
+                      id="perfil-nome"
+                      type="text"
+                      placeholder="Nome completo"
+                      className={inputStyle}
+                      value={String(nome)}
+                      onChange={(e) => setNome(e.target.value)}
+                    />
+                  </FormField>
 
-                  <input
-                    type="text"
-                    placeholder="Telefone"
-                    className={inputStyle}
-                    value={String(telefone)}
-                    onChange={(e) => setTelefone(e.target.value)}
-                  />
+                  <FormField label="Telefone" htmlFor="perfil-telefone">
+                    <InputWithMask
+                      id="perfil-telefone"
+                      type="text"
+                      mask="telefone"
+                      placeholder="Telefone"
+                      className={inputStyle}
+                      value={String(telefone)}
+                      onChange={(e) => setTelefone(e.target.value)}
+                    />
+                  </FormField>
 
-                  <input
-                    type="text"
-                    placeholder="CPF"
-                    className={inputStyle}
-                    value={String(cpf)}
-                    onChange={(e) => setCpf(e.target.value)}
-                  />
+                  <FormField label="CPF" htmlFor="perfil-cpf">
+                    <InputWithMask
+                      id="perfil-cpf"
+                      type="text"
+                      mask="cpf"
+                      placeholder="CPF"
+                      className={inputStyle}
+                      value={String(cpf)}
+                      onChange={(e) => setCpf(e.target.value)}
+                    />
+                  </FormField>
 
-                  <input
-                    type="date"
-                    className={inputStyle}
-                    value={String(dataNascimento)}
-                    onChange={(e) => setDataNascimento(e.target.value)}
-                  />
+                  <FormField label="Data de nascimento" htmlFor="perfil-data">
+                    <TextField
+                      id="perfil-data"
+                      type="date"
+                      className={inputStyle}
+                      value={String(dataNascimento)}
+                      onChange={(e) => setDataNascimento(e.target.value)}
+                    />
+                  </FormField>
 
-                  <input
-                    type="text"
-                    placeholder="Endereço"
-                    className={inputStyle}
-                    value={String(endereco)}
-                    onChange={(e) => setEndereco(e.target.value)}
-                  />
+                  <FormField label="Endereço" htmlFor="perfil-endereco">
+                    <TextField
+                      id="perfil-endereco"
+                      type="text"
+                      placeholder="Endereço"
+                      className={inputStyle}
+                      value={String(endereco)}
+                      onChange={(e) => setEndereco(e.target.value)}
+                    />
+                  </FormField>
 
-                  <input
-                    type="text"
-                    placeholder="Número"
-                    className={inputStyle}
-                    value={String(numero)}
-                    onChange={(e) => setNumero(e.target.value)}
-                  />
+                  <FormField label="Número" htmlFor="perfil-numero">
+                    <TextField
+                      id="perfil-numero"
+                      type="text"
+                      placeholder="Número"
+                      className={inputStyle}
+                      value={String(numero)}
+                      onChange={(e) => setNumero(e.target.value)}
+                    />
+                  </FormField>
 
-                  <input
-                    type="text"
-                    placeholder="Estado"
-                    className={inputStyle}
-                    value={String(estado)}
-                    onChange={(e) => setEstado(e.target.value)}
-                  />
+                  <FormField label="Estado" htmlFor="perfil-estado">
+                    <TextField
+                      id="perfil-estado"
+                      type="text"
+                      placeholder="Estado"
+                      className={inputStyle}
+                      value={String(estado)}
+                      onChange={(e) => setEstado(e.target.value)}
+                    />
+                  </FormField>
 
-                  <input
-                    type="text"
-                    placeholder="CEP"
-                    className={inputStyle}
-                    value={String(cep)}
-                    onChange={(e) => setCep(e.target.value)}
-                  />
+                  <FormField label="CEP" htmlFor="perfil-cep">
+                    <TextField
+                      id="perfil-cep"
+                      type="text"
+                      placeholder="CEP"
+                      className={inputStyle}
+                      value={String(cep)}
+                      onChange={(e) => setCep(e.target.value)}
+                    />
+                  </FormField>
 
-                  <input
-                    type="text"
-                    placeholder="Cidade"
-                    className={inputStyle}
-                    value={String(cidade)}
-                    onChange={(e) => setCidade(e.target.value)}
-                  />
+                  <FormField label="Cidade" htmlFor="perfil-cidade">
+                    <TextField
+                      id="perfil-cidade"
+                      type="text"
+                      placeholder="Cidade"
+                      className={inputStyle}
+                      value={String(cidade)}
+                      onChange={(e) => setCidade(e.target.value)}
+                    />
+                  </FormField>
 
-                  <div>
-                    <input
+                  <FormField label="E-mail" htmlFor="perfil-email" className="opacity-60">
+                    <TextField
+                      id="perfil-email"
                       type="email"
                       disabled
                       value={String(user?.email || '')}
-                      className={`${inputStyle} opacity-60 cursor-not-allowed`}
+                      className={`${inputStyle} cursor-not-allowed`}
                     />
                     <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
                       O e-mail não pode ser alterado. Para mudanças, entre em
                       contato com o suporte.
                     </p>
-                  </div>
+                  </FormField>
 
                   <div className="flex justify-end gap-2 pt-2">
                     <button

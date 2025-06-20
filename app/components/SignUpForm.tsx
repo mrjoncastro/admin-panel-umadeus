@@ -6,6 +6,7 @@ import { useToast } from '@/lib/context/ToastContext'
 import type { ClientResponseError } from 'pocketbase'
 import createPocketBase from '@/lib/pocketbase' // ajuste para seu caminho real
 import Spinner from '@/components/atoms/Spinner'
+import { FormField, TextField, InputWithMask } from '@/components'
 
 const VIA_CEP_URL =
   process.env.NEXT_PUBLIC_VIA_CEP_URL || 'https://viacep.com.br/ws'
@@ -142,45 +143,62 @@ export default function SignUpForm({
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="text"
-              placeholder="Nome completo"
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              className="input-base w-full rounded-md px-4 py-2"
-              required
-            />
-            <input
-              type="email"
-              placeholder="E-mail"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="input-base w-full rounded-md px-4 py-2"
-              required
-            />
-            <input
-              type="text"
-              placeholder="Telefone"
-              value={telefone}
-              onChange={(e) => setTelefone(e.target.value)}
-              className="input-base w-full rounded-md px-4 py-2"
-              required
-            />
-            <input
-              type="text"
-              placeholder="CPF"
-              value={cpf}
-              onChange={(e) => setCpf(e.target.value)}
-              className="input-base w-full rounded-md px-4 py-2"
-              required
-            />
-            <input
-              type="date"
-              value={dataNascimento}
-              onChange={(e) => setDataNascimento(e.target.value)}
-              className="input-base w-full rounded-md px-4 py-2"
-              required
-            />
+            <FormField label="Nome completo" htmlFor="signup-nome">
+              <TextField
+                id="signup-nome"
+                type="text"
+                placeholder="Nome completo"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                className="w-full rounded-md px-4 py-2"
+                required
+              />
+            </FormField>
+            <FormField label="E-mail" htmlFor="signup-email">
+              <TextField
+                id="signup-email"
+                type="email"
+                placeholder="E-mail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-md px-4 py-2"
+                required
+              />
+            </FormField>
+            <FormField label="Telefone" htmlFor="signup-telefone">
+              <InputWithMask
+                id="signup-telefone"
+                type="text"
+                mask="telefone"
+                placeholder="Telefone"
+                value={telefone}
+                onChange={(e) => setTelefone(e.target.value)}
+                className="w-full rounded-md px-4 py-2"
+                required
+              />
+            </FormField>
+            <FormField label="CPF" htmlFor="signup-cpf">
+              <InputWithMask
+                id="signup-cpf"
+                type="text"
+                mask="cpf"
+                placeholder="CPF"
+                value={cpf}
+                onChange={(e) => setCpf(e.target.value)}
+                className="w-full rounded-md px-4 py-2"
+                required
+              />
+            </FormField>
+            <FormField label="Data de nascimento" htmlFor="signup-data">
+              <TextField
+                id="signup-data"
+                type="date"
+                value={dataNascimento}
+                onChange={(e) => setDataNascimento(e.target.value)}
+                className="w-full rounded-md px-4 py-2"
+                required
+              />
+            </FormField>
             <select
               value={campo}
               onChange={(e) => setCampo(e.target.value)}
@@ -194,65 +212,86 @@ export default function SignUpForm({
                 </option>
               ))}
             </select>
-            <input
-              type="text"
-              placeholder="CEP"
-              value={cep}
-              onChange={(e) => setCep(e.target.value)}
-              className="input-base w-full rounded-md px-4 py-2"
-              required
-            />
-            <input
-              type="text"
-              placeholder="Endereço"
-              value={endereco}
-              onChange={(e) => setEndereco(e.target.value)}
-              className="input-base w-full rounded-md px-4 py-2"
-              required
-            />
-            <input
-              type="text"
-              placeholder="Número"
-              value={numero}
-              onChange={(e) => setNumero(e.target.value)}
-              className="input-base w-full rounded-md px-4 py-2"
-              required
-            />
-            <input
-              type="text"
-              placeholder="Cidade"
-              value={cidade}
-              onChange={(e) => setCidade(e.target.value)}
-              className="input-base w-full rounded-md px-4 py-2"
-              required
-            />
-            <input
-              type="text"
-              placeholder="Estado"
-              value={estado}
-              onChange={(e) => setEstado(e.target.value)}
-              className="input-base w-full rounded-md px-4 py-2"
-              required
-            />
+            <FormField label="CEP" htmlFor="signup-cep">
+              <TextField
+                id="signup-cep"
+                type="text"
+                placeholder="CEP"
+                value={cep}
+                onChange={(e) => setCep(e.target.value)}
+                className="w-full rounded-md px-4 py-2"
+                required
+              />
+            </FormField>
+            <FormField label="Endereço" htmlFor="signup-endereco">
+              <TextField
+                id="signup-endereco"
+                type="text"
+                placeholder="Endereço"
+                value={endereco}
+                onChange={(e) => setEndereco(e.target.value)}
+                className="w-full rounded-md px-4 py-2"
+                required
+              />
+            </FormField>
+            <FormField label="Número" htmlFor="signup-numero">
+              <TextField
+                id="signup-numero"
+                type="text"
+                placeholder="Número"
+                value={numero}
+                onChange={(e) => setNumero(e.target.value)}
+                className="w-full rounded-md px-4 py-2"
+                required
+              />
+            </FormField>
+            <FormField label="Cidade" htmlFor="signup-cidade">
+              <TextField
+                id="signup-cidade"
+                type="text"
+                placeholder="Cidade"
+                value={cidade}
+                onChange={(e) => setCidade(e.target.value)}
+                className="w-full rounded-md px-4 py-2"
+                required
+              />
+            </FormField>
+            <FormField label="Estado" htmlFor="signup-estado">
+              <TextField
+                id="signup-estado"
+                type="text"
+                placeholder="Estado"
+                value={estado}
+                onChange={(e) => setEstado(e.target.value)}
+                className="w-full rounded-md px-4 py-2"
+                required
+              />
+            </FormField>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="password"
-              placeholder="Senha"
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
-              className="input-base w-full rounded-md px-4 py-2"
-              required
-            />
-            <input
-              type="password"
-              placeholder="Confirme a senha"
-              value={senhaConfirm}
-              onChange={(e) => setSenhaConfirm(e.target.value)}
-              className="input-base w-full rounded-md px-4 py-2"
-              required
-            />
+            <FormField label="Senha" htmlFor="signup-senha">
+              <TextField
+                id="signup-senha"
+                type="password"
+                placeholder="Senha"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                className="w-full rounded-md px-4 py-2"
+                required
+              />
+            </FormField>
+            <FormField label="Confirme a senha" htmlFor="signup-confirm">
+              <TextField
+                id="signup-confirm"
+                type="password"
+                placeholder="Confirme a senha"
+                value={senhaConfirm}
+                onChange={(e) => setSenhaConfirm(e.target.value)}
+                className="w-full rounded-md px-4 py-2"
+                required
+              />
+            </FormField>
           </div>
 
           <button

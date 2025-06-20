@@ -311,3 +311,5 @@
 ## [2025-06-20] Validação de tenant adicionada nas rotas de API e testes atualizados. Lint e build executados.
 
 ## [2025-07-13] Adicionado script format:write e CI verificando Prettier apenas nos arquivos alterados.
+
+## [2025-06-20] Atualizacao de formularios para usar FormField e TextField. - Lint: falhou (next not found) - Build: falhou (next not found)
