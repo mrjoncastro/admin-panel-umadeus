@@ -6,8 +6,8 @@ Este documento orienta a criação e padronização de componentes em seu Design
 
 ## 1. Convenções Gerais
 
-* **Nomeclatura**: Componentes devem usar PascalCase (ex.: `Button`, `TextField`).
-* **Estrutura de Pastas**:
+- **Nomeclatura**: Componentes devem usar PascalCase (ex.: `Button`, `TextField`).
+- **Estrutura de Pastas**:
 
   ```bash
   /components
@@ -16,13 +16,15 @@ Este documento orienta a criação e padronização de componentes em seu Design
     ├── organisms   # Blocos de UI complexos (modais, tabelas, formulários)
     ├── templates   # Páginas ou telas inteiras compostas por organisms
   ```
-* **Props Padrão**:
 
-  * `className?: string` para extensão de estilo.
-  * `id?: string`, `data-testid?: string` para testes.
-  * `aria-*` para acessibilidade.
-* **Estilos**: Utilizar classes utilitárias do Tailwind e tokens do Design System (`input-base`, `btn-primary`, etc.).
-* **Documentação**: Cada componente deve ter:
+- **Props Padrão**:
+
+  - `className?: string` para extensão de estilo.
+  - `id?: string`, `data-testid?: string` para testes.
+  - `aria-*` para acessibilidade.
+
+- **Estilos**: Utilizar classes utilitárias do Tailwind e tokens do Design System (`input-base`, `btn-primary`, etc.).
+- **Documentação**: Cada componente deve ter:
 
   1. **Descrição** breve do propósito.
   2. **API** de props (com tipos, obrigatoriedade e defaultValues).
@@ -35,39 +37,39 @@ Este documento orienta a criação e padronização de componentes em seu Design
 
 ### 2.1 Atoms
 
-* **Button**: variantes `primary`, `secondary`, `danger`, `link`.
-* **Text**: estilos tipográficos (`Heading`, `Body`, `Caption`).
-* **Icon** / **IconButton**: wrappers para ícones SVG.
-* **Input** (TextField): campos de texto com label, placeholder e mensagens de erro.
-* **Select** (SelectField): dropdown nativo estilizado.
-* **Checkbox** / **Radio**: opções de seleção únicas ou múltiplas.
-* **ToggleSwitch**: alternador binário (on/off).
-* **Spinner** / **Loader**: indicação de carregamento.
+- **Button**: variantes `primary`, `secondary`, `danger`, `link`.
+- **Text**: estilos tipográficos (`Heading`, `Body`, `Caption`).
+- **Icon** / **IconButton**: wrappers para ícones SVG.
+- **Input** (TextField): campos de texto com label, placeholder e mensagens de erro.
+- **Select** (SelectField): dropdown nativo estilizado.
+- **Checkbox** / **Radio**: opções de seleção únicas ou múltiplas.
+- **ToggleSwitch**: alternador binário (on/off).
+- **Spinner** / **Loader**: indicação de carregamento.
 
 ### 2.2 Molecules
 
-* **InputWithMask**: Input + máscara (CPF, telefone).
-* **FormField**: Label + Input/Select + ErrorMessage + wrapper acessível.
-* **Card**: container de conteúdo (ex.: `SaldoCard`).
-* **Badge** / **Tag**: rótulos de status ou categorias.
-* **SmoothTabs**: abas de navegação interna.
-* **Avatar**: foto ou iniciais do usuário.
+- **InputWithMask**: Input + máscara (CPF, telefone).
+- **FormField**: Label + Input/Select + ErrorMessage + wrapper acessível.
+- **Card**: container de conteúdo (ex.: `SaldoCard`).
+- **Badge** / **Tag**: rótulos de status ou categorias.
+- **SmoothTabs**: abas de navegação interna.
+- **Avatar**: foto ou iniciais do usuário.
 
 ### 2.3 Organisms
 
-* **Modal** / **ModalAnimated**: janela modal com animação de abertura/fechamento.
-* **LoadingOverlay**: layer semitransparente com spinner central.
-* **Table**: componentes para `thead`, `tbody`, sortable, paginado.
-* **Pagination**: navegação por páginas de dados.
-* **Toast** / **Alert**: notificações temporárias.
-* **Stepper**: barra de progresso para multi-step forms.
-* **FormWizard**: estrutura para formulários multi-etapa.
+- **Modal** / **ModalAnimated**: janela modal com animação de abertura/fechamento.
+- **LoadingOverlay**: layer semitransparente com spinner central.
+- **Table**: componentes para `thead`, `tbody`, sortable, paginado.
+- **Pagination**: navegação por páginas de dados.
+- **Toast** / **Alert**: notificações temporárias.
+- **Stepper**: barra de progresso para multi-step forms.
+- **FormWizard**: estrutura para formulários multi-etapa.
 
 ### 2.4 Templates
 
-* **LoginForm**: combinação de campos e botões para autenticação.
-* **CheckoutForm**: fluxo de pagamento e revisão de pedido.
-* **DashboardLayout**: sidebar + header + content area.
+- **LoginForm**: combinação de campos e botões para autenticação.
+- **CheckoutForm**: fluxo de pagamento e revisão de pedido.
+- **DashboardLayout**: sidebar + header + content area.
 
 ---
 
@@ -77,24 +79,29 @@ Este documento orienta a criação e padronização de componentes em seu Design
 
 ```tsx
 interface ButtonProps {
-  variant?: 'primary' | 'secondary' | 'danger' | 'link';
+  variant?: "primary" | "secondary" | "danger" | "link";
   disabled?: boolean;
   onClick?: () => void;
   children: React.ReactNode;
   className?: string;
 }
 
-function Button({ variant = 'primary', disabled = false, className, ...props }: ButtonProps) {
-  const base = 'py-2 px-4 rounded-md font-medium focus:outline-none';
+function Button({
+  variant = "primary",
+  disabled = false,
+  className,
+  ...props
+}: ButtonProps) {
+  const base = "py-2 px-4 rounded-md font-medium focus:outline-none";
   const styleMap = {
-    primary: 'bg-purple-600 hover:bg-purple-700 text-white',
-    secondary: 'bg-gray-200 hover:bg-gray-300 text-gray-800',
-    danger: 'bg-red-600 hover:bg-red-700 text-white',
-    link: 'underline text-purple-600 hover:text-purple-700 bg-transparent'
+    primary: "bg-purple-600 hover:bg-purple-700 text-white",
+    secondary: "bg-gray-200 hover:bg-gray-300 text-gray-800",
+    danger: "bg-red-600 hover:bg-red-700 text-white",
+    link: "underline text-purple-600 hover:text-purple-700 bg-transparent",
   };
   return (
     <button
-      className={`${base} ${styleMap[variant]} ${className ?? ''}`}
+      className={`${base} ${styleMap[variant]} ${className ?? ""}`}
       disabled={disabled}
       aria-disabled={disabled}
       {...props}
@@ -115,12 +122,30 @@ function Button({ variant = 'primary', disabled = false, className, ...props }: 
 
 ---
 
-## 5. Workflows e Ferramentas
+## 5. Workflows e Ferramentas\$1
 
-* **Storybook**: registrar cada componente com *stories* demonstrando variantes.
-* **Testing Library + Jest**: testes unitários e de acessibilidade (*axe*).
-* **Lint/Prettier**: manter estilo de código uniforme.
+## 6. Considerações do Plano de Negócio
+
+Para garantir que o design system esteja plenamente alinhado ao seu plano de negócio multi-tenant e às regras de personalização de cada cliente, siga estas diretrizes:
+
+- **Temas e Branding Dinâmicos**: todos os componentes devem suportar tokens de cor e logo configuráveis por tenant (e.g., `m24_clientes.cor_primary`, `logo_url`). Utilize variáveis CSS (`--color-primary`, `--logo-url`) expostas pelo `TenantProvider` para aplicar estilos dinamicamente.
+
+- **Feature Toggles**: incorpore componentes como `ToggleSwitch` para ativar/desativar funcionalidades específicas de cada cliente. Por exemplo, controle a exibição do checkbox de confirmação de inscrição com base no campo `clientes_config.confirma_inscricoes`.
+
+- **Seleção de Métodos de Pagamento**: crie um componente `PaymentMethodSelector` que receba do contexto do tenant as opções permitidas (Pix, Boleto, Crédito) e limites de parcelas definidos no plano de negócio.
+
+- **Filtragem e Isolamento de Dados**: o layout e os componentes de navegação (e.g., `DashboardLayout`, `SmoothTabs`) devem respeitar o escopo multi-tenant, usando o hook ou contexto `useTenant()` para filtrar rotas, dados e menus conforme o host em `clientes_config`.
+
+- **Configurador de Componentes**: disponibilize um `TenantProvider` que carrega e expõe em React Context:
+
+  - **Tokens de Design** (cores, fontes, espaçamentos) personalizados.
+  - **URLs de API** e credenciais (sem expor chaves sensíveis no cliente).
+  - **Regras de Negócio** (confirmações, limites de uso, branding).
+
+- **Documentação Integrada**: em cada Storybook, inclua um _story_ de “Tema Dinâmico” que demonstra a aplicação de diferentes configurações de tenant, para validar visualmente as variações de branding.
+
+Com essas adições, o design system não só unifica a interface, mas também reflete diretamente as necessidades e restrições definidas no plano de negócio, assegurando consistência e escalabilidade para cada cliente.
 
 ---
 
-Com este guia, você terá um mapa completo de componentes a documentar e padronizar, facilitando a colaboração, manutenção e evolução do seu design system.
+Com este guia completo, você terá um mapa detalhado de componentes, integrações e personalizações necessários para suportar todo o seu fluxo de negócios multi-tenant.
