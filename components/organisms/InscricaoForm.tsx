@@ -140,7 +140,11 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
             {/* Linhas agrupadas em pares */}
             <div className="flex flex-col gap-4">
               <div className="flex flex-col md:flex-row gap-4">
-                <FormField label="Nome*" htmlFor="inscricao-nome" className="flex-1">
+                <FormField
+                  label="Nome*"
+                  htmlFor="inscricao-nome"
+                  className="flex-1"
+                >
                   <TextField
                     id="inscricao-nome"
                     name="user_first_name"
@@ -163,7 +167,11 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
               </div>
 
               <div className="flex flex-col md:flex-row gap-4">
-                <FormField label="E-mail*" htmlFor="inscricao-email" className="flex-1">
+                <FormField
+                  label="E-mail*"
+                  htmlFor="inscricao-email"
+                  className="flex-1"
+                >
                   <TextField
                     id="inscricao-email"
                     type="email"
@@ -172,7 +180,11 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                     defaultValue={String(user?.email ?? '')}
                   />
                 </FormField>
-                <FormField label="Telefone*" htmlFor="inscricao-phone" className="flex-1">
+                <FormField
+                  label="Telefone*"
+                  htmlFor="inscricao-phone"
+                  className="flex-1"
+                >
                   <InputWithMask
                     id="inscricao-phone"
                     type="text"
@@ -185,7 +197,11 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
               </div>
 
               <div className="flex flex-col md:flex-row gap-4">
-                <FormField label="CPF*" htmlFor="inscricao-cpf" className="flex-1">
+                <FormField
+                  label="CPF*"
+                  htmlFor="inscricao-cpf"
+                  className="flex-1"
+                >
                   <InputWithMask
                     id="inscricao-cpf"
                     type="text"
@@ -263,7 +279,11 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
               </FormField>
 
               <div className="flex flex-col md:flex-row gap-4">
-                <FormField label="Número*" htmlFor="inscricao-numero" className="w-1/3">
+                <FormField
+                  label="Número*"
+                  htmlFor="inscricao-numero"
+                  className="w-1/3"
+                >
                   <TextField
                     id="inscricao-numero"
                     name="user_number"
@@ -271,7 +291,11 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                     defaultValue={String(user?.numero ?? '')}
                   />
                 </FormField>
-                <FormField label="Complemento" htmlFor="inscricao-complemento" className="flex-1">
+                <FormField
+                  label="Complemento"
+                  htmlFor="inscricao-complemento"
+                  className="flex-1"
+                >
                   <TextField
                     id="inscricao-complemento"
                     name="user_complement"
@@ -281,7 +305,11 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
               </div>
 
               <div className="flex flex-col md:flex-row gap-4">
-                <FormField label="Bairro*" htmlFor="inscricao-bairro" className="flex-1">
+                <FormField
+                  label="Bairro*"
+                  htmlFor="inscricao-bairro"
+                  className="flex-1"
+                >
                   <TextField
                     id="inscricao-bairro"
                     name="user_neighborhood"
@@ -290,7 +318,11 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                     onChange={(e) => setBairro(e.target.value)}
                   />
                 </FormField>
-                <FormField label="Cidade*" htmlFor="inscricao-cidade" className="flex-1">
+                <FormField
+                  label="Cidade*"
+                  htmlFor="inscricao-cidade"
+                  className="flex-1"
+                >
                   <TextField
                     id="inscricao-cidade"
                     name="user_city"
