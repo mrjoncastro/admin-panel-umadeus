@@ -14,7 +14,7 @@ export default function useInscricoes() {
     let active = true
     fetchInscricoes(tenantId)
       .then((res) => {
-        if (active) setInscricoes(res as Inscricao[])
+        if (active) setInscricoes(res as unknown as Inscricao[])
       })
       .catch(() => {
         if (active) setInscricoes([])
