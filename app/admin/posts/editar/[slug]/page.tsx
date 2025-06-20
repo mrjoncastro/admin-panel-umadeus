@@ -23,15 +23,15 @@ export default function EditarPostPage() {
   const [thumbnail, setThumbnail] = useState('')
   const [keywords, setKeywords] = useState('')
 
-  const { user: ctxUser, isLoggedIn } = useAuthContext()
+  const { isLoggedIn } = useAuthContext()
   const router = useRouter()
   const { authChecked } = useAuthGuard(['coordenador'])
 
   useEffect(() => {
-    if (!isLoggedIn || !user) {
+    if (!isLoggedIn) {
       router.replace('/login')
     }
-  }, [isLoggedIn, user, router])
+  }, [isLoggedIn, router])
 
   useEffect(() => {
     fetch(`/admin/api/posts/${slug}`)

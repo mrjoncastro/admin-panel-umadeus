@@ -75,7 +75,7 @@ export default function GerenciarCamposPage() {
     }
 
     carregarCampos()
-  }, [token, user, camposCarregados, showError])
+  }, [token, storedUser, camposCarregados, showError, authChecked])
 
   async function handleCriarOuAtualizar(e: React.FormEvent) {
     e.preventDefault()

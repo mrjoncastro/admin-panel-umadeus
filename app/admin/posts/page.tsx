@@ -15,7 +15,7 @@ type Post = PostClientRecord
 const POSTS_PER_PAGE = 10
 
 export default function AdminPostsPage() {
-  const { user: ctxUser, isLoggedIn } = useAuthContext()
+  const { isLoggedIn } = useAuthContext()
   const router = useRouter()
   const { authChecked } = useAuthGuard(['coordenador'])
   const [posts, setPosts] = useState<Post[]>([])
