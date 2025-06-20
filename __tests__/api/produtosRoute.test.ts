@@ -13,10 +13,14 @@ vi.mock('../../lib/pocketbase', () => ({
 vi.mock('../../lib/products', () => ({
   filtrarProdutos: vi.fn((p) => p),
 }))
-const getTenantFromHostMock = vi.fn().mockResolvedValue('t1')
+const getTenantFromHostMock = vi.fn()
 vi.mock('../../lib/getTenantFromHost', () => ({
   getTenantFromHost: getTenantFromHostMock,
 }))
+
+beforeEach(() => {
+  getTenantFromHostMock.mockResolvedValue('t1')
+})
 
 describe('GET /api/produtos', () => {
   it('retorna 500 quando pocketbase falha', async () => {

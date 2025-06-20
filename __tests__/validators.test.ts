@@ -14,8 +14,8 @@ describe('isValidCPF', () => {
 
 describe('isValidCNPJ', () => {
   it('valida cnpjs corretos', () => {
-    expect(isValidCNPJ('51.174.497/0001-93')).toBe(true)
-    expect(isValidCNPJ('51174497000193')).toBe(true)
+    expect(isValidCNPJ('51.174.497/0001-03')).toBe(true)
+    expect(isValidCNPJ('51174497000103')).toBe(true)
   })
   it('retorna false para cnpj invalido', () => {
     expect(isValidCNPJ('11.111.111/1111-11')).toBe(false)

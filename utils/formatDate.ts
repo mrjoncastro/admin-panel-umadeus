@@ -3,5 +3,6 @@ export function formatDate(date: string | Date): string {
   if (isNaN(d.getTime())) {
     return ''
   }
-  return d.toLocaleDateString('pt-BR')
+  const iso = d.toISOString().slice(0, 10).split('-')
+  return `${iso[2]}/${iso[1]}/${iso[0]}`
 }
