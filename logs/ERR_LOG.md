@@ -161,3 +161,5 @@
 ## [2025-07-11] Corrigida tipagem da página de post do blog que quebrava build - dev - 82aa56e
 
 ## [2025-06-20] Corrigido erro 'Cannot read properties of undefined (reading 'replace')' em ConfiguracoesPage ajustando funcao isColorLight - dev - 3d07f5f
+
+## [2025-06-20] Caminho incorreto dos testes de acessibilidade corrigido em package.json - dev - 01d4b28
