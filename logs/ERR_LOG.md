@@ -156,3 +156,4 @@
 
 ## [2025-07-09] Resolvido erro de Split no checkout ajustando o valor automaticamente quando a API retorna o limite. Commit: 4285c3777ccd95b6024d424a54fe5528118646a4
 ## [2025-07-11] Corrigida tipagem da página de post do blog que quebrava build - dev - 82aa56e
+## [2025-06-20] Corrigido erro 'Cannot read properties of undefined (reading 'replace')' em ConfiguracoesPage ajustando funcao isColorLight - dev - 3d07f5f

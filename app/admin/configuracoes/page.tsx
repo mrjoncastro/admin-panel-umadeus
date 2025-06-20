@@ -50,7 +50,8 @@ function isBlockedColor(hex: string) {
 }
 
 // Checa se cor é clara, para ajuste de texto no botão
-function isColorLight(hex: string) {
+function isColorLight(hex?: string) {
+  if (!hex) return false;
   const c = hex.replace("#", "");
   let r = 0,
     g = 0,
