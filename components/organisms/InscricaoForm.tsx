@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useToast } from '@/lib/context/ToastContext'
 import Spinner from '@/components/atoms/Spinner'
+import { FormField, TextField, InputWithMask } from '@/components'
 
 const CEP_BASE_URL =
   process.env.NEXT_PUBLIC_VIA_CEP_URL ||
@@ -139,79 +140,74 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
             {/* Linhas agrupadas em pares */}
             <div className="flex flex-col gap-4">
               <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1">
-                  <label className="block mb-1 text-sm font-medium">
-                    Nome*
-                  </label>
-                  <input
+                <FormField label="Nome*" htmlFor="inscricao-nome" className="flex-1">
+                  <TextField
+                    id="inscricao-nome"
                     name="user_first_name"
                     required
-                    className="input-base"
                     defaultValue={firstName}
                   />
-                </div>
-                <div className="flex-1">
-                  <label className="block mb-1 text-sm font-medium">
-                    Sobrenome*
-                  </label>
-                  <input
+                </FormField>
+                <FormField
+                  label="Sobrenome*"
+                  htmlFor="inscricao-sobrenome"
+                  className="flex-1"
+                >
+                  <TextField
+                    id="inscricao-sobrenome"
                     name="user_last_name"
                     required
-                    className="input-base"
                     defaultValue={lastName}
                   />
-                </div>
+                </FormField>
               </div>
 
               <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1">
-                  <label className="block mb-1 text-sm font-medium">
-                    E-mail*
-                  </label>
-                  <input
+                <FormField label="E-mail*" htmlFor="inscricao-email" className="flex-1">
+                  <TextField
+                    id="inscricao-email"
                     type="email"
                     name="user_email"
                     required
-                    className="input-base"
                     defaultValue={String(user?.email ?? '')}
                   />
-                </div>
-                <div className="flex-1">
-                  <label className="block mb-1 text-sm font-medium">
-                    Telefone*
-                  </label>
-                  <input
-                    type="tel"
+                </FormField>
+                <FormField label="Telefone*" htmlFor="inscricao-phone" className="flex-1">
+                  <InputWithMask
+                    id="inscricao-phone"
+                    type="text"
+                    mask="telefone"
                     name="user_phone"
                     required
-                    className="input-base"
                     defaultValue={String(user?.telefone ?? '')}
                   />
-                </div>
+                </FormField>
               </div>
 
               <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1">
-                  <label className="block mb-1 text-sm font-medium">CPF*</label>
-                  <input
+                <FormField label="CPF*" htmlFor="inscricao-cpf" className="flex-1">
+                  <InputWithMask
+                    id="inscricao-cpf"
+                    type="text"
+                    mask="cpf"
                     name="user_cpf"
                     required
-                    className="input-base"
                     defaultValue={String(user?.cpf ?? '')}
                   />
-                </div>
-                <div className="flex-1">
-                  <label className="block mb-1 text-sm font-medium">
-                    Data de Nascimento*
-                  </label>
-                  <input
+                </FormField>
+                <FormField
+                  label="Data de Nascimento*"
+                  htmlFor="inscricao-data"
+                  className="flex-1"
+                >
+                  <TextField
+                    id="inscricao-data"
                     type="date"
                     name="user_birth_date"
                     required
-                    className="input-base"
                     defaultValue={String(user?.data_nascimento ?? '')}
                   />
-                </div>
+                </FormField>
               </div>
 
               <div>
@@ -246,79 +242,63 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
             </h3>
 
             <div className="flex flex-col gap-4">
-              <div>
-                <label className="block mb-1 text-sm font-medium">CEP*</label>
-                <input
+              <FormField label="CEP*" htmlFor="inscricao-cep">
+                <TextField
+                  id="inscricao-cep"
                   name="user_cep"
                   required
-                  className="input-base"
                   value={cep}
                   onChange={(e) => setCep(e.target.value)}
                 />
-              </div>
+              </FormField>
 
-              <div>
-                <label className="block mb-1 text-sm font-medium">
-                  Endereço*
-                </label>
-                <input
+              <FormField label="Endereço*" htmlFor="inscricao-endereco">
+                <TextField
+                  id="inscricao-endereco"
                   name="user_address"
                   required
-                  className="input-base"
                   value={endereco}
                   onChange={(e) => setEndereco(e.target.value)}
                 />
-              </div>
+              </FormField>
 
               <div className="flex flex-col md:flex-row gap-4">
-                <div className="w-1/3">
-                  <label className="block mb-1 text-sm font-medium">
-                    Número*
-                  </label>
-                  <input
+                <FormField label="Número*" htmlFor="inscricao-numero" className="w-1/3">
+                  <TextField
+                    id="inscricao-numero"
                     name="user_number"
                     required
-                    className="input-base"
                     defaultValue={String(user?.numero ?? '')}
                   />
-                </div>
-                <div className="flex-1">
-                  <label className="block mb-1 text-sm font-medium">
-                    Complemento
-                  </label>
-                  <input
+                </FormField>
+                <FormField label="Complemento" htmlFor="inscricao-complemento" className="flex-1">
+                  <TextField
+                    id="inscricao-complemento"
                     name="user_complement"
-                    className="input-base"
                     defaultValue={String(user?.complemento ?? '')}
                   />
-                </div>
+                </FormField>
               </div>
 
               <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1">
-                  <label className="block mb-1 text-sm font-medium">
-                    Bairro*
-                  </label>
-                  <input
+                <FormField label="Bairro*" htmlFor="inscricao-bairro" className="flex-1">
+                  <TextField
+                    id="inscricao-bairro"
                     name="user_neighborhood"
                     required
-                    className="input-base"
                     value={bairro}
                     onChange={(e) => setBairro(e.target.value)}
                   />
-                </div>
-                <div className="flex-1">
-                  <label className="block mb-1 text-sm font-medium">
-                    Cidade*
-                  </label>
-                  <input
+                </FormField>
+                <FormField label="Cidade*" htmlFor="inscricao-cidade" className="flex-1">
+                  <TextField
+                    id="inscricao-cidade"
                     name="user_city"
                     required
-                    className="input-base"
                     value={cidade}
                     onChange={(e) => setCidade(e.target.value)}
                   />
-                </div>
+                </FormField>
               </div>
 
               <div>
