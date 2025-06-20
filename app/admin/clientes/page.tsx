@@ -14,7 +14,7 @@ export default function ClientesPage() {
   const pbClient = useMemo(() => createPocketBase(), [])
   const { tenantId } = useAuthContext()
   const { showError, showSuccess } = useToast()
-  const { user, pb, authChecked } = useAuthGuard(['coordenador', 'lider'])
+  const { authChecked } = useAuthGuard(['coordenador', 'lider'])
   const [clientes, setClientes] = useState<
     (Inscricao & { eventoId?: string })[]
   >([])
@@ -22,8 +22,6 @@ export default function ClientesPage() {
   const [clienteEmEdicao, setClienteEmEdicao] = useState<
     (Inscricao & { eventoId?: string }) | null
   >(null)
-
-  if (!authChecked) return null
 
   useEffect(() => {
     async function fetchClientes() {
@@ -51,6 +49,8 @@ export default function ClientesPage() {
 
     fetchClientes()
   }, [pbClient, tenantId, showError])
+
+  if (!authChecked) return null
 
   const salvarEdicao = async (
     atualizada: Partial<Inscricao & { eventoId?: string }>,

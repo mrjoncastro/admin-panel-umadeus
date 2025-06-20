@@ -18,7 +18,7 @@ interface Evento {
 export default function AdminEventosPage() {
   const { user: ctxUser, isLoggedIn } = useAuthContext()
   const router = useRouter()
-  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
+  const { authChecked } = useAuthGuard(['coordenador'])
   const getAuth = useCallback(() => {
     const token =
       typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
@@ -30,16 +30,16 @@ export default function AdminEventosPage() {
 
   const [eventos, setEventos] = useState<Evento[]>([])
 
-  if (!authChecked) return null
-
   useEffect(() => {
+    if (!authChecked) return
     const { token, user } = getAuth()
     if (!isLoggedIn || !token || !user || user.role !== 'coordenador') {
       router.replace('/login')
     }
-  }, [isLoggedIn, router, getAuth])
+  }, [isLoggedIn, router, getAuth, authChecked])
 
   useEffect(() => {
+    if (!authChecked) return
     const { token, user } = getAuth()
     if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
 
@@ -59,7 +59,7 @@ export default function AdminEventosPage() {
     }
 
     fetchEventos()
-  }, [isLoggedIn, getAuth])
+  }, [isLoggedIn, getAuth, authChecked])
 
   async function handleDelete(id: string) {
     if (!confirm('Confirma excluir?')) return
@@ -73,6 +73,8 @@ export default function AdminEventosPage() {
     })
     setEventos((prev) => prev.filter((e) => e.id !== id))
   }
+
+  if (!authChecked) return null
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">

@@ -27,7 +27,7 @@ function formatCpf(value: string) {
 
 export default function NovoUsuarioPage() {
   const { showError, showSuccess } = useToast()
-  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
+  const { authChecked } = useAuthGuard(['coordenador'])
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
@@ -38,9 +38,8 @@ export default function NovoUsuarioPage() {
   const [campoId, setCampoId] = useState('')
   const [campos, setCampos] = useState<Campo[]>([])
 
-  if (!authChecked) return null
-
   useEffect(() => {
+    if (!authChecked) return
     const token = localStorage.getItem('pb_token')
     const user = localStorage.getItem('pb_user')
 
@@ -53,7 +52,7 @@ export default function NovoUsuarioPage() {
       .then((res) => res.json())
       .then((data) => setCampos(data))
       .catch(() => showError('Erro ao carregar os campos.'))
-  }, [showError])
+  }, [showError, authChecked])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -97,6 +96,8 @@ export default function NovoUsuarioPage() {
       showError('Erro: ' + (data?.error || 'Erro desconhecido'))
     }
   }
+
+  if (!authChecked) return null
 
   return (
     <main className="max-w-xl mx-auto px-4 py-8">

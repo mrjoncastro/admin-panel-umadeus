@@ -19,24 +19,29 @@ export default function GerenciarCamposPage() {
   const [loading, setLoading] = useState(false)
   const [camposCarregados, setCamposCarregados] = useState(false)
   const router = useRouter()
-  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
-
-  if (!authChecked) return null
+  const { authChecked } = useAuthGuard(['coordenador'])
 
   const token =
     typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
   const userRaw =
     typeof window !== 'undefined' ? localStorage.getItem('pb_user') : null
-  const user = userRaw ? JSON.parse(userRaw) : null
+  const storedUser = userRaw ? JSON.parse(userRaw) : null
 
   useEffect(() => {
-    if (!token || !user || user.role !== 'coordenador') {
+    if (!authChecked) return
+    if (!token || !storedUser || storedUser.role !== 'coordenador') {
       router.replace('/login')
     }
-  }, [token, user, router])
+  }, [token, storedUser, router, authChecked])
 
   useEffect(() => {
-    if (!token || !user || user.role !== 'coordenador' || camposCarregados)
+    if (
+      !authChecked ||
+      !token ||
+      !storedUser ||
+      storedUser.role !== 'coordenador' ||
+      camposCarregados
+    )
       return
 
     const carregarCampos = async () => {
@@ -45,7 +50,7 @@ export default function GerenciarCamposPage() {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
-            'X-PB-User': JSON.stringify(user),
+            'X-PB-User': JSON.stringify(storedUser),
           },
         })
 
@@ -76,7 +81,7 @@ export default function GerenciarCamposPage() {
     e.preventDefault()
     setLoading(true)
 
-    if (!token || !user || user.role !== 'coordenador') {
+    if (!token || !storedUser || storedUser.role !== 'coordenador') {
       showError('Usuário não autenticado.')
       setLoading(false)
       return
@@ -93,7 +98,7 @@ export default function GerenciarCamposPage() {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(user),
+          'X-PB-User': JSON.stringify(storedUser),
         },
         body: JSON.stringify({ nome }),
       })
@@ -120,13 +125,13 @@ export default function GerenciarCamposPage() {
   }
 
   const fetchCampos = async () => {
-    if (!token || !user || user.role !== 'coordenador') return
+    if (!token || !storedUser || storedUser.role !== 'coordenador') return
 
     try {
       const res = await fetch('/admin/api/campos', {
         headers: {
           Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(user),
+          'X-PB-User': JSON.stringify(storedUser),
         },
       })
       const data = await res.json()
@@ -201,7 +206,7 @@ export default function GerenciarCamposPage() {
   async function handleExcluirCampo(id: string) {
     try {
       setLoading(true)
-      if (!token || !user || user.role !== 'coordenador') {
+      if (!token || !storedUser || storedUser.role !== 'coordenador') {
         showError('Usuário não autenticado.')
         setLoading(false)
         return
@@ -210,7 +215,7 @@ export default function GerenciarCamposPage() {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(user),
+          'X-PB-User': JSON.stringify(storedUser),
         },
       })
       if (!res.ok) {
@@ -226,6 +231,8 @@ export default function GerenciarCamposPage() {
       setLoading(false)
     }
   }
+
+  if (!authChecked) return null
 
   return (
     <>

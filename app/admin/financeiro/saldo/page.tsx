@@ -24,15 +24,14 @@ interface ExtratoItem {
 export default function SaldoPage() {
   const { isLoggedIn } = useAuthContext()
   const router = useRouter()
-  const { user, pb, authChecked } = useAuthGuard(['coordenador', 'lider'])
+  const { authChecked } = useAuthGuard(['coordenador', 'lider'])
   const [saldoDisponivel, setSaldoDisponivel] = useState<number | null>(null)
   const [aLiberar, setALiberar] = useState<number | null>(null)
   const [extrato, setExtrato] = useState<ExtratoItem[]>([])
   const [loading, setLoading] = useState(false)
 
-  if (!authChecked) return null
-
   useEffect(() => {
+    if (!authChecked) return
     if (!isLoggedIn) {
       router.replace('/login')
       return
@@ -64,7 +63,7 @@ export default function SaldoPage() {
       }
     }
     fetchData()
-  }, [isLoggedIn, router])
+  }, [isLoggedIn, router, authChecked])
 
   const exportXLSM = () => {
     const worksheet = XLSX.utils.json_to_sheet(extrato)
@@ -87,6 +86,8 @@ export default function SaldoPage() {
     })
     doc.save('extrato.pdf')
   }
+
+  if (!authChecked) return null
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-8">

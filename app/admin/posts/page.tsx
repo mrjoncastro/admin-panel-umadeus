@@ -17,17 +17,16 @@ const POSTS_PER_PAGE = 10
 export default function AdminPostsPage() {
   const { user: ctxUser, isLoggedIn } = useAuthContext()
   const router = useRouter()
-  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
+  const { authChecked } = useAuthGuard(['coordenador'])
   const [posts, setPosts] = useState<Post[]>([])
   const [page, setPage] = useState(1)
 
-  if (!authChecked) return null
-
   useEffect(() => {
-    if (!isLoggedIn || !user) {
+    if (!authChecked) return
+    if (!isLoggedIn) {
       router.replace('/login')
     }
-  }, [isLoggedIn, user, router])
+  }, [isLoggedIn, router, authChecked])
 
   useEffect(() => {
     getPostsClientPB()
@@ -42,6 +41,8 @@ export default function AdminPostsPage() {
     (page - 1) * POSTS_PER_PAGE,
     page * POSTS_PER_PAGE,
   )
+
+  if (!authChecked) return null
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">

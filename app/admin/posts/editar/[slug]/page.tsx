@@ -25,9 +25,7 @@ export default function EditarPostPage() {
 
   const { user: ctxUser, isLoggedIn } = useAuthContext()
   const router = useRouter()
-  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
-
-  if (!authChecked) return null
+  const { authChecked } = useAuthGuard(['coordenador'])
 
   useEffect(() => {
     if (!isLoggedIn || !user) {
@@ -59,6 +57,8 @@ export default function EditarPostPage() {
       )
       .catch((err) => console.error('Erro ao carregar post:', err))
   }, [slug])
+
+  if (!authChecked) return null
 
   if (preview) {
     const words = conteudo.split(/\s+/).length

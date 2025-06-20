@@ -13,7 +13,7 @@ export default function EditarEventoPage() {
   const { id } = useParams<{ id: string }>()
   const { user: ctxUser, isLoggedIn } = useAuthContext()
   const { showSuccess, showError } = useToast()
-  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
+  const { authChecked } = useAuthGuard(['coordenador'])
   const getAuth = useCallback(() => {
     const token =
       typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
@@ -31,8 +31,6 @@ export default function EditarEventoPage() {
   const [selectedProdutos, setSelectedProdutos] = useState<string[]>([])
   const [produtoModalOpen, setProdutoModalOpen] = useState(false)
 
-  if (!authChecked) return null
-
   function toggleProduto(id: string) {
     setSelectedProdutos((prev) =>
       prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id],
@@ -40,13 +38,15 @@ export default function EditarEventoPage() {
   }
 
   useEffect(() => {
+    if (!authChecked) return
     const { token, user } = getAuth()
     if (!isLoggedIn || !token || !user || user.role !== 'coordenador') {
       router.replace('/login')
     }
-  }, [isLoggedIn, router, getAuth])
+  }, [isLoggedIn, router, getAuth, authChecked])
 
   useEffect(() => {
+    if (!authChecked) return
     const { token, user } = getAuth()
     if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
     fetch(`/admin/api/eventos/${id}`, {
@@ -74,9 +74,10 @@ export default function EditarEventoPage() {
         setSelectedProdutos(arr)
       })
       .finally(() => setLoading(false))
-  }, [id, isLoggedIn, getAuth])
+  }, [id, isLoggedIn, getAuth, authChecked])
 
   useEffect(() => {
+    if (!authChecked) return
     const { token, user } = getAuth()
     if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
     fetch('/admin/api/produtos', {
@@ -90,7 +91,7 @@ export default function EditarEventoPage() {
         setProdutos(Array.isArray(data) ? data : (data.items ?? []))
       })
       .catch(() => setProdutos([]))
-  }, [isLoggedIn, getAuth])
+  }, [isLoggedIn, getAuth, authChecked])
 
   async function handleNovoProduto(form: Produto) {
     const formData = new FormData()
@@ -180,6 +181,8 @@ export default function EditarEventoPage() {
       showError('Falha ao salvar evento')
     }
   }
+
+  if (!authChecked) return null
 
   return (
     <>

@@ -13,14 +13,13 @@ interface Statistics {
 export default function FinanceiroPage() {
   const { tenantId, isLoggedIn } = useAuthContext()
   const router = useRouter()
-  const { user, pb, authChecked } = useAuthGuard(['coordenador', 'lider'])
+  const { authChecked } = useAuthGuard(['coordenador', 'lider'])
   const [saldoDisponivel, setSaldoDisponivel] = useState<number | null>(null)
   const [aLiberar, setALiberar] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
 
-  if (!authChecked) return null
-
   useEffect(() => {
+    if (!authChecked) return
     if (!isLoggedIn) {
       router.replace('/login')
       return
@@ -48,7 +47,9 @@ export default function FinanceiroPage() {
       }
     }
     fetchSaldo()
-  }, [tenantId, isLoggedIn, router])
+  }, [tenantId, isLoggedIn, router, authChecked])
+
+  if (!authChecked) return null
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">

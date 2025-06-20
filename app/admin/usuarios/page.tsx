@@ -21,7 +21,7 @@ interface Usuario {
 
 export default function UsuariosPage() {
   const { showError } = useToast()
-  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
+  const { authChecked } = useAuthGuard(['coordenador'])
   const [usuarios, setUsuarios] = useState<Usuario[]>([])
   const [loading, setLoading] = useState(true)
   const [eventos, setEventos] = useState<Evento[]>([])
