@@ -13,12 +13,20 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  args: { label: 'Nome', htmlFor: 'nome', children: <TextField id="nome" /> },
-  render: (args) => <FormField {...args}>{args.children}</FormField>,
+  args: {
+    label: 'Nome',
+    htmlFor: 'nome',
+    children: <TextField id="nome" />,
+  },
+  render: (args) => <FormField {...args} />,
 }
 
 export const TemaDinamico: Story = {
-  args: { label: 'Nome', htmlFor: 'nome', children: <TextField id="nome1" /> },
+  args: {
+    label: 'Nome',
+    htmlFor: 'nome1',
+    children: <TextField id="nome1" />,
+  },
   render: (args) => (
     <div className="space-y-4">
       <TenantProvider
