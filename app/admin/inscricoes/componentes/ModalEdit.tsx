@@ -1,55 +1,55 @@
-"use client";
+'use client'
 
-import { FormEvent, useEffect, useState } from "react";
-import { Inscricao, Evento } from "@/types";
-import { useAuth } from "@/lib/hooks/useAuth";
+import { FormEvent, useEffect, useState } from 'react'
+import { Inscricao, Evento } from '@/types'
+import { useAuth } from '@/lib/hooks/useAuth'
 
 type Props = {
-  inscricao: Inscricao & { eventoId: string };
-  onClose: () => void;
-  onSave: (inscricaoAtualizada: Partial<Inscricao & { eventoId: string }>) => void;
-};
-
+  inscricao: Inscricao & { eventoId: string }
+  onClose: () => void
+  onSave: (
+    inscricaoAtualizada: Partial<Inscricao & { eventoId: string }>,
+  ) => void
+}
 
 export default function ModalEditarInscricao({
   inscricao,
   onClose,
   onSave,
 }: Props) {
-  const { user, pb } = useAuth();
-  const [eventos, setEventos] = useState<Evento[]>([]);
+  const { user, pb } = useAuth()
+  const [eventos, setEventos] = useState<Evento[]>([])
 
   useEffect(() => {
-    if (!user) return;
-    pb
-      .collection("eventos")
+    if (!user) return
+    pb.collection('eventos')
       .getFullList<Evento>({
-        sort: "-data",
+        sort: '-data',
         filter: `cliente='${user.cliente}' && status!='realizado'`,
       })
       .then((evs) => setEventos(evs))
-      .catch(() => setEventos([]));
-  }, [pb, user]);
+      .catch(() => setEventos([]))
+  }, [pb, user])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    e.preventDefault()
+    const formData = new FormData(e.currentTarget)
 
-    const eventoId = formData.get("evento")?.toString();
-    const eventoSelecionado = eventos.find((ev) => ev.id === eventoId);
+    const eventoId = formData.get('evento')?.toString()
+    const eventoSelecionado = eventos.find((ev) => ev.id === eventoId)
 
     const atualizada: Partial<Inscricao & { eventoId: string }> = {
-      nome: formData.get("nome")?.toString() || "",
-      telefone: formData.get("telefone")?.toString() || "",
-      status: formData.get("status") as "pendente" | "confirmado" | "cancelado",
-      tamanho: formData.get("tamanho")?.toString(),
-      genero: formData.get("genero")?.toString(),
+      nome: formData.get('nome')?.toString() || '',
+      telefone: formData.get('telefone')?.toString() || '',
+      status: formData.get('status') as 'pendente' | 'confirmado' | 'cancelado',
+      tamanho: formData.get('tamanho')?.toString(),
+      genero: formData.get('genero')?.toString(),
       eventoId: eventoId || inscricao.eventoId,
       evento: eventoSelecionado?.titulo || inscricao.evento,
-    };
+    }
 
-    onSave(atualizada);
-  };
+    onSave(atualizada)
+  }
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
@@ -72,9 +72,9 @@ export default function ModalEditarInscricao({
           <Select
             name="tamanho"
             label="Tamanho"
-            defaultValue={inscricao.tamanho || ""}
+            defaultValue={inscricao.tamanho || ''}
           >
-            {["PP", "P", "M", "G", "GG", "XG"].map((t) => (
+            {['PP', 'P', 'M', 'G', 'GG', 'XG'].map((t) => (
               <option key={t} value={t}>
                 {t}
               </option>
@@ -84,7 +84,7 @@ export default function ModalEditarInscricao({
           <Select
             name="genero"
             label="Gênero"
-            defaultValue={inscricao.genero || ""}
+            defaultValue={inscricao.genero || ''}
           >
             <option value="masculino">Masculino</option>
             <option value="feminino">Feminino</option>
@@ -96,7 +96,7 @@ export default function ModalEditarInscricao({
             defaultValue={
               inscricao.eventoId ||
               eventos.find((ev) => ev.titulo === inscricao.evento)?.id ||
-              ""
+              ''
             }
           >
             {eventos.map((ev) => (
@@ -124,18 +124,18 @@ export default function ModalEditarInscricao({
         </form>
       </div>
     </div>
-  );
+  )
 }
 
 // Componentes auxiliares
 type InputProps = {
-  name: string;
-  label: string;
-  defaultValue?: string;
-  type?: string;
-};
+  name: string
+  label: string
+  defaultValue?: string
+  type?: string
+}
 
-function Input({ name, label, defaultValue = "", type = "text" }: InputProps) {
+function Input({ name, label, defaultValue = '', type = 'text' }: InputProps) {
   return (
     <div>
       <label htmlFor={name} className="text-sm font-medium block mb-1">
@@ -149,17 +149,17 @@ function Input({ name, label, defaultValue = "", type = "text" }: InputProps) {
         className="w-full p-2 border rounded"
       />
     </div>
-  );
+  )
 }
 
 type SelectProps = {
-  name: string;
-  label: string;
-  defaultValue?: string;
-  children: React.ReactNode;
-};
+  name: string
+  label: string
+  defaultValue?: string
+  children: React.ReactNode
+}
 
-function Select({ name, label, defaultValue = "", children }: SelectProps) {
+function Select({ name, label, defaultValue = '', children }: SelectProps) {
   return (
     <div>
       <label htmlFor={name} className="text-sm font-medium block mb-1">
@@ -174,5 +174,5 @@ function Select({ name, label, defaultValue = "", children }: SelectProps) {
         {children}
       </select>
     </div>
-  );
+  )
 }

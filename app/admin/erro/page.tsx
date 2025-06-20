@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link'
 
 export default function ErroPage() {
   return (
@@ -27,5 +27,5 @@ export default function ErroPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

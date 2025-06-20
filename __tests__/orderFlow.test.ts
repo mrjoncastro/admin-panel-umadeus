@@ -11,7 +11,7 @@ const dadosValidos = {
   evento: 'evt1',
   liderId: 'lider1',
   produto: 'Somente Pulseira',
-  tamanho: 'M'
+  tamanho: 'M',
 }
 
 const pulseira = { nome: 'Somente Pulseira', preco: 10 }
@@ -25,12 +25,8 @@ describe('Fluxo de inscrição e pedido', () => {
   })
 
   it('falha quando campos obrigatórios estão vazios', () => {
-    expect(() =>
-      criarInscricao({ ...dadosValidos, nome: '' })
-    ).toThrow()
-    expect(() =>
-      criarInscricao({ ...dadosValidos, evento: '' })
-    ).toThrow()
+    expect(() => criarInscricao({ ...dadosValidos, nome: '' })).toThrow()
+    expect(() => criarInscricao({ ...dadosValidos, evento: '' })).toThrow()
   })
 
   it('cria pedido com valor correto', () => {
@@ -45,7 +41,7 @@ describe('Fluxo de inscrição e pedido', () => {
   it('gera pedido para kit completo com valor 50', () => {
     const inscricao = criarInscricao({
       ...dadosValidos,
-      produto: 'Kit Camisa + Pulseira'
+      produto: 'Kit Camisa + Pulseira',
     })
     const pedido = criarPedido(inscricao, kit)
     expect(pedido.valor).toBe('50.00')

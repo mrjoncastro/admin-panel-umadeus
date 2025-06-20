@@ -1,106 +1,103 @@
-"use client";
+'use client'
 
-import { useMemo, useState, useRef, useEffect } from "react";
-import { Menu, X, ChevronDown, LogOut } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import CartButton from "./CartButton";
-import Link from "next/link";
-import Image from "next/image";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import { useTenant } from "@/lib/context/TenantContext";
+import { useMemo, useState, useRef, useEffect } from 'react'
+import { Menu, X, ChevronDown, LogOut } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import CartButton from './CartButton'
+import Link from 'next/link'
+import Image from 'next/image'
+import { useAuthContext } from '@/lib/context/AuthContext'
+import { useTenant } from '@/lib/context/TenantContext'
 
-type UserRole = "visitante" | "usuario" | "lider" | "coordenador";
+type UserRole = 'visitante' | 'usuario' | 'lider' | 'coordenador'
 
 const baseLinks = [
-  { href: "/", label: "Início" },
-  { href: "/loja/produtos", label: "Produtos" },
-  { href: "/blog", label: "Blog" },
-  { href: "/loja/eventos", label: "Eventos" },
-];
+  { href: '/', label: 'Início' },
+  { href: '/loja/produtos', label: 'Produtos' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/loja/eventos', label: 'Eventos' },
+]
 
 export default function Header() {
-  const [open, setOpen] = useState(false);
-  const [adminOpen, setAdminOpen] = useState(false);
-  const [clientOpen, setClientOpen] = useState(false);
-  const { user, isLoggedIn, logout } = useAuthContext();
-  const { config } = useTenant();
-  const adminMenuRef = useRef<HTMLUListElement>(null);
-  const clientMenuRef = useRef<HTMLUListElement>(null);
+  const [open, setOpen] = useState(false)
+  const [adminOpen, setAdminOpen] = useState(false)
+  const [clientOpen, setClientOpen] = useState(false)
+  const { user, isLoggedIn, logout } = useAuthContext()
+  const { config } = useTenant()
+  const adminMenuRef = useRef<HTMLUListElement>(null)
+  const clientMenuRef = useRef<HTMLUListElement>(null)
 
   const role: UserRole = useMemo(() => {
-    if (!isLoggedIn) return "visitante";
-    if (user?.role === "coordenador") return "coordenador";
-    if (user?.role === "lider") return "lider";
-    return "usuario";
-  }, [isLoggedIn, user?.role]);
+    if (!isLoggedIn) return 'visitante'
+    if (user?.role === 'coordenador') return 'coordenador'
+    if (user?.role === 'lider') return 'lider'
+    return 'usuario'
+  }, [isLoggedIn, user?.role])
 
   const adminLinks = useMemo(() => {
-    if (role === "lider") {
+    if (role === 'lider') {
       return [
-        { href: "/admin/lider-painel", label: "Painel" },
-        { href: "/admin/inscricoes", label: "Inscrições" },
-        { href: "/admin/pedidos", label: "Pedidos" },
-        { href: "/admin/perfil", label: "Configurações" },
-      ];
+        { href: '/admin/lider-painel', label: 'Painel' },
+        { href: '/admin/inscricoes', label: 'Inscrições' },
+        { href: '/admin/pedidos', label: 'Pedidos' },
+        { href: '/admin/perfil', label: 'Configurações' },
+      ]
     }
-    if (role === "coordenador") {
+    if (role === 'coordenador') {
       return [
-        { href: "/admin/dashboard", label: "Painel" },
-        { href: "/admin/inscricoes", label: "Inscrições" },
-        { href: "/admin/pedidos", label: "Pedidos" },
-        { href: "/admin/usuarios", label: "Usuários" },
-        { href: "/admin/campos", label: "Campos" },
-        { href: "/admin/produtos", label: "Produtos" },
-        { href: "/admin/eventos", label: "Eventos" },
-        { href: "/admin/posts", label: "Posts" },
-        { href: "/admin/perfil", label: "Configurações" },
-      ];
+        { href: '/admin/dashboard', label: 'Painel' },
+        { href: '/admin/inscricoes', label: 'Inscrições' },
+        { href: '/admin/pedidos', label: 'Pedidos' },
+        { href: '/admin/usuarios', label: 'Usuários' },
+        { href: '/admin/campos', label: 'Campos' },
+        { href: '/admin/produtos', label: 'Produtos' },
+        { href: '/admin/eventos', label: 'Eventos' },
+        { href: '/admin/posts', label: 'Posts' },
+        { href: '/admin/perfil', label: 'Configurações' },
+      ]
     }
-    return [];
-  }, [role]);
+    return []
+  }, [role])
 
-  const navLinks = baseLinks;
-  const firstName = useMemo(
-    () => user?.nome?.split(" ")[0] ?? "",
-    [user?.nome]
-  );
+  const navLinks = baseLinks
+  const firstName = useMemo(() => user?.nome?.split(' ')[0] ?? '', [user?.nome])
 
   // FECHAR AO CLICAR FORA
   useEffect(() => {
-    if (!adminOpen) return;
+    if (!adminOpen) return
     function handleClickOutside(event: MouseEvent) {
       if (
         adminMenuRef.current &&
         !adminMenuRef.current.contains(event.target as Node)
       ) {
-        setAdminOpen(false);
+        setAdminOpen(false)
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [adminOpen]);
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [adminOpen])
 
   useEffect(() => {
-    if (!clientOpen) return;
+    if (!clientOpen) return
     function handleClickOutside(event: MouseEvent) {
       if (
         clientMenuRef.current &&
         !clientMenuRef.current.contains(event.target as Node)
       ) {
-        setClientOpen(false);
+        setClientOpen(false)
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [clientOpen]);
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [clientOpen])
 
   // Função de logout (contexto)
   function handleLogout() {
-    logout?.(); // pode ser logout(), useAuthLogout(), etc.
-    setAdminOpen(false);
-    setClientOpen(false);
-    setOpen(false);
-    window.location.href = "/"; // Redireciona para home
+    logout?.() // pode ser logout(), useAuthLogout(), etc.
+    setAdminOpen(false)
+    setClientOpen(false)
+    setOpen(false)
+    window.location.href = '/' // Redireciona para home
   }
 
   return (
@@ -114,7 +111,7 @@ export default function Header() {
             aria-label="Página inicial"
           >
             <Image
-              src={config.logoUrl || "/img/logo_umadeus_branco.png"}
+              src={config.logoUrl || '/img/logo_umadeus_branco.png'}
               alt="UMADEUS"
               width={36}
               height={36}
@@ -136,7 +133,7 @@ export default function Header() {
 
             <CartButton />
 
-            {(role === "lider" || role === "coordenador") && (
+            {(role === 'lider' || role === 'coordenador') && (
               <div className="relative">
                 <button
                   onClick={() => setAdminOpen((prev) => !prev)}
@@ -165,8 +162,8 @@ export default function Header() {
                     <li>
                       <button
                         onClick={() => {
-                          logout?.();
-                          setAdminOpen(false);
+                          logout?.()
+                          setAdminOpen(false)
                         }}
                         className="block w-full text-left px-4 py-2 text-red-600 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                       >
@@ -180,7 +177,7 @@ export default function Header() {
               </div>
             )}
 
-            {role === "usuario" && (
+            {role === 'usuario' && (
               <div className="relative">
                 <button
                   onClick={() => setClientOpen((prev) => !prev)}
@@ -205,11 +202,11 @@ export default function Header() {
                     </li>
                     <li>
                       <button
-                            onClick={handleLogout}
-                            className="w-full text-left flex items-center gap-2 px-4 py-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-900 cursor-pointer"
-                          >
-                            <LogOut size={16} /> Sair
-                          </button>
+                        onClick={handleLogout}
+                        className="w-full text-left flex items-center gap-2 px-4 py-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-900 cursor-pointer"
+                      >
+                        <LogOut size={16} /> Sair
+                      </button>
                     </li>
                   </ul>
                 )}
@@ -232,7 +229,7 @@ export default function Header() {
           <button
             onClick={() => setOpen(!open)}
             className="md:hidden text-platinum transition"
-            aria-label={open ? "Fechar menu" : "Abrir menu"}
+            aria-label={open ? 'Fechar menu' : 'Abrir menu'}
           >
             {open ? <X size={28} /> : <Menu size={28} />}
           </button>
@@ -247,89 +244,91 @@ export default function Header() {
               exit={{ opacity: 0, y: -10 }}
               className="md:hidden mt-2 px-6 pb-3 flex flex-col gap-2 bg-black_bean/95 backdrop-blur-md border-t border-platinum/10 rounded-b-2xl shadow-lg"
             >
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-platinum hover:text-primary-400 transition py-2 text-base font-medium"
-                onClick={() => setOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
-
-            <CartButton />
-
-            {(role === "lider" || role === "coordenador") && (
-              <>
-                <span className="mt-2 font-semibold text-platinum">Admin</span>
-                {adminLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="text-platinum hover:text-primary-400 transition py-2 text-base font-medium"
-                    onClick={() => setOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 text-red-600 mt-2"
-                >
-                  <LogOut size={16} />
-                  Sair
-                </button>
-              </>
-            )}
-
-            {role === "usuario" && (
-              <>
+              {navLinks.map((link) => (
                 <Link
-                  href="/loja/cliente"
+                  key={link.href}
+                  href={link.href}
                   className="text-platinum hover:text-primary-400 transition py-2 text-base font-medium"
                   onClick={() => setOpen(false)}
                 >
-                  Área do Cliente
+                  {link.label}
                 </Link>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 text-red-600 mt-2"
-                >
-                  <LogOut size={16} />
-                  Sair
-                </button>
-              </>
-            )}
+              ))}
 
-            {!isLoggedIn && (
-              <>
-                <Link
-                  href="/login"
-                  className="btn btn-primary text-sm text-center mt-2"
-                  onClick={() => setOpen(false)}
-                >
-                  Acessar sua conta
-                </Link>
-                <Link
-                  href="/login?view=signup"
-                  className="btn btn-secondary text-sm text-center"
-                  onClick={() => setOpen(false)}
-                >
-                  Crie sua conta
-                </Link>
-              </>
-            )}
+              <CartButton />
 
-            {isLoggedIn && (
-              <span className="mt-2 text-sm text-platinum">
-                Olá, {firstName}
-              </span>
-            )}
-          </motion.div>
-        )}
+              {(role === 'lider' || role === 'coordenador') && (
+                <>
+                  <span className="mt-2 font-semibold text-platinum">
+                    Admin
+                  </span>
+                  {adminLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="text-platinum hover:text-primary-400 transition py-2 text-base font-medium"
+                      onClick={() => setOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 text-red-600 mt-2"
+                  >
+                    <LogOut size={16} />
+                    Sair
+                  </button>
+                </>
+              )}
+
+              {role === 'usuario' && (
+                <>
+                  <Link
+                    href="/loja/cliente"
+                    className="text-platinum hover:text-primary-400 transition py-2 text-base font-medium"
+                    onClick={() => setOpen(false)}
+                  >
+                    Área do Cliente
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-zinc-100 dark:hover:bg-zinc-800 text-red-600 mt-2"
+                  >
+                    <LogOut size={16} />
+                    Sair
+                  </button>
+                </>
+              )}
+
+              {!isLoggedIn && (
+                <>
+                  <Link
+                    href="/login"
+                    className="btn btn-primary text-sm text-center mt-2"
+                    onClick={() => setOpen(false)}
+                  >
+                    Acessar sua conta
+                  </Link>
+                  <Link
+                    href="/login?view=signup"
+                    className="btn btn-secondary text-sm text-center"
+                    onClick={() => setOpen(false)}
+                  >
+                    Crie sua conta
+                  </Link>
+                </>
+              )}
+
+              {isLoggedIn && (
+                <span className="mt-2 text-sm text-platinum">
+                  Olá, {firstName}
+                </span>
+              )}
+            </motion.div>
+          )}
         </AnimatePresence>
       </header>
     </>
-  );
+  )
 }

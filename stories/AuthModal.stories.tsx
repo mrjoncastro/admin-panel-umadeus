@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import AuthModal from '../app/components/AuthModal';
-import { AuthProvider } from '../lib/context/AuthContext';
-import { ThemeProvider } from '../lib/context/ThemeContext';
+import type { Meta, StoryObj } from '@storybook/nextjs'
+import AuthModal from '../app/components/AuthModal'
+import { AuthProvider } from '../lib/context/AuthContext'
+import { ThemeProvider } from '../lib/context/ThemeContext'
 
 const meta = {
   title: 'Components/AuthModal',
@@ -17,14 +17,14 @@ const meta = {
     ),
   ],
   tags: ['autodocs'],
-} satisfies Meta<typeof AuthModal>;
+} satisfies Meta<typeof AuthModal>
 
-export default meta;
-export type Story = StoryObj<typeof meta>;
+export default meta
+export type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
     open: true,
     onClose: () => {},
   },
-};
+}

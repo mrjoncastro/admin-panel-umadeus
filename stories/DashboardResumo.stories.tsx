@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import { within, expect, fn } from 'storybook/test';
-import DashboardResumo from '../app/admin/dashboard/components/DashboardResumo';
-import { ThemeProvider } from '../lib/context/ThemeContext';
-import { Pedido } from '@/types';
+import type { Meta, StoryObj } from '@storybook/nextjs'
+import { within, expect, fn } from 'storybook/test'
+import DashboardResumo from '../app/admin/dashboard/components/DashboardResumo'
+import { ThemeProvider } from '../lib/context/ThemeContext'
+import { Pedido } from '@/types'
 
 const meta = {
   title: 'Admin/DashboardResumo',
@@ -22,8 +22,20 @@ const meta = {
   },
   args: {
     inscricoes: [
-      { id: '1', nome: 'João', telefone: '11999999999', status: 'confirmado', expand: { pedido: { id: '1', valor: '100', status: 'pago' } } },
-      { id: '2', nome: 'Maria', telefone: '11988888888', status: 'pendente', expand: { pedido: { id: '2', valor: '50', status: 'pendente' } } },
+      {
+        id: '1',
+        nome: 'João',
+        telefone: '11999999999',
+        status: 'confirmado',
+        expand: { pedido: { id: '1', valor: '100', status: 'pago' } },
+      },
+      {
+        id: '2',
+        nome: 'Maria',
+        telefone: '11988888888',
+        status: 'pendente',
+        expand: { pedido: { id: '2', valor: '50', status: 'pendente' } },
+      },
     ],
     pedidos: [
       {
@@ -46,16 +58,28 @@ const meta = {
     filtroStatus: 'pago',
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof DashboardResumo>;
+} satisfies Meta<typeof DashboardResumo>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
     inscricoes: [
-      { id: '1', nome: 'João', telefone: '11999999999', status: 'confirmado', expand: { pedido: { id: '1', valor: '100', status: 'pago' } } },
-      { id: '2', nome: 'Maria', telefone: '11988888888', status: 'pendente', expand: { pedido: { id: '2', valor: '50', status: 'pendente' } } },
+      {
+        id: '1',
+        nome: 'João',
+        telefone: '11999999999',
+        status: 'confirmado',
+        expand: { pedido: { id: '1', valor: '100', status: 'pago' } },
+      },
+      {
+        id: '2',
+        nome: 'Maria',
+        telefone: '11988888888',
+        status: 'pendente',
+        expand: { pedido: { id: '2', valor: '50', status: 'pendente' } },
+      },
     ],
     pedidos: [
       {
@@ -77,7 +101,7 @@ export const Default: Story = {
     setFiltroStatus: () => {},
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(canvas.getByText(/Total de Inscrições/i)).toBeInTheDocument();
+    const canvas = within(canvasElement)
+    await expect(canvas.getByText(/Total de Inscrições/i)).toBeInTheDocument()
   },
-};
+}

@@ -1,63 +1,63 @@
-"use client";
+'use client'
 import {
   createContext,
   useContext,
   useState,
   useCallback,
   useEffect,
-} from "react";
-import { createPortal } from "react-dom";
-import { usePathname } from "next/navigation";
-import { CheckCircle, XCircle } from "lucide-react";
+} from 'react'
+import { createPortal } from 'react-dom'
+import { usePathname } from 'next/navigation'
+import { CheckCircle, XCircle } from 'lucide-react'
 
-export type ToastType = "success" | "error";
-const TOAST_DURATION = 4000; // milissegundos
+export type ToastType = 'success' | 'error'
+const TOAST_DURATION = 4000 // milissegundos
 
 interface ToastContextType {
-  showSuccess: (msg: string) => void;
-  showError: (msg: string) => void;
+  showSuccess: (msg: string) => void
+  showError: (msg: string) => void
 }
 const ToastContext = createContext<ToastContextType>({
   showSuccess: () => {},
   showError: () => {},
-});
+})
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
+  const pathname = usePathname()
   const [toasts, setToasts] = useState<
     { id: string; message: string; type: ToastType }[]
-  >([]);
-  const [mounted, setMounted] = useState(false);
+  >([])
+  const [mounted, setMounted] = useState(false)
 
-  useEffect(() => setMounted(true), []);
-  useEffect(() => setToasts([]), [pathname]);
+  useEffect(() => setMounted(true), [])
+  useEffect(() => setToasts([]), [pathname])
 
   const removeToast = useCallback((id: string) => {
-    setToasts((prev) => prev.filter((toast) => toast.id !== id));
-  }, []);
+    setToasts((prev) => prev.filter((toast) => toast.id !== id))
+  }, [])
 
   const addToast = useCallback(
     (message: string, type: ToastType) => {
       const id = globalThis.crypto?.randomUUID
         ? globalThis.crypto.randomUUID()
-        : Math.random().toString(36).slice(2);
+        : Math.random().toString(36).slice(2)
 
-      setToasts((prev) => [...prev, { id, message, type }]);
+      setToasts((prev) => [...prev, { id, message, type }])
       setTimeout(() => {
-        removeToast(id);
-      }, TOAST_DURATION);
+        removeToast(id)
+      }, TOAST_DURATION)
     },
-    [removeToast]
-  );
+    [removeToast],
+  )
 
   const showSuccess = useCallback(
-    (msg: string) => addToast(msg, "success"),
-    [addToast]
-  );
+    (msg: string) => addToast(msg, 'success'),
+    [addToast],
+  )
   const showError = useCallback(
-    (msg: string) => addToast(msg, "error"),
-    [addToast]
-  );
+    (msg: string) => addToast(msg, 'error'),
+    [addToast],
+  )
 
   const portal = (
     <div className="fixed inset-x-0 top-6 flex flex-col items-center z-[9999] pointer-events-none">
@@ -68,19 +68,19 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             bg-white/80 backdrop-blur border border-gray-200 pointer-events-auto
             transition-all duration-500 animate-slideIn
             ${
-              t.type === "success"
-                ? "border-green-400 text-green-800"
-                : "border-red-400 text-red-800"
+              t.type === 'success'
+                ? 'border-green-400 text-green-800'
+                : 'border-red-400 text-red-800'
             }
           `}
           style={{
-            boxShadow: "0 8px 24px 0 rgb(0 0 0 / 8%)",
+            boxShadow: '0 8px 24px 0 rgb(0 0 0 / 8%)',
           }}
           tabIndex={0}
           role="alert"
         >
           <span>
-            {t.type === "success" ? (
+            {t.type === 'success' ? (
               <CheckCircle className="w-5 h-5 text-green-500" />
             ) : (
               <XCircle className="w-5 h-5 text-red-500" />
@@ -112,16 +112,16 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         }
       `}</style>
     </div>
-  );
+  )
 
   return (
     <ToastContext.Provider value={{ showSuccess, showError }}>
       {children}
       {mounted && createPortal(portal, document.body)}
     </ToastContext.Provider>
-  );
+  )
 }
 
 export function useToast() {
-  return useContext(ToastContext);
+  return useContext(ToastContext)
 }

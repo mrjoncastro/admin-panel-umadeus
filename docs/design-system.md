@@ -54,7 +54,7 @@ Os principais componentes têm exemplos interativos no Storybook. Alguns dos mai
 - Cabeçalhos (`stories/Header.stories.ts`)
 - Modais (`stories/ModalEditarPerfil.stories.tsx` e outros)
 - Tabs suaves (`stories/Tabs.stories.tsx`)
- - Overlays de loading (`components/organisms/LoadingOverlay.tsx`)
+- Overlays de loading (`components/organisms/LoadingOverlay.tsx`)
 
 Execute `npm run storybook` para iniciar a interface e explorar os exemplos.
 
@@ -169,15 +169,15 @@ export function MeuBotao() {
     <button className="bg-[var(--accent)] p-[var(--space-sm)] rounded">
       Ação
     </button>
-  );
+  )
 }
 
 // stories/MeuBotao.stories.tsx
-import { MeuBotao } from "../components/MeuBotao";
+import { MeuBotao } from '../components/MeuBotao'
 
-export default { title: "Design System/MeuBotao", component: MeuBotao };
+export default { title: 'Design System/MeuBotao', component: MeuBotao }
 
-export const Padrão = () => <MeuBotao />;
+export const Padrão = () => <MeuBotao />
 ```
 
 ### Referências ao Storybook

@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import PostSuggestions from '../app/blog/components/PostSuggestions';
+import type { Meta, StoryObj } from '@storybook/nextjs'
+import PostSuggestions from '../app/blog/components/PostSuggestions'
 
 interface Post {
-  slug: string;
-  title: string;
-  summary: string;
-  thumbnail: string;
-  category: string;
+  slug: string
+  title: string
+  summary: string
+  thumbnail: string
+  category: string
 }
 
 const meta = {
@@ -40,9 +40,9 @@ const meta = {
       },
     ] as Post[],
   },
-} satisfies Meta<typeof PostSuggestions>;
+} satisfies Meta<typeof PostSuggestions>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
-export const Default: Story = {};
+export const Default: Story = {}

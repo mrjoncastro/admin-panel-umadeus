@@ -1,17 +1,17 @@
-"use client";
+'use client'
 
 interface SaldoCardProps {
-  saldo: number;
-  className?: string;
+  saldo: number
+  className?: string
 }
 
 function cn(...classes: Array<string | undefined>) {
-  return classes.filter(Boolean).join(" ");
+  return classes.filter(Boolean).join(' ')
 }
 
 export default function SaldoCard({ saldo, className }: SaldoCardProps) {
   return (
-    <div className={cn("card text-center", className)}>
+    <div className={cn('card text-center', className)}>
       <h3 className="text-sm font-semibold text-neutral-500 dark:text-neutral-300">
         Saldo Disponível
       </h3>
@@ -19,5 +19,5 @@ export default function SaldoCard({ saldo, className }: SaldoCardProps) {
         R$ {saldo.toFixed(2)}
       </p>
     </div>
-  );
+  )
 }

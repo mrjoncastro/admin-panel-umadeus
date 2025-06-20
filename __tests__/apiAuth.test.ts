@@ -3,7 +3,6 @@ import { NextRequest } from 'next/server'
 import * as headers from '../lib/getUserFromHeaders'
 import { requireRole } from '../lib/apiAuth'
 
-
 describe('requireRole', () => {
   afterEach(() => {
     vi.restoreAllMocks()
@@ -20,7 +19,7 @@ describe('requireRole', () => {
     const pb = {}
     vi.spyOn(headers, 'getUserFromHeaders').mockReturnValue({
       user: { role: 'user' } as any,
-      pbSafe: pb as any
+      pbSafe: pb as any,
     })
     const req = new Request('http://test')
     const res = requireRole(req as unknown as NextRequest, 'admin')
@@ -32,7 +31,7 @@ describe('requireRole', () => {
     const user = { role: 'admin', id: 'u1' } as any
     vi.spyOn(headers, 'getUserFromHeaders').mockReturnValue({
       user,
-      pbSafe: pb as any
+      pbSafe: pb as any,
     })
     const req = new Request('http://test')
     const res = requireRole(req as unknown as NextRequest, 'admin')

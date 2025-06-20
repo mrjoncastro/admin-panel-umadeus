@@ -1,10 +1,10 @@
-"use client";
-import { useState, useRef, useEffect, useMemo } from "react";
-import Image from "next/image";
-import type { Produto } from "@/types";
-import { calculateGross } from "@/lib/asaasFees";
+'use client'
+import { useState, useRef, useEffect, useMemo } from 'react'
+import Image from 'next/image'
+import type { Produto } from '@/types'
+import { calculateGross } from '@/lib/asaasFees'
 
-import AddToCartButton from "./AddToCartButton";
+import AddToCartButton from './AddToCartButton'
 
 // Componente para seleção de gênero e tamanho (reutilizável)
 function DetalhesSelecao({
@@ -15,15 +15,15 @@ function DetalhesSelecao({
   tamanho,
   setTamanho,
 }: {
-  generos: string[];
-  tamanhos: string[];
-  genero: string;
-  setGenero: (g: string) => void;
-  tamanho: string;
-  setTamanho: (t: string) => void;
+  generos: string[]
+  tamanhos: string[]
+  genero: string
+  setGenero: (g: string) => void
+  tamanho: string
+  setTamanho: (t: string) => void
 }) {
-  const ALL_GENEROS = ["Masculino", "Feminino"];
-  const indisponivel = ALL_GENEROS.filter((g) => !generos.includes(g));
+  const ALL_GENEROS = ['Masculino', 'Feminino']
+  const indisponivel = ALL_GENEROS.filter((g) => !generos.includes(g))
 
   return (
     <>
@@ -32,7 +32,7 @@ function DetalhesSelecao({
         <p className="text-sm mb-2 text-[var(--text-primary)]/70">Modelo:</p>
         <div className="flex gap-3">
           {ALL_GENEROS.map((g) => {
-            const disponivel = generos.includes(g);
+            const disponivel = generos.includes(g)
             return (
               <button
                 key={g}
@@ -41,24 +41,24 @@ function DetalhesSelecao({
                 className={`px-4 py-1 rounded-full border font-medium transition-colors duration-200 outline-none
               ${
                 genero === g && disponivel
-                  ? "bg-[var(--accent)] text-white border-[var(--accent)] shadow"
-                  : "bg-transparent text-[var(--text-primary)] border-[var(--accent)]/40 hover:bg-[var(--accent)]/10"
+                  ? 'bg-[var(--accent)] text-white border-[var(--accent)] shadow'
+                  : 'bg-transparent text-[var(--text-primary)] border-[var(--accent)]/40 hover:bg-[var(--accent)]/10'
               }
-              ${!disponivel ? "opacity-50 cursor-not-allowed" : ""}
+              ${!disponivel ? 'opacity-50 cursor-not-allowed' : ''}
               focus-visible:ring-2 focus-visible:ring-[var(--accent-900)]`}
               >
                 {g}
               </button>
-            );
+            )
           })}
         </div>
         {indisponivel.length > 0 && (
           <p className="text-xs text-red-600 mt-1">
             {indisponivel
               .map((g) =>
-                g === "Masculino" ? "Modelo masculino" : "Modelo Feminino"
+                g === 'Masculino' ? 'Modelo masculino' : 'Modelo Feminino',
               )
-              .join(" e ")}{" "}
+              .join(' e ')}{' '}
             indisponível
           </p>
         )}
@@ -76,8 +76,8 @@ function DetalhesSelecao({
               className={`px-3 py-1 border rounded-full text-sm font-medium transition-colors duration-200 outline-none
             ${
               tamanho === t
-                ? "bg-[var(--accent)] text-white border-[var(--accent)] font-bold shadow"
-                : "bg-transparent text-[var(--text-primary)] border-[var(--accent)]/40 hover:bg-[var(--accent)]/10"
+                ? 'bg-[var(--accent)] text-white border-[var(--accent)] font-bold shadow'
+                : 'bg-transparent text-[var(--text-primary)] border-[var(--accent)]/40 hover:bg-[var(--accent)]/10'
             }
             focus-visible:ring-2 focus-visible:ring-[var(--accent-900)]`}
             >
@@ -93,7 +93,7 @@ function DetalhesSelecao({
         </a>
       </div>
     </>
-  );
+  )
 }
 
 export default function ProdutoInterativo({
@@ -105,63 +105,63 @@ export default function ProdutoInterativo({
   descricao,
   produto,
 }: {
-  imagens: Record<string, string[]>;
-  generos: string[];
-  tamanhos: string[];
-  nome: string;
-  preco: number;
-  descricao?: string;
-  produto: Produto;
+  imagens: Record<string, string[]>
+  generos: string[]
+  tamanhos: string[]
+  nome: string
+  preco: number
+  descricao?: string
+  produto: Produto
 }) {
   // Padronização dos gêneros:
   const generosNorm = generos.map((g) =>
-    g.trim().toLowerCase() === "masculino"
-      ? "Masculino"
-      : g.trim().toLowerCase() === "feminino"
-      ? "Feminino"
-      : g
-  );
-  const [genero, setGenero] = useState(generosNorm[0]);
-  const [tamanho, setTamanho] = useState(tamanhos[0]);
+    g.trim().toLowerCase() === 'masculino'
+      ? 'Masculino'
+      : g.trim().toLowerCase() === 'feminino'
+        ? 'Feminino'
+        : g,
+  )
+  const [genero, setGenero] = useState(generosNorm[0])
+  const [tamanho, setTamanho] = useState(tamanhos[0])
   const coresList = Array.from(
     new Set(
       Array.isArray(produto.cores)
         ? produto.cores
-        : typeof produto.cores === "string"
-        ? produto.cores.split(",").map((c: string) => c.trim())
-        : []
-    )
-  );
-  const [cor, setCor] = useState(coresList[0] || "");
-  const [indexImg, setIndexImg] = useState(0);
-  const pauseRef = useRef(false);
+        : typeof produto.cores === 'string'
+          ? produto.cores.split(',').map((c: string) => c.trim())
+          : [],
+    ),
+  )
+  const [cor, setCor] = useState(coresList[0] || '')
+  const [indexImg, setIndexImg] = useState(0)
+  const pauseRef = useRef(false)
 
   const precoBruto = useMemo(
-    () => calculateGross(preco, "pix", 1).gross,
+    () => calculateGross(preco, 'pix', 1).gross,
     [preco],
-  );
+  )
 
-  const firstImgKey = Object.keys(imagens)[0];
-  const imgs = imagens[genero] || imagens["default"] || imagens[firstImgKey];
+  const firstImgKey = Object.keys(imagens)[0]
+  const imgs = imagens[genero] || imagens['default'] || imagens[firstImgKey]
 
   useEffect(() => {
-    setIndexImg(0);
-  }, [genero]);
+    setIndexImg(0)
+  }, [genero])
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (!pauseRef.current) {
-        setIndexImg((prev) => (prev + 1) % imgs.length);
+        setIndexImg((prev) => (prev + 1) % imgs.length)
       }
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [imgs]);
+    }, 4000)
+    return () => clearInterval(interval)
+  }, [imgs])
 
   const handleMiniaturaClick = (i: number) => {
-    pauseRef.current = true;
-    setIndexImg(i);
-    setTimeout(() => (pauseRef.current = false), 10000);
-  };
+    pauseRef.current = true
+    setIndexImg(i)
+    setTimeout(() => (pauseRef.current = false), 10000)
+  }
 
   return (
     <div className="grid md:grid-cols-2 gap-12 items-start">
@@ -187,8 +187,8 @@ export default function ProdutoInterativo({
               className={`w-16 h-16 object-cover rounded-lg border-2 cursor-pointer transition
               ${
                 indexImg === i
-                  ? "border-[var(--accent)] ring-2 ring-[var(--accent)]"
-                  : "border-[var(--accent-900)] hover:brightness-110"
+                  ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]'
+                  : 'border-[var(--accent-900)] hover:brightness-110'
               }`}
             />
           ))}
@@ -215,8 +215,8 @@ export default function ProdutoInterativo({
                     onClick={() => setCor(c)}
                     className={`w-7 h-7 rounded-full border-2 transition-all ${
                       cor === c
-                        ? "border-[var(--accent)] ring-2 ring-[var(--accent)]"
-                        : "border-[var(--accent-900)]"
+                        ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]'
+                        : 'border-[var(--accent-900)]'
                     }`}
                     style={{ background: c }}
                     aria-label={`Selecionar cor ${c}`}
@@ -233,7 +233,7 @@ export default function ProdutoInterativo({
           {nome}
         </h1>
         <p className="text-xl font-semibold text-[var(--text-primary)]">
-          R$ {precoBruto.toFixed(2).replace(".", ",")}
+          R$ {precoBruto.toFixed(2).replace('.', ',')}
         </p>
         <div className="hidden md:block">
           <DetalhesSelecao
@@ -256,8 +256,8 @@ export default function ProdutoInterativo({
                     onClick={() => setCor(c)}
                     className={`w-7 h-7 rounded-full border-2 transition-all ${
                       cor === c
-                        ? "border-[var(--accent)] ring-2 ring-[var(--accent)]"
-                        : "border-[var(--accent-900)]"
+                        ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]'
+                        : 'border-[var(--accent-900)]'
                     }`}
                     style={{ background: c }}
                     aria-label={`Selecionar cor ${c}`}
@@ -276,7 +276,7 @@ export default function ProdutoInterativo({
                 imagens: Array.isArray(produto.imagens)
                   ? produto.imagens
                   : imagens[genero] ||
-                    imagens["default"] ||
+                    imagens['default'] ||
                     imagens[firstImgKey] ||
                     [],
                 generos: [genero],
@@ -331,5 +331,5 @@ export default function ProdutoInterativo({
         </div>
       </div>
     </div>
-  );
+  )
 }

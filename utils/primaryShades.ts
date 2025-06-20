@@ -1,7 +1,10 @@
 export function hexToHsl(hex?: string | null): [number, number, number] {
   let sanitized = (hex ?? '#000000').replace('#', '')
   if (sanitized.length === 3) {
-    sanitized = sanitized.split('').map((c) => c + c).join('')
+    sanitized = sanitized
+      .split('')
+      .map((c) => c + c)
+      .join('')
   }
   const r = parseInt(sanitized.substring(0, 2), 16) / 255
   const g = parseInt(sanitized.substring(2, 4), 16) / 255

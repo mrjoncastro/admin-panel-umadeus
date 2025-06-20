@@ -1,12 +1,12 @@
-"use client";
+'use client'
 
-import * as Dialog from "@radix-ui/react-dialog";
-import { AnimatePresence, motion } from "framer-motion";
+import * as Dialog from '@radix-ui/react-dialog'
+import { AnimatePresence, motion } from 'framer-motion'
 
 export interface ModalAnimatedProps {
-  open: boolean;
-  onOpenChange?: (open: boolean) => void;
-  children: React.ReactNode;
+  open: boolean
+  onOpenChange?: (open: boolean) => void
+  children: React.ReactNode
 }
 
 export default function ModalAnimated({
@@ -34,11 +34,13 @@ export default function ModalAnimated({
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                   className="bg-white dark:bg-zinc-900 text-black dark:text-white p-6 rounded-xl z-[130]"
                 >
                   <Dialog.Title className="sr-only">Modal</Dialog.Title>
-                  <Dialog.Description className="sr-only">Modal content</Dialog.Description>
+                  <Dialog.Description className="sr-only">
+                    Modal content
+                  </Dialog.Description>
                   {children}
                 </motion.div>
               </Dialog.Content>
@@ -47,5 +49,5 @@ export default function ModalAnimated({
         )}
       </AnimatePresence>
     </Dialog.Root>
-  );
+  )
 }

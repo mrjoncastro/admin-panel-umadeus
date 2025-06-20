@@ -1,8 +1,8 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { useCart } from "@/lib/context/CartContext";
-import CartPreview from "./CartPreview";
+import Link from 'next/link'
+import { useCart } from '@/lib/context/CartContext'
+import CartPreview from './CartPreview'
 
 function CartIcon({ filled }: { filled?: boolean }) {
   return filled ? (
@@ -33,19 +33,24 @@ function CartIcon({ filled }: { filled?: boolean }) {
         strokeLinejoin="round"
       />
     </svg>
-  );
+  )
 }
 
 export default function CartButton() {
-  const { itens } = useCart();
-  const filled = itens.length > 0;
+  const { itens } = useCart()
+  const filled = itens.length > 0
 
   return (
     <div className="relative group">
-      <Link href="/loja/carrinho" aria-label="Carrinho" className="relative" prefetch={false}>
+      <Link
+        href="/loja/carrinho"
+        aria-label="Carrinho"
+        className="relative"
+        prefetch={false}
+      >
         <CartIcon filled={filled} />
         <span
-          className={`absolute -top-1 -right-1 rounded-full text-xs w-5 h-5 flex items-center justify-center ${filled ? "bg-red-600 text-white" : "bg-gray-400 text-black"}`}
+          className={`absolute -top-1 -right-1 rounded-full text-xs w-5 h-5 flex items-center justify-center ${filled ? 'bg-red-600 text-white' : 'bg-gray-400 text-black'}`}
         >
           {itens.reduce((sum, i) => sum + i.quantidade, 0)}
         </span>
@@ -54,6 +59,5 @@ export default function CartButton() {
         <CartPreview />
       </div>
     </div>
-  );
+  )
 }
-

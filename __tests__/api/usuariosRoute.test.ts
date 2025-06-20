@@ -8,9 +8,11 @@ import { requireRole } from '../../lib/apiAuth'
 describe('POST /admin/api/usuarios', () => {
   it('cria usuario quando dados validos', async () => {
     const createMock = vi.fn().mockResolvedValue({ id: 'u1' })
-    ;(requireRole as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue({
+    ;(
+      requireRole as unknown as { mockReturnValue: (v: any) => void }
+    ).mockReturnValue({
       pb: { collection: () => ({ create: createMock }) } as any,
-      user: { cliente: 'cli1' }
+      user: { cliente: 'cli1' },
     })
 
     const req = new Request('http://test', {
@@ -21,8 +23,8 @@ describe('POST /admin/api/usuarios', () => {
         password: 'p',
         passwordConfirm: 'p',
         role: 'usuario',
-        campo: 'c1'
-      })
+        campo: 'c1',
+      }),
     })
 
     const res = await POST(req as unknown as NextRequest)
@@ -34,7 +36,7 @@ describe('POST /admin/api/usuarios', () => {
       passwordConfirm: 'p',
       role: 'usuario',
       campo: 'c1',
-      cliente: 'cli1'
+      cliente: 'cli1',
     })
     const body = await res.json()
     expect(body.id).toBe('u1')

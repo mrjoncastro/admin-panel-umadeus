@@ -1,26 +1,26 @@
-"use client";
+'use client'
 
-import Header from "./Header";
-import Footer from "./Footer";
-import BackToTopButton from "@/app/admin/components/BackToTopButton";
-import NotificationBell from "@/app/admin/components/NotificationBell";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import { useMemo } from "react";
+import Header from './Header'
+import Footer from './Footer'
+import BackToTopButton from '@/app/admin/components/BackToTopButton'
+import NotificationBell from '@/app/admin/components/NotificationBell'
+import { useAuthContext } from '@/lib/context/AuthContext'
+import { useMemo } from 'react'
 
-type UserRole = "visitante" | "usuario" | "lider" | "coordenador";
+type UserRole = 'visitante' | 'usuario' | 'lider' | 'coordenador'
 
 export default function LayoutWrapper({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const { isLoggedIn, user } = useAuthContext();
+  const { isLoggedIn, user } = useAuthContext()
   const role: UserRole = useMemo(() => {
-    if (!isLoggedIn) return "visitante";
-    if (user?.role === "coordenador") return "coordenador";
-    if (user?.role === "lider") return "lider";
-    return "usuario";
-  }, [isLoggedIn, user?.role]);
+    if (!isLoggedIn) return 'visitante'
+    if (user?.role === 'coordenador') return 'coordenador'
+    if (user?.role === 'lider') return 'lider'
+    return 'usuario'
+  }, [isLoggedIn, user?.role])
 
   return (
     <>
@@ -29,8 +29,8 @@ export default function LayoutWrapper({
         {children}
       </main>
       <Footer />
-      {role === "coordenador" && <NotificationBell />}
+      {role === 'coordenador' && <NotificationBell />}
       <BackToTopButton />
     </>
-  );
+  )
 }

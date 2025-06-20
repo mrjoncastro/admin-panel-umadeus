@@ -9,12 +9,12 @@ import {
   Title,
   Tooltip,
   Legend,
-} from "chart.js";
+} from 'chart.js'
 
-let chartsRegistered = false;
+let chartsRegistered = false
 
 export function setupCharts() {
-  if (chartsRegistered) return;
+  if (chartsRegistered) return
   ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -24,7 +24,7 @@ export function setupCharts() {
     ArcElement,
     Title,
     Tooltip,
-    Legend
-  );
-  chartsRegistered = true;
+    Legend,
+  )
+  chartsRegistered = true
 }

@@ -24,10 +24,10 @@ export function criarInscricao(dados: DadosInscricao): Inscricao {
     dados.data_nascimento,
     dados.genero,
     dados.liderId,
-    dados.evento
+    dados.evento,
   ]
 
-  if (obrigatorios.some(v => !v || v.trim() === '')) {
+  if (obrigatorios.some((v) => !v || v.trim() === '')) {
     throw new Error('Todos os campos são obrigatórios.')
   }
 
@@ -42,16 +42,20 @@ export function criarInscricao(dados: DadosInscricao): Inscricao {
     genero: dados.genero,
     criado_por: dados.liderId,
     data_nascimento: dados.data_nascimento,
-    status: 'pendente'
+    status: 'pendente',
   }
 }
 
 export function criarPedido(
   inscricao: Inscricao,
-  produto: { nome?: string; preco: number; tamanhos?: string[] | string; generos?: string[] | string }
+  produto: {
+    nome?: string
+    preco: number
+    tamanhos?: string[] | string
+    generos?: string[] | string
+  },
 ): Pedido {
-  const first = (v?: string[] | string) =>
-    Array.isArray(v) ? v[0] : v;
+  const first = (v?: string[] | string) => (Array.isArray(v) ? v[0] : v)
   const valor = produto.preco
 
   return {
@@ -66,7 +70,7 @@ export function criarPedido(
     responsavel: inscricao.criado_por,
     email: dadosEmail(inscricao),
     canal: 'inscricao',
-    valor: valor.toFixed(2)
+    valor: valor.toFixed(2),
   }
 }
 

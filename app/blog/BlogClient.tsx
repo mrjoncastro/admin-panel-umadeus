@@ -1,85 +1,87 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import BlogSidebar from "./components/BlogSidebar";
-import BlogHeroCarousel from "./components/BlogHeroCarousel";
-import Link from "next/link";
-import Image from "next/image";
-import createPocketBase from "@/lib/pocketbase";
-import type { Cliente } from "@/types";
-import { getPostsClientPB, type PostClientRecord } from "@/lib/posts/getPostsClientPB";
+import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import BlogSidebar from './components/BlogSidebar'
+import BlogHeroCarousel from './components/BlogHeroCarousel'
+import Link from 'next/link'
+import Image from 'next/image'
+import createPocketBase from '@/lib/pocketbase'
+import type { Cliente } from '@/types'
+import {
+  getPostsClientPB,
+  type PostClientRecord,
+} from '@/lib/posts/getPostsClientPB'
 
-type Post = PostClientRecord;
+type Post = PostClientRecord
 
-const POSTS_PER_PAGE = 6;
+const POSTS_PER_PAGE = 6
 
 export default function BlogClient() {
-  const [nomeCliente, setNomeCliente] = useState("");
+  const [nomeCliente, setNomeCliente] = useState('')
 
-    useEffect(() => {
-      const pb = createPocketBase();
-      async function fetchCliente() {
-        try {
-          const res = await fetch("/api/tenant");
-          const data = (await res.json()) as { tenantId: string | null };
-          const id = data.tenantId;
-          if (id) {
-            const c = await pb
-              .collection("clientes_config")
-              .getFirstListItem<Cliente>(`cliente='${id}'`);
-            setNomeCliente(c?.nome ?? "");
-          } else {
-            setNomeCliente("");
-          }
-        } catch (err) {
-          console.error("Erro ao buscar nome do cliente:", err);
+  useEffect(() => {
+    const pb = createPocketBase()
+    async function fetchCliente() {
+      try {
+        const res = await fetch('/api/tenant')
+        const data = (await res.json()) as { tenantId: string | null }
+        const id = data.tenantId
+        if (id) {
+          const c = await pb
+            .collection('clientes_config')
+            .getFirstListItem<Cliente>(`cliente='${id}'`)
+          setNomeCliente(c?.nome ?? '')
+        } else {
+          setNomeCliente('')
         }
+      } catch (err) {
+        console.error('Erro ao buscar nome do cliente:', err)
       }
-      fetchCliente();
-    }, []);
+    }
+    fetchCliente()
+  }, [])
 
   const introText = {
-    title: "Criamos este espaço porque acreditamos no poder do conhecimento.",
+    title: 'Criamos este espaço porque acreditamos no poder do conhecimento.',
     paragraph: `${nomeCliente} valoriza a informação como forma de cuidado. Por isso, cada conteúdo aqui foi pensado para orientar, inspirar e caminhar ao seu lado.`,
-  };
+  }
 
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [posts, setPosts] = useState<Post[]>([])
+  const [search, setSearch] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
 
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams()
   const categoriaSelecionada =
-    searchParams.get("categoria")?.toLowerCase() || "";
+    searchParams.get('categoria')?.toLowerCase() || ''
 
   useEffect(() => {
     getPostsClientPB()
       .then(setPosts)
       .catch((err) => {
-        console.error("Erro ao carregar posts:", err);
-      });
-  }, []);
+        console.error('Erro ao carregar posts:', err)
+      })
+  }, [])
 
   const filteredPosts = posts.filter((post) => {
-    const texto =
-      `${post.title} ${post.summary} ${post.category}`.toLowerCase();
-    const correspondeBusca = texto.includes(search.toLowerCase());
+    const texto = `${post.title} ${post.summary} ${post.category}`.toLowerCase()
+    const correspondeBusca = texto.includes(search.toLowerCase())
     const correspondeCategoria = categoriaSelecionada
       ? post.category?.toLowerCase() === categoriaSelecionada
-      : true;
-    return correspondeBusca && correspondeCategoria;
-  });
+      : true
+    return correspondeBusca && correspondeCategoria
+  })
 
-  const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
+  const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE)
   const paginatedPosts = filteredPosts.slice(
     (currentPage - 1) * POSTS_PER_PAGE,
-    currentPage * POSTS_PER_PAGE
-  );
+    currentPage * POSTS_PER_PAGE,
+  )
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+    setCurrentPage(page)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   return (
     <>
@@ -90,15 +92,17 @@ export default function BlogClient() {
           <h1 className="text-4xl md:text-5xl font-bold text-[var(--text-primary)] mb-4">
             {introText.title}
           </h1>
-          <p className="text-[var(--text-secondary)] text-lg mb-6">{introText.paragraph}</p>
+          <p className="text-[var(--text-secondary)] text-lg mb-6">
+            {introText.paragraph}
+          </p>
           <div className="max-w-xl mx-auto flex items-center gap-2">
             <input
               type="text"
               placeholder="Buscar por assunto ou dúvida..."
               value={search}
               onChange={(e) => {
-                setSearch(e.target.value);
-                setCurrentPage(1);
+                setSearch(e.target.value)
+                setCurrentPage(1)
               }}
               className="w-full px-4 py-3 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
@@ -170,8 +174,8 @@ export default function BlogClient() {
                       onClick={() => handlePageChange(i + 1)}
                       className={`px-3 py-2 text-sm rounded ${
                         currentPage === i + 1
-                          ? "bg-primary-600 text-white"
-                          : "bg-neutral-100 hover:bg-neutral-200"
+                          ? 'bg-primary-600 text-white'
+                          : 'bg-neutral-100 hover:bg-neutral-200'
                       }`}
                     >
                       {i + 1}
@@ -198,5 +202,5 @@ export default function BlogClient() {
         </div>
       </main>
     </>
-  );
+  )
 }

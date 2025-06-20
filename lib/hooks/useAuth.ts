@@ -1,38 +1,38 @@
 // lib/hooks/useAuth
 
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import usePocketBase from "./usePocketBase";
-import type { UserModel } from "@/types/UserModel"; 
+import { useState, useEffect } from 'react'
+import usePocketBase from './usePocketBase'
+import type { UserModel } from '@/types/UserModel'
 
 export function useAuth() {
-  const pb = usePocketBase();
-  const [user, setUser] = useState<UserModel | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const pb = usePocketBase()
+  const [user, setUser] = useState<UserModel | null>(null)
+  const [token, setToken] = useState<string | null>(null)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   useEffect(() => {
     const update = () => {
-      const isValid = pb.authStore.isValid;
-      const model = pb.authStore.model as unknown as UserModel | null;
-      const tokenAtual = pb.authStore.token;
+      const isValid = pb.authStore.isValid
+      const model = pb.authStore.model as unknown as UserModel | null
+      const tokenAtual = pb.authStore.token
 
-      setUser(model);
-      setToken(tokenAtual);
-      setIsLoggedIn(isValid && !!model);
-    };
+      setUser(model)
+      setToken(tokenAtual)
+      setIsLoggedIn(isValid && !!model)
+    }
 
-    update();
+    update()
 
-    const unsubscribe = pb.authStore.onChange(update);
-    return () => unsubscribe();
-  }, [pb]);
+    const unsubscribe = pb.authStore.onChange(update)
+    return () => unsubscribe()
+  }, [pb])
 
   return {
     user,
     token,
     isLoggedIn,
     pb,
-  };
+  }
 }

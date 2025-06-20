@@ -10,9 +10,11 @@ describe('POST /admin/api/asaas/checkout', () => {
   })
 
   it('retorna 403 quando requireRole falha', async () => {
-    (requireRole as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue({
+    ;(
+      requireRole as unknown as { mockReturnValue: (v: any) => void }
+    ).mockReturnValue({
       error: 'Acesso negado',
-      status: 403
+      status: 403,
     })
     const req = new Request('http://test', { method: 'POST', body: '{}' })
     const res = await POST(req as unknown as NextRequest)

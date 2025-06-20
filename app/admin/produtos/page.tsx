@@ -1,143 +1,143 @@
-"use client";
+'use client'
 
-import { useEffect, useState, useCallback } from "react";
-import { useRouter, usePathname } from "next/navigation";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import Link from "next/link";
-import type { Produto } from "@/types";
-import { ModalProduto } from "./novo/ModalProduto";
-import { useToast } from "@/lib/context/ToastContext";
+import { useEffect, useState, useCallback } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
+import { useAuthContext } from '@/lib/context/AuthContext'
+import Link from 'next/link'
+import type { Produto } from '@/types'
+import { ModalProduto } from './novo/ModalProduto'
+import { useToast } from '@/lib/context/ToastContext'
 
 function slugify(str: string) {
   return str
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)+/g, "")
-    .replace(/-+/g, "-");
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)+/g, '')
+    .replace(/-+/g, '-')
 }
 
-const PRODUTOS_POR_PAGINA = 10;
+const PRODUTOS_POR_PAGINA = 10
 
 export default function AdminProdutosPage() {
-  const { user: ctxUser, isLoggedIn } = useAuthContext();
-  const router = useRouter();
-  const { showSuccess, showError } = useToast();
+  const { user: ctxUser, isLoggedIn } = useAuthContext()
+  const router = useRouter()
+  const { showSuccess, showError } = useToast()
   const getAuth = useCallback(() => {
     const token =
-      typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
+      typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
     const raw =
-      typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
-    const user = raw ? JSON.parse(raw) : ctxUser;
-    return { token, user } as const;
-  }, [ctxUser]);
-  const [produtos, setProdutos] = useState<Produto[]>([]);
-  const [page, setPage] = useState(1);
-  const [modalOpen, setModalOpen] = useState(false);
-  const pathname = usePathname();
+      typeof window !== 'undefined' ? localStorage.getItem('pb_user') : null
+    const user = raw ? JSON.parse(raw) : ctxUser
+    return { token, user } as const
+  }, [ctxUser])
+  const [produtos, setProdutos] = useState<Produto[]>([])
+  const [page, setPage] = useState(1)
+  const [modalOpen, setModalOpen] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
-    const { token, user } = getAuth();
-    if (!isLoggedIn || !token || !user || user.role !== "coordenador") {
-      router.replace("/login");
+    const { token, user } = getAuth()
+    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') {
+      router.replace('/login')
     }
-  }, [isLoggedIn, router, getAuth]);
+  }, [isLoggedIn, router, getAuth])
 
   useEffect(() => {
-    const { token, user } = getAuth();
-    if (!isLoggedIn || !token || !user || user.role !== "coordenador") return;
+    const { token, user } = getAuth()
+    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
 
     async function fetchProdutos() {
       try {
-        const res = await fetch("/admin/api/produtos", {
+        const res = await fetch('/admin/api/produtos', {
           headers: {
             Authorization: `Bearer ${token}`,
-            "X-PB-User": JSON.stringify(user),
+            'X-PB-User': JSON.stringify(user),
           },
-        });
-        const data = await res.json();
-        setProdutos(Array.isArray(data) ? data : data.items ?? []);
+        })
+        const data = await res.json()
+        setProdutos(Array.isArray(data) ? data : (data.items ?? []))
       } catch (err) {
-        console.error("Erro ao carregar produtos:", err);
+        console.error('Erro ao carregar produtos:', err)
       }
     }
-    fetchProdutos();
-  }, [isLoggedIn, getAuth]);
+    fetchProdutos()
+  }, [isLoggedIn, getAuth])
 
-  const totalPages = Math.ceil(produtos.length / PRODUTOS_POR_PAGINA);
+  const totalPages = Math.ceil(produtos.length / PRODUTOS_POR_PAGINA)
   const paginated = produtos.slice(
     (page - 1) * PRODUTOS_POR_PAGINA,
-    page * PRODUTOS_POR_PAGINA
-  );
+    page * PRODUTOS_POR_PAGINA,
+  )
 
   // Função para adicionar produto na lista após cadastro via modal
   const handleNovoProduto = async (form: Produto) => {
-    const formData = new FormData();
-    formData.set("nome", String(form.nome ?? ""));
-    formData.set("preco", String(form.preco ?? 0));
+    const formData = new FormData()
+    formData.set('nome', String(form.nome ?? ''))
+    formData.set('preco', String(form.preco ?? 0))
     if (form.checkout_url)
-      formData.set("checkout_url", String(form.checkout_url));
-    if (form.categoria) formData.set("categoria", String(form.categoria));
+      formData.set('checkout_url', String(form.checkout_url))
+    if (form.categoria) formData.set('categoria', String(form.categoria))
     if (Array.isArray(form.tamanhos)) {
-      form.tamanhos.forEach((t) => formData.append("tamanhos", t));
+      form.tamanhos.forEach((t) => formData.append('tamanhos', t))
     }
     if (Array.isArray(form.generos)) {
-      form.generos.forEach((g) => formData.append("generos", g));
+      form.generos.forEach((g) => formData.append('generos', g))
     }
-    if (form.descricao) formData.set("descricao", String(form.descricao));
-    if (form.detalhes) formData.set("detalhes", String(form.detalhes));
+    if (form.descricao) formData.set('descricao', String(form.descricao))
+    if (form.detalhes) formData.set('detalhes', String(form.detalhes))
     if (!form.slug && form.nome) {
-      form.slug = slugify(String(form.nome));
+      form.slug = slugify(String(form.nome))
     }
-    if (form.slug) formData.set("slug", String(form.slug));
+    if (form.slug) formData.set('slug', String(form.slug))
     if (Array.isArray(form.cores)) {
-      formData.set("cores", (form.cores as string[]).join(","));
+      formData.set('cores', (form.cores as string[]).join(','))
     } else if (form.cores) {
-      formData.set("cores", String(form.cores));
+      formData.set('cores', String(form.cores))
     }
-    formData.set("ativo", String(form.ativo ? "true" : "false"));
+    formData.set('ativo', String(form.ativo ? 'true' : 'false'))
     if (form.imagens && form.imagens instanceof FileList) {
       Array.from(form.imagens).forEach((file) =>
-        formData.append("imagens", file)
-      );
+        formData.append('imagens', file),
+      )
     }
 
-    const { token, user } = getAuth();
+    const { token, user } = getAuth()
     try {
-      const res = await fetch("/admin/api/produtos", {
-        method: "POST",
+      const res = await fetch('/admin/api/produtos', {
+        method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
-          "X-PB-User": JSON.stringify(user),
+          'X-PB-User': JSON.stringify(user),
         },
         body: formData,
-      });
+      })
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        console.error("Falha ao criar produto", res.status, data);
-        showError("Erro ao criar produto");
-        return;
+        const data = await res.json().catch(() => ({}))
+        console.error('Falha ao criar produto', res.status, data)
+        showError('Erro ao criar produto')
+        return
       }
-      const data = await res.json();
-      console.log("Produto criado:", data);
-      setProdutos((prev) => [data, ...prev]);
-      showSuccess("Produto criado");
+      const data = await res.json()
+      console.log('Produto criado:', data)
+      setProdutos((prev) => [data, ...prev])
+      showSuccess('Produto criado')
     } catch (err) {
-      console.error("Erro ao criar produto:", err);
-      showError("Erro ao criar produto");
+      console.error('Erro ao criar produto:', err)
+      showError('Erro ao criar produto')
     }
 
-    setModalOpen(false);
-    setPage(1);
-  };
+    setModalOpen(false)
+    setPage(1)
+  }
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-[var(--space-lg)]">
         <h2
           className="text-2xl font-bold"
-          style={{ fontFamily: "var(--font-heading)" }}
+          style={{ fontFamily: 'var(--font-heading)' }}
         >
           Produtos
         </h2>
@@ -150,9 +150,9 @@ export default function AdminProdutosPage() {
         <Link
           href="/admin/produtos"
           className={`pb-2 ${
-            pathname === "/admin/produtos"
-              ? "border-b-2 border-[var(--accent)]"
-              : "hover:text-[var(--accent)]"
+            pathname === '/admin/produtos'
+              ? 'border-b-2 border-[var(--accent)]'
+              : 'hover:text-[var(--accent)]'
           }`}
         >
           Produtos
@@ -160,9 +160,9 @@ export default function AdminProdutosPage() {
         <Link
           href="/admin/produtos/categorias"
           className={`pb-2 ${
-            pathname === "/admin/produtos/categorias"
-              ? "border-b-2 border-[var(--accent)]"
-              : "hover:text-[var(--accent)]"
+            pathname === '/admin/produtos/categorias'
+              ? 'border-b-2 border-[var(--accent)]'
+              : 'hover:text-[var(--accent)]'
           }`}
         >
           Categorias
@@ -200,9 +200,9 @@ export default function AdminProdutosPage() {
                 <tr key={produto.id}>
                   <td className="font-medium">{produto.nome}</td>
                   <td>
-                    {Number(produto.preco).toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
+                    {Number(produto.preco).toLocaleString('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
                     })}
                   </td>
                   <td>
@@ -253,5 +253,5 @@ export default function AdminProdutosPage() {
         </div>
       )}
     </main>
-  );
+  )
 }

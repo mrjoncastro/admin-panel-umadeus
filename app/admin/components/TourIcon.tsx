@@ -1,34 +1,34 @@
-"use client";
+'use client'
 
-import { useEffect, useState, useMemo } from "react";
-import { MapPinned } from "lucide-react";
-import { useRouter } from "next/navigation";
-import createPocketBase from "@/lib/pocketbase";
-import { useAuthContext } from "@/lib/context/AuthContext";
+import { useEffect, useState, useMemo } from 'react'
+import { MapPinned } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import createPocketBase from '@/lib/pocketbase'
+import { useAuthContext } from '@/lib/context/AuthContext'
 
 export default function TourIcon() {
-  const { user, isLoggedIn } = useAuthContext();
-  const [visible, setVisible] = useState(false);
-  const pb = useMemo(() => createPocketBase(), []);
-  const router = useRouter();
+  const { user, isLoggedIn } = useAuthContext()
+  const [visible, setVisible] = useState(false)
+  const pb = useMemo(() => createPocketBase(), [])
+  const router = useRouter()
 
   useEffect(() => {
-    if (!isLoggedIn || !user) return setVisible(false);
-    const fezTour = Boolean(user.tour);
-    setVisible(!fezTour);
-  }, [isLoggedIn, user]);
+    if (!isLoggedIn || !user) return setVisible(false)
+    const fezTour = Boolean(user.tour)
+    setVisible(!fezTour)
+  }, [isLoggedIn, user])
 
-  if (!visible) return null;
+  if (!visible) return null
 
   async function iniciarTour() {
-    const confirmar = window.confirm("Iniciar tour?");
-    if (!confirmar || !user) return;
+    const confirmar = window.confirm('Iniciar tour?')
+    if (!confirmar || !user) return
     try {
-      await pb.collection("usuarios").update(user.id, { tour: true });
+      await pb.collection('usuarios').update(user.id, { tour: true })
     } catch (err) {
-      console.error("Erro ao registrar tour", err);
+      console.error('Erro ao registrar tour', err)
     }
-    router.push("/iniciar-tour");
+    router.push('/iniciar-tour')
   }
 
   return (
@@ -41,5 +41,5 @@ export default function TourIcon() {
         <MapPinned className="w-5 h-5" />
       </button>
     </div>
-  );
+  )
 }

@@ -1,118 +1,118 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { Copy } from "lucide-react";
-import { saveAs } from "file-saver";
-import LoadingOverlay from "@/components/organisms/LoadingOverlay";
-import ModalEditarInscricao from "./componentes/ModalEdit";
-import ModalVisualizarPedido from "./componentes/ModalVisualizarPedido";
-import { CheckCircle, XCircle, Pencil, Trash2, Eye } from "lucide-react";
-import TooltipIcon from "../components/TooltipIcon";
-import { useToast } from "@/lib/context/ToastContext";
-import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
-import { type PaymentMethod } from "@/lib/asaasFees";
+import { useEffect, useState } from 'react'
+import { Copy } from 'lucide-react'
+import { saveAs } from 'file-saver'
+import LoadingOverlay from '@/components/organisms/LoadingOverlay'
+import ModalEditarInscricao from './componentes/ModalEdit'
+import ModalVisualizarPedido from './componentes/ModalVisualizarPedido'
+import { CheckCircle, XCircle, Pencil, Trash2, Eye } from 'lucide-react'
+import TooltipIcon from '../components/TooltipIcon'
+import { useToast } from '@/lib/context/ToastContext'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
+import { type PaymentMethod } from '@/lib/asaasFees'
 import type {
   Evento,
   Inscricao as InscricaoRecord,
   Pedido,
   Produto,
-} from "@/types";
+} from '@/types'
 
 const statusBadge = {
-  pendente: "bg-yellow-100 text-yellow-800",
-  aguardando_pagamento: "bg-blue-100 text-blue-800",
-  confirmado: "bg-green-100 text-green-800",
-  cancelado: "bg-red-100 text-red-800",
-} as const;
+  pendente: 'bg-yellow-100 text-yellow-800',
+  aguardando_pagamento: 'bg-blue-100 text-blue-800',
+  confirmado: 'bg-green-100 text-green-800',
+  cancelado: 'bg-red-100 text-red-800',
+} as const
 
-type StatusInscricao = keyof typeof statusBadge;
+type StatusInscricao = keyof typeof statusBadge
 
 type Inscricao = {
-  id: string;
-  nome: string;
-  telefone: string;
-  cpf: string;
+  id: string
+  nome: string
+  telefone: string
+  cpf: string
   /** Título do evento para exibição */
-  evento: string;
+  evento: string
   /** ID do evento */
-  eventoId: string;
-  status: StatusInscricao;
-  created: string;
-  campo?: string;
-  tamanho?: string;
-  genero?: string;
-  confirmado_por_lider?: boolean;
-  data_nascimento?: string;
-  criado_por?: string;
-  pedido_id?: string | null;
-};
+  eventoId: string
+  status: StatusInscricao
+  created: string
+  campo?: string
+  tamanho?: string
+  genero?: string
+  confirmado_por_lider?: boolean
+  data_nascimento?: string
+  criado_por?: string
+  pedido_id?: string | null
+}
 
 export default function ListaInscricoesPage() {
-  const { user, pb, authChecked } = useAuthGuard(["coordenador", "lider"]);
-  const tenantId = user?.cliente || "";
-  const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
-  const [role, setRole] = useState("");
-  const [linkPublico, setLinkPublico] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [copiado, setCopiado] = useState(false);
-  const [eventos, setEventos] = useState<Evento[]>([]);
-  const [eventoId, setEventoId] = useState("");
-  const [filtroStatus, setFiltroStatus] = useState("");
-  const [filtroBusca, setFiltroBusca] = useState("");
+  const { user, pb, authChecked } = useAuthGuard(['coordenador', 'lider'])
+  const tenantId = user?.cliente || ''
+  const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
+  const [role, setRole] = useState('')
+  const [linkPublico, setLinkPublico] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [copiado, setCopiado] = useState(false)
+  const [eventos, setEventos] = useState<Evento[]>([])
+  const [eventoId, setEventoId] = useState('')
+  const [filtroStatus, setFiltroStatus] = useState('')
+  const [filtroBusca, setFiltroBusca] = useState('')
   const [inscricaoEmEdicao, setInscricaoEmEdicao] = useState<Inscricao | null>(
-    null
-  );
-  const { showError, showSuccess } = useToast();
+    null,
+  )
+  const { showError, showSuccess } = useToast()
   const placeholderBusca =
-    role === "coordenador"
-      ? "Buscar por nome, telefone, CPF ou campo"
-      : "Buscar por nome, telefone ou CPF";
+    role === 'coordenador'
+      ? 'Buscar por nome, telefone, CPF ou campo'
+      : 'Buscar por nome, telefone ou CPF'
 
   useEffect(() => {
-    if (!authChecked) return;
+    if (!authChecked) return
 
     if (!user) {
-      showError("Sessão expirada ou inválida.");
-      setLoading(false);
-      return;
+      showError('Sessão expirada ou inválida.')
+      setLoading(false)
+      return
     }
 
-    pb.autoCancellation(false);
+    pb.autoCancellation(false)
 
-    setRole(user.role);
+    setRole(user.role)
 
-    pb.collection("eventos")
+    pb.collection('eventos')
       .getFullList<Evento>({
-        sort: "-data",
+        sort: '-data',
         filter: `cliente='${tenantId}' && status!='realizado'`,
       })
       .then((evs) => {
-        setEventos(evs);
+        setEventos(evs)
         if (evs.length > 0) {
-          setEventoId(evs[0].id);
+          setEventoId(evs[0].id)
           setLinkPublico(
-            `${window.location.origin}/inscricoes/${user.id}/${evs[0].id}`
-          );
+            `${window.location.origin}/inscricoes/${user.id}/${evs[0].id}`,
+          )
         } else {
-          setLinkPublico(`${window.location.origin}/inscricoes/${user.id}`);
+          setLinkPublico(`${window.location.origin}/inscricoes/${user.id}`)
         }
       })
       .catch(() => {
-        showError("Erro ao carregar eventos.");
-        setLinkPublico(`${window.location.origin}/inscricoes/${user.id}`);
-      });
+        showError('Erro ao carregar eventos.')
+        setLinkPublico(`${window.location.origin}/inscricoes/${user.id}`)
+      })
 
-    const baseFiltro = `cliente='${tenantId}'`;
+    const baseFiltro = `cliente='${tenantId}'`
     const filtro =
-      user.role === "coordenador"
+      user.role === 'coordenador'
         ? baseFiltro
-        : `campo='${user.campo}' && ${baseFiltro}`;
+        : `campo='${user.campo}' && ${baseFiltro}`
 
-    pb.collection("inscricoes")
+    pb.collection('inscricoes')
       .getFullList({
-        sort: "-created",
+        sort: '-created',
         filter: filtro,
-        expand: "campo,evento,pedido",
+        expand: 'campo,evento,pedido',
       })
       .then((res) => {
         const lista = res.map((r) => ({
@@ -124,7 +124,7 @@ export default function ListaInscricoesPage() {
           cpf: r.cpf,
           status: r.status,
           created: r.created,
-          campo: r.expand?.campo?.nome || "—",
+          campo: r.expand?.campo?.nome || '—',
           tamanho: r.tamanho,
           produto: r.produto,
           genero: r.genero,
@@ -133,94 +133,94 @@ export default function ListaInscricoesPage() {
           confirmado_por_lider: r.confirmado_por_lider,
           pedido_status: r.expand?.pedido?.status || null,
           pedido_id: r.expand?.pedido?.id || null,
-        }));
-        setInscricoes(lista);
+        }))
+        setInscricoes(lista)
       })
-      .catch(() => showError("Erro ao carregar inscrições."))
-      .finally(() => setLoading(false));
+      .catch(() => showError('Erro ao carregar inscrições.'))
+      .finally(() => setLoading(false))
 
-    if (user.role === "coordenador") {
-      pb.collection("campos")
-        .getFullList({ sort: "nome", filter: `cliente='${tenantId}'` })
+    if (user.role === 'coordenador') {
+      pb.collection('campos')
+        .getFullList({ sort: 'nome', filter: `cliente='${tenantId}'` })
         .then(() => {
           // noop
         })
-        .catch(() => {});
+        .catch(() => {})
     }
-  }, [authChecked, pb, tenantId, user, showError]);
+  }, [authChecked, pb, tenantId, user, showError])
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) return
     if (eventoId) {
       setLinkPublico(
-        `${window.location.origin}/inscricoes/${user.id}/${eventoId}`
-      );
+        `${window.location.origin}/inscricoes/${user.id}/${eventoId}`,
+      )
     } else {
-      setLinkPublico(`${window.location.origin}/inscricoes/${user.id}`);
+      setLinkPublico(`${window.location.origin}/inscricoes/${user.id}`)
     }
-  }, [eventoId, user]);
+  }, [eventoId, user])
 
   const copiarLink = async () => {
     try {
-      await navigator.clipboard.writeText(linkPublico);
-      setCopiado(true);
-      setTimeout(() => setCopiado(false), 2000);
+      await navigator.clipboard.writeText(linkPublico)
+      setCopiado(true)
+      setTimeout(() => setCopiado(false), 2000)
     } catch {
-      showError("Não foi possível copiar o link.");
+      showError('Não foi possível copiar o link.')
     }
-  };
+  }
 
   const deletarInscricao = async (id: string) => {
-    if (confirm("Tem certeza que deseja excluir esta inscrição?")) {
+    if (confirm('Tem certeza que deseja excluir esta inscrição?')) {
       try {
-        await pb.collection("inscricoes").delete(id);
-        setInscricoes((prev) => prev.filter((i) => i.id !== id));
-        showSuccess("Inscrição excluída.");
+        await pb.collection('inscricoes').delete(id)
+        setInscricoes((prev) => prev.filter((i) => i.id !== id))
+        showSuccess('Inscrição excluída.')
       } catch {
-        showError("Erro ao excluir inscrição.");
+        showError('Erro ao excluir inscrição.')
       }
     }
-  };
-  const [confirmandoId, setConfirmandoId] = useState<string | null>(null);
+  }
+  const [confirmandoId, setConfirmandoId] = useState<string | null>(null)
 
   const confirmarInscricao = async (id: string) => {
     try {
-      setConfirmandoId(id);
+      setConfirmandoId(id)
 
       // 1. Buscar inscrição com expand do campo e produtos
       const inscricao = await pb
-        .collection("inscricoes")
+        .collection('inscricoes')
         .getOne<
           InscricaoRecord & { expand?: { produtos?: Produto | Produto[] } }
         >(id, {
-          expand: "campo,produto",
-        });
+          expand: 'campo,produto',
+        })
 
       // Dados da inscrição obtidos com expand
 
       // Checar campo correto: produto ou produtos
-      type InscricaoWithProdutos = InscricaoRecord & { produtos?: string };
+      type InscricaoWithProdutos = InscricaoRecord & { produtos?: string }
       const produtoId =
-        inscricao.produto || (inscricao as InscricaoWithProdutos).produtos;
+        inscricao.produto || (inscricao as InscricaoWithProdutos).produtos
 
       // Extrair produto do expand (array ou objeto)
-      let produtoRecord: Produto | undefined = undefined;
+      let produtoRecord: Produto | undefined = undefined
 
       // Se expand já trouxe produtos (array ou objeto)
       if (inscricao.expand?.produtos) {
         if (Array.isArray(inscricao.expand.produtos)) {
           produtoRecord = inscricao.expand.produtos.find(
-            (p: Produto) => p.id === produtoId || p.id === inscricao.produto
-          );
-        } else if (typeof inscricao.expand.produtos === "object") {
-          produtoRecord = inscricao.expand.produtos as Produto;
+            (p: Produto) => p.id === produtoId || p.id === inscricao.produto,
+          )
+        } else if (typeof inscricao.expand.produtos === 'object') {
+          produtoRecord = inscricao.expand.produtos as Produto
         }
       }
 
       // Fallback se não achou pelo expand
       if (!produtoRecord && produtoId) {
         try {
-          produtoRecord = await pb.collection("produtos").getOne(produtoId);
+          produtoRecord = await pb.collection('produtos').getOne(produtoId)
         } catch {}
       }
 
@@ -228,39 +228,39 @@ export default function ListaInscricoesPage() {
       // Produto final escolhido a partir do expand ou fallback
 
       // Se mesmo assim não encontrou, aborta!
-      if (!produtoRecord || typeof produtoRecord.preco !== "number") {
+      if (!produtoRecord || typeof produtoRecord.preco !== 'number') {
         showError(
-          "Não foi possível identificar o produto ou o preço da inscrição."
-        );
-        setConfirmandoId(null);
-        return;
+          'Não foi possível identificar o produto ou o preço da inscrição.',
+        )
+        setConfirmandoId(null)
+        return
       }
 
       // Obter o campo expandido normalmente
       const campo = inscricao.expand?.campo as
         | { id?: string; responsavel?: string }
-        | undefined;
+        | undefined
 
       const insc = inscricao as InscricaoRecord & {
-        paymentMethod?: PaymentMethod;
-        installments?: number;
-      };
+        paymentMethod?: PaymentMethod
+        installments?: number
+      }
 
-      const metodo = insc.paymentMethod ?? "boleto";
-      const parcelas = insc.installments ?? 1;
+      const metodo = insc.paymentMethod ?? 'boleto'
+      const parcelas = insc.installments ?? 1
 
       // Valor base do produto
-      const precoProduto = Number(produtoRecord?.preco ?? 0);
+      const precoProduto = Number(produtoRecord?.preco ?? 0)
 
       // Aqui você pode aplicar algum cálculo se desejar
-      const gross = precoProduto; // ajuste aqui caso queira aplicar taxas/descontos
+      const gross = precoProduto // ajuste aqui caso queira aplicar taxas/descontos
 
-      const pedido = await pb.collection("pedidos").create<Pedido>({
+      const pedido = await pb.collection('pedidos').create<Pedido>({
         id_inscricao: id,
         valor: precoProduto,
-        status: "pendente",
-        produto: produtoRecord.nome || "Produto",
-        cor: "Roxo",
+        status: 'pendente',
+        produto: produtoRecord.nome || 'Produto',
+        cor: 'Roxo',
         tamanho:
           inscricao.tamanho ||
           (Array.isArray(produtoRecord.tamanhos)
@@ -275,34 +275,34 @@ export default function ListaInscricoesPage() {
         cliente: tenantId,
         campo: campo?.id,
         responsavel: inscricao.criado_por,
-        canal: "inscricao",
-      });
+        canal: 'inscricao',
+      })
 
       // 3. Gerar link de pagamento via API do Asaas
 
-      const res = await fetch("/admin/api/asaas/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/admin/api/asaas/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           pedidoId: pedido.id,
           valorBruto: gross,
           paymentMethod: metodo,
           installments: parcelas,
         }),
-      });
+      })
 
-      const checkout = await res.json();
+      const checkout = await res.json()
 
       if (!res.ok || !checkout?.url) {
-        throw new Error("Erro ao gerar link de pagamento.");
+        throw new Error('Erro ao gerar link de pagamento.')
       }
 
       // 4. Atualizar inscrição com o ID do pedido
-      await pb.collection("inscricoes").update<InscricaoRecord>(id, {
+      await pb.collection('inscricoes').update<InscricaoRecord>(id, {
         pedido: pedido.id, // ✅ atualiza campo pedido
-        status: "aguardando_pagamento",
+        status: 'aguardando_pagamento',
         confirmado_por_lider: true,
-      });
+      })
 
       // Atualizar estado local das inscrições
       setInscricoes((prev) =>
@@ -310,17 +310,17 @@ export default function ListaInscricoesPage() {
           i.id === id
             ? {
                 ...i,
-                status: "aguardando_pagamento",
+                status: 'aguardando_pagamento',
                 confirmado_por_lider: true,
               }
-            : i
-        )
-      );
+            : i,
+        ),
+      )
 
       // 🔹 6. Notificar via n8n webhook de forma assíncrona
-      fetch("/admin/api/n8n", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      fetch('/admin/api/n8n', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           nome: inscricao.nome,
           telefone: inscricao.telefone,
@@ -332,75 +332,75 @@ export default function ListaInscricoesPage() {
           valor: gross,
           url_pagamento: checkout.url,
         }),
-      }).catch(() => {});
+      }).catch(() => {})
 
       // 🔹 7. Mostrar sucesso visual
-      showSuccess("Link de pagamento enviado com sucesso!");
+      showSuccess('Link de pagamento enviado com sucesso!')
     } catch {
-      showError("Erro ao confirmar inscrição e gerar pedido.");
+      showError('Erro ao confirmar inscrição e gerar pedido.')
     } finally {
-      setConfirmandoId(null);
+      setConfirmandoId(null)
     }
-  };
+  }
 
   const [inscricaoParaRecusar, setInscricaoParaRecusar] =
-    useState<Inscricao | null>(null);
+    useState<Inscricao | null>(null)
 
   const exportarCSV = () => {
     const header = [
-      "Nome",
-      "Telefone",
-      "Evento",
-      "Status",
-      "Campo",
-      "Criado em",
-    ];
+      'Nome',
+      'Telefone',
+      'Evento',
+      'Status',
+      'Campo',
+      'Criado em',
+    ]
     const linhas = inscricoes.map((i) => [
       i.nome,
       i.telefone,
       i.evento,
       i.status,
-      i.campo || "",
-      new Date(i.created).toLocaleDateString("pt-BR"),
-    ]);
+      i.campo || '',
+      new Date(i.created).toLocaleDateString('pt-BR'),
+    ])
 
     const csvContent = [header, ...linhas]
-      .map((linha) => linha.map((valor) => `"${valor}"`).join(","))
-      .join("\n");
+      .map((linha) => linha.map((valor) => `"${valor}"`).join(','))
+      .join('\n')
 
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const hoje = new Date().toISOString().split("T")[0];
-    saveAs(blob, `inscricoes_${hoje}.csv`);
-  };
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const hoje = new Date().toISOString().split('T')[0]
+    saveAs(blob, `inscricoes_${hoje}.csv`)
+  }
 
   const inscricoesFiltradas = inscricoes.filter((i) => {
-    const busca = filtroBusca.toLowerCase();
+    const busca = filtroBusca.toLowerCase()
 
-    const matchStatus = filtroStatus === "" || i.status === filtroStatus;
+    const matchStatus = filtroStatus === '' || i.status === filtroStatus
 
     const matchBusca =
-      filtroBusca === "" ||
+      filtroBusca === '' ||
       i.nome.toLowerCase().includes(busca) ||
       i.telefone?.toLowerCase().includes(busca) ||
       i.cpf?.toLowerCase().includes(busca) ||
-      (role === "coordenador" && i.campo?.toLowerCase().includes(busca));
+      (role === 'coordenador' && i.campo?.toLowerCase().includes(busca))
 
-    return matchStatus && matchBusca;
-  });
+    return matchStatus && matchBusca
+  })
 
   const [pedidoSelecionado, setPedidoSelecionado] = useState<string | null>(
-    null
-  );
+    null,
+  )
 
   if (loading)
-    return <LoadingOverlay show={true} text="Carregando inscrições..." />;
+    return <LoadingOverlay show={true} text="Carregando inscrições..." />
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">
       <h2 className="heading">Inscrições Recebidas</h2>
 
       {/* Link público */}
-      {role === "lider" && (
+      {role === 'lider' && (
         <div className="mb-6 bg-gray-50 border border-gray-200 p-4 rounded-lg text-sm shadow-sm">
           <p className="font-semibold mb-2">📎 Link de inscrição pública:</p>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
@@ -479,7 +479,7 @@ export default function ListaInscricoesPage() {
                 <th>Campo</th>
                 <th>Criado em</th>
                 <th>Confirmação</th>
-                {role === "coordenador" && <th>Ação</th>}
+                {role === 'coordenador' && <th>Ação</th>}
               </tr>
             </thead>
             <tbody>
@@ -498,11 +498,11 @@ export default function ListaInscricoesPage() {
                     </span>
                   </td>
                   <td>{i.campo}</td>
-                  <td>{new Date(i.created).toLocaleDateString("pt-BR")}</td>
+                  <td>{new Date(i.created).toLocaleDateString('pt-BR')}</td>
                   <td className="text-left text-xs">
                     <div className="flex items-center gap-3">
-                      {(role === "lider" || role === "coordenador") &&
-                      i.status === "pendente" &&
+                      {(role === 'lider' || role === 'coordenador') &&
+                      i.status === 'pendente' &&
                       !i.confirmado_por_lider ? (
                         <>
                           <TooltipIcon label="Confirmar inscrição">
@@ -510,7 +510,7 @@ export default function ListaInscricoesPage() {
                               onClick={() => confirmarInscricao(i.id)}
                               disabled={confirmandoId === i.id}
                               className={`text-green-600 hover:text-green-700 cursor-pointer ${
-                                confirmandoId === i.id ? "opacity-50" : ""
+                                confirmandoId === i.id ? 'opacity-50' : ''
                               }`}
                             >
                               {confirmandoId === i.id ? (
@@ -605,22 +605,22 @@ export default function ListaInscricoesPage() {
           inscricao={inscricaoEmEdicao}
           onClose={() => setInscricaoEmEdicao(null)}
           onSave={async (
-            dadosAtualizados: Partial<Inscricao & { eventoId: string }>
+            dadosAtualizados: Partial<Inscricao & { eventoId: string }>,
           ) => {
             await pb
-              .collection("inscricoes")
+              .collection('inscricoes')
               .update<InscricaoRecord>(inscricaoEmEdicao.id, {
                 ...dadosAtualizados,
                 evento: dadosAtualizados.eventoId ?? inscricaoEmEdicao.eventoId,
-              });
+              })
             setInscricoes((prev) =>
               prev.map((i) =>
                 i.id === inscricaoEmEdicao.id
                   ? { ...i, ...dadosAtualizados }
-                  : i
-              )
-            );
-            setInscricaoEmEdicao(null);
+                  : i,
+              ),
+            )
+            setInscricaoEmEdicao(null)
           }}
         />
       )}
@@ -630,7 +630,7 @@ export default function ListaInscricoesPage() {
           <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full">
             <h2 className="text-lg font-semibold mb-4">Recusar Inscrição</h2>
             <p className="text-sm text-gray-700 mb-4">
-              Tem certeza que deseja recusar a inscrição de{" "}
+              Tem certeza que deseja recusar a inscrição de{' '}
               <strong>{inscricaoParaRecusar.nome}</strong>? Essa ação definirá o
               status como <strong className="text-red-600">cancelado</strong>.
             </p>
@@ -644,18 +644,18 @@ export default function ListaInscricoesPage() {
               <button
                 onClick={async () => {
                   await pb
-                    .collection("inscricoes")
+                    .collection('inscricoes')
                     .update<InscricaoRecord>(inscricaoParaRecusar.id, {
-                      status: "cancelado",
-                    });
+                      status: 'cancelado',
+                    })
                   setInscricoes((prev) =>
                     prev.map((i) =>
                       i.id === inscricaoParaRecusar.id
-                        ? { ...i, status: "cancelado" }
-                        : i
-                    )
-                  );
-                  setInscricaoParaRecusar(null);
+                        ? { ...i, status: 'cancelado' }
+                        : i,
+                    ),
+                  )
+                  setInscricaoParaRecusar(null)
                 }}
                 className="btn btn-danger text-sm"
               >
@@ -673,5 +673,5 @@ export default function ListaInscricoesPage() {
         />
       )}
     </main>
-  );
+  )
 }

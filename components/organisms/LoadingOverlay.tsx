@@ -1,13 +1,13 @@
-"use client";
+'use client'
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from 'framer-motion'
 
 export default function LoadingOverlay({
   show,
   text,
 }: {
-  show: boolean;
-  text?: string;
+  show: boolean
+  text?: string
 }) {
   return (
     <AnimatePresence>
@@ -26,5 +26,5 @@ export default function LoadingOverlay({
         </motion.div>
       )}
     </AnimatePresence>
-  );
+  )
 }

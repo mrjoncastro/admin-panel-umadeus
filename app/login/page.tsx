@@ -1,29 +1,29 @@
-"use client";
+'use client'
 
-import { Suspense, useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import LoginForm from "../components/LoginForm";
-import SignUpForm from "../components/SignUpForm";
-import LayoutWrapper from "../components/LayoutWrapper";
+import { Suspense, useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import LoginForm from '../components/LoginForm'
+import SignUpForm from '../components/SignUpForm'
+import LayoutWrapper from '../components/LayoutWrapper'
 
 export default function LoginPage() {
   return (
     <Suspense>
       <LoginClient />
     </Suspense>
-  );
+  )
 }
 
 function LoginClient() {
-  "use client";
-  const searchParams = useSearchParams();
-  const initial = searchParams.get("view") === "signup" ? "signup" : "login";
-  const [view, setView] = useState<"login" | "signup">(initial);
-  const redirectTo = searchParams.get("redirect") || undefined;
+  'use client'
+  const searchParams = useSearchParams()
+  const initial = searchParams.get('view') === 'signup' ? 'signup' : 'login'
+  const [view, setView] = useState<'login' | 'signup'>(initial)
+  const redirectTo = searchParams.get('redirect') || undefined
 
   useEffect(() => {
-    setView(initial);
-  }, [initial]);
+    setView(initial)
+  }, [initial])
 
   return (
     <LayoutWrapper>
@@ -32,23 +32,23 @@ function LoginClient() {
           <div className="w-full">
             {/* Formulário */}
             <div>
-              {view === "login" ? (
+              {view === 'login' ? (
                 <LoginForm redirectTo={redirectTo}>
-                  Ainda não tem conta?{" "}
+                  Ainda não tem conta?{' '}
                   <button
                     type="button"
-                    onClick={() => setView("signup")}
+                    onClick={() => setView('signup')}
                     className="underline hover:text-[var(--accent)] transition"
                   >
                     Crie uma agora
                   </button>
                 </LoginForm>
               ) : (
-                <SignUpForm onSuccess={() => setView("login")}>
-                  Já tem uma conta?{" "}
+                <SignUpForm onSuccess={() => setView('login')}>
+                  Já tem uma conta?{' '}
                   <button
                     type="button"
-                    onClick={() => setView("login")}
+                    onClick={() => setView('login')}
                     className="underline text-white hover:text-[var(--accent)] transition"
                   >
                     Faça login
@@ -60,6 +60,5 @@ function LoginClient() {
         </div>
       </div>
     </LayoutWrapper>
-  );
+  )
 }
-

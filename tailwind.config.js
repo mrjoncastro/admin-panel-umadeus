@@ -4,18 +4,18 @@
 const withOpacityValue = (variable) => {
   return ({ opacityValue }) => {
     if (opacityValue !== undefined) {
-      return `hsl(var(${variable}) / ${opacityValue})`;
+      return `hsl(var(${variable}) / ${opacityValue})`
     }
-    return `hsl(var(${variable}))`;
-  };
-};
+    return `hsl(var(${variable}))`
+  }
+}
 
 module.exports = {
   darkMode: 'class',
   content: [
-    "./app/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
-    "./pages/**/*.{js,ts,jsx,tsx}",
+    './app/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+    './pages/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     extend: {
@@ -33,30 +33,30 @@ module.exports = {
           900: withOpacityValue('--primary-900'),
         },
         error: {
-          DEFAULT: "#dc2626",
-          50: "#fef2f2",
-          100: "#fee2e2",
-          200: "#fecaca",
-          300: "#fca5a5",
-          400: "#f87171",
-          500: "#ef4444",
-          600: "#dc2626",
-          700: "#b91c1c",
-          800: "#991b1b",
-          900: "#7f1d1d",
+          DEFAULT: '#dc2626',
+          50: '#fef2f2',
+          100: '#fee2e2',
+          200: '#fecaca',
+          300: '#fca5a5',
+          400: '#f87171',
+          500: '#ef4444',
+          600: '#dc2626',
+          700: '#b91c1c',
+          800: '#991b1b',
+          900: '#7f1d1d',
         },
         neutral: {
-          50: "#FAFAFA",
-          100: "#dcdcdc",
-          200: "#d3d3d3",
-          300: "#b3b3b3",
-          400: "#9ca3af",
-          500: "#6b7280",
-          600: "#4b5563",
-          700: "#374151",
-          800: "#1a1b18",
-          900: "#1e2019",
-          950: "#0c0d0a",
+          50: '#FAFAFA',
+          100: '#dcdcdc',
+          200: '#d3d3d3',
+          300: '#b3b3b3',
+          400: '#9ca3af',
+          500: '#6b7280',
+          600: '#4b5563',
+          700: '#374151',
+          800: '#1a1b18',
+          900: '#1e2019',
+          950: '#0c0d0a',
         },
       },
       fontFamily: {
@@ -65,4 +65,4 @@ module.exports = {
     },
   },
   plugins: [],
-};
+}

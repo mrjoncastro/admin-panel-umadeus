@@ -10,8 +10,8 @@ describe('TenantProvider SSR', () => {
         React.createElement(
           TenantProvider,
           null,
-          React.createElement('div', null, 'SSR')
-        )
+          React.createElement('div', null, 'SSR'),
+        ),
       )
     expect(render).not.toThrow()
   })

@@ -1,50 +1,50 @@
-"use client";
+'use client'
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import LoadingOverlay from "@/components/organisms/LoadingOverlay";
-import { useAuthContext } from "@/lib/context/AuthContext";
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import LoadingOverlay from '@/components/organisms/LoadingOverlay'
+import { useAuthContext } from '@/lib/context/AuthContext'
 
 interface Statistics {
-  netValue: number;
+  netValue: number
 }
 
 export default function FinanceiroPage() {
-  const { tenantId, isLoggedIn } = useAuthContext();
-  const router = useRouter();
-  const [saldoDisponivel, setSaldoDisponivel] = useState<number | null>(null);
-  const [aLiberar, setALiberar] = useState<number | null>(null);
-  const [loading, setLoading] = useState(false);
+  const { tenantId, isLoggedIn } = useAuthContext()
+  const router = useRouter()
+  const [saldoDisponivel, setSaldoDisponivel] = useState<number | null>(null)
+  const [aLiberar, setALiberar] = useState<number | null>(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (!isLoggedIn) {
-      router.replace("/login");
-      return;
+      router.replace('/login')
+      return
     }
-    if (!tenantId) return;
+    if (!tenantId) return
     const fetchSaldo = async () => {
       try {
-        setLoading(true);
-        const saldoRes = await fetch(`/admin/api/asaas/saldo`);
+        setLoading(true)
+        const saldoRes = await fetch(`/admin/api/asaas/saldo`)
         if (saldoRes.ok) {
-          const data: { balance: number } = await saldoRes.json();
-          setSaldoDisponivel(data.balance);
+          const data: { balance: number } = await saldoRes.json()
+          setSaldoDisponivel(data.balance)
         }
         const statsRes = await fetch(
           `/admin/api/asaas/estatisticas?status=PENDING`,
-        );
+        )
         if (statsRes.ok) {
-          const stats: Statistics = await statsRes.json();
-          setALiberar(stats.netValue);
+          const stats: Statistics = await statsRes.json()
+          setALiberar(stats.netValue)
         }
       } catch (err) {
-        console.error("Erro ao obter saldo:", err);
+        console.error('Erro ao obter saldo:', err)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
-    fetchSaldo();
-  }, [tenantId, isLoggedIn, router]);
+    }
+    fetchSaldo()
+  }, [tenantId, isLoggedIn, router])
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">
@@ -57,15 +57,17 @@ export default function FinanceiroPage() {
             <div className="card p-6 text-center">
               <h3 className="text-lg font-semibold mb-2">Saldo Disponível</h3>
               <p className="text-xl font-bold">
-                {typeof saldoDisponivel === "number"
+                {typeof saldoDisponivel === 'number'
                   ? `R$ ${saldoDisponivel.toFixed(2)}`
-                  : "—"}
+                  : '—'}
               </p>
             </div>
             <div className="card p-6 text-center">
               <h3 className="text-lg font-semibold mb-2">A Liberar</h3>
               <p className="text-xl font-bold">
-                {typeof aLiberar === "number" ? `R$ ${aLiberar.toFixed(2)}` : "—"}
+                {typeof aLiberar === 'number'
+                  ? `R$ ${aLiberar.toFixed(2)}`
+                  : '—'}
               </p>
             </div>
           </div>
@@ -75,5 +77,5 @@ export default function FinanceiroPage() {
         </>
       )}
     </main>
-  );
+  )
 }

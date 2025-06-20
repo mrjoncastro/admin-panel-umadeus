@@ -16,13 +16,15 @@ describe('logConciliacaoErro', () => {
     const logPath = path.join(process.cwd(), 'logs', 'ERR_LOG.md')
     expect(appendFile).toHaveBeenCalledWith(
       logPath,
-      expect.stringContaining('teste')
+      expect.stringContaining('teste'),
     )
   })
 
   it('exibe erro no console quando falha', async () => {
     const err = new Error('fail')
-    ;(appendFile as unknown as { mockRejectedValue: (v: any) => void }).mockRejectedValue(err)
+    ;(
+      appendFile as unknown as { mockRejectedValue: (v: any) => void }
+    ).mockRejectedValue(err)
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     await logConciliacaoErro('teste')
     expect(consoleSpy).toHaveBeenCalledWith('Falha ao registrar ERR_LOG', err)

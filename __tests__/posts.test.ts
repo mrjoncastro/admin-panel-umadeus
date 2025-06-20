@@ -7,8 +7,8 @@ import { getRecentPostsPB } from '../lib/posts/getRecentPostsPB'
 function createMockPb(data: any[]) {
   return {
     collection: vi.fn(() => ({
-      getFullList: vi.fn().mockResolvedValue(data)
-    }))
+      getFullList: vi.fn().mockResolvedValue(data),
+    })),
   } as unknown as PocketBase
 }
 
@@ -16,7 +16,7 @@ describe('posts utilities with PocketBase', () => {
   it('listPosts consulta colecao e mapeia campos', async () => {
     const items = [
       { title: 'B', slug: 'b', summary: '', date: '2024-01-02' },
-      { title: 'A', slug: 'a', summary: '', date: '2024-02-01' }
+      { title: 'A', slug: 'a', summary: '', date: '2024-02-01' },
     ]
     const pb = createMockPb(items)
     const posts = await listPosts(pb)
@@ -33,16 +33,21 @@ describe('posts utilities with PocketBase', () => {
     expect(pbMock.collection).toHaveBeenCalledWith('posts')
     expect(getList).toHaveBeenCalledWith(1, 3, { sort: '-date' })
     expect(recent).toEqual(items)
-  it('getRecentPosts limita a 3', async () => {
-    const data = Array.from({ length: 5 }, (_, i) => ({ title: `p${i}`, slug: `p${i}`, summary: '', date: `2024-0${i+1}-01` }))
-    const pb = createMockPb(data)
-    const recent = await getRecentPosts(pb)
-    expect(recent).toHaveLength(3)
-  })
+    it('getRecentPosts limita a 3', async () => {
+      const data = Array.from({ length: 5 }, (_, i) => ({
+        title: `p${i}`,
+        slug: `p${i}`,
+        summary: '',
+        date: `2024-0${i + 1}-01`,
+      }))
+      const pb = createMockPb(data)
+      const recent = await getRecentPosts(pb)
+      expect(recent).toHaveLength(3)
+    })
 
-  it('getRelatedPosts fornece proximo post', () => {
-    const { nextPost } = getRelatedPosts('primeiro-post', 'Geral')
-    expect(nextPost?.slug).toBe('segundo-post')
+    it('getRelatedPosts fornece proximo post', () => {
+      const { nextPost } = getRelatedPosts('primeiro-post', 'Geral')
+      expect(nextPost?.slug).toBe('segundo-post')
+    })
   })
 })
- })

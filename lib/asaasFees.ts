@@ -1,6 +1,11 @@
 export type PaymentMethod = 'pix' | 'boleto' | 'credito'
 
-interface FeeRange { min: number; max: number; fixed: number; percent: number }
+interface FeeRange {
+  min: number
+  max: number
+  fixed: number
+  percent: number
+}
 
 const feeTable: Record<PaymentMethod, FeeRange[]> = {
   pix: [{ min: 1, max: 1, fixed: 1.99, percent: 0 }],

@@ -1,9 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import { within, expect, fn } from 'storybook/test';
-import ModalEditarPedido from '../app/admin/pedidos/componentes/ModalEditarPedido';
-import { ThemeProvider } from '../lib/context/ThemeContext';
-import { Pedido } from '@/types';
-
+import type { Meta, StoryObj } from '@storybook/nextjs'
+import { within, expect, fn } from 'storybook/test'
+import ModalEditarPedido from '../app/admin/pedidos/componentes/ModalEditarPedido'
+import { ThemeProvider } from '../lib/context/ThemeContext'
+import { Pedido } from '@/types'
 
 const meta = {
   title: 'Admin/ModalEditarPedido',
@@ -33,14 +32,14 @@ const meta = {
     onSave: fn(),
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof ModalEditarPedido>;
+} satisfies Meta<typeof ModalEditarPedido>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(canvas.getByText(/Editar Pedido/i)).toBeInTheDocument();
+    const canvas = within(canvasElement)
+    await expect(canvas.getByText(/Editar Pedido/i)).toBeInTheDocument()
   },
-};
+}

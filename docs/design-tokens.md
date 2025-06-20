@@ -16,8 +16,8 @@ Este documento lista os tokens de design definidos em `app/globals.css` e como u
 
 ### Paleta de cores
 
-| Token         | Valor    |
-|---------------|---------|
+| Token         | Valor     |
+| ------------- | --------- |
 | `primary-600` | `#7c3aed` |
 | `error-600`   | `#dc2626` |
 | `neutral-100` | `#dcdcdc` |
@@ -66,8 +66,7 @@ Todos os componentes interativos utilizam classes globais para manter a
 uniformidade. As principais são:
 
 ```html
-<button class="btn btn-primary">Ação</button>
-<input class="input-base" />
+<button class="btn btn-primary">Ação</button> <input class="input-base" />
 ```
 
 Essas classes aplicam cores `primary-600` e foco `error-600` definidos em

@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { Instagram, MessageCircle } from "lucide-react";
-import { useAuthContext } from "@/lib/context/AuthContext";
+import Link from 'next/link'
+import { Instagram, MessageCircle } from 'lucide-react'
+import { useAuthContext } from '@/lib/context/AuthContext'
 
 export default function Footer() {
-  const { isLoggedIn } = useAuthContext();
+  const { isLoggedIn } = useAuthContext()
 
   return (
     <footer className="bg-gray-900 text-gray-300 pt-10 pb-6">
@@ -86,7 +86,7 @@ export default function Footer() {
             reservados.
           </p>
           <p>
-            Desenvolvido por{" "}
+            Desenvolvido por{' '}
             <Link
               href="https://m24saude.com.br"
               className="underline hover:text-white transition"
@@ -99,5 +99,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  );
+  )
 }

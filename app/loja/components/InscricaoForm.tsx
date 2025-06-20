@@ -1,129 +1,132 @@
-"use client";
+'use client'
 
-import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import { useToast } from "@/lib/context/ToastContext";
-import Spinner from "@/components/atoms/Spinner";
-
+import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuthContext } from '@/lib/context/AuthContext'
+import { useToast } from '@/lib/context/ToastContext'
+import Spinner from '@/components/atoms/Spinner'
 
 const CEP_BASE_URL =
-  process.env.NEXT_PUBLIC_VIA_CEP_URL || process.env.NEXT_PUBLIC_BRASILAPI_URL || "";
+  process.env.NEXT_PUBLIC_VIA_CEP_URL ||
+  process.env.NEXT_PUBLIC_BRASILAPI_URL ||
+  ''
 
 interface Campo {
-  id: string;
-  nome: string;
+  id: string
+  nome: string
 }
 
 interface InscricaoFormProps {
-  eventoId: string;
+  eventoId: string
 }
 
 export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
-  const { user } = useAuthContext();
-  const { showSuccess, showError } = useToast();
-  const firstName = user?.nome?.split(" ")[0] || "";
-  const lastName = user?.nome?.split(" ").slice(1).join(" ") || "";
+  const { user } = useAuthContext()
+  const { showSuccess, showError } = useToast()
+  const firstName = user?.nome?.split(' ')[0] || ''
+  const lastName = user?.nome?.split(' ').slice(1).join(' ') || ''
   const [status, setStatus] = useState<
-    "idle" | "sending" | "success" | "error"
-  >("idle");
-  const [campos, setCampos] = useState<Campo[]>([]);
-  const [cep, setCep] = useState(String(user?.cep ?? ""));
-  const [endereco, setEndereco] = useState(String(user?.endereco ?? ""));
-  const [cidade, setCidade] = useState(String(user?.cidade ?? ""));
-  const [estado, setEstado] = useState(String(user?.estado ?? ""));
-  const [bairro, setBairro] = useState(String(user?.bairro ?? ""));
-  const formRef = useRef<HTMLFormElement>(null);
+    'idle' | 'sending' | 'success' | 'error'
+  >('idle')
+  const [campos, setCampos] = useState<Campo[]>([])
+  const [cep, setCep] = useState(String(user?.cep ?? ''))
+  const [endereco, setEndereco] = useState(String(user?.endereco ?? ''))
+  const [cidade, setCidade] = useState(String(user?.cidade ?? ''))
+  const [estado, setEstado] = useState(String(user?.estado ?? ''))
+  const [bairro, setBairro] = useState(String(user?.bairro ?? ''))
+  const formRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
-    fetch("/api/campos")
+    fetch('/api/campos')
       .then((r) => (r.ok ? r.json() : []))
       .then((data) => (Array.isArray(data) ? setCampos(data) : setCampos([])))
-      .catch((err) => console.error("Erro ao carregar campos:", err));
-  }, []);
+      .catch((err) => console.error('Erro ao carregar campos:', err))
+  }, [])
 
   useEffect(() => {
-    if (!user || !formRef.current) return;
-    const form = formRef.current;
+    if (!user || !formRef.current) return
+    const form = formRef.current
     const setVal = (name: string, value: string) => {
-      const el = form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | null;
+      const el = form.elements.namedItem(name) as
+        | HTMLInputElement
+        | HTMLSelectElement
+        | null
       if (el && !el.value) {
-        el.value = value;
+        el.value = value
       }
-    };
-    setVal("user_first_name", firstName);
-    setVal("user_last_name", lastName);
-    setVal("user_email", String(user.email ?? ""));
-    setVal("user_phone", String(user.telefone ?? ""));
-    setVal("user_cpf", String(user.cpf ?? ""));
-    setVal("user_birth_date", String(user.data_nascimento ?? ""));
-    setCep(String(user.cep ?? ""));
-    setEndereco(String(user.endereco ?? ""));
-    setCidade(String(user.cidade ?? ""));
-    setEstado(String(user.estado ?? ""));
-    setBairro(String(user.bairro ?? ""));
-    setVal("user_number", String(user.numero ?? ""));
-    setVal("user_complement", String(user.complemento ?? ""));
-    setVal("user_neighborhood", String(user.bairro ?? ""));
-  }, [user, firstName, lastName]);
+    }
+    setVal('user_first_name', firstName)
+    setVal('user_last_name', lastName)
+    setVal('user_email', String(user.email ?? ''))
+    setVal('user_phone', String(user.telefone ?? ''))
+    setVal('user_cpf', String(user.cpf ?? ''))
+    setVal('user_birth_date', String(user.data_nascimento ?? ''))
+    setCep(String(user.cep ?? ''))
+    setEndereco(String(user.endereco ?? ''))
+    setCidade(String(user.cidade ?? ''))
+    setEstado(String(user.estado ?? ''))
+    setBairro(String(user.bairro ?? ''))
+    setVal('user_number', String(user.numero ?? ''))
+    setVal('user_complement', String(user.complemento ?? ''))
+    setVal('user_neighborhood', String(user.bairro ?? ''))
+  }, [user, firstName, lastName])
 
   useEffect(() => {
-    const cleanCep = cep.replace(/\D/g, "");
-    if (cleanCep.length !== 8 || !CEP_BASE_URL) return;
+    const cleanCep = cep.replace(/\D/g, '')
+    if (cleanCep.length !== 8 || !CEP_BASE_URL) return
     const url = process.env.NEXT_PUBLIC_VIA_CEP_URL
       ? `${CEP_BASE_URL}/${cleanCep}/json/`
-      : `${CEP_BASE_URL}/cep/v1/${cleanCep}`;
+      : `${CEP_BASE_URL}/cep/v1/${cleanCep}`
     fetch(url)
       .then(async (res) => {
         if (!res.ok) {
-          throw new Error("CEP not found");
+          throw new Error('CEP not found')
         }
-        return res.json();
+        return res.json()
       })
       .then((data) => {
-        setEndereco(data.logradouro || data.street || "");
-        setCidade(data.localidade || data.city || "");
-        setEstado(data.uf || data.state || "");
-        setBairro(data.bairro || data.neighborhood || "");
+        setEndereco(data.logradouro || data.street || '')
+        setCidade(data.localidade || data.city || '')
+        setEstado(data.uf || data.state || '')
+        setBairro(data.bairro || data.neighborhood || '')
       })
-      .catch(() => console.warn("Erro ao buscar o CEP"));
-  }, [cep]);
+      .catch(() => console.warn('Erro ao buscar o CEP'))
+  }, [cep])
 
-  const router = useRouter();
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setStatus("sending");
+    e.preventDefault()
+    setStatus('sending')
 
-    const form = e.currentTarget;
-    const data = Object.fromEntries(new FormData(form));
+    const form = e.currentTarget
+    const data = Object.fromEntries(new FormData(form))
 
     try {
-      const response = await fetch("/loja/api/inscricoes", {
-        method: "POST",
+      const response = await fetch('/loja/api/inscricoes', {
+        method: 'POST',
         body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" },
-      });
+        headers: { 'Content-Type': 'application/json' },
+      })
 
       if (!response.ok) {
-        throw new Error("Falha ao salvar inscrição");
+        throw new Error('Falha ao salvar inscrição')
       }
 
-      setStatus("success");
-      showSuccess("Inscrição registrada! Em breve entraremos em contato.");
+      setStatus('success')
+      showSuccess('Inscrição registrada! Em breve entraremos em contato.')
       setTimeout(() => {
-        router.push("/loja/inscricoes/confirmacao");
-      }, 500);
+        router.push('/loja/inscricoes/confirmacao')
+      }, 500)
     } catch (err) {
-      console.warn("Erro ao enviar inscrição:", err);
-      setStatus("error");
-      showError("Erro ao enviar a inscrição. Tente novamente.");
+      console.warn('Erro ao enviar inscrição:', err)
+      setStatus('error')
+      showError('Erro ao enviar a inscrição. Tente novamente.')
     }
-  };
+  }
 
   return (
     <main className="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-8 my-10 font-sans text-gray-800">
-
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
         <input type="hidden" name="evento" value={eventoId} />
         <div className="grid md:grid-cols-2 gap-10">
@@ -170,7 +173,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                     name="user_email"
                     required
                     className="input-base"
-                    defaultValue={String(user?.email ?? "")}
+                    defaultValue={String(user?.email ?? '')}
                   />
                 </div>
                 <div className="flex-1">
@@ -182,7 +185,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                     name="user_phone"
                     required
                     className="input-base"
-                    defaultValue={String(user?.telefone ?? "")}
+                    defaultValue={String(user?.telefone ?? '')}
                   />
                 </div>
               </div>
@@ -194,7 +197,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                     name="user_cpf"
                     required
                     className="input-base"
-                    defaultValue={String(user?.cpf ?? "")}
+                    defaultValue={String(user?.cpf ?? '')}
                   />
                 </div>
                 <div className="flex-1">
@@ -206,7 +209,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                     name="user_birth_date"
                     required
                     className="input-base"
-                    defaultValue={String(user?.data_nascimento ?? "")}
+                    defaultValue={String(user?.data_nascimento ?? '')}
                   />
                 </div>
               </div>
@@ -276,7 +279,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                     name="user_number"
                     required
                     className="input-base"
-                    defaultValue={String(user?.numero ?? "")}
+                    defaultValue={String(user?.numero ?? '')}
                   />
                 </div>
                 <div className="flex-1">
@@ -286,7 +289,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                   <input
                     name="user_complement"
                     className="input-base"
-                    defaultValue={String(user?.complemento ?? "")}
+                    defaultValue={String(user?.complemento ?? '')}
                   />
                 </div>
               </div>
@@ -331,33 +334,33 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                 >
                   <option value="">Selecione</option>
                   {[
-                    "AC",
-                    "AL",
-                    "AP",
-                    "AM",
-                    "BA",
-                    "CE",
-                    "DF",
-                    "ES",
-                    "GO",
-                    "MA",
-                    "MT",
-                    "MS",
-                    "MG",
-                    "PA",
-                    "PB",
-                    "PR",
-                    "PE",
-                    "PI",
-                    "RJ",
-                    "RN",
-                    "RS",
-                    "RO",
-                    "RR",
-                    "SC",
-                    "SP",
-                    "SE",
-                    "TO",
+                    'AC',
+                    'AL',
+                    'AP',
+                    'AM',
+                    'BA',
+                    'CE',
+                    'DF',
+                    'ES',
+                    'GO',
+                    'MA',
+                    'MT',
+                    'MS',
+                    'MG',
+                    'PA',
+                    'PB',
+                    'PR',
+                    'PE',
+                    'PI',
+                    'RJ',
+                    'RN',
+                    'RS',
+                    'RO',
+                    'RR',
+                    'SC',
+                    'SP',
+                    'SE',
+                    'TO',
                   ].map((uf) => (
                     <option key={uf} value={uf}>
                       {uf}
@@ -387,16 +390,15 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
         <button
           type="submit"
           className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-6 rounded-lg uppercase transition"
-          disabled={status === "sending"}
+          disabled={status === 'sending'}
         >
-          {status === "sending" ? (
+          {status === 'sending' ? (
             <Spinner className="w-4 h-4" />
           ) : (
-            "Enviar inscrição"
+            'Enviar inscrição'
           )}
         </button>
       </form>
     </main>
-  );
+  )
 }
-

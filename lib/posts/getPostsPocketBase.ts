@@ -12,15 +12,17 @@ export interface PostRecord {
 }
 
 export async function listPosts(pb: PocketBase = createPocketBase()) {
-  const records = await pb.collection('posts').getFullList<PostRecord>({ sort: '-date' })
-  return records.map(r => ({
+  const records = await pb
+    .collection('posts')
+    .getFullList<PostRecord>({ sort: '-date' })
+  return records.map((r) => ({
     title: r.title,
     slug: r.slug,
     summary: r.summary,
     date: r.date,
     thumbnail: r.thumbnail ?? null,
     category: r.category ?? null,
-    keywords: r.keywords ?? []
+    keywords: r.keywords ?? [],
   }))
 }
 

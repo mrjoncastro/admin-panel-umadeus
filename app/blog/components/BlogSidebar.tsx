@@ -1,27 +1,30 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import Image from "next/image";
-import { isExternalUrl } from "@/utils/isExternalUrl";
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { getPostsClientPB, type PostClientRecord } from "@/lib/posts/getPostsClientPB";
+import Link from 'next/link'
+import Image from 'next/image'
+import { isExternalUrl } from '@/utils/isExternalUrl'
+import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import {
+  getPostsClientPB,
+  type PostClientRecord,
+} from '@/lib/posts/getPostsClientPB'
 
-type Post = PostClientRecord;
+type Post = PostClientRecord
 
 export default function BlogSidebar() {
-  const [popular, setPopular] = useState<Post[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
-  const searchParams = useSearchParams();
-  const current = searchParams.get("categoria")?.toLowerCase();
+  const [popular, setPopular] = useState<Post[]>([])
+  const [categories, setCategories] = useState<string[]>([])
+  const searchParams = useSearchParams()
+  const current = searchParams.get('categoria')?.toLowerCase()
 
   useEffect(() => {
     getPostsClientPB().then((posts: Post[]) => {
-      setPopular(posts.slice(0, 3));
-      const unique = [...new Set(posts.map((p) => p.category).filter(Boolean))];
-      setCategories(unique as string[]);
-    });
-  }, [setPopular, setCategories]);
+      setPopular(posts.slice(0, 3))
+      const unique = [...new Set(posts.map((p) => p.category).filter(Boolean))]
+      setCategories(unique as string[])
+    })
+  }, [setPopular, setCategories])
 
   return (
     <aside className="w-full lg:w-1/3 mt-16 lg:mt-0 lg:pl-10 space-y-12">
@@ -48,7 +51,9 @@ export default function BlogSidebar() {
                 href={`?categoria=${encodeURIComponent(cat.toLowerCase())}`}
                 scroll={false}
                 className={`hover:underline ${
-                  current === cat.toLowerCase() ? "font-bold text-primary-600" : ""
+                  current === cat.toLowerCase()
+                    ? 'font-bold text-primary-600'
+                    : ''
                 }`}
               >
                 {cat}
@@ -58,7 +63,7 @@ export default function BlogSidebar() {
         </ul>
         {current && (
           <button
-            onClick={() => window.history.pushState({}, "", "/blog")}
+            onClick={() => window.history.pushState({}, '', '/blog')}
             className="mt-4 text-sm text-neutral-500 hover:underline"
           >
             Limpar filtro
@@ -72,8 +77,8 @@ export default function BlogSidebar() {
         <ul className="space-y-4">
           {popular.map((post) => (
             <li key={post.slug} className="flex items-center gap-3">
-              {post.thumbnail && (
-                isExternalUrl(post.thumbnail) ? (
+              {post.thumbnail &&
+                (isExternalUrl(post.thumbnail) ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={post.thumbnail}
@@ -88,8 +93,7 @@ export default function BlogSidebar() {
                     height={48}
                     className="w-12 h-12 object-cover rounded-md"
                   />
-                )
-              )}
+                ))}
               <Link
                 href={`/blog/post/${post.slug}`}
                 className="text-sm text-neutral-800 hover:underline"
@@ -101,5 +105,5 @@ export default function BlogSidebar() {
         </ul>
       </div>
     </aside>
-  );
+  )
 }

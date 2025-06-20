@@ -11,7 +11,7 @@ describe('filtrarProdutos', () => {
   it('remove produtos inativos', () => {
     const filtrados = filtrarProdutos(produtos)
     expect(filtrados).toHaveLength(2)
-    expect(filtrados.find(p => p.id === '2')).toBeUndefined()
+    expect(filtrados.find((p) => p.id === '2')).toBeUndefined()
   })
 
   it('filtra por categoria quando informada', () => {

@@ -1,87 +1,87 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { useToast } from "@/lib/context/ToastContext";
-import Link from "next/link";
-import type { Evento } from "@/types";
-import LoadingOverlay from "@/components/organisms/LoadingOverlay";
+import { useEffect, useState } from 'react'
+import { useToast } from '@/lib/context/ToastContext'
+import Link from 'next/link'
+import type { Evento } from '@/types'
+import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 
 interface Usuario {
-  id: string;
-  nome: string;
-  email: string;
-  role: "coordenador" | "lider" | "usuario";
+  id: string
+  nome: string
+  email: string
+  role: 'coordenador' | 'lider' | 'usuario'
   expand?: {
     campo?: {
-      nome: string;
-    };
-  };
+      nome: string
+    }
+  }
 }
 
 export default function UsuariosPage() {
-  const { showError } = useToast();
-  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [eventos, setEventos] = useState<Evento[]>([]);
-  const [eventoId, setEventoId] = useState("");
+  const { showError } = useToast()
+  const [usuarios, setUsuarios] = useState<Usuario[]>([])
+  const [loading, setLoading] = useState(true)
+  const [eventos, setEventos] = useState<Evento[]>([])
+  const [eventoId, setEventoId] = useState('')
 
   useEffect(() => {
     async function fetchUsuarios() {
       try {
-        const token = localStorage.getItem("pb_token");
-        const user = localStorage.getItem("pb_user");
+        const token = localStorage.getItem('pb_token')
+        const user = localStorage.getItem('pb_user')
 
-        const res = await fetch("/admin/api/usuarios", {
+        const res = await fetch('/admin/api/usuarios', {
           headers: {
             Authorization: `Bearer ${token}`,
-            "X-PB-User": user ?? "",
+            'X-PB-User': user ?? '',
           },
-        });
+        })
 
         if (!res.ok) {
-          const erro = await res.json();
-          showError("Erro ao buscar usuários: " + erro.error);
-          return;
+          const erro = await res.json()
+          showError('Erro ao buscar usuários: ' + erro.error)
+          return
         }
 
-        const data = await res.json();
-        setUsuarios(data);
+        const data = await res.json()
+        setUsuarios(data)
       } catch (error) {
-        console.error("❌ Erro ao carregar usuários:", error);
-        showError("Erro inesperado ao carregar usuários.");
+        console.error('❌ Erro ao carregar usuários:', error)
+        showError('Erro inesperado ao carregar usuários.')
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     }
 
-    fetchUsuarios();
-  }, [showError]);
+    fetchUsuarios()
+  }, [showError])
 
   useEffect(() => {
     async function fetchEventos() {
       try {
-        const token = localStorage.getItem("pb_token");
-        const user = localStorage.getItem("pb_user");
-        const res = await fetch("/admin/api/eventos", {
+        const token = localStorage.getItem('pb_token')
+        const user = localStorage.getItem('pb_user')
+        const res = await fetch('/admin/api/eventos', {
           headers: {
             Authorization: `Bearer ${token}`,
-            "X-PB-User": user ?? "",
+            'X-PB-User': user ?? '',
           },
-        });
-        if (!res.ok) return;
-        const data = await res.json();
+        })
+        if (!res.ok) return
+        const data = await res.json()
         const ativos = Array.isArray(data)
-          ? data.filter((e: Evento) => e.status !== "realizado")
-          : [];
-        setEventos(ativos);
-        if (ativos.length > 0) setEventoId(ativos[0].id);
+          ? data.filter((e: Evento) => e.status !== 'realizado')
+          : []
+        setEventos(ativos)
+        if (ativos.length > 0) setEventoId(ativos[0].id)
       } catch (err) {
-        console.error("Erro ao carregar eventos:", err);
+        console.error('Erro ao carregar eventos:', err)
       }
     }
 
-    fetchEventos();
-  }, []);
+    fetchEventos()
+  }, [])
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
@@ -129,9 +129,9 @@ export default function UsuariosPage() {
                   <td className="font-medium">{usuario.nome}</td>
                   <td>{usuario.email}</td>
                   <td className="capitalize">{usuario.role}</td>
-                  <td>{usuario.expand?.campo?.nome ?? "—"}</td>
+                  <td>{usuario.expand?.campo?.nome ?? '—'}</td>
                   <td>
-                    {usuario.role === "lider" ? (
+                    {usuario.role === 'lider' ? (
                       eventos.length > 0 ? (
                         <Link
                           href={`/inscricoes/${usuario.id}/${eventoId}`}
@@ -156,5 +156,5 @@ export default function UsuariosPage() {
         </div>
       )}
     </main>
-  );
+  )
 }

@@ -1,101 +1,101 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { useToast } from "@/lib/context/ToastContext";
+import { useState } from 'react'
+import { useToast } from '@/lib/context/ToastContext'
 
 // ✅ Validação formal de CPF
 function validarCPF(cpf: string): boolean {
-  const str = cpf.replace(/\D/g, "");
-  if (str.length !== 11 || /^(\d)\1+$/.test(str)) return false;
+  const str = cpf.replace(/\D/g, '')
+  if (str.length !== 11 || /^(\d)\1+$/.test(str)) return false
 
-  let soma = 0;
-  for (let i = 0; i < 9; i++) soma += parseInt(str.charAt(i)) * (10 - i);
-  let resto = (soma * 10) % 11;
-  if (resto === 10 || resto === 11) resto = 0;
-  if (resto !== parseInt(str.charAt(9))) return false;
+  let soma = 0
+  for (let i = 0; i < 9; i++) soma += parseInt(str.charAt(i)) * (10 - i)
+  let resto = (soma * 10) % 11
+  if (resto === 10 || resto === 11) resto = 0
+  if (resto !== parseInt(str.charAt(9))) return false
 
-  soma = 0;
-  for (let i = 0; i < 10; i++) soma += parseInt(str.charAt(i)) * (11 - i);
-  resto = (soma * 10) % 11;
-  if (resto === 10 || resto === 11) resto = 0;
+  soma = 0
+  for (let i = 0; i < 10; i++) soma += parseInt(str.charAt(i)) * (11 - i)
+  resto = (soma * 10) % 11
+  if (resto === 10 || resto === 11) resto = 0
 
-  return resto === parseInt(str.charAt(10));
+  return resto === parseInt(str.charAt(10))
 }
 
 export default function RecuperarPagamentoPage() {
-  const [cpfOuTelefone, setCpfOuTelefone] = useState("");
-  const [link, setLink] = useState("");
-  const [carregando, setCarregando] = useState(false);
-  const { showSuccess, showError } = useToast();
+  const [cpfOuTelefone, setCpfOuTelefone] = useState('')
+  const [link, setLink] = useState('')
+  const [carregando, setCarregando] = useState(false)
+  const { showSuccess, showError } = useToast()
 
   const aplicarMascara = (valor: string): string => {
-    const numeros = valor.replace(/\D/g, "");
+    const numeros = valor.replace(/\D/g, '')
 
     if (validarCPF(numeros)) {
       return numeros
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
     }
 
     if (numeros.length <= 11) {
       return numeros
-        .replace(/^(\d{2})(\d)/, "($1) $2")
-        .replace(/(\d{5})(\d)/, "$1-$2")
-        .replace(/(-\d{4})\d+?$/, "$1");
+        .replace(/^(\d{2})(\d)/, '($1) $2')
+        .replace(/(\d{5})(\d)/, '$1-$2')
+        .replace(/(-\d{4})\d+?$/, '$1')
     }
 
-    return valor;
-  };
+    return valor
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valor = e.target.value;
-    setCpfOuTelefone(aplicarMascara(valor));
-  };
+    const valor = e.target.value
+    setCpfOuTelefone(aplicarMascara(valor))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLink("");
-    setCarregando(true);
+    e.preventDefault()
+    setLink('')
+    setCarregando(true)
 
-    const numeros = cpfOuTelefone.replace(/\D/g, "");
-    const isCPFValido = validarCPF(numeros);
+    const numeros = cpfOuTelefone.replace(/\D/g, '')
+    const isCPFValido = validarCPF(numeros)
 
-    const payload = isCPFValido ? { cpf: numeros } : { telefone: numeros };
+    const payload = isCPFValido ? { cpf: numeros } : { telefone: numeros }
 
     try {
-      const res = await fetch("/admin/api/recuperar-link", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/admin/api/recuperar-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
-      });
+      })
 
-      const data = await res.json();
+      const data = await res.json()
 
       if (!res.ok) {
-        showError(data.error || "Erro ao buscar inscrição.");
-      } else if (data.status === "pago") {
-        showSuccess("Seu pagamento já foi confirmado.");
-      } else if (data.status === "cancelado") {
-        showError("Esse pedido foi cancelado.");
-      } else if (data.status === "recusado") {
+        showError(data.error || 'Erro ao buscar inscrição.')
+      } else if (data.status === 'pago') {
+        showSuccess('Seu pagamento já foi confirmado.')
+      } else if (data.status === 'cancelado') {
+        showError('Esse pedido foi cancelado.')
+      } else if (data.status === 'recusado') {
         showError(
-          "Sua inscrição foi recusada. Entre em contato com a liderança local."
-        );
-      } else if (data.status === "aguardando_confirmacao") {
+          'Sua inscrição foi recusada. Entre em contato com a liderança local.',
+        )
+      } else if (data.status === 'aguardando_confirmacao') {
         showSuccess(
-          "Sua inscrição aguarda a confirmação da liderança. Assim que for validada você receberá o link de pagamento."
-        );
-      } else if (data.status === "pendente" && data.link_pagamento) {
-        setLink(data.link_pagamento);
-        showSuccess("Link de pagamento recuperado.");
+          'Sua inscrição aguarda a confirmação da liderança. Assim que for validada você receberá o link de pagamento.',
+        )
+      } else if (data.status === 'pendente' && data.link_pagamento) {
+        setLink(data.link_pagamento)
+        showSuccess('Link de pagamento recuperado.')
       }
     } catch {
-      showError("Erro ao tentar recuperar o link.");
+      showError('Erro ao tentar recuperar o link.')
     } finally {
-      setCarregando(false);
+      setCarregando(false)
     }
-  };
+  }
 
   return (
     <div className="max-w-md mx-auto p-6 mt-12 bg-white rounded-xl shadow-lg text-gray-700 font-sans">
@@ -122,7 +122,7 @@ export default function RecuperarPagamentoPage() {
           disabled={carregando}
           className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 rounded-md transition"
         >
-          {carregando ? "Verificando..." : "Recuperar Link"}
+          {carregando ? 'Verificando...' : 'Recuperar Link'}
         </button>
       </form>
 
@@ -139,5 +139,5 @@ export default function RecuperarPagamentoPage() {
         </div>
       )}
     </div>
-  );
+  )
 }

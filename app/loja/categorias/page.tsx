@@ -1,20 +1,20 @@
-import createPocketBase from "@/lib/pocketbase";
-import { getTenantFromHost } from "@/lib/getTenantFromHost";
+import createPocketBase from '@/lib/pocketbase'
+import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic'
 
 interface Categoria {
-  id: string;
-  nome: string;
-  slug: string;
+  id: string
+  nome: string
+  slug: string
 }
 
 export default async function CategoriasPage() {
-  const pb = createPocketBase();
-  const tenantId = await getTenantFromHost();
+  const pb = createPocketBase()
+  const tenantId = await getTenantFromHost()
   const categorias: Categoria[] = await pb
-    .collection("categorias")
-    .getFullList({ sort: "nome", filter: `cliente='${tenantId}'` });
+    .collection('categorias')
+    .getFullList({ sort: 'nome', filter: `cliente='${tenantId}'` })
 
   return (
     <main className="p-8 text-platinum font-sans">
@@ -32,5 +32,5 @@ export default async function CategoriasPage() {
         ))}
       </ul>
     </main>
-  );
+  )
 }

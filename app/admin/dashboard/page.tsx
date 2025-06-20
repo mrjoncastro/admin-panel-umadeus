@@ -1,53 +1,51 @@
-"use client";
+'use client'
 
-import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
-import { useEffect, useRef, useState } from "react";
-import type { Inscricao, Pedido } from "@/types";
-import DashboardResumo from "./components/DashboardResumo";
-import DashboardAnalytics from "../components/DashboardAnalytics";
-import LoadingOverlay from "@/components/organisms/LoadingOverlay";
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
+import { useEffect, useRef, useState } from 'react'
+import type { Inscricao, Pedido } from '@/types'
+import DashboardResumo from './components/DashboardResumo'
+import DashboardAnalytics from '../components/DashboardAnalytics'
+import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 
 export default function DashboardPage() {
-  const { user, pb, authChecked } = useAuthGuard(["coordenador", "lider"]);
-  const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
-  const [pedidos, setPedidos] = useState<Pedido[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [filtroStatus, setFiltroStatus] = useState("pago");
-  const isMounted = useRef(true);
+  const { user, pb, authChecked } = useAuthGuard(['coordenador', 'lider'])
+  const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
+  const [pedidos, setPedidos] = useState<Pedido[]>([])
+  const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [filtroStatus, setFiltroStatus] = useState('pago')
+  const isMounted = useRef(true)
 
   useEffect(() => {
-    if (!authChecked || !user?.id || !user?.role) return;
-    const controller = new AbortController();
-    const signal = controller.signal;
+    if (!authChecked || !user?.id || !user?.role) return
+    const controller = new AbortController()
+    const signal = controller.signal
 
     const fetchData = async () => {
       try {
-        const expandedUser = await pb.collection("usuarios").getOne(user.id, {
-          expand: "campo",
+        const expandedUser = await pb.collection('usuarios').getOne(user.id, {
+          expand: 'campo',
           signal,
-        });
+        })
 
-        const perPage = 50;
+        const perPage = 50
         const [inscricoesRes, pedidosRes] = await Promise.all([
+          pb.collection('inscricoes').getList(page, perPage, {
+            expand: 'campo,evento,criado_por,pedido',
+            signal,
+          }),
           pb
-            .collection("inscricoes")
-            .getList(page, perPage, {
-              expand: "campo,evento,criado_por,pedido",
-              signal,
-            }),
-          pb
-            .collection("pedidos")
-            .getList(page, perPage, { expand: "campo,criado_por", signal }),
-        ]);
-        const rawInscricoes = inscricoesRes.items;
-        const rawPedidos = pedidosRes.items;
-        setTotalPages(Math.max(inscricoesRes.totalPages, pedidosRes.totalPages));
+            .collection('pedidos')
+            .getList(page, perPage, { expand: 'campo,criado_por', signal }),
+        ])
+        const rawInscricoes = inscricoesRes.items
+        const rawPedidos = pedidosRes.items
+        setTotalPages(Math.max(inscricoesRes.totalPages, pedidosRes.totalPages))
 
-        if (!isMounted.current) return;
+        if (!isMounted.current) return
 
-        const campoId = expandedUser.expand?.campo?.id;
+        const campoId = expandedUser.expand?.campo?.id
 
         const allInscricoes: Inscricao[] = rawInscricoes.map((r) => ({
           id: r.id,
@@ -67,11 +65,11 @@ export default function DashboardPage() {
             criado_por: r.expand?.criado_por,
             pedido: r.expand?.pedido,
           },
-        }));
+        }))
 
         const allPedidos: Pedido[] = rawPedidos.map((r) => ({
           id: r.id,
-          id_inscricao:r.id_inscricao,
+          id_inscricao: r.id_inscricao,
           produto: r.produto,
           email: r.email,
           tamanho: r.tamanho,
@@ -90,32 +88,30 @@ export default function DashboardPage() {
             campo: r.expand?.campo,
             criado_por: r.expand?.criado_por,
           },
-        }));
+        }))
 
-        if (user.role === "coordenador") {
-          setInscricoes(allInscricoes);
-          setPedidos(allPedidos);
+        if (user.role === 'coordenador') {
+          setInscricoes(allInscricoes)
+          setPedidos(allPedidos)
         } else {
-          setInscricoes(allInscricoes.filter((i) => i.campo === campoId));
-          setPedidos(allPedidos.filter((p) => p.expand?.campo?.id === campoId));
+          setInscricoes(allInscricoes.filter((i) => i.campo === campoId))
+          setPedidos(allPedidos.filter((p) => p.expand?.campo?.id === campoId))
         }
       } catch (err: unknown) {
         if (err instanceof Error) {
-          console.error("Erro no dashboard:", err.message);
+          console.error('Erro no dashboard:', err.message)
         }
       } finally {
-        if (isMounted.current) setLoading(false);
+        if (isMounted.current) setLoading(false)
       }
-    };
+    }
 
-    fetchData();
+    fetchData()
     return () => {
-      isMounted.current = false;
-      controller.abort();
-    };
-  }, [authChecked, user?.id, user?.role, pb, page]);
-
-
+      isMounted.current = false
+      controller.abort()
+    }
+  }, [authChecked, user?.id, user?.role, pb, page])
 
   return (
     <main className="min-h-screen  p-4 md:p-6">
@@ -125,8 +121,8 @@ export default function DashboardPage() {
         <>
           <div className="mb-6 text-center dark:text-gray-100">
             <h1 className="heading">
-              Painel de{" "}
-              {user.role === "coordenador" ? "Coordenação" : "Liderança"}
+              Painel de{' '}
+              {user.role === 'coordenador' ? 'Coordenação' : 'Liderança'}
             </h1>
             <p className="text-sm text-gray-700 mt-1 dark:text-gray-100">
               Bem-vindo(a), <span className="font-semibold">{user.nome}</span>!
@@ -162,5 +158,5 @@ export default function DashboardPage() {
         </>
       )}
     </main>
-  );
+  )
 }

@@ -1,54 +1,54 @@
-"use client";
+'use client'
 
-import { useEffect, useRef, useState } from "react";
-import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
-import DashboardAnalytics from "../components/DashboardAnalytics";
-import type { Inscricao, Pedido } from "@/types";
-import LoadingOverlay from "@/components/organisms/LoadingOverlay";
+import { useEffect, useRef, useState } from 'react'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
+import DashboardAnalytics from '../components/DashboardAnalytics'
+import type { Inscricao, Pedido } from '@/types'
+import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 
 export default function LiderDashboardPage() {
-  const { user, pb, authChecked } = useAuthGuard(["lider"]);
+  const { user, pb, authChecked } = useAuthGuard(['lider'])
 
-  const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
-  const [pedidos, setPedidos] = useState<Pedido[]>([]);
+  const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
+  const [pedidos, setPedidos] = useState<Pedido[]>([])
   const [totais, setTotais] = useState({
     inscricoes: { pendente: 0, confirmado: 0, cancelado: 0 },
     pedidos: { pendente: 0, pago: 0, cancelado: 0, valorTotal: 0 },
-  });
+  })
 
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const isMounted = useRef(true);
+  const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const isMounted = useRef(true)
 
   useEffect(() => {
-    if (!authChecked || !user) return;
+    if (!authChecked || !user) return
 
-    const controller = new AbortController();
-    const signal = controller.signal;
+    const controller = new AbortController()
+    const signal = controller.signal
     const fetchDados = async () => {
-      pb.autoCancellation(false);
+      pb.autoCancellation(false)
       try {
-        const campoId = user.campo;
+        const campoId = user.campo
 
-        const perPage = 50;
+        const perPage = 50
         const [inscricoesRes, pedidosRes] = await Promise.all([
-          pb.collection("inscricoes").getList(page, perPage, {
+          pb.collection('inscricoes').getList(page, perPage, {
             filter: `campo="${campoId}" && cliente='${user?.cliente}'`,
-            expand: "campo,evento,criado_por,pedido",
+            expand: 'campo,evento,criado_por,pedido',
             signal,
           }),
-          pb.collection("pedidos").getList(page, perPage, {
+          pb.collection('pedidos').getList(page, perPage, {
             filter: `campo="${campoId}" && cliente='${user?.cliente}'`,
-            expand: "campo,criado_por",
+            expand: 'campo,criado_por',
             signal,
           }),
-        ]);
-        const rawInscricoes = inscricoesRes.items;
-        const rawPedidos = pedidosRes.items;
-        setTotalPages(Math.max(inscricoesRes.totalPages, pedidosRes.totalPages));
+        ])
+        const rawInscricoes = inscricoesRes.items
+        const rawPedidos = pedidosRes.items
+        setTotalPages(Math.max(inscricoesRes.totalPages, pedidosRes.totalPages))
 
-        if (!isMounted.current) return;
+        if (!isMounted.current) return
 
         const allInscricoes: Inscricao[] = rawInscricoes.map((r) => ({
           id: r.id,
@@ -68,7 +68,7 @@ export default function LiderDashboardPage() {
             criado_por: r.expand?.criado_por,
             pedido: r.expand?.pedido,
           },
-        }));
+        }))
 
         const allPedidos: Pedido[] = rawPedidos.map((r) => ({
           id: r.id,
@@ -91,43 +91,45 @@ export default function LiderDashboardPage() {
             campo: r.expand?.campo,
             criado_por: r.expand?.criado_por,
           },
-        }));
+        }))
 
-        setInscricoes(allInscricoes);
-        setPedidos(allPedidos);
+        setInscricoes(allInscricoes)
+        setPedidos(allPedidos)
 
         const resumoPedidos = {
-          pendente: allPedidos.filter((p) => p.status === "pendente").length,
-          pago: allPedidos.filter((p) => p.status === "pago").length,
-          cancelado: allPedidos.filter((p) => p.status === "cancelado").length,
+          pendente: allPedidos.filter((p) => p.status === 'pendente').length,
+          pago: allPedidos.filter((p) => p.status === 'pago').length,
+          cancelado: allPedidos.filter((p) => p.status === 'cancelado').length,
           valorTotal: allPedidos
-            .filter((p) => p.status === "pago")
+            .filter((p) => p.status === 'pago')
             .reduce((acc, p) => acc + Number(p.valor || 0), 0),
-        };
+        }
 
         const resumoInscricoes = {
-          pendente: allInscricoes.filter((i) => i.status === "pendente").length,
-          confirmado: allInscricoes.filter((i) => i.status === "confirmado").length,
-          cancelado: allInscricoes.filter((i) => i.status === "cancelado").length,
-        };
+          pendente: allInscricoes.filter((i) => i.status === 'pendente').length,
+          confirmado: allInscricoes.filter((i) => i.status === 'confirmado')
+            .length,
+          cancelado: allInscricoes.filter((i) => i.status === 'cancelado')
+            .length,
+        }
 
-        setTotais({ inscricoes: resumoInscricoes, pedidos: resumoPedidos });
+        setTotais({ inscricoes: resumoInscricoes, pedidos: resumoPedidos })
       } catch (err) {
-        console.error("Erro ao carregar dados:", err);
+        console.error('Erro ao carregar dados:', err)
       } finally {
-        if (isMounted.current) setLoading(false);
+        if (isMounted.current) setLoading(false)
       }
-    };
+    }
 
-    fetchDados();
+    fetchDados()
     return () => {
-      isMounted.current = false;
-      controller.abort();
-    };
-  }, [pb, authChecked, user, page]);
+      isMounted.current = false
+      controller.abort()
+    }
+  }, [pb, authChecked, user, page])
 
   if (loading) {
-    return <LoadingOverlay show={true} text="Carregando dashboard..." />;
+    return <LoadingOverlay show={true} text="Carregando dashboard..." />
   }
 
   return (
@@ -165,7 +167,9 @@ export default function LiderDashboardPage() {
         >
           Anterior
         </button>
-        <span className="text-sm">Página {page} de {totalPages}</span>
+        <span className="text-sm">
+          Página {page} de {totalPages}
+        </span>
         <button
           className="btn btn-primary px-3 py-1"
           disabled={page === totalPages}
@@ -175,5 +179,5 @@ export default function LiderDashboardPage() {
         </button>
       </div>
     </main>
-  );
+  )
 }

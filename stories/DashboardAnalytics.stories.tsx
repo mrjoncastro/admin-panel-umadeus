@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import { within, expect } from 'storybook/test';
-import DashboardAnalytics from '../app/admin/components/DashboardAnalytics';
-import { ThemeProvider } from '../lib/context/ThemeContext';
-import { Pedido } from '@/types';
+import type { Meta, StoryObj } from '@storybook/nextjs'
+import { within, expect } from 'storybook/test'
+import DashboardAnalytics from '../app/admin/components/DashboardAnalytics'
+import { ThemeProvider } from '../lib/context/ThemeContext'
+import { Pedido } from '@/types'
 
 const meta = {
   title: 'Admin/DashboardAnalytics',
@@ -20,16 +20,21 @@ const meta = {
     mostrarFinanceiro: { control: 'boolean' },
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof DashboardAnalytics>;
+} satisfies Meta<typeof DashboardAnalytics>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
     inscricoes: [
       { id: '1', created: '2024-01-01', nome: 'João', telefone: '11999999999' },
-      { id: '2', created: '2024-01-02', nome: 'Maria', telefone: '11988888888' },
+      {
+        id: '2',
+        created: '2024-01-02',
+        nome: 'Maria',
+        telefone: '11988888888',
+      },
     ],
     pedidos: [
       {
@@ -62,10 +67,12 @@ export const Default: Story = {
     mostrarFinanceiro: true,
   },
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(canvas.getByRole('button', { name: /exportar csv/i })).toBeInTheDocument();
+    const canvas = within(canvasElement)
+    await expect(
+      canvas.getByRole('button', { name: /exportar csv/i }),
+    ).toBeInTheDocument()
   },
-};
+}
 
 export const SemFinanceiro: Story = {
   args: {
@@ -84,4 +91,4 @@ export const SemFinanceiro: Story = {
     ],
     mostrarFinanceiro: false,
   },
-};
+}

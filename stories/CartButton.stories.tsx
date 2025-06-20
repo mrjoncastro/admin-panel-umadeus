@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import CartButton from '../app/components/CartButton';
-import { CartProvider } from '../lib/context/CartContext';
-import { ThemeProvider } from '../lib/context/ThemeContext';
+import type { Meta, StoryObj } from '@storybook/nextjs'
+import CartButton from '../app/components/CartButton'
+import { CartProvider } from '../lib/context/CartContext'
+import { ThemeProvider } from '../lib/context/ThemeContext'
 
 const meta = {
   title: 'Components/CartButton',
@@ -16,10 +16,10 @@ const meta = {
     ),
   ],
   tags: ['autodocs'],
-} satisfies Meta<typeof CartButton>;
+} satisfies Meta<typeof CartButton>
 
-export default meta;
+export default meta
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof meta>
 
-export const Default: Story = {};
+export const Default: Story = {}

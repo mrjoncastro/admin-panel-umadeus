@@ -7,13 +7,22 @@ const createMock = vi.fn().mockResolvedValue({ id: 'u1' })
 
 vi.mock('../../lib/pocketbase', () => ({
   default: vi.fn(() => ({
-    collection: () => ({ getOne: getOneMock, create: createMock })
-  }))
+    collection: () => ({ getOne: getOneMock, create: createMock }),
+  })),
 }))
 
 describe('POST /api/register', () => {
   it('retorna 404 se cliente nao encontrado', async () => {
-    const req = new Request('http://test', { method: 'POST', body: JSON.stringify({ nome:'n', email:'e', telefone:'t', password:'p', cliente:'1' }) })
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({
+        nome: 'n',
+        email: 'e',
+        telefone: 't',
+        password: 'p',
+        cliente: '1',
+      }),
+    })
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(404)
     const body = await res.json()
@@ -34,9 +43,12 @@ describe('POST /api/register', () => {
       cep: '000',
       cidade: 'c',
       password: 'p',
-      cliente: '1'
+      cliente: '1',
     }
-    const req = new Request('http://test', { method: 'POST', body: JSON.stringify(payload) })
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    })
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(201)
     expect(createMock).toHaveBeenCalledWith(expect.objectContaining(payload))

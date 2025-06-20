@@ -113,11 +113,11 @@ Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utiliza
 
 ### Inscrições x Compras na Loja
 
-* **Inscrições** – após um líder confirmar a inscrição pelo admin, o painel faz
+- **Inscrições** – após um líder confirmar a inscrição pelo admin, o painel faz
   uma chamada para `/admin/api/asaas` informando `valorBruto`, `paymentMethod`
   e `installments` para gerar o boleto e salvar o link de pagamento no pedido
   correspondente.
-* **Compras de Loja** – os produtos adicionados ao carrinho são processados na
+- **Compras de Loja** – os produtos adicionados ao carrinho são processados na
   página `/loja/checkout`. Esse fluxo usa `/admin/api/asaas/checkout` para
   criar um link de checkout do Asaas e redirecionar o usuário automaticamente.
 
@@ -232,6 +232,7 @@ Resposta de exemplo:
 ```json
 { "data": [] }
 ```
+
 Use `start` e `end` (AAAA-MM-DD) para filtrar o período. A rota usa
 `requireClienteFromHost` para obter a chave do cliente, define o `User-Agent`
 e consulta `${ASAAS_API_URL}/financialTransactions` com os parâmetros padrão
@@ -242,8 +243,6 @@ em `/admin/api/asaas/saldo`.
 
 O painel possui o modal `BankAccountModal` para registrar contas bancárias do cliente. O formulário possui campos **Nome do titular** (`ownerName`) e **Nome da conta** (`accountName`) para identificar a conta cadastrada. O campo **Banco** possui filtragem que consulta a BrasilAPI (`NEXT_PUBLIC_BRASILAPI_URL`); quando vazio, apresenta uma lista inicial com quinze bancos. Ao escolher um banco, `bankCode` e `ispb` são preenchidos automaticamente (este último fica oculto no formulário). Agora é possível alternar entre **Conta Bancária** e **PIX** por meio de abas com `SmoothTabs`. Quando selecionado PIX, o modal exibe os campos `pixAddressKey`, `pixAddressKeyType`, `description` e `scheduleDate`. O envio salva na coleção `clientes_pix` ou `clientes_contas_bancarias` conforme o tipo escolhido. A seleção de tipo de conta inclui a opção **Conta Salário**.
 Na página **Transferências**, um botão **Nova conta** abre este modal para facilitar o cadastro durante o fluxo de transferências. O `ModalAnimated` recebeu um `z-index` superior para evitar que elementos fixos como a navbar sobreponham o conteúdo do modal.
-
-
 
 ## Perfis de Acesso
 

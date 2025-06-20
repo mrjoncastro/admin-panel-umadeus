@@ -1,47 +1,47 @@
-"use client";
+'use client'
 
-import { useEffect, useRef, useCallback, useState } from "react";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import { calculateGross } from "@/lib/asaasFees";
-import ModalCategoria from "../categorias/ModalCategoria";
-import { useToast } from "@/lib/context/ToastContext";
-import { Button } from "@/components/atoms/Button";
-import { TextField } from "@/components/atoms/TextField";
+import { useEffect, useRef, useCallback, useState } from 'react'
+import { useAuthContext } from '@/lib/context/AuthContext'
+import { calculateGross } from '@/lib/asaasFees'
+import ModalCategoria from '../categorias/ModalCategoria'
+import { useToast } from '@/lib/context/ToastContext'
+import { Button } from '@/components/atoms/Button'
+import { TextField } from '@/components/atoms/TextField'
 
 export interface ModalProdutoProps<T extends Record<string, unknown>> {
-  open: boolean;
-  onClose: () => void;
-  onSubmit: (form: T) => void;
+  open: boolean
+  onClose: () => void
+  onSubmit: (form: T) => void
   initial?: {
-    nome?: string;
-    preco?: string;
-    imagens?: FileList | null;
-    tamanhos?: string[];
-    generos?: string[];
-    descricao?: string;
-    detalhes?: string;
-    checkout_url?: string;
-    categoria?: string;
-    ativo?: boolean;
-    cores?: string | string[];
-  };
+    nome?: string
+    preco?: string
+    imagens?: FileList | null
+    tamanhos?: string[]
+    generos?: string[]
+    descricao?: string
+    detalhes?: string
+    checkout_url?: string
+    categoria?: string
+    ativo?: boolean
+    cores?: string | string[]
+  }
 }
 
 interface Categoria {
-  id: string;
-  nome: string;
-  slug: string;
+  id: string
+  nome: string
+  slug: string
 }
 
 // Função para gerar slug automático
 function slugify(str: string) {
   return str
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove acentos
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)+/g, "")
-    .replace(/-+/g, "-");
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)+/g, '')
+    .replace(/-+/g, '-')
 }
 
 export function ModalProduto<T extends Record<string, unknown>>({
@@ -50,146 +50,146 @@ export function ModalProduto<T extends Record<string, unknown>>({
   onSubmit,
   initial = {},
 }: ModalProdutoProps<T>) {
-  const ref = useRef<HTMLDialogElement>(null);
-  const [categorias, setCategorias] = useState<Categoria[]>([]);
-  const [categoriaModalOpen, setCategoriaModalOpen] = useState(false);
+  const ref = useRef<HTMLDialogElement>(null)
+  const [categorias, setCategorias] = useState<Categoria[]>([])
+  const [categoriaModalOpen, setCategoriaModalOpen] = useState(false)
   const [selectedCategoria, setSelectedCategoria] = useState<string>(
-    initial.categoria || ""
-  );
-  const { isLoggedIn, user: ctxUser } = useAuthContext();
-  const { showSuccess, showError } = useToast();
+    initial.categoria || '',
+  )
+  const { isLoggedIn, user: ctxUser } = useAuthContext()
+  const { showSuccess, showError } = useToast()
   const getAuth = useCallback(() => {
     const token =
-      typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
+      typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
     const raw =
-      typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
-    const user = raw ? JSON.parse(raw) : ctxUser;
-    return { token, user } as const;
-  }, [ctxUser]);
+      typeof window !== 'undefined' ? localStorage.getItem('pb_user') : null
+    const user = raw ? JSON.parse(raw) : ctxUser
+    return { token, user } as const
+  }, [ctxUser])
 
   // Novos estados para cor
-  const [cores, setCores] = useState<string[]>([]);
-  const inputHex = useRef<HTMLInputElement | null>(null);
+  const [cores, setCores] = useState<string[]>([])
+  const inputHex = useRef<HTMLInputElement | null>(null)
   const [valorCliente, setValorCliente] = useState(
-    calculateGross(Number(initial.preco ?? 0), "pix", 1).gross
-  );
+    calculateGross(Number(initial.preco ?? 0), 'pix', 1).gross,
+  )
 
   useEffect(() => {
-    if (open) ref.current?.showModal();
-    else ref.current?.close();
-  }, [open]);
+    if (open) ref.current?.showModal()
+    else ref.current?.close()
+  }, [open])
 
   useEffect(() => {
-    setSelectedCategoria(initial.categoria || "");
-  }, [initial.categoria, open]);
+    setSelectedCategoria(initial.categoria || '')
+  }, [initial.categoria, open])
 
   useEffect(() => {
-    const { token, user } = getAuth();
-    if (!isLoggedIn || !token || !user || user.role !== "coordenador") return;
-    fetch("/admin/api/categorias", {
+    const { token, user } = getAuth()
+    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
+    fetch('/admin/api/categorias', {
       headers: {
         Authorization: `Bearer ${token}`,
-        "X-PB-User": JSON.stringify(user),
+        'X-PB-User': JSON.stringify(user),
       },
     })
       .then((r) => r.json())
       .then((data) => {
-        setCategorias(Array.isArray(data) ? data : []);
+        setCategorias(Array.isArray(data) ? data : [])
       })
       .catch((err) => {
-        console.error("Erro ao carregar categorias:", err);
-        setCategorias([]);
-      });
-  }, [isLoggedIn, open, getAuth]);
+        console.error('Erro ao carregar categorias:', err)
+        setCategorias([])
+      })
+  }, [isLoggedIn, open, getAuth])
 
   // Preenche cores iniciais (em modo editar)
   useEffect(() => {
-    if (initial?.cores && typeof initial.cores === "string") {
+    if (initial?.cores && typeof initial.cores === 'string') {
       setCores(
         initial.cores
-          .split(",")
+          .split(',')
           .map((c: string) => c.trim())
-          .filter(Boolean)
-      );
+          .filter(Boolean),
+      )
     } else if (Array.isArray(initial?.cores)) {
-      setCores(initial.cores as string[]);
+      setCores(initial.cores as string[])
     }
-  }, [initial?.cores, open]);
+  }, [initial?.cores, open])
 
   function addCor(hex: string) {
-    if (!hex || cores.includes(hex)) return;
-    setCores([...cores, hex]);
-    if (inputHex.current) inputHex.current.value = "#000000";
+    if (!hex || cores.includes(hex)) return
+    setCores([...cores, hex])
+    if (inputHex.current) inputHex.current.value = '#000000'
   }
   function removeCor(hex: string) {
-    setCores(cores.filter((c) => c !== hex));
+    setCores(cores.filter((c) => c !== hex))
   }
 
   async function handleNovaCategoria(form: { nome: string }) {
-    const { token, user } = getAuth();
-    if (!isLoggedIn || !token || !user) return;
+    const { token, user } = getAuth()
+    if (!isLoggedIn || !token || !user) return
     try {
-      const res = await fetch("/admin/api/categorias", {
-        method: "POST",
+      const res = await fetch('/admin/api/categorias', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
-          "X-PB-User": JSON.stringify(user),
+          'X-PB-User': JSON.stringify(user),
         },
         body: JSON.stringify(form),
-      });
-      const data = await res.json();
+      })
+      const data = await res.json()
       if (res.ok) {
-        setCategorias((prev) => [...prev, data]);
-        setSelectedCategoria(data.id);
-        showSuccess("Categoria criada");
+        setCategorias((prev) => [...prev, data])
+        setSelectedCategoria(data.id)
+        showSuccess('Categoria criada')
       } else {
-        console.error(data);
-        showError("Erro ao criar categoria");
+        console.error(data)
+        showError('Erro ao criar categoria')
       }
     } finally {
-      setCategoriaModalOpen(false);
+      setCategoriaModalOpen(false)
     }
   }
 
   function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const formElement = e.currentTarget as HTMLFormElement;
+    e.preventDefault()
+    const formElement = e.currentTarget as HTMLFormElement
     const form: Record<string, unknown> = Object.fromEntries(
-      new FormData(formElement)
-    );
+      new FormData(formElement),
+    )
 
     // Corrige checkboxes (arrays)
     form.tamanhos = Array.from(
       formElement.querySelectorAll<HTMLInputElement>(
-        "input[name='tamanhos']:checked"
-      )
-    ).map((el) => el.value);
+        "input[name='tamanhos']:checked",
+      ),
+    ).map((el) => el.value)
     form.generos = Array.from(
       formElement.querySelectorAll<HTMLInputElement>(
-        "input[name='generos']:checked"
-      )
-    ).map((el) => el.value);
-    form.ativo = !!form.ativo;
+        "input[name='generos']:checked",
+      ),
+    ).map((el) => el.value)
+    form.ativo = !!form.ativo
     // Corrige imagens para ser FileList ou File[]
     const imagensInput = formElement.querySelector(
-      "input[name='imagens']"
-    ) as HTMLInputElement;
+      "input[name='imagens']",
+    ) as HTMLInputElement
     form.imagens =
       imagensInput && imagensInput.files && imagensInput.files.length > 0
         ? imagensInput.files
-        : null;
+        : null
 
     // Cores
-    form.cores = cores.join(",");
+    form.cores = cores.join(',')
 
     // Slug automático (sempre gerado a partir do nome)
-    if (typeof form.nome === "string") {
-      form.slug = slugify(form.nome);
+    if (typeof form.nome === 'string') {
+      form.slug = slugify(form.nome)
     }
 
-    onSubmit(form as T);
-    onClose();
+    onSubmit(form as T)
+    onClose()
   }
 
   return (
@@ -204,7 +204,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
           {/* Header */}
           <div className="flex justify-between items-center pb-3 border-b border-neutral-100 mb-4">
             <h2 className="text-xl font-bold font-heading">
-              {initial?.nome ? "Editar Produto" : "Novo Produto"}
+              {initial?.nome ? 'Editar Produto' : 'Novo Produto'}
             </h2>
             <button
               type="button"
@@ -223,7 +223,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
               <TextField
                 name="nome"
                 placeholder="Ex: Camiseta Básica Preta"
-                defaultValue={initial.nome || ""}
+                defaultValue={initial.nome || ''}
                 maxLength={30}
                 required
               />
@@ -235,17 +235,17 @@ export function ModalProduto<T extends Record<string, unknown>>({
                 placeholder="Ex: 39.90"
                 type="number"
                 step="0.01"
-                defaultValue={initial.preco || ""}
+                defaultValue={initial.preco || ''}
                 onChange={(e) =>
                   setValorCliente(
-                    calculateGross(Number(e.target.value || 0), "pix", 1).gross
+                    calculateGross(Number(e.target.value || 0), 'pix', 1).gross,
                   )
                 }
                 required
               />
               <span className="text-xs text-gray-500 ml-1">
-                Valor para o cliente: R${" "}
-                {valorCliente.toFixed(2).replace(".", ",")}
+                Valor para o cliente: R${' '}
+                {valorCliente.toFixed(2).replace('.', ',')}
               </span>
             </div>
             <div>
@@ -284,7 +284,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
                 name="checkout_url"
                 placeholder="Ex: https://loja.com/produto"
                 type="url"
-                defaultValue={initial.checkout_url || ""}
+                defaultValue={initial.checkout_url || ''}
               />
               <span className="text-xs text-gray-400 ml-1">
                 Link externo para checkout (opcional)
@@ -309,7 +309,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
             <div>
               <label className="label-base">Tamanhos</label>
               <div className="flex gap-3 mt-1">
-                {["PP", "P", "M", "G", "GG"].map((t) => (
+                {['PP', 'P', 'M', 'G', 'GG'].map((t) => (
                   <label key={t} className="checkbox-label">
                     <input
                       type="checkbox"
@@ -329,7 +329,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
             <div>
               <label className="label-base">Gêneros</label>
               <div className="flex gap-3 mt-1">
-                {["masculino", "feminino"].map((g) => (
+                {['masculino', 'feminino'].map((g) => (
                   <label key={g} className="checkbox-label">
                     <input
                       type="checkbox"
@@ -355,7 +355,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
                 className="input-base"
                 name="descricao"
                 placeholder="Ex: Camiseta 100% algodão, confortável, não desbota."
-                defaultValue={initial.descricao || ""}
+                defaultValue={initial.descricao || ''}
                 rows={2}
                 maxLength={150}
                 required
@@ -370,7 +370,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
                 className="input-base"
                 name="detalhes"
                 placeholder="Detalhes adicionais: tabela de medidas, instruções de lavagem, etc."
-                defaultValue={initial.detalhes || ""}
+                defaultValue={initial.detalhes || ''}
                 rows={2}
               />
               <span className="text-xs text-gray-400 ml-1">
@@ -395,7 +395,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
                 type="button"
                 className="btn btn-sm"
                 onClick={() => {
-                  if (inputHex.current) addCor(inputHex.current.value);
+                  if (inputHex.current) addCor(inputHex.current.value)
                 }}
               >
                 Adicionar cor
@@ -425,7 +425,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
                 </span>
               )}
             </div>
-            <input type="hidden" name="cores" value={cores.join(",")} />
+            <input type="hidden" name="cores" value={cores.join(',')} />
             <span className="text-xs text-gray-400 ml-1">
               Adicione as variações de cor do produto.
             </span>
@@ -463,5 +463,5 @@ export function ModalProduto<T extends Record<string, unknown>>({
         />
       )}
     </>
-  );
+  )
 }

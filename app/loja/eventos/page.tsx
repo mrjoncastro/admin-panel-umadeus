@@ -1,37 +1,37 @@
 // app/eventos/page.tsx
-"use client";
+'use client'
 
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { formatDate } from "@/utils/formatDate";
+import Image from 'next/image'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { formatDate } from '@/utils/formatDate'
 
 interface Evento {
-  id: string;
-  titulo: string;
-  descricao: string;
-  data: string;
-  cidade: string;
-  imagem?: string;
-  status: "realizado" | "em breve";
+  id: string
+  titulo: string
+  descricao: string
+  data: string
+  cidade: string
+  imagem?: string
+  status: 'realizado' | 'em breve'
 }
 
 export default function EventosPage() {
-  const [eventos, setEventos] = useState<Evento[]>([]);
+  const [eventos, setEventos] = useState<Evento[]>([])
 
   useEffect(() => {
     async function fetchEventos() {
-      fetch("/api/eventos")
+      fetch('/api/eventos')
         .then((r) => r.json())
         .then((data) => {
-          setEventos(Array.isArray(data) ? data : []);
+          setEventos(Array.isArray(data) ? data : [])
         })
         .catch((err) => {
-          console.error("Erro ao carregar eventos:", err);
-        });
+          console.error('Erro ao carregar eventos:', err)
+        })
     }
-    fetchEventos();
-  }, []);
+    fetchEventos()
+  }, [])
 
   return (
     <main
@@ -70,12 +70,12 @@ export default function EventosPage() {
               <div className="p-4 flex flex-col flex-grow">
                 <span
                   className={`inline-block text-xs px-2 py-1 rounded-full uppercase tracking-wide font-semibold ${
-                    evento.status === "realizado"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-yellow-100 text-yellow-800"
+                    evento.status === 'realizado'
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-yellow-100 text-yellow-800'
                   }`}
                 >
-                  {evento.status === "realizado" ? "Realizado" : "Em breve"}
+                  {evento.status === 'realizado' ? 'Realizado' : 'Em breve'}
                 </span>
 
                 <h2 className="text-lg font-semibold mt-2">{evento.titulo}</h2>
@@ -100,5 +100,5 @@ export default function EventosPage() {
         </div>
       )}
     </main>
-  );
+  )
 }

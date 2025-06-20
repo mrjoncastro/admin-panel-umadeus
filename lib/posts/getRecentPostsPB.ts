@@ -13,10 +13,8 @@ export interface BlogPostRecord extends RecordModel {
 
 export async function getRecentPostsPB(
   limit = 3,
-  pb = createPocketBase()
+  pb = createPocketBase(),
 ): Promise<BlogPostRecord[]> {
-  const list = await pb
-    .collection('posts')
-    .getList(1, limit, { sort: '-date' })
+  const list = await pb.collection('posts').getList(1, limit, { sort: '-date' })
   return list.items as BlogPostRecord[]
 }

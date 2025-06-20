@@ -55,13 +55,22 @@ const pbMock = {
     }
     if (name === 'eventos') {
       return {
-        getFullList: vi.fn().mockResolvedValue([{ id: 'evt1', titulo: 'Congresso Teste' }]),
-        getOne: vi.fn().mockResolvedValue({ id: 'evt1', expand: { produtos: [] } }),
+        getFullList: vi
+          .fn()
+          .mockResolvedValue([{ id: 'evt1', titulo: 'Congresso Teste' }]),
+        getOne: vi
+          .fn()
+          .mockResolvedValue({ id: 'evt1', expand: { produtos: [] } }),
       }
     }
     if (name === 'produtos') {
       return {
-        getFirstListItem: vi.fn().mockResolvedValue({ nome: 'Prod', preco: 10, tamanhos: ['P'], generos: ['m'] }),
+        getFirstListItem: vi.fn().mockResolvedValue({
+          nome: 'Prod',
+          preco: 10,
+          tamanhos: ['P'],
+          generos: ['m'],
+        }),
       }
     }
     if (name === 'pedidos') {
@@ -118,7 +127,9 @@ test('envia paymentMethod e installments ao confirmar', async () => {
   const { container } = render(<ListaInscricoesPage />)
 
   await screen.findByText('Fulano')
-  const btn = container.querySelector('button.text-green-600') as HTMLButtonElement
+  const btn = container.querySelector(
+    'button.text-green-600',
+  ) as HTMLButtonElement
   fireEvent.click(btn)
 
   await vi.waitFor(() => {
@@ -126,13 +137,13 @@ test('envia paymentMethod e installments ao confirmar', async () => {
       '/admin/api/asaas/',
       expect.objectContaining({
         body: expect.stringContaining('"paymentMethod":"pix"'),
-      })
+      }),
     )
     expect(fetchMock).toHaveBeenCalledWith(
       '/admin/api/asaas/',
       expect.objectContaining({
         body: expect.stringContaining('"installments":2'),
-      })
+      }),
     )
   })
 })

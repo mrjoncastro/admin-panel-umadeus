@@ -1,110 +1,108 @@
-import { notFound } from "next/navigation";
-import Footer from "@/app/components/Footer";
-import Image from "next/image";
-import { Share2, Clock } from "lucide-react";
-import { isExternalUrl } from "@/utils/isExternalUrl";
-import type { Metadata } from "next";
-import { getRelatedPostsFromPB } from "@/lib/posts/getRelatedPostsFromPB";
-import { getPostBySlug } from "@/lib/posts/getPostBySlug";
-import NextPostButton from "@/app/blog/components/NextPostButton";
-import PostSuggestions from "@/app/blog/components/PostSuggestions";
-import Script from "next/script";
+import { notFound } from 'next/navigation'
+import Footer from '@/app/components/Footer'
+import Image from 'next/image'
+import { Share2, Clock } from 'lucide-react'
+import { isExternalUrl } from '@/utils/isExternalUrl'
+import type { Metadata } from 'next'
+import { getRelatedPostsFromPB } from '@/lib/posts/getRelatedPostsFromPB'
+import { getPostBySlug } from '@/lib/posts/getPostBySlug'
+import NextPostButton from '@/app/blog/components/NextPostButton'
+import PostSuggestions from '@/app/blog/components/PostSuggestions'
+import Script from 'next/script'
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic'
 
 interface Params {
-  slug: string;
+  slug: string
 }
 
 export async function generateStaticParams() {
-  return [];
+  return []
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<Params>;
+  params: Promise<Params>
 }): Promise<Metadata> {
-  const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const { slug } = await params
+  const post = await getPostBySlug(slug)
 
   if (!post) {
     return {
-      title: "Post não encontrado",
-      description: "O conteúdo solicitado não foi encontrado.",
-    };
+      title: 'Post não encontrado',
+      description: 'O conteúdo solicitado não foi encontrado.',
+    }
   }
 
   return {
     title: post.title,
-    description: post.summary || "",
+    description: post.summary || '',
     openGraph: {
       title: post.title,
-      description: post.summary || "",
-      images: [post.thumbnail || "/img/og-default.jpg"],
+      description: post.summary || '',
+      images: [post.thumbnail || '/img/og-default.jpg'],
     },
-  };
+  }
 }
 
 export default async function BlogPostPage({
   params,
 }: {
-  params: Promise<Params>;
+  params: Promise<Params>
 }) {
-  const { slug } = await params;
+  const { slug } = await params
 
-  const post = await getPostBySlug(slug);
-  if (!post) return notFound();
+  const post = await getPostBySlug(slug)
+  if (!post) return notFound()
 
   const { nextPost, suggestions } = await getRelatedPostsFromPB(
     slug,
-    post.category || ""
-  );
+    post.category || '',
+  )
   const safeSuggestions = suggestions.map((s) => ({
     ...s,
-    summary: s.summary || "",
-    thumbnail: s.thumbnail || "",
-    category: s.category || "",
-  }));
-  const mdxContent = post.content || "";
+    summary: s.summary || '',
+    thumbnail: s.thumbnail || '',
+    category: s.category || '',
+  }))
+  const mdxContent = post.content || ''
 
-  const words = mdxContent.split(/\s+/).length;
-  const readingTime = Math.ceil(words / 200);
+  const words = mdxContent.split(/\s+/).length
+  const readingTime = Math.ceil(words / 200)
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://m24saude.com.br";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://m24saude.com.br'
 
   const schema = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
     headline: post.title,
-    description: post.summary || "",
-    image: isExternalUrl(post.thumbnail || "")
+    description: post.summary || '',
+    image: isExternalUrl(post.thumbnail || '')
       ? post.thumbnail
-      : `${siteUrl}${post.thumbnail || "/img/og-default.jpg"}`,
+      : `${siteUrl}${post.thumbnail || '/img/og-default.jpg'}`,
     author: {
-      "@type": "Person",
-      name: "Redação M24",
+      '@type': 'Person',
+      name: 'Redação M24',
     },
     publisher: {
-      "@type": "Organization",
-      name: "M24 Saúde",
+      '@type': 'Organization',
+      name: 'M24 Saúde',
       logo: {
-        "@type": "ImageObject",
+        '@type': 'ImageObject',
         url: `${siteUrl}/img/M24.webp`,
       },
     },
     datePublished: post.date || new Date().toISOString(),
     mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `${siteUrl}/blog/post/${slug}`,
+      '@type': 'WebPage',
+      '@id': `${siteUrl}/blog/post/${slug}`,
     },
-  };
+  }
 
   return (
     <>
-      <main
-        className="mx-auto mt-8 max-w-[680px] px-5 py-20 text-[1.125rem] leading-[1.8] text-[var(--text-primary)] bg-white"
-      >
+      <main className="mx-auto mt-8 max-w-[680px] px-5 py-20 text-[1.125rem] leading-[1.8] text-[var(--text-primary)] bg-white">
         {post.thumbnail && (
           <figure>
             {isExternalUrl(post.thumbnail) ? (
@@ -160,7 +158,7 @@ export default async function BlogPostPage({
 
           <a
             href={`https://twitter.com/intent/tweet?url=${siteUrl}/blog/post/${slug}&text=${encodeURIComponent(
-              post.title
+              post.title,
             )}`}
             target="_blank"
             rel="noopener noreferrer"
@@ -172,7 +170,9 @@ export default async function BlogPostPage({
         </div>
 
         {post.summary && (
-          <p className="mb-8 text-[1.125rem] text-neutral-700">{post.summary}</p>
+          <p className="mb-8 text-[1.125rem] text-neutral-700">
+            {post.summary}
+          </p>
         )}
 
         <article
@@ -192,6 +192,5 @@ export default async function BlogPostPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
     </>
-  );
+  )
 }
-

@@ -1,38 +1,36 @@
-"use client";
+'use client'
 
-import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
+import Image from 'next/image'
+import Link from 'next/link'
+import { useState } from 'react'
 
 interface Produto {
-  id: string;
-  nome: string;
-  preco: number;
-  imagens: string[];
-  slug: string;
-  tamanhos?: string[];
-  generos?: string[];
-  categoria: string;
+  id: string
+  nome: string
+  preco: number
+  imagens: string[]
+  slug: string
+  tamanhos?: string[]
+  generos?: string[]
+  categoria: string
 }
 
-const TAMANHOS = ["PP", "P", "M", "G", "GG"];
-const GENEROS = ["masculino", "feminino"];
+const TAMANHOS = ['PP', 'P', 'M', 'G', 'GG']
+const GENEROS = ['masculino', 'feminino']
 
 export default function ProdutosFiltrados({
   produtos,
 }: {
-  produtos: Produto[];
+  produtos: Produto[]
 }) {
-  const [tamanho, setTamanho] = useState("");
-  const [genero, setGenero] = useState("");
+  const [tamanho, setTamanho] = useState('')
+  const [genero, setGenero] = useState('')
 
   const filtrados = produtos.filter((p) => {
-    const matchTamanho =
-      tamanho === "" || (p.tamanhos || []).includes(tamanho);
-    const matchGenero =
-      genero === "" || (p.generos || []).includes(genero);
-    return matchTamanho && matchGenero;
-  });
+    const matchTamanho = tamanho === '' || (p.tamanhos || []).includes(tamanho)
+    const matchGenero = genero === '' || (p.generos || []).includes(genero)
+    return matchTamanho && matchGenero
+  })
 
   return (
     <>
@@ -81,7 +79,7 @@ export default function ProdutosFiltrados({
               {p.nome}
             </h2>
             <p className="text-base font-semibold text-black_bean mt-1">
-              R$ {p.preco.toFixed(2).replace(".", ",")}
+              R$ {p.preco.toFixed(2).replace('.', ',')}
             </p>
 
             <Link
@@ -94,5 +92,5 @@ export default function ProdutosFiltrados({
         ))}
       </div>
     </>
-  );
+  )
 }

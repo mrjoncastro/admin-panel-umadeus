@@ -1,20 +1,20 @@
-"use client";
+'use client'
 
-import * as Tabs from "@radix-ui/react-tabs";
-import { motion } from "framer-motion";
-import { useState } from "react";
+import * as Tabs from '@radix-ui/react-tabs'
+import { motion } from 'framer-motion'
+import { useState } from 'react'
 
 export interface TabItem {
-  value: string;
-  label: string;
-  content: React.ReactNode;
+  value: string
+  label: string
+  content: React.ReactNode
 }
 
 export interface SmoothTabsProps {
-  tabs: TabItem[];
-  defaultValue?: string;
-  className?: string;
-  onChange?: (value: string) => void;
+  tabs: TabItem[]
+  defaultValue?: string
+  className?: string
+  onChange?: (value: string) => void
 }
 
 export default function SmoothTabs({
@@ -23,15 +23,19 @@ export default function SmoothTabs({
   className,
   onChange,
 }: SmoothTabsProps) {
-  const [active, setActive] = useState(defaultValue ?? tabs[0]?.value);
+  const [active, setActive] = useState(defaultValue ?? tabs[0]?.value)
 
   const handleChange = (value: string) => {
-    setActive(value);
-    onChange?.(value);
-  };
+    setActive(value)
+    onChange?.(value)
+  }
 
   return (
-    <Tabs.Root value={active} onValueChange={handleChange} className={className}>
+    <Tabs.Root
+      value={active}
+      onValueChange={handleChange}
+      className={className}
+    >
       <Tabs.List className="relative flex border-b border-neutral-300">
         {tabs.map(({ value, label }) => (
           <Tabs.Trigger
@@ -55,5 +59,5 @@ export default function SmoothTabs({
         </Tabs.Content>
       ))}
     </Tabs.Root>
-  );
+  )
 }

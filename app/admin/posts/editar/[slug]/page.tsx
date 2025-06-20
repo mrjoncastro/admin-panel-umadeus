@@ -1,64 +1,64 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import PostContentEditor from "../../components/PostContentEditor";
-import Header from "@/app/components/Header";
-import Footer from "@/app/components/Footer";
-import Image from "next/image";
-import { Clock } from "lucide-react";
-import { isExternalUrl } from "@/utils/isExternalUrl";
+import { useEffect, useState } from 'react'
+import { useRouter, useParams } from 'next/navigation'
+import { useAuthContext } from '@/lib/context/AuthContext'
+import PostContentEditor from '../../components/PostContentEditor'
+import Header from '@/app/components/Header'
+import Footer from '@/app/components/Footer'
+import Image from 'next/image'
+import { Clock } from 'lucide-react'
+import { isExternalUrl } from '@/utils/isExternalUrl'
 
 export default function EditarPostPage() {
-  const { slug } = useParams<{ slug: string }>();
+  const { slug } = useParams<{ slug: string }>()
 
-  const [conteudo, setConteudo] = useState("");
-  const [preview, setPreview] = useState(false);
-  const [title, setTitle] = useState("");
-  const [summary, setSummary] = useState("");
-  const [category, setCategory] = useState("");
-  const [date, setDate] = useState("");
-  const [thumbnail, setThumbnail] = useState("");
-  const [keywords, setKeywords] = useState("");
+  const [conteudo, setConteudo] = useState('')
+  const [preview, setPreview] = useState(false)
+  const [title, setTitle] = useState('')
+  const [summary, setSummary] = useState('')
+  const [category, setCategory] = useState('')
+  const [date, setDate] = useState('')
+  const [thumbnail, setThumbnail] = useState('')
+  const [keywords, setKeywords] = useState('')
 
-  const { user, isLoggedIn } = useAuthContext();
-  const router = useRouter();
+  const { user, isLoggedIn } = useAuthContext()
+  const router = useRouter()
 
   useEffect(() => {
     if (!isLoggedIn || !user) {
-      router.replace("/login");
+      router.replace('/login')
     }
-  }, [isLoggedIn, user, router]);
+  }, [isLoggedIn, user, router])
 
   useEffect(() => {
     fetch(`/admin/api/posts/${slug}`)
       .then((res) => res.json())
       .then(
         (data: {
-          title: string;
-          summary: string;
-          category: string;
-          content: string;
-          date: string;
-          thumbnail: string;
-          keywords: string;
+          title: string
+          summary: string
+          category: string
+          content: string
+          date: string
+          thumbnail: string
+          keywords: string
         }) => {
-          setTitle(data.title);
-          setSummary(data.summary);
-          setCategory(data.category);
-          setConteudo(data.content);
-          setDate(data.date);
-          setThumbnail(data.thumbnail);
-          setKeywords(data.keywords);
-        }
+          setTitle(data.title)
+          setSummary(data.summary)
+          setCategory(data.category)
+          setConteudo(data.content)
+          setDate(data.date)
+          setThumbnail(data.thumbnail)
+          setKeywords(data.keywords)
+        },
       )
-      .catch((err) => console.error("Erro ao carregar post:", err));
-  }, [slug]);
+      .catch((err) => console.error('Erro ao carregar post:', err))
+  }, [slug])
 
   if (preview) {
-    const words = conteudo.split(/\s+/).length;
-    const readingTime = Math.ceil(words / 200);
+    const words = conteudo.split(/\s+/).length
+    const readingTime = Math.ceil(words / 200)
 
     return (
       <>
@@ -139,7 +139,7 @@ export default function EditarPostPage() {
         </main>
         <Footer />
       </>
-    );
+    )
   }
 
   return (
@@ -149,16 +149,16 @@ export default function EditarPostPage() {
         <p className="text-sm text-gray-600 mb-4">Slug: {slug}</p>
         <form
           onSubmit={(e) => {
-            e.preventDefault();
-            const formData = new FormData(e.currentTarget);
-            formData.set("content", conteudo);
-            fetch("/admin/api/posts", {
-              method: "POST",
+            e.preventDefault()
+            const formData = new FormData(e.currentTarget)
+            formData.set('content', conteudo)
+            fetch('/admin/api/posts', {
+              method: 'POST',
               body: formData,
             })
               .then((res) => res.json())
-              .then(() => router.push("/admin/posts"))
-              .catch((err) => console.error("Erro ao salvar post:", err));
+              .then(() => router.push('/admin/posts'))
+              .catch((err) => console.error('Erro ao salvar post:', err))
           }}
           className="space-y-4"
         >
@@ -222,5 +222,5 @@ export default function EditarPostPage() {
         </form>
       </main>
     </>
-  );
+  )
 }

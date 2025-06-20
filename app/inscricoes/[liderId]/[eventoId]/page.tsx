@@ -1,110 +1,110 @@
-"use client";
+'use client'
 
-import { useEffect, useState, useMemo } from "react";
-import { useParams } from "next/navigation";
-import Link from "next/link";
-import { logInfo } from "@/lib/logger";
-import { useToast } from "@/lib/context/ToastContext";
-import { calculateGross, type PaymentMethod } from "@/lib/asaasFees";
-import { useTenant } from "@/lib/context/TenantContext";
-import Spinner from "@/components/atoms/Spinner";
-import { Check } from "lucide-react";
+import { useEffect, useState, useMemo } from 'react'
+import { useParams } from 'next/navigation'
+import Link from 'next/link'
+import { logInfo } from '@/lib/logger'
+import { useToast } from '@/lib/context/ToastContext'
+import { calculateGross, type PaymentMethod } from '@/lib/asaasFees'
+import { useTenant } from '@/lib/context/TenantContext'
+import Spinner from '@/components/atoms/Spinner'
+import { Check } from 'lucide-react'
 
 interface Produto {
-  id: string;
-  nome: string;
-  valor: number;
-  tamanhos?: string[];
+  id: string
+  nome: string
+  valor: number
+  tamanhos?: string[]
 }
 
 interface ProdutoPB {
-  id: string;
-  nome: string;
-  preco: number;
-  tamanhos?: string[] | string;
+  id: string
+  nome: string
+  preco: number
+  tamanhos?: string[] | string
 }
 
 interface FormFields {
-  nome: string;
-  email: string;
-  telefone: string;
-  cpf: string;
-  data_nascimento: string;
-  tamanho: string;
-  produto: string;
-  genero: string;
+  nome: string
+  email: string
+  telefone: string
+  cpf: string
+  data_nascimento: string
+  tamanho: string
+  produto: string
+  genero: string
 }
 
 export default function InscricaoPage() {
-  const params = useParams();
-  const liderId = params.liderId as string;
-  const eventoId = params.eventoId as string;
+  const params = useParams()
+  const liderId = params.liderId as string
+  const eventoId = params.eventoId as string
 
-  const { showError, showSuccess } = useToast();
-  const { config } = useTenant();
+  const { showError, showSuccess } = useToast()
+  const { config } = useTenant()
 
-  const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [produtos, setProdutos] = useState<Produto[]>([])
 
   const [form, setForm] = useState<FormFields>({
-    nome: "",
-    email: "",
-    telefone: "",
-    cpf: "",
-    data_nascimento: "",
-    tamanho: "",
-    produto: "",
-    genero: "",
-  });
+    nome: '',
+    email: '',
+    telefone: '',
+    cpf: '',
+    data_nascimento: '',
+    tamanho: '',
+    produto: '',
+    genero: '',
+  })
 
-  const [loading, setLoading] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
-  const [installments, setInstallments] = useState(1);
-  const [campoNome, setCampoNome] = useState("");
+  const [loading, setLoading] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('pix')
+  const [installments, setInstallments] = useState(1)
+  const [campoNome, setCampoNome] = useState('')
   const [evento, setEvento] = useState<{
-    titulo: string;
-    descricao: string;
-  } | null>(null);
+    titulo: string
+    descricao: string
+  } | null>(null)
 
   const base = useMemo(
     () => produtos.find((p) => p.id === form.produto)?.valor ?? 0,
-    [form.produto, produtos]
-  );
+    [form.produto, produtos],
+  )
   const current = useMemo(
     () => produtos.find((p) => p.id === form.produto),
-    [form.produto, produtos]
-  );
+    [form.produto, produtos],
+  )
   const totalGross = useMemo(
     () => calculateGross(base, paymentMethod, installments).gross,
-    [base, paymentMethod, installments]
-  );
+    [base, paymentMethod, installments],
+  )
 
   useEffect(() => {
-    if (!liderId) return;
+    if (!liderId) return
 
     fetch(`/admin/api/lider/${liderId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data?.campo) {
-          setCampoNome(data.campo);
+          setCampoNome(data.campo)
         } else {
-          showError("❌ Link inválido ou expirado.");
+          showError('❌ Link inválido ou expirado.')
         }
       })
-      .catch(() => showError("❌ Erro ao buscar dados do líder."));
-  }, [liderId, showError]);
+      .catch(() => showError('❌ Erro ao buscar dados do líder.'))
+  }, [liderId, showError])
 
   useEffect(() => {
-    if (!eventoId) return;
+    if (!eventoId) return
     fetch(`/api/eventos/${eventoId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data?.titulo) {
-          setEvento({ titulo: data.titulo, descricao: data.descricao });
+          setEvento({ titulo: data.titulo, descricao: data.descricao })
         }
 
         const prods = Array.isArray(data?.expand?.produtos)
           ? (data.expand.produtos as ProdutoPB[])
-          : [];
+          : []
         const mapped = prods.map((p) => ({
           id: p.id,
           nome: p.nome,
@@ -112,75 +112,75 @@ export default function InscricaoPage() {
           tamanhos: Array.isArray(p.tamanhos)
             ? p.tamanhos
             : p.tamanhos
-            ? [p.tamanhos]
-            : undefined,
-        }));
-        setProdutos(mapped);
+              ? [p.tamanhos]
+              : undefined,
+        }))
+        setProdutos(mapped)
         if (mapped.length > 0) {
           setForm((prev) => ({
             ...prev,
             produto: mapped[0].id,
-            tamanho: "",
-          }));
+            tamanho: '',
+          }))
         } else {
-          setForm((prev) => ({ ...prev, produto: "", tamanho: "" }));
+          setForm((prev) => ({ ...prev, produto: '', tamanho: '' }))
         }
       })
-      .catch(() => {});
-  }, [eventoId]);
+      .catch(() => {})
+  }, [eventoId])
 
   useEffect(() => {
-    if (paymentMethod !== "credito" && installments !== 1) {
-      setInstallments(1);
+    if (paymentMethod !== 'credito' && installments !== 1) {
+      setInstallments(1)
     }
-  }, [paymentMethod, installments]);
+  }, [paymentMethod, installments])
 
   const maskCPF = (value: string) =>
     value
-      .replace(/\D/g, "")
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+      .replace(/\D/g, '')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
 
   const maskTelefone = (value: string) =>
     value
-      .replace(/\D/g, "")
-      .replace(/(\d{2})(\d)/, "($1) $2")
-      .replace(/(\d{5})(\d)/, "$1-$2")
-      .replace(/(-\d{4})\d+?$/, "$1");
+      .replace(/\D/g, '')
+      .replace(/(\d{2})(\d)/, '($1) $2')
+      .replace(/(\d{5})(\d)/, '$1-$2')
+      .replace(/(-\d{4})\d+?$/, '$1')
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    const { name, value } = e.target;
-    let newValue = value;
+    const { name, value } = e.target
+    let newValue = value
 
-    if (name === "cpf") newValue = maskCPF(value);
-    if (name === "telefone") newValue = maskTelefone(value);
+    if (name === 'cpf') newValue = maskCPF(value)
+    if (name === 'telefone') newValue = maskTelefone(value)
 
     setForm((prev) => {
-      const updated = { ...prev, [name]: newValue };
-      if (name === "produto") {
-        const prod = produtos.find((p) => p.id === newValue);
+      const updated = { ...prev, [name]: newValue }
+      if (name === 'produto') {
+        const prod = produtos.find((p) => p.id === newValue)
         if (!prod?.tamanhos?.length) {
-          updated.tamanho = "";
+          updated.tamanho = ''
         }
       }
-      return updated;
-    });
-  };
-  const [enviado, setEnviado] = useState(false);
+      return updated
+    })
+  }
+  const [enviado, setEnviado] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    setEnviado(false);
+    e.preventDefault()
+    setLoading(true)
+    setEnviado(false)
 
     try {
       // 1. Envia os dados para a API de inscrição
-      const resposta = await fetch("/admin/api/inscricoes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const resposta = await fetch('/admin/api/inscricoes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
           produtoId: form.produto,
@@ -189,19 +189,19 @@ export default function InscricaoPage() {
           paymentMethod,
           installments,
         }),
-      });
+      })
 
-      const result = await resposta.json();
+      const result = await resposta.json()
 
       if (!resposta.ok) {
-        showError(`❌ ${result.erro || "Erro ao salvar inscrição."}`);
-        return;
+        showError(`❌ ${result.erro || 'Erro ao salvar inscrição.'}`)
+        return
       }
 
       // 2. Envia notificação para o n8n de forma assíncrona
-      fetch("/admin/api/n8n", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      fetch('/admin/api/n8n', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
           produtoId: form.produto,
@@ -211,38 +211,38 @@ export default function InscricaoPage() {
           paymentMethod,
           installments,
         }),
-      }).catch((erro) => logInfo("⚠️ Falha ao notificar o n8n", erro));
+      }).catch((erro) => logInfo('⚠️ Falha ao notificar o n8n', erro))
 
       // 3. Redireciona se já houver link de pagamento
       if (result.link_pagamento) {
         showSuccess(
-          "✅ Inscrição enviada com sucesso! Redirecionando para pagamento..."
-        );
+          '✅ Inscrição enviada com sucesso! Redirecionando para pagamento...',
+        )
         setTimeout(() => {
-          window.location.href = result.link_pagamento;
-        }, 4000); // tempo do toast na tela
-        return;
+          window.location.href = result.link_pagamento
+        }, 4000) // tempo do toast na tela
+        return
       }
 
       // 4. Exibe mensagem de sucesso padrão e redireciona para uma página de obrigado
       // Sucesso
-      showSuccess("✅ Inscrição enviada com sucesso! Redirecionando...");
-      setEnviado(true);
+      showSuccess('✅ Inscrição enviada com sucesso! Redirecionando...')
+      setEnviado(true)
       setTimeout(() => {
-        window.location.href = "/inscricoes/obrigado";
-      }, 1500);
+        window.location.href = '/inscricoes/obrigado'
+      }, 1500)
     } catch (erro) {
-      console.error("❌ Erro no handleSubmit:", erro);
-      showError("❌ Erro ao processar inscrição.");
+      console.error('❌ Erro no handleSubmit:', erro)
+      showError('❌ Erro ao processar inscrição.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="max-w-lg mx-auto p-6 mt-10 bg-white rounded-2xl shadow-2xl font-sans">
       <div className="mb-6 p-3 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-600 text-center">
-        Já fez a inscrição?{" "}
+        Já fez a inscrição?{' '}
         <Link
           href="/admin/inscricoes/recuperar"
           className="text-purple-700 font-medium underline hover:text-purple-900"
@@ -252,7 +252,7 @@ export default function InscricaoPage() {
       </div>
 
       <h1 className="text-2xl font-extrabold text-purple-700 mb-3 text-center">
-        {evento ? `Inscrição para ${evento.titulo}` : "Inscrição"}
+        {evento ? `Inscrição para ${evento.titulo}` : 'Inscrição'}
       </h1>
       {evento?.descricao && (
         <p className="text-center text-sm text-gray-600 mb-2">
@@ -402,7 +402,7 @@ export default function InscricaoPage() {
           <select
             value={installments}
             onChange={(e) => setInstallments(Number(e.target.value))}
-            disabled={paymentMethod !== "credito"}
+            disabled={paymentMethod !== 'credito'}
             className="w-full p-3 border border-purple-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
           >
             {Array.from({ length: 6 }).map((_, i) => (
@@ -412,12 +412,12 @@ export default function InscricaoPage() {
             ))}
           </select>
           <p className="text-sm mt-1">
-            Total: R$ {totalGross.toFixed(2).replace(".", ",")}
+            Total: R$ {totalGross.toFixed(2).replace('.', ',')}
           </p>
           {installments > 1 && (
             <p className="text-xs text-gray-500">
-              Valor da parcela: R${" "}
-              {(totalGross / installments).toFixed(2).replace(".", ",")}
+              Valor da parcela: R${' '}
+              {(totalGross / installments).toFixed(2).replace('.', ',')}
             </p>
           )}
         </div>
@@ -443,8 +443,8 @@ export default function InscricaoPage() {
           className={`w-full font-bold py-2 px-4 rounded-md transition duration-200 ease-in-out flex items-center justify-center gap-2
       ${
         enviado
-          ? "bg-green-600 hover:bg-green-700 text-white"
-          : "bg-purple-600 hover:bg-purple-700 text-white"
+          ? 'bg-green-600 hover:bg-green-700 text-white'
+          : 'bg-purple-600 hover:bg-purple-700 text-white'
       }
       disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer
     `}
@@ -467,5 +467,5 @@ export default function InscricaoPage() {
         </button>
       </form>
     </div>
-  );
+  )
 }

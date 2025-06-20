@@ -1,37 +1,40 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { getPostsClientPB, type PostClientRecord } from "@/lib/posts/getPostsClientPB";
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import {
+  getPostsClientPB,
+  type PostClientRecord,
+} from '@/lib/posts/getPostsClientPB'
 
-type Post = PostClientRecord;
+type Post = PostClientRecord
 
 export default function BlogHeroCarousel() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [posts, setPosts] = useState<Post[]>([])
+  const [currentIndex, setCurrentIndex] = useState(0)
 
   useEffect(() => {
-    getPostsClientPB().then((data) => setPosts(data.slice(0, 3)));
-  }, []);
+    getPostsClientPB().then((data) => setPosts(data.slice(0, 3)))
+  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % posts.length);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, [posts]);
+      setCurrentIndex((prev) => (prev + 1) % posts.length)
+    }, 6000)
+    return () => clearInterval(interval)
+  }, [posts])
 
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % posts.length);
-  };
+    setCurrentIndex((prev) => (prev + 1) % posts.length)
+  }
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + posts.length) % posts.length);
-  };
+    setCurrentIndex((prev) => (prev - 1 + posts.length) % posts.length)
+  }
 
-  if (posts.length === 0) return null;
+  if (posts.length === 0) return null
 
-  const post = posts[currentIndex];
+  const post = posts[currentIndex]
 
   return (
     <section
@@ -85,7 +88,7 @@ export default function BlogHeroCarousel() {
             <span
               key={post.slug}
               className={`w-2.5 h-2.5 rounded-full ${
-                index === currentIndex ? "bg-blue-600" : "bg-white/50"
+                index === currentIndex ? 'bg-blue-600' : 'bg-white/50'
               }`}
             />
           ))}
@@ -108,5 +111,5 @@ export default function BlogHeroCarousel() {
         </button>
       </div>
     </section>
-  );
+  )
 }

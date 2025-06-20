@@ -1,43 +1,43 @@
-"use client";
+'use client'
 
-import { useCart } from "@/lib/context/CartContext";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import { useState } from "react";
-import { hexToPtName } from "@/utils/colorNamePt";
-import { calculateGross } from "@/lib/asaasFees";
+import { useCart } from '@/lib/context/CartContext'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { useAuthContext } from '@/lib/context/AuthContext'
+import { useState } from 'react'
+import { hexToPtName } from '@/utils/colorNamePt'
+import { calculateGross } from '@/lib/asaasFees'
 
 function formatCurrency(n: number) {
-  return `R$ ${n.toFixed(2).replace(".", ",")}`;
+  return `R$ ${n.toFixed(2).replace('.', ',')}`
 }
 
 export default function CarrinhoPage() {
-  const { itens, removeItem, clearCart } = useCart();
-  const { isLoggedIn } = useAuthContext();
-  const router = useRouter();
-  const [showPrompt, setShowPrompt] = useState(false);
+  const { itens, removeItem, clearCart } = useCart()
+  const { isLoggedIn } = useAuthContext()
+  const router = useRouter()
+  const [showPrompt, setShowPrompt] = useState(false)
   const totalBruto = itens.reduce(
-    (sum, i) => sum + calculateGross(i.preco, "pix", 1).gross * i.quantidade,
+    (sum, i) => sum + calculateGross(i.preco, 'pix', 1).gross * i.quantidade,
     0,
-  );
+  )
 
   function handleCheckout() {
     if (!isLoggedIn) {
-      setShowPrompt(true);
-      return;
+      setShowPrompt(true)
+      return
     }
-    router.push("/loja/checkout");
+    router.push('/loja/checkout')
   }
 
   const goToSignup = () => {
-    setShowPrompt(false);
-    router.push("/login?view=signup&redirect=/loja/checkout");
-  };
+    setShowPrompt(false)
+    router.push('/login?view=signup&redirect=/loja/checkout')
+  }
   const goToLogin = () => {
-    setShowPrompt(false);
-    router.push("/login?redirect=/loja/checkout");
-  };
+    setShowPrompt(false)
+    router.push('/login?redirect=/loja/checkout')
+  }
 
   if (itens.length === 0) {
     return (
@@ -46,13 +46,13 @@ export default function CarrinhoPage() {
           Seu carrinho está vazio
         </h1>
         <button
-          onClick={() => router.push("/loja")}
+          onClick={() => router.push('/loja')}
           className="text-sm underline mt-2"
         >
           Voltar à loja
         </button>
       </main>
-    );
+    )
   }
 
   return (
@@ -71,21 +71,21 @@ export default function CarrinhoPage() {
                   width={72}
                   height={72}
                   className="rounded-xl object-cover border border-gray-200"
-                  style={{ background: "#FAFAFA" }}
+                  style={{ background: '#FAFAFA' }}
                 />
               )}
               <div className="flex-1">
                 <p className="font-medium text-accent">{item.nome}</p>
                 <p className="text-xs text-gray-400">
-                  Modelo: {item.generos?.[0] || "-"} | Tamanho:{" "}
-                  {item.tamanhos?.[0] || "-"} | Cor:{" "}
-                  {item.cores?.[0] ? hexToPtName(item.cores[0]) : "-"}
+                  Modelo: {item.generos?.[0] || '-'} | Tamanho:{' '}
+                  {item.tamanhos?.[0] || '-'} | Cor:{' '}
+                  {item.cores?.[0] ? hexToPtName(item.cores[0]) : '-'}
                 </p>
                 <p className="text-xs text-gray-400">Qtd: {item.quantidade}</p>
               </div>
               <div className="font-semibold text-accent">
                 {formatCurrency(
-                  calculateGross(item.preco, "pix", 1).gross * item.quantidade,
+                  calculateGross(item.preco, 'pix', 1).gross * item.quantidade,
                 )}
               </div>
               <button
@@ -117,11 +117,11 @@ export default function CarrinhoPage() {
           </button>
           {showPrompt && !isLoggedIn && (
             <div className="text-sm text-center text-gray-600 mt-4 w-full">
-              Para finalizar a compra, é preciso ter uma conta.{" "}
+              Para finalizar a compra, é preciso ter uma conta.{' '}
               <button onClick={goToSignup} className="underline">
                 Criar conta
-              </button>{" "}
-              ou{" "}
+              </button>{' '}
+              ou{' '}
               <button onClick={goToLogin} className="underline">
                 fazer login
               </button>
@@ -131,5 +131,5 @@ export default function CarrinhoPage() {
         </div>
       </div>
     </main>
-  );
+  )
 }

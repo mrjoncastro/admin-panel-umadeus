@@ -14,7 +14,7 @@ function setupPocketBaseMock(withClone: boolean) {
       clear: vi.fn(() => {
         this.authStore.token = ''
         this.authStore.model = null
-      })
+      }),
     }
     constructor(url: string) {
       this.url = url
@@ -53,10 +53,14 @@ describe('pocketbase utilities', () => {
 
   it('sincroniza auth e atualiza base', async () => {
     const { instances } = setupPocketBaseMock(false)
-    const { createPocketBase, updateBaseAuth, clearBaseAuth } = await import('../lib/pocketbase')
+    const { createPocketBase, updateBaseAuth, clearBaseAuth } = await import(
+      '../lib/pocketbase'
+    )
 
     updateBaseAuth('tok', { id: 'u1' })
-    expect(instances[0].authStore.save).toHaveBeenCalledWith('tok', { id: 'u1' })
+    expect(instances[0].authStore.save).toHaveBeenCalledWith('tok', {
+      id: 'u1',
+    })
     expect(instances[0].authStore.token).toBe('tok')
 
     const pb = createPocketBase()

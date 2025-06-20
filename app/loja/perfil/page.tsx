@@ -1,49 +1,49 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
-import ModalEditarPerfil from "@/app/admin/perfil/components/ModalEditarPerfil";
+import { useEffect, useState } from 'react'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
+import ModalEditarPerfil from '@/app/admin/perfil/components/ModalEditarPerfil'
 
 interface UsuarioAuthModel {
-  id: string;
-  email: string;
-  nome: string;
-  telefone?: string;
-  cpf?: string;
-  data_nascimento?: string;
-  endereco?: string;
-  numero?: string;
-  estado?: string;
-  cep?: string;
-  cidade?: string;
-  role: "coordenador" | "lider" | "usuario" | string;
-  campo?: string;
+  id: string
+  email: string
+  nome: string
+  telefone?: string
+  cpf?: string
+  data_nascimento?: string
+  endereco?: string
+  numero?: string
+  estado?: string
+  cep?: string
+  cidade?: string
+  role: 'coordenador' | 'lider' | 'usuario' | string
+  campo?: string
   expand?: {
     campo?: {
-      nome: string;
-    };
-  };
+      nome: string
+    }
+  }
 }
 
 export default function PerfilPage() {
-  const { pb, authChecked } = useAuthGuard(["usuario"]);
-  const [usuario, setUsuario] = useState<UsuarioAuthModel | null>(null);
-  const [mostrarModal, setMostrarModal] = useState(false);
+  const { pb, authChecked } = useAuthGuard(['usuario'])
+  const [usuario, setUsuario] = useState<UsuarioAuthModel | null>(null)
+  const [mostrarModal, setMostrarModal] = useState(false)
 
   useEffect(() => {
-    if (!authChecked) return;
+    if (!authChecked) return
 
     const handleAuthChange = () => {
-      const model = pb.authStore.model as unknown as UsuarioAuthModel;
-      setUsuario(model);
-    };
+      const model = pb.authStore.model as unknown as UsuarioAuthModel
+      setUsuario(model)
+    }
 
-    handleAuthChange();
-    const unsubscribe = pb.authStore.onChange(handleAuthChange);
-    return () => unsubscribe();
-  }, [authChecked, pb]);
+    handleAuthChange()
+    const unsubscribe = pb.authStore.onChange(handleAuthChange)
+    return () => unsubscribe()
+  }, [authChecked, pb])
 
-  if (!authChecked || !usuario) return null;
+  if (!authChecked || !usuario) return null
 
   return (
     <div className="max-w-2xl mx-auto mt-10 p-6 bg-white dark:bg-zinc-900 rounded-xl shadow space-y-6">
@@ -59,8 +59,8 @@ export default function PerfilPage() {
           <span className="font-semibold">E-mail:</span> {usuario.email}
         </p>
         <p>
-          <span className="font-semibold">Campo de Atuação:</span>{" "}
-          {usuario.expand?.campo?.nome || "Não vinculado"}
+          <span className="font-semibold">Campo de Atuação:</span>{' '}
+          {usuario.expand?.campo?.nome || 'Não vinculado'}
         </p>
       </div>
 
@@ -76,12 +76,12 @@ export default function PerfilPage() {
       {mostrarModal && (
         <ModalEditarPerfil
           onClose={() => {
-            setMostrarModal(false);
-            const model = pb.authStore.model as unknown as UsuarioAuthModel;
-            setUsuario(model);
+            setMostrarModal(false)
+            const model = pb.authStore.model as unknown as UsuarioAuthModel
+            setUsuario(model)
           }}
         />
       )}
     </div>
-  );
+  )
 }

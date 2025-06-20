@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import { ChevronRight } from "lucide-react";
+import { ChevronRight } from 'lucide-react'
 
 interface NextPostButtonProps {
-  slug: string;
+  slug: string
 }
 
 export default function NextPostButton({ slug }: NextPostButtonProps) {
@@ -17,5 +17,5 @@ export default function NextPostButton({ slug }: NextPostButtonProps) {
         <ChevronRight size={20} />
       </a>
     </div>
-  );
+  )
 }

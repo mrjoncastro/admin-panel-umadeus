@@ -1,104 +1,104 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import { useToast } from "@/lib/context/ToastContext";
-import type { ClientResponseError } from "pocketbase";
-import createPocketBase from "@/lib/pocketbase"; // ajuste para seu caminho real
-import Spinner from "@/components/atoms/Spinner";
+import { useState, useEffect } from 'react'
+import { useAuthContext } from '@/lib/context/AuthContext'
+import { useToast } from '@/lib/context/ToastContext'
+import type { ClientResponseError } from 'pocketbase'
+import createPocketBase from '@/lib/pocketbase' // ajuste para seu caminho real
+import Spinner from '@/components/atoms/Spinner'
 
 const VIA_CEP_URL =
-  process.env.NEXT_PUBLIC_VIA_CEP_URL || "https://viacep.com.br/ws";
+  process.env.NEXT_PUBLIC_VIA_CEP_URL || 'https://viacep.com.br/ws'
 
 export default function SignUpForm({
   onSuccess,
   children,
 }: {
-  onSuccess?: () => void;
-  children?: React.ReactNode;
+  onSuccess?: () => void
+  children?: React.ReactNode
 }) {
-  const { signUp } = useAuthContext();
-  const pb = createPocketBase();
+  const { signUp } = useAuthContext()
+  const pb = createPocketBase()
 
-  const [campos, setCampos] = useState<{ id: string; nome: string }[]>([]);
-  const [campo, setCampo] = useState("");
-  const [nome, setNome] = useState("");
-  const [email, setEmail] = useState("");
-  const [telefone, setTelefone] = useState("");
-  const [cpf, setCpf] = useState("");
-  const [dataNascimento, setDataNascimento] = useState("");
-  const [cep, setCep] = useState("");
-  const [endereco, setEndereco] = useState("");
-  const [numero, setNumero] = useState("");
-  const [estado, setEstado] = useState("");
-  const [cidade, setCidade] = useState("");
-  const [senha, setSenha] = useState("");
-  const [senhaConfirm, setSenhaConfirm] = useState("");
-  const { showError, showSuccess } = useToast();
-  const [loading, setLoading] = useState(false);
+  const [campos, setCampos] = useState<{ id: string; nome: string }[]>([])
+  const [campo, setCampo] = useState('')
+  const [nome, setNome] = useState('')
+  const [email, setEmail] = useState('')
+  const [telefone, setTelefone] = useState('')
+  const [cpf, setCpf] = useState('')
+  const [dataNascimento, setDataNascimento] = useState('')
+  const [cep, setCep] = useState('')
+  const [endereco, setEndereco] = useState('')
+  const [numero, setNumero] = useState('')
+  const [estado, setEstado] = useState('')
+  const [cidade, setCidade] = useState('')
+  const [senha, setSenha] = useState('')
+  const [senhaConfirm, setSenhaConfirm] = useState('')
+  const { showError, showSuccess } = useToast()
+  const [loading, setLoading] = useState(false)
 
   // Busca os campos disponíveis
   useEffect(() => {
     async function loadCampos() {
       try {
-        const resTenant = await fetch("/api/tenant");
-        const data = resTenant.ok ? await resTenant.json() : { tenantId: null };
-        const tenantId = data.tenantId;
+        const resTenant = await fetch('/api/tenant')
+        const data = resTenant.ok ? await resTenant.json() : { tenantId: null }
+        const tenantId = data.tenantId
 
-        if (!tenantId) return;
+        if (!tenantId) return
 
-        const res = await pb.collection("campos").getFullList({
-          sort: "nome",
+        const res = await pb.collection('campos').getFullList({
+          sort: 'nome',
           filter: `cliente='${tenantId}'`,
-        });
-        const lista = res.map((item) => ({ id: item.id, nome: item.nome }));
-        setCampos(lista);
+        })
+        const lista = res.map((item) => ({ id: item.id, nome: item.nome }))
+        setCampos(lista)
       } catch {
-        console.warn("Erro ao carregar os campos");
+        console.warn('Erro ao carregar os campos')
       }
     }
 
-    loadCampos();
-  }, [pb]);
+    loadCampos()
+  }, [pb])
 
   useEffect(() => {
-    const cleanCep = cep.replace(/\D/g, "");
-    if (cleanCep.length !== 8) return;
+    const cleanCep = cep.replace(/\D/g, '')
+    if (cleanCep.length !== 8) return
     fetch(`${VIA_CEP_URL}/${cleanCep}/json/`)
       .then(async (res) => {
         if (!res.ok) {
-          showError("CEP n\u00e3o encontrado.");
-          setEndereco("");
-          setCidade("");
-          setEstado("");
-          return null;
+          showError('CEP n\u00e3o encontrado.')
+          setEndereco('')
+          setCidade('')
+          setEstado('')
+          return null
         }
-        return res.json();
+        return res.json()
       })
       .then((data) => {
-        if (!data || data.erro) return;
-        setEndereco(data.logradouro || "");
-        setCidade(data.localidade || "");
-        setEstado(data.uf || "");
+        if (!data || data.erro) return
+        setEndereco(data.logradouro || '')
+        setCidade(data.localidade || '')
+        setEstado(data.uf || '')
       })
       .catch(() => {
-        showError("Erro ao buscar o CEP.");
-      });
-  }, [cep, showError]);
+        showError('Erro ao buscar o CEP.')
+      })
+  }, [cep, showError])
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+    e.preventDefault()
     if (senha !== senhaConfirm) {
-      showError("As senhas não coincidem.");
-      return;
+      showError('As senhas não coincidem.')
+      return
     }
 
     if (!campo) {
-      showError("Selecione um campo.");
-      return;
+      showError('Selecione um campo.')
+      return
     }
 
-    setLoading(true);
+    setLoading(true)
     try {
       await signUp(
         nome,
@@ -110,26 +110,26 @@ export default function SignUpForm({
         estado,
         cep,
         cidade,
-        senha
-      );
-      showSuccess("Conta criada com sucesso!");
+        senha,
+      )
+      showSuccess('Conta criada com sucesso!')
       setTimeout(() => {
-        onSuccess?.();
-      }, 500);
+        onSuccess?.()
+      }, 500)
     } catch (err: unknown) {
-      console.error("Erro no cadastro:", err);
-      const e = err as ClientResponseError;
+      console.error('Erro no cadastro:', err)
+      const e = err as ClientResponseError
       const data = e.response?.data as
         | { telefone?: { message: string }; cpf?: { message: string } }
-        | undefined;
-      const dupMsg = data?.telefone?.message || data?.cpf?.message;
+        | undefined
+      const dupMsg = data?.telefone?.message || data?.cpf?.message
       if (dupMsg) {
-        showError(dupMsg);
+        showError(dupMsg)
       } else {
-        showError("Não foi possível criar a conta.");
+        showError('Não foi possível criar a conta.')
       }
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
@@ -140,8 +140,6 @@ export default function SignUpForm({
           <h2 className="text-2xl font-semibold text-center text-white">
             Criar Conta
           </h2>
-
-
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
@@ -261,7 +259,7 @@ export default function SignUpForm({
             type="submit"
             disabled={loading}
             className={`btn btn-primary w-full rounded-md py-2 text-white font-semibold ${
-              loading ? "opacity-50" : ""
+              loading ? 'opacity-50' : ''
             }`}
           >
             {loading ? (
@@ -270,7 +268,7 @@ export default function SignUpForm({
                 Enviando...
               </span>
             ) : (
-              "Criar conta"
+              'Criar conta'
             )}
           </button>
 
@@ -282,5 +280,5 @@ export default function SignUpForm({
         </form>
       </div>
     </div>
-  );
+  )
 }

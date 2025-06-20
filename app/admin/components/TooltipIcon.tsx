@@ -1,15 +1,15 @@
 // components/TooltipIcon.tsx
-"use client";
+'use client'
 
-import * as Tooltip from "@radix-ui/react-tooltip";
-import { ReactNode } from "react";
+import * as Tooltip from '@radix-ui/react-tooltip'
+import { ReactNode } from 'react'
 
 export default function TooltipIcon({
   children,
   label,
 }: {
-  children: ReactNode;
-  label: string;
+  children: ReactNode
+  label: string
 }) {
   return (
     <Tooltip.Provider>
@@ -27,5 +27,5 @@ export default function TooltipIcon({
         </Tooltip.Portal>
       </Tooltip.Root>
     </Tooltip.Provider>
-  );
+  )
 }

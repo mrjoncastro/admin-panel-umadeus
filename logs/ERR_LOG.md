@@ -151,9 +151,13 @@
 ## [2025-06-18] Erro ao criar compra: ClientResponseError 400: Failed to create record. - development
 
 ## [2025-06-18] Erro no checkout: Error: {"errors":[{"code":"invalid_object","description":"O campo successUrl é inválido."},{"code":"invalid_object","description":"O campo cancelUrl é inválido."},{"code":"invalid_object","description":"O campo expiredUrl é inválido."}]} - development
+
 ## [2025-06-19] Erro ao atualizar configuracoes: ClientResponseError 400: Failed to update record. - development
+
 ## [2025-07-09] Erro no checkout: {"errors":[{"code":"invalid_object","description":"O valor total do Split excede o valor a receber"}]} - development
 
 ## [2025-07-09] Resolvido erro de Split no checkout ajustando o valor automaticamente quando a API retorna o limite. Commit: 4285c3777ccd95b6024d424a54fe5528118646a4
+
 ## [2025-07-11] Corrigida tipagem da página de post do blog que quebrava build - dev - 82aa56e
+
 ## [2025-06-20] Corrigido erro 'Cannot read properties of undefined (reading 'replace')' em ConfiguracoesPage ajustando funcao isColorLight - dev - 3d07f5f

@@ -1,41 +1,43 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import Link from "next/link";
-import { getPostsClientPB, type PostClientRecord } from "@/lib/posts/getPostsClientPB";
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuthContext } from '@/lib/context/AuthContext'
+import Link from 'next/link'
+import {
+  getPostsClientPB,
+  type PostClientRecord,
+} from '@/lib/posts/getPostsClientPB'
 
-type Post = PostClientRecord;
+type Post = PostClientRecord
 
-const POSTS_PER_PAGE = 10;
+const POSTS_PER_PAGE = 10
 
 export default function AdminPostsPage() {
-  const { user, isLoggedIn } = useAuthContext();
-  const router = useRouter();
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [page, setPage] = useState(1);
-  
+  const { user, isLoggedIn } = useAuthContext()
+  const router = useRouter()
+  const [posts, setPosts] = useState<Post[]>([])
+  const [page, setPage] = useState(1)
 
   useEffect(() => {
     if (!isLoggedIn || !user) {
-      router.replace("/login");
+      router.replace('/login')
     }
-  }, [isLoggedIn, user, router]);
+  }, [isLoggedIn, user, router])
 
   useEffect(() => {
     getPostsClientPB()
       .then(setPosts)
       .catch((err) => {
-        console.error("Erro ao carregar posts:", err);
-      });
-  }, [setPosts]);
+        console.error('Erro ao carregar posts:', err)
+      })
+  }, [setPosts])
 
-  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE)
   const paginated = posts.slice(
     (page - 1) * POSTS_PER_PAGE,
-    page * POSTS_PER_PAGE
-  );
+    page * POSTS_PER_PAGE,
+  )
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">
@@ -64,7 +66,7 @@ export default function AdminPostsPage() {
               <tr key={post.slug}>
                 <td className="font-medium">{post.title}</td>
                 <td>{post.date}</td>
-                <td>{post.category || "—"}</td>
+                <td>{post.category || '—'}</td>
                 <td>
                   <Link
                     href={`/admin/posts/editar/${post.slug}`}
@@ -99,5 +101,5 @@ export default function AdminPostsPage() {
         </button>
       </div>
     </main>
-  );
+  )
 }

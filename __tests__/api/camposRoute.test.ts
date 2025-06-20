@@ -5,12 +5,12 @@ import { NextRequest } from 'next/server'
 const getFullListMock = vi.fn().mockResolvedValue([{ id: '1', nome: 'Campo' }])
 vi.mock('../../lib/pocketbase', () => ({
   default: vi.fn(() => ({
-    collection: () => ({ getFullList: getFullListMock })
-  }))
+    collection: () => ({ getFullList: getFullListMock }),
+  })),
 }))
 
 vi.mock('../../lib/getTenantFromHost', () => ({
-  getTenantFromHost: vi.fn().mockResolvedValue(null)
+  getTenantFromHost: vi.fn().mockResolvedValue(null),
 }))
 
 describe('GET /api/campos', () => {

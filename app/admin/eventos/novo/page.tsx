@@ -1,142 +1,142 @@
-"use client";
+'use client'
 
-import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import type { Produto } from "@/types";
-import { ModalProduto } from "../../produtos/novo/ModalProduto";
-import { useToast } from "@/lib/context/ToastContext";
+import { useEffect, useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { useAuthContext } from '@/lib/context/AuthContext'
+import type { Produto } from '@/types'
+import { ModalProduto } from '../../produtos/novo/ModalProduto'
+import { useToast } from '@/lib/context/ToastContext'
 
 export default function NovoEventoPage() {
-  const { user: ctxUser, isLoggedIn } = useAuthContext();
-  const { showSuccess, showError } = useToast();
-  const router = useRouter();
+  const { user: ctxUser, isLoggedIn } = useAuthContext()
+  const { showSuccess, showError } = useToast()
+  const router = useRouter()
   const getAuth = useCallback(() => {
     const token =
-      typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
+      typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
     const raw =
-      typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
-    const user = raw ? JSON.parse(raw) : ctxUser;
-    return { token, user } as const;
-  }, [ctxUser]);
+      typeof window !== 'undefined' ? localStorage.getItem('pb_user') : null
+    const user = raw ? JSON.parse(raw) : ctxUser
+    return { token, user } as const
+  }, [ctxUser])
 
-  const [cobraInscricao, setCobraInscricao] = useState(false);
-  const [produtos, setProdutos] = useState<Produto[]>([]);
-  const [selectedProdutos, setSelectedProdutos] = useState<string[]>([]);
-  const [produtoModalOpen, setProdutoModalOpen] = useState(false);
+  const [cobraInscricao, setCobraInscricao] = useState(false)
+  const [produtos, setProdutos] = useState<Produto[]>([])
+  const [selectedProdutos, setSelectedProdutos] = useState<string[]>([])
+  const [produtoModalOpen, setProdutoModalOpen] = useState(false)
 
   function toggleProduto(id: string) {
     setSelectedProdutos((prev) =>
-      prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]
-    );
+      prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id],
+    )
   }
 
   useEffect(() => {
-    const { token, user } = getAuth();
-    if (!isLoggedIn || !token || !user || user.role !== "coordenador") {
-      router.replace("/login");
+    const { token, user } = getAuth()
+    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') {
+      router.replace('/login')
     }
-  }, [isLoggedIn, router, getAuth]);
+  }, [isLoggedIn, router, getAuth])
 
   useEffect(() => {
-    const { token, user } = getAuth();
-    if (!isLoggedIn || !token || !user || user.role !== "coordenador") return;
-    fetch("/admin/api/produtos", {
+    const { token, user } = getAuth()
+    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
+    fetch('/admin/api/produtos', {
       headers: {
         Authorization: `Bearer ${token}`,
-        "X-PB-User": JSON.stringify(user),
+        'X-PB-User': JSON.stringify(user),
       },
     })
       .then((r) => r.json())
       .then((data) => {
-        setProdutos(Array.isArray(data) ? data : data.items ?? []);
+        setProdutos(Array.isArray(data) ? data : (data.items ?? []))
       })
-      .catch(() => setProdutos([]));
-  }, [isLoggedIn, getAuth]);
+      .catch(() => setProdutos([]))
+  }, [isLoggedIn, getAuth])
 
   async function handleNovoProduto(form: Produto) {
-    const formData = new FormData();
-    formData.set("nome", String(form.nome ?? ""));
-    formData.set("preco", String(form.preco ?? 0));
+    const formData = new FormData()
+    formData.set('nome', String(form.nome ?? ''))
+    formData.set('preco', String(form.preco ?? 0))
     if (form.checkout_url)
-      formData.set("checkout_url", String(form.checkout_url));
-    if (form.categoria) formData.set("categoria", String(form.categoria));
+      formData.set('checkout_url', String(form.checkout_url))
+    if (form.categoria) formData.set('categoria', String(form.categoria))
     if (Array.isArray(form.tamanhos)) {
-      form.tamanhos.forEach((t) => formData.append("tamanhos", t));
+      form.tamanhos.forEach((t) => formData.append('tamanhos', t))
     }
     if (Array.isArray(form.generos)) {
-      form.generos.forEach((g) => formData.append("generos", g));
+      form.generos.forEach((g) => formData.append('generos', g))
     }
-    if (form.descricao) formData.set("descricao", String(form.descricao));
-    if (form.detalhes) formData.set("detalhes", String(form.detalhes));
+    if (form.descricao) formData.set('descricao', String(form.descricao))
+    if (form.detalhes) formData.set('detalhes', String(form.detalhes))
     if (Array.isArray(form.cores)) {
-      formData.set("cores", (form.cores as string[]).join(","));
+      formData.set('cores', (form.cores as string[]).join(','))
     } else if (form.cores) {
-      formData.set("cores", String(form.cores));
+      formData.set('cores', String(form.cores))
     }
-    formData.set("ativo", String(form.ativo ? "true" : "false"));
+    formData.set('ativo', String(form.ativo ? 'true' : 'false'))
     if (form.imagens && form.imagens instanceof FileList) {
       Array.from(form.imagens).forEach((file) =>
-        formData.append("imagens", file)
-      );
+        formData.append('imagens', file),
+      )
     }
 
-    const { token, user } = getAuth();
+    const { token, user } = getAuth()
     try {
-      const res = await fetch("/admin/api/produtos", {
-        method: "POST",
+      const res = await fetch('/admin/api/produtos', {
+        method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
-          "X-PB-User": JSON.stringify(user),
+          'X-PB-User': JSON.stringify(user),
         },
         body: formData,
-      });
-      if (!res.ok) return;
-      const data = await res.json();
-      setProdutos((prev) => [data, ...prev]);
-      setSelectedProdutos((prev) => [...prev, data.id]);
+      })
+      if (!res.ok) return
+      const data = await res.json()
+      setProdutos((prev) => [data, ...prev])
+      setSelectedProdutos((prev) => [...prev, data.id])
     } catch (err) {
-      console.error("Erro ao criar produto:", err);
+      console.error('Erro ao criar produto:', err)
     } finally {
-      setProdutoModalOpen(false);
+      setProdutoModalOpen(false)
     }
   }
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const formElement = e.currentTarget as HTMLFormElement;
-    const formData = new FormData(formElement);
+    e.preventDefault()
+    const formElement = e.currentTarget as HTMLFormElement
+    const formData = new FormData(formElement)
     const imagemInput = formElement.querySelector<HTMLInputElement>(
-      "input[name='imagem']"
-    );
-    const files = imagemInput?.files;
-    formData.delete("imagem");
+      "input[name='imagem']",
+    )
+    const files = imagemInput?.files
+    formData.delete('imagem')
     if (files && files.length > 0) {
-      formData.append("imagem", files[0]);
+      formData.append('imagem', files[0])
     }
-    formData.delete("produtos");
-    selectedProdutos.forEach((p) => formData.append("produtos", p));
-    formData.set("cobra_inscricao", String(cobraInscricao));
-    const { token, user } = getAuth();
+    formData.delete('produtos')
+    selectedProdutos.forEach((p) => formData.append('produtos', p))
+    formData.set('cobra_inscricao', String(cobraInscricao))
+    const { token, user } = getAuth()
     try {
-      const res = await fetch("/admin/api/eventos", {
-        method: "POST",
+      const res = await fetch('/admin/api/eventos', {
+        method: 'POST',
         body: formData,
         headers: {
           Authorization: `Bearer ${token}`,
-          "X-PB-User": JSON.stringify(user),
+          'X-PB-User': JSON.stringify(user),
         },
-      });
+      })
       if (res.ok) {
-        showSuccess("Evento salvo com sucesso");
-        router.push("/admin/eventos");
+        showSuccess('Evento salvo com sucesso')
+        router.push('/admin/eventos')
       } else {
-        showError("Falha ao salvar evento");
+        showError('Falha ao salvar evento')
       }
     } catch (err) {
-      console.error("Erro ao salvar evento:", err);
-      showError("Falha ao salvar evento");
+      console.error('Erro ao salvar evento:', err)
+      showError('Falha ao salvar evento')
     }
   }
 
@@ -145,7 +145,7 @@ export default function NovoEventoPage() {
       <main className="max-w-xl mx-auto px-4 py-8">
         <h1
           className="text-2xl font-bold mb-4"
-          style={{ fontFamily: "var(--font-heading)" }}
+          style={{ fontFamily: 'var(--font-heading)' }}
         >
           Novo Evento
         </h1>
@@ -213,8 +213,8 @@ export default function NovoEventoPage() {
               border-2 bg-white cursor-pointer select-none
               ${
                 selectedProdutos.includes(p.id)
-                  ? "border-primary bg-primary ring-2 ring-primary"
-                  : "border-gray-200 hover:border-primary"
+                  ? 'border-primary bg-primary ring-2 ring-primary'
+                  : 'border-gray-200 hover:border-primary'
               }
             `}
                     >
@@ -232,7 +232,7 @@ export default function NovoEventoPage() {
                         </span>
                         {p.preco !== undefined && (
                           <span className="text-xs text-gray-500">
-                            R$ {Number(p.preco).toFixed(2).replace(".", ",")}
+                            R$ {Number(p.preco).toFixed(2).replace('.', ',')}
                           </span>
                         )}
                       </div>
@@ -244,7 +244,6 @@ export default function NovoEventoPage() {
                   className="btn btn-secondary w-fit"
                   onClick={() => setProdutoModalOpen(true)}
                 >
-                  
                   <span>+ Produto</span>
                 </button>
               </div>
@@ -269,5 +268,5 @@ export default function NovoEventoPage() {
         />
       )}
     </>
-  );
+  )
 }

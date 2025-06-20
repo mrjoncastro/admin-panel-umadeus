@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import { within, expect } from 'storybook/test';
-import SignUpForm from '../app/components/SignUpForm';
-import { AuthProvider } from '../lib/context/AuthContext';
-import { ThemeProvider } from '../lib/context/ThemeContext';
+import type { Meta, StoryObj } from '@storybook/nextjs'
+import { within, expect } from 'storybook/test'
+import SignUpForm from '../app/components/SignUpForm'
+import { AuthProvider } from '../lib/context/AuthContext'
+import { ThemeProvider } from '../lib/context/ThemeContext'
 
 const meta = {
   title: 'Components/SignUpForm',
@@ -17,15 +17,17 @@ const meta = {
     ),
   ],
   tags: ['autodocs'],
-} satisfies Meta<typeof SignUpForm>;
+} satisfies Meta<typeof SignUpForm>
 
-export default meta;
+export default meta
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(canvas.getByRole('button', { name: /cadastrar/i })).toBeInTheDocument();
+    const canvas = within(canvasElement)
+    await expect(
+      canvas.getByRole('button', { name: /cadastrar/i }),
+    ).toBeInTheDocument()
   },
-};
+}

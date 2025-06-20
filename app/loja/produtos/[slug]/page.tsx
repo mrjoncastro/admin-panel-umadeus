@@ -1,27 +1,26 @@
-"use client";
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import Link from "next/link";
-import { Suspense } from "react";
-import LoadingOverlay from "@/components/organisms/LoadingOverlay";
+'use client'
+import { useState, useEffect } from 'react'
+import { useParams } from 'next/navigation'
+import Link from 'next/link'
+import { Suspense } from 'react'
+import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 
-
-import ProdutoInterativo from "./ProdutoInterativo";
-import type { Produto as ProdutoBase } from "@/types";
+import ProdutoInterativo from './ProdutoInterativo'
+import type { Produto as ProdutoBase } from '@/types'
 export default function ProdutoDetalhe() {
-  const { slug } = useParams<{ slug: string }>();
-  const [produto, setProduto] = useState<ProdutoBase | null>(null);
-  const [erro, setErro] = useState(false);
+  const { slug } = useParams<{ slug: string }>()
+  const [produto, setProduto] = useState<ProdutoBase | null>(null)
+  const [erro, setErro] = useState(false)
 
   useEffect(() => {
-    if (!slug) return;
+    if (!slug) return
     fetch(`/api/produtos/${slug}`)
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((p: ProdutoBase) => {
-        setProduto(p);
+        setProduto(p)
       })
-      .catch(() => setErro(true));
-  }, [slug]);
+      .catch(() => setErro(true))
+  }, [slug])
 
   if (erro) {
     return (
@@ -36,7 +35,7 @@ export default function ProdutoDetalhe() {
           Produto não encontrado ou ocorreu um erro.
         </div>
       </main>
-    );
+    )
   }
 
   if (!produto) {
@@ -44,39 +43,39 @@ export default function ProdutoDetalhe() {
       <main className="font-sans px-4 md:px-16 py-10">
         <LoadingOverlay show={true} text="Carregando..." />
       </main>
-    );
+    )
   }
 
   // Normaliza imagens e gêneros
-  let generos: string[] = [];
-  let imagens: Record<string, string[]> = {};
+  let generos: string[] = []
+  let imagens: Record<string, string[]> = {}
 
   // Tenta extrair lista de gêneros armazenada no produto
   if (produto.generos) {
     generos = Array.isArray(produto.generos)
       ? produto.generos.map((g) => g.trim())
-      : produto.generos.split(",").map((g) => g.trim());
+      : produto.generos.split(',').map((g) => g.trim())
   }
 
-  if (typeof produto.imagens === "object" && !Array.isArray(produto.imagens)) {
+  if (typeof produto.imagens === 'object' && !Array.isArray(produto.imagens)) {
     // formato: { masculino: [...], feminino: [...] }
-    imagens = produto.imagens as Record<string, string[]>;
-    if (generos.length === 0) generos = Object.keys(imagens);
+    imagens = produto.imagens as Record<string, string[]>
+    if (generos.length === 0) generos = Object.keys(imagens)
   } else {
     // formato: array
-    imagens = { default: (produto.imagens as string[]) || [] };
-    if (generos.length === 0) generos = ["default"];
+    imagens = { default: (produto.imagens as string[]) || [] }
+    if (generos.length === 0) generos = ['default']
   }
 
   const tamanhos = Array.isArray(produto.tamanhos)
     ? produto.tamanhos
-    : typeof produto.tamanhos === "string"
-    ? produto.tamanhos.split(",").map((t) => t.trim())
-    : ["P", "M", "G", "GG"];
+    : typeof produto.tamanhos === 'string'
+      ? produto.tamanhos.split(',').map((t) => t.trim())
+      : ['P', 'M', 'G', 'GG']
 
   // Make sure parsedValor is declared before it is used
   // Example:
-  const parsedValor = Number(produto.preco);
+  const parsedValor = Number(produto.preco)
 
   return (
     <main className="text-platinum font-sans px-4 md:px-16 py-10">
@@ -98,5 +97,5 @@ export default function ProdutoDetalhe() {
         />
       </Suspense>
     </main>
-  );
+  )
 }

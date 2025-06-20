@@ -1,69 +1,69 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import Image from "next/image";
-import RedefinirSenhaModal from "@/app/admin/components/RedefinirSenhaModal";
-import { useToast } from "@/lib/context/ToastContext";
-import "@/app/globals.css"; // Certifique-se de que o CSS global está importado
+import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
+import { useRouter } from 'next/navigation'
+import { useAuthContext } from '@/lib/context/AuthContext'
+import Image from 'next/image'
+import RedefinirSenhaModal from '@/app/admin/components/RedefinirSenhaModal'
+import { useToast } from '@/lib/context/ToastContext'
+import '@/app/globals.css' // Certifique-se de que o CSS global está importado
 
 export default function LoginForm({
   redirectTo,
   children,
 }: {
-  redirectTo?: string;
-  children?: React.ReactNode;
+  redirectTo?: string
+  children?: React.ReactNode
 }) {
-  const router = useRouter();
-  const { login, isLoggedIn, isLoading, user } = useAuthContext();
+  const router = useRouter()
+  const { login, isLoggedIn, isLoading, user } = useAuthContext()
 
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [mostrarModal, setMostrarModal] = useState(false);
-  const { showError } = useToast();
+  const [email, setEmail] = useState('')
+  const [senha, setSenha] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [mostrarModal, setMostrarModal] = useState(false)
+  const { showError } = useToast()
 
   // Redirecionamento pós-login
   useEffect(() => {
     if (!isLoading && isLoggedIn && user) {
       if (redirectTo) {
-        router.replace(redirectTo);
-      } else if (user.role === "coordenador") {
-        router.replace("/admin/dashboard");
-      } else if (user.role === "lider") {
-        router.replace("/admin/lider-painel");
+        router.replace(redirectTo)
+      } else if (user.role === 'coordenador') {
+        router.replace('/admin/dashboard')
+      } else if (user.role === 'lider') {
+        router.replace('/admin/lider-painel')
       } else {
-        router.replace("/loja/cliente");
+        router.replace('/loja/cliente')
       }
     }
-  }, [isLoading, isLoggedIn, user, router, redirectTo]);
+  }, [isLoading, isLoggedIn, user, router, redirectTo])
 
   if (!isLoading && isLoggedIn) {
-    return null; // impede que o componente renderize novamente
+    return null // impede que o componente renderize novamente
   }
 
   const handleLogin = async () => {
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     try {
-      await login(email, senha);
+      await login(email, senha)
       // Redirecionamento ocorre no useEffect
     } catch (e) {
-      console.error("❌ Erro no login:", e);
-      showError("Credenciais inválidas.");
+      console.error('❌ Erro no login:', e)
+      showError('Credenciais inválidas.')
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex justify-center items-center bg-gray-100">
         <p className="text-gray-700 text-sm">Verificando sessão...</p>
       </div>
-    );
+    )
   }
 
   return (
@@ -97,11 +97,10 @@ export default function LoginForm({
           Acesse o painel
         </motion.p>
 
-
         <form
           onSubmit={(e) => {
-            e.preventDefault();
-            handleLogin();
+            e.preventDefault()
+            handleLogin()
           }}
           className="space-y-6"
         >
@@ -141,11 +140,11 @@ export default function LoginForm({
             disabled={isSubmitting}
             className={`btn w-full rounded-md py-2 font-semibold text-white transition ${
               isSubmitting
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-[var(--accent)]"
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-[var(--accent)]'
             }`}
           >
-            {isSubmitting ? "Entrando..." : "Entrar"}
+            {isSubmitting ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
 
@@ -154,5 +153,5 @@ export default function LoginForm({
         )}
       </div>
     </div>
-  );
+  )
 }

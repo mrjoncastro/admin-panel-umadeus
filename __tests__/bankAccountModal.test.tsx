@@ -4,7 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import BankAccountModal from '@/app/admin/financeiro/transferencias/modals/BankAccountModal'
 
 vi.mock('../lib/hooks/usePocketBase', () => ({
-  default: () => ({ authStore: { model: { id: 'u1', cliente: 'cli1' } } })
+  default: () => ({ authStore: { model: { id: 'u1', cliente: 'cli1' } } }),
 }))
 
 const createBankAccount = vi.fn()
@@ -18,11 +18,19 @@ vi.mock('../lib/bankAccounts', () => ({
 }))
 
 function fillBasicFields(container: HTMLElement, cpf: string, birth: string) {
-  fireEvent.change(screen.getByPlaceholderText('Nome do titular'), { target: { value: 'Fulano' }})
-  fireEvent.change(screen.getByPlaceholderText('Nome da conta'), { target: { value: 'Conta' }})
-  fireEvent.change(screen.getByPlaceholderText('CPF/CNPJ'), { target: { value: cpf }})
-  const date = container.querySelectorAll('input[type="date"]')[0] as HTMLInputElement
-  fireEvent.change(date, { target: { value: birth }})
+  fireEvent.change(screen.getByPlaceholderText('Nome do titular'), {
+    target: { value: 'Fulano' },
+  })
+  fireEvent.change(screen.getByPlaceholderText('Nome da conta'), {
+    target: { value: 'Conta' },
+  })
+  fireEvent.change(screen.getByPlaceholderText('CPF/CNPJ'), {
+    target: { value: cpf },
+  })
+  const date = container.querySelectorAll(
+    'input[type="date"]',
+  )[0] as HTMLInputElement
+  fireEvent.change(date, { target: { value: birth } })
 }
 
 describe('BankAccountModal validations', () => {
@@ -42,7 +50,9 @@ describe('BankAccountModal validations', () => {
     const { container } = render(<BankAccountModal open onClose={() => {}} />)
     fillBasicFields(container, '93541134780', '2023-13-01')
     fireEvent.submit(container.querySelector('form') as HTMLFormElement)
-    expect(await screen.findByText('Data de nascimento inválida.')).toBeInTheDocument()
+    expect(
+      await screen.findByText('Data de nascimento inválida.'),
+    ).toBeInTheDocument()
     expect(createBankAccount).not.toHaveBeenCalled()
   })
 })

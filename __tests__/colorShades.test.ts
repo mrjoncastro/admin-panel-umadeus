@@ -9,7 +9,7 @@ describe('colorShades utilities', () => {
 
   it('generates hsl shades based on color', () => {
     const shades = generateHslShades('#ffffff')
-    expect(shades["600"]).toBe('0 0% 100%')
+    expect(shades['600']).toBe('0 0% 100%')
     expect(Object.keys(shades)).toContain('900')
   })
 })

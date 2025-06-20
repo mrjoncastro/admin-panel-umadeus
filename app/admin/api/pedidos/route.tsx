@@ -1,66 +1,68 @@
-import { NextRequest, NextResponse } from "next/server";
-import createPocketBase from "@/lib/pocketbase";
-import { logConciliacaoErro } from "@/lib/server/logger";
-import type { Inscricao, Pedido, Produto } from "@/types";
+import { NextRequest, NextResponse } from 'next/server'
+import createPocketBase from '@/lib/pocketbase'
+import { logConciliacaoErro } from '@/lib/server/logger'
+import type { Inscricao, Pedido, Produto } from '@/types'
 
 export async function POST(req: NextRequest) {
-  const pb = createPocketBase();
+  const pb = createPocketBase()
   try {
-    const body = await req.json();
-    const { inscricaoId } = body;
+    const body = await req.json()
+    const { inscricaoId } = body
 
     if (!inscricaoId) {
       return NextResponse.json(
-        { erro: "ID da inscrição é obrigatório." },
-        { status: 400 }
-      );
+        { erro: 'ID da inscrição é obrigatório.' },
+        { status: 400 },
+      )
     }
 
     const inscricao = await pb
-      .collection("inscricoes")
+      .collection('inscricoes')
       .getOne<Inscricao>(inscricaoId, {
-        expand: "campo,criado_por",
-      });
+        expand: 'campo,criado_por',
+      })
 
     if (!inscricao) {
       return NextResponse.json(
-        { erro: "Inscrição não encontrada." },
-        { status: 404 }
-      );
+        { erro: 'Inscrição não encontrada.' },
+        { status: 404 },
+      )
     }
 
-    const campoId = inscricao.expand?.campo?.id;
-    const responsavelId = inscricao.expand?.criado_por;
+    const campoId = inscricao.expand?.campo?.id
+    const responsavelId = inscricao.expand?.criado_por
 
-    let produtoRecord: Produto | undefined;
+    let produtoRecord: Produto | undefined
     try {
       if (inscricao.produto) {
-        produtoRecord = await pb.collection("produtos").getOne(inscricao.produto);
+        produtoRecord = await pb
+          .collection('produtos')
+          .getOne(inscricao.produto)
       }
     } catch {
       try {
         if (inscricao.evento) {
           const ev = await pb
-            .collection("eventos")
-            .getOne(inscricao.evento, { expand: "produtos" });
+            .collection('eventos')
+            .getOne(inscricao.evento, { expand: 'produtos' })
           const lista = Array.isArray(ev.expand?.produtos)
             ? (ev.expand.produtos as Produto[])
-            : [];
-          produtoRecord = lista.find((p) => p.id === inscricao.produto);
+            : []
+          produtoRecord = lista.find((p) => p.id === inscricao.produto)
         }
       } catch {
         // noop - produtoRecord remains undefined
       }
     }
 
-    const valor = produtoRecord?.preco ?? 0;
+    const valor = produtoRecord?.preco ?? 0
 
-    const pedido = await pb.collection("pedidos").create<Pedido>({
+    const pedido = await pb.collection('pedidos').create<Pedido>({
       id_inscricao: inscricaoId,
       valor,
-      status: "pendente",
-      produto: produtoRecord?.nome || inscricao.produto || "Produto",
-      cor: "Roxo",
+      status: 'pendente',
+      produto: produtoRecord?.nome || inscricao.produto || 'Produto',
+      cor: 'Roxo',
       tamanho:
         inscricao.tamanho ||
         (Array.isArray(produtoRecord?.tamanhos)
@@ -76,18 +78,15 @@ export async function POST(req: NextRequest) {
       responsavel: responsavelId,
       cliente: inscricao.cliente,
       canal: 'inscricao',
-    });
+    })
 
     return NextResponse.json({
       pedidoId: pedido.id,
       valor: pedido.valor,
       status: pedido.status,
-    });
+    })
   } catch (err: unknown) {
-    await logConciliacaoErro(`Erro ao criar pedido: ${String(err)}`);
-    return NextResponse.json(
-      { erro: "Erro ao criar pedido." },
-      { status: 500 }
-    );
+    await logConciliacaoErro(`Erro ao criar pedido: ${String(err)}`)
+    return NextResponse.json({ erro: 'Erro ao criar pedido.' }, { status: 500 })
   }
 }

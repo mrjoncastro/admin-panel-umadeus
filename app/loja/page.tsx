@@ -1,49 +1,49 @@
-"use client";
+'use client'
 
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import createPocketBase from "@/lib/pocketbase";
-import { calculateGross } from "@/lib/asaasFees";
+import Image from 'next/image'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import createPocketBase from '@/lib/pocketbase'
+import { calculateGross } from '@/lib/asaasFees'
 
 interface Produto {
-  id: string;
-  nome: string;
-  preco: number;
-  imagens: string[];
-  slug: string;
+  id: string
+  nome: string
+  preco: number
+  imagens: string[]
+  slug: string
 }
 
 export default function Home() {
-  const [produtosDestaque, setProdutosDestaque] = useState<Produto[]>([]);
+  const [produtosDestaque, setProdutosDestaque] = useState<Produto[]>([])
 
   useEffect(() => {
     async function fetchProdutos() {
       try {
-        const pb = createPocketBase();
-        const res = await fetch("/api/tenant");
-        const data = (await res.json()) as { tenantId: string | null };
-        const tenantId = data.tenantId;
+        const pb = createPocketBase()
+        const res = await fetch('/api/tenant')
+        const data = (await res.json()) as { tenantId: string | null }
+        const tenantId = data.tenantId
 
         const filterStr = tenantId
           ? `ativo = true && cliente='${tenantId}'`
-          : "ativo = true";
-        const list = await pb.collection("produtos").getList<Produto>(1, 6, {
+          : 'ativo = true'
+        const list = await pb.collection('produtos').getList<Produto>(1, 6, {
           filter: filterStr,
-          sort: "-created",
-        });
+          sort: '-created',
+        })
         const prods = list.items.map((p) => ({
           ...p,
-          preco: calculateGross(p.preco, "pix", 1).gross,
+          preco: calculateGross(p.preco, 'pix', 1).gross,
           imagens: (p.imagens || []).map((img) => pb.files.getURL(p, img)),
-        }));
-        setProdutosDestaque(prods);
+        }))
+        setProdutosDestaque(prods)
       } catch (err) {
-        console.error(err);
+        console.error(err)
       }
     }
-    fetchProdutos();
-  }, []);
+    fetchProdutos()
+  }, [])
 
   return (
     <>
@@ -74,7 +74,7 @@ export default function Home() {
             src="/img/qg3_tech.webp"
             alt="Congresso UMADEUS"
             fill
-            style={{ objectFit: "cover" }}
+            style={{ objectFit: 'cover' }}
             className="w-full h-full"
             priority
           />
@@ -111,7 +111,7 @@ export default function Home() {
               <h3 className="font-medium text-lg mb-2">{prod.nome}</h3>
               <span className="font-bold text-[var(--accent)] text-lg mb-4">{`R$ ${prod.preco
                 .toFixed(2)
-                .replace(".", ",")}`}</span>
+                .replace('.', ',')}`}</span>
               <Link
                 href={`/loja/produtos/${prod.slug}`}
                 className="bg-primary-600 hover:bg-primary-900 text-white px-6 py-2 rounded-full font-semibold text-sm transition"
@@ -130,5 +130,5 @@ export default function Home() {
         </p>
       </section>
     </>
-  );
+  )
 }

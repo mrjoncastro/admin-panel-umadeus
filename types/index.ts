@@ -1,161 +1,161 @@
 export type Inscricao = {
-  id: string;
-  nome: string;
-  telefone: string;
-  email?: string;
-  status?: "pendente" | "aguardando_pagamento" | "confirmado" | "cancelado";
-  tamanho?: string;
-  produto?: string;
-  genero?: string;
-  evento?: string;
-  data_nascimento?: string;
-  criado_por?: string;
-  campo?: string;
-  cliente?: string;
-  cpf?: string;
-  confirmado_por_lider?: boolean;
-  created?: string;
+  id: string
+  nome: string
+  telefone: string
+  email?: string
+  status?: 'pendente' | 'aguardando_pagamento' | 'confirmado' | 'cancelado'
+  tamanho?: string
+  produto?: string
+  genero?: string
+  evento?: string
+  data_nascimento?: string
+  criado_por?: string
+  campo?: string
+  cliente?: string
+  cpf?: string
+  confirmado_por_lider?: boolean
+  created?: string
   expand?: {
     campo?: {
-      id: string;
-      nome: string;
-    };
+      id: string
+      nome: string
+    }
     criado_por?: {
-      id: string;
-      nome: string;
-    };
+      id: string
+      nome: string
+    }
     pedido?: {
-      id: string;
-      status: "pago" | "pendente" | "cancelado";
-      valor: number | string;
-    };
+      id: string
+      status: 'pago' | 'pendente' | 'cancelado'
+      valor: number | string
+    }
     id_inscricao?: {
-      nome: string;
-      telefone?: string;
-      cpf?: string;
-    };
-    evento?: Evento;
-  };
-};
+      nome: string
+      telefone?: string
+      cpf?: string
+    }
+    evento?: Evento
+  }
+}
 
 export type Pedido = {
-  id: string;
-  id_pagamento: string;
-  id_inscricao: string;
-  produto: string;
-  tamanho?: string;
-  status: "pendente" | "pago" | "cancelado";
-  cor: string;
-  genero?: string;
-  responsavel?: string;
-  cliente?: string;
-  campo?: string;
-  email: string;
-  canal: 'loja' | 'inscricao';
-  created?: string;
-  valor: string;
+  id: string
+  id_pagamento: string
+  id_inscricao: string
+  produto: string
+  tamanho?: string
+  status: 'pendente' | 'pago' | 'cancelado'
+  cor: string
+  genero?: string
+  responsavel?: string
+  cliente?: string
+  campo?: string
+  email: string
+  canal: 'loja' | 'inscricao'
+  created?: string
+  valor: string
   expand?: {
     campo?: {
-      id: string;
-      nome: string;
-    };
+      id: string
+      nome: string
+    }
     criado_por?: {
-      id: string;
-      nome: string;
-    };
+      id: string
+      nome: string
+    }
     pedido?: {
-      id: string;
-      status: "pago" | "pendente" | "cancelado";
-      valor: number | string;
-    };
+      id: string
+      status: 'pago' | 'pendente' | 'cancelado'
+      valor: number | string
+    }
     id_inscricao?: {
-      nome: string;
-      telefone?: string;
-      cpf?: string;
-    };
-  };
-};
+      nome: string
+      telefone?: string
+      cpf?: string
+    }
+  }
+}
 
 export type Produto = {
-  id: string;
-  nome: string;
-  preco: number;
-  imagem?: string;
-  imagens?: string[];
-  tamanhos?: string[] | string;
-  generos?: string[] | string;
-  cores?: string[] | string;
-  slug: string;
-  descricao?: string;
-  detalhes?: string;
-  checkout_url?: string;
-  ativo?: boolean;
-  user_org?: string;
-  cliente?: string;
-  categoria?: string;
-  created?: string;
+  id: string
+  nome: string
+  preco: number
+  imagem?: string
+  imagens?: string[]
+  tamanhos?: string[] | string
+  generos?: string[] | string
+  cores?: string[] | string
+  slug: string
+  descricao?: string
+  detalhes?: string
+  checkout_url?: string
+  ativo?: boolean
+  user_org?: string
+  cliente?: string
+  categoria?: string
+  created?: string
   expand?: {
     user_org?: {
-      id: string;
-      nome: string;
-    };
-  };
-};
+      id: string
+      nome: string
+    }
+  }
+}
 
 export type Categoria = {
-  id: string;
-  nome: string;
-  slug: string;
-};
+  id: string
+  nome: string
+  slug: string
+}
 
 export type Evento = {
-  id: string;
-  titulo: string;
-  descricao: string;
-  data: string;
-  cidade: string;
-  imagem?: string;
-  status: "realizado" | "em breve";
-  cobra_inscricao?: boolean;
+  id: string
+  titulo: string
+  descricao: string
+  data: string
+  cidade: string
+  imagem?: string
+  status: 'realizado' | 'em breve'
+  cobra_inscricao?: boolean
   /** Produto associado à inscrição do evento */
-  produto_inscricao?: string;
-  produtos?: string[];
+  produto_inscricao?: string
+  produtos?: string[]
   expand?: {
-    produtos?: Produto[];
-  };
-  created?: string;
-};
+    produtos?: Produto[]
+  }
+  created?: string
+}
 
 export type Cliente = {
-  id: string;
-  documento: string;
-  nome?: string;
-  dominio?: string;
-  tipo_dominio?: "subdominio" | "proprio" | "registrado";
-  verificado?: boolean;
-  modo_validacao?: "wildcard" | "manual" | "cloudflare_api";
-  logo_url?: string;
-  cor_primary?: string;
-  responsavel_nome?: string;
-  responsavel_email?: string;
-  ativo?: boolean;
-  asaas_api_key?: string;
-  asaas_account_id?: string;
-  created?: string;
-};
+  id: string
+  documento: string
+  nome?: string
+  dominio?: string
+  tipo_dominio?: 'subdominio' | 'proprio' | 'registrado'
+  verificado?: boolean
+  modo_validacao?: 'wildcard' | 'manual' | 'cloudflare_api'
+  logo_url?: string
+  cor_primary?: string
+  responsavel_nome?: string
+  responsavel_email?: string
+  ativo?: boolean
+  asaas_api_key?: string
+  asaas_account_id?: string
+  created?: string
+}
 
 export type Compra = {
-  id: string;
-  cliente: string;
-  usuario: string;
-  itens: Record<string, unknown>[];
-  valor_total: number;
-  status: "pendente" | "pago" | "cancelado";
-  metodo_pagamento: "pix" | "cartao" | "boleto";
-  checkout_url?: string;
-  asaas_payment_id?: string;
-  externalReference: string;
-  endereco_entrega?: Record<string, unknown>;
-  created?: string;
-  updated?: string;
-};
+  id: string
+  cliente: string
+  usuario: string
+  itens: Record<string, unknown>[]
+  valor_total: number
+  status: 'pendente' | 'pago' | 'cancelado'
+  metodo_pagamento: 'pix' | 'cartao' | 'boleto'
+  checkout_url?: string
+  asaas_payment_id?: string
+  externalReference: string
+  endereco_entrega?: Record<string, unknown>
+  created?: string
+  updated?: string
+}

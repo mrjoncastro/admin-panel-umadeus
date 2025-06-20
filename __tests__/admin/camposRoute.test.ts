@@ -3,7 +3,7 @@ import { GET } from '../../app/admin/api/campos/route'
 import { NextRequest } from 'next/server'
 
 vi.mock('../../lib/apiAuth', () => ({
-  requireRole: vi.fn(() => ({ error: 'Acesso negado', status: 403 }))
+  requireRole: vi.fn(() => ({ error: 'Acesso negado', status: 403 })),
 }))
 
 describe('GET /admin/api/campos', () => {

@@ -1,92 +1,91 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import * as Dialog from "@radix-ui/react-dialog";
-import ModalAnimated from "@/components/organisms/ModalAnimated";
-import SmoothTabs from "@/components/molecules/SmoothTabs";
-import usePocketBase from "@/lib/hooks/usePocketBase";
-import type { UserModel } from "@/types/UserModel";
+import { useEffect, useState } from 'react'
+import * as Dialog from '@radix-ui/react-dialog'
+import ModalAnimated from '@/components/organisms/ModalAnimated'
+import SmoothTabs from '@/components/molecules/SmoothTabs'
+import usePocketBase from '@/lib/hooks/usePocketBase'
+import type { UserModel } from '@/types/UserModel'
 import {
   searchBanks,
   createBankAccount,
   createPixKey,
   Bank,
-} from "@/lib/bankAccounts";
-import {
-  isValidCPF,
-  isValidCNPJ,
-  isValidDate,
-} from "@/utils/validators";
-import { useToast } from "@/lib/context/ToastContext";
+} from '@/lib/bankAccounts'
+import { isValidCPF, isValidCNPJ, isValidDate } from '@/utils/validators'
+import { useToast } from '@/lib/context/ToastContext'
 
 interface BankAccountModalProps {
-  open: boolean;
-  onClose: () => void;
+  open: boolean
+  onClose: () => void
 }
 
-export default function BankAccountModal({ open, onClose }: BankAccountModalProps) {
-  const pb = usePocketBase();
-  const user = pb.authStore.model as unknown as UserModel | null;
+export default function BankAccountModal({
+  open,
+  onClose,
+}: BankAccountModalProps) {
+  const pb = usePocketBase()
+  const user = pb.authStore.model as unknown as UserModel | null
 
-  const [type, setType] = useState("bank");
-  const [ownerName, setOwnerName] = useState("");
-  const [accountName, setAccountName] = useState("");
-  const [cpfCnpj, setCpfCnpj] = useState("");
-  const [ownerBirthDate, setOwnerBirthDate] = useState("");
-  const [bankName, setBankName] = useState("");
-  const [bankCode, setBankCode] = useState("");
-  const [ispb, setIspb] = useState("");
-  const [agency, setAgency] = useState("");
-  const [account, setAccount] = useState("");
-  const [accountDigit, setAccountDigit] = useState("");
-  const [bankAccountType, setBankAccountType] = useState("conta_corrente");
-  const [banks, setBanks] = useState<Bank[]>([]);
-  const [pixAddressKey, setPixAddressKey] = useState("");
-  const [pixAddressKeyType, setPixAddressKeyType] = useState("cpf");
-  const [description, setDescription] = useState("");
-  const [scheduleDate, setScheduleDate] = useState("");
-  const { showError, showSuccess } = useToast();
+  const [type, setType] = useState('bank')
+  const [ownerName, setOwnerName] = useState('')
+  const [accountName, setAccountName] = useState('')
+  const [cpfCnpj, setCpfCnpj] = useState('')
+  const [ownerBirthDate, setOwnerBirthDate] = useState('')
+  const [bankName, setBankName] = useState('')
+  const [bankCode, setBankCode] = useState('')
+  const [ispb, setIspb] = useState('')
+  const [agency, setAgency] = useState('')
+  const [account, setAccount] = useState('')
+  const [accountDigit, setAccountDigit] = useState('')
+  const [bankAccountType, setBankAccountType] = useState('conta_corrente')
+  const [banks, setBanks] = useState<Bank[]>([])
+  const [pixAddressKey, setPixAddressKey] = useState('')
+  const [pixAddressKeyType, setPixAddressKeyType] = useState('cpf')
+  const [description, setDescription] = useState('')
+  const [scheduleDate, setScheduleDate] = useState('')
+  const { showError, showSuccess } = useToast()
 
   useEffect(() => {
-    searchBanks("")
+    searchBanks('')
       .then(setBanks)
-      .catch(() => setBanks([]));
-  }, []);
+      .catch(() => setBanks([]))
+  }, [])
 
   useEffect(() => {
     if (!bankName) {
-      return;
+      return
     }
     const timeout = setTimeout(() => {
       searchBanks(bankName)
         .then(setBanks)
-        .catch(() => setBanks([]));
-    }, 300);
-    return () => clearTimeout(timeout);
-  }, [bankName]);
+        .catch(() => setBanks([]))
+    }, 300)
+    return () => clearTimeout(timeout)
+  }, [bankName])
 
   const handleBankChange = (value: string) => {
-    setBankName(value);
-    const found = banks.find((b) => b.name === value);
+    setBankName(value)
+    const found = banks.find((b) => b.name === value)
     if (found) {
-      setBankCode(String(found.code));
-      setIspb(found.ispb);
+      setBankCode(String(found.code))
+      setIspb(found.ispb)
     }
-  };
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return;
+    e.preventDefault()
+    if (!user) return
     if (cpfCnpj && !isValidCPF(cpfCnpj) && !isValidCNPJ(cpfCnpj)) {
-      showError("CPF/CNPJ inválido.");
-      return;
+      showError('CPF/CNPJ inválido.')
+      return
     }
     if (ownerBirthDate && !isValidDate(ownerBirthDate)) {
-      showError("Data de nascimento inválida.");
-      return;
+      showError('Data de nascimento inválida.')
+      return
     }
     try {
-      if (type === "pix") {
+      if (type === 'pix') {
         await createPixKey(
           pb,
           {
@@ -96,8 +95,8 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
             scheduleDate,
           },
           user.id,
-          (user as UserModel & { cliente?: string }).cliente || user.id
-        );
+          (user as UserModel & { cliente?: string }).cliente || user.id,
+        )
       } else {
         await createBankAccount(
           pb,
@@ -115,16 +114,16 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
             bankAccountType,
           },
           user.id,
-          (user as UserModel & { cliente?: string }).cliente || user.id
-        );
+          (user as UserModel & { cliente?: string }).cliente || user.id,
+        )
       }
-      showSuccess("Conta salva!");
-      onClose();
+      showSuccess('Conta salva!')
+      onClose()
     } catch (err) {
-      console.error(err);
-      showError("Erro ao salvar.");
+      console.error(err)
+      showError('Erro ao salvar.')
     }
-  };
+  }
 
   return (
     <ModalAnimated open={open} onOpenChange={(v) => !v && onClose()}>
@@ -132,14 +131,16 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
         <Dialog.Title asChild>
           <h3 className="text-lg font-semibold text-center">Adicionar Conta</h3>
         </Dialog.Title>
-        <Dialog.Description className="sr-only">Formulário de conta bancária</Dialog.Description>
+        <Dialog.Description className="sr-only">
+          Formulário de conta bancária
+        </Dialog.Description>
         <SmoothTabs
           onChange={setType}
           defaultValue="bank"
           tabs={[
             {
-              value: "bank",
-              label: "Conta Bancária",
+              value: 'bank',
+              label: 'Conta Bancária',
               content: (
                 <div className="space-y-3">
                   <input
@@ -228,8 +229,8 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
               ),
             },
             {
-              value: "pix",
-              label: "PIX",
+              value: 'pix',
+              label: 'PIX',
               content: (
                 <div className="space-y-3">
                   <input
@@ -277,5 +278,5 @@ export default function BankAccountModal({ open, onClose }: BankAccountModalProp
         </div>
       </form>
     </ModalAnimated>
-  );
+  )
 }

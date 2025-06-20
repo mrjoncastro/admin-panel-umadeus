@@ -1,23 +1,23 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import PostContentEditor from "../components/PostContentEditor";
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuthContext } from '@/lib/context/AuthContext'
+import PostContentEditor from '../components/PostContentEditor'
 
 export default function NovoPostPage() {
-  const { user, isLoggedIn } = useAuthContext();
-  const router = useRouter();
-  const [conteudo, setConteudo] = useState("");
-  const [preview, setPreview] = useState(false);
-  const [thumbnail, setThumbnail] = useState("");
-  const [keywords, setKeywords] = useState("");
+  const { user, isLoggedIn } = useAuthContext()
+  const router = useRouter()
+  const [conteudo, setConteudo] = useState('')
+  const [preview, setPreview] = useState(false)
+  const [thumbnail, setThumbnail] = useState('')
+  const [keywords, setKeywords] = useState('')
 
   useEffect(() => {
     if (!isLoggedIn || !user) {
-      router.replace("/login");
+      router.replace('/login')
     }
-  }, [isLoggedIn, user, router]);
+  }, [isLoggedIn, user, router])
 
   if (preview) {
     return (
@@ -33,7 +33,7 @@ export default function NovoPostPage() {
           dangerouslySetInnerHTML={{ __html: conteudo }}
         />
       </main>
-    );
+    )
   }
 
   return (
@@ -41,18 +41,18 @@ export default function NovoPostPage() {
       <h1 className="text-2xl font-bold mb-4">Novo Post</h1>
       <form
         onSubmit={(e) => {
-          e.preventDefault();
-          const formData = new FormData(e.currentTarget);
-          formData.set("content", conteudo);
+          e.preventDefault()
+          const formData = new FormData(e.currentTarget)
+          formData.set('content', conteudo)
           // Adiciona data atual no formato ISO (salva sempre a data/hora do envio)
-          formData.set("date", new Date().toISOString());
-          fetch("/admin/api/posts", {
-            method: "POST",
+          formData.set('date', new Date().toISOString())
+          fetch('/admin/api/posts', {
+            method: 'POST',
             body: formData,
           })
             .then((res) => res.json())
-            .then(() => router.push("/admin/posts"))
-            .catch((err) => console.error("Erro ao salvar post:", err));
+            .then(() => router.push('/admin/posts'))
+            .catch((err) => console.error('Erro ao salvar post:', err))
         }}
         className="space-y-4"
       >
@@ -65,7 +65,7 @@ export default function NovoPostPage() {
         {/* Campo de data APENAS visualização, não enviado */}
         <input
           type="text"
-          value={new Date().toLocaleDateString("pt-BR")}
+          value={new Date().toLocaleDateString('pt-BR')}
           readOnly
           disabled
           className="input-base"
@@ -110,5 +110,5 @@ export default function NovoPostPage() {
         </div>
       </form>
     </main>
-  );
+  )
 }

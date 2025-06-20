@@ -1,125 +1,125 @@
-"use client";
+'use client'
 
-import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import ModalCategoria from "./ModalCategoria";
-import { useToast } from "@/lib/context/ToastContext";
+import { useEffect, useState, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuthContext } from '@/lib/context/AuthContext'
+import ModalCategoria from './ModalCategoria'
+import { useToast } from '@/lib/context/ToastContext'
 
 interface Categoria {
-  id: string;
-  nome: string;
-  slug: string;
+  id: string
+  nome: string
+  slug: string
 }
 
 export default function CategoriasAdminPage() {
-  const { user: ctxUser, isLoggedIn } = useAuthContext();
-  const { showSuccess, showError } = useToast();
-  const router = useRouter();
+  const { user: ctxUser, isLoggedIn } = useAuthContext()
+  const { showSuccess, showError } = useToast()
+  const router = useRouter()
   const getAuth = useCallback(() => {
     const token =
-      typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
+      typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
     const raw =
-      typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
-    const user = raw ? JSON.parse(raw) : ctxUser;
-    return { token, user } as const;
-  }, [ctxUser]);
-  const [categorias, setCategorias] = useState<Categoria[]>([]);
-  const [editCategoria, setEditCategoria] = useState<Categoria | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
+      typeof window !== 'undefined' ? localStorage.getItem('pb_user') : null
+    const user = raw ? JSON.parse(raw) : ctxUser
+    return { token, user } as const
+  }, [ctxUser])
+  const [categorias, setCategorias] = useState<Categoria[]>([])
+  const [editCategoria, setEditCategoria] = useState<Categoria | null>(null)
+  const [modalOpen, setModalOpen] = useState(false)
 
   useEffect(() => {
-    const { token, user } = getAuth();
-    if (!isLoggedIn || !token || !user || user.role !== "coordenador") {
-      router.replace("/login");
+    const { token, user } = getAuth()
+    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') {
+      router.replace('/login')
     }
-  }, [isLoggedIn, router, getAuth]);
+  }, [isLoggedIn, router, getAuth])
 
   useEffect(() => {
-    const { token, user } = getAuth();
-    if (!isLoggedIn || !token || !user || user.role !== "coordenador") return;
-    fetch("/admin/api/categorias", {
+    const { token, user } = getAuth()
+    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
+    fetch('/admin/api/categorias', {
       headers: {
         Authorization: `Bearer ${token}`,
-        "X-PB-User": JSON.stringify(user),
+        'X-PB-User': JSON.stringify(user),
       },
     })
       .then((res) => res.json())
       .then((data) => {
-        setCategorias(Array.isArray(data) ? data : []);
+        setCategorias(Array.isArray(data) ? data : [])
       })
       .catch((err) => {
-        console.error("Erro ao carregar categorias:", err);
-        setCategorias([]);
-      });
-  }, [isLoggedIn, getAuth]);
+        console.error('Erro ao carregar categorias:', err)
+        setCategorias([])
+      })
+  }, [isLoggedIn, getAuth])
 
   async function handleSave(form: { nome: string }) {
-    const { token, user } = getAuth();
-    if (!isLoggedIn || !user || user.role !== "coordenador") return;
-    const metodo = editCategoria ? "PUT" : "POST";
+    const { token, user } = getAuth()
+    if (!isLoggedIn || !user || user.role !== 'coordenador') return
+    const metodo = editCategoria ? 'PUT' : 'POST'
     const url = editCategoria
       ? `/admin/api/categorias/${editCategoria.id}`
-      : "/admin/api/categorias";
+      : '/admin/api/categorias'
     try {
       const res = await fetch(url, {
         method: metodo,
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
-          "X-PB-User": JSON.stringify(user),
+          'X-PB-User': JSON.stringify(user),
         },
         body: JSON.stringify(form),
-      });
-      const data = await res.json();
+      })
+      const data = await res.json()
       if (res.ok) {
-        showSuccess(editCategoria ? "Categoria atualizada" : "Categoria criada");
-        const auth = getAuth();
-        fetch("/admin/api/categorias", {
+        showSuccess(editCategoria ? 'Categoria atualizada' : 'Categoria criada')
+        const auth = getAuth()
+        fetch('/admin/api/categorias', {
           headers: {
             Authorization: `Bearer ${auth.token}`,
-            "X-PB-User": JSON.stringify(auth.user),
+            'X-PB-User': JSON.stringify(auth.user),
           },
         })
           .then((r) => r.json())
           .then((cats) => setCategorias(Array.isArray(cats) ? cats : []))
           .catch((err) => {
-            console.error("Erro ao atualizar categorias:", err);
-            setCategorias([]);
-          });
+            console.error('Erro ao atualizar categorias:', err)
+            setCategorias([])
+          })
       } else {
-        showError("Erro: " + data.error);
+        showError('Erro: ' + data.error)
       }
     } catch (err) {
-      console.error("Erro ao salvar categoria:", err);
-      showError("Erro ao salvar categoria");
+      console.error('Erro ao salvar categoria:', err)
+      showError('Erro ao salvar categoria')
     } finally {
-      setModalOpen(false);
-      setEditCategoria(null);
+      setModalOpen(false)
+      setEditCategoria(null)
     }
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Confirma excluir?")) return;
-    const { token, user } = getAuth();
+    if (!confirm('Confirma excluir?')) return
+    const { token, user } = getAuth()
     try {
       const res = await fetch(`/admin/api/categorias/${id}`, {
-        method: "DELETE",
+        method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
-          "X-PB-User": JSON.stringify(user),
+          'X-PB-User': JSON.stringify(user),
         },
-      });
+      })
       if (!res.ok) {
-        const data = await res.json();
-        showError("Erro: " + (data.error || "Não foi possível excluir."));
-        return;
+        const data = await res.json()
+        showError('Erro: ' + (data.error || 'Não foi possível excluir.'))
+        return
       }
-      setCategorias((prev) => prev.filter((c) => c.id !== id));
-      showSuccess("Categoria excluída");
+      setCategorias((prev) => prev.filter((c) => c.id !== id))
+      showSuccess('Categoria excluída')
     } catch (err) {
-      console.error("Erro ao excluir categoria:", err);
-      showError("Erro ao excluir categoria");
+      console.error('Erro ao excluir categoria:', err)
+      showError('Erro ao excluir categoria')
     }
   }
 
@@ -128,7 +128,7 @@ export default function CategoriasAdminPage() {
       <div className="flex justify-between items-center mb-[var(--space-lg)]">
         <h2
           className="text-2xl font-bold"
-          style={{ fontFamily: "var(--font-heading)" }}
+          style={{ fontFamily: 'var(--font-heading)' }}
         >
           Categorias
         </h2>
@@ -140,8 +140,8 @@ export default function CategoriasAdminPage() {
         <ModalCategoria
           open={modalOpen}
           onClose={() => {
-            setModalOpen(false);
-            setEditCategoria(null);
+            setModalOpen(false)
+            setEditCategoria(null)
           }}
           onSubmit={handleSave}
           initial={editCategoria ? { nome: editCategoria.nome } : null}
@@ -166,15 +166,15 @@ export default function CategoriasAdminPage() {
                     <button
                       className="btn"
                       onClick={() => {
-                        setEditCategoria(c);
-                        setModalOpen(true);
+                        setEditCategoria(c)
+                        setModalOpen(true)
                       }}
                     >
                       Editar
                     </button>
                     <button
                       className="btn"
-                      style={{ color: "var(--accent)" }}
+                      style={{ color: 'var(--accent)' }}
                       onClick={() => handleDelete(c.id)}
                     >
                       Excluir
@@ -187,5 +187,5 @@ export default function CategoriasAdminPage() {
         </table>
       </div>
     </main>
-  );
+  )
 }

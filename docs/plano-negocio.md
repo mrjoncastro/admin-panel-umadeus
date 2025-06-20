@@ -74,7 +74,7 @@ Todas as coleções filhas (`usuarios`, `produtos`, `pedidos`, `inscricoes`, etc
 > **Exemplo de filtro**:
 >
 > ```js
-> pb.collection("pedidos").getFullList({ filter: `cliente='ID_DO_CLIENTE'` });
+> pb.collection('pedidos').getFullList({ filter: `cliente='ID_DO_CLIENTE'` })
 > ```
 
 ---
@@ -116,8 +116,8 @@ Todas as coleções filhas (`usuarios`, `produtos`, `pedidos`, `inscricoes`, etc
 1. Ao qualquer chamada ao Asaas, recupere:
 
    ```js
-   const cliente = await pb.collection("m24_clientes").getOne(CLIENTE_ID);
-   const apiKey = cliente.asaas_api_key;
+   const cliente = await pb.collection('m24_clientes').getOne(CLIENTE_ID)
+   const apiKey = cliente.asaas_api_key
    ```
 
 2. Use `apiKey` no header de autenticação.

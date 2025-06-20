@@ -1,14 +1,14 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import BlogHeroCarousel from '../app/blog/components/BlogHeroCarousel';
-import React, { useEffect } from 'react';
+import type { Meta, StoryObj } from '@storybook/nextjs'
+import BlogHeroCarousel from '../app/blog/components/BlogHeroCarousel'
+import React, { useEffect } from 'react'
 
 interface Post {
-  title: string;
-  date: string;
-  summary: string;
-  slug: string;
-  thumbnail?: string | null;
-  category?: string | null;
+  title: string
+  date: string
+  summary: string
+  slug: string
+  thumbnail?: string | null
+  category?: string | null
 }
 
 const meta = {
@@ -45,35 +45,41 @@ const meta = {
       },
     ] as Post[],
   },
-} satisfies Meta<typeof BlogHeroCarousel>;
+} satisfies Meta<typeof BlogHeroCarousel>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
-const FetchWrapper = ({ posts, children }: { posts: Post[]; children: React.ReactNode }) => {
+const FetchWrapper = ({
+  posts,
+  children,
+}: {
+  posts: Post[]
+  children: React.ReactNode
+}) => {
   useEffect(() => {
-    const original = global.fetch;
+    const original = global.fetch
     global.fetch = () =>
       Promise.resolve(
         new Response(JSON.stringify(posts), {
           status: 200,
-          headers: { "Content-Type": "application/json" },
-        })
-      );
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      )
     return () => {
-      global.fetch = original;
-    };
-  }, [posts]);
-  return <>{children}</>;
-};
+      global.fetch = original
+    }
+  }, [posts])
+  return <>{children}</>
+}
 
 export const Default: Story = {
   render: (args) => {
-    const { posts } = args as { posts: Post[] };
+    const { posts } = args as { posts: Post[] }
     return (
       <FetchWrapper posts={posts}>
         <BlogHeroCarousel />
       </FetchWrapper>
-    );
+    )
   },
-};
+}

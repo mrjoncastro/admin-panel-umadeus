@@ -1,17 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-import { createCheckout } from "@/lib/asaas";
-import { requireClienteFromHost } from "@/lib/clienteAuth";
-import { logInfo } from "@/lib/logger";
-import { logConciliacaoErro } from "@/lib/server/logger";
+import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
+import { createCheckout } from '@/lib/asaas'
+import { requireClienteFromHost } from '@/lib/clienteAuth'
+import { logInfo } from '@/lib/logger'
+import { logConciliacaoErro } from '@/lib/server/logger'
 import {
   MAX_ITEM_DESCRIPTION_LENGTH,
   MAX_ITEM_NAME_LENGTH,
-} from "@/lib/constants";
+} from '@/lib/constants'
 
 const checkoutSchema = z.object({
   valorBruto: z.number(),
-  paymentMethod: z.enum(["pix", "boleto", "credito"]),
+  paymentMethod: z.enum(['pix', 'boleto', 'credito']),
   itens: z
     .array(
       z.object({
@@ -20,7 +20,7 @@ const checkoutSchema = z.object({
         quantity: z.number(),
         value: z.number(),
         fotoBase64: z.string().optional().nullable(),
-      })
+      }),
     )
     .min(1),
   successUrl: z.string().url(),
@@ -41,37 +41,34 @@ const checkoutSchema = z.object({
   }),
   installments: z.number().int().min(1).max(21),
   paymentMethods: z
-    .array(z.enum(["PIX", "CREDIT_CARD"]))
+    .array(z.enum(['PIX', 'CREDIT_CARD']))
     .min(1)
     .max(2)
     .optional(),
-});
+})
 
 export async function POST(req: NextRequest) {
-  const auth = await requireClienteFromHost(req);
+  const auth = await requireClienteFromHost(req)
 
-  if ("error" in auth) {
-    return NextResponse.json({ error: auth.error }, { status: auth.status });
+  if ('error' in auth) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status })
   }
 
-  const { pb, cliente } = auth;
+  const { pb, cliente } = auth
 
   try {
-    logInfo("📥 Recebendo requisição POST em /asaas/checkout");
+    logInfo('📥 Recebendo requisição POST em /asaas/checkout')
 
-    const body = await req.json();
-    logInfo("🧾 Body recebido:\n" + JSON.stringify(body, null, 2));
+    const body = await req.json()
+    logInfo('🧾 Body recebido:\n' + JSON.stringify(body, null, 2))
 
-    const parse = checkoutSchema.safeParse(body);
+    const parse = checkoutSchema.safeParse(body)
     if (!parse.success) {
       logInfo(
-        "⚠️ Dados inválidos recebidos: " +
+        '⚠️ Dados inválidos recebidos: ' +
           JSON.stringify(parse.error.flatten()),
-      );
-      return NextResponse.json(
-        { error: "Dados inválidos" },
-        { status: 400 }
-      );
+      )
+      return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
     }
 
     const {
@@ -86,7 +83,7 @@ export async function POST(req: NextRequest) {
       cliente: clienteInfo,
       installments,
       paymentMethods,
-    } = parse.data;
+    } = parse.data
 
     if (
       process.env.PB_ADMIN_EMAIL &&
@@ -95,13 +92,13 @@ export async function POST(req: NextRequest) {
     ) {
       await pb.admins.authWithPassword(
         process.env.PB_ADMIN_EMAIL,
-        process.env.PB_ADMIN_PASSWORD
-      );
+        process.env.PB_ADMIN_PASSWORD,
+      )
     }
-    const apiKey = cliente.asaas_api_key || process.env.ASAAS_API_KEY || "";
-    const userAgent = cliente.nome;
+    const apiKey = cliente.asaas_api_key || process.env.ASAAS_API_KEY || ''
+    const userAgent = cliente.nome
 
-    logInfo("🔧 Chamando createCheckout com:", {
+    logInfo('🔧 Chamando createCheckout com:', {
       valorBruto,
       paymentMethod,
       itens,
@@ -113,9 +110,9 @@ export async function POST(req: NextRequest) {
       clienteInfo,
       installments,
       paymentMethods,
-    });
+    })
 
-    logInfo("🔑 API Key utilizada:", apiKey);
+    logInfo('🔑 API Key utilizada:', apiKey)
 
     const checkoutUrl = await createCheckout(
       {
@@ -133,16 +130,16 @@ export async function POST(req: NextRequest) {
       },
       apiKey,
       userAgent,
-    );
+    )
 
-    logInfo("✅ Checkout criado com sucesso:", checkoutUrl);
+    logInfo('✅ Checkout criado com sucesso:', checkoutUrl)
 
-    return NextResponse.json({ checkoutUrl });
+    return NextResponse.json({ checkoutUrl })
   } catch (err) {
-    await logConciliacaoErro(`Erro no checkout: ${String(err)}`);
+    await logConciliacaoErro(`Erro no checkout: ${String(err)}`)
     return NextResponse.json(
-      { error: "Erro ao processar checkout" },
-      { status: 500 }
-    );
+      { error: 'Erro ao processar checkout' },
+      { status: 500 },
+    )
   }
 }

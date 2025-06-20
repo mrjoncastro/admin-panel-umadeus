@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import { useMemo, useState } from "react";
-import createPocketBase from "@/lib/pocketbase";
-import Image from "next/image";
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useAuthContext } from '@/lib/context/AuthContext'
+import { useMemo, useState } from 'react'
+import createPocketBase from '@/lib/pocketbase'
+import Image from 'next/image'
 import {
   Menu,
   X,
@@ -16,77 +16,75 @@ import {
   Sun,
   Moon,
   Settings,
-} from "lucide-react";
-import * as Popover from "@radix-ui/react-popover";
-import { motion, AnimatePresence } from "framer-motion";
-import { useTheme } from "@/lib/context/ThemeContext";
-import { useTenant } from "@/lib/context/TenantContext";
-import RedefinirSenhaModal from "./RedefinirSenhaModal";
+} from 'lucide-react'
+import * as Popover from '@radix-ui/react-popover'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useTheme } from '@/lib/context/ThemeContext'
+import { useTenant } from '@/lib/context/TenantContext'
+import RedefinirSenhaModal from './RedefinirSenhaModal'
 
 const getNavLinks = (role?: string) => {
-  if (role === "lider") {
+  if (role === 'lider') {
     return [
-      { href: "/admin/lider-painel", label: "Painel" },
-      { href: "/admin/inscricoes", label: "Inscrições" },
-      { href: "/admin/pedidos", label: "Pedidos" },
-      { href: "/loja", label: "Ver loja" },
-    ];
+      { href: '/admin/lider-painel', label: 'Painel' },
+      { href: '/admin/inscricoes', label: 'Inscrições' },
+      { href: '/admin/pedidos', label: 'Pedidos' },
+      { href: '/loja', label: 'Ver loja' },
+    ]
   }
 
-  return [{ href: "/admin/dashboard", label: "Painel" }];
-};
+  return [{ href: '/admin/dashboard', label: 'Painel' }]
+}
 
 export default function Header() {
-  const pathname = usePathname();
-  const { isLoggedIn, user } = useAuthContext();
-  const pb = useMemo(() => createPocketBase(), []);
-  const [menuAberto, setMenuAberto] = useState(false);
-  const [perfilAberto, setPerfilAberto] = useState(false);
-  const [financeiroAberto, setFinanceiroAberto] = useState(false);
-  const [gestaoAberto, setGestaoAberto] = useState(false);
-  const [gestaoLojaAberto, setGestaoLojaAberto] = useState(false);
-  const [gerenciamentoAberto, setGerenciamentoAberto] = useState(false);
-  const [mostrarModalSenha, setMostrarModalSenha] = useState(false);
-  const { theme, toggleTheme } = useTheme();
-  const { config } = useTenant();
+  const pathname = usePathname()
+  const { isLoggedIn, user } = useAuthContext()
+  const pb = useMemo(() => createPocketBase(), [])
+  const [menuAberto, setMenuAberto] = useState(false)
+  const [perfilAberto, setPerfilAberto] = useState(false)
+  const [financeiroAberto, setFinanceiroAberto] = useState(false)
+  const [gestaoAberto, setGestaoAberto] = useState(false)
+  const [gestaoLojaAberto, setGestaoLojaAberto] = useState(false)
+  const [gerenciamentoAberto, setGerenciamentoAberto] = useState(false)
+  const [mostrarModalSenha, setMostrarModalSenha] = useState(false)
+  const { theme, toggleTheme } = useTheme()
+  const { config } = useTenant()
 
-  const navLinks = getNavLinks(user?.role);
+  const navLinks = getNavLinks(user?.role)
 
   const gestaoEventosLinks = [
-    { href: "/admin/eventos", label: "Eventos" },
-    { href: "/admin/inscricoes", label: "Inscrições" },
-    { href: "/admin/pedidos", label: "Pedidos" },
-  ];
+    { href: '/admin/eventos', label: 'Eventos' },
+    { href: '/admin/inscricoes', label: 'Inscrições' },
+    { href: '/admin/pedidos', label: 'Pedidos' },
+  ]
 
   const gestaoLojaLinks = [
-    { href: "/admin/produtos", label: "Produtos" },
-    { href: "/loja", label: "Ver loja" },
-  ];
+    { href: '/admin/produtos', label: 'Produtos' },
+    { href: '/loja', label: 'Ver loja' },
+  ]
 
   const gerenciamentoLinks =
-    user?.role === "lider"
-      ? [
-          { href: "/admin/posts", label: "Posts" },
-        ]
+    user?.role === 'lider'
+      ? [{ href: '/admin/posts', label: 'Posts' }]
       : [
-        { href: "/admin/usuarios", label: "Usuários" },
-        { href: "/admin/posts", label: "Posts" },
-        { href: "/admin/campos", label: "Campos" },
-      ];
+          { href: '/admin/usuarios', label: 'Usuários' },
+          { href: '/admin/posts', label: 'Posts' },
+          { href: '/admin/campos', label: 'Campos' },
+        ]
 
   const handleLogout = () => {
-    pb.authStore.clear();
-    localStorage.removeItem("pb_token");
-    localStorage.removeItem("pb_user");
-    window.location.href = "/login";
-  };
+    pb.authStore.clear()
+    localStorage.removeItem('pb_token')
+    localStorage.removeItem('pb_user')
+    window.location.href = '/login'
+  }
 
   return (
     <header className="bg-animated backdrop-blur-md text-[var(--text-header-primary)] shadow-md sticky top-0 z-50 gradient-x">
       <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
         <Link href="/" className="flex items-center">
           <Image
-            src={config.logoUrl || "/img/logo_umadeus_branco.png"}
+            src={config.logoUrl || '/img/logo_umadeus_branco.png'}
             alt="Logotipo UMADEUS"
             width={160}
             height={40}
@@ -109,26 +107,26 @@ export default function Header() {
           {isLoggedIn &&
             navLinks.map(({ href, label }) => {
               const active =
-                href === "/admin/produtos"
-                  ? pathname.startsWith("/admin/produtos")
-                  : pathname === href;
+                href === '/admin/produtos'
+                  ? pathname.startsWith('/admin/produtos')
+                  : pathname === href
               return (
                 <Link
                   key={href}
                   href={href}
                   className={`transition px-3 py-1 rounded-full hover:bg-[var(--background)] hover:text-[var(--foreground)] cursor-pointer ${
                     active
-                      ? "bg-[var(--background)] text-[var(--foreground)]"
-                      : ""
+                      ? 'bg-[var(--background)] text-[var(--foreground)]'
+                      : ''
                   }`}
                 >
                   {label}
                 </Link>
-              );
+              )
             })}
 
           {/* Gestão de Eventos */}
-          {isLoggedIn && user?.role === "coordenador" && (
+          {isLoggedIn && user?.role === 'coordenador' && (
             <Popover.Root open={gestaoAberto} onOpenChange={setGestaoAberto}>
               <Popover.Trigger asChild>
                 <button className="flex items-center gap-1 hover:opacity-90">
@@ -166,7 +164,7 @@ export default function Header() {
           )}
 
           {/* Gestão da Loja */}
-          {isLoggedIn && user?.role === "coordenador" && (
+          {isLoggedIn && user?.role === 'coordenador' && (
             <Popover.Root
               open={gestaoLojaAberto}
               onOpenChange={setGestaoLojaAberto}
@@ -248,7 +246,7 @@ export default function Header() {
           )}
 
           {/* Financeiro */}
-          {isLoggedIn && user?.role === "coordenador" && (
+          {isLoggedIn && user?.role === 'coordenador' && (
             <Popover.Root
               open={financeiroAberto}
               onOpenChange={setFinanceiroAberto}
@@ -301,7 +299,7 @@ export default function Header() {
             aria-label="Alternar tema"
             className="p-2 rounded hover:bg-[var(--background)] hover:text-[var(--foreground)]"
           >
-            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 
           {/* Perfil */}
@@ -311,7 +309,7 @@ export default function Header() {
                 <button className="flex items-center gap-2 text-sm font-semibold hover:opacity-90">
                   <User size={18} />
                   <span className="cursor-pointer">
-                    Olá, {user?.nome?.split(" ")[0]}
+                    Olá, {user?.nome?.split(' ')[0]}
                   </span>
                   <ChevronDown size={14} />
                 </button>
@@ -334,7 +332,7 @@ export default function Header() {
                             <User size={16} /> Visualizar perfil
                           </Link>
                         </li>
-                        {user?.role === "coordenador" && (
+                        {user?.role === 'coordenador' && (
                           <li>
                             <Link
                               href="/admin/configuracoes"
@@ -348,8 +346,8 @@ export default function Header() {
                         <li>
                           <button
                             onClick={() => {
-                              setMostrarModalSenha(true);
-                              setPerfilAberto(false);
+                              setMostrarModalSenha(true)
+                              setPerfilAberto(false)
                             }}
                             className="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
                           >
@@ -391,9 +389,9 @@ export default function Header() {
               <>
                 {navLinks.map(({ href, label }) => {
                   const active =
-                    href === "/admin/produtos"
-                      ? pathname.startsWith("/admin/produtos")
-                      : pathname === href;
+                    href === '/admin/produtos'
+                      ? pathname.startsWith('/admin/produtos')
+                      : pathname === href
                   return (
                     <Link
                       key={href}
@@ -401,16 +399,16 @@ export default function Header() {
                       onClick={() => setMenuAberto(false)}
                       className={`transition px-4 py-2 rounded-md text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] ${
                         active
-                          ? "bg-[var(--background)] text-[var(--foreground)]"
-                          : ""
+                          ? 'bg-[var(--background)] text-[var(--foreground)]'
+                          : ''
                       }`}
                     >
                       {label}
                     </Link>
-                  );
+                  )
                 })}
 
-                {user?.role === "coordenador" && (
+                {user?.role === 'coordenador' && (
                   <>
                     <span className="mt-2 text-xs uppercase font-semibold opacity-70">
                       Gestão de Eventos
@@ -458,7 +456,7 @@ export default function Header() {
               </>
             )}
 
-            {isLoggedIn && user?.role === "coordenador" && (
+            {isLoggedIn && user?.role === 'coordenador' && (
               <>
                 <Link
                   href="/admin/financeiro/saldo"
@@ -479,11 +477,11 @@ export default function Header() {
 
             <button
               onClick={() => {
-                toggleTheme();
+                toggleTheme()
               }}
               className="text-left px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)]"
             >
-              {theme === "dark" ? "Tema claro" : "Tema escuro"}
+              {theme === 'dark' ? 'Tema claro' : 'Tema escuro'}
             </button>
 
             {isLoggedIn && (
@@ -495,19 +493,19 @@ export default function Header() {
                 >
                   Perfil
                 </Link>
-                  {user?.role === "coordenador" && (
-                    <Link
-                      href="/admin/configuracoes"
-                      onClick={() => setMenuAberto(false)}
-                      className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)]"
-                    >
-                      Configurações
-                    </Link>
-                  )}
+                {user?.role === 'coordenador' && (
+                  <Link
+                    href="/admin/configuracoes"
+                    onClick={() => setMenuAberto(false)}
+                    className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)]"
+                  >
+                    Configurações
+                  </Link>
+                )}
                 <button
                   onClick={() => {
-                    setMenuAberto(false);
-                    setMostrarModalSenha(true);
+                    setMenuAberto(false)
+                    setMostrarModalSenha(true)
                   }}
                   className="text-left px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)]"
                 >
@@ -516,8 +514,8 @@ export default function Header() {
 
                 <button
                   onClick={() => {
-                    setMenuAberto(false);
-                    handleLogout();
+                    setMenuAberto(false)
+                    handleLogout()
                   }}
                   className="text-left px-4 py-2 text-sm underline text-red-400 hover:text-red-600"
                 >
@@ -543,5 +541,5 @@ export default function Header() {
         <RedefinirSenhaModal onClose={() => setMostrarModalSenha(false)} />
       )}
     </header>
-  );
+  )
 }

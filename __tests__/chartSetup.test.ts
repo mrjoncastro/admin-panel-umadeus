@@ -10,7 +10,7 @@ vi.mock('chart.js', () => ({
   ArcElement: {},
   Title: {},
   Tooltip: {},
-  Legend: {}
+  Legend: {},
 }))
 
 describe('setupCharts', () => {
@@ -47,7 +47,7 @@ describe('setupCharts', () => {
       chart.ArcElement,
       chart.Title,
       chart.Tooltip,
-      chart.Legend
+      chart.Legend,
     )
   })
 })

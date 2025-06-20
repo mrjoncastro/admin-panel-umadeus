@@ -1,22 +1,22 @@
-"use client";
+'use client'
 
-import Image from "next/image";
-import { isExternalUrl } from "@/utils/isExternalUrl";
+import Image from 'next/image'
+import { isExternalUrl } from '@/utils/isExternalUrl'
 
 interface Post {
-  slug: string;
-  title: string;
-  summary: string;
-  thumbnail: string;
-  category: string;
+  slug: string
+  title: string
+  summary: string
+  thumbnail: string
+  category: string
 }
 
 interface PostSuggestionsProps {
-  posts: Post[];
+  posts: Post[]
 }
 
 export default function PostSuggestions({ posts }: PostSuggestionsProps) {
-  if (!posts.length) return null;
+  if (!posts.length) return null
 
   return (
     <section className="py-16 px-4 bg-white">
@@ -67,5 +67,5 @@ export default function PostSuggestions({ posts }: PostSuggestionsProps) {
         </div>
       </div>
     </section>
-  );
+  )
 }

@@ -1,57 +1,57 @@
-"use client";
+'use client'
 
-import { useRouter } from "next/navigation";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import { useState, useEffect } from "react";
-import { useToast } from "@/lib/context/ToastContext";
-import TransferenciaForm from "@/app/admin/financeiro/transferencias/components/TransferenciaForm";
-import BankAccountModal from "@/app/admin/financeiro/transferencias/modals/BankAccountModal";
-import type { PixKeyRecord } from "@/lib/bankAccounts";
+import { useRouter } from 'next/navigation'
+import { useAuthContext } from '@/lib/context/AuthContext'
+import { useState, useEffect } from 'react'
+import { useToast } from '@/lib/context/ToastContext'
+import TransferenciaForm from '@/app/admin/financeiro/transferencias/components/TransferenciaForm'
+import BankAccountModal from '@/app/admin/financeiro/transferencias/modals/BankAccountModal'
+import type { PixKeyRecord } from '@/lib/bankAccounts'
 
 export default function TransferenciasPage() {
-  const { isLoggedIn } = useAuthContext();
-  const router = useRouter();
-  const { showSuccess, showError } = useToast();
-  const [openAccountModal, setOpenAccountModal] = useState(false);
+  const { isLoggedIn } = useAuthContext()
+  const router = useRouter()
+  const { showSuccess, showError } = useToast()
+  const [openAccountModal, setOpenAccountModal] = useState(false)
 
   async function handleTransfer(
     destino: string,
     valor: number,
     description: string,
     isPix: boolean,
-    pixKey?: PixKeyRecord
+    pixKey?: PixKeyRecord,
   ) {
-    const payload: Record<string, unknown> = { value: valor };
+    const payload: Record<string, unknown> = { value: valor }
     if (isPix && pixKey) {
-      payload.operationType = "PIX";
-      payload.pixAddressKey = pixKey.pixAddressKey;
-      payload.pixAddressKeyType = pixKey.pixAddressKeyType;
-      if (description) payload.description = description;
-      const schedule = (pixKey as Record<string, unknown>).scheduleDate;
-      if (typeof schedule === "string" && schedule) {
-        payload.scheduleDate = schedule;
+      payload.operationType = 'PIX'
+      payload.pixAddressKey = pixKey.pixAddressKey
+      payload.pixAddressKeyType = pixKey.pixAddressKeyType
+      if (description) payload.description = description
+      const schedule = (pixKey as Record<string, unknown>).scheduleDate
+      if (typeof schedule === 'string' && schedule) {
+        payload.scheduleDate = schedule
       }
     } else {
-      payload.bankAccountId = destino;
-      if (description) payload.description = description;
+      payload.bankAccountId = destino
+      if (description) payload.description = description
     }
-    const res = await fetch("/admin/api/asaas/transferencia", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const res = await fetch('/admin/api/asaas/transferencia', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
-    });
+    })
     if (res.ok) {
-      showSuccess("Transferência enviada!");
+      showSuccess('Transferência enviada!')
     } else {
-      showError("Erro ao transferir.");
+      showError('Erro ao transferir.')
     }
   }
 
   useEffect(() => {
-    if (!isLoggedIn) router.replace("/login");
-  }, [isLoggedIn, router]);
+    if (!isLoggedIn) router.replace('/login')
+  }, [isLoggedIn, router])
 
-  if (!isLoggedIn) return null;
+  if (!isLoggedIn) return null
 
   return (
     <main className="max-w-lg mx-auto px-4 py-8">
@@ -69,5 +69,5 @@ export default function TransferenciasPage() {
         onClose={() => setOpenAccountModal(false)}
       />
     </main>
-  );
+  )
 }

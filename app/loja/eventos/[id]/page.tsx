@@ -1,44 +1,44 @@
-import Image from "next/image";
-import { headers } from "next/headers";
-import InscricaoForm from "@/app/loja/components/InscricaoForm";
+import Image from 'next/image'
+import { headers } from 'next/headers'
+import InscricaoForm from '@/app/loja/components/InscricaoForm'
 
 interface Evento {
-  id: string;
-  titulo: string;
-  descricao: string;
-  imagem?: string;
+  id: string
+  titulo: string
+  descricao: string
+  imagem?: string
 }
 
 async function getEvento(id: string): Promise<Evento | null> {
   try {
-    const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
-    const h = await headers();
-    const host = h.get("host");
-    if (!host) return null;
+    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https'
+    const h = await headers()
+    const host = h.get('host')
+    if (!host) return null
 
     const res = await fetch(`${protocol}://${host}/api/eventos/${id}`, {
-      cache: "no-store",
-    });
-    if (!res.ok) return null;
-    return (await res.json()) as Evento;
+      cache: 'no-store',
+    })
+    if (!res.ok) return null
+    return (await res.json()) as Evento
   } catch {
-    return null;
+    return null
   }
 }
 export default async function EventoDetalhePage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string }>
 }) {
-  const { id } = await params;
-  const evento = await getEvento(id);
+  const { id } = await params
+  const evento = await getEvento(id)
 
   if (!evento) {
     return (
       <main className="px-4 py-10 md:px-16 font-sans">
         <p className="text-center text-red-500">Evento não encontrado.</p>
       </main>
-    );
+    )
   }
 
   return (
@@ -56,5 +56,5 @@ export default async function EventoDetalhePage({
       <p>{evento.descricao}</p>
       <InscricaoForm eventoId={id} />
     </main>
-  );
+  )
 }

@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import { within, expect } from 'storybook/test';
-import LayoutWrapper from '../app/admin/components/LayoutWrapper';
-import { AuthProvider } from '../lib/context/AuthContext';
-import { ThemeProvider } from '../lib/context/ThemeContext';
+import type { Meta, StoryObj } from '@storybook/nextjs'
+import { within, expect } from 'storybook/test'
+import LayoutWrapper from '../app/admin/components/LayoutWrapper'
+import { AuthProvider } from '../lib/context/AuthContext'
+import { ThemeProvider } from '../lib/context/ThemeContext'
 
 const meta = {
   title: 'Admin/LayoutWrapper',
@@ -20,10 +20,10 @@ const meta = {
     children: { control: 'text' },
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof LayoutWrapper>;
+} satisfies Meta<typeof LayoutWrapper>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
@@ -35,7 +35,7 @@ export const Default: Story = {
     </LayoutWrapper>
   ),
   play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-    await expect(canvas.getByText(args.children as string)).toBeInTheDocument();
+    const canvas = within(canvasElement)
+    await expect(canvas.getByText(args.children as string)).toBeInTheDocument()
   },
-};
+}

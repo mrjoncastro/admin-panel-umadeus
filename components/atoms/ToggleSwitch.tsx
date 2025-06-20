@@ -1,26 +1,26 @@
 // components/ToggleSwitch.tsx
-"use client";
-import React from "react";
+'use client'
+import React from 'react'
 
 interface ToggleSwitchProps {
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-  label?: string;
-  className?: string;
+  checked: boolean
+  onChange: (checked: boolean) => void
+  label?: string
+  className?: string
 }
 
 export default function ToggleSwitch({
   checked,
   onChange,
   label,
-  className = "",
+  className = '',
 }: ToggleSwitchProps) {
   return (
     <label
       className={`flex items-center gap-3 cursor-pointer select-none ${className}`}
       style={{
-        fontFamily: "var(--font-body)",
-        color: "var(--text-primary)",
+        fontFamily: 'var(--font-body)',
+        color: 'var(--text-primary)',
       }}
     >
       {label && <span className="text-sm font-medium">{label}</span>}
@@ -37,8 +37,8 @@ export default function ToggleSwitch({
             absolute top-0 left-0 w-12 h-7 rounded-full transition-colors duration-300
             ${
               checked
-                ? "bg-[var(--accent)]"
-                : "bg-neutral-300 dark:bg-neutral-700"
+                ? 'bg-[var(--accent)]'
+                : 'bg-neutral-300 dark:bg-neutral-700'
             }
             peer-focus-visible:ring-2 peer-focus-visible:ring-[var(--accent)]
           `}
@@ -48,9 +48,9 @@ export default function ToggleSwitch({
           className={`
             absolute top-0 left-0 w-7 h-7 bg-white border border-neutral-300 dark:border-neutral-700
             rounded-full shadow transition-transform duration-300
-            ${checked ? "translate-x-5" : ""}
+            ${checked ? 'translate-x-5' : ''}
           `}
-          style={{ boxShadow: "0 2px 8px 0 rgba(0,0,0,0.07)" }}
+          style={{ boxShadow: '0 2px 8px 0 rgba(0,0,0,0.07)' }}
         ></span>
         {/* Texto ON/OFF */}
         <span
@@ -59,14 +59,14 @@ export default function ToggleSwitch({
             top-1 left-3
             ${
               checked
-                ? "text-[var(--accent)] opacity-90 left-7"
-                : "text-neutral-500 opacity-80 left-2"
+                ? 'text-[var(--accent)] opacity-90 left-7'
+                : 'text-neutral-500 opacity-80 left-2'
             }
           `}
         >
-          {checked ? "ON" : "OFF"}
+          {checked ? 'ON' : 'OFF'}
         </span>
       </span>
     </label>
-  );
+  )
 }

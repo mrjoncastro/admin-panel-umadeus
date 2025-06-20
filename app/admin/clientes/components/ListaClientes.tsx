@@ -1,13 +1,16 @@
-"use client";
+'use client'
 
-import { Inscricao } from "@/types";
+import { Inscricao } from '@/types'
 
 export interface ListaClientesProps {
-  clientes: Inscricao[];
-  onEdit: (cliente: Inscricao) => void;
+  clientes: Inscricao[]
+  onEdit: (cliente: Inscricao) => void
 }
 
-export default function ListaClientes({ clientes, onEdit }: ListaClientesProps) {
+export default function ListaClientes({
+  clientes,
+  onEdit,
+}: ListaClientesProps) {
   return (
     <div className="overflow-auto rounded-lg border bg-white border-gray-300 dark:bg-neutral-950 dark:border-gray-700 shadow-sm">
       <table className="table-base">
@@ -25,10 +28,8 @@ export default function ListaClientes({ clientes, onEdit }: ListaClientesProps) 
             <tr key={c.id}>
               <td className="font-medium">{c.nome}</td>
               <td>{c.telefone}</td>
-              <td className="capitalize">
-                {c.expand?.pedido?.status ?? "—"}
-              </td>
-              <td>{c.expand?.pedido?.valor ?? "—"}</td>
+              <td className="capitalize">{c.expand?.pedido?.status ?? '—'}</td>
+              <td>{c.expand?.pedido?.valor ?? '—'}</td>
               <td>
                 <button
                   onClick={() => onEdit(c)}
@@ -42,5 +43,5 @@ export default function ListaClientes({ clientes, onEdit }: ListaClientesProps) 
         </tbody>
       </table>
     </div>
-  );
+  )
 }

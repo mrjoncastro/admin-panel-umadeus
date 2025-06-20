@@ -1,68 +1,68 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { useToast } from "@/lib/context/ToastContext";
+import { useState, useEffect } from 'react'
+import { useToast } from '@/lib/context/ToastContext'
 
 interface Campo {
-  id: string;
-  nome: string;
+  id: string
+  nome: string
 }
 
 function formatTelefone(value: string) {
   return value
-    .replace(/\D/g, "")
-    .replace(/^(\d{2})(\d)/, "($1) $2")
-    .replace(/(\d{5})(\d)/, "$1-$2")
-    .replace(/(-\d{4})\d+?$/, "$1");
+    .replace(/\D/g, '')
+    .replace(/^(\d{2})(\d)/, '($1) $2')
+    .replace(/(\d{5})(\d)/, '$1-$2')
+    .replace(/(-\d{4})\d+?$/, '$1')
 }
 
 function formatCpf(value: string) {
   return value
-    .replace(/\D/g, "")
-    .replace(/(\d{3})(\d)/, "$1.$2")
-    .replace(/(\d{3})(\d)/, "$1.$2")
-    .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    .replace(/\D/g, '')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
 }
 
 export default function NovoUsuarioPage() {
-  const { showError, showSuccess } = useToast();
-  const [nome, setNome] = useState("");
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [telefone, setTelefone] = useState("");
-  const [cpf, setCpf] = useState("");
-  const [dataNascimento, setDataNascimento] = useState("");
-  const [role, setRole] = useState("usuario");
-  const [campoId, setCampoId] = useState("");
-  const [campos, setCampos] = useState<Campo[]>([]);
+  const { showError, showSuccess } = useToast()
+  const [nome, setNome] = useState('')
+  const [email, setEmail] = useState('')
+  const [senha, setSenha] = useState('')
+  const [telefone, setTelefone] = useState('')
+  const [cpf, setCpf] = useState('')
+  const [dataNascimento, setDataNascimento] = useState('')
+  const [role, setRole] = useState('usuario')
+  const [campoId, setCampoId] = useState('')
+  const [campos, setCampos] = useState<Campo[]>([])
 
   useEffect(() => {
-    const token = localStorage.getItem("pb_token");
-    const user = localStorage.getItem("pb_user");
+    const token = localStorage.getItem('pb_token')
+    const user = localStorage.getItem('pb_user')
 
-    fetch("/admin/api/campos", {
+    fetch('/admin/api/campos', {
       headers: {
         Authorization: `Bearer ${token}`,
-        "X-PB-User": user ?? "",
+        'X-PB-User': user ?? '',
       },
     })
       .then((res) => res.json())
       .then((data) => setCampos(data))
-      .catch(() => showError("Erro ao carregar os campos."));
-  }, [showError]);
+      .catch(() => showError('Erro ao carregar os campos.'))
+  }, [showError])
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+    e.preventDefault()
 
-    const token = localStorage.getItem("pb_token");
-    const user = localStorage.getItem("pb_user");
+    const token = localStorage.getItem('pb_token')
+    const user = localStorage.getItem('pb_user')
 
-    const res = await fetch("/admin/api/usuarios", {
-      method: "POST",
+    const res = await fetch('/admin/api/usuarios', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
-        "X-PB-User": user ?? "",
+        'X-PB-User': user ?? '',
       },
       body: JSON.stringify({
         nome,
@@ -75,22 +75,22 @@ export default function NovoUsuarioPage() {
         role,
         campo: campoId,
       }),
-    });
+    })
 
-    const data = await res.json();
+    const data = await res.json()
 
     if (res.ok) {
-      showSuccess("Usuário cadastrado com sucesso!");
-      setNome("");
-      setEmail("");
-      setSenha("");
-      setTelefone("");
-      setCpf("");
-      setDataNascimento("");
-      setRole("usuario");
-      setCampoId("");
+      showSuccess('Usuário cadastrado com sucesso!')
+      setNome('')
+      setEmail('')
+      setSenha('')
+      setTelefone('')
+      setCpf('')
+      setDataNascimento('')
+      setRole('usuario')
+      setCampoId('')
     } else {
-      showError("Erro: " + (data?.error || "Erro desconhecido"));
+      showError('Erro: ' + (data?.error || 'Erro desconhecido'))
     }
   }
 
@@ -183,5 +183,5 @@ export default function NovoUsuarioPage() {
         </button>
       </form>
     </main>
-  );
+  )
 }

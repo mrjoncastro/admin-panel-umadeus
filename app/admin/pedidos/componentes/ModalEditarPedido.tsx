@@ -1,15 +1,13 @@
-"use client";
+'use client'
 
-import { FormEvent, useState } from "react";
-import { Pedido } from "@/types";
-
-
+import { FormEvent, useState } from 'react'
+import { Pedido } from '@/types'
 
 type Props = {
-  pedido: Pedido;
-  onClose: () => void;
-  onSave: (dadosAtualizados: Partial<Pedido>) => void;
-};
+  pedido: Pedido
+  onClose: () => void
+  onSave: (dadosAtualizados: Partial<Pedido>) => void
+}
 
 export default function ModalEditarPedido({ pedido, onClose, onSave }: Props) {
   const [formState, setFormState] = useState<Partial<Pedido>>({
@@ -18,19 +16,19 @@ export default function ModalEditarPedido({ pedido, onClose, onSave }: Props) {
     tamanho: pedido.tamanho,
     cor: pedido.cor,
     status: pedido.status,
-  });
+  })
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    const { name, value } = e.target;
-    setFormState((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setFormState((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    onSave(formState);
-  };
+    e.preventDefault()
+    onSave(formState)
+  }
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
@@ -40,31 +38,31 @@ export default function ModalEditarPedido({ pedido, onClose, onSave }: Props) {
           <Input
             name="produto"
             label="Produto"
-            value={formState.produto || ""}
+            value={formState.produto || ''}
             onChange={handleChange}
           />
           <Input
             name="email"
             label="Email"
-            value={formState.email || ""}
+            value={formState.email || ''}
             onChange={handleChange}
           />
           <Input
             name="tamanho"
             label="Tamanho"
-            value={formState.tamanho || ""}
+            value={formState.tamanho || ''}
             onChange={handleChange}
           />
           <Input
             name="cor"
             label="Cor"
-            value={formState.cor || ""}
+            value={formState.cor || ''}
             onChange={handleChange}
           />
           <Select
             name="status"
             label="Status"
-            value={formState.status || ""}
+            value={formState.status || ''}
             onChange={handleChange}
           >
             <option value="pendente">Pendente</option>
@@ -90,15 +88,15 @@ export default function ModalEditarPedido({ pedido, onClose, onSave }: Props) {
         </form>
       </div>
     </div>
-  );
+  )
 }
 
 type InputProps = {
-  name: string;
-  label: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-};
+  name: string
+  label: string
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+}
 
 function Input({ name, label, value, onChange }: InputProps) {
   return (
@@ -114,16 +112,16 @@ function Input({ name, label, value, onChange }: InputProps) {
         className="w-full p-2 border rounded"
       />
     </div>
-  );
+  )
 }
 
 type SelectProps = {
-  name: string;
-  label: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  children: React.ReactNode;
-};
+  name: string
+  label: string
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
+  children: React.ReactNode
+}
 
 function Select({ name, label, value, onChange, children }: SelectProps) {
   return (
@@ -141,5 +139,5 @@ function Select({ name, label, value, onChange, children }: SelectProps) {
         {children}
       </select>
     </div>
-  );
+  )
 }

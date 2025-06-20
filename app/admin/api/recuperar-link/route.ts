@@ -1,106 +1,102 @@
-import { NextRequest, NextResponse } from "next/server";
-import PocketBase from "pocketbase";
-import { logInfo } from "@/lib/logger";
+import { NextRequest, NextResponse } from 'next/server'
+import PocketBase from 'pocketbase'
+import { logInfo } from '@/lib/logger'
 
 const pb = new PocketBase(
-  process.env.NEXT_PUBLIC_PB_URL ||
-    "https://umadeus-production.up.railway.app"
-);
-pb.autoCancellation(false);
+  process.env.NEXT_PUBLIC_PB_URL || 'https://umadeus-production.up.railway.app',
+)
+pb.autoCancellation(false)
 
 export async function POST(req: NextRequest) {
   try {
-    const { cpf, telefone, cliente } = await req.json();
+    const { cpf, telefone, cliente } = await req.json()
 
-    logInfo("📨 Dados recebidos:", { cpf, telefone });
+    logInfo('📨 Dados recebidos:', { cpf, telefone })
 
     if (!cpf && !telefone) {
-      logInfo("⚠️ CPF ou telefone não fornecido");
+      logInfo('⚠️ CPF ou telefone não fornecido')
       return NextResponse.json(
-        { error: "Informe o CPF ou telefone." },
-        { status: 400 }
-      );
+        { error: 'Informe o CPF ou telefone.' },
+        { status: 400 },
+      )
     }
 
     if (!cliente) {
-      return NextResponse.json(
-        { error: "Cliente ausente." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Cliente ausente.' }, { status: 400 })
     }
 
     if (!pb.authStore.isValid) {
-      logInfo("🔐 Autenticando como admin...");
+      logInfo('🔐 Autenticando como admin...')
       await pb.admins.authWithPassword(
         process.env.PB_ADMIN_EMAIL!,
-        process.env.PB_ADMIN_PASSWORD!
-      );
-      logInfo("✅ Autenticado com sucesso.");
+        process.env.PB_ADMIN_PASSWORD!,
+      )
+      logInfo('✅ Autenticado com sucesso.')
     }
 
-    const filtroBase = cpf ? `cpf = "${cpf}"` : `telefone = "${telefone}"`;
-    const filtro = `${filtroBase} && cliente='${cliente}'`;
-    logInfo("🔎 Filtro usado:", filtro);
+    const filtroBase = cpf ? `cpf = "${cpf}"` : `telefone = "${telefone}"`
+    const filtro = `${filtroBase} && cliente='${cliente}'`
+    logInfo('🔎 Filtro usado:', filtro)
 
-    const inscricoes = await pb.collection("inscricoes").getFullList({
+    const inscricoes = await pb.collection('inscricoes').getFullList({
       filter: filtro,
-      expand: "pedido",
-    });
+      expand: 'pedido',
+    })
 
-    logInfo(`📋 ${inscricoes.length} inscrição(ões) encontrada(s)`);
+    logInfo(`📋 ${inscricoes.length} inscrição(ões) encontrada(s)`)
 
     if (!inscricoes.length) {
-      logInfo("❌ Nenhuma inscrição encontrada.");
+      logInfo('❌ Nenhuma inscrição encontrada.')
       return NextResponse.json(
-        { error: "Inscrição não encontrada. Por favor faça a inscrição." },
-        { status: 404 }
-      );
+        { error: 'Inscrição não encontrada. Por favor faça a inscrição.' },
+        { status: 404 },
+      )
     }
 
-    const inscricao = inscricoes[0];
-    const pedido = inscricao.expand?.pedido;
+    const inscricao = inscricoes[0]
+    const pedido = inscricao.expand?.pedido
 
-    logInfo("🧾 Pedido expandido com sucesso");
+    logInfo('🧾 Pedido expandido com sucesso')
 
-    if (inscricao.status === "cancelado") {
-      logInfo("❌ Inscrição recusada pela liderança.");
-      return NextResponse.json({ status: "recusado" });
+    if (inscricao.status === 'cancelado') {
+      logInfo('❌ Inscrição recusada pela liderança.')
+      return NextResponse.json({ status: 'recusado' })
     }
 
     if (!inscricao.confirmado_por_lider || !pedido) {
-      logInfo("⏳ Inscrição aguardando confirmação da liderança.");
-      return NextResponse.json({ status: "aguardando_confirmacao" });
+      logInfo('⏳ Inscrição aguardando confirmação da liderança.')
+      return NextResponse.json({ status: 'aguardando_confirmacao' })
     }
 
-    if (pedido.status === "pago") {
-      logInfo("✅ Pagamento já confirmado.");
-      return NextResponse.json({ status: "pago" });
+    if (pedido.status === 'pago') {
+      logInfo('✅ Pagamento já confirmado.')
+      return NextResponse.json({ status: 'pago' })
     }
 
-    if (pedido.status === "cancelado") {
-      logInfo("❌ Pedido cancelado.");
-      return NextResponse.json({ status: "cancelado" });
+    if (pedido.status === 'cancelado') {
+      logInfo('❌ Pedido cancelado.')
+      return NextResponse.json({ status: 'cancelado' })
     }
 
-    logInfo("⏳ Pagamento pendente. Link:", pedido.link_pagamento);
+    logInfo('⏳ Pagamento pendente. Link:', pedido.link_pagamento)
 
     return NextResponse.json({
-      status: "pendente",
+      status: 'pendente',
       link_pagamento: pedido.link_pagamento,
-    });
+    })
   } catch (error: unknown) {
     if (error instanceof Error) {
-      logInfo("❌ Erro na recuperação: " + error.message);
+      logInfo('❌ Erro na recuperação: ' + error.message)
       return NextResponse.json(
-        { error: "Erro interno: " + error.message },
-        { status: 500 }
-      );
+        { error: 'Erro interno: ' + error.message },
+        { status: 500 },
+      )
     }
 
-    logInfo("❌ Erro desconhecido: " + String(error));
+    logInfo('❌ Erro desconhecido: ' + String(error))
     return NextResponse.json(
-      { error: "Erro interno desconhecido" },
-      { status: 500 }
-    );
+      { error: 'Erro interno desconhecido' },
+      { status: 500 },
+    )
   }
 }

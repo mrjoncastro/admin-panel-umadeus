@@ -1,45 +1,45 @@
-"use client";
+'use client'
 
-import { useEffect, useState, useMemo } from "react";
-import { Bell, X } from "lucide-react";
-import createPocketBase from "@/lib/pocketbase";
-import type { Inscricao } from "@/types";
-import { useAuthContext } from "@/lib/context/AuthContext";
+import { useEffect, useState, useMemo } from 'react'
+import { Bell, X } from 'lucide-react'
+import createPocketBase from '@/lib/pocketbase'
+import type { Inscricao } from '@/types'
+import { useAuthContext } from '@/lib/context/AuthContext'
 
 export default function NotificationBell() {
-  const pb = useMemo(() => createPocketBase(), []);
-  const { tenantId } = useAuthContext();
-  const [count, setCount] = useState(0);
-  const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
-  const [open, setOpen] = useState(false);
+  const pb = useMemo(() => createPocketBase(), [])
+  const { tenantId } = useAuthContext()
+  const [count, setCount] = useState(0)
+  const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [insList, pedidos] = await Promise.all([
-          pb.collection("inscricoes").getList<Inscricao>(1, 5, {
+          pb.collection('inscricoes').getList<Inscricao>(1, 5, {
             filter: `status='pendente' && cliente='${tenantId}'`,
-            expand: "campo",
-            sort: "-created",
+            expand: 'campo',
+            sort: '-created',
             $autoCancel: false,
           }),
-          pb.collection("pedidos").getList(1, 1, {
+          pb.collection('pedidos').getList(1, 1, {
             filter: `status='pendente' && cliente='${tenantId}'`,
             $autoCancel: false,
           }),
-        ]);
+        ])
 
-        setCount(insList.totalItems + pedidos.totalItems);
-        setInscricoes(insList.items);
+        setCount(insList.totalItems + pedidos.totalItems)
+        setInscricoes(insList.items)
       } catch (err) {
-        console.error("Erro ao buscar notificações", err);
+        console.error('Erro ao buscar notificações', err)
       }
-    };
+    }
 
-    fetchData();
-    const id = setInterval(fetchData, 30000);
-    return () => clearInterval(id);
-  }, [pb, tenantId]);
+    fetchData()
+    const id = setInterval(fetchData, 30000)
+    return () => clearInterval(id)
+  }, [pb, tenantId])
 
   return (
     <div className="fixed bottom-20 right-4 z-50">
@@ -72,13 +72,13 @@ export default function NotificationBell() {
                 key={i.id}
                 className="border-b last:border-b-0 pb-1 mb-1 dark:border-zinc-700"
               >
-                <span className="font-medium">{i.nome}</span> -{" "}
-                {i.expand?.campo?.nome || "—"}
+                <span className="font-medium">{i.nome}</span> -{' '}
+                {i.expand?.campo?.nome || '—'}
               </li>
             ))}
           </ul>
         </div>
       )}
     </div>
-  );
+  )
 }

@@ -79,34 +79,34 @@ Este documento orienta a criação e padronização de componentes em seu Design
 
 ```tsx
 interface ButtonProps {
-  variant?: "primary" | "secondary" | "danger" | "link";
-  disabled?: boolean;
-  onClick?: () => void;
-  children: React.ReactNode;
-  className?: string;
+  variant?: 'primary' | 'secondary' | 'danger' | 'link'
+  disabled?: boolean
+  onClick?: () => void
+  children: React.ReactNode
+  className?: string
 }
 
 function Button({
-  variant = "primary",
+  variant = 'primary',
   disabled = false,
   className,
   ...props
 }: ButtonProps) {
-  const base = "py-2 px-4 rounded-md font-medium focus:outline-none";
+  const base = 'py-2 px-4 rounded-md font-medium focus:outline-none'
   const styleMap = {
-    primary: "bg-purple-600 hover:bg-purple-700 text-white",
-    secondary: "bg-gray-200 hover:bg-gray-300 text-gray-800",
-    danger: "bg-red-600 hover:bg-red-700 text-white",
-    link: "underline text-purple-600 hover:text-purple-700 bg-transparent",
-  };
+    primary: 'bg-purple-600 hover:bg-purple-700 text-white',
+    secondary: 'bg-gray-200 hover:bg-gray-300 text-gray-800',
+    danger: 'bg-red-600 hover:bg-red-700 text-white',
+    link: 'underline text-purple-600 hover:text-purple-700 bg-transparent',
+  }
   return (
     <button
-      className={`${base} ${styleMap[variant]} ${className ?? ""}`}
+      className={`${base} ${styleMap[variant]} ${className ?? ''}`}
       disabled={disabled}
       aria-disabled={disabled}
       {...props}
     />
-  );
+  )
 }
 ```
 

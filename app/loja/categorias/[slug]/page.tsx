@@ -1,39 +1,39 @@
 // app/loja/categorias/[slug]/page.tsx
-import createPocketBase from "@/lib/pocketbase";
-import ProdutosFiltrados from "./ProdutosFiltrados";
-import { getTenantFromHost } from "@/lib/getTenantFromHost";
+import createPocketBase from '@/lib/pocketbase'
+import ProdutosFiltrados from './ProdutosFiltrados'
+import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
 interface Produto {
-  id: string;
-  nome: string;
-  preco: number;
-  imagens: string[];
-  slug: string;
-  categoria: string;
+  id: string
+  nome: string
+  preco: number
+  imagens: string[]
+  slug: string
+  categoria: string
 }
 
 interface Params {
-  slug: string;
+  slug: string
 }
 
 export default async function CategoriaDetalhe({
   params,
 }: {
-  params: Promise<Params>;
+  params: Promise<Params>
 }) {
-  const { slug } = await params;
-  const pb = createPocketBase();
-  const tenantId = await getTenantFromHost();
+  const { slug } = await params
+  const pb = createPocketBase()
+  const tenantId = await getTenantFromHost()
 
-  const produtosPB: Produto[] = await pb.collection("produtos").getFullList({
+  const produtosPB: Produto[] = await pb.collection('produtos').getFullList({
     filter: `ativo = true && categoria = '${slug}' && cliente='${tenantId}'`,
-    sort: "-created",
-  });
+    sort: '-created',
+  })
 
   const produtos = produtosPB.map((p) => ({
     ...p,
     imagens: (p.imagens || []).map((img) => pb.files.getURL(p, img)),
-  }));
+  }))
 
   return (
     <main className="p-4 md:p-8 font-sans">
@@ -43,5 +43,5 @@ export default async function CategoriaDetalhe({
 
       <ProdutosFiltrados produtos={produtos} />
     </main>
-  );
+  )
 }

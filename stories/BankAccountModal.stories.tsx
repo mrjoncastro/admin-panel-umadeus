@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import { within, expect, fn } from 'storybook/test';
-import BankAccountModal from '@/app/admin/financeiro/transferencias/modals/BankAccountModal';
-import { AuthProvider } from '../lib/context/AuthContext';
-import { ThemeProvider } from '../lib/context/ThemeContext';
+import type { Meta, StoryObj } from '@storybook/nextjs'
+import { within, expect, fn } from 'storybook/test'
+import BankAccountModal from '@/app/admin/financeiro/transferencias/modals/BankAccountModal'
+import { AuthProvider } from '../lib/context/AuthContext'
+import { ThemeProvider } from '../lib/context/ThemeContext'
 
 const meta = {
   title: 'Design System/BankAccountModal',
@@ -21,15 +21,15 @@ const meta = {
     onClose: fn(),
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof BankAccountModal>;
+} satisfies Meta<typeof BankAccountModal>
 
-export default meta;
+export default meta
 
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(canvas.getByText(/Adicionar Conta/i)).toBeInTheDocument();
+    const canvas = within(canvasElement)
+    await expect(canvas.getByText(/Adicionar Conta/i)).toBeInTheDocument()
   },
-};
+}

@@ -1,71 +1,71 @@
-"use client";
-import { useEffect, useState, useMemo } from "react";
-import { X, Copy } from "lucide-react";
-import createPocketBase from "@/lib/pocketbase";
-import LoadingOverlay from "@/components/organisms/LoadingOverlay";
-import { useToast } from "@/lib/context/ToastContext";
-import { logInfo } from "@/lib/logger";
+'use client'
+import { useEffect, useState, useMemo } from 'react'
+import { X, Copy } from 'lucide-react'
+import createPocketBase from '@/lib/pocketbase'
+import LoadingOverlay from '@/components/organisms/LoadingOverlay'
+import { useToast } from '@/lib/context/ToastContext'
+import { logInfo } from '@/lib/logger'
 
 interface Props {
-  pedidoId: string;
-  onClose: () => void;
+  pedidoId: string
+  onClose: () => void
 }
 
 type PedidoExpandido = {
-  id: string;
-  valor: number;
-  status: string;
-  produto: string;
-  cor?: string;
-  tamanho?: string;
-  genero?: string;
-  email?: string;
+  id: string
+  valor: number
+  status: string
+  produto: string
+  cor?: string
+  tamanho?: string
+  genero?: string
+  email?: string
   expand?: {
-    campo?: { nome?: string };
-    responsavel?: { nome?: string; id?: string };
+    campo?: { nome?: string }
+    responsavel?: { nome?: string; id?: string }
     id_inscricao?: {
-      nome: string;
-      telefone: string;
-      cpf: string;
-      evento: string;
-    };
-  };
-};
+      nome: string
+      telefone: string
+      cpf: string
+      evento: string
+    }
+  }
+}
 
 export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
-  const pb = useMemo(() => createPocketBase(), []);
-  const [pedido, setPedido] = useState<PedidoExpandido | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [reenviando, setReenviando] = useState(false);
-  const [copiando, setCopiando] = useState(false);
-  const [urlPagamento, setUrlPagamento] = useState("");
-  const { showSuccess, showError } = useToast();
+  const pb = useMemo(() => createPocketBase(), [])
+  const [pedido, setPedido] = useState<PedidoExpandido | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [reenviando, setReenviando] = useState(false)
+  const [copiando, setCopiando] = useState(false)
+  const [urlPagamento, setUrlPagamento] = useState('')
+  const { showSuccess, showError } = useToast()
 
   useEffect(() => {
-    pb.collection("pedidos")
-      .getOne(pedidoId, { expand: "id_inscricao,campo,responsavel" })
+    pb.collection('pedidos')
+      .getOne(pedidoId, { expand: 'id_inscricao,campo,responsavel' })
       .then((res) => setPedido(res as unknown as PedidoExpandido))
-      .catch(() => showError("Erro ao carregar dados do pedido"))
-      .finally(() => setLoading(false));
-  }, [pb, pedidoId, showError]);
+      .catch(() => showError('Erro ao carregar dados do pedido'))
+      .finally(() => setLoading(false))
+  }, [pb, pedidoId, showError])
 
   const reenviarPagamento = async () => {
-    if (!pedido?.id || !pedido?.valor || !pedido?.expand?.id_inscricao) return;
+    if (!pedido?.id || !pedido?.valor || !pedido?.expand?.id_inscricao) return
 
-    setReenviando(true);
+    setReenviando(true)
     try {
-      const checkoutRes = await fetch("/admin/api/assas", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const checkoutRes = await fetch('/admin/api/assas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pedidoId: pedido.id, valor: pedido.valor }),
-      });
+      })
 
-      const { url } = await checkoutRes.json();
-      setUrlPagamento(url);
+      const { url } = await checkoutRes.json()
+      setUrlPagamento(url)
 
-      fetch("/admin/api/n8n", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      fetch('/admin/api/n8n', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           nome: pedido.expand.id_inscricao.nome,
           telefone: pedido.expand.id_inscricao.telefone,
@@ -76,24 +76,22 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
           valor: pedido.valor,
           url_pagamento: url,
         }),
-      }).catch((err) =>
-        logInfo("⚠️ Falha ao notificar o n8n", err)
-      );
+      }).catch((err) => logInfo('⚠️ Falha ao notificar o n8n', err))
 
-      showSuccess("Link reenviado com sucesso!");
+      showSuccess('Link reenviado com sucesso!')
     } catch {
-      showError("Erro ao reenviar link.");
+      showError('Erro ao reenviar link.')
     } finally {
-      setReenviando(false);
+      setReenviando(false)
     }
-  };
+  }
 
   const copiarLink = async () => {
-    if (!urlPagamento) return;
-    await navigator.clipboard.writeText(urlPagamento);
-    setCopiando(true);
-    setTimeout(() => setCopiando(false), 2000);
-  };
+    if (!urlPagamento) return
+    await navigator.clipboard.writeText(urlPagamento)
+    setCopiando(true)
+    setTimeout(() => setCopiando(false), 2000)
+  }
 
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-30 flex items-center justify-center px-2">
@@ -113,23 +111,44 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
           <LoadingOverlay show={true} text="Carregando..." />
         ) : (
           <div className="space-y-2 text-sm text-gray-700">
-            <p><strong>ID:</strong> {pedido.id}</p>
-            <p><strong>Valor:</strong> R$ {pedido.valor?.toFixed(2)}</p>
-            <p><strong>Status:</strong> {pedido.status}</p>
-            <p><strong>Produto:</strong> {pedido.produto}</p>
-            <p><strong>Tamanho:</strong> {pedido.tamanho || "—"}</p>
-            <p><strong>Cor:</strong> {pedido.cor || "—"}</p>
-            <p><strong>Gênero:</strong> {pedido.genero || "—"}</p>
-            <p><strong>E-mail:</strong> {pedido.email || "—"}</p>
-            <p><strong>Campo:</strong> {pedido.expand?.campo?.nome || "—"}</p>
-            <p><strong>Responsável:</strong> {pedido.expand?.responsavel?.nome || "—"}</p>
+            <p>
+              <strong>ID:</strong> {pedido.id}
+            </p>
+            <p>
+              <strong>Valor:</strong> R$ {pedido.valor?.toFixed(2)}
+            </p>
+            <p>
+              <strong>Status:</strong> {pedido.status}
+            </p>
+            <p>
+              <strong>Produto:</strong> {pedido.produto}
+            </p>
+            <p>
+              <strong>Tamanho:</strong> {pedido.tamanho || '—'}
+            </p>
+            <p>
+              <strong>Cor:</strong> {pedido.cor || '—'}
+            </p>
+            <p>
+              <strong>Gênero:</strong> {pedido.genero || '—'}
+            </p>
+            <p>
+              <strong>E-mail:</strong> {pedido.email || '—'}
+            </p>
+            <p>
+              <strong>Campo:</strong> {pedido.expand?.campo?.nome || '—'}
+            </p>
+            <p>
+              <strong>Responsável:</strong>{' '}
+              {pedido.expand?.responsavel?.nome || '—'}
+            </p>
 
             <button
               onClick={reenviarPagamento}
               disabled={reenviando}
               className="w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50 cursor-pointer"
             >
-              {reenviando ? "Reenviando..." : "📤 Reenviar link de pagamento"}
+              {reenviando ? 'Reenviando...' : '📤 Reenviar link de pagamento'}
             </button>
 
             {urlPagamento && (
@@ -155,5 +174,5 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
         )}
       </div>
     </div>
-  );
+  )
 }

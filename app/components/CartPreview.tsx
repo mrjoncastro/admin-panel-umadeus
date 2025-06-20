@@ -1,24 +1,23 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import Image from "next/image";
-import { useCart } from "@/lib/context/CartContext";
-import { calculateGross } from "@/lib/asaasFees";
+import Link from 'next/link'
+import Image from 'next/image'
+import { useCart } from '@/lib/context/CartContext'
+import { calculateGross } from '@/lib/asaasFees'
 
 export default function CartPreview() {
-  const { itens } = useCart();
+  const { itens } = useCart()
   const total = itens.reduce(
-    (sum, i) =>
-      sum + calculateGross(i.preco, "pix", 1).gross * i.quantidade,
+    (sum, i) => sum + calculateGross(i.preco, 'pix', 1).gross * i.quantidade,
     0,
-  );
+  )
 
   if (itens.length === 0) {
     return (
       <div className="card bg-[var(--background)] text-sm shadow-lg w-64">
         <p className="text-center">Seu carrinho está vazio</p>
       </div>
-    );
+    )
   }
 
   return (
@@ -43,11 +42,9 @@ export default function CartPreview() {
             </div>
             <span className="text-xs text-neutral-900 font-semibold">
               R$
-              {(
-                calculateGross(item.preco, "pix", 1).gross * item.quantidade
-              )
+              {(calculateGross(item.preco, 'pix', 1).gross * item.quantidade)
                 .toFixed(2)
-                .replace(".", ",")}
+                .replace('.', ',')}
             </span>
           </li>
         ))}
@@ -55,7 +52,7 @@ export default function CartPreview() {
       <div className="flex justify-between items-center pt-2 border-t border-neutral-200 dark:border-neutral-700 mt-2">
         <span className="font-semibold text-neutral-900 text-sm">Total:</span>
         <span className="font-semibold text-neutral-900 text-sm">
-          R$ {total.toFixed(2).replace(".", ",")}
+          R$ {total.toFixed(2).replace('.', ',')}
         </span>
       </div>
       <Link
@@ -65,5 +62,5 @@ export default function CartPreview() {
         Ver Carrinho
       </Link>
     </div>
-  );
+  )
 }

@@ -1,22 +1,22 @@
-"use client";
+'use client'
 
-import { usePathname } from "next/navigation";
-import Header from "@/app/admin/components/Header";
-import Footer from "@/app/components/Footer";
-import BackToTopButton from "@/app/admin/components/BackToTopButton";
-import NotificationBell from "@/app/admin/components/NotificationBell";
-import TourIcon from "@/app/admin/components/TourIcon";
-import { useAuthContext } from "@/lib/context/AuthContext";
+import { usePathname } from 'next/navigation'
+import Header from '@/app/admin/components/Header'
+import Footer from '@/app/components/Footer'
+import BackToTopButton from '@/app/admin/components/BackToTopButton'
+import NotificationBell from '@/app/admin/components/NotificationBell'
+import TourIcon from '@/app/admin/components/TourIcon'
+import { useAuthContext } from '@/lib/context/AuthContext'
 
 export default function LayoutWrapper({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const pathname = usePathname();
-  const isInscricaoPublica = /^\/inscricoes\/[^/]+\/[^/]+$/.test(pathname);
+  const pathname = usePathname()
+  const isInscricaoPublica = /^\/inscricoes\/[^/]+\/[^/]+$/.test(pathname)
 
-  const { isLoggedIn, user } = useAuthContext();
+  const { isLoggedIn, user } = useAuthContext()
 
   return (
     <>
@@ -25,7 +25,7 @@ export default function LayoutWrapper({
         {children}
       </main>
       <Footer />
-      {isLoggedIn && user?.role === "coordenador" && (
+      {isLoggedIn && user?.role === 'coordenador' && (
         <>
           <NotificationBell />
           <TourIcon />
@@ -33,5 +33,5 @@ export default function LayoutWrapper({
       )}
       <BackToTopButton />
     </>
-  );
+  )
 }

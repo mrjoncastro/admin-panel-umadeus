@@ -2,7 +2,11 @@ import { describe, it, expect, vi } from 'vitest'
 import type PocketBase from 'pocketbase'
 import { atualizarStatus, type EventoRecord } from '../lib/events'
 
-function criarEvento(id: string, dias: number, status: 'realizado' | 'em breve'): EventoRecord {
+function criarEvento(
+  id: string,
+  dias: number,
+  status: 'realizado' | 'em breve',
+): EventoRecord {
   const data = new Date()
   data.setDate(data.getDate() + dias)
   return {
@@ -29,8 +33,8 @@ describe('atualizarStatus', () => {
 
     expect(update).toHaveBeenCalledTimes(1)
     expect(update).toHaveBeenCalledWith('past', { status: 'realizado' })
-    expect(eventos.find(e => e.id === 'past')?.status).toBe('realizado')
-    expect(eventos.find(e => e.id === 'future')?.status).toBe('em breve')
-    expect(eventos.find(e => e.id === 'done')?.status).toBe('realizado')
+    expect(eventos.find((e) => e.id === 'past')?.status).toBe('realizado')
+    expect(eventos.find((e) => e.id === 'future')?.status).toBe('em breve')
+    expect(eventos.find((e) => e.id === 'done')?.status).toBe('realizado')
   })
 })

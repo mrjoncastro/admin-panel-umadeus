@@ -1,114 +1,114 @@
-"use client";
+'use client'
 
-import { useEffect, useState, useCallback, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { useAuthContext } from "@/lib/context/AuthContext";
-import { calculateGross } from "@/lib/asaasFees";
-import LoadingOverlay from "@/components/organisms/LoadingOverlay";
-import { useToast } from "@/lib/context/ToastContext";
+import { useEffect, useState, useCallback, useRef } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import { useAuthContext } from '@/lib/context/AuthContext'
+import { calculateGross } from '@/lib/asaasFees'
+import LoadingOverlay from '@/components/organisms/LoadingOverlay'
+import { useToast } from '@/lib/context/ToastContext'
 
 interface Categoria {
-  id: string;
-  nome: string;
-  slug: string;
+  id: string
+  nome: string
+  slug: string
 }
 
 // Função para gerar slug automático
 function slugify(str: string) {
   return str
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)+/g, "")
-    .replace(/-+/g, "-");
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)+/g, '')
+    .replace(/-+/g, '-')
 }
 
 export default function EditarProdutoPage() {
-  const { id } = useParams<{ id: string }>();
-  const { user: ctxUser, isLoggedIn } = useAuthContext();
-  const router = useRouter();
-  const { showSuccess, showError } = useToast();
+  const { id } = useParams<{ id: string }>()
+  const { user: ctxUser, isLoggedIn } = useAuthContext()
+  const router = useRouter()
+  const { showSuccess, showError } = useToast()
   const getAuth = useCallback(() => {
     const token =
-      typeof window !== "undefined" ? localStorage.getItem("pb_token") : null;
+      typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
     const raw =
-      typeof window !== "undefined" ? localStorage.getItem("pb_user") : null;
-    const user = raw ? JSON.parse(raw) : ctxUser;
-    return { token, user } as const;
-  }, [ctxUser]);
-  const [categorias, setCategorias] = useState<Categoria[]>([]);
-  const [selectedCategoria, setSelectedCategoria] = useState<string>("");
-  const [initial, setInitial] = useState<Record<string, unknown> | null>(null);
-  const [existingImages, setExistingImages] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [cores, setCores] = useState<string[]>([]);
-  const [tamanhos, setTamanhos] = useState<string[]>([]);
-  const [generos, setGeneros] = useState<string[]>([]);
-  const inputHex = useRef<HTMLInputElement | null>(null);
+      typeof window !== 'undefined' ? localStorage.getItem('pb_user') : null
+    const user = raw ? JSON.parse(raw) : ctxUser
+    return { token, user } as const
+  }, [ctxUser])
+  const [categorias, setCategorias] = useState<Categoria[]>([])
+  const [selectedCategoria, setSelectedCategoria] = useState<string>('')
+  const [initial, setInitial] = useState<Record<string, unknown> | null>(null)
+  const [existingImages, setExistingImages] = useState<string[]>([])
+  const [loading, setLoading] = useState(true)
+  const [cores, setCores] = useState<string[]>([])
+  const [tamanhos, setTamanhos] = useState<string[]>([])
+  const [generos, setGeneros] = useState<string[]>([])
+  const inputHex = useRef<HTMLInputElement | null>(null)
   const [valorCliente, setValorCliente] = useState(
-    calculateGross(Number(initial?.preco ?? 0), "pix", 1).gross
-  );
+    calculateGross(Number(initial?.preco ?? 0), 'pix', 1).gross,
+  )
 
   useEffect(() => {
-    setValorCliente(calculateGross(Number(initial?.preco ?? 0), "pix", 1).gross);
-  }, [initial?.preco]);
+    setValorCliente(calculateGross(Number(initial?.preco ?? 0), 'pix', 1).gross)
+  }, [initial?.preco])
 
   useEffect(() => {
-    const { token, user } = getAuth();
-    if (!isLoggedIn || !token || !user || user.role !== "coordenador") {
-      router.replace("/login");
+    const { token, user } = getAuth()
+    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') {
+      router.replace('/login')
     }
-  }, [isLoggedIn, router, getAuth]);
+  }, [isLoggedIn, router, getAuth])
 
   useEffect(() => {
-    const { token, user } = getAuth();
-    if (!isLoggedIn || !token || !user || user.role !== "coordenador") return;
-    fetch("/admin/api/categorias", {
+    const { token, user } = getAuth()
+    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
+    fetch('/admin/api/categorias', {
       headers: {
         Authorization: `Bearer ${token}`,
-        "X-PB-User": JSON.stringify(user),
+        'X-PB-User': JSON.stringify(user),
       },
     })
       .then((r) => r.json())
       .then((data) => {
-        setCategorias(Array.isArray(data) ? data : []);
+        setCategorias(Array.isArray(data) ? data : [])
       })
       .catch(() => {
-        setCategorias([]);
-      });
+        setCategorias([])
+      })
     fetch(`/admin/api/produtos/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
-        "X-PB-User": JSON.stringify(user),
+        'X-PB-User': JSON.stringify(user),
       },
     })
       .then(async (r) => {
         if (r.status === 401) {
-          router.replace("/login");
-          return null;
+          router.replace('/login')
+          return null
         }
-        return r.json();
+        return r.json()
       })
       .then((data) => {
-        if (!data) return;
+        if (!data) return
         const tams = Array.isArray(data.tamanhos)
           ? data.tamanhos
-          : typeof data.tamanhos === "string"
-          ? data.tamanhos.split(",").map((s: string) => s.trim())
-          : [];
+          : typeof data.tamanhos === 'string'
+            ? data.tamanhos.split(',').map((s: string) => s.trim())
+            : []
         const gens = Array.isArray(data.generos)
           ? data.generos
-          : typeof data.generos === "string"
-          ? [data.generos.trim()]
-          : [];
+          : typeof data.generos === 'string'
+            ? [data.generos.trim()]
+            : []
 
         setTamanhos(
-          tams.map((t: string) => t.trim().toUpperCase()).filter(Boolean)
-        );
+          tams.map((t: string) => t.trim().toUpperCase()).filter(Boolean),
+        )
         setGeneros(
-          gens.map((g: string) => g.trim().toLowerCase()).filter(Boolean)
-        );
+          gens.map((g: string) => g.trim().toLowerCase()).filter(Boolean),
+        )
 
         setInitial({
           nome: data.nome,
@@ -120,142 +120,142 @@ export default function EditarProdutoPage() {
           categoria: data.categoria,
           ativo: data.ativo,
           cores:
-            typeof data.cores === "string"
+            typeof data.cores === 'string'
               ? data.cores
               : Array.isArray(data.cores)
-              ? data.cores.join(", ")
-              : "",
+                ? data.cores.join(', ')
+                : '',
           imagens: data.imagens,
-        });
-        setExistingImages(Array.isArray(data.imagens) ? data.imagens : []);
+        })
+        setExistingImages(Array.isArray(data.imagens) ? data.imagens : [])
         setSelectedCategoria(
           Array.isArray(data.categoria)
-            ? data.categoria[0] ?? ""
-            : data.categoria
-        );
+            ? (data.categoria[0] ?? '')
+            : data.categoria,
+        )
       })
-      .finally(() => setLoading(false));
-  }, [id, isLoggedIn, router, getAuth]);
+      .finally(() => setLoading(false))
+  }, [id, isLoggedIn, router, getAuth])
 
   useEffect(() => {
-    if (initial?.cores && typeof initial.cores === "string") {
+    if (initial?.cores && typeof initial.cores === 'string') {
       setCores(
         initial.cores
-          .split(",")
+          .split(',')
           .map((c: string) => c.trim())
-          .filter(Boolean)
-      );
+          .filter(Boolean),
+      )
     } else if (Array.isArray(initial?.cores)) {
-      setCores(initial.cores as string[]);
+      setCores(initial.cores as string[])
     }
     if (initial?.categoria) {
       setSelectedCategoria(
         Array.isArray(initial.categoria)
-          ? initial.categoria[0] ?? ""
-          : (initial.categoria as string)
-      );
+          ? (initial.categoria[0] ?? '')
+          : (initial.categoria as string),
+      )
     }
-  }, [initial?.cores, initial?.categoria]);
+  }, [initial?.cores, initial?.categoria])
   if (loading || !initial) {
-    return <LoadingOverlay show={true} text="Carregando..." />;
+    return <LoadingOverlay show={true} text="Carregando..." />
   }
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const formElement = e.currentTarget as HTMLFormElement;
-    const formData = new FormData(formElement);
+    e.preventDefault()
+    const formElement = e.currentTarget as HTMLFormElement
+    const formData = new FormData(formElement)
 
-    const slug = slugify(formElement.nome.value);
-    formData.set("slug", slug);
+    const slug = slugify(formElement.nome.value)
+    formData.set('slug', slug)
 
     // Tratamento específico para o campo de imagens
     const imagensInput = formElement.querySelector<HTMLInputElement>(
-      "input[name='imagens']"
-    );
-    const arquivos = imagensInput?.files;
-    formData.delete("imagens");
+      "input[name='imagens']",
+    )
+    const arquivos = imagensInput?.files
+    formData.delete('imagens')
     if (arquivos && arquivos.length > 0) {
       Array.from(arquivos).forEach((file) => {
-        formData.append("imagens", file);
-      });
+        formData.append('imagens', file)
+      })
     } else {
-      existingImages.forEach((img) => formData.append("imagens", img));
+      existingImages.forEach((img) => formData.append('imagens', img))
     }
 
     // Trata o campo de cores: insere como string separada por vírgula
-    formData.set("cores", cores.join(","));
+    formData.set('cores', cores.join(','))
     // Normaliza checkboxes e arrays
     const ativoChecked = formElement.querySelector<HTMLInputElement>(
-      "input[name='ativo']"
-    )?.checked;
-    formData.set("ativo", ativoChecked ? "true" : "false");
+      "input[name='ativo']",
+    )?.checked
+    formData.set('ativo', ativoChecked ? 'true' : 'false')
 
     const tamanhos = Array.from(
       formElement.querySelectorAll<HTMLInputElement>(
-        "input[name='tamanhos']:checked"
-      )
-    ).map((el) => el.value);
-    formData.delete("tamanhos");
-    tamanhos.forEach((t) => formData.append("tamanhos", t));
+        "input[name='tamanhos']:checked",
+      ),
+    ).map((el) => el.value)
+    formData.delete('tamanhos')
+    tamanhos.forEach((t) => formData.append('tamanhos', t))
 
     const generos = Array.from(
       formElement.querySelectorAll<HTMLInputElement>(
-        "input[name='generos']:checked"
-      )
-    ).map((el) => el.value);
-    formData.delete("generos");
-    generos.forEach((g) => formData.append("generos", g));
+        "input[name='generos']:checked",
+      ),
+    ).map((el) => el.value)
+    formData.delete('generos')
+    generos.forEach((g) => formData.append('generos', g))
 
     // Categoria enviada sempre pelo id
-    const catValue = selectedCategoria;
-    formData.delete("categoria");
+    const catValue = selectedCategoria
+    formData.delete('categoria')
     if (catValue) {
-      formData.append("categoria", catValue);
+      formData.append('categoria', catValue)
     }
 
     // <<< AQUI O CONSOLE!
-    console.log("---- FormData a ser enviado ----");
+    console.log('---- FormData a ser enviado ----')
     for (const [key, value] of formData.entries()) {
-      console.log(key, value);
+      console.log(key, value)
     }
-    console.log("-------------------------------");
+    console.log('-------------------------------')
 
-    const { token, user } = getAuth();
+    const { token, user } = getAuth()
     try {
       const res = await fetch(`/admin/api/produtos/${id}`, {
-        method: "PUT",
+        method: 'PUT',
         body: formData,
         headers: {
           Authorization: `Bearer ${token}`,
-          "X-PB-User": JSON.stringify(user),
+          'X-PB-User': JSON.stringify(user),
         },
-      });
+      })
       if (res.ok) {
-        showSuccess("Produto atualizado");
-        router.push("/admin/produtos");
+        showSuccess('Produto atualizado')
+        router.push('/admin/produtos')
       } else {
-        showError("Erro ao atualizar produto");
+        showError('Erro ao atualizar produto')
       }
     } catch (err) {
-      console.error("Erro ao atualizar produto:", err);
-      showError("Erro ao atualizar produto");
+      console.error('Erro ao atualizar produto:', err)
+      showError('Erro ao atualizar produto')
     }
   }
 
   function addCor(hex: string) {
-    if (!hex || cores.includes(hex)) return;
-    setCores([...cores, hex]);
-    if (inputHex.current) inputHex.current.value = "#000000";
+    if (!hex || cores.includes(hex)) return
+    setCores([...cores, hex])
+    if (inputHex.current) inputHex.current.value = '#000000'
   }
   function removeCor(hex: string) {
-    setCores(cores.filter((c) => c !== hex));
+    setCores(cores.filter((c) => c !== hex))
   }
 
   return (
     <main className="max-w-xl mx-auto px-4 py-8">
       <h1
         className="text-2xl font-bold mb-6"
-        style={{ fontFamily: "var(--font-heading)" }}
+        style={{ fontFamily: 'var(--font-heading)' }}
       >
         Editar Produto
       </h1>
@@ -282,15 +282,14 @@ export default function EditarProdutoPage() {
             defaultValue={String(initial.preco)}
             onChange={(e) =>
               setValorCliente(
-                calculateGross(Number(e.target.value || 0), "pix", 1).gross
+                calculateGross(Number(e.target.value || 0), 'pix', 1).gross,
               )
             }
             required
           />
           <span className="text-xs text-gray-500 ml-1">
-            Valor para o cliente: R${" "}
-            {valorCliente.toFixed(2).replace(".", ",")}
-          </span>      
+            Valor para o cliente: R$ {valorCliente.toFixed(2).replace('.', ',')}
+          </span>
         </fieldset>
 
         {/* Categoria */}
@@ -328,7 +327,7 @@ export default function EditarProdutoPage() {
               type="button"
               className="btn btn-sm"
               onClick={() => {
-                if (inputHex.current) addCor(inputHex.current.value);
+                if (inputHex.current) addCor(inputHex.current.value)
               }}
             >
               Adicionar cor
@@ -358,7 +357,7 @@ export default function EditarProdutoPage() {
               </span>
             )}
           </div>
-          <input type="hidden" name="cores" value={cores.join(",")} />
+          <input type="hidden" name="cores" value={cores.join(',')} />
           <span className="text-xs text-gray-400 ml-1">
             Adicione as variações de cor do produto.
           </span>
@@ -371,8 +370,8 @@ export default function EditarProdutoPage() {
           <div className="mb-4">
             <p className="text-sm font-semibold mb-1">Tamanhos</p>
             <div className="flex gap-2 flex-wrap">
-              {["PP", "P", "M", "G", "GG"].map((t) => {
-                const value = t.toUpperCase();
+              {['PP', 'P', 'M', 'G', 'GG'].map((t) => {
+                const value = t.toUpperCase()
                 return (
                   <label
                     key={value}
@@ -389,13 +388,13 @@ export default function EditarProdutoPage() {
                         setTamanhos((prev) =>
                           e.target.checked
                             ? [...prev, value]
-                            : prev.filter((v) => v.toUpperCase() !== value)
+                            : prev.filter((v) => v.toUpperCase() !== value),
                         )
                       }
                     />
                     {value}
                   </label>
-                );
+                )
               })}
             </div>
             <span className="text-xs text-gray-400 ml-1">
@@ -406,8 +405,8 @@ export default function EditarProdutoPage() {
           <div>
             <p className="text-sm font-semibold mb-1">Gêneros</p>
             <div className="flex gap-2 flex-wrap">
-              {["masculino", "feminino"].map((g) => {
-                const value = g.toLowerCase();
+              {['masculino', 'feminino'].map((g) => {
+                const value = g.toLowerCase()
                 return (
                   <label
                     key={value}
@@ -424,13 +423,13 @@ export default function EditarProdutoPage() {
                         setGeneros((prev) =>
                           e.target.checked
                             ? [...prev, value]
-                            : prev.filter((v) => v.toLowerCase() !== value)
+                            : prev.filter((v) => v.toLowerCase() !== value),
                         )
                       }
                     />
                     {g.charAt(0).toUpperCase() + g.slice(1)}
                   </label>
-                );
+                )
               })}
             </div>
             <span className="text-xs text-gray-400 ml-1">
@@ -448,7 +447,7 @@ export default function EditarProdutoPage() {
             name="descricao"
             rows={2}
             placeholder="Ex: Camiseta 100% algodão, confortável, não desbota."
-            defaultValue={String(initial.descricao || "")}
+            defaultValue={String(initial.descricao || '')}
             maxLength={150}
             required
           />
@@ -460,7 +459,7 @@ export default function EditarProdutoPage() {
             name="detalhes"
             rows={2}
             placeholder="Detalhes adicionais: tabela de medidas, instruções de lavagem, etc."
-            defaultValue={String(initial.detalhes || "")}
+            defaultValue={String(initial.detalhes || '')}
           />
           <span className="text-xs text-gray-400 ml-1">
             Informações extras, se desejar.
@@ -499,7 +498,7 @@ export default function EditarProdutoPage() {
           </button>
           <button
             type="button"
-            onClick={() => router.push("/admin/produtos")}
+            onClick={() => router.push('/admin/produtos')}
             className="btn flex-1"
           >
             Cancelar
@@ -507,5 +506,5 @@ export default function EditarProdutoPage() {
         </div>
       </form>
     </main>
-  );
+  )
 }

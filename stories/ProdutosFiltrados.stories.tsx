@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/nextjs';
-import ProdutosFiltrados from '../app/loja/produtos/ProdutosFiltrados';
+import type { Meta, StoryObj } from '@storybook/nextjs'
+import ProdutosFiltrados from '../app/loja/produtos/ProdutosFiltrados'
 
 const meta = {
   title: 'Loja/ProdutosFiltrados',
@@ -23,10 +23,10 @@ const meta = {
     ],
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof ProdutosFiltrados>;
+} satisfies Meta<typeof ProdutosFiltrados>
 
-export default meta;
+export default meta
 
-export type Story = StoryObj<typeof meta>;
+export type Story = StoryObj<typeof meta>
 
-export const Default: Story = {};
+export const Default: Story = {}

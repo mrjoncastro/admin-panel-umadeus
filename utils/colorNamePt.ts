@@ -17,7 +17,7 @@ const ptMap: Record<string, string> = {
   cyan: 'ciano',
   magenta: 'magenta',
   gold: 'dourado',
-  silver: 'prata'
+  silver: 'prata',
 }
 
 export function hexToPtName(hex: string): string {

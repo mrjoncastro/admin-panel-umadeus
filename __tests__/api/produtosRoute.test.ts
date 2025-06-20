@@ -5,17 +5,17 @@ import { NextRequest } from 'next/server'
 vi.mock('../../lib/pocketbase', () => ({
   default: vi.fn(() => ({
     collection: () => ({
-      getFullList: vi.fn().mockRejectedValue(new Error('fail'))
-    })
-  }))
+      getFullList: vi.fn().mockRejectedValue(new Error('fail')),
+    }),
+  })),
 }))
 
 vi.mock('../../lib/products', () => ({
-  filtrarProdutos: vi.fn((p) => p)
+  filtrarProdutos: vi.fn((p) => p),
 }))
 const getTenantFromHostMock = vi.fn().mockResolvedValue('t1')
 vi.mock('../../lib/getTenantFromHost', () => ({
-  getTenantFromHost: getTenantFromHostMock
+  getTenantFromHost: getTenantFromHostMock,
 }))
 
 describe('GET /api/produtos', () => {

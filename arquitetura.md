@@ -20,7 +20,7 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 
 ## 📦 Estrutura de Pastas
 
-````bash
+```bash
 /app
 ├── admin/                 # Painel administrativo completo
 │   ├── api/               # Rotas internas (se necessário)
@@ -130,3 +130,4 @@ components/                # Componentes reutilizáveis compartilhados
 ## 📌 Considerações Finais
 
 Esta estrutura busca garantir **clareza, escalabilidade e manutenibilidade** do projeto M24Vendas, atendendo tanto ao público final quanto às lideranças administrativas. Deve ser evoluída com base no crescimento do projeto, mantendo a consistência na organização e nos princípios de performance e segurança.
+```

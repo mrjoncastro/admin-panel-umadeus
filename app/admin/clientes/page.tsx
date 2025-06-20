@@ -1,72 +1,76 @@
-"use client";
+'use client'
 
-import { useEffect, useState, useMemo } from "react";
-import createPocketBase from "@/lib/pocketbase";
-import ListaClientes from "./components/ListaClientes";
-import ModalEditarInscricao from "../inscricoes/componentes/ModalEdit";
-import LoadingOverlay from "@/components/organisms/LoadingOverlay";
-import type { Inscricao } from "@/types";
-import { useToast } from "@/lib/context/ToastContext";
-import { useAuthContext } from "@/lib/context/AuthContext";
+import { useEffect, useState, useMemo } from 'react'
+import createPocketBase from '@/lib/pocketbase'
+import ListaClientes from './components/ListaClientes'
+import ModalEditarInscricao from '../inscricoes/componentes/ModalEdit'
+import LoadingOverlay from '@/components/organisms/LoadingOverlay'
+import type { Inscricao } from '@/types'
+import { useToast } from '@/lib/context/ToastContext'
+import { useAuthContext } from '@/lib/context/AuthContext'
 
 export default function ClientesPage() {
-  const pb = useMemo(() => createPocketBase(), []);
-  const { tenantId } = useAuthContext();
-  const { showError, showSuccess } = useToast();
-  const [clientes, setClientes] = useState<(Inscricao & { eventoId?: string })[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [clienteEmEdicao, setClienteEmEdicao] =
-    useState<(Inscricao & { eventoId?: string }) | null>(null);
+  const pb = useMemo(() => createPocketBase(), [])
+  const { tenantId } = useAuthContext()
+  const { showError, showSuccess } = useToast()
+  const [clientes, setClientes] = useState<
+    (Inscricao & { eventoId?: string })[]
+  >([])
+  const [loading, setLoading] = useState(true)
+  const [clienteEmEdicao, setClienteEmEdicao] = useState<
+    (Inscricao & { eventoId?: string }) | null
+  >(null)
 
   useEffect(() => {
     async function fetchClientes() {
       try {
-        const lista = await pb.collection("inscricoes").getFullList<Inscricao>({
-          expand: "pedido,evento",
-          sort: "-created",
+        const lista = await pb.collection('inscricoes').getFullList<Inscricao>({
+          expand: 'pedido,evento',
+          sort: '-created',
           filter: `cliente='${tenantId}'`,
-        });
+        })
         const mapped = lista.map((c) => ({
           ...c,
           eventoId: c.evento,
           evento: c.expand?.evento?.titulo || c.evento,
-        }));
-        setClientes(mapped);
+        }))
+        setClientes(mapped)
       } catch (err) {
-        console.error("Erro ao carregar clientes", err);
-        showError("Erro ao carregar clientes");
+        console.error('Erro ao carregar clientes', err)
+        showError('Erro ao carregar clientes')
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     }
 
-    fetchClientes();
-  }, [pb, tenantId, showError]);
+    fetchClientes()
+  }, [pb, tenantId, showError])
 
   const salvarEdicao = async (
-    atualizada: Partial<Inscricao & { eventoId?: string }>
+    atualizada: Partial<Inscricao & { eventoId?: string }>,
   ) => {
-    if (!clienteEmEdicao) return;
+    if (!clienteEmEdicao) return
     try {
-      await pb.collection("inscricoes").update(clienteEmEdicao.id, {
+      await pb.collection('inscricoes').update(clienteEmEdicao.id, {
         ...atualizada,
         evento: atualizada.eventoId ?? clienteEmEdicao.eventoId,
-      });
+      })
       setClientes((prev) =>
         prev.map((c) =>
-          c.id === clienteEmEdicao.id ? { ...c, ...atualizada } : c
-        )
-      );
-      showSuccess("Cliente atualizado");
+          c.id === clienteEmEdicao.id ? { ...c, ...atualizada } : c,
+        ),
+      )
+      showSuccess('Cliente atualizado')
     } catch (err) {
-      console.error("Erro ao salvar cliente", err);
-      showError("Erro ao salvar cliente");
+      console.error('Erro ao salvar cliente', err)
+      showError('Erro ao salvar cliente')
     } finally {
-      setClienteEmEdicao(null);
+      setClienteEmEdicao(null)
     }
-  };
+  }
 
-  if (loading) return <LoadingOverlay show={true} text="Carregando clientes..." />;
+  if (loading)
+    return <LoadingOverlay show={true} text="Carregando clientes..." />
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
@@ -80,5 +84,5 @@ export default function ClientesPage() {
         />
       )}
     </main>
-  );
+  )
 }

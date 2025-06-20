@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { GET } from '../../app/api/tenant/route'
 
 vi.mock('../../lib/getTenantFromHost', () => ({
-  getTenantFromHost: vi.fn().mockResolvedValue(null)
+  getTenantFromHost: vi.fn().mockResolvedValue(null),
 }))
 
 describe('GET /api/tenant', () => {

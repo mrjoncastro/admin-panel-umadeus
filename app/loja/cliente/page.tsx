@@ -1,54 +1,53 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
-import type { Inscricao, Pedido } from "@/types";
+import { useEffect, useState } from 'react'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
+import type { Inscricao, Pedido } from '@/types'
 
 export default function AreaCliente() {
-  const { user, pb, authChecked } = useAuthGuard(["usuario"]);
-  const [inscricoes, setInscricoes] = useState<Inscricao[]>([]);
-  const [pedidos, setPedidos] = useState<Pedido[]>([]);
+  const { user, pb, authChecked } = useAuthGuard(['usuario'])
+  const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
+  const [pedidos, setPedidos] = useState<Pedido[]>([])
 
   useEffect(() => {
-    if (!authChecked || !user) return;
-    const token = pb.authStore.token;
+    if (!authChecked || !user) return
+    const token = pb.authStore.token
     const headers = {
       Authorization: `Bearer ${token}`,
-      "X-PB-User": JSON.stringify(user),
-    };
+      'X-PB-User': JSON.stringify(user),
+    }
 
-    fetch("/loja/api/minhas-inscricoes", { headers })
+    fetch('/loja/api/minhas-inscricoes', { headers })
       .then((res) => res.json())
       .then((data) => setInscricoes(Array.isArray(data) ? data : []))
       .catch((err) => {
-        console.error("Erro ao carregar inscricoes", err);
-        setInscricoes([]);
-      });
+        console.error('Erro ao carregar inscricoes', err)
+        setInscricoes([])
+      })
 
-    fetch("/loja/api/pedidos", { headers })
+    fetch('/loja/api/pedidos', { headers })
       .then((res) => res.json())
       .then((data) => setPedidos(Array.isArray(data) ? data : []))
       .catch((err) => {
-        console.error("Erro ao carregar pedidos", err);
-        setPedidos([]);
-      });
-  }, [authChecked, user, pb]);
+        console.error('Erro ao carregar pedidos', err)
+        setPedidos([])
+      })
+  }, [authChecked, user, pb])
 
-  if (!authChecked) return null;
-
+  if (!authChecked) return null
 
   return (
     <main className="p-8 text-platinum font-sans space-y-10">
       <section className="card">
         <h2 className="text-xl font-bold">Resumo do Cliente</h2>
         <p>
-          <strong>Nome:</strong> {user?.nome || "-"}
+          <strong>Nome:</strong> {user?.nome || '-'}
         </p>
         <p>
-          <strong>E-mail:</strong> {user?.email || "-"}
+          <strong>E-mail:</strong> {user?.email || '-'}
         </p>
         <p>
-          <strong>Telefone:</strong> {String(user?.telefone ?? "-")}
+          <strong>Telefone:</strong> {String(user?.telefone ?? '-')}
         </p>
 
         <div className="flex flex-wrap gap-2 pt-4">
@@ -64,7 +63,6 @@ export default function AreaCliente() {
         </div>
       </section>
 
-
       <section className="card">
         <h2 className="text-xl font-bold mb-4">Minhas Inscrições</h2>
         <table className="table-base">
@@ -79,11 +77,11 @@ export default function AreaCliente() {
             {inscricoes.map((i) => (
               <tr key={i.id}>
                 <td className="capitalize">{i.status}</td>
-                <td>{i.expand?.evento?.titulo || "-"}</td>
+                <td>{i.expand?.evento?.titulo || '-'}</td>
                 <td>
                   {i.created
-                    ? new Date(i.created).toLocaleDateString("pt-BR")
-                    : "-"}
+                    ? new Date(i.created).toLocaleDateString('pt-BR')
+                    : '-'}
                 </td>
               </tr>
             ))}
@@ -117,5 +115,5 @@ export default function AreaCliente() {
         </table>
       </section>
     </main>
-  );
+  )
 }

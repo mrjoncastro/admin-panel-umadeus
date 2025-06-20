@@ -1,29 +1,29 @@
 // app/layout.tsx
-import "@/app/globals.css";
-import LayoutWrapper from "./components/LayoutWrapper";
+import '@/app/globals.css'
+import LayoutWrapper from './components/LayoutWrapper'
 
 export const metadata = {
-  title: "UMADEUS",
-  description: "Sistema de inscrições e gestão UMADEUS",
+  title: 'UMADEUS',
+  description: 'Sistema de inscrições e gestão UMADEUS',
   icons: {
     icon: [
-      { url: "/favicon.ico" },
-      { url: "/apple-icon.png", sizes: "32x32", type: "image/png" },
-      { url: "/icon-192x192.png", sizes: "16x16", type: "image/png" },
+      { url: '/favicon.ico' },
+      { url: '/apple-icon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icon-192x192.png', sizes: '16x16', type: 'image/png' },
     ],
-    apple: "/apple-icon.png",
+    apple: '/apple-icon.png',
   },
-  manifest: "/manifest.json",
-};
+  manifest: '/manifest.json',
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <div className="antialiased font-sans">
       <LayoutWrapper>{children}</LayoutWrapper>
     </div>
-  );
+  )
 }

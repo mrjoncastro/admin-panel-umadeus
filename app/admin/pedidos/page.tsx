@@ -1,71 +1,71 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { useAuthGuard } from "@/lib/hooks/useAuthGuard";
-import { Pedido } from "@/types";
-import { saveAs } from "file-saver";
-import LoadingOverlay from "@/components/organisms/LoadingOverlay";
-import ModalEditarPedido from "./componentes/ModalEditarPedido";
-import { useToast } from "@/lib/context/ToastContext";
+import { useEffect, useState } from 'react'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
+import { Pedido } from '@/types'
+import { saveAs } from 'file-saver'
+import LoadingOverlay from '@/components/organisms/LoadingOverlay'
+import ModalEditarPedido from './componentes/ModalEditarPedido'
+import { useToast } from '@/lib/context/ToastContext'
 
 export default function PedidosPage() {
-  const { user, pb, authChecked } = useAuthGuard(["coordenador", "lider"]);
+  const { user, pb, authChecked } = useAuthGuard(['coordenador', 'lider'])
 
-  const [pedidos, setPedidos] = useState<Pedido[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [pagina, setPagina] = useState(1);
-  const [totalPaginas, setTotalPaginas] = useState(1);
-  const [filtroStatus, setFiltroStatus] = useState("");
-  const [filtroCampo, setFiltroCampo] = useState("");
-  const [buscaGlobal, setBuscaGlobal] = useState("");
-  const [ordem, setOrdem] = useState<"asc" | "desc">("desc");
+  const [pedidos, setPedidos] = useState<Pedido[]>([])
+  const [loading, setLoading] = useState(true)
+  const [pagina, setPagina] = useState(1)
+  const [totalPaginas, setTotalPaginas] = useState(1)
+  const [filtroStatus, setFiltroStatus] = useState('')
+  const [filtroCampo, setFiltroCampo] = useState('')
+  const [buscaGlobal, setBuscaGlobal] = useState('')
+  const [ordem, setOrdem] = useState<'asc' | 'desc'>('desc')
   const [pedidoSelecionado, setPedidoSelecionado] = useState<Pedido | null>(
-    null
-  );
-  const { showError, showSuccess } = useToast();
+    null,
+  )
+  const { showError, showSuccess } = useToast()
   const placeholderBusca =
-    user?.role === "coordenador"
-      ? "Buscar por produto, email, nome ou campo"
-      : "Buscar por nome ou email";
+    user?.role === 'coordenador'
+      ? 'Buscar por produto, email, nome ou campo'
+      : 'Buscar por nome ou email'
 
   useEffect(() => {
-    if (!authChecked || !user) return;
+    if (!authChecked || !user) return
 
     const fetchPedidos = async () => {
-      setLoading(true);
+      setLoading(true)
       try {
-        const baseFiltro = `cliente='${user.cliente}'`;
+        const baseFiltro = `cliente='${user.cliente}'`
         const filtro =
-          user.role === "coordenador"
+          user.role === 'coordenador'
             ? baseFiltro
-            : `campo = "${user.campo}" && ${baseFiltro}`;
+            : `campo = "${user.campo}" && ${baseFiltro}`
 
-        const res = await pb.collection("pedidos").getList<Pedido>(pagina, 10, {
+        const res = await pb.collection('pedidos').getList<Pedido>(pagina, 10, {
           filter: filtro,
-          expand: "campo,id_inscricao",
-          sort: `${ordem === "desc" ? "-" : ""}created`,
-        });
+          expand: 'campo,id_inscricao',
+          sort: `${ordem === 'desc' ? '-' : ''}created`,
+        })
 
-        setPedidos(res.items);
-        setTotalPaginas(res.totalPages);
+        setPedidos(res.items)
+        setTotalPaginas(res.totalPages)
       } catch (err) {
-        console.error("Erro ao carregar pedidos", err);
-        showError("Erro ao carregar pedidos");
+        console.error('Erro ao carregar pedidos', err)
+        showError('Erro ao carregar pedidos')
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchPedidos();
-  }, [pb, pagina, ordem, user, authChecked, showError]);
+    fetchPedidos()
+  }, [pb, pagina, ordem, user, authChecked, showError])
 
   const pedidosFiltrados = pedidos.filter((p) => {
-    const matchStatus = filtroStatus === "" || p.status === filtroStatus;
+    const matchStatus = filtroStatus === '' || p.status === filtroStatus
     const matchCampo =
-      filtroCampo === "" ||
-      p.expand?.campo?.nome?.toLowerCase().includes(filtroCampo.toLowerCase());
+      filtroCampo === '' ||
+      p.expand?.campo?.nome?.toLowerCase().includes(filtroCampo.toLowerCase())
     const matchBuscaGlobal =
-      buscaGlobal === "" ||
+      buscaGlobal === '' ||
       p.produto.toLowerCase().includes(buscaGlobal.toLowerCase()) ||
       p.email.toLowerCase().includes(buscaGlobal.toLowerCase()) ||
       p.expand?.campo?.nome
@@ -76,52 +76,52 @@ export default function PedidosPage() {
         .includes(buscaGlobal.toLowerCase()) ||
       p.expand?.id_inscricao?.cpf
         ?.toLowerCase()
-        .includes(buscaGlobal.toLowerCase());
+        .includes(buscaGlobal.toLowerCase())
 
-    return matchStatus && matchCampo && matchBuscaGlobal;
-  });
+    return matchStatus && matchCampo && matchBuscaGlobal
+  })
 
   const exportarCSV = () => {
     const header = [
-      "Produto",
-      "Nome",
-      "Email",
-      "Tamanho",
-      "Cor",
-      "Status",
-      "Campo",
-      "Canal",
-      "Data",
-    ];
+      'Produto',
+      'Nome',
+      'Email',
+      'Tamanho',
+      'Cor',
+      'Status',
+      'Campo',
+      'Canal',
+      'Data',
+    ]
 
     const linhas = pedidosFiltrados.map((p) => [
       p.produto,
-      p.expand?.id_inscricao?.nome || "",
+      p.expand?.id_inscricao?.nome || '',
       p.email,
-      p.tamanho || "",
-      p.cor || "",
+      p.tamanho || '',
+      p.cor || '',
       p.status,
-      p.expand?.campo?.nome || "",
-      p.canal || "",
-      p.created?.split("T")[0] || "",
-    ]);
+      p.expand?.campo?.nome || '',
+      p.canal || '',
+      p.created?.split('T')[0] || '',
+    ])
 
     const csvContent = [header, ...linhas]
-      .map((linha) => linha.map((valor) => `"${valor}"`).join(","))
-      .join("\n");
+      .map((linha) => linha.map((valor) => `"${valor}"`).join(','))
+      .join('\n')
 
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const hoje = new Date().toISOString().split("T")[0];
-    saveAs(blob, `pedidos_exportados_${hoje}.csv`);
-  };
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const hoje = new Date().toISOString().split('T')[0]
+    saveAs(blob, `pedidos_exportados_${hoje}.csv`)
+  }
   const statusBadge = {
-    pendente: "bg-yellow-100 text-yellow-800",
-    pago: "bg-green-100 text-green-800",
-    cancelado: "bg-red-100 text-red-800",
-  };
+    pendente: 'bg-yellow-100 text-yellow-800',
+    pago: 'bg-green-100 text-green-800',
+    cancelado: 'bg-red-100 text-red-800',
+  }
 
   if (!authChecked || loading) {
-    return <LoadingOverlay show={true} text="Carregando pedidos..." />;
+    return <LoadingOverlay show={true} text="Carregando pedidos..." />
   }
 
   return (
@@ -147,7 +147,7 @@ export default function PedidosPage() {
           <option value="pago">Pago</option>
           <option value="cancelado">Cancelado</option>
         </select>
-        {user?.role === "coordenador" && (
+        {user?.role === 'coordenador' && (
           <input
             type="text"
             placeholder="Filtrar por campo"
@@ -157,10 +157,10 @@ export default function PedidosPage() {
           />
         )}
         <button
-          onClick={() => setOrdem(ordem === "desc" ? "asc" : "desc")}
+          onClick={() => setOrdem(ordem === 'desc' ? 'asc' : 'desc')}
           className="btn btn-secondary"
         >
-          Ordenar por data ({ordem === "desc" ? "↓" : "↑"})
+          Ordenar por data ({ordem === 'desc' ? '↓' : '↑'})
         </button>
         <button onClick={exportarCSV} className="btn btn-primary">
           Exportar CSV
@@ -190,10 +190,10 @@ export default function PedidosPage() {
               {pedidosFiltrados.map((pedido) => (
                 <tr key={pedido.id}>
                   <td className="font-medium">{pedido.produto}</td>
-                  <td>{pedido.expand?.id_inscricao?.nome || "—"}</td>
+                  <td>{pedido.expand?.id_inscricao?.nome || '—'}</td>
                   <td>{pedido.email}</td>
-                  <td>{pedido.tamanho || "—"}</td>
-                  <td>{pedido.cor || "—"}</td>
+                  <td>{pedido.tamanho || '—'}</td>
+                  <td>{pedido.cor || '—'}</td>
                   <td className="capitalize">
                     <span
                       className={`px-2 py-1 rounded text-xs font-semibold ${
@@ -203,12 +203,12 @@ export default function PedidosPage() {
                       {pedido.status}
                     </span>
                   </td>
-                  <td>{pedido.expand?.campo?.nome || "—"}</td>
+                  <td>{pedido.expand?.campo?.nome || '—'}</td>
                   <td className="text-xs font-medium">
                     {pedido.canal
                       ? pedido.canal.charAt(0).toUpperCase() +
                         pedido.canal.slice(1).toLowerCase()
-                      : "—"}
+                      : '—'}
                   </td>
                   <td className="space-x-3 text-right">
                     <button
@@ -220,17 +220,17 @@ export default function PedidosPage() {
                     <button
                       onClick={async () => {
                         if (
-                          confirm("Tem certeza que deseja excluir este pedido?")
+                          confirm('Tem certeza que deseja excluir este pedido?')
                         ) {
                           try {
-                            await pb.collection("pedidos").delete(pedido.id);
+                            await pb.collection('pedidos').delete(pedido.id)
                             setPedidos((prev) =>
-                              prev.filter((p) => p.id !== pedido.id)
-                            );
-                            showSuccess("Pedido excluído");
+                              prev.filter((p) => p.id !== pedido.id),
+                            )
+                            showSuccess('Pedido excluído')
                           } catch (e) {
-                            console.error("Erro ao excluir:", e);
-                            showError("Erro ao excluir pedido");
+                            console.error('Erro ao excluir:', e)
+                            showError('Erro ao excluir pedido')
                           }
                         }
                       }}
@@ -254,18 +254,18 @@ export default function PedidosPage() {
           onSave={async (dadosAtualizados) => {
             try {
               const atualizado = await pb
-                .collection("pedidos")
-                .update(pedidoSelecionado.id, dadosAtualizados);
+                .collection('pedidos')
+                .update(pedidoSelecionado.id, dadosAtualizados)
               setPedidos((prev) =>
                 prev.map((p) =>
-                  p.id === atualizado.id ? { ...p, ...atualizado } : p
-                )
-              );
-              setPedidoSelecionado(null);
-              showSuccess("Pedido atualizado");
+                  p.id === atualizado.id ? { ...p, ...atualizado } : p,
+                ),
+              )
+              setPedidoSelecionado(null)
+              showSuccess('Pedido atualizado')
             } catch (e) {
-              console.error("Erro ao salvar edição:", e);
-              showError("Erro ao salvar edição");
+              console.error('Erro ao salvar edição:', e)
+              showError('Erro ao salvar edição')
             }
           }}
         />
@@ -292,5 +292,5 @@ export default function PedidosPage() {
         </button>
       </div>
     </main>
-  );
+  )
 }

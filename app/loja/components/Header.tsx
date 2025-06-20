@@ -1,15 +1,15 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useState } from 'react'
+import { Menu, X } from 'lucide-react'
 
 export default function Header() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   const links = [
-    { href: "/loja", label: "Início" },
-    { href: "/loja/eventos", label: "Eventos" },
-  ];
+    { href: '/loja', label: 'Início' },
+    { href: '/loja/eventos', label: 'Eventos' },
+  ]
 
   return (
     <header className="bg-transparent backdrop-blur-sm px-6 py-4 border-b border-platinum/20 text-platinum fixed top-0 inset-x-0 z-50">
@@ -57,5 +57,5 @@ export default function Header() {
         </div>
       )}
     </header>
-  );
+  )
 }

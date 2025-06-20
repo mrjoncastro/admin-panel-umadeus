@@ -1,60 +1,60 @@
-"use client";
+'use client'
 
-import Image from "next/image";
-import Link from "next/link";
-import { useMemo, useState } from "react";
-import { calculateGross } from "@/lib/asaasFees";
+import Image from 'next/image'
+import Link from 'next/link'
+import { useMemo, useState } from 'react'
+import { calculateGross } from '@/lib/asaasFees'
 
 const faixasPreco = [
-  { label: "Até R$ 50", min: 0, max: 50 },
-  { label: "R$ 50 a R$ 100", min: 50, max: 100 },
-  { label: "Acima de R$ 100", min: 100, max: Infinity },
-];
+  { label: 'Até R$ 50', min: 0, max: 50 },
+  { label: 'R$ 50 a R$ 100', min: 50, max: 100 },
+  { label: 'Acima de R$ 100', min: 100, max: Infinity },
+]
 
 interface Produto {
-  id: string;
-  nome: string;
-  preco: number;
-  imagens: string[];
-  slug: string;
+  id: string
+  nome: string
+  preco: number
+  imagens: string[]
+  slug: string
 }
 
 export default function ProdutosFiltrados({
   produtos,
 }: {
-  produtos: Produto[];
+  produtos: Produto[]
 }) {
-  const [busca, setBusca] = useState("");
-  const [faixasSelecionadas, setFaixasSelecionadas] = useState<string[]>([]);
-  const [ordem, setOrdem] = useState("recentes");
+  const [busca, setBusca] = useState('')
+  const [faixasSelecionadas, setFaixasSelecionadas] = useState<string[]>([])
+  const [ordem, setOrdem] = useState('recentes')
 
   const filtrados = useMemo(() => {
     let res = produtos.filter((p) =>
-      p.nome.toLowerCase().includes(busca.toLowerCase())
-    );
+      p.nome.toLowerCase().includes(busca.toLowerCase()),
+    )
     if (faixasSelecionadas.length > 0) {
       res = res.filter((p) =>
         faixasSelecionadas.some((label) => {
-          const faixa = faixasPreco.find((f) => f.label === label);
-          return faixa ? p.preco >= faixa.min && p.preco <= faixa.max : true;
-        })
-      );
+          const faixa = faixasPreco.find((f) => f.label === label)
+          return faixa ? p.preco >= faixa.min && p.preco <= faixa.max : true
+        }),
+      )
     }
-    if (ordem === "menor-preco") {
-      res = [...res].sort((a, b) => a.preco - b.preco);
-    } else if (ordem === "maior-preco") {
-      res = [...res].sort((a, b) => b.preco - a.preco);
+    if (ordem === 'menor-preco') {
+      res = [...res].sort((a, b) => a.preco - b.preco)
+    } else if (ordem === 'maior-preco') {
+      res = [...res].sort((a, b) => b.preco - a.preco)
     }
-    return res;
-  }, [busca, faixasSelecionadas, ordem, produtos]); // removed faixasPreco from dependencies
+    return res
+  }, [busca, faixasSelecionadas, ordem, produtos]) // removed faixasPreco from dependencies
 
   // To fix the implicit any type for 'checked', add a type annotation:
   function toggleFaixa(label: string) {
     setFaixasSelecionadas((prev: string[]) =>
       prev.includes(label)
         ? prev.filter((l: string) => l !== label)
-        : [...prev, label]
-    );
+        : [...prev, label],
+    )
   }
 
   return (
@@ -107,7 +107,7 @@ export default function ProdutosFiltrados({
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
           {filtrados.map((p) => {
-            const precoBruto = calculateGross(p.preco, "pix", 1).gross;
+            const precoBruto = calculateGross(p.preco, 'pix', 1).gross
             return (
               <div
                 key={p.id}
@@ -125,7 +125,7 @@ export default function ProdutosFiltrados({
                   {p.nome}
                 </h2>
                 <p className="text-base font-bold text-[var(--accent-900)] mb-2">
-                  R$ {precoBruto.toFixed(2).replace(".", ",")}
+                  R$ {precoBruto.toFixed(2).replace('.', ',')}
                 </p>
                 <Link
                   href={`/loja/produtos/${p.slug}`}
@@ -134,10 +134,10 @@ export default function ProdutosFiltrados({
                   Ver detalhes
                 </Link>
               </div>
-            );
+            )
           })}
         </div>
       </section>
     </div>
-  );
+  )
 }
