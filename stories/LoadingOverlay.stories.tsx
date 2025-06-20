@@ -1,3 +1,4 @@
+import { TenantProvider } from '../lib/context/TenantContext'
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { useState } from 'react'
 import { within, userEvent, expect } from 'storybook/test'
@@ -36,4 +37,31 @@ export const Default: Story = {
     await userEvent.click(toggle)
     await expect(canvas.getByText(args.text as string)).toBeInTheDocument()
   },
+}
+
+export const TemaDinamico: Story = {
+  render: (args) => (
+    <div className=\"space-y-4\">
+      <TenantProvider
+        initialConfig={{
+          primaryColor: '#2563eb',
+          font: 'var(--font-geist)',
+          logoUrl: '/img/logo_umadeus_branco.png',
+          confirmaInscricoes: false,
+        }}
+      >
+        <LoadingOverlay {...args} />
+      </TenantProvider>
+      <TenantProvider
+        initialConfig={{
+          primaryColor: '#dc2626',
+          font: 'var(--font-geist)',
+          logoUrl: '/img/logo_umadeus_branco.png',
+          confirmaInscricoes: false,
+        }}
+      >
+        <LoadingOverlay {...args} />
+      </TenantProvider>
+    </div>
+  ),
 }

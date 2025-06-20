@@ -1,3 +1,4 @@
+import { TenantProvider } from '../lib/context/TenantContext'
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { within, expect, fn } from 'storybook/test'
 import RedefinirSenhaModal from '../app/admin/components/RedefinirSenhaModal'
@@ -30,4 +31,31 @@ export const Default: Story = {
     const canvas = within(canvasElement)
     await expect(canvas.getByText(/Redefinir senha/i)).toBeInTheDocument()
   },
+}
+
+export const TemaDinamico: Story = {
+  render: (args) => (
+    <div className=\"space-y-4\">
+      <TenantProvider
+        initialConfig={{
+          primaryColor: '#2563eb',
+          font: 'var(--font-geist)',
+          logoUrl: '/img/logo_umadeus_branco.png',
+          confirmaInscricoes: false,
+        }}
+      >
+        <RedefinirSenhaModal {...args} />
+      </TenantProvider>
+      <TenantProvider
+        initialConfig={{
+          primaryColor: '#dc2626',
+          font: 'var(--font-geist)',
+          logoUrl: '/img/logo_umadeus_branco.png',
+          confirmaInscricoes: false,
+        }}
+      >
+        <RedefinirSenhaModal {...args} />
+      </TenantProvider>
+    </div>
+  ),
 }

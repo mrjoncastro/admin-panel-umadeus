@@ -1,3 +1,4 @@
+import { TenantProvider } from '../lib/context/TenantContext'
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { within, expect } from 'storybook/test'
 import NotificationBell from '../app/admin/components/NotificationBell'
@@ -29,4 +30,31 @@ export const Default: Story = {
       canvas.getByRole('button', { name: /notifica/i }),
     ).toBeInTheDocument()
   },
+}
+
+export const TemaDinamico: Story = {
+  render: (args) => (
+    <div className=\"space-y-4\">
+      <TenantProvider
+        initialConfig={{
+          primaryColor: '#2563eb',
+          font: 'var(--font-geist)',
+          logoUrl: '/img/logo_umadeus_branco.png',
+          confirmaInscricoes: false,
+        }}
+      >
+        <NotificationBell {...args} />
+      </TenantProvider>
+      <TenantProvider
+        initialConfig={{
+          primaryColor: '#dc2626',
+          font: 'var(--font-geist)',
+          logoUrl: '/img/logo_umadeus_branco.png',
+          confirmaInscricoes: false,
+        }}
+      >
+        <NotificationBell {...args} />
+      </TenantProvider>
+    </div>
+  ),
 }

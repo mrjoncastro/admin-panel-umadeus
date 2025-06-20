@@ -1,3 +1,4 @@
+import { TenantProvider } from '../lib/context/TenantContext'
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { within, expect, fn } from 'storybook/test'
 import BankAccountModal from '@/app/admin/financeiro/transferencias/modals/BankAccountModal'
@@ -32,4 +33,31 @@ export const Default: Story = {
     const canvas = within(canvasElement)
     await expect(canvas.getByText(/Adicionar Conta/i)).toBeInTheDocument()
   },
+}
+
+export const TemaDinamico: Story = {
+  render: (args) => (
+    <div className=\"space-y-4\">
+      <TenantProvider
+        initialConfig={{
+          primaryColor: '#2563eb',
+          font: 'var(--font-geist)',
+          logoUrl: '/img/logo_umadeus_branco.png',
+          confirmaInscricoes: false,
+        }}
+      >
+        <BankAccountModal {...args} />
+      </TenantProvider>
+      <TenantProvider
+        initialConfig={{
+          primaryColor: '#dc2626',
+          font: 'var(--font-geist)',
+          logoUrl: '/img/logo_umadeus_branco.png',
+          confirmaInscricoes: false,
+        }}
+      >
+        <BankAccountModal {...args} />
+      </TenantProvider>
+    </div>
+  ),
 }

@@ -1,3 +1,4 @@
+import { TenantProvider } from '../lib/context/TenantContext'
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import SmoothTabs from '../components/molecules/SmoothTabs'
 import { within, userEvent, expect } from 'storybook/test'
@@ -29,4 +30,31 @@ export const Default: Story = {
     await userEvent.click(tab3)
     await expect(canvas.getByText('Conteúdo 3')).toBeInTheDocument()
   },
+}
+
+export const TemaDinamico: Story = {
+  render: (args) => (
+    <div className=\"space-y-4\">
+      <TenantProvider
+        initialConfig={{
+          primaryColor: '#2563eb',
+          font: 'var(--font-geist)',
+          logoUrl: '/img/logo_umadeus_branco.png',
+          confirmaInscricoes: false,
+        }}
+      >
+        <SmoothTabs {...args} />
+      </TenantProvider>
+      <TenantProvider
+        initialConfig={{
+          primaryColor: '#dc2626',
+          font: 'var(--font-geist)',
+          logoUrl: '/img/logo_umadeus_branco.png',
+          confirmaInscricoes: false,
+        }}
+      >
+        <SmoothTabs {...args} />
+      </TenantProvider>
+    </div>
+  ),
 }
