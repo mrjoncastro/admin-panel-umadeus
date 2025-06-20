@@ -321,3 +321,4 @@
 ## [2025-06-20] README orienta executar `npm install` antes de `npm run lint` ou `npm run build`. Workflow CI passa a instalar dependências antes dos scripts. Lint e build executados.
 
 ## [2025-07-15] Metadata dinamico nas rotas publicas da loja e do blog com generateMetadata.
+## [2025-06-20] Atualizado inventário de componentes com caminhos corretos e novo item InscricaoFormNoSSR. Lint e build executados mas falharam por 'next' ausente.

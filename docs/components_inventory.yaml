@@ -99,16 +99,16 @@ components:
     path: app/admin/financeiro/transferencias/components/TransferenciaForm.tsx
     category: Organism
   - name: BlogHeroCarousel
-    path: app/blog/components/BlogHeroCarousel.tsx
+    path: components/organisms/BlogHeroCarousel.tsx
     category: Organism
   - name: BlogSidebar
-    path: app/blog/components/BlogSidebar.tsx
+    path: components/organisms/BlogSidebar.tsx
     category: Organism
   - name: NextPostButton
-    path: app/blog/components/NextPostButton.tsx
+    path: components/molecules/NextPostButton.tsx
     category: Atom
   - name: PostSuggestions
-    path: app/blog/components/PostSuggestions.tsx
+    path: components/organisms/PostSuggestions.tsx
     category: Organism
   - name: HeaderLoja
     path: components/templates/HeaderLoja.tsx
@@ -117,5 +117,8 @@ components:
     path: components/templates/FooterLoja.tsx
     category: Organism
   - name: InscricaoForm
-    path: app/loja/components/InscricaoForm.tsx
-    category: Template
+    path: components/organisms/InscricaoForm.tsx
+    category: Organism
+  - name: InscricaoFormNoSSR
+    path: components/organisms/InscricaoForm.no-ssr.tsx
+    category: Organism
