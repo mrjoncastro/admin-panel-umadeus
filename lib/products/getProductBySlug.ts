@@ -12,8 +12,9 @@ export async function getProductBySlug(slug: string): Promise<Produto | null> {
     const imagens = Array.isArray(prod.imagens)
       ? (prod.imagens || []).map((img) => pb.files.getURL(prod, img))
       : Object.fromEntries(
-          Object.entries((prod.imagens ?? {}) as Record<string, string[]>)
-            .map(([g, arr]) => [g, arr.map((img) => pb.files.getURL(prod, img))])
+          Object.entries((prod.imagens ?? {}) as Record<string, string[]>).map(
+            ([g, arr]) => [g, arr.map((img) => pb.files.getURL(prod, img))],
+          ),
         )
     return { ...prod, imagens }
   } catch {

@@ -28,11 +28,13 @@ export default function ClientesPage() {
   useEffect(() => {
     async function fetchClientes() {
       try {
-        const lista = await pbClient.collection('inscricoes').getFullList<Inscricao>({
-          expand: 'pedido,evento',
-          sort: '-created',
-          filter: `cliente='${tenantId}'`,
-        })
+        const lista = await pbClient
+          .collection('inscricoes')
+          .getFullList<Inscricao>({
+            expand: 'pedido,evento',
+            sort: '-created',
+            filter: `cliente='${tenantId}'`,
+          })
         const mapped = lista.map((c) => ({
           ...c,
           eventoId: c.evento,

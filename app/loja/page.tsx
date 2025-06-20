@@ -22,9 +22,10 @@ export async function generateMetadata(): Promise<Metadata> {
       description: 'Produtos e eventos',
     }
   }
-  const imagem = produto.imagens && produto.imagens.length
-    ? pb.files.getURL(produto, produto.imagens[0])
-    : '/img/og-default.jpg'
+  const imagem =
+    produto.imagens && produto.imagens.length
+      ? pb.files.getURL(produto, produto.imagens[0])
+      : '/img/og-default.jpg'
   const title = `Loja - ${produto.nome}`
   const description = produto.descricao || ''
   return {
