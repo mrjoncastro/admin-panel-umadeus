@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useToast } from '@/lib/context/ToastContext'
 import { useRouter } from 'next/navigation'
 import Spinner from '@/components/atoms/Spinner'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 interface Campo {
   id: string
@@ -18,6 +19,9 @@ export default function GerenciarCamposPage() {
   const [loading, setLoading] = useState(false)
   const [camposCarregados, setCamposCarregados] = useState(false)
   const router = useRouter()
+  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
+
+  if (!authChecked) return null
 
   const token =
     typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null

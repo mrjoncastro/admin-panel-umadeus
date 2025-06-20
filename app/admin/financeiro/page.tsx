@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import { useAuthContext } from '@/lib/context/AuthContext'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 interface Statistics {
   netValue: number
@@ -12,9 +13,12 @@ interface Statistics {
 export default function FinanceiroPage() {
   const { tenantId, isLoggedIn } = useAuthContext()
   const router = useRouter()
+  const { user, pb, authChecked } = useAuthGuard(['coordenador', 'lider'])
   const [saldoDisponivel, setSaldoDisponivel] = useState<number | null>(null)
   const [aLiberar, setALiberar] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
+
+  if (!authChecked) return null
 
   useEffect(() => {
     if (!isLoggedIn) {

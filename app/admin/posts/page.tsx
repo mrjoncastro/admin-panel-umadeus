@@ -8,16 +8,20 @@ import {
   getPostsClientPB,
   type PostClientRecord,
 } from '@/lib/posts/getPostsClientPB'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 type Post = PostClientRecord
 
 const POSTS_PER_PAGE = 10
 
 export default function AdminPostsPage() {
-  const { user, isLoggedIn } = useAuthContext()
+  const { user: ctxUser, isLoggedIn } = useAuthContext()
   const router = useRouter()
+  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
   const [posts, setPosts] = useState<Post[]>([])
   const [page, setPage] = useState(1)
+
+  if (!authChecked) return null
 
   useEffect(() => {
     if (!isLoggedIn || !user) {

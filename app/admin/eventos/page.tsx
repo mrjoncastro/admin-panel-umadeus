@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { formatDate } from '@/utils/formatDate'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 interface Evento {
   id: string
@@ -17,6 +18,7 @@ interface Evento {
 export default function AdminEventosPage() {
   const { user: ctxUser, isLoggedIn } = useAuthContext()
   const router = useRouter()
+  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
   const getAuth = useCallback(() => {
     const token =
       typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
@@ -27,6 +29,8 @@ export default function AdminEventosPage() {
   }, [ctxUser])
 
   const [eventos, setEventos] = useState<Evento[]>([])
+
+  if (!authChecked) return null
 
   useEffect(() => {
     const { token, user } = getAuth()

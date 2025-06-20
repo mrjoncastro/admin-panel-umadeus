@@ -5,6 +5,7 @@ import { useToast } from '@/lib/context/ToastContext'
 import Link from 'next/link'
 import type { Evento } from '@/types'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 interface Usuario {
   id: string
@@ -20,10 +21,13 @@ interface Usuario {
 
 export default function UsuariosPage() {
   const { showError } = useToast()
+  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
   const [usuarios, setUsuarios] = useState<Usuario[]>([])
   const [loading, setLoading] = useState(true)
   const [eventos, setEventos] = useState<Evento[]>([])
   const [eventoId, setEventoId] = useState('')
+
+  if (!authChecked) return null
 
   useEffect(() => {
     async function fetchUsuarios() {

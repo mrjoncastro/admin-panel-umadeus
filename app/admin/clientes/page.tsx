@@ -8,11 +8,13 @@ import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import type { Inscricao } from '@/types'
 import { useToast } from '@/lib/context/ToastContext'
 import { useAuthContext } from '@/lib/context/AuthContext'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 export default function ClientesPage() {
-  const pb = useMemo(() => createPocketBase(), [])
+  const pbClient = useMemo(() => createPocketBase(), [])
   const { tenantId } = useAuthContext()
   const { showError, showSuccess } = useToast()
+  const { user, pb, authChecked } = useAuthGuard(['coordenador', 'lider'])
   const [clientes, setClientes] = useState<
     (Inscricao & { eventoId?: string })[]
   >([])
@@ -21,10 +23,12 @@ export default function ClientesPage() {
     (Inscricao & { eventoId?: string }) | null
   >(null)
 
+  if (!authChecked) return null
+
   useEffect(() => {
     async function fetchClientes() {
       try {
-        const lista = await pb.collection('inscricoes').getFullList<Inscricao>({
+        const lista = await pbClient.collection('inscricoes').getFullList<Inscricao>({
           expand: 'pedido,evento',
           sort: '-created',
           filter: `cliente='${tenantId}'`,
@@ -44,14 +48,14 @@ export default function ClientesPage() {
     }
 
     fetchClientes()
-  }, [pb, tenantId, showError])
+  }, [pbClient, tenantId, showError])
 
   const salvarEdicao = async (
     atualizada: Partial<Inscricao & { eventoId?: string }>,
   ) => {
     if (!clienteEmEdicao) return
     try {
-      await pb.collection('inscricoes').update(clienteEmEdicao.id, {
+      await pbClient.collection('inscricoes').update(clienteEmEdicao.id, {
         ...atualizada,
         evento: atualizada.eventoId ?? clienteEmEdicao.eventoId,
       })

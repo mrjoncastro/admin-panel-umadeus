@@ -7,11 +7,13 @@ import { useAuthContext } from '@/lib/context/AuthContext'
 import type { Produto } from '@/types'
 import { ModalProduto } from '../../produtos/novo/ModalProduto'
 import { useToast } from '@/lib/context/ToastContext'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 export default function NovoEventoPage() {
   const { user: ctxUser, isLoggedIn } = useAuthContext()
   const { showSuccess, showError } = useToast()
   const router = useRouter()
+  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
   const getAuth = useCallback(() => {
     const token =
       typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
@@ -25,6 +27,8 @@ export default function NovoEventoPage() {
   const [produtos, setProdutos] = useState<Produto[]>([])
   const [selectedProdutos, setSelectedProdutos] = useState<string[]>([])
   const [produtoModalOpen, setProdutoModalOpen] = useState(false)
+
+  if (!authChecked) return null
 
   function toggleProduto(id: string) {
     setSelectedProdutos((prev) =>

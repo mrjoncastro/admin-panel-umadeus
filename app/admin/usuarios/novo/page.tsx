@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useToast } from '@/lib/context/ToastContext'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 interface Campo {
   id: string
@@ -26,6 +27,7 @@ function formatCpf(value: string) {
 
 export default function NovoUsuarioPage() {
   const { showError, showSuccess } = useToast()
+  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
@@ -35,6 +37,8 @@ export default function NovoUsuarioPage() {
   const [role, setRole] = useState('usuario')
   const [campoId, setCampoId] = useState('')
   const [campos, setCampos] = useState<Campo[]>([])
+
+  if (!authChecked) return null
 
   useEffect(() => {
     const token = localStorage.getItem('pb_token')

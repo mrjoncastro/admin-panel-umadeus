@@ -4,14 +4,18 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import PostContentEditor from '../components/PostContentEditor'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 export default function NovoPostPage() {
-  const { user, isLoggedIn } = useAuthContext()
+  const { user: ctxUser, isLoggedIn } = useAuthContext()
   const router = useRouter()
+  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
   const [conteudo, setConteudo] = useState('')
   const [preview, setPreview] = useState(false)
   const [thumbnail, setThumbnail] = useState('')
   const [keywords, setKeywords] = useState('')
+
+  if (!authChecked) return null
 
   useEffect(() => {
     if (!isLoggedIn || !user) {

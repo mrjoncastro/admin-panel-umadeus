@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import ModalCategoria from './ModalCategoria'
 import { useToast } from '@/lib/context/ToastContext'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 interface Categoria {
   id: string
@@ -16,6 +17,7 @@ export default function CategoriasAdminPage() {
   const { user: ctxUser, isLoggedIn } = useAuthContext()
   const { showSuccess, showError } = useToast()
   const router = useRouter()
+  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
   const getAuth = useCallback(() => {
     const token =
       typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
@@ -27,6 +29,8 @@ export default function CategoriasAdminPage() {
   const [categorias, setCategorias] = useState<Categoria[]>([])
   const [editCategoria, setEditCategoria] = useState<Categoria | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
+
+  if (!authChecked) return null
 
   useEffect(() => {
     const { token, user } = getAuth()

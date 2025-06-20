@@ -7,6 +7,7 @@ import Link from 'next/link'
 import type { Produto } from '@/types'
 import { ModalProduto } from './novo/ModalProduto'
 import { useToast } from '@/lib/context/ToastContext'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 function slugify(str: string) {
   return str
@@ -24,6 +25,7 @@ export default function AdminProdutosPage() {
   const { user: ctxUser, isLoggedIn } = useAuthContext()
   const router = useRouter()
   const { showSuccess, showError } = useToast()
+  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
   const getAuth = useCallback(() => {
     const token =
       typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
@@ -36,6 +38,8 @@ export default function AdminProdutosPage() {
   const [page, setPage] = useState(1)
   const [modalOpen, setModalOpen] = useState(false)
   const pathname = usePathname()
+
+  if (!authChecked) return null
 
   useEffect(() => {
     const { token, user } = getAuth()

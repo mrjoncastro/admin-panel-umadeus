@@ -6,6 +6,7 @@ import { useAuthContext } from '@/lib/context/AuthContext'
 import { calculateGross } from '@/lib/asaasFees'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import { useToast } from '@/lib/context/ToastContext'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 interface Categoria {
   id: string
@@ -29,6 +30,7 @@ export default function EditarProdutoPage() {
   const { user: ctxUser, isLoggedIn } = useAuthContext()
   const router = useRouter()
   const { showSuccess, showError } = useToast()
+  const { user, pb, authChecked } = useAuthGuard(['coordenador'])
   const getAuth = useCallback(() => {
     const token =
       typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
@@ -49,6 +51,8 @@ export default function EditarProdutoPage() {
   const [valorCliente, setValorCliente] = useState(
     calculateGross(Number(initial?.preco ?? 0), 'pix', 1).gross,
   )
+
+  if (!authChecked) return null
 
   useEffect(() => {
     setValorCliente(calculateGross(Number(initial?.preco ?? 0), 'pix', 1).gross)
