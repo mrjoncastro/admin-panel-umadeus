@@ -186,7 +186,11 @@ export default function ModalEditarPerfil({
                     />
                   </FormField>
 
-                  <FormField label="E-mail" htmlFor="perfil-email" className="opacity-60">
+                  <FormField
+                    label="E-mail"
+                    htmlFor="perfil-email"
+                    className="opacity-60"
+                  >
                     <TextField
                       id="perfil-email"
                       type="email"
