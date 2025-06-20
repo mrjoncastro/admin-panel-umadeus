@@ -7,7 +7,7 @@ import PostContentEditor from '../components/PostContentEditor'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 export default function NovoPostPage() {
-  const { user: ctxUser, isLoggedIn } = useAuthContext()
+  const { isLoggedIn } = useAuthContext()
   const router = useRouter()
   const { authChecked } = useAuthGuard(['coordenador'])
   const [conteudo, setConteudo] = useState('')

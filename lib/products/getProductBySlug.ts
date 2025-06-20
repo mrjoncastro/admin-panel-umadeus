@@ -16,7 +16,7 @@ export async function getProductBySlug(slug: string): Promise<Produto | null> {
             ([g, arr]) => [g, arr.map((img) => pb.files.getURL(prod, img))],
           ),
         )
-    return { ...prod, imagens }
+    return { ...(prod as unknown as Produto), imagens } as Produto
   } catch {
     return null
   }
