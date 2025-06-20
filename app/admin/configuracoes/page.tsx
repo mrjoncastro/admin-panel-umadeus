@@ -50,7 +50,8 @@ function isBlockedColor(hex: string) {
 }
 
 // Checa se cor é clara, para ajuste de texto no botão
-function isColorLight(hex: string) {
+function isColorLight(hex?: string) {
+  if (!hex) return false;
   const c = hex.replace("#", "");
   let r = 0,
     g = 0,
@@ -87,7 +88,7 @@ export default function ConfiguracoesPage() {
   }, [ctxUser]);
   const [font, setFont] = useState(config.font);
   const [primaryColor, setPrimaryColor] = useState(config.primaryColor);
-  const [logoUrl, setLogoUrl] = useState(config.logoUrl);
+  const [logoUrl, setLogoUrl] = useState(config.logoUrl || "");
   const [confirmaInscricoes, setConfirmaInscricoes] = useState(
     config.confirmaInscricoes
   );
@@ -243,7 +244,7 @@ export default function ConfiguracoesPage() {
           </span>
           <input
             type="text"
-            value={logoUrl.startsWith("data:") ? "" : logoUrl}
+            value={logoUrl?.startsWith("data:") ? "" : logoUrl ?? ""}
             placeholder="Cole a URL do logo"
             onChange={handleLogoChange}
             className="input-base rounded-xl border-2 border-purple-100 focus:border-purple-400 mb-2"
