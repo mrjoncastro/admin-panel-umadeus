@@ -1,12 +1,12 @@
 import { describe, it, expect, vi } from 'vitest'
 import { GET } from '../../app/api/produtos/[slug]/route'
 import { NextRequest } from 'next/server'
+import createPocketBaseMock from '../mocks/pocketbase'
 
+const pb = createPocketBaseMock()
+pb.collection.mockReturnValue({ getFirstListItem: vi.fn() })
 vi.mock('../../lib/pocketbase', () => ({
-  default: vi.fn(() => ({
-    collection: () => ({ getFirstListItem: vi.fn() }),
-    files: { getURL: vi.fn() },
-  })),
+  default: vi.fn(() => pb),
 }))
 
 vi.mock('../../lib/getTenantFromHost', () => ({

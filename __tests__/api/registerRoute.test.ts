@@ -1,14 +1,14 @@
 import { describe, it, expect, vi } from 'vitest'
 import { POST } from '../../app/api/register/route'
 import { NextRequest } from 'next/server'
+import createPocketBaseMock from '../mocks/pocketbase'
 
 const getOneMock = vi.fn().mockRejectedValue(new Error('not found'))
 const createMock = vi.fn().mockResolvedValue({ id: 'u1' })
-
+const pb = createPocketBaseMock()
+pb.collection.mockReturnValue({ getOne: getOneMock, create: createMock })
 vi.mock('../../lib/pocketbase', () => ({
-  default: vi.fn(() => ({
-    collection: () => ({ getOne: getOneMock, create: createMock }),
-  })),
+  default: vi.fn(() => pb),
 }))
 
 describe('POST /api/register', () => {

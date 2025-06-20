@@ -1,13 +1,14 @@
 import { describe, it, expect, vi } from 'vitest'
 import { GET } from '../../app/api/produtos/route'
 import { NextRequest } from 'next/server'
+import createPocketBaseMock from '../mocks/pocketbase'
 
+const pb = createPocketBaseMock()
+pb.collection.mockReturnValue({
+  getFullList: vi.fn().mockRejectedValue(new Error('fail')),
+})
 vi.mock('../../lib/pocketbase', () => ({
-  default: vi.fn(() => ({
-    collection: () => ({
-      getFullList: vi.fn().mockRejectedValue(new Error('fail')),
-    }),
-  })),
+  default: vi.fn(() => pb),
 }))
 
 vi.mock('../../lib/products', () => ({
