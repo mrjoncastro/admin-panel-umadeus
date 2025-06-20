@@ -1,41 +1,50 @@
 import { CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+interface SucessoConfirmacaoPageProps {
+  searchParams: {
+    mensagem?: string
+    acaoPrimariaLabel?: string
+    acaoPrimariaHref?: string
+    acaoSecundariaLabel?: string
+    acaoSecundariaHref?: string
+  }
+}
+
 export default function SucessoConfirmacaoPage({
-  searchParams,
-}: {
-  searchParams: any
-}) {
-  const params = searchParams as Record<string, string | undefined>
-  const mensagem = params.mensagem
+  searchParams: {
+    mensagem,
+    acaoPrimariaLabel,
+    acaoPrimariaHref,
+    acaoSecundariaLabel,
+    acaoSecundariaHref,
+  },
+}: SucessoConfirmacaoPageProps) {
   const acaoPrimaria =
-    params.acaoPrimariaLabel && params.acaoPrimariaHref
-      ? {
-          label: params.acaoPrimariaLabel as string,
-          href: params.acaoPrimariaHref as string,
-        }
+    acaoPrimariaLabel && acaoPrimariaHref
+      ? { label: acaoPrimariaLabel, href: acaoPrimariaHref }
       : undefined
+
   const acaoSecundaria =
-    params.acaoSecundariaLabel && params.acaoSecundariaHref
-      ? {
-          label: params.acaoSecundariaLabel as string,
-          href: params.acaoSecundariaHref as string,
-        }
+    acaoSecundariaLabel && acaoSecundariaHref
+      ? { label: acaoSecundariaLabel, href: acaoSecundariaHref }
       : undefined
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-gray-100 to-gray-200 px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 flex flex-col items-center">
         <div className="mb-4 animate-bounce">
           <CheckCircle className="text-green-600" size={56} />
         </div>
+
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Tudo certo!</h1>
         <div className="text-gray-600 text-base mb-2">
-          {mensagem || 'Sua ação foi realizada com sucesso.'}
+          {mensagem ?? 'Sua ação foi realizada com sucesso.'}
         </div>
         <div className="text-gray-500 text-xs mb-6">
           Você receberá mais informações em breve por e-mail ou mensagem.
         </div>
+
         <div className="flex flex-col gap-3 w-full">
           {acaoPrimaria && (
             <Link
@@ -54,11 +63,12 @@ export default function SucessoConfirmacaoPage({
             </Link>
           )}
         </div>
+
         <div className="mt-8 text-xs text-gray-400 text-center">
           Precisa de ajuda?{' '}
-          <a href="/suporte" className="underline hover:text-black">
+          <Link href="/suporte" className="underline hover:text-black">
             Fale conosco
-          </a>
+          </Link>
         </div>
       </div>
     </div>
