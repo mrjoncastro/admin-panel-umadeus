@@ -1,0 +1,45 @@
+summary:
+  duplicates:
+    - component: Header
+      instances:
+        - { name: Header, path: app/components/Header.tsx }
+        - { name: HeaderAdmin, path: app/admin/components/Header.tsx }
+        - { name: HeaderLoja, path: app/loja/components/Header.tsx }
+    - component: Footer
+      instances:
+        - { name: Footer, path: app/components/Footer.tsx }
+        - { name: FooterLoja, path: app/loja/components/Footer.tsx }
+    - component: LayoutWrapper
+      instances:
+        - { name: LayoutWrapper, path: app/components/LayoutWrapper.tsx }
+        - { name: LayoutWrapperAdmin, path: app/admin/components/LayoutWrapper.tsx }
+    - component: Modal
+      instances:
+        - { name: ModalAnimated, path: components/ModalAnimated.tsx }
+        - { name: AuthModal, path: app/components/AuthModal.tsx }
+        - { name: RedefinirSenhaModal, path: app/admin/components/RedefinirSenhaModal.tsx }
+        - { name: ModalEditarPerfil, path: app/admin/perfil/components/ModalEditarPerfil.tsx }
+  missing_components:
+    atoms:
+      - Button
+      - Text
+      - Input
+      - Select
+      - Checkbox
+      - Radio
+    molecules:
+      - InputWithMask
+      - FormField
+    organisms:
+      - Table
+      - Pagination
+      - Toast
+      - Stepper
+      - FormWizard
+    templates:
+      - CheckoutForm
+      - DashboardLayout
+    visuals:
+      - Badge
+      - Avatar
+      - Card
