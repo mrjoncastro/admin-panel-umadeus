@@ -27,9 +27,8 @@ export default function UsuariosPage() {
   const [eventos, setEventos] = useState<Evento[]>([])
   const [eventoId, setEventoId] = useState('')
 
-  if (!authChecked) return null
-
   useEffect(() => {
+    if (!authChecked) return
     async function fetchUsuarios() {
       try {
         const token = localStorage.getItem('pb_token')
@@ -59,9 +58,10 @@ export default function UsuariosPage() {
     }
 
     fetchUsuarios()
-  }, [showError])
+  }, [showError, authChecked])
 
   useEffect(() => {
+    if (!authChecked) return
     async function fetchEventos() {
       try {
         const token = localStorage.getItem('pb_token')
@@ -85,7 +85,9 @@ export default function UsuariosPage() {
     }
 
     fetchEventos()
-  }, [])
+  }, [authChecked])
+
+  if (!authChecked) return null
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
