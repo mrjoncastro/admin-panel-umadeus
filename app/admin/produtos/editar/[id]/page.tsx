@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { calculateGross } from '@/lib/asaasFees'
@@ -31,14 +31,6 @@ export default function EditarProdutoPage() {
   const router = useRouter()
   const { showSuccess, showError } = useToast()
   const { authChecked } = useAuthGuard(['coordenador'])
-  const getAuth = useCallback(() => {
-    const token =
-      typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
-    const raw =
-      typeof window !== 'undefined' ? localStorage.getItem('pb_user') : null
-    const user = raw ? JSON.parse(raw) : ctxUser
-    return { token, user } as const
-  }, [ctxUser])
   const [categorias, setCategorias] = useState<Categoria[]>([])
   const [selectedCategoria, setSelectedCategoria] = useState<string>('')
   const [initial, setInitial] = useState<Record<string, unknown> | null>(null)
@@ -58,22 +50,15 @@ export default function EditarProdutoPage() {
 
   useEffect(() => {
     if (!authChecked) return
-    const { token, user } = getAuth()
-    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') {
+    if (!isLoggedIn || ctxUser?.role !== 'coordenador') {
       router.replace('/login')
     }
-  }, [isLoggedIn, router, getAuth, authChecked])
+  }, [isLoggedIn, router, ctxUser?.role, authChecked])
 
   useEffect(() => {
     if (!authChecked) return
-    const { token, user } = getAuth()
-    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
-    fetch('/admin/api/categorias', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'X-PB-User': JSON.stringify(user),
-      },
-    })
+    if (!isLoggedIn || ctxUser?.role !== 'coordenador') return
+    fetch('/admin/api/categorias')
       .then((r) => r.json())
       .then((data) => {
         setCategorias(Array.isArray(data) ? data : [])
@@ -81,12 +66,7 @@ export default function EditarProdutoPage() {
       .catch(() => {
         setCategorias([])
       })
-    fetch(`/admin/api/produtos/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'X-PB-User': JSON.stringify(user),
-      },
-    })
+    fetch(`/admin/api/produtos/${id}`)
       .then(async (r) => {
         if (r.status === 401) {
           router.replace('/login')
@@ -139,7 +119,7 @@ export default function EditarProdutoPage() {
         )
       })
       .finally(() => setLoading(false))
-  }, [id, isLoggedIn, router, getAuth, authChecked])
+  }, [id, isLoggedIn, router, ctxUser?.role, authChecked])
 
   useEffect(() => {
     if (initial?.cores && typeof initial.cores === 'string') {
@@ -224,15 +204,11 @@ export default function EditarProdutoPage() {
     }
     console.log('-------------------------------')
 
-    const { token, user } = getAuth()
     try {
       const res = await fetch(`/admin/api/produtos/${id}`, {
         method: 'PUT',
         body: formData,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(user),
-        },
+        headers: {},
       })
       if (res.ok) {
         showSuccess('Produto atualizado')

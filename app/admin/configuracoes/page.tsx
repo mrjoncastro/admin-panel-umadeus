@@ -1,7 +1,6 @@
 'use client'
-import { useState, useRef, ChangeEvent, useCallback } from 'react'
+import { useState, useRef, ChangeEvent } from 'react'
 import { useTenant } from '@/lib/context/TenantContext'
-import { useAuthContext } from '@/lib/context/AuthContext'
 import { useToast } from '@/lib/context/ToastContext'
 import Image from 'next/image'
 import { Check } from 'lucide-react'
@@ -76,17 +75,8 @@ const fontes = [
 
 export default function ConfiguracoesPage() {
   const { config, updateConfig } = useTenant()
-  const { user: ctxUser } = useAuthContext()
   const { showSuccess, showError } = useToast()
   const { authChecked } = useAuthGuard(['coordenador'])
-  const getAuth = useCallback(() => {
-    const token =
-      typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
-    const raw =
-      typeof window !== 'undefined' ? localStorage.getItem('pb_user') : null
-    const user = raw ? JSON.parse(raw) : ctxUser
-    return { token, user } as const
-  }, [ctxUser])
   const [font, setFont] = useState(config.font)
   const [primaryColor, setPrimaryColor] = useState(config.primaryColor)
   const [logoUrl, setLogoUrl] = useState(config.logoUrl || '')
@@ -142,19 +132,11 @@ export default function ConfiguracoesPage() {
       return
     }
 
-    const { token, user } = getAuth()
-    if (!token || !user) {
-      showError('Erro ao salvar configurações')
-      return
-    }
-
     try {
       const res = await fetch('/admin/api/configuracoes', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(user),
         },
         body: JSON.stringify({
           cor_primary: primaryColor,

@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useAuthContext } from '@/lib/context/AuthContext'
@@ -14,14 +14,6 @@ export default function EditarEventoPage() {
   const { user: ctxUser, isLoggedIn } = useAuthContext()
   const { showSuccess, showError } = useToast()
   const { authChecked } = useAuthGuard(['coordenador'])
-  const getAuth = useCallback(() => {
-    const token =
-      typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
-    const raw =
-      typeof window !== 'undefined' ? localStorage.getItem('pb_user') : null
-    const user = raw ? JSON.parse(raw) : ctxUser
-    return { token, user } as const
-  }, [ctxUser])
   const router = useRouter()
   const [initial, setInitial] = useState<Record<string, unknown> | null>(null)
   const [existingImage, setExistingImage] = useState<string | null>(null)
@@ -39,22 +31,15 @@ export default function EditarEventoPage() {
 
   useEffect(() => {
     if (!authChecked) return
-    const { token, user } = getAuth()
-    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') {
+    if (!isLoggedIn || ctxUser?.role !== 'coordenador') {
       router.replace('/login')
     }
-  }, [isLoggedIn, router, getAuth, authChecked])
+  }, [isLoggedIn, router, ctxUser?.role, authChecked])
 
   useEffect(() => {
     if (!authChecked) return
-    const { token, user } = getAuth()
-    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
-    fetch(`/admin/api/eventos/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'X-PB-User': JSON.stringify(user),
-      },
-    })
+    if (!isLoggedIn || ctxUser?.role !== 'coordenador') return
+    fetch(`/admin/api/eventos/${id}`)
       .then((r) => r.json())
       .then((data) => {
         setInitial({
@@ -74,24 +59,18 @@ export default function EditarEventoPage() {
         setSelectedProdutos(arr)
       })
       .finally(() => setLoading(false))
-  }, [id, isLoggedIn, getAuth, authChecked])
+  }, [id, isLoggedIn, ctxUser?.role, authChecked])
 
   useEffect(() => {
     if (!authChecked) return
-    const { token, user } = getAuth()
-    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
-    fetch('/admin/api/produtos', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'X-PB-User': JSON.stringify(user),
-      },
-    })
+    if (!isLoggedIn || ctxUser?.role !== 'coordenador') return
+    fetch('/admin/api/produtos')
       .then((r) => r.json())
       .then((data) => {
         setProdutos(Array.isArray(data) ? data : (data.items ?? []))
       })
       .catch(() => setProdutos([]))
-  }, [isLoggedIn, getAuth, authChecked])
+  }, [isLoggedIn, ctxUser?.role, authChecked])
 
   async function handleNovoProduto(form: Produto) {
     const formData = new FormData()
@@ -120,14 +99,9 @@ export default function EditarEventoPage() {
       )
     }
 
-    const { token, user } = getAuth()
     try {
       const res = await fetch('/admin/api/produtos', {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(user),
-        },
         body: formData,
       })
       if (!res.ok) return
@@ -160,15 +134,11 @@ export default function EditarEventoPage() {
     formData.delete('produtos')
     selectedProdutos.forEach((p) => formData.append('produtos', p))
     formData.set('cobra_inscricao', String(cobraInscricao))
-    const { token, user } = getAuth()
     try {
       const res = await fetch(`/admin/api/eventos/${id}`, {
         method: 'PUT',
         body: formData,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(user),
-        },
+        headers: {},
       })
       if (res.ok) {
         showSuccess('Evento salvo com sucesso')

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
@@ -19,38 +19,23 @@ export default function AdminEventosPage() {
   const { user: ctxUser, isLoggedIn } = useAuthContext()
   const router = useRouter()
   const { authChecked } = useAuthGuard(['coordenador'])
-  const getAuth = useCallback(() => {
-    const token =
-      typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
-    const raw =
-      typeof window !== 'undefined' ? localStorage.getItem('pb_user') : null
-    const user = raw ? JSON.parse(raw) : ctxUser
-    return { token, user } as const
-  }, [ctxUser])
 
   const [eventos, setEventos] = useState<Evento[]>([])
 
   useEffect(() => {
     if (!authChecked) return
-    const { token, user } = getAuth()
-    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') {
+    if (!isLoggedIn || ctxUser?.role !== 'coordenador') {
       router.replace('/login')
     }
-  }, [isLoggedIn, router, getAuth, authChecked])
+  }, [isLoggedIn, ctxUser?.role, router, authChecked])
 
   useEffect(() => {
     if (!authChecked) return
-    const { token, user } = getAuth()
-    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
+    if (!isLoggedIn || ctxUser?.role !== 'coordenador') return
 
     async function fetchEventos() {
       try {
-        const res = await fetch('/admin/api/eventos', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'X-PB-User': JSON.stringify(user),
-          },
-        })
+        const res = await fetch('/admin/api/eventos')
         const data = await res.json()
         setEventos(Array.isArray(data) ? data : (data.items ?? []))
       } catch (err) {
@@ -59,17 +44,12 @@ export default function AdminEventosPage() {
     }
 
     fetchEventos()
-  }, [isLoggedIn, getAuth, authChecked])
+  }, [isLoggedIn, ctxUser?.role, authChecked])
 
   async function handleDelete(id: string) {
     if (!confirm('Confirma excluir?')) return
-    const { token, user } = getAuth()
     await fetch(`/admin/api/eventos/${id}`, {
       method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'X-PB-User': JSON.stringify(user),
-      },
     })
     setEventos((prev) => prev.filter((e) => e.id !== id))
   }

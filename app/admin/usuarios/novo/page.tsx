@@ -40,15 +40,7 @@ export default function NovoUsuarioPage() {
 
   useEffect(() => {
     if (!authChecked) return
-    const token = localStorage.getItem('pb_token')
-    const user = localStorage.getItem('pb_user')
-
-    fetch('/admin/api/campos', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'X-PB-User': user ?? '',
-      },
-    })
+    fetch('/admin/api/campos')
       .then((res) => res.json())
       .then((data) => setCampos(data))
       .catch(() => showError('Erro ao carregar os campos.'))
@@ -57,15 +49,10 @@ export default function NovoUsuarioPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
-    const token = localStorage.getItem('pb_token')
-    const user = localStorage.getItem('pb_user')
-
     const res = await fetch('/admin/api/usuarios', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-        'X-PB-User': user ?? '',
       },
       body: JSON.stringify({
         nome,

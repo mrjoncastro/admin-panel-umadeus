@@ -5,6 +5,7 @@ import { useToast } from '@/lib/context/ToastContext'
 import { useRouter } from 'next/navigation'
 import Spinner from '@/components/atoms/Spinner'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
+import { useAuthContext } from '@/lib/context/AuthContext'
 
 interface Campo {
   id: string
@@ -21,38 +22,27 @@ export default function GerenciarCamposPage() {
   const router = useRouter()
   const { authChecked } = useAuthGuard(['coordenador'])
 
-  const token =
-    typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
-  const userRaw =
-    typeof window !== 'undefined' ? localStorage.getItem('pb_user') : null
-  const storedUser = userRaw ? JSON.parse(userRaw) : null
+  const { user: ctxUser, isLoggedIn } = useAuthContext()
 
   useEffect(() => {
     if (!authChecked) return
-    if (!token || !storedUser || storedUser.role !== 'coordenador') {
+    if (!isLoggedIn || ctxUser?.role !== 'coordenador') {
       router.replace('/login')
     }
-  }, [token, storedUser, router, authChecked])
+  }, [isLoggedIn, ctxUser?.role, router, authChecked])
 
   useEffect(() => {
     if (
       !authChecked ||
-      !token ||
-      !storedUser ||
-      storedUser.role !== 'coordenador' ||
+      !isLoggedIn ||
+      ctxUser?.role !== 'coordenador' ||
       camposCarregados
     )
       return
 
     const carregarCampos = async () => {
       try {
-        const res = await fetch('/admin/api/campos', {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'X-PB-User': JSON.stringify(storedUser),
-          },
-        })
+        const res = await fetch('/admin/api/campos')
 
         const data = await res.json()
 
@@ -75,13 +65,13 @@ export default function GerenciarCamposPage() {
     }
 
     carregarCampos()
-  }, [token, storedUser, camposCarregados, showError, authChecked])
+  }, [isLoggedIn, ctxUser?.role, camposCarregados, showError, authChecked])
 
   async function handleCriarOuAtualizar(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
 
-    if (!token || !storedUser || storedUser.role !== 'coordenador') {
+    if (!isLoggedIn || ctxUser?.role !== 'coordenador') {
       showError('Usuário não autenticado.')
       setLoading(false)
       return
@@ -97,8 +87,6 @@ export default function GerenciarCamposPage() {
         method: metodo,
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(storedUser),
         },
         body: JSON.stringify({ nome }),
       })
@@ -125,15 +113,10 @@ export default function GerenciarCamposPage() {
   }
 
   const fetchCampos = async () => {
-    if (!token || !storedUser || storedUser.role !== 'coordenador') return
+    if (!isLoggedIn || ctxUser?.role !== 'coordenador') return
 
     try {
-      const res = await fetch('/admin/api/campos', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(storedUser),
-        },
-      })
+      const res = await fetch('/admin/api/campos')
       const data = await res.json()
       if (res.ok) setCampos(data)
     } catch (err: unknown) {
@@ -206,17 +189,13 @@ export default function GerenciarCamposPage() {
   async function handleExcluirCampo(id: string) {
     try {
       setLoading(true)
-      if (!token || !storedUser || storedUser.role !== 'coordenador') {
+      if (!isLoggedIn || ctxUser?.role !== 'coordenador') {
         showError('Usuário não autenticado.')
         setLoading(false)
         return
       }
       const res = await fetch(`/admin/api/campos/${id}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(storedUser),
-        },
       })
       if (!res.ok) {
         const data = await res.json()

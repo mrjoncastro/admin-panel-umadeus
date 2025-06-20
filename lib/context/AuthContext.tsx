@@ -1,11 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import createPocketBase, {
-  updateBaseAuth,
-  clearBaseAuth,
-} from '@/lib/pocketbase'
-import type { RecordModel } from 'pocketbase'
+import createPocketBase, { clearBaseAuth } from '@/lib/pocketbase'
 import type { UserModel } from '@/types/UserModel'
 
 type AuthContextType = {
@@ -51,15 +47,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let unsubscribe = () => {}
     async function loadAuth() {
       try {
-        const token = localStorage.getItem('pb_token')
-        const rawUser = localStorage.getItem('pb_user')
-
-        if (token && rawUser) {
-          const parsedRecord = JSON.parse(rawUser) as RecordModel
-          pb.authStore.save(token, parsedRecord)
-          updateBaseAuth(token, parsedRecord)
-
-          setUser(parsedRecord as unknown as UserModel)
+        const meRes = await fetch('/api/auth/me')
+        if (meRes.ok) {
+          const data = await meRes.json()
+          pb.authStore.clear()
+          setUser(data.user as UserModel)
           setIsLoggedIn(true)
         }
         const tenantRes = await fetch('/api/tenant')
@@ -74,20 +66,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         pb.authStore.clear()
         clearBaseAuth()
-        localStorage.removeItem('pb_token')
-        localStorage.removeItem('pb_user')
-        localStorage.removeItem('tenant_id')
         setUser(null)
         setTenantId(null)
         setIsLoggedIn(false)
       } finally {
         setIsLoading(false)
       }
-      unsubscribe = pb.authStore.onChange(() => {
-        localStorage.setItem('pb_token', pb.authStore.token)
-        localStorage.setItem('pb_user', JSON.stringify(pb.authStore.model))
-        updateBaseAuth(pb.authStore.token, pb.authStore.model)
-      })
+      unsubscribe = pb.authStore.onChange(() => {})
     }
 
     loadAuth()
@@ -97,29 +82,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [pb])
 
   const login = async (email: string, password: string) => {
-    await pb.collection('usuarios').authWithPassword(email, password)
-
-    const model = pb.authStore.model as unknown as UserModel
-
-    try {
-      const tenantRes = await fetch('/api/tenant')
-      if (tenantRes.ok) {
-        const { tenantId } = await tenantRes.json()
-        setTenantId(tenantId)
-      } else {
-        setTenantId(null)
-      }
-    } catch {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
+    if (!res.ok) throw new Error('Login failed')
+    const data = await res.json()
+    setUser(data.user as UserModel)
+    setIsLoggedIn(true)
+    const tenantRes = await fetch('/api/tenant')
+    if (tenantRes.ok) {
+      const { tenantId } = await tenantRes.json()
+      setTenantId(tenantId)
+    } else {
       setTenantId(null)
     }
-
-    localStorage.setItem('pb_token', pb.authStore.token)
-    localStorage.setItem('pb_user', JSON.stringify(model))
-
-    updateBaseAuth(pb.authStore.token, pb.authStore.model)
-
-    setUser(model)
-    setIsLoggedIn(true)
   }
 
   const signUp = async (
@@ -168,11 +146,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const logout = () => {
+    fetch('/api/auth/logout', { method: 'POST' })
     pb.authStore.clear()
     clearBaseAuth()
-    localStorage.removeItem('pb_token')
-    localStorage.removeItem('pb_user')
-    localStorage.removeItem('tenant_id')
     setUser(null)
     setTenantId(null)
     setIsLoggedIn(false)

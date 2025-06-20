@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useCallback, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { calculateGross } from '@/lib/asaasFees'
 import ModalCategoria from '../categorias/ModalCategoria'
@@ -58,14 +58,6 @@ export function ModalProduto<T extends Record<string, unknown>>({
   )
   const { isLoggedIn, user: ctxUser } = useAuthContext()
   const { showSuccess, showError } = useToast()
-  const getAuth = useCallback(() => {
-    const token =
-      typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
-    const raw =
-      typeof window !== 'undefined' ? localStorage.getItem('pb_user') : null
-    const user = raw ? JSON.parse(raw) : ctxUser
-    return { token, user } as const
-  }, [ctxUser])
 
   // Novos estados para cor
   const [cores, setCores] = useState<string[]>([])
@@ -84,14 +76,8 @@ export function ModalProduto<T extends Record<string, unknown>>({
   }, [initial.categoria, open])
 
   useEffect(() => {
-    const { token, user } = getAuth()
-    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
-    fetch('/admin/api/categorias', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'X-PB-User': JSON.stringify(user),
-      },
-    })
+    if (!isLoggedIn || ctxUser?.role !== 'coordenador') return
+    fetch('/admin/api/categorias')
       .then((r) => r.json())
       .then((data) => {
         setCategorias(Array.isArray(data) ? data : [])
@@ -100,7 +86,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
         console.error('Erro ao carregar categorias:', err)
         setCategorias([])
       })
-  }, [isLoggedIn, open, getAuth])
+  }, [isLoggedIn, ctxUser?.role, open])
 
   // Preenche cores iniciais (em modo editar)
   useEffect(() => {
@@ -126,15 +112,12 @@ export function ModalProduto<T extends Record<string, unknown>>({
   }
 
   async function handleNovaCategoria(form: { nome: string }) {
-    const { token, user } = getAuth()
-    if (!isLoggedIn || !token || !user) return
+    if (!isLoggedIn) return
     try {
       const res = await fetch('/admin/api/categorias', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(user),
         },
         body: JSON.stringify(form),
       })

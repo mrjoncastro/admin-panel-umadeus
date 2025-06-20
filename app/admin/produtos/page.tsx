@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import Link from 'next/link'
@@ -26,14 +26,6 @@ export default function AdminProdutosPage() {
   const router = useRouter()
   const { showSuccess, showError } = useToast()
   const { authChecked } = useAuthGuard(['coordenador'])
-  const getAuth = useCallback(() => {
-    const token =
-      typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
-    const raw =
-      typeof window !== 'undefined' ? localStorage.getItem('pb_user') : null
-    const user = raw ? JSON.parse(raw) : ctxUser
-    return { token, user } as const
-  }, [ctxUser])
   const [produtos, setProdutos] = useState<Produto[]>([])
   const [page, setPage] = useState(1)
   const [modalOpen, setModalOpen] = useState(false)
@@ -41,25 +33,18 @@ export default function AdminProdutosPage() {
 
   useEffect(() => {
     if (!authChecked) return
-    const { token, user } = getAuth()
-    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') {
+    if (!isLoggedIn || ctxUser?.role !== 'coordenador') {
       router.replace('/login')
     }
-  }, [isLoggedIn, router, getAuth, authChecked])
+  }, [isLoggedIn, router, ctxUser?.role, authChecked])
 
   useEffect(() => {
     if (!authChecked) return
-    const { token, user } = getAuth()
-    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
+    if (!isLoggedIn || ctxUser?.role !== 'coordenador') return
 
     async function fetchProdutos() {
       try {
-        const res = await fetch('/admin/api/produtos', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'X-PB-User': JSON.stringify(user),
-          },
-        })
+        const res = await fetch('/admin/api/produtos')
         const data = await res.json()
         setProdutos(Array.isArray(data) ? data : (data.items ?? []))
       } catch (err) {
@@ -67,7 +52,7 @@ export default function AdminProdutosPage() {
       }
     }
     fetchProdutos()
-  }, [isLoggedIn, getAuth, authChecked])
+  }, [isLoggedIn, ctxUser?.role, authChecked])
 
   const totalPages = Math.ceil(produtos.length / PRODUTOS_POR_PAGINA)
   const paginated = produtos.slice(
@@ -107,14 +92,9 @@ export default function AdminProdutosPage() {
       )
     }
 
-    const { token, user } = getAuth()
     try {
       const res = await fetch('/admin/api/produtos', {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(user),
-        },
         body: formData,
       })
       if (!res.ok) {

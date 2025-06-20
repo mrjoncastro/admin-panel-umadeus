@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuthContext } from '@/lib/context/AuthContext'
@@ -14,14 +14,6 @@ export default function NovoEventoPage() {
   const { showSuccess, showError } = useToast()
   const router = useRouter()
   const { authChecked } = useAuthGuard(['coordenador'])
-  const getAuth = useCallback(() => {
-    const token =
-      typeof window !== 'undefined' ? localStorage.getItem('pb_token') : null
-    const raw =
-      typeof window !== 'undefined' ? localStorage.getItem('pb_user') : null
-    const user = raw ? JSON.parse(raw) : ctxUser
-    return { token, user } as const
-  }, [ctxUser])
 
   const [cobraInscricao, setCobraInscricao] = useState(false)
   const [produtos, setProdutos] = useState<Produto[]>([])
@@ -36,28 +28,21 @@ export default function NovoEventoPage() {
 
   useEffect(() => {
     if (!authChecked) return
-    const { token, user } = getAuth()
-    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') {
+    if (!isLoggedIn || ctxUser?.role !== 'coordenador') {
       router.replace('/login')
     }
-  }, [isLoggedIn, router, getAuth, authChecked])
+  }, [isLoggedIn, router, ctxUser?.role, authChecked])
 
   useEffect(() => {
     if (!authChecked) return
-    const { token, user } = getAuth()
-    if (!isLoggedIn || !token || !user || user.role !== 'coordenador') return
-    fetch('/admin/api/produtos', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'X-PB-User': JSON.stringify(user),
-      },
-    })
+    if (!isLoggedIn || ctxUser?.role !== 'coordenador') return
+    fetch('/admin/api/produtos')
       .then((r) => r.json())
       .then((data) => {
         setProdutos(Array.isArray(data) ? data : (data.items ?? []))
       })
       .catch(() => setProdutos([]))
-  }, [isLoggedIn, getAuth, authChecked])
+  }, [isLoggedIn, ctxUser?.role, authChecked])
 
   async function handleNovoProduto(form: Produto) {
     const formData = new FormData()
@@ -86,14 +71,9 @@ export default function NovoEventoPage() {
       )
     }
 
-    const { token, user } = getAuth()
     try {
       const res = await fetch('/admin/api/produtos', {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(user),
-        },
         body: formData,
       })
       if (!res.ok) return
@@ -122,15 +102,11 @@ export default function NovoEventoPage() {
     formData.delete('produtos')
     selectedProdutos.forEach((p) => formData.append('produtos', p))
     formData.set('cobra_inscricao', String(cobraInscricao))
-    const { token, user } = getAuth()
     try {
       const res = await fetch('/admin/api/eventos', {
         method: 'POST',
         body: formData,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(user),
-        },
+        headers: {},
       })
       if (res.ok) {
         showSuccess('Evento salvo com sucesso')
