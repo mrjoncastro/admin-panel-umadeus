@@ -1,4 +1,5 @@
 /* @vitest-environment jsdom */
+import React from 'react'
 import { describe, it, expect, vi, expectTypeOf } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import type {
@@ -15,17 +16,19 @@ vi.mock('../lib/context/AuthContext', () => ({
   useAuthContext: () => ({ tenantId: 'cli1' }),
 }))
 
-const contasMock: ClienteContaBancariaRecord[] = [
-  { id: '1', accountName: 'Conta 1', ownerName: 'Fulano' },
-  { id: '2', accountName: 'Conta 2', ownerName: 'Beltrano' },
-]
-const pixMock: PixKeyRecord[] = [
-  { id: '3', pixAddressKey: 'a@b.com', pixAddressKeyType: 'email' },
-]
-vi.mock('../lib/bankAccounts', () => ({
-  getBankAccountsByTenant: vi.fn().mockResolvedValue(contasMock),
-  getPixKeysByTenant: vi.fn().mockResolvedValue(pixMock),
-}))
+let contasMock: ClienteContaBancariaRecord[]
+let pixMock: PixKeyRecord[]
+vi.mock('../lib/bankAccounts', () => {
+  contasMock = [
+    { id: '1', accountName: 'Conta 1', ownerName: 'Fulano' },
+    { id: '2', accountName: 'Conta 2', ownerName: 'Beltrano' },
+  ]
+  pixMock = [{ id: '3', pixAddressKey: 'a@b.com', pixAddressKeyType: 'email' }]
+  return {
+    getBankAccountsByTenant: vi.fn().mockResolvedValue(contasMock),
+    getPixKeysByTenant: vi.fn().mockResolvedValue(pixMock),
+  }
+})
 
 describe('TransferenciaForm', () => {
   it('renderiza contas bancarias e chaves pix', async () => {
