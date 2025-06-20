@@ -1,7 +1,10 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import path from 'path'
 
-vi.mock('fs/promises', () => ({ appendFile: vi.fn() }))
+vi.mock('fs/promises', async (importOriginal) => {
+  const actual = await importOriginal()
+  return { ...actual, appendFile: vi.fn() }
+})
 
 import { logConciliacaoErro } from '../lib/server/logger'
 import { appendFile } from 'fs/promises'

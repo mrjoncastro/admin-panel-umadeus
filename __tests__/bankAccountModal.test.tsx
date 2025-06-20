@@ -1,4 +1,5 @@
 /* @vitest-environment jsdom */
+import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import BankAccountModal from '@/app/admin/financeiro/transferencias/modals/BankAccountModal'
@@ -7,15 +8,20 @@ vi.mock('../lib/hooks/usePocketBase', () => ({
   default: () => ({ authStore: { model: { id: 'u1', cliente: 'cli1' } } }),
 }))
 
-const createBankAccount = vi.fn()
-const createPixKey = vi.fn()
-const searchBanks = vi.fn().mockResolvedValue([])
+let createBankAccount: ReturnType<typeof vi.fn>
+let createPixKey: ReturnType<typeof vi.fn>
+let searchBanks: ReturnType<typeof vi.fn>
 
-vi.mock('../lib/bankAccounts', () => ({
-  searchBanks,
-  createBankAccount,
-  createPixKey,
-}))
+vi.mock('../lib/bankAccounts', () => {
+  createBankAccount = vi.fn()
+  createPixKey = vi.fn()
+  searchBanks = vi.fn().mockResolvedValue([])
+  return {
+    searchBanks,
+    createBankAccount,
+    createPixKey,
+  }
+})
 
 function fillBasicFields(container: HTMLElement, cpf: string, birth: string) {
   fireEvent.change(screen.getByPlaceholderText('Nome do titular'), {

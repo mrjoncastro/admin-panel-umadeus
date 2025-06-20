@@ -1,4 +1,5 @@
 /* @vitest-environment jsdom */
+import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
 import ProdutoDetalhe from '@/app/loja/produtos/[slug]/page'
