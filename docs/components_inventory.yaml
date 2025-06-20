@@ -8,11 +8,23 @@ components:
 - name: SmoothTabs
   path: components/SmoothTabs.tsx
   category: Molecule
+- name: FormField
+  path: components/molecules/FormField.tsx
+  category: Molecule
+- name: InputWithMask
+  path: components/molecules/InputWithMask.tsx
+  category: Molecule
 - name: SaldoCard
   path: components/SaldoCard.tsx
   category: Molecule
 - name: Spinner
   path: components/Spinner.tsx
+  category: Atom
+- name: Button
+  path: components/atoms/Button.tsx
+  category: Atom
+- name: TextField
+  path: components/atoms/TextField.tsx
   category: Atom
 - name: ToggleSwitch
   path: components/ToggleSwitch.tsx

@@ -164,3 +164,4 @@
 ## [2025-06-20] Documentação da estrutura atualizada com novos diretórios e referência a utils. Lint e build executados.
 ## [2025-06-20] Inventário de componentes adicionado em docs/components_inventory.yaml. - Lint: falhou (next not found) - Build: falhou (next not found)
 ## [2025-06-20] Criado components_analysis.yaml listando duplicacoes e lacunas no design system.
+## [2025-06-20] Componentes base Button, TextField, FormField e InputWithMask criados. ModalProduto passou a usar Button e TextField. Lint e build executados.

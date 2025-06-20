@@ -5,6 +5,8 @@ import { useAuthContext } from "@/lib/context/AuthContext";
 import { calculateGross } from "@/lib/asaasFees";
 import ModalCategoria from "../categorias/ModalCategoria";
 import { useToast } from "@/lib/context/ToastContext";
+import { Button } from "@/components/atoms/Button";
+import { TextField } from "@/components/atoms/TextField";
 
 export interface ModalProdutoProps<T extends Record<string, unknown>> {
   open: boolean;
@@ -218,8 +220,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="label-base">Nome *</label>
-              <input
-                className="input-base"
+              <TextField
                 name="nome"
                 placeholder="Ex: Camiseta Básica Preta"
                 defaultValue={initial.nome || ""}
@@ -229,8 +230,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
             </div>
             <div>
               <label className="label-base">Preço *</label>
-              <input
-                className="input-base"
+              <TextField
                 name="preco"
                 placeholder="Ex: 39.90"
                 type="number"
@@ -264,13 +264,14 @@ export function ModalProduto<T extends Record<string, unknown>>({
                     </option>
                   ))}
                 </select>
-                <button
+                <Button
                   type="button"
-                  className="btn btn-secondary whitespace-nowrap"
+                  variant="secondary"
+                  className="whitespace-nowrap"
                   onClick={() => setCategoriaModalOpen(true)}
                 >
                   + Categoria
-                </button>
+                </Button>
               </div>
               <span className="text-xs text-gray-400 ml-1">
                 Caso a categoria não exista, clique em + Categoria.
@@ -444,16 +445,12 @@ export function ModalProduto<T extends Record<string, unknown>>({
           </div>
 
           <div className="flex justify-end gap-3 mt-8 pt-4 border-t border-neutral-100">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={onClose}
-            >
+            <Button type="button" variant="secondary" onClick={onClose}>
               Cancelar
-            </button>
-            <button type="submit" className="btn btn-primary">
+            </Button>
+            <Button type="submit" variant="primary">
               Salvar
-            </button>
+            </Button>
           </div>
         </form>
       </dialog>
