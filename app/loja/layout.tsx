@@ -1,11 +1,6 @@
 import '../globals.css'
 import LayoutWrapper from '@/components/templates/LayoutWrapper'
 
-export const metadata = {
-  title: 'UMADEUS',
-  description: 'Site oficial da UMADEUS – Produtos e Eventos',
-}
-
 export default function RootLayout({
   children,
 }: {
