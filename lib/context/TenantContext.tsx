@@ -13,7 +13,7 @@ export type TenantConfig = {
   confirmaInscricoes: boolean;
 };
 
-const defaultConfig: TenantConfig = {
+export const defaultConfig: TenantConfig = {
   font: "var(--font-geist)",
   primaryColor: "#7c3aed",
   logoUrl: "/img/logo_umadeus_branco.png",
@@ -30,12 +30,23 @@ const TenantContext = createContext<TenantContextType>({
   updateConfig: () => {},
 });
 
-export function TenantProvider({ children }: { children: React.ReactNode }) {
-  const [config, setConfig] = useState<TenantConfig>(defaultConfig);
+export function TenantProvider({
+  children,
+  initialConfig,
+}: {
+  children: React.ReactNode;
+  initialConfig?: TenantConfig;
+}) {
+  const [config, setConfig] = useState<TenantConfig>(initialConfig ?? defaultConfig);
   const [configId, setConfigId] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+
+    if (initialConfig) {
+      localStorage.setItem("app_config", JSON.stringify(initialConfig));
+      localStorage.setItem("app_config_time", Date.now().toString());
+    }
 
     async function fetchInitialConfig() {
       try {
@@ -160,9 +171,11 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    fetchInitialConfig();
+    if (!initialConfig) {
+      fetchInitialConfig();
+    }
     refreshConfig();
-  }, []);
+  }, [initialConfig]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
