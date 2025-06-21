@@ -342,3 +342,4 @@
 
 ## [2025-07-20] Documentadas regras de acesso às inscrições e filtros da API.
 ## [2025-07-21] Criados docs/regras-pedidos.md e atualizadas instru\u00e7\u00f5es de confirma\u00e7\u00e3o no guia de inscri\u00e7\u00f5es e README. Lint e build executados.
+## [2025-07-22] Adicionada valida\u00e7\u00e3o de PB_URL em runtime e documenta\u00e7\u00e3o atualizada. Lint e build executados.

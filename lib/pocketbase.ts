@@ -1,6 +1,11 @@
 import PocketBase from 'pocketbase'
 
-const PB_URL = process.env.PB_URL!
+const PB_URL = process.env.PB_URL
+
+if (!PB_URL) {
+  throw new Error('PB_URL environment variable is not defined')
+}
+
 const basePb = new PocketBase(PB_URL)
 
 export function createPocketBase() {
