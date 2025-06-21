@@ -1,8 +1,9 @@
 'use client'
 
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useEffect, useMemo, useState } from 'react'
 import { Inscricao, Evento } from '@/types'
 import { useAuth } from '@/lib/hooks/useAuth'
+import createPocketBase from '@/lib/pocketbase'
 
 type Props = {
   inscricao: Inscricao & { eventoId: string }
@@ -17,7 +18,8 @@ export default function ModalEditarInscricao({
   onClose,
   onSave,
 }: Props) {
-  const { user, pb } = useAuth()
+  const { user } = useAuth()
+  const pb = useMemo(() => createPocketBase(), [])
   const [eventos, setEventos] = useState<Evento[]>([])
 
   useEffect(() => {

@@ -1,13 +1,15 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
+import createPocketBase from '@/lib/pocketbase'
 import DashboardAnalytics from '../components/DashboardAnalytics'
 import type { Inscricao, Pedido } from '@/types'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 
 export default function LiderDashboardPage() {
   const { user, authChecked } = useAuthGuard(['lider'])
+  const pb = useMemo(() => createPocketBase(), [])
 
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [pedidos, setPedidos] = useState<Pedido[]>([])
@@ -46,7 +48,9 @@ export default function LiderDashboardPage() {
             signal,
           }).then((r) => r.json()),
         ])
-        const rawInscricoes = Array.isArray(insRes.items) ? insRes.items : insRes
+        const rawInscricoes = Array.isArray(insRes.items)
+          ? insRes.items
+          : insRes
         const rawPedidos = Array.isArray(pedRes.items) ? pedRes.items : pedRes
         if (insRes.totalPages && pedRes.totalPages) {
           setTotalPages(Math.max(insRes.totalPages, pedRes.totalPages))
