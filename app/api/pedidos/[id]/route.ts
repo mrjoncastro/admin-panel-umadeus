@@ -42,7 +42,10 @@ export async function GET(req: NextRequest) {
       .getOne<Pedido>(id, { expand: 'campo,responsavel,id_inscricao' })
     const access = await checkAccess(pedido, user)
     if ('error' in access) {
-      return NextResponse.json({ error: access.error }, { status: access.status })
+      return NextResponse.json(
+        { error: access.error },
+        { status: access.status },
+      )
     }
     return NextResponse.json(pedido)
   } catch (err) {
@@ -63,7 +66,10 @@ export async function PATCH(req: NextRequest) {
     const pedido = await pb.collection('pedidos').getOne<Pedido>(id)
     const access = await checkAccess(pedido, user)
     if ('error' in access) {
-      return NextResponse.json({ error: access.error }, { status: access.status })
+      return NextResponse.json(
+        { error: access.error },
+        { status: access.status },
+      )
     }
     const data = await req.json()
     const updated = await pb.collection('pedidos').update(id, {
@@ -92,7 +98,10 @@ export async function DELETE(req: NextRequest) {
     const pedido = await pb.collection('pedidos').getOne<Pedido>(id)
     const access = await checkAccess(pedido, user)
     if ('error' in access) {
-      return NextResponse.json({ error: access.error }, { status: access.status })
+      return NextResponse.json(
+        { error: access.error },
+        { status: access.status },
+      )
     }
     await pb.collection('pedidos').delete(id)
     return NextResponse.json({ ok: true })

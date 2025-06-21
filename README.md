@@ -81,7 +81,7 @@ Esses documentos também trazem exemplos das classes globais `btn` e
 
 Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 
- - `PB_URL` - URL do PocketBase (obrigatório; em desenvolvimento usa `http://127.0.0.1:8090` caso esteja ausente)
+- `PB_URL` - URL do PocketBase (obrigatório; em desenvolvimento usa `http://127.0.0.1:8090` caso esteja ausente)
 - `PB_ADMIN_EMAIL` - e-mail do administrador do PocketBase
 - `PB_ADMIN_PASSWORD` - senha do administrador
 - `ASAAS_API_URL` - URL base da API do Asaas (ex.: `https://api-sandbox.asaas.com/api/v3/`)

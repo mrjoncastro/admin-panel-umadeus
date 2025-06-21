@@ -56,25 +56,27 @@ export default function LiderDashboardPage() {
 
         if (!isMounted.current) return
 
-        const allInscricoes: Inscricao[] = rawInscricoes.map((r: Inscricao) => ({
-          id: r.id,
-          nome: r.nome,
-          telefone: r.telefone,
-          evento: r.expand?.evento?.titulo,
-          status: r.status,
-          created: r.created,
-          campo: r.campo,
-          tamanho: r.tamanho,
-          produto: r.produto,
-          genero: r.genero,
-          data_nascimento: r.data_nascimento,
-          criado_por: r.criado_por,
-          expand: {
-            campo: r.expand?.campo,
-            criado_por: r.expand?.criado_por,
-            pedido: r.expand?.pedido,
-          },
-        }))
+        const allInscricoes: Inscricao[] = rawInscricoes.map(
+          (r: Inscricao) => ({
+            id: r.id,
+            nome: r.nome,
+            telefone: r.telefone,
+            evento: r.expand?.evento?.titulo,
+            status: r.status,
+            created: r.created,
+            campo: r.campo,
+            tamanho: r.tamanho,
+            produto: r.produto,
+            genero: r.genero,
+            data_nascimento: r.data_nascimento,
+            criado_por: r.criado_por,
+            expand: {
+              campo: r.expand?.campo,
+              criado_por: r.expand?.criado_por,
+              pedido: r.expand?.pedido,
+            },
+          }),
+        )
 
         const allPedidos: Pedido[] = rawPedidos.map((r: Pedido) => ({
           id: r.id,

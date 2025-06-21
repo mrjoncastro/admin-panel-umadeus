@@ -23,4 +23,3 @@ Em ambos os casos o pedido recebe status `pendente` inicialmente e passa a `pago
 - **Desativado** – o pedido é criado imediatamente junto à inscrição, agilizando o fluxo.
 
 Consulte também [docs/regras-inscricoes.md](docs/regras-inscricoes.md) para detalhes sobre o escopo das inscrições.
-

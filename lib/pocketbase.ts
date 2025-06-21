@@ -5,9 +5,7 @@ const DEFAULT_PB_URL = 'http://127.0.0.1:8090'
 const PB_URL = process.env.PB_URL || DEFAULT_PB_URL
 
 if (!process.env.PB_URL) {
-  console.warn(
-    `PB_URL não configurada. Usando valor padrão: ${DEFAULT_PB_URL}`,
-  )
+  console.warn(`PB_URL não configurada. Usando valor padrão: ${DEFAULT_PB_URL}`)
 }
 
 const basePb = new PocketBase(PB_URL)

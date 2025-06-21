@@ -15,12 +15,18 @@ import { getTenantFromHost } from '../../lib/getTenantFromHost'
 
 describe('GET /api/pedidos', () => {
   it('filtra por responsavel quando usuario', async () => {
-    ;(requireRole as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue({
+    ;(
+      requireRole as unknown as { mockReturnValue: (v: any) => void }
+    ).mockReturnValue({
       pb,
       user: { id: 'u1', role: 'usuario' },
     })
-    const req = new Request('http://test/api/pedidos?page=2&perPage=5&status=pendente')
-    ;(req as any).nextUrl = new URL('http://test/api/pedidos?page=2&perPage=5&status=pendente')
+    const req = new Request(
+      'http://test/api/pedidos?page=2&perPage=5&status=pendente',
+    )
+    ;(req as any).nextUrl = new URL(
+      'http://test/api/pedidos?page=2&perPage=5&status=pendente',
+    )
     const res = await GET(req as unknown as NextRequest)
     expect(res.status).toBe(200)
     expect(getListMock).toHaveBeenCalledWith(
@@ -34,7 +40,9 @@ describe('GET /api/pedidos', () => {
   })
 
   it('filtra por campo quando lider', async () => {
-    ;(requireRole as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue({
+    ;(
+      requireRole as unknown as { mockReturnValue: (v: any) => void }
+    ).mockReturnValue({
       pb,
       user: { id: 'u1', role: 'lider', campo: 'c1' },
     })
@@ -53,13 +61,19 @@ describe('GET /api/pedidos', () => {
   })
 
   it('filtra por cliente quando coordenador', async () => {
-    ;(requireRole as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue({
+    ;(
+      requireRole as unknown as { mockReturnValue: (v: any) => void }
+    ).mockReturnValue({
       pb,
       user: { id: 'u1', role: 'coordenador' },
     })
-    ;(getTenantFromHost as unknown as { mockResolvedValue: (v: any) => void }).mockResolvedValue('t1')
+    ;(
+      getTenantFromHost as unknown as { mockResolvedValue: (v: any) => void }
+    ).mockResolvedValue('t1')
     const req = new Request('http://test/api/pedidos?page=3&status=pago')
-    ;(req as any).nextUrl = new URL('http://test/api/pedidos?page=3&status=pago')
+    ;(req as any).nextUrl = new URL(
+      'http://test/api/pedidos?page=3&status=pago',
+    )
     const res = await GET(req as unknown as NextRequest)
     expect(res.status).toBe(200)
     expect(getTenantFromHost).toHaveBeenCalled()
@@ -74,11 +88,15 @@ describe('GET /api/pedidos', () => {
   })
 
   it('retorna 400 quando coordenador sem tenant', async () => {
-    ;(requireRole as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue({
+    ;(
+      requireRole as unknown as { mockReturnValue: (v: any) => void }
+    ).mockReturnValue({
       pb,
       user: { id: 'u1', role: 'coordenador' },
     })
-    ;(getTenantFromHost as unknown as { mockResolvedValue: (v: any) => void }).mockResolvedValue(null)
+    ;(
+      getTenantFromHost as unknown as { mockResolvedValue: (v: any) => void }
+    ).mockResolvedValue(null)
     const req = new Request('http://test/api/pedidos')
     ;(req as any).nextUrl = new URL('http://test/api/pedidos')
     const res = await GET(req as unknown as NextRequest)
