@@ -193,7 +193,7 @@ export default function Header() {
                   >
                     <li>
                       <Link
-                        href="/loja/cliente"
+                        href="/cliente/dashboard"
                         className="block px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                         onClick={() => setClientOpen(false)}
                       >
@@ -285,7 +285,7 @@ export default function Header() {
               {role === 'usuario' && (
                 <>
                   <Link
-                    href="/loja/cliente"
+                    href="/cliente/dashboard"
                     className="text-platinum hover:text-primary-400 transition py-2 text-base font-medium"
                     onClick={() => setOpen(false)}
                   >
