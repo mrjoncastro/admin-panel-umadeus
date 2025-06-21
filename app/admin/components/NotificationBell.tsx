@@ -6,12 +6,16 @@ import type { Inscricao } from '@/types'
 import { useAuthContext } from '@/lib/context/AuthContext'
 
 export default function NotificationBell() {
-  const { tenantId } = useAuthContext()
+  const { tenantId, isLoggedIn, isLoading } = useAuthContext()
   const [count, setCount] = useState(0)
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
+    if (isLoading || !isLoggedIn) {
+      return
+    }
+
     const fetchData = async () => {
       try {
         const [insRes, pedRes] = await Promise.all([
@@ -43,7 +47,7 @@ export default function NotificationBell() {
     fetchData()
     const id = setInterval(fetchData, 30000)
     return () => clearInterval(id)
-  }, [tenantId])
+  }, [tenantId, isLoggedIn, isLoading])
 
   return (
     <div className="fixed bottom-20 right-4 z-50">
