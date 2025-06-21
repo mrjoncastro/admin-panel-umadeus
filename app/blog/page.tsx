@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import BlogClient from './BlogClient'
+import BlogClient from './BlogClient.dynamic'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import type { Metadata } from 'next'
 import { getPostsFromPB } from '@/lib/posts/getPostsFromPB'

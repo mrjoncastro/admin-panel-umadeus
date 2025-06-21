@@ -4,7 +4,10 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
-import ProdutoInterativo from './ProdutoInterativo'
+import dynamic from 'next/dynamic'
+const ProdutoInterativo = dynamic(() => import('./ProdutoInterativo'), {
+  ssr: false,
+})
 import type { Produto as ProdutoBase } from '@/types'
 export default function ProdutoDetalhe() {
   const { slug } = useParams<{ slug: string }>()
