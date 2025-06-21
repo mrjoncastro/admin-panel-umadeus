@@ -11,9 +11,9 @@ export function createPocketBase() {
       : new PocketBase(PB_URL)
 
   pb.authStore.save(basePb.authStore.token, basePb.authStore.model)
-  pb.beforeSend = (_, opt) => {
+  pb.beforeSend = (url, opt) => {
     opt.credentials = 'include'
-    return opt
+    return { url, options: opt }
   }
   pb.autoCancellation(false)
   return pb
