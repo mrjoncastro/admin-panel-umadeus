@@ -9,9 +9,11 @@ export async function GET(req: NextRequest) {
   }
   const { pb, user } = auth
   try {
-    const contas = await pb.collection('clientes_contas_bancarias').getFullList({
-      filter: `cliente='${user.cliente}'`,
-    })
+    const contas = await pb
+      .collection('clientes_contas_bancarias')
+      .getFullList({
+        filter: `cliente='${user.cliente}'`,
+      })
     return NextResponse.json(contas, { status: 200 })
   } catch (err) {
     await logConciliacaoErro(`Erro ao listar contas: ${String(err)}`)

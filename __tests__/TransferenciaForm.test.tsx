@@ -8,7 +8,6 @@ import type {
 } from '../lib/bankAccounts'
 import TransferenciaForm from '@/app/admin/financeiro/transferencias/components/TransferenciaForm'
 
-
 vi.mock('../lib/context/AuthContext', () => ({
   useAuthContext: () => ({ tenantId: 'cli1' }),
 }))
