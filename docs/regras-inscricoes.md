@@ -40,3 +40,37 @@ Com a opção **desativada**, o pedido é gerado automaticamente logo após o en
 ## Geração de Pedidos
 
 O pedido proveniente da inscrição traz o campo `canal` com valor `inscricao`, diferenciando-o das compras comuns via checkout. Consulte [docs/regras-pedidos.md](docs/regras-pedidos.md) para o processo completo de pedidos.
+
+## Fluxo Resumido
+
+```text
+[Usuário preenche Formulário]
+        |
+[Usuário já existe por e-mail?]
+     /            \
+   Sim            Não
+   |               |
+ [Usar ID]    [Criar Usuário]
+     \            /
+      v          v
+[Evento tem produto?]
+    /              \
+  Não              Sim
+  |                 |
+[Inscrição gratuita] [Verifica confirmaInscricoes]
+                         |
+            ┌────────────┴─────────────┐
+            |                          |
+   Ativado (manual)            Desativado (automático)
+            |                          |
+[Status: pendente]            [Gerar pedido + cobrança]
+[Aguardar aprovação]            [Asaas gera link?]
+            |                          |
+      [Aprovado?]                  /          \
+            |                  Falha        Sucesso
+[Gerar pedido + cobrança]       |             |
+            |                 [Erro]   [Redirecionar para pagamento]
+            v                               |
+  [Status do pedido: pendente → pago]       v
+                      [Fim]
+```
