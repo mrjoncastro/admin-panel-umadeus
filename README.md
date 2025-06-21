@@ -93,6 +93,7 @@ Os servidores identificam automaticamente o tenant pelo domínio de cada requisi
 Com esse ID, o backend acessa `m24_clientes` e obtém as credenciais `asaas_api_key` e `asaas_account_id` da subconta correspondente, garantindo que cada domínio utilize sua própria chave Asaas.
 
 Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utilizar o SDK oficial.
+Quando não há domínio configurado (ex.: durante testes em localhost), defina manualmente o cookie `tenantId` com o ID do cliente ou cadastre o domínio em `clientes_config` para que rotas como `/api/produtos` funcionem corretamente.
 
 ## Conectando ao PocketBase
 
