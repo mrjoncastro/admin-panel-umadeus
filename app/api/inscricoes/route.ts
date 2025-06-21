@@ -4,7 +4,10 @@ import { createPocketBase } from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro } from '@/lib/server/logger'
 import type { PaymentMethod } from '@/lib/asaasFees'
-import { criarInscricao, InscricaoTemplate } from '@/lib/templates/inscricao'
+import {
+  criarInscricao,
+  InscricaoTemplate,
+} from '@/components/templates/inscricao'
 import type { Inscricao } from '@/types'
 
 export async function GET(req: NextRequest) {
@@ -177,16 +180,9 @@ export async function POST(req: NextRequest) {
       if (cfg?.confirma_inscricoes === false && evento.cobra_inscricao) {
         const base = req.nextUrl.origin
 
-        const token = pb.authStore.token
-        const headers = {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-          'X-PB-User': JSON.stringify(lider),
-        }
-
         const pedidoRes = await fetch(`${base}/api/pedidos`, {
           method: 'POST',
-          headers,
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ inscricaoId: inscricao.id }),
         })
 

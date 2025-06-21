@@ -1,5 +1,8 @@
 import { Inscricao, Pedido } from '@/types'
-import { criarInscricao as criarInscricaoTemplate, InscricaoTemplate } from '../templates/inscricao'
+import {
+  criarInscricao as criarInscricaoTemplate,
+  InscricaoTemplate,
+} from '@/components/templates/inscricao'
 
 export type DadosInscricao = InscricaoTemplate & { liderId: string }
 

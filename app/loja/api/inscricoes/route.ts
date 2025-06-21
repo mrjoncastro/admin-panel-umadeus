@@ -3,7 +3,10 @@ import createPocketBase from '@/lib/pocketbase'
 import { ClientResponseError } from 'pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro } from '@/lib/server/logger'
-import { criarInscricao, InscricaoTemplate } from '@/lib/templates/inscricao'
+import {
+  criarInscricao,
+  InscricaoTemplate,
+} from '@/components/templates/inscricao'
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase()
@@ -25,6 +28,7 @@ export async function POST(req: NextRequest) {
       if (!tenantId) {
         return NextResponse.json({ error: 'Tenant não informado' }, { status: 400 })
       }
+      const tempPass = Math.random().toString(36).slice(2, 10)
       usuario = await pb.collection('usuarios').create({
         nome,
         email: data.user_email,
@@ -34,6 +38,8 @@ export async function POST(req: NextRequest) {
         cliente: tenantId,
         campo: data.campo,
         perfil: 'usuario',
+        password: tempPass,
+        passwordConfirm: tempPass,
       })
     }
 

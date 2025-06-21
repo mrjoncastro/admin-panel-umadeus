@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { criarPedido } from '../lib/flows/orderFlow'
-import { criarInscricao } from '../lib/templates/inscricao'
+import { criarInscricao } from '../components/templates/inscricao'
 
 const dadosValidos = {
   nome: 'Teste',
