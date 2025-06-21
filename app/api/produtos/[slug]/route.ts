@@ -6,7 +6,7 @@ import type { Produto } from '@/types'
 
 export async function GET(req: NextRequest) {
   const auth = getUserFromHeaders(req)
-  const pb = 'error' in auth ? createPocketBase() : auth.pbSafe
+  const pb = 'error' in auth ? createPocketBase(false) : auth.pbSafe
   const role = 'error' in auth ? null : auth.user.role
   const tenantId = await getTenantFromHost()
 

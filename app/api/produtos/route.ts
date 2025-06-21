@@ -6,7 +6,7 @@ import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
 export async function GET(req: NextRequest) {
   const auth = getUserFromHeaders(req)
-  const pb = 'error' in auth ? createPocketBase() : auth.pbSafe
+  const pb = 'error' in auth ? createPocketBase(false) : auth.pbSafe
   const role = 'error' in auth ? null : auth.user.role
   const categoria = req.nextUrl.searchParams.get('categoria') || undefined
   const tenantId = await getTenantFromHost()

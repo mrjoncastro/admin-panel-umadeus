@@ -10,14 +10,17 @@ if (!process.env.PB_URL) {
 
 const basePb = new PocketBase(PB_URL)
 
-export function createPocketBase() {
+export function createPocketBase(copyAuth = true) {
   const pbWithClone = basePb as PocketBase & { clone?: () => PocketBase }
   const pb =
     typeof pbWithClone.clone === 'function'
       ? pbWithClone.clone()
       : new PocketBase(PB_URL)
-
-  pb.authStore.save(basePb.authStore.token, basePb.authStore.model)
+  if (copyAuth) {
+    pb.authStore.save(basePb.authStore.token, basePb.authStore.model)
+  } else {
+    pb.authStore.clear()
+  }
   pb.beforeSend = (url, opt) => {
     opt.credentials = 'include'
     return { url, options: opt }

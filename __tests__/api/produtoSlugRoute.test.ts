@@ -46,4 +46,14 @@ describe('GET /api/produtos/[slug]', () => {
     const body = await res.json()
     expect(body.imagens[0]).toBe('url/img1.jpg')
   })
+
+  it('não retorna produto exclusivo para visitante', async () => {
+    const produto = { id: 'p1', imagens: ['img1.jpg'], ativo: true, exclusivo_user: true }
+    getFirstListItemMock.mockResolvedValueOnce(produto)
+    pb.files.getURL.mockImplementation((_p, img) => `url/${img}`)
+    const req = new Request('http://test/produtos/p1')
+    ;(req as any).nextUrl = new URL('http://test/produtos/p1')
+    const res = await GET(req as unknown as NextRequest)
+    expect(res.status).toBe(404)
+  })
 })
