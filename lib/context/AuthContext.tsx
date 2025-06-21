@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let unsubscribe = () => {}
     async function loadAuth() {
       try {
-        const meRes = await fetch('/api/auth/me')
+        const meRes = await fetch('/api/auth/me', { credentials: 'include' })
         if (meRes.ok) {
           const data = await meRes.json()
           pb.authStore.clear()
@@ -91,6 +91,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const data = await res.json()
     setUser(data.user as UserModel)
     setIsLoggedIn(true)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('pb_user', JSON.stringify(data.user))
+    }
     const tenantRes = await fetch('/api/tenant')
     if (tenantRes.ok) {
       const { tenantId } = await tenantRes.json()
