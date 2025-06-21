@@ -29,6 +29,7 @@ export default function SignUpForm({
   const [cep, setCep] = useState('')
   const [endereco, setEndereco] = useState('')
   const [numero, setNumero] = useState('')
+  const [bairro, setBairro] = useState('')
   const [estado, setEstado] = useState('')
   const [cidade, setCidade] = useState('')
   const [senha, setSenha] = useState('')
@@ -72,11 +73,12 @@ export default function SignUpForm({
       .then(async (res) => {
         if (!res.ok) {
           showError('CEP n\u00e3o encontrado.')
-          setEndereco('')
-          setCidade('')
-          setEstado('')
-          return null
-        }
+        setEndereco('')
+        setCidade('')
+        setEstado('')
+        setBairro('')
+        return null
+      }
         return res.json()
       })
       .then((data) => {
@@ -84,6 +86,7 @@ export default function SignUpForm({
         setEndereco(data.logradouro || '')
         setCidade(data.localidade || '')
         setEstado(data.uf || '')
+        setBairro(data.bairro || '')
       })
       .catch(() => {
         showError('Erro ao buscar o CEP.')
@@ -112,6 +115,7 @@ export default function SignUpForm({
         dataNascimento,
         endereco,
         numero,
+        bairro,
         estado,
         cep,
         cidade,
@@ -245,6 +249,17 @@ export default function SignUpForm({
                 placeholder="Número"
                 value={numero}
                 onChange={(e) => setNumero(e.target.value)}
+                className="w-full rounded-md px-4 py-2"
+                required
+              />
+            </FormField>
+            <FormField label="Bairro" htmlFor="signup-bairro">
+              <TextField
+                id="signup-bairro"
+                type="text"
+                placeholder="Bairro"
+                value={bairro}
+                onChange={(e) => setBairro(e.target.value)}
                 className="w-full rounded-md px-4 py-2"
                 required
               />

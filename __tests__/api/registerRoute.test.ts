@@ -3,10 +3,13 @@ import { POST } from '../../app/api/register/route'
 import { NextRequest } from 'next/server'
 import createPocketBaseMock from '../mocks/pocketbase'
 
-const getOneMock = vi.fn().mockRejectedValue(new Error('not found'))
+const getFirstListItemMock = vi.fn().mockRejectedValue(new Error('not found'))
 const createMock = vi.fn().mockResolvedValue({ id: 'u1' })
 const pb = createPocketBaseMock()
-pb.collection.mockReturnValue({ getOne: getOneMock, create: createMock })
+pb.collection.mockReturnValue({
+  getFirstListItem: getFirstListItemMock,
+  create: createMock,
+})
 vi.mock('../../lib/pocketbase', () => ({
   default: vi.fn(() => pb),
 }))
@@ -23,6 +26,7 @@ describe('POST /api/register', () => {
         data_nascimento: '2000-01-01',
         endereco: 'rua',
         numero: '1',
+        bairro: 'b',
         estado: 'BA',
         cep: '000',
         cidade: 'c',
@@ -37,7 +41,7 @@ describe('POST /api/register', () => {
   })
 
   it('cria usuario quando cliente existe', async () => {
-    getOneMock.mockResolvedValueOnce({ id: 'c1' })
+    getFirstListItemMock.mockResolvedValueOnce({ id: 'c1' })
     const payload = {
       nome: 'n',
       email: 'e',
@@ -46,6 +50,7 @@ describe('POST /api/register', () => {
       data_nascimento: '2000-01-01',
       endereco: 'rua',
       numero: '1',
+      bairro: 'b',
       estado: 'BA',
       cep: '000',
       cidade: 'c',
@@ -58,6 +63,8 @@ describe('POST /api/register', () => {
     })
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(201)
-    expect(createMock).toHaveBeenCalledWith(expect.objectContaining(payload))
+    expect(createMock).toHaveBeenCalledWith(
+      expect.objectContaining({ ...payload, role: 'usuario' }),
+    )
   })
 })
