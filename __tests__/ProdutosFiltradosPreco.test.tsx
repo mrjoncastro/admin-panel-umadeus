@@ -2,7 +2,7 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
-import ProdutosFiltrados from '@/app/loja/produtos/ProdutosFiltrados'
+import ProdutosFiltrados from '@/components/organisms/ProdutosFiltrados'
 import { calculateGross } from '@/lib/asaasFees'
 
 vi.mock('next/image', () => ({

@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { motion, AnimatePresence } from 'framer-motion'
-import LoginForm from './LoginForm'
-import SignUpForm from './SignUpForm'
+import LoginForm from '@/components/templates/LoginForm'
+import SignUpForm from '@/components/templates/SignUpForm'
 
 export default function AuthModal({
   open,

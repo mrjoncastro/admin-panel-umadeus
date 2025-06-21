@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
-import CartButton from '../app/components/CartButton'
+import CartButton from '@/components/molecules/CartButton'
 import { CartProvider } from '../lib/context/CartContext'
 import { ThemeProvider } from '../lib/context/ThemeContext'
 

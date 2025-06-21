@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { within, expect } from 'storybook/test'
-import LoginForm from '../app/components/LoginForm'
+import LoginForm from '@/components/templates/LoginForm'
 import { AuthProvider } from '../lib/context/AuthContext'
 import { ThemeProvider } from '../lib/context/ThemeContext'
 

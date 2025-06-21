@@ -4,7 +4,7 @@ import Image from 'next/image'
 import type { Produto } from '@/types'
 import { calculateGross } from '@/lib/asaasFees'
 
-import AddToCartButton from './AddToCartButton'
+import AddToCartButton from '@/components/molecules/AddToCartButton'
 
 // Componente para seleção de gênero e tamanho (reutilizável)
 function DetalhesSelecao({

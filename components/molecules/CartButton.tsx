@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useCart } from '@/lib/context/CartContext'
-import CartPreview from './CartPreview'
+import CartPreview from '@/components/molecules/CartPreview'
 
 function CartIcon({ filled }: { filled?: boolean }) {
   return filled ? (

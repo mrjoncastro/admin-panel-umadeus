@@ -30,13 +30,13 @@ components:
     path: components/atoms/ToggleSwitch.tsx
     category: Atom
   - name: AuthModal
-    path: app/components/AuthModal.tsx
+    path: components/organisms/AuthModal.tsx
     category: Organism
   - name: CartButton
-    path: app/components/CartButton.tsx
+    path: components/molecules/CartButton.tsx
     category: Molecule
   - name: CartPreview
-    path: app/components/CartPreview.tsx
+    path: components/molecules/CartPreview.tsx
     category: Molecule
   - name: Footer
     path: components/templates/Footer.tsx
@@ -45,16 +45,16 @@ components:
     path: components/templates/Header.tsx
     category: Organism
   - name: Hero
-    path: app/components/Hero.tsx
+    path: components/organisms/Hero.tsx
     category: Organism
   - name: LayoutWrapper
     path: components/templates/LayoutWrapper.tsx
     category: Template
   - name: LoginForm
-    path: app/components/LoginForm.tsx
+    path: components/templates/LoginForm.tsx
     category: Template
   - name: SignUpForm
-    path: app/components/SignUpForm.tsx
+    path: components/templates/SignUpForm.tsx
     category: Template
   - name: BackToTopButton
     path: app/admin/components/BackToTopButton.tsx
