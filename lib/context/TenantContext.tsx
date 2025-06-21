@@ -2,7 +2,6 @@
 import * as React from 'react'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { generatePrimaryShades } from '@/utils/primaryShades'
-import createPocketBase from '@/lib/pocketbase'
 
 const STALE_TIME = 1000 * 60 * 60 // 1 hour
 
@@ -52,35 +51,28 @@ export function TenantProvider({
 
     async function fetchInitialConfig() {
       try {
-        const tenantRes = await fetch('/api/tenant')
-        if (tenantRes.ok) {
-          const { tenantId } = await tenantRes.json()
-          if (tenantId) {
-            const pb = createPocketBase()
-            const cliente = await pb
-              .collection('clientes_config')
-              .getFirstListItem(`cliente='${tenantId}'`)
-            const cfg: TenantConfig = {
-              font: cliente.font || defaultConfig.font,
-              primaryColor: cliente.cor_primary || defaultConfig.primaryColor,
-              logoUrl: cliente.logo_url || defaultConfig.logoUrl,
-              confirmaInscricoes:
-                cliente.confirmaInscricoes ??
-                cliente.confirma_inscricoes ??
-                defaultConfig.confirmaInscricoes,
-            }
-            setConfigId(cliente.id)
-            setConfig(cfg)
-            localStorage.setItem('app_config', JSON.stringify(cfg))
-            localStorage.setItem('app_config_time', Date.now().toString())
-            return
+        const res = await fetch('/api/tenant-config', { credentials: 'include' })
+        if (res.ok) {
+          const data = await res.json()
+          const cfg: TenantConfig = {
+            font: data.font || defaultConfig.font,
+            primaryColor: data.cor_primary || defaultConfig.primaryColor,
+            logoUrl: data.logo_url || defaultConfig.logoUrl,
+            confirmaInscricoes:
+              data.confirmaInscricoes ??
+              data.confirma_inscricoes ??
+              defaultConfig.confirmaInscricoes,
           }
+          setConfigId(data.id)
+          setConfig(cfg)
+          localStorage.setItem('app_config', JSON.stringify(cfg))
+          localStorage.setItem('app_config_time', Date.now().toString())
+          return
         }
       } catch {
         /* ignore */
       }
 
-      // fallback para cache local
       const cached = localStorage.getItem('app_config')
       if (cached) {
         try {
@@ -99,75 +91,25 @@ export function TenantProvider({
 
       if (!cached || isStale) {
         try {
-          const tenantRes = await fetch('/api/tenant')
-          if (tenantRes.ok) {
-            const { tenantId } = await tenantRes.json()
-            if (tenantId) {
-              const pb = createPocketBase()
-              const cliente = await pb
-                .collection('clientes_config')
-                .getFirstListItem(`cliente='${tenantId}'`)
-              const cfg: TenantConfig = {
-                font: cliente.font || defaultConfig.font,
-                primaryColor: cliente.cor_primary || defaultConfig.primaryColor,
-                logoUrl: cliente.logo_url || defaultConfig.logoUrl,
-                confirmaInscricoes:
-                  cliente.confirmaInscricoes ??
-                  cliente.confirma_inscricoes ??
-                  defaultConfig.confirmaInscricoes,
-              }
-              setConfigId(cliente.id)
-              setConfig(cfg)
-              localStorage.setItem('app_config', JSON.stringify(cfg))
-              localStorage.setItem('app_config_time', Date.now().toString())
-              return
+          const res = await fetch('/api/tenant-config', { credentials: 'include' })
+          if (res.ok) {
+            const data = await res.json()
+            const cfg = {
+              font: data.font || defaultConfig.font,
+              primaryColor: data.cor_primary || defaultConfig.primaryColor,
+              logoUrl: data.logo_url || defaultConfig.logoUrl,
+              confirmaInscricoes:
+                data.confirmaInscricoes ??
+                data.confirma_inscricoes ??
+                defaultConfig.confirmaInscricoes,
             }
+            setConfigId(data.id)
+            setConfig(cfg)
+            localStorage.setItem('app_config', JSON.stringify(cfg))
+            localStorage.setItem('app_config_time', Date.now().toString())
           }
         } catch {
           /* ignore */
-        }
-
-        // Fallback: tenta pelo /admin/api/configuracoes
-        const user = localStorage.getItem('pb_user')
-
-        if (user) {
-          try {
-            const res = await fetch('/admin/api/configuracoes', {
-              credentials: 'include',
-              headers: {
-                'X-PB-User': user,
-              },
-            })
-            if (res.ok) {
-              const data = await res.json()
-              const cfg = {
-                font: data.font || defaultConfig.font,
-                primaryColor: data.cor_primary || defaultConfig.primaryColor,
-                logoUrl: data.logo_url || defaultConfig.logoUrl,
-                confirmaInscricoes:
-                  data.confirmaInscricoes ??
-                  data.confirma_inscricoes ??
-                  defaultConfig.confirmaInscricoes,
-              }
-              try {
-                const { cliente } = JSON.parse(user)
-                const pb = createPocketBase()
-                const record = await pb
-                  .collection('clientes_config')
-                  .getFirstListItem(`cliente='${cliente}'`)
-                setConfigId(record.id)
-              } catch {
-                /* ignore */
-              }
-              setConfig(cfg)
-              setConfigId(data.id)
-              localStorage.setItem('app_config', JSON.stringify(cfg))
-              localStorage.setItem('app_config_time', Date.now().toString())
-              return
-            }
-          } catch {
-            /* ignore */
-          }
         }
       }
     }
@@ -198,25 +140,21 @@ export function TenantProvider({
     const newCfg = { ...config, ...cfg }
     setConfig(newCfg)
 
-    if (typeof window !== 'undefined') {
-      const user = localStorage.getItem('pb_user')
-      if (user && configId) {
-        fetch('/admin/api/configuracoes', {
-          method: 'PUT',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-PB-User': user,
-          },
-          body: JSON.stringify({
-            id: configId,
-            cor_primary: newCfg.primaryColor,
-            logo_url: newCfg.logoUrl,
-            font: newCfg.font,
-            confirma_inscricoes: newCfg.confirmaInscricoes,
-          }),
-        }).catch((err) => console.error('Erro ao salvar config:', err))
-      }
+    if (typeof window !== 'undefined' && configId) {
+      fetch('/api/tenant-config', {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: configId,
+          cor_primary: newCfg.primaryColor,
+          logo_url: newCfg.logoUrl,
+          font: newCfg.font,
+          confirma_inscricoes: newCfg.confirmaInscricoes,
+        }),
+      }).catch((err) => console.error('Erro ao salvar config:', err))
     }
   }
 

@@ -14,8 +14,7 @@ import {
   MAX_ITEM_NAME_LENGTH,
 } from '@/lib/constants'
 import { useMemo } from 'react'
-import createPocketBase from '@/lib/pocketbase'
-import type { Pedido, Produto } from '@/types'
+import type { Produto } from '@/types'
 
 function formatCurrency(n: number) {
   return `R$ ${n.toFixed(2).replace('.', ',')}`
@@ -26,7 +25,6 @@ function CheckoutContent() {
 
   const router = useRouter()
   const { isLoggedIn, user, tenantId } = useAuthContext()
-  const pb = useMemo(() => createPocketBase(), [])
   const { showSuccess, showError } = useToast()
 
   const [nome, setNome] = useState(user?.nome || '')
@@ -86,18 +84,14 @@ function CheckoutContent() {
   useEffect(() => {
     if (!user?.id) return
     let ignore = false
-    pb.collection('usuarios')
-      .getOne(user.id, { expand: 'campo' })
+    fetch(`/api/usuarios/${user.id}`, { credentials: 'include' })
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((u) => {
         if (ignore) return
         const campo =
           (u.expand?.campo as { id?: string; responsavel?: string }) || {}
-        setCampoId(
-          (u as unknown as { campo?: string }).campo || campo.id || null,
-        )
-        setLiderId(
-          typeof campo.responsavel === 'string' ? campo.responsavel : null,
-        )
+        setCampoId((u as { campo?: string }).campo || campo.id || null)
+        setLiderId(typeof campo.responsavel === 'string' ? campo.responsavel : null)
       })
       .catch(() => {
         /* ignore */
@@ -105,7 +99,7 @@ function CheckoutContent() {
     return () => {
       ignore = true
     }
-  }, [user?.id, pb])
+  }, [user?.id])
 
   useEffect(() => {}, [total, paymentMethod, installments])
 
@@ -198,28 +192,29 @@ function CheckoutContent() {
 
       const firstItem = itens[0] as LegacyItem
 
-      const pedido = await pb.collection('pedidos').create<Pedido>({
-        id_pagamento: '',
-        id_inscricao: '',
-        produto: firstItem?.nome || 'Produto',
-        tamanho: Array.isArray(firstItem?.tamanhos)
-          ? firstItem.tamanhos[0]
-          : firstItem.tamanho,
-        status: 'pendente',
-        cor: Array.isArray(firstItem?.cores)
-          ? firstItem.cores[0] || 'Roxo'
-          : firstItem.cor || 'Roxo',
-        genero: Array.isArray(firstItem?.generos)
-          ? firstItem.generos[0]
-          : firstItem.genero,
-        responsavel: liderId || user.id,
-        cliente: tenantId,
-        ...(campoId ? { campo: campoId } : {}),
-        email,
-        valor: displayTotalGross.toFixed(2),
-        canal: 'loja',
+      const pedidoRes = await fetch('/api/pedidos', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          produto: firstItem?.nome || 'Produto',
+          tamanho: Array.isArray(firstItem?.tamanhos)
+            ? firstItem.tamanhos[0]
+            : firstItem.tamanho,
+          cor: Array.isArray(firstItem?.cores)
+            ? firstItem.cores[0] || 'Roxo'
+            : firstItem.cor || 'Roxo',
+          genero: Array.isArray(firstItem?.generos)
+            ? firstItem.generos[0]
+            : firstItem.genero,
+          campoId,
+          email,
+          valor: displayTotalGross.toFixed(2),
+        }),
       })
-      pedidoId = pedido.id
+      const pedidoData = await pedidoRes.json()
+      if (!pedidoRes.ok) throw new Error('Erro ao criar pedido')
+      pedidoId = pedidoData.pedidoId
 
       const payload = {
         valorBruto,
@@ -270,13 +265,6 @@ function CheckoutContent() {
         }, 1000)
       }, 1000)
     } catch {
-      if (pedidoId) {
-        try {
-          await pb.collection('pedidos').delete(pedidoId)
-        } catch {
-          /* ignore */
-        }
-      }
       showError('Erro ao processar pagamento. Tente novamente.')
       setStatus('idle')
     }
