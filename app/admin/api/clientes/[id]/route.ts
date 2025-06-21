@@ -20,7 +20,9 @@ export async function PUT(req: NextRequest) {
     const record = await pbSafe.collection('inscricoes').update(id, data)
     return NextResponse.json(record)
   } catch (err) {
-    await logConciliacaoErro(`Erro ao atualizar inscricao ${id}: ${String(err)}`)
+    await logConciliacaoErro(
+      `Erro ao atualizar inscricao ${id}: ${String(err)}`,
+    )
     return NextResponse.json({ error: 'Erro ao atualizar' }, { status: 500 })
   }
 }

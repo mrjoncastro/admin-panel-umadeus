@@ -15,19 +15,25 @@ import { getTenantFromHost } from '../../lib/getTenantFromHost'
 
 describe('GET /api/inscricoes', () => {
   it('filtra por criado_por quando usuario', async () => {
-    ;(requireRole as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue({
+    ;(
+      requireRole as unknown as { mockReturnValue: (v: any) => void }
+    ).mockReturnValue({
       pb,
       user: { id: 'u1', role: 'usuario' },
     })
-    const req = new Request('http://test/api/inscricoes?perPage=5&status=pendente')
-    ;(req as any).nextUrl = new URL('http://test/api/inscricoes?perPage=5&status=pendente')
+    const req = new Request(
+      'http://test/api/inscricoes?perPage=5&status=pendente',
+    )
+    ;(req as any).nextUrl = new URL(
+      'http://test/api/inscricoes?perPage=5&status=pendente',
+    )
     const res = await GET(req as unknown as NextRequest)
     expect(res.status).toBe(200)
     expect(getListMock).toHaveBeenCalledWith(
       1,
       5,
       expect.objectContaining({
-        filter: "criado_por = \"u1\" && status='pendente'",
+        filter: 'criado_por = "u1" && status=\'pendente\'',
         expand: 'evento',
         sort: '-created',
       }),
@@ -35,7 +41,9 @@ describe('GET /api/inscricoes', () => {
   })
 
   it('filtra por campo quando lider', async () => {
-    ;(requireRole as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue({
+    ;(
+      requireRole as unknown as { mockReturnValue: (v: any) => void }
+    ).mockReturnValue({
       pb,
       user: { id: 'u1', role: 'lider', campo: 'c1' },
     })
@@ -55,11 +63,15 @@ describe('GET /api/inscricoes', () => {
   })
 
   it('filtra por cliente quando coordenador', async () => {
-    ;(requireRole as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue({
+    ;(
+      requireRole as unknown as { mockReturnValue: (v: any) => void }
+    ).mockReturnValue({
       pb,
       user: { id: 'u1', role: 'coordenador' },
     })
-    ;(getTenantFromHost as unknown as { mockResolvedValue: (v: any) => void }).mockResolvedValue('t1')
+    ;(
+      getTenantFromHost as unknown as { mockResolvedValue: (v: any) => void }
+    ).mockResolvedValue('t1')
     const req = new Request('http://test/api/inscricoes?status=ativo')
     ;(req as any).nextUrl = new URL('http://test/api/inscricoes?status=ativo')
     const res = await GET(req as unknown as NextRequest)
@@ -69,7 +81,7 @@ describe('GET /api/inscricoes', () => {
       1,
       50,
       expect.objectContaining({
-        filter: "cliente = \"t1\" && status='ativo'",
+        filter: 'cliente = "t1" && status=\'ativo\'',
         expand: 'evento',
         sort: '-created',
       }),
@@ -77,11 +89,15 @@ describe('GET /api/inscricoes', () => {
   })
 
   it('retorna 400 quando coordenador sem tenant', async () => {
-    ;(requireRole as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue({
+    ;(
+      requireRole as unknown as { mockReturnValue: (v: any) => void }
+    ).mockReturnValue({
       pb,
       user: { id: 'u1', role: 'coordenador' },
     })
-    ;(getTenantFromHost as unknown as { mockResolvedValue: (v: any) => void }).mockResolvedValue(null)
+    ;(
+      getTenantFromHost as unknown as { mockResolvedValue: (v: any) => void }
+    ).mockResolvedValue(null)
     const req = new Request('http://test/api/inscricoes')
     ;(req as any).nextUrl = new URL('http://test/api/inscricoes')
     const res = await GET(req as unknown as NextRequest)
