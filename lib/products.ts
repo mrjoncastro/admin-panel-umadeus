@@ -7,6 +7,8 @@ export interface ProdutoRecord {
   categoria?: string
   exclusivo_user?: boolean
   ativo?: boolean
+  evento_id?: string
+  requer_inscricao_aprovada?: boolean
   [key: string]: unknown
 }
 

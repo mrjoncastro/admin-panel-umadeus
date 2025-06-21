@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
     })
 
     return NextResponse.json(items)
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'Erro ao listar' }, { status: 500 })
   }
 }
@@ -74,10 +74,37 @@ export async function POST(req: NextRequest) {
         )
       }
 
+      let produtoRecord: Produto | null = null
+      try {
+        if (produto) {
+          produtoRecord = await pb
+            .collection('produtos')
+            .getOne<Produto>(produto)
+        }
+      } catch {
+        // ignore
+      }
+
+      if (produtoRecord?.requer_inscricao_aprovada) {
+        const possui = await pb
+          .collection('inscricoes')
+          .getFirstListItem<Inscricao>(
+            `criado_por='${userId}' && evento='${produtoRecord.evento_id}' && aprovada=true`,
+          )
+          .then(() => true)
+          .catch(() => false)
+        if (!possui) {
+          return NextResponse.json(
+            { erro: 'É necessário possuir inscrição aprovada no evento.' },
+            { status: 400 },
+          )
+        }
+      }
+
       const pedido = await pb.collection('pedidos').create<Pedido>({
         id_inscricao: '',
         id_pagamento: '',
-        produto: produto || 'Produto',
+        produto: produtoRecord?.nome || produto || 'Produto',
         tamanho,
         status: 'pendente',
         cor: cor || 'Roxo',
@@ -167,7 +194,7 @@ export async function POST(req: NextRequest) {
       valor: pedido.valor,
       status: pedido.status,
     })
-  } catch (err: any) {
+  } catch (err: unknown) {
     await logConciliacaoErro(`Erro ao criar pedido: ${String(err)}`)
     return NextResponse.json({ erro: 'Erro ao criar pedido.' }, { status: 500 })
   }
