@@ -99,6 +99,9 @@ Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utiliza
 1. Defina `NEXT_PUBLIC_PB_URL` apontando para a URL onde o PocketBase está rodando, por exemplo:
 
 2. Utilize as variáveis `PB_ADMIN_EMAIL` e `PB_ADMIN_PASSWORD` para autenticar a aplicação.
+3. **Sempre chame o PocketBase através das rotas internas (`/api/*` ou `/admin/api/*`).**
+   Dessa forma todas as requisições ocorrem no mesmo domínio e os cookies de autenticação
+   são enviados corretamente, eliminando erros de CORS.
 
 ## Fluxo de Cadastro e Checkout
 
