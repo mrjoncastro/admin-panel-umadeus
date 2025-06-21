@@ -335,3 +335,5 @@
 ## [2025-07-18] Variável NEXT_PUBLIC_PB_URL removida em favor de PB_URL; README e .env.example atualizados. Rotas publicas de posts criadas. Lint e build executados.
 
 ## [2025-06-21] Rotas de login e recuperar-link agora usam createPocketBase e .env atualizado para PB_URL. Lint e build executados.
+
+## [2025-07-19] Rotas lider, inscricoes, pedidos, n8n e asaas movidas de /admin/api para /api. Documentação e testes atualizados. Lint e build executados.

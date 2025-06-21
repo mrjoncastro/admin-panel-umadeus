@@ -37,7 +37,7 @@ export default function TransferenciasPage() {
       payload.bankAccountId = destino
       if (description) payload.description = description
     }
-    const res = await fetch('/admin/api/asaas/transferencia', {
+    const res = await fetch('/api/asaas/transferencia', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

@@ -250,7 +250,7 @@ function CheckoutContent() {
           : {}),
       }
 
-      const res = await fetch('/admin/api/asaas/checkout', {
+      const res = await fetch('/api/asaas/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

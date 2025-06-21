@@ -1,6 +1,6 @@
 # Saldo e Transferência Asaas
 
-Este guia explica como consultar o saldo e realizar transferências usando as rotas `/admin/api/asaas/saldo` e `/admin/api/asaas/transferencia`.
+Este guia explica como consultar o saldo e realizar transferências usando as rotas `/api/asaas/saldo` e `/api/asaas/transferencia`.
 
 ## Pré-requisitos
 
@@ -11,7 +11,7 @@ Este guia explica como consultar o saldo e realizar transferências usando as ro
 ## Consulta de Saldo
 
 ```bash
-GET /admin/api/asaas/saldo
+GET /api/asaas/saldo
 ```
 
 Resposta:
@@ -26,7 +26,7 @@ Utilize esta rota para obter valores agregados das cobranças no Asaas. Todos os
 parâmetros enviados são repassados para `/finance/payment/statistics`.
 
 ```bash
-GET /admin/api/asaas/estatisticas?status=PENDING
+GET /api/asaas/estatisticas?status=PENDING
 ```
 
 Resposta:
@@ -64,11 +64,11 @@ A rota retorna o objeto da transferência criado pelo Asaas.
 
 ## Extrato de Movimentações
 
-Na página **Saldo** é possível listar o extrato financeiro usando o endpoint `/admin/api/asaas/extrato`. Utilize os botões **Exportar PDF** ou **Exportar XLSM** para salvar os dados.
+Na página **Saldo** é possível listar o extrato financeiro usando o endpoint `/api/asaas/extrato`. Utilize os botões **Exportar PDF** ou **Exportar XLSM** para salvar os dados.
 Para filtrar, informe `start` e `end` (AAAA-MM-DD):
 
 ```bash
-GET /admin/api/asaas/extrato?start=2025-01-01&end=2025-01-31
+GET /api/asaas/extrato?start=2025-01-01&end=2025-01-31
 ```
 
 Essa rota consulta `${ASAAS_API_URL}/financialTransactions`, aplicando os
