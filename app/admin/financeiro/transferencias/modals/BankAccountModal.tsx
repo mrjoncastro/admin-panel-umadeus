@@ -4,14 +4,14 @@ import { useEffect, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalAnimated from '@/components/organisms/ModalAnimated'
 import SmoothTabs from '@/components/molecules/SmoothTabs'
-import usePocketBase from '@/lib/hooks/usePocketBase'
 import type { UserModel } from '@/types/UserModel'
 import {
   searchBanks,
-  createBankAccount,
-  createPixKey,
+  createBankAccountApi,
+  createPixKeyApi,
   Bank,
 } from '@/lib/bankAccounts'
+import { useAuthContext } from '@/lib/context/AuthContext'
 import { isValidCPF, isValidCNPJ, isValidDate } from '@/utils/validators'
 import { useToast } from '@/lib/context/ToastContext'
 
@@ -24,8 +24,7 @@ export default function BankAccountModal({
   open,
   onClose,
 }: BankAccountModalProps) {
-  const pb = usePocketBase()
-  const user = pb.authStore.model as unknown as UserModel | null
+  const { user } = useAuthContext()
 
   const [type, setType] = useState('bank')
   const [ownerName, setOwnerName] = useState('')
@@ -86,36 +85,26 @@ export default function BankAccountModal({
     }
     try {
       if (type === 'pix') {
-        await createPixKey(
-          pb,
-          {
-            pixAddressKey,
-            pixAddressKeyType,
-            description,
-            scheduleDate,
-          },
-          user.id,
-          (user as UserModel & { cliente?: string }).cliente || user.id,
-        )
+        await createPixKeyApi({
+          pixAddressKey,
+          pixAddressKeyType,
+          description,
+          scheduleDate,
+        })
       } else {
-        await createBankAccount(
-          pb,
-          {
-            ownerName,
-            accountName,
-            cpfCnpj,
-            ownerBirthDate,
-            bankName,
-            bankCode,
-            ispb,
-            agency,
-            account,
-            accountDigit,
-            bankAccountType,
-          },
-          user.id,
-          (user as UserModel & { cliente?: string }).cliente || user.id,
-        )
+        await createBankAccountApi({
+          ownerName,
+          accountName,
+          cpfCnpj,
+          ownerBirthDate,
+          bankName,
+          bankCode,
+          ispb,
+          agency,
+          account,
+          accountDigit,
+          bankAccountType,
+        })
       }
       showSuccess('Conta salva!')
       onClose()

@@ -4,22 +4,22 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import BankAccountModal from '@/app/admin/financeiro/transferencias/modals/BankAccountModal'
 
-vi.mock('../lib/hooks/usePocketBase', () => ({
-  default: () => ({ authStore: { model: { id: 'u1', cliente: 'cli1' } } }),
+vi.mock('../lib/context/AuthContext', () => ({
+  useAuthContext: () => ({ user: { id: 'u1', cliente: 'cli1' } }),
 }))
 
-let createBankAccount: ReturnType<typeof vi.fn>
-let createPixKey: ReturnType<typeof vi.fn>
+let createBankAccountApi: ReturnType<typeof vi.fn>
+let createPixKeyApi: ReturnType<typeof vi.fn>
 let searchBanks: ReturnType<typeof vi.fn>
 
 vi.mock('../lib/bankAccounts', () => {
-  createBankAccount = vi.fn()
-  createPixKey = vi.fn()
+  createBankAccountApi = vi.fn()
+  createPixKeyApi = vi.fn()
   searchBanks = vi.fn().mockResolvedValue([])
   return {
     searchBanks,
-    createBankAccount,
-    createPixKey,
+    createBankAccountApi,
+    createPixKeyApi,
   }
 })
 
@@ -49,7 +49,7 @@ describe('BankAccountModal validations', () => {
     fillBasicFields(container, '123', '2000-01-01')
     fireEvent.submit(container.querySelector('form') as HTMLFormElement)
     expect(await screen.findByText('CPF/CNPJ inválido.')).toBeInTheDocument()
-    expect(createBankAccount).not.toHaveBeenCalled()
+    expect(createBankAccountApi).not.toHaveBeenCalled()
   })
 
   it('mostra erro quando data inválida', async () => {
@@ -59,6 +59,6 @@ describe('BankAccountModal validations', () => {
     expect(
       await screen.findByText('Data de nascimento inválida.'),
     ).toBeInTheDocument()
-    expect(createBankAccount).not.toHaveBeenCalled()
+    expect(createBankAccountApi).not.toHaveBeenCalled()
   })
 })

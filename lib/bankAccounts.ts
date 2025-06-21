@@ -105,3 +105,53 @@ export async function getBankAccountsByTenant(
     ClienteContaBancariaRecord[]
   >
 }
+
+export async function fetchBankAccounts(
+  fetchFn: typeof fetch = fetch,
+): Promise<ClienteContaBancariaRecord[]> {
+  const res = await fetchFn('/admin/api/bank-accounts')
+  if (!res.ok) {
+    throw new Error('Erro ao listar contas')
+  }
+  return (await res.json()) as ClienteContaBancariaRecord[]
+}
+
+export async function fetchPixKeys(
+  fetchFn: typeof fetch = fetch,
+): Promise<PixKeyRecord[]> {
+  const res = await fetchFn('/admin/api/pix-keys')
+  if (!res.ok) {
+    throw new Error('Erro ao listar pix')
+  }
+  return (await res.json()) as PixKeyRecord[]
+}
+
+export async function createBankAccountApi(
+  account: BankAccount,
+  fetchFn: typeof fetch = fetch,
+) {
+  const res = await fetchFn('/admin/api/bank-accounts', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(account),
+  })
+  if (!res.ok) {
+    throw new Error('Erro ao criar conta')
+  }
+  return res.json()
+}
+
+export async function createPixKeyApi(
+  pix: PixKey,
+  fetchFn: typeof fetch = fetch,
+) {
+  const res = await fetchFn('/admin/api/pix-keys', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(pix),
+  })
+  if (!res.ok) {
+    throw new Error('Erro ao criar pix')
+  }
+  return res.json()
+}

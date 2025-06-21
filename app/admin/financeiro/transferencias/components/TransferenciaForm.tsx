@@ -2,12 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { Loader2 as Spinner } from 'lucide-react'
-import usePocketBase from '@/lib/hooks/usePocketBase'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useToast } from '@/lib/context/ToastContext'
 import {
-  getBankAccountsByTenant,
-  getPixKeysByTenant,
+  fetchBankAccounts,
+  fetchPixKeys,
   type ClienteContaBancariaRecord,
   type PixKeyRecord,
 } from '@/lib/bankAccounts'
@@ -33,7 +32,6 @@ export default function TransferenciaForm({
     | (PixKeyRecord & { kind: 'pix' })
   const [contas, setContas] = useState<ContaOption[]>([])
   const [loading, setLoading] = useState(false)
-  const pb = usePocketBase()
   const { tenantId } = useAuthContext()
   const { showError } = useToast()
 
@@ -42,10 +40,7 @@ export default function TransferenciaForm({
 
   useEffect(() => {
     if (!tenantId) return
-    Promise.all([
-      getBankAccountsByTenant(pb, tenantId),
-      getPixKeysByTenant(pb, tenantId),
-    ])
+    Promise.all([fetchBankAccounts(), fetchPixKeys()])
       .then(([banks, pix]) =>
         setContas([
           ...banks.map((b) => ({ ...b, kind: 'bank' as const })),
@@ -53,7 +48,7 @@ export default function TransferenciaForm({
         ]),
       )
       .catch(() => setContas([]))
-  }, [pb, tenantId])
+  }, [tenantId])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
