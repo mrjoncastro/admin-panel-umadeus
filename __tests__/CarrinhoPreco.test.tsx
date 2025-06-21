@@ -3,7 +3,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { vi, describe, it, expect } from 'vitest'
 import CarrinhoPage from '@/app/loja/carrinho/page'
-import CartPreview from '@/app/components/CartPreview'
+import CartPreview from '@/components/molecules/CartPreview'
 import { CartProvider } from '@/lib/context/CartContext'
 import { calculateGross } from '@/lib/asaasFees'
 

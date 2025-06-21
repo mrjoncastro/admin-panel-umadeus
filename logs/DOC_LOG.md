@@ -327,3 +327,4 @@
 ## [2025-06-20] Atualizado inventário de componentes com caminhos corretos e novo item InscricaoFormNoSSR. Lint e build executados mas falharam por 'next' ausente.
 
 ## [2025-07-17] README e CONTRIBUTING destacam que `npm install` deve ser executado antes de `npm run lint` ou `npm run build`. Lint e build executados.
+## [2025-06-21] Componentes de loja e blog movidos para `components/` e inventário atualizado. Lint e build executados.

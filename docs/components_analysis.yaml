@@ -19,7 +19,7 @@ summary:
     - component: Modal
       instances:
         - { name: ModalAnimated, path: components/organisms/ModalAnimated.tsx }
-        - { name: AuthModal, path: app/components/AuthModal.tsx }
+        - { name: AuthModal, path: components/organisms/AuthModal.tsx }
         - {
             name: RedefinirSenhaModal,
             path: app/admin/components/RedefinirSenhaModal.tsx,

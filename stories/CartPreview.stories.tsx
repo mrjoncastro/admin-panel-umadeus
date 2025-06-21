@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
-import CartPreview from '../app/components/CartPreview'
+import CartPreview from '@/components/molecules/CartPreview'
 import { CartProvider } from '../lib/context/CartContext'
 import { ThemeProvider } from '../lib/context/ThemeContext'
 

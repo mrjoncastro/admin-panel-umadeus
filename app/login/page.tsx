@@ -2,8 +2,8 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import LoginForm from '../components/LoginForm'
-import SignUpForm from '../components/SignUpForm'
+import LoginForm from '@/components/templates/LoginForm'
+import SignUpForm from '@/components/templates/SignUpForm'
 import LayoutWrapper from '@/components/templates/LayoutWrapper'
 
 export default function LoginPage() {

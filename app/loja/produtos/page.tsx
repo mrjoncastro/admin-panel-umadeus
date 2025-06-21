@@ -1,5 +1,5 @@
 import createPocketBase from '@/lib/pocketbase'
-import ProdutosFiltrados from './ProdutosFiltrados'
+import ProdutosFiltrados from '@/components/organisms/ProdutosFiltrados'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
 export const dynamic = 'force-dynamic'
