@@ -27,3 +27,13 @@ A rota `GET /api/inscricoes` aceita os seguintes filtros:
 
 - `status` – filtra por status da inscri\u00e7\u00e3o (ex.: `pendente`, `aprovado`, `cancelado`).
 - `perPage` – define a quantidade de registros retornados por p\u00e1gina.
+
+## Efeito de `confirma_inscricoes`
+
+Quando `confirma_inscricoes` está **ativado** em `clientes_config`, cada inscrição permanece `pendente` até que um líder ou coordenador a aprove na tela **Inscrições**. Somente após essa aprovação o pedido é criado e o link de pagamento é enviado.
+
+Com a opção **desativada**, o pedido é gerado automaticamente logo após o envio do formulário (desde que o evento tenha `cobra_inscricao` habilitado e um produto definido). A inscrição já é confirmada e a cobrança segue para o usuário.
+
+## Geração de Pedidos
+
+O pedido proveniente da inscrição traz o campo `canal` com valor `inscricao`, diferenciando-o das compras comuns via checkout. Consulte [docs/regras-pedidos.md](docs/regras-pedidos.md) para o processo completo de pedidos.
