@@ -174,3 +174,4 @@
 
 ## [2025-06-21] Corrigido erro 403 no dashboard requisitando admin/api/usuarios/${user.id} - dev - ab8a6ee
 ## [2025-06-21] Erro ao atualizar configuracoes: ClientResponseError 400: Failed to update record. - development
+## [2025-06-21] Corrigido retorno 500 em eventos inexistentes; agora responde 404 - dev
