@@ -4,8 +4,9 @@ import { NextRequest } from 'next/server'
 import createPocketBaseMock from '../mocks/pocketbase'
 
 const pb = createPocketBaseMock()
+const getFullListMock = vi.fn().mockRejectedValue(new Error('fail'))
 pb.collection.mockReturnValue({
-  getFullList: vi.fn().mockRejectedValue(new Error('fail')),
+  getFullList: getFullListMock,
 })
 vi.mock('../../lib/pocketbase', () => ({
   default: vi.fn(() => pb),
@@ -13,6 +14,9 @@ vi.mock('../../lib/pocketbase', () => ({
 
 vi.mock('../../lib/products', () => ({
   filtrarProdutos: vi.fn((p) => p),
+}))
+vi.mock('../../lib/getUserFromHeaders', () => ({
+  getUserFromHeaders: vi.fn(() => ({ error: 'Token ou usuário ausente.' })),
 }))
 let getTenantFromHostMock: any
 vi.mock('../../lib/getTenantFromHost', () => ({
@@ -22,6 +26,7 @@ getTenantFromHostMock = vi.fn()
 
 beforeEach(() => {
   getTenantFromHostMock.mockResolvedValue('t1')
+  getFullListMock.mockRejectedValue(new Error('fail'))
 })
 
 describe('GET /api/produtos', () => {
@@ -42,5 +47,19 @@ describe('GET /api/produtos', () => {
     expect(res.status).toBe(400)
     const body = await res.json()
     expect(body.error).toBe('Tenant não informado')
+  })
+
+  it('retorna lista quando visitante sem autenticação', async () => {
+    const produtos = [
+      { id: 'p1', imagens: ['img1.jpg'], ativo: true, exclusivo_user: false },
+    ]
+    getFullListMock.mockResolvedValueOnce(produtos)
+    pb.files.getURL.mockImplementation((_p, img) => `url/${img}`)
+    const req = new Request('http://test')
+    ;(req as any).nextUrl = new URL('http://test')
+    const res = await GET(req as unknown as NextRequest)
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body[0].imagens[0]).toBe('url/img1.jpg')
   })
 })

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
-import { requireRole } from '@/lib/apiAuth'
+import { getUserFromHeaders } from '@/lib/getUserFromHeaders'
 import type { Produto } from '@/types'
 
 export async function GET(req: NextRequest) {
-  const auth = requireRole(req, ['usuario', 'lider', 'coordenador'])
-  const pb = 'error' in auth ? createPocketBase() : auth.pb
+  const auth = getUserFromHeaders(req)
+  const pb = 'error' in auth ? createPocketBase() : auth.pbSafe
   const role = 'error' in auth ? null : auth.user.role
   const tenantId = await getTenantFromHost()
 
