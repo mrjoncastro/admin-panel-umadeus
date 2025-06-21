@@ -10,8 +10,6 @@ import { fetchTenantConfig } from '@/lib/fetchTenantConfig'
 import { CartProvider } from '@/lib/context/CartContext'
 
 export const metadata = {
-  title: 'UMADEUS',
-  description: 'Sistema de inscrições e gestão UMADEUS',
   icons: {
     icon: [
       { url: '/favicon.ico' },

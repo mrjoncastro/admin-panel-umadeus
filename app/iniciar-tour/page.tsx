@@ -1,8 +1,18 @@
 import LayoutWrapper from '@/components/templates/LayoutWrapper'
+import type { Metadata } from 'next'
 
-export const metadata = {
-  title: 'Iniciar Tour',
-  description: 'Guia de primeiro acesso para novos clientes',
+export async function generateMetadata(): Promise<Metadata> {
+  const title = 'Iniciar Tour'
+  const description = 'Guia de primeiro acesso para novos clientes'
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: ['/img/og-default.jpg'],
+    },
+  }
 }
 
 export default function IniciarTourPage() {
