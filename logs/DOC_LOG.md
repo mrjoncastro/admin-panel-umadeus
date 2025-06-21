@@ -329,3 +329,5 @@
 ## [2025-07-17] README e CONTRIBUTING destacam que `npm install` deve ser executado antes de `npm run lint` ou `npm run build`. Lint e build executados.
 
 ## [2025-06-21] Componentes de loja e blog movidos para `components/` e inventário atualizado. Lint e build executados.
+
+## [2025-06-21] Documentadas páginas públicas do admin e adicionados comentários explicativos nos arquivos.

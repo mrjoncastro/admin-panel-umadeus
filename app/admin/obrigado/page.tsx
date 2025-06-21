@@ -1,3 +1,4 @@
+// Página pública - exibida após confirmação do formulário de inscrição
 import Link from 'next/link'
 
 export default function ObrigadoPage() {

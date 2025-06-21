@@ -1,4 +1,5 @@
 'use client'
+// Componente público para redefinição de senha
 
 import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
