@@ -47,6 +47,7 @@ export type Pedido = {
   status: 'pendente' | 'pago' | 'cancelado'
   cor: string
   genero?: string
+  data_nascimento?: string
   responsavel?: string
   cliente?: string
   campo?: string
@@ -73,6 +74,7 @@ export type Pedido = {
       telefone?: string
       cpf?: string
     }
+    evento?: Evento
   }
 }
 

@@ -1,15 +1,13 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
-import createPocketBase from '@/lib/pocketbase'
 import DashboardAnalytics from '../components/DashboardAnalytics'
 import type { Inscricao, Pedido } from '@/types'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 
 export default function LiderDashboardPage() {
   const { user, authChecked } = useAuthGuard(['lider'])
-  const pb = useMemo(() => createPocketBase(), [])
 
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [pedidos, setPedidos] = useState<Pedido[]>([])
@@ -58,7 +56,7 @@ export default function LiderDashboardPage() {
 
         if (!isMounted.current) return
 
-        const allInscricoes: Inscricao[] = rawInscricoes.map((r) => ({
+        const allInscricoes: Inscricao[] = rawInscricoes.map((r: Inscricao) => ({
           id: r.id,
           nome: r.nome,
           telefone: r.telefone,
@@ -78,7 +76,7 @@ export default function LiderDashboardPage() {
           },
         }))
 
-        const allPedidos: Pedido[] = rawPedidos.map((r) => ({
+        const allPedidos: Pedido[] = rawPedidos.map((r: Pedido) => ({
           id: r.id,
           id_inscricao: r.id_inscricao,
           produto: r.produto,
