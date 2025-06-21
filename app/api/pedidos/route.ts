@@ -34,6 +34,7 @@ export async function GET(req: NextRequest) {
     const { items } = await pb.collection('pedidos').getList(page, perPage, {
       filter: filtro,
       sort: '-created',
+      expand: 'campo,id_inscricao',
     })
     return NextResponse.json(items)
   } catch (err) {
