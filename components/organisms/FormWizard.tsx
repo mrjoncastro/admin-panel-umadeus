@@ -9,6 +9,7 @@ interface FormWizardProps {
   steps: WizardStep[]
   onFinish?: () => void
   className?: string
+  loading?: boolean
 }
 
 export default function FormWizard({ steps, onFinish, className = '' }: FormWizardProps) {
