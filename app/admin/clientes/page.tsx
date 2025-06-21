@@ -1,7 +1,6 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
-import createPocketBase from '@/lib/pocketbase'
+import { useEffect, useState } from 'react'
 import ListaClientes from './components/ListaClientes'
 import ModalEditarInscricao from '../inscricoes/componentes/ModalEdit'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
@@ -11,7 +10,6 @@ import { useAuthContext } from '@/lib/context/AuthContext'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 export default function ClientesPage() {
-  const pbClient = useMemo(() => createPocketBase(), [])
   const { tenantId } = useAuthContext()
   const { showError, showSuccess } = useToast()
   const { authChecked } = useAuthGuard(['coordenador', 'lider'])
@@ -26,13 +24,14 @@ export default function ClientesPage() {
   useEffect(() => {
     async function fetchClientes() {
       try {
-        const lista = await pbClient
-          .collection('inscricoes')
-          .getFullList<Inscricao>({
-            expand: 'pedido,evento',
-            sort: '-created',
-            filter: `cliente='${tenantId}'`,
-          })
+        const params = new URLSearchParams({
+          filter: `cliente='${tenantId}'`,
+          expand: 'pedido,evento',
+          sort: '-created',
+        })
+        const res = await fetch(`/admin/api/clientes?${params.toString()}`)
+        if (!res.ok) throw new Error('Erro ao carregar')
+        const lista: Inscricao[] = await res.json()
         const mapped = lista.map((c) => ({
           ...c,
           eventoId: c.evento,
@@ -48,7 +47,7 @@ export default function ClientesPage() {
     }
 
     fetchClientes()
-  }, [pbClient, tenantId, showError])
+  }, [tenantId, showError])
 
   if (!authChecked) return null
 
@@ -57,10 +56,15 @@ export default function ClientesPage() {
   ) => {
     if (!clienteEmEdicao) return
     try {
-      await pbClient.collection('inscricoes').update(clienteEmEdicao.id, {
-        ...atualizada,
-        evento: atualizada.eventoId ?? clienteEmEdicao.eventoId,
+      const res = await fetch(`/admin/api/clientes/${clienteEmEdicao.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...atualizada,
+          evento: atualizada.eventoId ?? clienteEmEdicao.eventoId,
+        }),
       })
+      if (!res.ok) throw new Error('Erro ao salvar')
       setClientes((prev) =>
         prev.map((c) =>
           c.id === clienteEmEdicao.id ? { ...c, ...atualizada } : c,

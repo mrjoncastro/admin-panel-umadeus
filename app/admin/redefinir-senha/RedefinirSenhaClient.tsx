@@ -1,15 +1,13 @@
 'use client'
 // Componente público para redefinição de senha
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import createPocketBase from '@/lib/pocketbase'
 import { useToast } from '@/lib/context/ToastContext'
 
 export default function RedefinirSenhaClient() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const pb = useMemo(() => createPocketBase(), [])
   const token = searchParams.get('token') ?? ''
 
   const [novaSenha, setNovaSenha] = useState('')
@@ -26,9 +24,16 @@ export default function RedefinirSenhaClient() {
       return
     }
     try {
-      await pb
-        .collection('usuarios')
-        .confirmPasswordReset(token, novaSenha, confirmacao)
+      const res = await fetch('/api/usuarios/confirm-password-reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token,
+          password: novaSenha,
+          passwordConfirm: confirmacao,
+        }),
+      })
+      if (!res.ok) throw new Error('Erro')
       showSuccess('Senha redefinida com sucesso!')
       setTimeout(() => router.push('/login'), 2000)
     } catch {
