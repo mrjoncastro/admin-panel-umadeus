@@ -9,15 +9,25 @@ async function getEvento(id: string) {
     if (!host) return null
     const res = await fetch(`${protocol}://${host}/api/eventos/${id}`)
     if (!res.ok) return null
-    return (await res.json()) as { titulo: string; descricao: string; imagem?: string }
+    return (await res.json()) as {
+      titulo: string
+      descricao: string
+      imagem?: string
+    }
   } catch {
     return null
   }
 }
 
-interface Params { id: string }
+interface Params {
+  id: string
+}
 
-export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Params
+}): Promise<Metadata> {
   const evento = await getEvento(params.id)
   const title = evento ? evento.titulo : 'Evento'
   const description = evento?.descricao || 'Detalhes do evento.'
