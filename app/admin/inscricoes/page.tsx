@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Copy } from 'lucide-react'
 import { saveAs } from 'file-saver'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
@@ -10,6 +10,7 @@ import { CheckCircle, XCircle, Pencil, Trash2, Eye } from 'lucide-react'
 import TooltipIcon from '../components/TooltipIcon'
 import { useToast } from '@/lib/context/ToastContext'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
+import createPocketBase from '@/lib/pocketbase'
 import { type PaymentMethod } from '@/lib/asaasFees'
 import type {
   Evento,
@@ -49,6 +50,7 @@ type Inscricao = {
 
 export default function ListaInscricoesPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
+  const pb = useMemo(() => createPocketBase(), [])
   const tenantId = user?.cliente || ''
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [role, setRole] = useState('')
@@ -80,7 +82,7 @@ export default function ListaInscricoesPage() {
     setRole(user.role)
 
     fetch('/api/eventos', { credentials: 'include' })
-      .then((res) => res.json())
+      .then((r: Response): Promise<Evento[]> => r.json())
       .then((evs: Evento[]) => {
         setEventos(evs)
         if (evs.length > 0) {
@@ -103,30 +105,39 @@ export default function ListaInscricoesPage() {
         ? baseFiltro
         : `campo='${user.campo}' && ${baseFiltro}`
 
-    fetch(`/api/inscricoes?${new URLSearchParams({ filter: filtro }).toString()}`, {
-      credentials: 'include',
-    })
-      .then((res) => res.json())
+    fetch(
+      `/api/inscricoes?${new URLSearchParams({ filter: filtro }).toString()}`,
+      {
+        credentials: 'include',
+      },
+    )
+      .then(
+        (
+          r: Response,
+        ): Promise<InscricaoRecord[] | { items: InscricaoRecord[] }> =>
+          r.json(),
+      )
       .then((res) => {
         const lista = (Array.isArray(res) ? res : res.items).map((r) => ({
           id: r.id,
-          nome: r.nome,
-          telefone: r.telefone,
-          evento: r.expand?.evento?.titulo,
-          eventoId: r.evento,
-          cpf: r.cpf,
-          status: r.status,
-          created: r.created,
-          campo: r.expand?.campo?.nome || '—',
-          tamanho: r.tamanho,
-          produto: r.produto,
-          genero: r.genero,
-          data_nascimento: r.data_nascimento,
-          criado_por: r.criado_por,
-          confirmado_por_lider: r.confirmado_por_lider,
-          pedido_status: r.expand?.pedido?.status || null,
-          pedido_id: r.expand?.pedido?.id || null,
+          nome: r.nome ?? '',
+          telefone: r.telefone ?? '',
+          evento: r.expand?.evento?.titulo ?? '—',
+          eventoId: r.evento ?? '',
+          cpf: r.cpf ?? '',
+          status: r.status ?? 'pendente',
+          created: r.created ?? '',
+          campo: r.expand?.campo?.nome ?? '—',
+          tamanho: r.tamanho ?? '',
+          produto: r.produto ?? '',
+          genero: r.genero ?? '',
+          data_nascimento: r.data_nascimento ?? '',
+          criado_por: r.criado_por ?? '',
+          confirmado_por_lider: r.confirmado_por_lider ?? false,
+          pedido_status: r.expand?.pedido?.status ?? null,
+          pedido_id: r.expand?.pedido?.id ?? null,
         }))
+
         setInscricoes(lista)
       })
       .catch(() => showError('Erro ao carregar inscrições.'))
@@ -278,45 +289,24 @@ export default function ListaInscricoesPage() {
           canal: 'inscricao',
         }),
       })
+
+      // Agora sim, apenas aguardamos o JSON retornado
       const pedido: Pedido = await pedidoRes.json()
-        id_inscricao: id,
-        valor: precoProduto,
-        status: 'pendente',
-        produto: produtoRecord.nome || 'Produto',
-        cor: 'Roxo',
-        tamanho:
-          inscricao.tamanho ||
-          (Array.isArray(produtoRecord.tamanhos)
-            ? produtoRecord.tamanhos[0]
-            : (produtoRecord.tamanhos as string | undefined)),
-        genero:
-          inscricao.genero ||
-          (Array.isArray(produtoRecord.generos)
-            ? produtoRecord.generos[0]
-            : (produtoRecord.generos as string | undefined)),
-        email: inscricao.email,
-        cliente: tenantId,
-        campo: campo?.id,
-        responsavel: inscricao.criado_por,
-        canal: 'inscricao',
-      })
 
-      // 3. Gerar link de pagamento via API do Asaas
-
-      const res = await fetch('/api/asaas/', {
+      // 3. Gerar link de pagamento via Asaas
+      const asaasRes = await fetch('/api/asaas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           pedidoId: pedido.id,
-          valorBruto: gross,
+          valorBruto: precoProduto,
           paymentMethod: metodo,
           installments: parcelas,
         }),
       })
+      const checkout = await asaasRes.json()
 
-      const checkout = await res.json()
-
-      if (!res.ok || !checkout?.url) {
+      if (!asaasRes.ok || !checkout?.url) {
         throw new Error('Erro ao gerar link de pagamento.')
       }
 
@@ -641,8 +631,7 @@ export default function ListaInscricoesPage() {
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 ...dadosAtualizados,
-                evento:
-                  dadosAtualizados.eventoId ?? inscricaoEmEdicao.eventoId,
+                evento: dadosAtualizados.eventoId ?? inscricaoEmEdicao.eventoId,
               }),
             })
             setInscricoes((prev) =>
