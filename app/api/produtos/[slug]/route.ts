@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Tenant não informado' }, { status: 400 })
   }
   const slug = req.nextUrl.pathname.split('/').pop() ?? ''
-  let filter = `slug = '${slug}' && cliente='${tenantId}'`
+  let filter = `ativo = true && slug = '${slug}' && cliente='${tenantId}'`
   if (!role) {
     filter += " && exclusivo_user = false"
   }
