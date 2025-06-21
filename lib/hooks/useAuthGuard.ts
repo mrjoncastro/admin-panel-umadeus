@@ -15,14 +15,17 @@ export function useAuthGuard(
   const [authChecked, setAuthChecked] = useState(false)
 
   useEffect(() => {
-    if (!user && !isLoggedIn) return
+    if (!isLoggedIn) {
+      router.replace('/login')
+      return
+    }
 
     const temPermissao = user && rolesPermitidos.includes(user.role)
 
-    if (!isLoggedIn || !temPermissao) {
-      router.replace('/login')
-    } else {
+    if (temPermissao) {
       setAuthChecked(true)
+    } else {
+      router.replace('/login')
     }
   }, [isLoggedIn, user, rolesPermitidos, router])
 
