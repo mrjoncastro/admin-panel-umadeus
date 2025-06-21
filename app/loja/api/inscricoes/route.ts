@@ -28,9 +28,11 @@ export async function POST(req: NextRequest) {
         nome,
         email: data.user_email,
         cpf: String(data.user_cpf).replace(/\D/g, ''),
+        telefone: String(data.user_phone).replace(/\D/g, ''),
+        data_nascimento: data.user_birth_date,
         cliente: tenantId,
         campo: data.campo,
-        role: 'usuario',
+        perfil: 'usuario',
       })
     }
 

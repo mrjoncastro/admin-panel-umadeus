@@ -53,9 +53,11 @@ describe('POST /loja/api/inscricoes', () => {
         nome: 'J D',
         email: 't@test.com',
         cpf: '11111111111',
+        telefone: '11999999999',
+        data_nascimento: '2000-01-01',
         cliente: 'cli1',
         campo: 'c1',
-        role: 'usuario',
+        perfil: 'usuario',
       }),
     )
     expect(createInscricaoMock).toHaveBeenCalledWith(
