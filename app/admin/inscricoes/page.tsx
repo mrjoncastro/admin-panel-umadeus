@@ -85,16 +85,14 @@ export default function ListaInscricoesPage() {
         setEventos(evs)
         if (evs.length > 0) {
           setEventoId(evs[0].id)
-          setLinkPublico(
-            `${window.location.origin}/inscricoes/${user.id}/${evs[0].id}`,
-          )
         } else {
-          setLinkPublico(`${window.location.origin}/inscricoes/${user.id}`)
+          setEventoId('')
+          setLinkPublico('')
         }
       })
       .catch(() => {
         showError('Erro ao carregar eventos.')
-        setLinkPublico(`${window.location.origin}/inscricoes/${user.id}`)
+        setLinkPublico('')
       })
 
     const baseFiltro = `cliente='${tenantId}'`
@@ -147,14 +145,13 @@ export default function ListaInscricoesPage() {
   }, [authChecked, tenantId, user, showError])
 
   useEffect(() => {
-    if (!user) return
-    if (eventoId) {
-      setLinkPublico(
-        `${window.location.origin}/inscricoes/${user.id}/${eventoId}`,
-      )
-    } else {
-      setLinkPublico(`${window.location.origin}/inscricoes/${user.id}`)
+    if (!user || !eventoId) {
+      setLinkPublico('')
+      return
     }
+    setLinkPublico(
+      `${window.location.origin}/inscricoes/${user.id}/${eventoId}`,
+    )
   }, [eventoId, user])
 
   const copiarLink = async () => {
