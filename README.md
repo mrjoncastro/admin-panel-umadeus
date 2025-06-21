@@ -257,6 +257,8 @@ Existem três formatos principais de produtos:
 2. **Vinculado a evento (sem aprovação)** – criado a partir de um evento que não exige aprovação. O pedido é gerado automaticamente e `canal` passa a ser `inscricao`.
 3. **Vinculado a evento (com aprovação)** – associado a um evento onde `confirmaInscricoes` está habilitado. O usuário vê a mensagem "Requer inscrição aprovada" e o botão de compra permanece desativado até a aprovação.
 
+O campo `canal` indica a **origem do pedido**, sendo `loja` para produtos independentes e `inscricao` quando o pedido se origina de uma inscrição (automática ou aprovada).
+
 O fluxograma completo está disponível em [docs/fluxos.md](docs/fluxos.md).
 
 ## Perfis de Acesso
