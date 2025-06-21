@@ -3,7 +3,7 @@ import PocketBase from 'pocketbase'
 import { logInfo } from '@/lib/logger'
 
 const pb = new PocketBase(
-  process.env.NEXT_PUBLIC_PB_URL || 'https://umadeus-production.up.railway.app',
+  process.env.PB_URL || 'https://umadeus-production.up.railway.app',
 )
 pb.autoCancellation(false)
 
