@@ -3,6 +3,10 @@ import createPocketBase from '@/lib/pocketbase'
 import { ClientResponseError } from 'pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro } from '@/lib/server/logger'
+import {
+  criarInscricao,
+  InscricaoTemplate,
+} from '@/components/templates/inscricao'
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase()
@@ -24,6 +28,7 @@ export async function POST(req: NextRequest) {
       if (!tenantId) {
         return NextResponse.json({ error: 'Tenant não informado' }, { status: 400 })
       }
+      const tempPass = Math.random().toString(36).slice(2, 10)
       usuario = await pb.collection('usuarios').create({
         nome,
         email: data.user_email,
@@ -33,10 +38,12 @@ export async function POST(req: NextRequest) {
         cliente: tenantId,
         campo: data.campo,
         perfil: 'usuario',
+        password: tempPass,
+        passwordConfirm: tempPass,
       })
     }
 
-    const registroParaCriar = {
+    const base: InscricaoTemplate = {
       nome,
       email: data.user_email,
       telefone: String(data.user_phone).replace(/\D/g, ''),
@@ -45,10 +52,11 @@ export async function POST(req: NextRequest) {
       genero: data.user_gender.toLowerCase(),
       campo: data.campo,
       evento: data.evento,
-      status: 'pendente',
       criado_por: usuario.id,
       ...(tenantId ? { cliente: tenantId } : {}),
     }
+
+    const registroParaCriar = criarInscricao(base)
 
     const record = await pb.collection('inscricoes').create(registroParaCriar)
 

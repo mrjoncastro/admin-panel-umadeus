@@ -355,3 +355,4 @@
 
 ## [2025-06-21] Adicionado campo exclusivo_user e componente FormWizard
 ## [2025-07-25] Inscrições agora criam usuário automaticamente quando email não existe. Guia atualizado e novo teste. Lint e build executados.
+## [2025-07-26] Mover utilitario criarInscricao para components/templates e gerar senha temporaria na rota da loja. Lint e build falharam localmente.

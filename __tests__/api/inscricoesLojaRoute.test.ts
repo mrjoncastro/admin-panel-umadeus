@@ -61,7 +61,11 @@ describe('POST /loja/api/inscricoes', () => {
       }),
     )
     expect(createInscricaoMock).toHaveBeenCalledWith(
-      expect.objectContaining({ criado_por: 'u1' }),
+      expect.objectContaining({
+        criado_por: 'u1',
+        status: 'pendente',
+        id: expect.stringMatching(/^insc_/),
+      }),
     )
   })
 
@@ -87,7 +91,11 @@ describe('POST /loja/api/inscricoes', () => {
     expect(res.status).toBe(201)
     expect(createUserMock).not.toHaveBeenCalled()
     expect(createInscricaoMock).toHaveBeenCalledWith(
-      expect.objectContaining({ criado_por: 'u2' }),
+      expect.objectContaining({
+        criado_por: 'u2',
+        status: 'pendente',
+        id: expect.stringMatching(/^insc_/),
+      }),
     )
   })
 })

@@ -1,50 +1,12 @@
 import { Inscricao, Pedido } from '@/types'
+import {
+  criarInscricao as criarInscricaoTemplate,
+  InscricaoTemplate,
+} from '@/components/templates/inscricao'
 
-export type DadosInscricao = {
-  nome: string
-  email: string
-  telefone: string
-  cpf: string
-  data_nascimento: string
-  genero: string
-  evento: string
-  liderId: string
-  produto: string
-  tamanho?: string
-}
+export type DadosInscricao = InscricaoTemplate & { liderId: string }
 
-let idCounter = 1
-
-export function criarInscricao(dados: DadosInscricao): Inscricao {
-  const obrigatorios = [
-    dados.nome,
-    dados.email,
-    dados.telefone,
-    dados.cpf,
-    dados.data_nascimento,
-    dados.genero,
-    dados.liderId,
-    dados.evento,
-  ]
-
-  if (obrigatorios.some((v) => !v || v.trim() === '')) {
-    throw new Error('Todos os campos são obrigatórios.')
-  }
-
-  return {
-    id: `insc_${idCounter++}`,
-    nome: dados.nome,
-    telefone: dados.telefone,
-    cpf: dados.cpf,
-    evento: dados.evento,
-    tamanho: dados.tamanho,
-    produto: dados.produto,
-    genero: dados.genero,
-    criado_por: dados.liderId,
-    data_nascimento: dados.data_nascimento,
-    status: 'pendente',
-  }
-}
+export const criarInscricao = criarInscricaoTemplate
 
 export function criarPedido(
   inscricao: Inscricao,

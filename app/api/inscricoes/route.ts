@@ -4,23 +4,11 @@ import { createPocketBase } from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro } from '@/lib/server/logger'
 import type { PaymentMethod } from '@/lib/asaasFees'
-interface DadosInscricao {
-  nome: string
-  email: string
-  telefone: string
-  cpf: string
-  data_nascimento: string
-  genero: string
-  evento: string
-  campo: string
-  criado_por: string
-  status: 'pendente'
-  produto: string
-  tamanho?: string
-  cliente?: string
-  paymentMethod: PaymentMethod
-  installments: number
-}
+import {
+  criarInscricao,
+  InscricaoTemplate,
+} from '@/components/templates/inscricao'
+import type { Inscricao } from '@/types'
 
 export async function GET(req: NextRequest) {
   const auth = requireRole(req, ['usuario', 'lider', 'coordenador'])
@@ -71,7 +59,7 @@ export async function POST(req: NextRequest) {
       tamanho,
       produtoId,
       genero,
-      paymentMethod = 'pix',
+      paymentMethod = 'pix' as PaymentMethod,
       installments = 1,
       liderId,
       eventoId,
@@ -155,7 +143,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Cria inscrição SEM pedido
-    const dadosInscricao: DadosInscricao = {
+    const dadosBase: InscricaoTemplate = {
       nome,
       email,
       telefone: telefoneNumerico,
@@ -165,13 +153,18 @@ export async function POST(req: NextRequest) {
       evento: eventoIdFinal!,
       campo: campoId,
       criado_por: liderId,
-      status: 'pendente',
       produto: produtoId,
+      tamanho,
       cliente: lider.cliente,
+    }
+    const dadosInscricao: Inscricao & {
+      paymentMethod: PaymentMethod
+      installments: number
+    } = {
+      ...criarInscricao(dadosBase),
       paymentMethod,
       installments,
     }
-    if (tamanho) dadosInscricao.tamanho = tamanho
 
     const inscricao = await pb.collection('inscricoes').create(dadosInscricao)
 

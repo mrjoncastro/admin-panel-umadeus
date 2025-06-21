@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { criarInscricao, criarPedido } from '../lib/flows/orderFlow'
+import { criarPedido } from '../lib/flows/orderFlow'
+import { criarInscricao } from '../components/templates/inscricao'
 
 const dadosValidos = {
   nome: 'Teste',
@@ -9,7 +10,8 @@ const dadosValidos = {
   data_nascimento: '2000-01-01',
   genero: 'masculino',
   evento: 'evt1',
-  liderId: 'lider1',
+  campo: 'c1',
+  criado_por: 'lider1',
   produto: 'Somente Pulseira',
   tamanho: 'M',
 }
