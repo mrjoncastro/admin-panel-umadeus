@@ -1,11 +1,13 @@
 'use client'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import createPocketBase from '@/lib/pocketbase'
 import { useToast } from '@/lib/context/ToastContext'
 import { FormField, TextField, InputWithMask } from '@/components'
 
 export default function ProfileForm() {
-  const { user, pb, authChecked } = useAuthGuard(['usuario'])
+  const { user, authChecked } = useAuthGuard(['usuario'])
+  const pb = useMemo(() => createPocketBase(), [])
   const { showSuccess, showError } = useToast()
 
   const [nome, setNome] = useState('')

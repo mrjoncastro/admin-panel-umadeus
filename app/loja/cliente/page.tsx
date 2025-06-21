@@ -1,11 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
+import createPocketBase from '@/lib/pocketbase'
 import type { Inscricao, Pedido } from '@/types'
 
 export default function AreaCliente() {
-  const { user, pb, authChecked } = useAuthGuard(['usuario'])
+  const { user, authChecked } = useAuthGuard(['usuario'])
+  const pb = useMemo(() => createPocketBase(), [])
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [pedidos, setPedidos] = useState<Pedido[]>([])
 

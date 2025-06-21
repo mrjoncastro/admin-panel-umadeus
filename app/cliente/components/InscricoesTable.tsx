@@ -1,10 +1,12 @@
 'use client'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import createPocketBase from '@/lib/pocketbase'
 import type { Inscricao } from '@/types'
 
 export default function InscricoesTable({ limit }: { limit?: number }) {
-  const { user, pb, authChecked } = useAuthGuard(['usuario'])
+  const { user, authChecked } = useAuthGuard(['usuario'])
+  const pb = useMemo(() => createPocketBase(), [])
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
 
   useEffect(() => {

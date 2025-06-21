@@ -9,7 +9,7 @@ import { useAuth } from './useAuth'
 export function useAuthGuard(
   rolesPermitidos: string[] = ['coordenador', 'lider'],
 ) {
-  const { user, isLoggedIn, pb } = useAuth()
+  const { user, isLoggedIn } = useAuth()
   const router = useRouter()
 
   const [authChecked, setAuthChecked] = useState(false)
@@ -20,12 +20,11 @@ export function useAuthGuard(
     const temPermissao = user && rolesPermitidos.includes(user.role)
 
     if (!isLoggedIn || !temPermissao) {
-      pb.authStore.clear()
       router.replace('/login')
     } else {
       setAuthChecked(true)
     }
-  }, [isLoggedIn, user, rolesPermitidos, pb, router])
+  }, [isLoggedIn, user, rolesPermitidos, router])
 
-  return { user, pb, authChecked }
+  return { user, authChecked }
 }

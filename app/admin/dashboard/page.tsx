@@ -1,14 +1,16 @@
 'use client'
 
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import createPocketBase from '@/lib/pocketbase'
 import type { Inscricao, Pedido } from '@/types'
 import DashboardResumo from './components/DashboardResumo'
 import DashboardAnalytics from '../components/DashboardAnalytics'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 
 export default function DashboardPage() {
-  const { user, pb, authChecked } = useAuthGuard(['coordenador', 'lider'])
+  const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
+  const pb = useMemo(() => createPocketBase(), [])
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [pedidos, setPedidos] = useState<Pedido[]>([])
   const [loading, setLoading] = useState(true)

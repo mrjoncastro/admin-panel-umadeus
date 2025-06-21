@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import ModalEditarPerfil from './components/ModalEditarPerfil'
+import createPocketBase from '@/lib/pocketbase'
 
 interface UsuarioAuthModel {
   id: string
@@ -26,11 +27,11 @@ interface UsuarioAuthModel {
 }
 
 export default function PerfilPage() {
-  const {
-    user: usuarioGuard,
-    pb,
-    authChecked,
-  } = useAuthGuard(['coordenador', 'lider'])
+  const { user: usuarioGuard, authChecked } = useAuthGuard([
+    'coordenador',
+    'lider',
+  ])
+  const pb = useMemo(() => createPocketBase(), [])
   const [usuario, setUsuario] = useState<UsuarioAuthModel | null>(
     usuarioGuard as UsuarioAuthModel | null,
   )

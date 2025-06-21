@@ -33,6 +33,5 @@ export function useAuth() {
     user,
     token,
     isLoggedIn,
-    pb,
   }
 }

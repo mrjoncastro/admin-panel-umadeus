@@ -42,7 +42,6 @@ function CheckoutContent() {
   const [installments, setInstallments] = useState(1)
   const [redirecting, setRedirecting] = useState(false)
   const [campoId, setCampoId] = useState<string | null>(null)
-  const [liderId, setLiderId] = useState<string | null>(null)
 
   // 1. calcula total líquido
   const total = useMemo(
@@ -91,7 +90,6 @@ function CheckoutContent() {
         const campo =
           (u.expand?.campo as { id?: string; responsavel?: string }) || {}
         setCampoId((u as { campo?: string }).campo || campo.id || null)
-        setLiderId(typeof campo.responsavel === 'string' ? campo.responsavel : null)
       })
       .catch(() => {
         /* ignore */
@@ -135,7 +133,6 @@ function CheckoutContent() {
 
   const handleConfirm = async () => {
     setStatus('loading')
-    let pedidoId: string | undefined
     try {
       const itensPayload = await Promise.all(
         itens.map(async (i) => {
@@ -214,14 +211,13 @@ function CheckoutContent() {
       })
       const pedidoData = await pedidoRes.json()
       if (!pedidoRes.ok) throw new Error('Erro ao criar pedido')
-      pedidoId = pedidoData.pedidoId
 
       const payload = {
         valorBruto,
         paymentMethod,
         itens: itensPayload,
-        successUrl: `${window.location.origin}/loja/sucesso?pedido=${pedido.id}`,
-        errorUrl: `${window.location.origin}/loja/sucesso?pedido=${pedido.id}`,
+        successUrl: `${window.location.origin}/loja/sucesso?pedido=${pedidoData.pedidoId}`,
+        errorUrl: `${window.location.origin}/loja/sucesso?pedido=${pedidoData.pedidoId}`,
         clienteId: tenantId,
         usuarioId: user.id,
         cliente: {
