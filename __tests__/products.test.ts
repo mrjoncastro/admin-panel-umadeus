@@ -9,13 +9,13 @@ const produtos: ProdutoRecord[] = [
 
 describe('filtrarProdutos', () => {
   it('remove produtos inativos', () => {
-    const filtrados = filtrarProdutos(produtos)
+    const filtrados = filtrarProdutos(produtos, undefined, true)
     expect(filtrados).toHaveLength(2)
     expect(filtrados.find((p) => p.id === '2')).toBeUndefined()
   })
 
   it('filtra por categoria quando informada', () => {
-    const filtrados = filtrarProdutos(produtos, 'roupas')
+    const filtrados = filtrarProdutos(produtos, 'roupas', true)
     expect(filtrados).toHaveLength(1)
     expect(filtrados[0].id).toBe('1')
   })

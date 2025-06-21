@@ -7,6 +7,7 @@ import ModalCategoria from '../categorias/ModalCategoria'
 import { useToast } from '@/lib/context/ToastContext'
 import { Button } from '@/components/atoms/Button'
 import { TextField } from '@/components/atoms/TextField'
+import ToggleSwitch from '@/components/atoms/ToggleSwitch'
 
 export interface ModalProdutoProps<T extends Record<string, unknown>> {
   open: boolean
@@ -23,6 +24,7 @@ export interface ModalProdutoProps<T extends Record<string, unknown>> {
     checkout_url?: string
     categoria?: string
     ativo?: boolean
+    exclusivo_user?: boolean
     cores?: string | string[]
   }
 }
@@ -58,6 +60,9 @@ export function ModalProduto<T extends Record<string, unknown>>({
   )
   const { isLoggedIn, user: ctxUser } = useAuthContext()
   const { showSuccess, showError } = useToast()
+  const [exclusivo, setExclusivo] = useState<boolean>(
+    initial.exclusivo_user ?? false,
+  )
 
   // Novos estados para cor
   const [cores, setCores] = useState<string[]>([])
@@ -74,6 +79,10 @@ export function ModalProduto<T extends Record<string, unknown>>({
   useEffect(() => {
     setSelectedCategoria(initial.categoria || '')
   }, [initial.categoria, open])
+
+  useEffect(() => {
+    setExclusivo(initial.exclusivo_user ?? false)
+  }, [initial.exclusivo_user, open])
 
   useEffect(() => {
     if (!isLoggedIn || ctxUser?.role !== 'coordenador') return
@@ -165,6 +174,8 @@ export function ModalProduto<T extends Record<string, unknown>>({
 
     // Cores
     form.cores = cores.join(',')
+
+    form.exclusivo_user = exclusivo
 
     // Slug automático (sempre gerado a partir do nome)
     if (typeof form.nome === 'string') {
@@ -409,10 +420,17 @@ export function ModalProduto<T extends Record<string, unknown>>({
               )}
             </div>
             <input type="hidden" name="cores" value={cores.join(',')} />
-            <span className="text-xs text-gray-400 ml-1">
-              Adicione as variações de cor do produto.
-            </span>
-          </div>
+          <span className="text-xs text-gray-400 ml-1">
+            Adicione as variações de cor do produto.
+          </span>
+        </div>
+
+        <ToggleSwitch
+          label="Produto de uso interno?"
+          checked={exclusivo}
+          onChange={setExclusivo}
+          className="mt-2"
+        />
 
           <div className="flex items-center gap-2 mt-2">
             <input
