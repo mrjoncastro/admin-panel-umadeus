@@ -3,10 +3,13 @@ import { POST } from '../../app/api/register/route'
 import { NextRequest } from 'next/server'
 import createPocketBaseMock from '../mocks/pocketbase'
 
-const getOneMock = vi.fn().mockRejectedValue(new Error('not found'))
+const getFirstListItemMock = vi.fn().mockRejectedValue(new Error('not found'))
 const createMock = vi.fn().mockResolvedValue({ id: 'u1' })
 const pb = createPocketBaseMock()
-pb.collection.mockReturnValue({ getOne: getOneMock, create: createMock })
+pb.collection.mockReturnValue({
+  getFirstListItem: getFirstListItemMock,
+  create: createMock,
+})
 vi.mock('../../lib/pocketbase', () => ({
   default: vi.fn(() => pb),
 }))
@@ -37,7 +40,7 @@ describe('POST /api/register', () => {
   })
 
   it('cria usuario quando cliente existe', async () => {
-    getOneMock.mockResolvedValueOnce({ id: 'c1' })
+    getFirstListItemMock.mockResolvedValueOnce({ id: 'c1' })
     const payload = {
       nome: 'n',
       email: 'e',

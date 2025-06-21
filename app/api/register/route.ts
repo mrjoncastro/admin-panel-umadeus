@@ -40,7 +40,9 @@ export async function POST(req: NextRequest) {
       )
     }
     try {
-      await pb.collection('clientes_config').getOne(String(cliente))
+      await pb
+        .collection('clientes_config')
+        .getFirstListItem(`cliente='${String(cliente)}'`)
     } catch {
       return NextResponse.json(
         { error: 'Cliente não encontrado' },
