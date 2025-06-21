@@ -94,9 +94,12 @@ components/                # Componentes reutilizáveis compartilhados
 
 ---
 
-## 🛠️ Admin – Boas Práticas
+-## 🛠️ Admin – Boas Práticas
 
 - Rotas protegidas com `useAuthGuard` e validação de `role`
+- Algumas rotas de confirmação de inscrição são públicas:
+  `/admin/obrigado`, `/admin/pendente`, `/admin/erro`,
+  `/admin/redefinir-senha` e `/admin/inscricoes/recuperar`
 - Layout persistente com navegação clara entre seções (dashboard, pedidos, etc)
 - Paginação, filtros e expand para consultas PocketBase
 - Armazenamento de token com `pb.authStore` e persistência no localStorage

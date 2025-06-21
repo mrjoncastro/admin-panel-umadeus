@@ -1,4 +1,5 @@
 'use client'
+// Página pública para redefinição de senha via token
 
 import dynamic from 'next/dynamic'
 import { Suspense } from 'react'

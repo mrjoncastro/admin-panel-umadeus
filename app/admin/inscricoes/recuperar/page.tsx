@@ -1,4 +1,5 @@
 'use client'
+// Página pública para recuperar link de pagamento
 
 import { useState } from 'react'
 import { useToast } from '@/lib/context/ToastContext'

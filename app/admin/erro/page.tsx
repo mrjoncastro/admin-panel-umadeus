@@ -1,3 +1,4 @@
+// Página pública - exibida quando o pagamento falha
 import Link from 'next/link'
 
 export default function ErroPage() {

@@ -1,3 +1,4 @@
+// Página pública - informa que o pagamento está em análise
 import Link from 'next/link'
 
 export default function PagamentoPendentePage() {
