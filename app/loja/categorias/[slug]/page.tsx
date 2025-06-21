@@ -1,6 +1,6 @@
 // app/loja/categorias/[slug]/page.tsx
 import createPocketBase from '@/lib/pocketbase'
-import ProdutosFiltrados from '@/components/organisms/ProdutosFiltradosCategoria'
+import ProdutosFiltrados from './ProdutosFiltrados.dynamic'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
 interface Produto {

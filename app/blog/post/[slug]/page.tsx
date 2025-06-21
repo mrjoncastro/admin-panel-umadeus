@@ -6,14 +6,8 @@ import { isExternalUrl } from '@/utils/isExternalUrl'
 import type { Metadata } from 'next'
 import { getRelatedPostsFromPB } from '@/lib/posts/getRelatedPostsFromPB'
 import { getPostBySlug } from '@/lib/posts/getPostBySlug'
-import dynamic from 'next/dynamic'
-
-const NextPostButton = dynamic(
-  () => import('@/components/molecules/NextPostButton'),
-)
-const PostSuggestions = dynamic(
-  () => import('@/components/organisms/PostSuggestions'),
-)
+import NextPostButton from './NextPostButton.dynamic'
+import PostSuggestions from './PostSuggestions.dynamic'
 import Script from 'next/script'
 
 export const dynamic = 'force-dynamic'
