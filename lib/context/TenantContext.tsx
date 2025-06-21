@@ -128,14 +128,13 @@ export function TenantProvider({
         }
 
         // Fallback: tenta pelo /admin/api/configuracoes
-        const token = localStorage.getItem('pb_token')
         const user = localStorage.getItem('pb_user')
 
-        if (token && user) {
+        if (user) {
           try {
             const res = await fetch('/admin/api/configuracoes', {
+              credentials: 'include',
               headers: {
-                Authorization: `Bearer ${token}`,
                 'X-PB-User': user,
               },
             })
@@ -200,14 +199,13 @@ export function TenantProvider({
     setConfig(newCfg)
 
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('pb_token')
       const user = localStorage.getItem('pb_user')
-      if (token && user && configId) {
+      if (user && configId) {
         fetch('/admin/api/configuracoes', {
           method: 'PUT',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
             'X-PB-User': user,
           },
           body: JSON.stringify({

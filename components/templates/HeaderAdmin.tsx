@@ -74,7 +74,6 @@ export default function Header() {
 
   const handleLogout = () => {
     pb.authStore.clear()
-    localStorage.removeItem('pb_token')
     localStorage.removeItem('pb_user')
     window.location.href = '/login'
   }
