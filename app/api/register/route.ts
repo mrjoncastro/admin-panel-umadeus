@@ -14,12 +14,13 @@ export async function POST(req: NextRequest) {
       data_nascimento,
       endereco,
       numero,
+      bairro,
       estado,
       cep,
       cidade,
       password,
       cliente,
-    } = await req.json()
+      } = await req.json()
     if (
       !nome ||
       !email ||
@@ -28,6 +29,7 @@ export async function POST(req: NextRequest) {
       !data_nascimento ||
       !endereco ||
       !numero ||
+      !bairro ||
       !estado ||
       !cep ||
       !cidade ||
@@ -40,7 +42,9 @@ export async function POST(req: NextRequest) {
       )
     }
     try {
-      await pb.collection('clientes_config').getOne(String(cliente))
+      await pb
+        .collection('clientes_config')
+        .getFirstListItem(`cliente='${String(cliente)}'`)
     } catch {
       return NextResponse.json(
         { error: 'Cliente não encontrado' },
@@ -56,11 +60,13 @@ export async function POST(req: NextRequest) {
       data_nascimento: String(data_nascimento),
       endereco: String(endereco).trim(),
       numero: String(numero).trim(),
+      bairro: String(bairro).trim(),
       estado: String(estado).trim(),
       cep: String(cep).trim(),
       cidade: String(cidade).trim(),
       password: String(password),
       passwordConfirm: String(password),
+      role: 'usuario',
     })
     logInfo('\u2705 Usu\u00E1rio registrado com sucesso')
     return NextResponse.json(novoUsuario, { status: 201 })
