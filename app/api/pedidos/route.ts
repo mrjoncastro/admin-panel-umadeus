@@ -31,13 +31,19 @@ export async function POST(req: NextRequest) {
       // Cria pedido da loja
       const tenantId = await getTenantFromHost()
       if (!tenantId) {
-        return NextResponse.json({ erro: 'Tenant não encontrado' }, { status: 400 })
+        return NextResponse.json(
+          { erro: 'Tenant não encontrado' },
+          { status: 400 },
+        )
       }
       const { produto, tamanho, cor, genero, campoId, email, valor } = body
       const userId = pb.authStore.model?.id as string | undefined
 
       if (!userId) {
-        return NextResponse.json({ erro: 'Usuário não autenticado' }, { status: 401 })
+        return NextResponse.json(
+          { erro: 'Usuário não autenticado' },
+          { status: 401 },
+        )
       }
 
       const pedido = await pb.collection('pedidos').create<Pedido>({

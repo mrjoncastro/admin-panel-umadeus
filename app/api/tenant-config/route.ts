@@ -9,7 +9,10 @@ export async function GET() {
   const tenantId = await getTenantFromHost()
 
   if (!tenantId) {
-    return NextResponse.json({ error: 'Tenant n\u00e3o informado' }, { status: 400 })
+    return NextResponse.json(
+      { error: 'Tenant n\u00e3o informado' },
+      { status: 400 },
+    )
   }
 
   try {
@@ -23,7 +26,8 @@ export async function GET() {
       cor_primary: cfg.cor_primary ?? '',
       logo_url: cfg.logo_url ?? '',
       font: cfg.font ?? '',
-      confirma_inscricoes: cfg.confirmaInscricoes ?? cfg.confirma_inscricoes ?? false,
+      confirma_inscricoes:
+        cfg.confirmaInscricoes ?? cfg.confirma_inscricoes ?? false,
     })
   } catch (err) {
     await logConciliacaoErro(`Erro ao obter tenant-config: ${String(err)}`)

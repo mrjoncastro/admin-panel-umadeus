@@ -15,7 +15,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
   }
   try {
-    const record = await pb.collection('usuarios').getOne(id, { expand: 'campo' })
+    const record = await pb
+      .collection('usuarios')
+      .getOne(id, { expand: 'campo' })
     return NextResponse.json(record, { status: 200 })
   } catch (err) {
     console.error('Erro ao obter usuario:', err)

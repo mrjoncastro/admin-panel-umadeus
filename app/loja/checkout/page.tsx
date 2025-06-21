@@ -91,7 +91,9 @@ function CheckoutContent() {
         const campo =
           (u.expand?.campo as { id?: string; responsavel?: string }) || {}
         setCampoId((u as { campo?: string }).campo || campo.id || null)
-        setLiderId(typeof campo.responsavel === 'string' ? campo.responsavel : null)
+        setLiderId(
+          typeof campo.responsavel === 'string' ? campo.responsavel : null,
+        )
       })
       .catch(() => {
         /* ignore */

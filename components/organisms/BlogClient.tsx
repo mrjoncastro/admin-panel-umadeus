@@ -33,7 +33,9 @@ export default function BlogClient() {
   useEffect(() => {
     async function fetchCliente() {
       try {
-        const res = await fetch('/api/tenant-config', { credentials: 'include' })
+        const res = await fetch('/api/tenant-config', {
+          credentials: 'include',
+        })
         if (res.ok) {
           const data = (await res.json()) as Cliente
           setNomeCliente(data?.nome ?? '')
