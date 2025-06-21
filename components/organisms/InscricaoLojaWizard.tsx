@@ -1,3 +1,4 @@
+'use client'
 import React, { useState, useEffect } from 'react'
 import { useTenant } from '@/lib/context/TenantContext'
 import { useToast } from '@/lib/context/ToastContext'
@@ -55,7 +56,8 @@ export default function InscricaoLojaWizard({ eventoId }: InscricaoLojaWizardPro
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         const lista = Array.isArray(data?.expand?.produtos)
-          ? data.expand.produtos.map((p: any) => ({
+          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            data.expand.produtos.map((p: any) => ({
               id: p.id,
               nome: p.nome,
               tamanhos: Array.isArray(p.tamanhos)
@@ -109,7 +111,7 @@ export default function InscricaoLojaWizard({ eventoId }: InscricaoLojaWizardPro
         return
       }
       showSuccess('Inscrição enviada com sucesso!')
-    } catch (err) {
+    } catch {
       showError('Erro ao enviar inscrição.')
     } finally {
       setLoading(false)
