@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import createPocketBase from '@/lib/pocketbase'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import { Pedido } from '@/types'
 import { saveAs } from 'file-saver'
@@ -10,6 +11,7 @@ import { useToast } from '@/lib/context/ToastContext'
 
 export default function PedidosPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
+  const pb = useMemo(() => createPocketBase(), [])
 
   const [pedidos, setPedidos] = useState<Pedido[]>([])
   const [loading, setLoading] = useState(true)

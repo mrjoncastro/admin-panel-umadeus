@@ -1,7 +1,8 @@
 'use client'
 
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import createPocketBase from '@/lib/pocketbase'
 import type { Inscricao, Pedido } from '@/types'
 import DashboardResumo from './components/DashboardResumo'
 import DashboardAnalytics from '../components/DashboardAnalytics'
@@ -9,6 +10,7 @@ import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 
 export default function DashboardPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
+  const pb = useMemo(() => createPocketBase(), [])
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [pedidos, setPedidos] = useState<Pedido[]>([])
   const [loading, setLoading] = useState(true)
@@ -47,7 +49,9 @@ export default function DashboardPage() {
             signal,
           }).then((r) => r.json()),
         ])
-        const rawInscricoes = Array.isArray(insRes.items) ? insRes.items : insRes
+        const rawInscricoes = Array.isArray(insRes.items)
+          ? insRes.items
+          : insRes
         const rawPedidos = Array.isArray(pedRes.items) ? pedRes.items : pedRes
         if (insRes.totalPages && pedRes.totalPages) {
           setTotalPages(Math.max(insRes.totalPages, pedRes.totalPages))
