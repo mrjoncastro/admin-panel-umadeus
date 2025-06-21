@@ -15,7 +15,7 @@ export type RequireRoleError = {
 
 export function requireRole(
   req: NextRequest,
-  role: string,
+  roles: string | string[],
 ): RequireRoleOk | RequireRoleError {
   const result = getUserFromHeaders(req)
 
@@ -25,7 +25,9 @@ export function requireRole(
 
   const { user, pbSafe } = result
 
-  if (user.role !== role) {
+  const allowed = Array.isArray(roles) ? roles : [roles]
+
+  if (!allowed.includes(user.role)) {
     return { error: 'Acesso negado', status: 403 }
   }
 

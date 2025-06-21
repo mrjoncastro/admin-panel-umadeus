@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { createPocketBase } from '@/lib/pocketbase'
+import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro } from '@/lib/server/logger'
 import type { PaymentMethod } from '@/lib/asaasFees'
 interface DadosInscricao {
@@ -22,18 +23,36 @@ interface DadosInscricao {
 }
 
 export async function GET(req: NextRequest) {
-  const auth = requireRole(req, 'usuario')
+  const auth = requireRole(req, ['usuario', 'lider', 'coordenador'])
   if ('error' in auth) {
     return NextResponse.json({ error: auth.error }, { status: auth.status })
   }
   const { pb, user } = auth
+  const perPage = Number(req.nextUrl.searchParams.get('perPage') || '50')
+  const status = req.nextUrl.searchParams.get('status') || ''
   try {
-    const inscricoes = await pb.collection('inscricoes').getFullList({
-      filter: `criado_por = "${user.id}"`,
+    let baseFilter = ''
+    if (user.role === 'usuario') {
+      baseFilter = `criado_por = "${user.id}"`
+    } else if (user.role === 'lider') {
+      baseFilter = `campo = "${user.campo}"`
+    } else {
+      const tenantId = await getTenantFromHost()
+      if (!tenantId) {
+        return NextResponse.json(
+          { error: 'Tenant não informado' },
+          { status: 400 },
+        )
+      }
+      baseFilter = `cliente = "${tenantId}"`
+    }
+    const filtro = status ? `${baseFilter} && status='${status}'` : baseFilter
+    const { items } = await pb.collection('inscricoes').getList(1, perPage, {
+      filter: filtro,
       expand: 'evento',
       sort: '-created',
     })
-    return NextResponse.json(inscricoes, { status: 200 })
+    return NextResponse.json(items, { status: 200 })
   } catch (err) {
     console.error('Erro ao listar inscricoes:', err)
     return NextResponse.json({ error: 'Erro ao listar' }, { status: 500 })
