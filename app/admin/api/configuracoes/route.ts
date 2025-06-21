@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { logConciliacaoErro } from '@/lib/server/logger'
+import { ClientResponseError } from 'pocketbase'
 
 export async function GET(req: NextRequest) {
   const auth = requireRole(req, 'coordenador')
@@ -23,6 +24,12 @@ export async function GET(req: NextRequest) {
       { status: 200 },
     )
   } catch (err) {
+    if (err instanceof ClientResponseError && err.status === 404) {
+      return NextResponse.json(
+        { error: 'Configuração não encontrada para o cliente' },
+        { status: 404 },
+      )
+    }
     await logConciliacaoErro(`Erro ao obter configuracoes: ${String(err)}`)
     return NextResponse.json({ error: 'Erro ao obter' }, { status: 500 })
   }
