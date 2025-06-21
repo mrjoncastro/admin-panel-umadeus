@@ -16,6 +16,7 @@ interface Produto {
 interface InscricaoWizardProps {
   liderId: string
   eventoId: string
+  loading?: boolean
 }
 
 export default function InscricaoWizard({
@@ -42,7 +43,6 @@ export default function InscricaoWizard({
     paymentMethod: 'pix',
     installments: 1,
   })
-  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     fetch(`/api/lider/${liderId}`)
@@ -82,7 +82,6 @@ export default function InscricaoWizard({
   }
 
   const handleSubmit = async () => {
-    setLoading(true)
     try {
       const res = await fetch('/api/inscricoes', {
         method: 'POST',
@@ -116,7 +115,7 @@ export default function InscricaoWizard({
     } catch {
       showError('Erro ao enviar inscrição.')
     } finally {
-      setLoading(false)
+      /* noop */
     }
   }
 
