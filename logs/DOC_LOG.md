@@ -350,3 +350,5 @@
 
 ## [2025-06-21] Correção de proteções de autenticação e notificação usando useAuthContext. Lint e build executados.
 ## [2025-06-21] README atualizado instruindo definir cookie `tenantId` ou registrar domínio em `clientes_config` quando não houver domínio configurado. Lint e build executados.
+
+## [2025-06-21] Adicionado campo exclusivo_user e componente FormWizard

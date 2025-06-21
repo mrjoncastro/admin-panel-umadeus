@@ -91,6 +91,7 @@ export type Produto = {
   descricao?: string
   detalhes?: string
   checkout_url?: string
+  exclusivo_user?: boolean
   ativo?: boolean
   user_org?: string
   cliente?: string

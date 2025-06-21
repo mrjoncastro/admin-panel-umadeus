@@ -1,17 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
+import { requireRole } from '@/lib/apiAuth'
 import type { Produto } from '@/types'
 
 export async function GET(req: NextRequest) {
-  const pb = createPocketBase()
+  const auth = requireRole(req, ['usuario', 'lider', 'coordenador'])
+  const pb = 'error' in auth ? createPocketBase() : auth.pb
+  const role = 'error' in auth ? null : auth.user.role
   const tenantId = await getTenantFromHost()
 
   if (!tenantId) {
     return NextResponse.json({ error: 'Tenant não informado' }, { status: 400 })
   }
   const slug = req.nextUrl.pathname.split('/').pop() ?? ''
-  const filter = `slug = '${slug}' && cliente='${tenantId}'`
+  let filter = `slug = '${slug}' && cliente='${tenantId}'`
+  if (!role) {
+    filter += " && exclusivo_user = false"
+  }
   try {
     const p = await pb.collection('produtos').getFirstListItem<Produto>(filter)
     const imagens = Array.isArray(p.imagens)

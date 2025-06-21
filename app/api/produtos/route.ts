@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { filtrarProdutos, ProdutoRecord } from '@/lib/products'
+import { requireRole } from '@/lib/apiAuth'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
 export async function GET(req: NextRequest) {
-  const pb = createPocketBase()
+  const auth = requireRole(req, ['usuario', 'lider', 'coordenador'])
+  const pb = 'error' in auth ? createPocketBase() : auth.pb
+  const role = 'error' in auth ? null : auth.user.role
   const categoria = req.nextUrl.searchParams.get('categoria') || undefined
   const tenantId = await getTenantFromHost()
 
@@ -13,7 +16,10 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const baseFilter = `ativo = true && cliente='${tenantId}'`
+    let baseFilter = `ativo = true && cliente='${tenantId}'`
+    if (!role) {
+      baseFilter += " && exclusivo_user = false"
+    }
     const filterString = categoria
       ? `${baseFilter} && categoria = '${categoria}'`
       : baseFilter
@@ -26,7 +32,7 @@ export async function GET(req: NextRequest) {
       })
 
     // Aplica filtro extra (caso sua função faça algo a mais)
-    const ativos = filtrarProdutos(produtos, categoria)
+    const ativos = filtrarProdutos(produtos, categoria, !!role)
 
     // Monta URLs completas das imagens
     const comUrls = ativos.map((p) => ({

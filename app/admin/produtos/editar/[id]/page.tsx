@@ -7,6 +7,7 @@ import { calculateGross } from '@/lib/asaasFees'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import { useToast } from '@/lib/context/ToastContext'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
+import ToggleSwitch from '@/components/atoms/ToggleSwitch'
 
 interface Categoria {
   id: string
@@ -39,6 +40,7 @@ export default function EditarProdutoPage() {
   const [cores, setCores] = useState<string[]>([])
   const [tamanhos, setTamanhos] = useState<string[]>([])
   const [generos, setGeneros] = useState<string[]>([])
+  const [exclusivo, setExclusivo] = useState(false)
   const inputHex = useRef<HTMLInputElement | null>(null)
   const [valorCliente, setValorCliente] = useState(
     calculateGross(Number(initial?.preco ?? 0), 'pix', 1).gross,
@@ -103,6 +105,7 @@ export default function EditarProdutoPage() {
           generos: gens,
           categoria: data.categoria,
           ativo: data.ativo,
+          exclusivo_user: data.exclusivo_user,
           cores:
             typeof data.cores === 'string'
               ? data.cores
@@ -139,7 +142,10 @@ export default function EditarProdutoPage() {
           : (initial.categoria as string),
       )
     }
-  }, [initial?.cores, initial?.categoria])
+    if (typeof initial?.exclusivo_user !== 'undefined') {
+      setExclusivo(Boolean(initial.exclusivo_user))
+    }
+  }, [initial?.cores, initial?.categoria, initial?.exclusivo_user])
   if (loading || !initial) {
     return <LoadingOverlay show={true} text="Carregando..." />
   }
@@ -173,6 +179,7 @@ export default function EditarProdutoPage() {
       "input[name='ativo']",
     )?.checked
     formData.set('ativo', ativoChecked ? 'true' : 'false')
+    formData.set('exclusivo_user', exclusivo ? 'true' : 'false')
 
     const tamanhos = Array.from(
       formElement.querySelectorAll<HTMLInputElement>(
@@ -462,6 +469,12 @@ export default function EditarProdutoPage() {
             Selecione uma ou mais imagens do produto.
           </span>
         </fieldset>
+
+        <ToggleSwitch
+          label="Produto de uso interno?"
+          checked={exclusivo}
+          onChange={setExclusivo}
+        />
 
         {/* Produto ativo */}
         <label className="flex items-center gap-2">
