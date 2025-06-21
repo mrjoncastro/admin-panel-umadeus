@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import type { PostRecord } from '@/lib/posts/getPostsFromPB'
-
 export async function GET() {
   const pb = createPocketBase()
   const tenantId = await getTenantFromHost()

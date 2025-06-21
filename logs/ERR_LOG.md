@@ -165,4 +165,5 @@
 ## [2025-06-20] Caminho incorreto dos testes de acessibilidade corrigido em package.json - dev - 01d4b28
 
 ## [2025-06-20] Corrigido erro de hidratação e ordem de hooks em UsuariosPage e Layout - dev - 30c0f0f
+
 ## [2025-07-21] Erro de CORS ao chamar o PocketBase diretamente pelo cliente. Agora todas as requisições passam por rotas internas do Next.js. - dev - a521f30
