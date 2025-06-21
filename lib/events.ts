@@ -5,6 +5,7 @@ export interface EventoRecord {
   data: string
   cidade: string
   imagem?: string
+  logo?: string
   status: 'realizado' | 'em breve'
   [key: string]: unknown
 }

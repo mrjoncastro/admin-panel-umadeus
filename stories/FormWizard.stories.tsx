@@ -20,12 +20,11 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Basic: Story = {
-  render: () => (
-    <FormWizard
-      steps={[
-        { title: 'Passo 1', content: <div>Conteúdo 1</div> },
-        { title: 'Passo 2', content: <div>Conteúdo 2</div> },
-      ]}
-    />
-  ),
+  args: {
+    steps: [
+      { title: 'Passo 1', content: <div>Conteúdo 1</div> },
+      { title: 'Passo 2', content: <div>Conteúdo 2</div> },
+    ],
+  },
+  render: (args) => <FormWizard {...args} />,
 }

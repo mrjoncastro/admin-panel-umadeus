@@ -20,10 +20,13 @@ export async function GET() {
       expand: 'produtos',
     })
     await atualizarStatus(eventos, pb)
-    const comUrls = eventos.map((e) => ({
-      ...e,
-      imagem: e.imagem ? pb.files.getURL(e, e.imagem) : undefined,
-    }))
+    const comUrls = eventos.map((e) => {
+      const fileName = e.imagem || e.logo
+      return {
+        ...e,
+        imagem: fileName ? pb.files.getURL(e, fileName) : undefined,
+      }
+    })
     return NextResponse.json(comUrls)
   } catch (err) {
     await logConciliacaoErro(`Erro ao listar eventos: ${String(err)}`)
