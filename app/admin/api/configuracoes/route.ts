@@ -42,8 +42,7 @@ export async function PUT(req: NextRequest) {
   }
   const { pb, user } = auth
   try {
-    const { cor_primary, logo_url, font, confirma_inscricoes } =
-      await req.json()
+    const { cor_primary, font, confirma_inscricoes } = await req.json()
     const cfg = await pb
       .collection('clientes_config')
       .getFirstListItem(`cliente='${user.cliente}'`)
