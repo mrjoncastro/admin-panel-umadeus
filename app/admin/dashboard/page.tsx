@@ -15,6 +15,7 @@ export default function DashboardPage() {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [filtroStatus, setFiltroStatus] = useState('pago')
+  const [error, setError] = useState<string | null>(null)
   const isMounted = useRef(true)
 
   useEffect(() => {
@@ -24,10 +25,18 @@ export default function DashboardPage() {
 
     const fetchData = async () => {
       try {
-        const userRes = await fetch(`/api/usuarios/${user.id}`, {
+        setError(null)
+        const userRes = await fetch(`/admin/api/usuarios/${user.id}`, {
           credentials: 'include',
           signal,
         })
+        if (!userRes.ok) {
+          if (userRes.status === 401 || userRes.status === 403) {
+            setError('403 - Acesso negado')
+            return
+          }
+          throw new Error('Erro ao obter usuário')
+        }
         const expandedUser = await userRes.json()
 
         const perPage = 50
@@ -113,6 +122,7 @@ export default function DashboardPage() {
         if (err instanceof Error) {
           console.error('Erro no dashboard:', err.message)
         }
+        setError('Erro ao carregar dashboard.')
       } finally {
         if (isMounted.current) setLoading(false)
       }
@@ -129,6 +139,10 @@ export default function DashboardPage() {
     <main className="min-h-screen  p-4 md:p-6">
       {!authChecked || !user || loading ? (
         <LoadingOverlay show={true} text="Carregando painel..." />
+      ) : error ? (
+        <div className="min-h-screen flex items-center justify-center">
+          <h1 className="text-2xl font-semibold">{error}</h1>
+        </div>
       ) : (
         <>
           <div className="mb-6 text-center dark:text-gray-100">
