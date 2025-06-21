@@ -30,14 +30,18 @@ export default function DashboardPage() {
         })
 
         const perPage = 50
+        const filtroCliente = `cliente='${user.cliente}'`
         const [inscricoesRes, pedidosRes] = await Promise.all([
           pb.collection('inscricoes').getList(page, perPage, {
             expand: 'campo,evento,criado_por,pedido',
+            filter: filtroCliente,
             signal,
           }),
-          pb
-            .collection('pedidos')
-            .getList(page, perPage, { expand: 'campo,criado_por', signal }),
+          pb.collection('pedidos').getList(page, perPage, {
+            expand: 'campo,criado_por',
+            filter: filtroCliente,
+            signal,
+          }),
         ])
         const rawInscricoes = inscricoesRes.items
         const rawPedidos = pedidosRes.items
@@ -111,7 +115,7 @@ export default function DashboardPage() {
       isMounted.current = false
       controller.abort()
     }
-  }, [authChecked, user?.id, user?.role, pb, page])
+  }, [authChecked, user?.id, user?.role, user?.cliente, pb, page])
 
   return (
     <main className="min-h-screen  p-4 md:p-6">

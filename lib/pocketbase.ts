@@ -5,11 +5,17 @@ const basePb = new PocketBase(PB_URL)
 
 export function createPocketBase() {
   const pbWithClone = basePb as PocketBase & { clone?: () => PocketBase }
-  if (typeof pbWithClone.clone === 'function') {
-    return pbWithClone.clone()
-  }
-  const pb = new PocketBase(PB_URL)
+  const pb =
+    typeof pbWithClone.clone === 'function'
+      ? pbWithClone.clone()
+      : new PocketBase(PB_URL)
+
   pb.authStore.save(basePb.authStore.token, basePb.authStore.model)
+  pb.beforeSend = (_, opt) => {
+    opt.credentials = 'include'
+    return opt
+  }
+  pb.autoCancellation(false)
   return pb
 }
 
