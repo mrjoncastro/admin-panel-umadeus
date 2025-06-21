@@ -123,13 +123,13 @@ export default function EditarEventoPage() {
     e.preventDefault()
     const formElement = e.currentTarget as HTMLFormElement
     const formData = new FormData(formElement)
-    const imagemInput = formElement.querySelector<HTMLInputElement>(
-      "input[name='imagem']",
+    const logoInput = formElement.querySelector<HTMLInputElement>(
+      "input[name='logo']",
     )
-    const files = imagemInput?.files
-    formData.delete('imagem')
+    const files = logoInput?.files
+    formData.delete('logo')
     if (files && files.length > 0) {
-      formData.append('imagem', files[0])
+      formData.append('logo', files[0])
     }
     formData.delete('produtos')
     selectedProdutos.forEach((p) => formData.append('produtos', p))
@@ -194,7 +194,7 @@ export default function EditarEventoPage() {
           />
           <input
             type="file"
-            name="imagem"
+            name="logo"
             accept="image/*"
             className="input-base"
           />

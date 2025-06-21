@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { logConciliacaoErro } from '@/lib/server/logger'
+import type { EventoRecord } from '@/lib/events'
 
 export async function GET(req: NextRequest) {
   const { pathname } = req.nextUrl
@@ -11,12 +12,11 @@ export async function GET(req: NextRequest) {
   try {
     const evento = await pb
       .collection('eventos')
-      .getOne(id, { expand: 'produtos' })
+      .getOne<EventoRecord>(id, { expand: 'produtos' })
+    const fileName = evento.imagem || evento.logo
     const withUrl = {
       ...evento,
-      imagem: evento.imagem
-        ? pb.files.getURL(evento, evento.imagem)
-        : undefined,
+      imagem: fileName ? pb.files.getURL(evento, fileName) : undefined,
     }
     return NextResponse.json(withUrl, { status: 200 })
   } catch (err) {

@@ -118,6 +118,7 @@ export type Evento = {
   data: string
   cidade: string
   imagem?: string
+  logo?: string
   status: 'realizado' | 'em breve'
   cobra_inscricao?: boolean
   /** Produto associado à inscrição do evento */

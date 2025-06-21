@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { logConciliacaoErro } from '@/lib/server/logger'
+import type { EventoRecord } from '@/lib/events'
 
 export async function GET(req: NextRequest) {
   const { pathname } = req.nextUrl
@@ -12,12 +13,11 @@ export async function GET(req: NextRequest) {
   }
   const { pb } = auth
   try {
-    const evento = await pb.collection('eventos').getOne(id, {
+    const evento = await pb.collection('eventos').getOne<EventoRecord>(id, {
       expand: 'produtos',
     })
-    const imagemUrl = evento.imagem
-      ? pb.files.getURL(evento, evento.imagem)
-      : undefined
+    const fileName = evento.imagem || evento.logo
+    const imagemUrl = fileName ? pb.files.getURL(evento, fileName) : undefined
     return NextResponse.json({ ...evento, imagemUrl }, { status: 200 })
   } catch (err) {
     await logConciliacaoErro(`Erro ao obter evento: ${String(err)}`)
