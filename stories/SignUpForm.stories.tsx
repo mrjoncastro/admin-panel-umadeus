@@ -30,5 +30,6 @@ export const Default: Story = {
       canvas.getByRole('button', { name: /criar conta/i }),
     ).toBeInTheDocument()
     await expect(canvas.getByLabelText(/nome completo/i)).toBeInTheDocument()
+    await expect(canvas.getByLabelText(/bairro/i)).toBeInTheDocument()
   },
 }

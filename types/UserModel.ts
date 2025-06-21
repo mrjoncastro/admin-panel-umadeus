@@ -7,6 +7,7 @@ export type UserModel = {
   data_nascimento?: string
   endereco?: string
   numero?: string
+  bairro?: string
   estado?: string
   cep?: string
   cidade?: string

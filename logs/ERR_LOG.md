@@ -180,3 +180,5 @@
 ## [2025-07-27] Corrigido erro de cliente não encontrado ao registrar usuário; validação agora usa campo cliente em clientes_config - dev - 6967030
 ## [2025-07-27] Corrigido erro de cliente não encontrado ao registrar usuário; validação agora usa campo cliente em clientes_config - dev - 6967030
 ## [2025-07-27] Registro de usuário não incluía role e bairro; rota atualizada para enviar role "usuario" e campo bairro - dev
+## [2025-07-27] Corrigido erro de cliente não encontrado ao registrar usuário; validação agora usa campo cliente em clientes_config - dev - 6967030
+## [2025-07-27] Registro de usuário não incluía role e bairro; rota atualizada para enviar role "usuario" e campo bairro - dev
