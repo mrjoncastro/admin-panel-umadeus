@@ -142,6 +142,28 @@ export async function POST(req: NextRequest) {
       // OK - não encontrado
     }
 
+    // Busca usuário existente ou cria um novo
+    let usuario
+    try {
+      usuario = await pb
+        .collection('usuarios')
+        .getFirstListItem(`email='${email}' && cliente='${lider.cliente}'`)
+    } catch {
+      const tempPass = Math.random().toString(36).slice(2, 10)
+      usuario = await pb.collection('usuarios').create({
+        nome,
+        email,
+        telefone: telefoneNumerico,
+        cpf: cpfNumerico,
+        data_nascimento,
+        cliente: lider.cliente,
+        campo: campoId,
+        perfil: 'usuario',
+        password: tempPass,
+        passwordConfirm: tempPass,
+      })
+    }
+
     // Cria inscrição SEM pedido
     const dadosBase: InscricaoTemplate = {
       nome,
@@ -152,7 +174,7 @@ export async function POST(req: NextRequest) {
       genero,
       evento: eventoIdFinal!,
       campo: campoId,
-      criado_por: liderId,
+      criado_por: usuario.id,
       produto: produtoId,
       tamanho,
       cliente: lider.cliente,
