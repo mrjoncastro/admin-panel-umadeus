@@ -1,11 +1,15 @@
 import type { NextRequest } from 'next/server'
 import PocketBase from 'pocketbase'
 
-export function getPocketBaseFromRequest(req: NextRequest) {
-  const url = process.env.PB_URL
+const DEFAULT_PB_URL = 'http://127.0.0.1:8090'
 
-  if (!url) {
-    throw new Error('PB_URL environment variable is not defined')
+export function getPocketBaseFromRequest(req: NextRequest) {
+  const url = process.env.PB_URL || DEFAULT_PB_URL
+
+  if (!process.env.PB_URL) {
+    console.warn(
+      `PB_URL não configurada. Usando valor padrão: ${DEFAULT_PB_URL}`,
+    )
   }
 
   const pb = new PocketBase(url)
