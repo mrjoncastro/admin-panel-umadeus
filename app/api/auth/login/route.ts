@@ -6,16 +6,14 @@ export async function POST(req: NextRequest) {
     const { email, password } = await req.json()
     const pb = new PocketBase(process.env.NEXT_PUBLIC_PB_URL!)
     await pb.collection('usuarios').authWithPassword(email, password)
-    const token = pb.authStore.token
     const user = pb.authStore.model
-    const res = NextResponse.json({ user })
-    const secure = process.env.NODE_ENV === 'production'
-    res.cookies.set('pb_token', token, {
+    const cookie = pb.authStore.exportToCookie({
       httpOnly: true,
-      secure,
-      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
       path: '/',
     })
+    const res = NextResponse.json({ user })
+    res.headers.append('Set-Cookie', cookie)
     return res
   } catch {
     return NextResponse.json(
