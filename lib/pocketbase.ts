@@ -1,9 +1,13 @@
 import PocketBase from 'pocketbase'
 
-const PB_URL = process.env.PB_URL
+const DEFAULT_PB_URL = 'http://127.0.0.1:8090'
 
-if (!PB_URL) {
-  throw new Error('PB_URL environment variable is not defined')
+const PB_URL = process.env.PB_URL || DEFAULT_PB_URL
+
+if (!process.env.PB_URL) {
+  console.warn(
+    `PB_URL não configurada. Usando valor padrão: ${DEFAULT_PB_URL}`,
+  )
 }
 
 const basePb = new PocketBase(PB_URL)
