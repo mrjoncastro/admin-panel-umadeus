@@ -17,12 +17,12 @@ export default function DashboardHeader() {
       Authorization: `Bearer ${token}`,
       'X-PB-User': JSON.stringify(user),
     }
-    fetch('/api/inscricoes', { headers })
+    fetch('/api/inscricoes', { headers, credentials: 'include' })
       .then((res) => res.json())
       .then((data) => setInscricoes(Array.isArray(data) ? data : []))
       .catch(() => setInscricoes([]))
 
-    fetch('/api/pedidos', { headers })
+    fetch('/api/pedidos', { headers, credentials: 'include' })
       .then((res) => res.json())
       .then((data) => setPedidos(Array.isArray(data) ? data : []))
       .catch(() => setPedidos([]))

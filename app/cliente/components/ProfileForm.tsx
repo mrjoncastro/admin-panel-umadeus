@@ -37,6 +37,7 @@ export default function ProfileForm() {
       const res = await fetch(`/api/usuarios/${user.id}`, {
         method: 'PATCH',
         headers,
+        credentials: 'include',
         body: JSON.stringify({
           nome: nome.trim(),
           telefone: telefone.trim(),

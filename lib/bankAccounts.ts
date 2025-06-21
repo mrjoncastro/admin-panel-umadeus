@@ -109,7 +109,9 @@ export async function getBankAccountsByTenant(
 export async function fetchBankAccounts(
   fetchFn: typeof fetch = fetch,
 ): Promise<ClienteContaBancariaRecord[]> {
-  const res = await fetchFn('/admin/api/bank-accounts')
+  const res = await fetchFn('/admin/api/bank-accounts', {
+    credentials: 'include',
+  })
   if (!res.ok) {
     throw new Error('Erro ao listar contas')
   }
@@ -119,7 +121,7 @@ export async function fetchBankAccounts(
 export async function fetchPixKeys(
   fetchFn: typeof fetch = fetch,
 ): Promise<PixKeyRecord[]> {
-  const res = await fetchFn('/admin/api/pix-keys')
+  const res = await fetchFn('/admin/api/pix-keys', { credentials: 'include' })
   if (!res.ok) {
     throw new Error('Erro ao listar pix')
   }
@@ -133,6 +135,7 @@ export async function createBankAccountApi(
   const res = await fetchFn('/admin/api/bank-accounts', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify(account),
   })
   if (!res.ok) {
@@ -148,6 +151,7 @@ export async function createPixKeyApi(
   const res = await fetchFn('/admin/api/pix-keys', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify(pix),
   })
   if (!res.ok) {

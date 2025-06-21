@@ -16,7 +16,7 @@ export default function InscricoesTable({ limit }: { limit?: number }) {
       Authorization: `Bearer ${token}`,
       'X-PB-User': JSON.stringify(user),
     }
-    fetch('/api/inscricoes', { headers })
+    fetch('/api/inscricoes', { headers, credentials: 'include' })
       .then((res) => res.json())
       .then((data) =>
         setInscricoes(

@@ -16,7 +16,7 @@ export default function PedidosTable({ limit }: { limit?: number }) {
       Authorization: `Bearer ${token}`,
       'X-PB-User': JSON.stringify(user),
     }
-    fetch('/api/pedidos', { headers })
+    fetch('/api/pedidos', { headers, credentials: 'include' })
       .then((res) => res.json())
       .then((data) =>
         setPedidos(
