@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import type { PostRecord } from '@/lib/posts/getPostsFromPB'
+
 export async function GET(req: NextRequest) {
   const slug = req.nextUrl.pathname.split('/').pop() ?? ''
   if (!slug) {

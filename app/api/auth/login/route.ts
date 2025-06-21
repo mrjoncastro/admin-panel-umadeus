@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import PocketBase from 'pocketbase'
+import createPocketBase from '@/lib/pocketbase'
 
 export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json()
-    const pb = new PocketBase(process.env.PB_URL!)
+    const pb = createPocketBase()
     await pb.collection('usuarios').authWithPassword(email, password)
     const user = pb.authStore.model
     const cookie = pb.authStore.exportToCookie({
