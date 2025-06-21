@@ -11,10 +11,12 @@ export async function GET(req: NextRequest) {
   if ('error' in auth) {
     return NextResponse.json({ error: auth.error }, { status: auth.status })
   }
+
   const { pb, user } = auth
   const page = Number(req.nextUrl.searchParams.get('page') || '1')
   const perPage = Number(req.nextUrl.searchParams.get('perPage') || '50')
   const status = req.nextUrl.searchParams.get('status') || ''
+
   try {
     let baseFilter = ''
     if (user.role === 'usuario') {
@@ -31,15 +33,16 @@ export async function GET(req: NextRequest) {
       }
       baseFilter = `cliente = "${tenantId}"`
     }
+
     const filtro = status ? `${baseFilter} && status='${status}'` : baseFilter
     const { items } = await pb.collection('pedidos').getList(page, perPage, {
       filter: filtro,
       sort: '-created',
       expand: 'campo,id_inscricao',
     })
+
     return NextResponse.json(items)
   } catch (err) {
-    console.error('Erro ao listar pedidos:', err)
     return NextResponse.json({ error: 'Erro ao listar' }, { status: 500 })
   }
 }
@@ -47,12 +50,12 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const auth = getUserFromHeaders(req)
   const pb = 'error' in auth ? createPocketBase(false) : auth.pbSafe
+
   try {
     const body = await req.json()
     const { inscricaoId } = body
 
     if (!inscricaoId) {
-      // Cria pedido da loja
       const tenantId = await getTenantFromHost()
       if (!tenantId) {
         return NextResponse.json(
@@ -60,6 +63,7 @@ export async function POST(req: NextRequest) {
           { status: 400 },
         )
       }
+
       const { produto, tamanho, cor, genero, campoId, email, valor } = body
       const userId = 'error' in auth ? undefined : (auth.user.id as string)
 
@@ -77,7 +81,7 @@ export async function POST(req: NextRequest) {
         tamanho,
         status: 'pendente',
         cor: cor || 'Roxo',
-        genero,
+        genero: normalizarGenero(genero),
         responsavel: userId,
         cliente: tenantId,
         ...(campoId ? { campo: campoId } : {}),
@@ -108,8 +112,8 @@ export async function POST(req: NextRequest) {
 
     const campoId = inscricao.expand?.campo?.id
     const responsavelId = inscricao.expand?.criado_por
-
     let produtoRecord: Produto | undefined
+
     try {
       if (inscricao.produto) {
         produtoRecord = await pb
@@ -128,7 +132,7 @@ export async function POST(req: NextRequest) {
           produtoRecord = lista.find((p) => p.id === inscricao.produto)
         }
       } catch {
-        // noop - produtoRecord remains undefined
+        // noop
       }
     }
 
@@ -145,11 +149,12 @@ export async function POST(req: NextRequest) {
         (Array.isArray(produtoRecord?.tamanhos)
           ? produtoRecord?.tamanhos[0]
           : (produtoRecord?.tamanhos as string | undefined)),
-      genero:
+      genero: normalizarGenero(
         inscricao.genero ||
-        (Array.isArray(produtoRecord?.generos)
-          ? produtoRecord?.generos[0]
-          : (produtoRecord?.generos as string | undefined)),
+          (Array.isArray(produtoRecord?.generos)
+            ? produtoRecord?.generos[0]
+            : (produtoRecord?.generos as string | undefined)),
+      ),
       email: inscricao.email,
       campo: campoId,
       responsavel: responsavelId,
@@ -162,8 +167,19 @@ export async function POST(req: NextRequest) {
       valor: pedido.valor,
       status: pedido.status,
     })
-  } catch (err: unknown) {
+  } catch (err: any) {
     await logConciliacaoErro(`Erro ao criar pedido: ${String(err)}`)
     return NextResponse.json({ erro: 'Erro ao criar pedido.' }, { status: 500 })
   }
+}
+
+function normalizarGenero(valor?: string): string | undefined {
+  if (!valor) return undefined
+
+  const valorNormalizado = valor.trim().toLowerCase()
+  const valoresValidos = ['masculino', 'feminino', 'outro']
+
+  return valoresValidos.includes(valorNormalizado)
+    ? valorNormalizado
+    : undefined
 }

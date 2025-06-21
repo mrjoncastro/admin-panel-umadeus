@@ -182,3 +182,8 @@
 ## [2025-07-27] Registro de usuário não incluía role e bairro; rota atualizada para enviar role "usuario" e campo bairro - dev
 ## [2025-07-27] Corrigido erro de cliente não encontrado ao registrar usuário; validação agora usa campo cliente em clientes_config - dev - 6967030
 ## [2025-07-27] Registro de usuário não incluía role e bairro; rota atualizada para enviar role "usuario" e campo bairro - dev
+## [2025-06-21] Erro ao criar pedido: ClientResponseError 400: Failed to create record. - development
+## [2025-06-21] Erro ao criar pedido: ClientResponseError 400: Failed to create record. - development
+## [2025-06-21] Erro ao criar pedido: ClientResponseError 400: Failed to create record. - development
+## [2025-06-21] Erro ao criar pedido: ClientResponseError 400: Failed to create record. - development
+## [2025-06-21] Erro no checkout: Error - development

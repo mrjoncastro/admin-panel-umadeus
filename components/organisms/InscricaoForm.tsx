@@ -244,8 +244,8 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
                 </label>
                 <select name="user_gender" required className="input-base">
                   <option value="">Selecione</option>
-                  <option value="Masculino">Masculino</option>
-                  <option value="Feminino">Feminino</option>
+                  <option value="masculino">Masculino</option>
+                  <option value="feminino">Feminino</option>
                 </select>
               </div>
             </div>
