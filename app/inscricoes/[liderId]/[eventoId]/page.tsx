@@ -81,7 +81,7 @@ export default function InscricaoPage() {
   useEffect(() => {
     if (!liderId) return
 
-    fetch(`/admin/api/lider/${liderId}`)
+    fetch(`/api/lider/${liderId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data?.campo) {
@@ -178,7 +178,7 @@ export default function InscricaoPage() {
 
     try {
       // 1. Envia os dados para a API de inscrição
-      const resposta = await fetch('/admin/api/inscricoes', {
+      const resposta = await fetch('/api/inscricoes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -199,7 +199,7 @@ export default function InscricaoPage() {
       }
 
       // 2. Envia notificação para o n8n de forma assíncrona
-      fetch('/admin/api/n8n', {
+      fetch('/api/n8n', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

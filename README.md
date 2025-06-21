@@ -110,7 +110,7 @@ Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utiliza
 3. Em seguida `criarPedido` só é finalizado se a chamada ao Asaas retornar com
    sucesso, salvando `link_pagamento`. O campo `canal` recebe `inscricao` para
    indicar a origem do pedido.
-4. Compras feitas na loja chamam primeiro `/admin/api/asaas/checkout`; o pedido
+4. Compras feitas na loja chamam primeiro `/api/asaas/checkout`; o pedido
    é criado somente após receber o `link` do Asaas, garantindo registros
    válidos.
 5. O usuário é redirecionado para essa URL para concluir o pagamento.
@@ -118,14 +118,14 @@ Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utiliza
 ### Inscrições x Compras na Loja
 
 - **Inscrições** – após um líder confirmar a inscrição pelo admin, o painel faz
-  uma chamada para `/admin/api/asaas` informando `valorBruto`, `paymentMethod`
+  uma chamada para `/api/asaas` informando `valorBruto`, `paymentMethod`
   e `installments` para gerar o boleto e salvar o link de pagamento no pedido
   correspondente.
 - **Compras de Loja** – os produtos adicionados ao carrinho são processados na
-  página `/loja/checkout`. Esse fluxo usa `/admin/api/asaas/checkout` para
+  página `/loja/checkout`. Esse fluxo usa `/api/asaas/checkout` para
   criar um link de checkout do Asaas e redirecionar o usuário automaticamente.
 
-### Endpoint `/admin/api/asaas/checkout`
+### Endpoint `/api/asaas/checkout`
 
 Envie uma requisição `POST` em JSON contendo:
 
@@ -157,12 +157,12 @@ A resposta contém o campo `link` com o URL gerado. O `externalReference` enviad
 { "link": "https://asaas.com/..." }
 ```
 
-### Endpoint `/admin/api/asaas/saldo`
+### Endpoint `/api/asaas/saldo`
 
 Faça uma requisição `GET` para obter o saldo da subconta do cliente atual:
 
 ```bash
-GET /admin/api/asaas/saldo
+GET /api/asaas/saldo
 ```
 
 Resposta de exemplo:
@@ -171,14 +171,14 @@ Resposta de exemplo:
 { "balance": 1234.56 }
 ```
 
-### Endpoint `/admin/api/asaas/estatisticas`
+### Endpoint `/api/asaas/estatisticas`
 
 Consulta estatísticas de cobranças através de `/finance/payment/statistics`.
 Todos os parâmetros da requisição são repassados ao Asaas, permitindo filtros
 como `status`, `billingType` e datas.
 
 ```bash
-GET /admin/api/asaas/estatisticas?status=PENDING
+GET /api/asaas/estatisticas?status=PENDING
 ```
 
 Resposta de exemplo:
@@ -187,7 +187,7 @@ Resposta de exemplo:
 { "quantity": 1, "value": 50, "netValue": 48.01 }
 ```
 
-### Endpoint `/admin/api/asaas/transferencia`
+### Endpoint `/api/asaas/transferencia`
 
 Envia uma transferência do saldo do Asaas para a conta bancária cadastrada. Requisição `POST` com o seguinte payload:
 
@@ -223,12 +223,12 @@ Para PIX:
 
 Essas rotas utilizam a chave do Asaas de cada cliente (tenant) conforme descrito em [docs/plano-negocio.md](docs/plano-negocio.md).
 
-### Endpoint `/admin/api/asaas/extrato`
+### Endpoint `/api/asaas/extrato`
 
 Retorna as movimentações financeiras do período informado:
 
 ```bash
-GET /admin/api/asaas/extrato?start=2025-01-01&end=2025-01-31
+GET /api/asaas/extrato?start=2025-01-01&end=2025-01-31
 ```
 
 Resposta de exemplo:
@@ -241,7 +241,7 @@ Use `start` e `end` (AAAA-MM-DD) para filtrar o período. A rota usa
 `requireClienteFromHost` para obter a chave do cliente, define o `User-Agent`
 e consulta `${ASAAS_API_URL}/financialTransactions` com os parâmetros padrão
 `offset=0`, `limit=10` e `order=asc`, enviando os mesmos cabeçalhos utilizados
-em `/admin/api/asaas/saldo`.
+em `/api/asaas/saldo`.
 
 ### Cadastro de Contas Bancárias
 

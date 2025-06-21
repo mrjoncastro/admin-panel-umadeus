@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { POST } from '../../app/admin/api/pedidos/route'
+import { POST } from '../../app/api/pedidos/route'
 import { NextRequest } from 'next/server'
 
 describe('POST /admin/api/pedidos', () => {

@@ -280,7 +280,7 @@ export default function ListaInscricoesPage() {
 
       // 3. Gerar link de pagamento via API do Asaas
 
-      const res = await fetch('/admin/api/asaas/', {
+      const res = await fetch('/api/asaas/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -318,7 +318,7 @@ export default function ListaInscricoesPage() {
       )
 
       // 🔹 6. Notificar via n8n webhook de forma assíncrona
-      fetch('/admin/api/n8n', {
+      fetch('/api/n8n', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -10,7 +10,7 @@ Este documento lista as atividades necessárias para implementar o processo de c
 
 2. **Criar sessão de Checkout Pronto**
 
-   - Para usuários autenticados, chamar o endpoint `/admin/api/asaas` passando `pedidoId`, `valorBruto`, `paymentMethod` e `installments` para gerar o checkout.
+   - Para usuários autenticados, chamar o endpoint `/api/asaas` passando `pedidoId`, `valorBruto`, `paymentMethod` e `installments` para gerar o checkout.
    - Registrar a `checkoutUrl` retornada no pedido e redirecionar o usuário para essa página.
 
 3. **Tratar erros de integração**

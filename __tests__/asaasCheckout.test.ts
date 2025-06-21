@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { buildCheckoutUrl } from '../lib/asaas'
-import { POST } from '../app/admin/api/asaas/checkout/route'
+import { POST } from '../app/api/asaas/checkout/route'
 import { NextRequest } from 'next/server'
 vi.mock('../lib/clienteAuth', () => ({ requireClienteFromHost: vi.fn() }))
 import { requireClienteFromHost } from '../lib/clienteAuth'

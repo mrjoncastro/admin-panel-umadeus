@@ -42,7 +42,7 @@ describe('TransferenciasPage', () => {
     render(<TransferenciasPage />)
     fireEvent.click(screen.getByRole('button'))
     expect(fetchMock).toHaveBeenCalledWith(
-      '/admin/api/asaas/transferencia',
+      '/api/asaas/transferencia',
       expect.objectContaining({
         body: expect.stringContaining('"operationType":"PIX"'),
       }),

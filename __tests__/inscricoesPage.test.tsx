@@ -135,13 +135,13 @@ test('envia paymentMethod e installments ao confirmar', async () => {
 
   await vi.waitFor(() => {
     expect(fetchMock).toHaveBeenCalledWith(
-      '/admin/api/asaas/',
+      '/api/asaas/',
       expect.objectContaining({
         body: expect.stringContaining('"paymentMethod":"pix"'),
       }),
     )
     expect(fetchMock).toHaveBeenCalledWith(
-      '/admin/api/asaas/',
+      '/api/asaas/',
       expect.objectContaining({
         body: expect.stringContaining('"installments":2'),
       }),
