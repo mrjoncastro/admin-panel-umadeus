@@ -24,7 +24,7 @@ export async function GET() {
       id: cfg.id,
       nome: cfg.nome ?? '',
       cor_primary: cfg.cor_primary ?? '',
-      logo_url: cfg.logo_url ?? '',
+      logo_url: cfg.logo ? pb.files.getUrl(cfg, cfg.logo) : '',
       font: cfg.font ?? '',
       confirma_inscricoes:
         cfg.confirmaInscricoes ?? cfg.confirma_inscricoes ?? false,

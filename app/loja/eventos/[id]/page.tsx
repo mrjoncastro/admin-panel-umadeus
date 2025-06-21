@@ -52,8 +52,8 @@ export default async function EventoDetalhePage({
           className="w-full h-56 object-cover rounded-lg"
         />
       )}
-      <h1 className="text-2xl font-bold">{evento.titulo}</h1>
-      <p>{evento.descricao}</p>
+      <h1 className="text-2xl text-center font-bold">{evento.titulo}</h1>
+      <p className="text-center">{evento.descricao}</p>
       <InscricaoForm eventoId={id} />
     </main>
   )

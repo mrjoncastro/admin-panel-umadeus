@@ -49,7 +49,7 @@ export async function PUT(req: NextRequest) {
       .getFirstListItem(`cliente='${user.cliente}'`)
     const updated = await pb.collection('clientes_config').update(cfg.id, {
       cor_primary,
-      logo_url,
+      logo_url: cfg.logo ? pb.files.getUrl(cfg, cfg.logo) : '',
       font,
       confirma_inscricoes,
     })
