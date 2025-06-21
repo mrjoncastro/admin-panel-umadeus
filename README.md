@@ -277,7 +277,7 @@ O front-end consome os posts diretamente do banco, portanto não é mais necess�
 
 ## Testes
 
-Execute `npm run lint` e `npm run test` para validar o projeto.
+Execute `npm run lint`, `npm run test` e `npm run a11y` para validar o projeto.
 Consulte [docs/testes.md](docs/testes.md) para instruções completas.
 
 ## Build

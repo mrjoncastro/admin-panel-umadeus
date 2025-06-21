@@ -12,24 +12,23 @@ npm install
 
 ## Estrutura
 
-Os arquivos de teste ficam no diretório `__tests__/` na raiz do projeto. Cada módulo possui um arquivo `*.test.ts` correspondente.
+Os arquivos de teste ficam no diretório `__tests__/` na raiz do projeto. Cada módulo possui um arquivo `*.test.ts` **ou** `*.test.tsx` correspondente.
 
 ## Execução
 
-Para rodar a linter e a bateria de testes utilize:
+Para rodar a linter e toda a bateria de testes utilize:
 
 ```bash
 npm run lint
 npm run test
-```
-
-Para executar os testes de acessibilidade, utilize:
-
-```bash
 npm run a11y
 ```
 
-Os testes de acessibilidade estão localizados em `__tests__/a11y/`.
+Os testes de acessibilidade seguem o padrão `*.a11y.test.tsx` e ficam em
+`__tests__/a11y/`.
+
+Em ambientes de integração contínua utilize `npm run test:ci` para uma
+execução única dos testes.
 
 Antes de rodar `npm run lint`, `npm run build` ou `npm run test`, certifique-se de executar `npm install` para instalar todos os módulos necessários, como **Next** e **Vitest**.
 
