@@ -37,7 +37,8 @@ export default function InscricaoWizard({ liderId, eventoId }: InscricaoWizardPr
     paymentMethod: 'pix',
     installments: 1,
   })
-  const [loading, setLoading] = useState(false)
+  // `loading` não é exibido na UI, mas controla a finalização do submit
+  const [, setLoading] = useState(false)
 
   useEffect(() => {
     fetch(`/api/lider/${liderId}`)
@@ -50,8 +51,13 @@ export default function InscricaoWizard({ liderId, eventoId }: InscricaoWizardPr
     fetch(`/api/eventos/${eventoId}`)
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
+        interface ProdutoResponse {
+          id: string
+          nome: string
+          tamanhos?: string | string[]
+        }
         const lista = Array.isArray(data?.expand?.produtos)
-          ? data.expand.produtos.map((p: any) => ({
+          ? data.expand.produtos.map((p: ProdutoResponse) => ({
               id: p.id,
               nome: p.nome,
               tamanhos: Array.isArray(p.tamanhos)
@@ -108,7 +114,7 @@ export default function InscricaoWizard({ liderId, eventoId }: InscricaoWizardPr
         return
       }
       showSuccess('Inscrição enviada com sucesso!')
-    } catch (err) {
+    } catch {
       showError('Erro ao enviar inscrição.')
     } finally {
       setLoading(false)
