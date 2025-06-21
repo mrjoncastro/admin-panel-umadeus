@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
+import useInscricoes from '@/lib/hooks/useInscricoes'
 import { calculateGross } from '@/lib/asaasFees'
 
 const faixasPreco = [
@@ -17,6 +18,8 @@ interface Produto {
   preco: number
   imagens: string[]
   slug: string
+  requer_inscricao_aprovada?: boolean
+  evento_id?: string
 }
 
 export default function ProdutosFiltrados({
@@ -27,6 +30,12 @@ export default function ProdutosFiltrados({
   const [busca, setBusca] = useState('')
   const [faixasSelecionadas, setFaixasSelecionadas] = useState<string[]>([])
   const [ordem, setOrdem] = useState('recentes')
+  const { inscricoes } = useInscricoes()
+
+  const possuiAprovacao = (prod: Produto) =>
+    inscricoes.some(
+      (i) => i.evento === prod.evento_id && i.status === 'confirmado',
+    )
 
   const filtrados = useMemo(() => {
     let res = produtos.filter((p) =>
@@ -108,12 +117,19 @@ export default function ProdutosFiltrados({
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
           {filtrados.map((p) => {
             const precoBruto = calculateGross(p.preco, 'pix', 1).gross
+            const precisaAprov =
+              p.requer_inscricao_aprovada && !possuiAprovacao(p)
             return (
               <div
                 key={p.id}
                 className="bg-white rounded-2xl shadow-lg border border-[var(--accent-900)]/10 flex flex-col items-center p-4 transition hover:shadow-xl"
               >
                 <div className="w-full aspect-square overflow-hidden rounded-xl mb-2 bg-neutral-100 border border-[var(--accent)]/5 relative">
+                  {precisaAprov && (
+                    <span className="absolute top-2 left-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded z-10">
+                      Requer inscrição aprovada
+                    </span>
+                  )}
                   <Image
                     src={p.imagens[0]}
                     alt={p.nome}

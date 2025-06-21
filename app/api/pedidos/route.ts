@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
     })
 
     return NextResponse.json(items)
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'Erro ao listar' }, { status: 500 })
   }
 }
@@ -167,7 +167,7 @@ export async function POST(req: NextRequest) {
       valor: pedido.valor,
       status: pedido.status,
     })
-  } catch (err: any) {
+  } catch (err: unknown) {
     await logConciliacaoErro(`Erro ao criar pedido: ${String(err)}`)
     return NextResponse.json({ erro: 'Erro ao criar pedido.' }, { status: 500 })
   }

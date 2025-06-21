@@ -90,6 +90,10 @@ export type Produto = {
   slug: string
   descricao?: string
   detalhes?: string
+  /** Se true, exige aprovação de inscrição para compra */
+  requer_inscricao_aprovada?: boolean
+  /** ID do evento vinculado ao produto */
+  evento_id?: string
   checkout_url?: string
   exclusivo_user?: boolean
   ativo?: boolean

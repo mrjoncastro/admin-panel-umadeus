@@ -5,6 +5,7 @@ import type { Produto } from '@/types'
 import { calculateGross } from '@/lib/asaasFees'
 
 import AddToCartButton from '@/components/molecules/AddToCartButton'
+import useInscricoes from '@/lib/hooks/useInscricoes'
 
 // Componente para seleção de gênero e tamanho (reutilizável)
 function DetalhesSelecao({
@@ -135,6 +136,11 @@ export default function ProdutoInterativo({
   const [cor, setCor] = useState(coresList[0] || '')
   const [indexImg, setIndexImg] = useState(0)
   const pauseRef = useRef(false)
+  const { inscricoes } = useInscricoes()
+  const aprovado = inscricoes.some(
+    (i) => i.evento === produto.evento_id && i.status === 'confirmado',
+  )
+  const precisaAprov = produto.requer_inscricao_aprovada && !aprovado
 
   const precoBruto = useMemo(
     () => calculateGross(preco, 'pix', 1).gross,
@@ -284,6 +290,9 @@ export default function ProdutoInterativo({
                 cores: cor ? [cor] : [],
               }}
             />
+            {precisaAprov && (
+              <p className="text-xs text-red-600 mt-2">Requer inscrição aprovada</p>
+            )}
           </div>
         </div>
         {/* Resto dos detalhes */}
