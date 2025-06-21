@@ -426,17 +426,17 @@ export function ModalProduto<T extends Record<string, unknown>>({
               )}
             </div>
             <input type="hidden" name="cores" value={cores.join(',')} />
-          <span className="text-xs text-gray-400 ml-1">
-            Adicione as variações de cor do produto.
-          </span>
-        </div>
+            <span className="text-xs text-gray-400 ml-1">
+              Adicione as variações de cor do produto.
+            </span>
+          </div>
 
-        <ToggleSwitch
-          label="Produto de uso interno?"
-          checked={exclusivo}
-          onChange={setExclusivo}
-          className="mt-2"
-        />
+          <ToggleSwitch
+            label="Produto de uso interno?"
+            checked={exclusivo}
+            onChange={setExclusivo}
+            className="mt-2"
+          />
 
           <div className="flex items-center gap-2 mt-2">
             <input

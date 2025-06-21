@@ -4,7 +4,9 @@ import { NextRequest } from 'next/server'
 import createPocketBaseMock from '../mocks/pocketbase'
 
 const getListMock = vi.fn().mockResolvedValue({ items: [] })
-const createMock = vi.fn().mockResolvedValue({ id: 'p1', valor: 10, status: 'pendente' })
+const createMock = vi
+  .fn()
+  .mockResolvedValue({ id: 'p1', valor: 10, status: 'pendente' })
 const getOneMock = vi.fn()
 const pb = createPocketBaseMock()
 pb.collection.mockImplementation((name: string) => {
@@ -115,7 +117,7 @@ describe('GET /api/pedidos', () => {
     ;(req as any).nextUrl = new URL('http://test/api/pedidos')
     const res = await GET(req as unknown as NextRequest)
     expect(res.status).toBe(400)
-})
+  })
 })
 
 describe('POST /api/pedidos', () => {
@@ -144,14 +146,18 @@ describe('POST /api/pedidos', () => {
 
   it('cria pedido para produto sem evento', async () => {
     getOneMock.mockResolvedValueOnce({ id: 'p1' })
-    createMock.mockResolvedValueOnce({ id: 'ped1', valor: 5, status: 'pendente' })
+    createMock.mockResolvedValueOnce({
+      id: 'ped1',
+      valor: 5,
+      status: 'pendente',
+    })
     const req = new Request('http://test/api/pedidos', {
       method: 'POST',
       body: JSON.stringify({ produto: 'p1', valor: 5 }),
     })
-    const res = await (await import('../../app/api/pedidos/route')).POST(
-      req as unknown as NextRequest,
-    )
+    const res = await (
+      await import('../../app/api/pedidos/route')
+    ).POST(req as unknown as NextRequest)
     expect(res.status).toBe(200)
     expect(getFirstMock).not.toHaveBeenCalled()
   })
@@ -167,9 +173,9 @@ describe('POST /api/pedidos', () => {
       method: 'POST',
       body: JSON.stringify({ produto: 'p2', valor: 10 }),
     })
-    const res = await (await import('../../app/api/pedidos/route')).POST(
-      req as unknown as NextRequest,
-    )
+    const res = await (
+      await import('../../app/api/pedidos/route')
+    ).POST(req as unknown as NextRequest)
     expect(res.status).toBe(400)
     const body = await res.json()
     expect(body.erro).toMatch(/inscrição aprovada/)
@@ -182,14 +188,18 @@ describe('POST /api/pedidos', () => {
       requer_inscricao_aprovada: true,
     })
     getFirstMock.mockResolvedValueOnce({ id: 'i1', aprovada: true })
-    createMock.mockResolvedValueOnce({ id: 'ped2', valor: 15, status: 'pendente' })
+    createMock.mockResolvedValueOnce({
+      id: 'ped2',
+      valor: 15,
+      status: 'pendente',
+    })
     const req = new Request('http://test/api/pedidos', {
       method: 'POST',
       body: JSON.stringify({ produto: 'p3', valor: 15 }),
     })
-    const res = await (await import('../../app/api/pedidos/route')).POST(
-      req as unknown as NextRequest,
-    )
+    const res = await (
+      await import('../../app/api/pedidos/route')
+    ).POST(req as unknown as NextRequest)
     expect(res.status).toBe(200)
     expect(createMock).toHaveBeenCalled()
   })

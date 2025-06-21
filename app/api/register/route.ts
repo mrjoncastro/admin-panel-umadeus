@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       cidade,
       password,
       cliente,
-      } = await req.json()
+    } = await req.json()
     if (
       !nome ||
       !email ||

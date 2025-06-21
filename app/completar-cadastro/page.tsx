@@ -6,7 +6,10 @@ import { TextField, FormField, Button, Spinner } from '@/components'
 import { useToast } from '@/lib/context/ToastContext'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
-interface Campo { id: string; nome: string }
+interface Campo {
+  id: string
+  nome: string
+}
 
 export default function CompletarCadastroPage() {
   const { authChecked } = useAuthGuard(['usuario'])

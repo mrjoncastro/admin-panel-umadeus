@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   try {
     let baseFilter = `ativo = true && cliente='${tenantId}'`
     if (!role) {
-      baseFilter += " && exclusivo_user = false"
+      baseFilter += ' && exclusivo_user = false'
     }
     const filterString = categoria
       ? `${baseFilter} && categoria = '${categoria}'`

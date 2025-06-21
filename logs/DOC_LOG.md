@@ -351,15 +351,27 @@
 ## [2025-07-24] Página /loja/produtos agora exibe mensagem "Domínio não configurado" quando `getTenantFromHost` não encontra tenant. Lint e build executados.
 
 ## [2025-06-21] Correção de proteções de autenticação e notificação usando useAuthContext. Lint e build executados.
+
 ## [2025-06-21] README atualizado instruindo definir cookie `tenantId` ou registrar domínio em `clientes_config` quando não houver domínio configurado. Lint e build executados.
 
 ## [2025-06-21] Adicionado campo exclusivo_user e componente FormWizard
+
 ## [2025-07-25] Inscrições agora criam usuário automaticamente quando email não existe. Guia atualizado e novo teste. Lint e build executados.
+
 ## [2025-07-26] Mover utilitario criarInscricao para components/templates e gerar senha temporaria na rota da loja. Lint e build falharam localmente.
+
 ## [2025-07-27] Ajustado fluxo da API de inscrições para criar usuário automaticamente e documentação atualizada com fluxograma.
+
 ## [2025-07-28] Integrado componente InscricaoWizard na pagina de inscricao e documentado etapas.
+
 ## [2025-06-21] Documentado fluxo de venda e tipos de produtos.
+
 ## [2025-07-27] Ajustado fluxo da API de inscrições para criar usuário automaticamente e documentação atualizada com fluxograma.
+
 ## [2025-07-28] Integrado componente InscricaoWizard na pagina de inscricao e documentado etapas.
+
 ## [2025-06-21] Wizard aplicado na rota loja/eventos e documentação atualizada
+
 ## [2025-06-21] README menciona que o campo 'canal' indica a origem do pedido e testes de pedidos atualizados.
+
+## [2025-06-21] Implementado fluxo de venda validando inscrição aprovada (commit fe7e6f64893832d14d36b6c8452365f5ecfdd576). Lint e build falharam localmente.

@@ -42,9 +42,8 @@ describe('getUserFromHeaders', () => {
     })
     const req = new Request('http://test', { headers })
     const result = getUserFromHeaders(req as unknown as NextRequest)
-    const pb = (
-      getPocketBaseFromRequest as unknown as vi.Mock
-    ).mock.results[0].value
+    const pb = (getPocketBaseFromRequest as unknown as vi.Mock).mock.results[0]
+      .value
     expect(result).toEqual({ user, pbSafe: pb })
     expect(pb.authStore.save).toHaveBeenCalledWith('token123', user)
   })

@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
   const slug = req.nextUrl.pathname.split('/').pop() ?? ''
   let filter = `ativo = true && slug = '${slug}' && cliente='${tenantId}'`
   if (!role) {
-    filter += " && exclusivo_user = false"
+    filter += ' && exclusivo_user = false'
   }
   try {
     const p = await pb.collection('produtos').getFirstListItem<Produto>(filter)

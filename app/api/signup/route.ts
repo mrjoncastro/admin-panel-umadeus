@@ -27,6 +27,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(e.response.data, { status: 400 })
     }
     console.error('Erro em /api/signup:', err)
-    return NextResponse.json({ error: 'Erro ao criar usuário' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Erro ao criar usuário' },
+      { status: 500 },
+    )
   }
 }

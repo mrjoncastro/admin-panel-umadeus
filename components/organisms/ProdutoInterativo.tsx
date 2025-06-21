@@ -291,7 +291,9 @@ export default function ProdutoInterativo({
               }}
             />
             {precisaAprov && (
-              <p className="text-xs text-red-600 mt-2">Requer inscrição aprovada</p>
+              <p className="text-xs text-red-600 mt-2">
+                Requer inscrição aprovada
+              </p>
             )}
           </div>
         </div>

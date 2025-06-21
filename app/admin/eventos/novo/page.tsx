@@ -91,9 +91,8 @@ export default function NovoEventoPage() {
     e.preventDefault()
     const formElement = e.currentTarget as HTMLFormElement
     const formData = new FormData(formElement)
-    const logoInput = formElement.querySelector<HTMLInputElement>(
-      "input[name='logo']",
-    )
+    const logoInput =
+      formElement.querySelector<HTMLInputElement>("input[name='logo']")
     const files = logoInput?.files
     formData.delete('logo')
     if (files && files.length > 0) {

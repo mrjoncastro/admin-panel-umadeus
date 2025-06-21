@@ -73,12 +73,12 @@ export default function SignUpForm({
       .then(async (res) => {
         if (!res.ok) {
           showError('CEP n\u00e3o encontrado.')
-        setEndereco('')
-        setCidade('')
-        setEstado('')
-        setBairro('')
-        return null
-      }
+          setEndereco('')
+          setCidade('')
+          setEstado('')
+          setBairro('')
+          return null
+        }
         return res.json()
       })
       .then((data) => {

@@ -12,7 +12,11 @@ interface FormWizardProps {
   loading?: boolean
 }
 
-export default function FormWizard({ steps, onFinish, className = '' }: FormWizardProps) {
+export default function FormWizard({
+  steps,
+  onFinish,
+  className = '',
+}: FormWizardProps) {
   const [current, setCurrent] = useState(0)
   const isLast = current === steps.length - 1
 
@@ -37,7 +41,12 @@ export default function FormWizard({ steps, onFinish, className = '' }: FormWiza
       </div>
       <div>{steps[current]?.content}</div>
       <div className="mt-4 flex justify-between">
-        <button type="button" onClick={prev} disabled={current === 0} className="btn">
+        <button
+          type="button"
+          onClick={prev}
+          disabled={current === 0}
+          className="btn"
+        >
           Voltar
         </button>
         <button type="button" onClick={next} className="btn btn-primary">

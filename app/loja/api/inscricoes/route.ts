@@ -26,7 +26,10 @@ export async function POST(req: NextRequest) {
         .getFirstListItem(`email='${data.user_email}'`)
     } catch {
       if (!tenantId) {
-        return NextResponse.json({ error: 'Tenant não informado' }, { status: 400 })
+        return NextResponse.json(
+          { error: 'Tenant não informado' },
+          { status: 400 },
+        )
       }
       const tempPass = Math.random().toString(36).slice(2, 10)
       usuario = await pb.collection('usuarios').create({

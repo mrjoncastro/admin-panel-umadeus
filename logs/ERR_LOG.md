@@ -173,17 +173,29 @@
 ## [2025-06-21] Build falhou: next not found - dev
 
 ## [2025-06-21] Corrigido erro 403 no dashboard requisitando admin/api/usuarios/${user.id} - dev - ab8a6ee
+
 ## [2025-06-21] Erro ao atualizar configuracoes: ClientResponseError 400: Failed to update record. - development
+
 ## [2025-06-21] Suporte ao campo logo nos eventos e formulários. Rotas corrigidas - dev
 
 ## [2025-07-26] Erro 401 ao criar pedido na loja devido a token não enviado; rota ajustada para incluir cabeçalhos de autenticação - dev
+
 ## [2025-07-27] Corrigido erro de cliente não encontrado ao registrar usuário; validação agora usa campo cliente em clientes_config - dev - 6967030
+
 ## [2025-07-27] Corrigido erro de cliente não encontrado ao registrar usuário; validação agora usa campo cliente em clientes_config - dev - 6967030
+
 ## [2025-07-27] Registro de usuário não incluía role e bairro; rota atualizada para enviar role "usuario" e campo bairro - dev
+
 ## [2025-07-27] Corrigido erro de cliente não encontrado ao registrar usuário; validação agora usa campo cliente em clientes_config - dev - 6967030
+
 ## [2025-07-27] Registro de usuário não incluía role e bairro; rota atualizada para enviar role "usuario" e campo bairro - dev
+
 ## [2025-06-21] Erro ao criar pedido: ClientResponseError 400: Failed to create record. - development
+
 ## [2025-06-21] Erro ao criar pedido: ClientResponseError 400: Failed to create record. - development
+
 ## [2025-06-21] Erro ao criar pedido: ClientResponseError 400: Failed to create record. - development
+
 ## [2025-06-21] Erro ao criar pedido: ClientResponseError 400: Failed to create record. - development
+
 ## [2025-06-21] Erro no checkout: Error - development

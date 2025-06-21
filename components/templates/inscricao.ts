@@ -33,7 +33,9 @@ export function criarInscricao(dados: InscricaoTemplate): Inscricao {
     dados.criado_por,
   ]
 
-  if (obrigatorios.some((v) => !v || (typeof v === 'string' && v.trim() === ''))) {
+  if (
+    obrigatorios.some((v) => !v || (typeof v === 'string' && v.trim() === ''))
+  ) {
     throw new Error('Todos os campos obrigatórios devem ser preenchidos.')
   }
 

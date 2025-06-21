@@ -16,7 +16,10 @@ interface InscricaoWizardProps {
   eventoId: string
 }
 
-export default function InscricaoWizard({ liderId, eventoId }: InscricaoWizardProps) {
+export default function InscricaoWizard({
+  liderId,
+  eventoId,
+}: InscricaoWizardProps) {
   const { config } = useTenant()
   const { showSuccess, showError } = useToast()
   const [campoNome, setCampoNome] = useState('')
@@ -57,8 +60,8 @@ export default function InscricaoWizard({ liderId, eventoId }: InscricaoWizardPr
               tamanhos: Array.isArray(p.tamanhos)
                 ? p.tamanhos
                 : p.tamanhos
-                ? [p.tamanhos]
-                : undefined,
+                  ? [p.tamanhos]
+                  : undefined,
             }))
           : []
         setProdutos(lista)
@@ -121,22 +124,63 @@ export default function InscricaoWizard({ liderId, eventoId }: InscricaoWizardPr
       content: (
         <div className="space-y-4">
           <FormField label="Nome" htmlFor="nome">
-            <TextField id="nome" name="nome" value={form.nome} onChange={handleChange} required />
+            <TextField
+              id="nome"
+              name="nome"
+              value={form.nome}
+              onChange={handleChange}
+              required
+            />
           </FormField>
           <FormField label="E-mail" htmlFor="email">
-            <TextField id="email" name="email" type="email" value={form.email} onChange={handleChange} required />
+            <TextField
+              id="email"
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
           </FormField>
           <FormField label="Telefone" htmlFor="telefone">
-            <InputWithMask id="telefone" name="telefone" mask="telefone" value={form.telefone} onChange={handleChange} required />
+            <InputWithMask
+              id="telefone"
+              name="telefone"
+              mask="telefone"
+              value={form.telefone}
+              onChange={handleChange}
+              required
+            />
           </FormField>
           <FormField label="CPF" htmlFor="cpf">
-            <InputWithMask id="cpf" name="cpf" mask="cpf" value={form.cpf} onChange={handleChange} required />
+            <InputWithMask
+              id="cpf"
+              name="cpf"
+              mask="cpf"
+              value={form.cpf}
+              onChange={handleChange}
+              required
+            />
           </FormField>
           <FormField label="Data de Nascimento" htmlFor="data_nascimento">
-            <TextField id="data_nascimento" name="data_nascimento" type="date" value={form.data_nascimento} onChange={handleChange} required />
+            <TextField
+              id="data_nascimento"
+              name="data_nascimento"
+              type="date"
+              value={form.data_nascimento}
+              onChange={handleChange}
+              required
+            />
           </FormField>
           <FormField label="Gênero" htmlFor="genero">
-            <select id="genero" name="genero" value={form.genero} onChange={handleChange} className="input-base" required>
+            <select
+              id="genero"
+              name="genero"
+              value={form.genero}
+              onChange={handleChange}
+              className="input-base"
+              required
+            >
               <option value="">Selecione</option>
               <option value="masculino">Masculino</option>
               <option value="feminino">Feminino</option>
@@ -150,16 +194,40 @@ export default function InscricaoWizard({ liderId, eventoId }: InscricaoWizardPr
       content: (
         <div className="space-y-4">
           <FormField label="CEP" htmlFor="cep">
-            <TextField id="cep" name="cep" value={form.cep} onChange={handleChange} required />
+            <TextField
+              id="cep"
+              name="cep"
+              value={form.cep}
+              onChange={handleChange}
+              required
+            />
           </FormField>
           <FormField label="Estado" htmlFor="estado">
-            <TextField id="estado" name="estado" value={form.estado} onChange={handleChange} required />
+            <TextField
+              id="estado"
+              name="estado"
+              value={form.estado}
+              onChange={handleChange}
+              required
+            />
           </FormField>
           <FormField label="Cidade" htmlFor="cidade">
-            <TextField id="cidade" name="cidade" value={form.cidade} onChange={handleChange} required />
+            <TextField
+              id="cidade"
+              name="cidade"
+              value={form.cidade}
+              onChange={handleChange}
+              required
+            />
           </FormField>
           <FormField label="Número" htmlFor="numero">
-            <TextField id="numero" name="numero" value={form.numero} onChange={handleChange} required />
+            <TextField
+              id="numero"
+              name="numero"
+              value={form.numero}
+              onChange={handleChange}
+              required
+            />
           </FormField>
         </div>
       ),
@@ -177,7 +245,13 @@ export default function InscricaoWizard({ liderId, eventoId }: InscricaoWizardPr
       content: (
         <div className="space-y-4">
           <FormField label="Produto" htmlFor="produtoId">
-            <select id="produtoId" name="produtoId" value={form.produtoId} onChange={handleChange} className="input-base">
+            <select
+              id="produtoId"
+              name="produtoId"
+              value={form.produtoId}
+              onChange={handleChange}
+              className="input-base"
+            >
               {produtos.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.nome}
@@ -187,7 +261,13 @@ export default function InscricaoWizard({ liderId, eventoId }: InscricaoWizardPr
           </FormField>
           {produtos.find((p) => p.id === form.produtoId)?.tamanhos && (
             <FormField label="Tamanho" htmlFor="tamanho">
-              <select id="tamanho" name="tamanho" value={form.tamanho} onChange={handleChange} className="input-base">
+              <select
+                id="tamanho"
+                name="tamanho"
+                value={form.tamanho}
+                onChange={handleChange}
+                className="input-base"
+              >
                 <option value="">Selecione</option>
                 {produtos
                   .find((p) => p.id === form.produtoId)

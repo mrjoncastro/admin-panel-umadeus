@@ -34,6 +34,9 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json(updated, { status: 200 })
   } catch (err) {
     console.error('Erro ao atualizar dados:', err)
-    return NextResponse.json({ error: 'Erro ao atualizar dados' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Erro ao atualizar dados' },
+      { status: 500 },
+    )
   }
 }

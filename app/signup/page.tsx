@@ -4,7 +4,13 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useToast } from '@/lib/context/ToastContext'
-import { TextField, InputWithMask, FormField, Button, Spinner } from '@/components'
+import {
+  TextField,
+  InputWithMask,
+  FormField,
+  Button,
+  Spinner,
+} from '@/components'
 
 export default function SignUpPage() {
   const { login } = useAuthContext()

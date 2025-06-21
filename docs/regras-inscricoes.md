@@ -41,6 +41,7 @@ Com a opção **desativada**, o pedido é gerado automaticamente logo após o en
 
 O frontend utiliza o componente `InscricaoWizard` para guiar o usuário pelo preenchimento dos dados em etapas. A mesma experiência está disponível na rota `loja/eventos/[id]` por meio do `InscricaoLojaWizard`.
 As etapas são:
+
 1. Dados Pessoais
 2. Endereço
 3. Campo de Atuação
