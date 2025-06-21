@@ -1,8 +1,7 @@
 'use client'
 
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import createPocketBase from '@/lib/pocketbase'
+import { useEffect, useRef, useState } from 'react'
 import type { Inscricao, Pedido } from '@/types'
 import DashboardResumo from './components/DashboardResumo'
 import DashboardAnalytics from '../components/DashboardAnalytics'
@@ -10,7 +9,6 @@ import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 
 export default function DashboardPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
-  const pb = useMemo(() => createPocketBase(), [])
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [pedidos, setPedidos] = useState<Pedido[]>([])
   const [loading, setLoading] = useState(true)
@@ -61,7 +59,7 @@ export default function DashboardPage() {
 
         const campoId = expandedUser.expand?.campo?.id
 
-        const allInscricoes: Inscricao[] = rawInscricoes.map((r) => ({
+        const allInscricoes: Inscricao[] = rawInscricoes.map((r: Inscricao) => ({
           id: r.id,
           nome: r.nome,
           telefone: r.telefone,
@@ -81,7 +79,7 @@ export default function DashboardPage() {
           },
         }))
 
-        const allPedidos: Pedido[] = rawPedidos.map((r) => ({
+        const allPedidos: Pedido[] = rawPedidos.map((r: Pedido) => ({
           id: r.id,
           id_inscricao: r.id_inscricao,
           produto: r.produto,

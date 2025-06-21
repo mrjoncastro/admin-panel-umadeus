@@ -1,7 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import createPocketBase from '@/lib/pocketbase'
+import { useEffect, useState } from 'react'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import { Pedido } from '@/types'
 import { saveAs } from 'file-saver'
@@ -11,7 +10,6 @@ import { useToast } from '@/lib/context/ToastContext'
 
 export default function PedidosPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
-  const pb = useMemo(() => createPocketBase(), [])
 
   const [pedidos, setPedidos] = useState<Pedido[]>([])
   const [loading, setLoading] = useState(true)
@@ -45,7 +43,7 @@ export default function PedidosPage() {
         const params = new URLSearchParams({
           page: String(pagina),
           perPage: '10',
-          filter,
+          filter: filtro,
           sort: `${ordem === 'desc' ? '-' : ''}created`,
         })
         const res = await fetch(`/api/pedidos?${params.toString()}`, {

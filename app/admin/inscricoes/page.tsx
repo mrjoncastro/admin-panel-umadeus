@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Copy } from 'lucide-react'
 import { saveAs } from 'file-saver'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
@@ -10,7 +10,6 @@ import { CheckCircle, XCircle, Pencil, Trash2, Eye } from 'lucide-react'
 import TooltipIcon from '../components/TooltipIcon'
 import { useToast } from '@/lib/context/ToastContext'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
-import createPocketBase from '@/lib/pocketbase'
 import { type PaymentMethod } from '@/lib/asaasFees'
 import type {
   Evento,
@@ -50,7 +49,6 @@ type Inscricao = {
 
 export default function ListaInscricoesPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
-  const pb = useMemo(() => createPocketBase(), [])
   const tenantId = user?.cliente || ''
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [role, setRole] = useState('')
