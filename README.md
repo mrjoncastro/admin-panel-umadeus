@@ -259,7 +259,7 @@ O sistema possui três níveis de usuário:
 Coordenadores visualizam as métricas financeiras completas no painel.
 Líderes veem apenas a quantidade de inscrições e pedidos do seu campo.
 
-Para mais detalhes de visualização das inscrições e parâmetros de filtro da API, consulte [docs/regras-inscricoes.md](docs/regras-inscricoes.md).
+Para detalhes completos sobre visualização das inscrições, consulte [docs/regras-inscricoes.md](docs/regras-inscricoes.md). Já as regras de geração e acompanhamento de pedidos estão em [docs/regras-pedidos.md](docs/regras-pedidos.md).
 
 ## Blog e CMS
 
