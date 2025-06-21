@@ -344,3 +344,4 @@
 ## [2025-07-21] Criados docs/regras-pedidos.md e atualizadas instru\u00e7\u00f5es de confirma\u00e7\u00e3o no guia de inscri\u00e7\u00f5es e README. Lint e build executados.
 ## [2025-07-22] Adicionada valida\u00e7\u00e3o de PB_URL em runtime e documenta\u00e7\u00e3o atualizada. Lint e build executados.
 ## [2025-07-23] Adicionado fallback para PB_URL e mensagens de aviso. Documentação e .env.example atualizados. Lint e build executados.
+## [2025-06-21] Correção de proteções de autenticação e notificação usando useAuthContext. Lint e build executados.

@@ -4,17 +4,21 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from './useAuth'
+import { useAuthContext } from '../context/AuthContext'
 
 export function useAuthGuard(
   rolesPermitidos: string[] = ['coordenador', 'lider'],
 ) {
-  const { user, isLoggedIn } = useAuth()
+  const { user, isLoggedIn, isLoading } = useAuthContext()
   const router = useRouter()
 
   const [authChecked, setAuthChecked] = useState(false)
 
   useEffect(() => {
+    if (isLoading) {
+      return
+    }
+
     if (!isLoggedIn) {
       router.replace('/login')
       return
@@ -27,7 +31,7 @@ export function useAuthGuard(
     } else {
       router.replace('/login')
     }
-  }, [isLoggedIn, user, rolesPermitidos, router])
+  }, [isLoggedIn, isLoading, user, rolesPermitidos, router])
 
   return { user, authChecked }
 }
