@@ -1,24 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
+import { requireRole } from '@/lib/apiAuth'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro } from '@/lib/server/logger'
 import type { Inscricao, Pedido, Produto } from '@/types'
 
-export async function GET(req: Request) {
-  const cookie = req.headers.get('cookie') || ''
-  const pb = createPocketBase()
-  pb.authStore.loadFromCookie(cookie)
-
-  if (!pb.authStore.isValid) {
-    return NextResponse.json([], { status: 401 })
+export async function GET(req: NextRequest) {
+  const auth = requireRole(req, ['usuario', 'lider', 'coordenador'])
+  if ('error' in auth) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status })
   }
-
-  const tenant = await getTenantFromHost()
-  const { items } = await pb
-    .collection('pedidos')
-    .getList(1, 10, { filter: `cliente="${tenant}"`, sort: '-created' })
-
-  return NextResponse.json(items)
+  const { pb, user } = auth
+  const page = Number(req.nextUrl.searchParams.get('page') || '1')
+  const perPage = Number(req.nextUrl.searchParams.get('perPage') || '50')
+  const status = req.nextUrl.searchParams.get('status') || ''
+  try {
+    let baseFilter = ''
+    if (user.role === 'usuario') {
+      baseFilter = `responsavel = "${user.id}"`
+    } else if (user.role === 'lider') {
+      baseFilter = `campo = "${user.campo}"`
+    } else {
+      const tenantId = await getTenantFromHost()
+      if (!tenantId) {
+        return NextResponse.json(
+          { error: 'Tenant não informado' },
+          { status: 400 },
+        )
+      }
+      baseFilter = `cliente = "${tenantId}"`
+    }
+    const filtro = status ? `${baseFilter} && status='${status}'` : baseFilter
+    const { items } = await pb.collection('pedidos').getList(page, perPage, {
+      filter: filtro,
+      sort: '-created',
+    })
+    return NextResponse.json(items)
+  } catch (err) {
+    console.error('Erro ao listar pedidos:', err)
+    return NextResponse.json({ error: 'Erro ao listar' }, { status: 500 })
+  }
 }
 
 export async function POST(req: NextRequest) {
