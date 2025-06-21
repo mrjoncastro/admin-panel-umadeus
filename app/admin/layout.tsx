@@ -3,8 +3,6 @@ import '@/app/globals.css'
 import LayoutWrapper from '@/components/templates/LayoutWrapperAdmin'
 
 export const metadata = {
-  title: 'UMADEUS',
-  description: 'Sistema de inscrições e gestão UMADEUS',
   icons: {
     icon: [
       { url: '/favicon.ico' },
