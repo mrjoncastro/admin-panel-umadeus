@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { fetchInscricoes } from '@/lib/services/pocketbase'
+
 import { useAuthContext } from '@/lib/context/AuthContext'
 import type { Inscricao } from '@/types'
 
@@ -12,9 +12,10 @@ export default function useInscricoes() {
   useEffect(() => {
     if (!tenantId) return
     let active = true
-    fetchInscricoes(tenantId)
-      .then((res) => {
-        if (active) setInscricoes(res as unknown as Inscricao[])
+    fetch('/api/inscricoes', { credentials: 'include' })
+      .then((res) => (res.ok ? res.json() : Promise.reject()))
+      .then((data) => {
+        if (active) setInscricoes(data as Inscricao[])
       })
       .catch(() => {
         if (active) setInscricoes([])

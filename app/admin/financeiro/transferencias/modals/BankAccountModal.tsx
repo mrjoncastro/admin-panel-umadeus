@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import ModalAnimated from '@/components/organisms/ModalAnimated'
 import SmoothTabs from '@/components/molecules/SmoothTabs'
-import type { UserModel } from '@/types/UserModel'
 import {
   searchBanks,
   createBankAccountApi,

@@ -2,12 +2,12 @@
 
 'use client'
 
-import { useState, useEffect } from 'react'
-import usePocketBase from './usePocketBase'
+import { useState, useEffect, useMemo } from 'react'
+import createPocketBase from '@/lib/pocketbase'
 import type { UserModel } from '@/types/UserModel'
 
 export function useAuth() {
-  const pb = usePocketBase()
+  const pb = useMemo(() => createPocketBase(), [])
   const [user, setUser] = useState<UserModel | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [isLoggedIn, setIsLoggedIn] = useState(false)

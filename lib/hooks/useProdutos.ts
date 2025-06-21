@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { fetchProdutos } from '@/lib/services/pocketbase'
+
 import { useAuthContext } from '@/lib/context/AuthContext'
 import type { Produto } from '@/types'
 
@@ -12,9 +12,10 @@ export default function useProdutos() {
   useEffect(() => {
     if (!tenantId) return
     let active = true
-    fetchProdutos(tenantId)
-      .then((res) => {
-        if (active) setProdutos(res as unknown as Produto[])
+    fetch('/api/produtos', { credentials: 'include' })
+      .then((res) => (res.ok ? res.json() : Promise.reject()))
+      .then((data) => {
+        if (active) setProdutos(data as Produto[])
       })
       .catch(() => {
         if (active) setProdutos([])
