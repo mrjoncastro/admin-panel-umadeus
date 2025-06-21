@@ -28,10 +28,39 @@ export async function POST(req: NextRequest) {
     const { inscricaoId } = body
 
     if (!inscricaoId) {
-      return NextResponse.json(
-        { erro: 'ID da inscrição é obrigatório.' },
-        { status: 400 },
-      )
+      // Cria pedido da loja
+      const tenantId = await getTenantFromHost()
+      if (!tenantId) {
+        return NextResponse.json({ erro: 'Tenant não encontrado' }, { status: 400 })
+      }
+      const { produto, tamanho, cor, genero, campoId, email, valor } = body
+      const userId = pb.authStore.model?.id as string | undefined
+
+      if (!userId) {
+        return NextResponse.json({ erro: 'Usuário não autenticado' }, { status: 401 })
+      }
+
+      const pedido = await pb.collection('pedidos').create<Pedido>({
+        id_inscricao: '',
+        id_pagamento: '',
+        produto: produto || 'Produto',
+        tamanho,
+        status: 'pendente',
+        cor: cor || 'Roxo',
+        genero,
+        responsavel: userId,
+        cliente: tenantId,
+        ...(campoId ? { campo: campoId } : {}),
+        email,
+        valor: valor ?? 0,
+        canal: 'loja',
+      })
+
+      return NextResponse.json({
+        pedidoId: pedido.id,
+        valor: pedido.valor,
+        status: pedido.status,
+      })
     }
 
     const inscricao = await pb

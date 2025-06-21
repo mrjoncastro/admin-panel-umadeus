@@ -17,7 +17,6 @@ const BlogHeroCarousel = dynamic(
 const BlogPostsList = dynamic(
   () => import('@/components/organisms/BlogPostsList'),
 )
-import createPocketBase from '@/lib/pocketbase'
 import type { Cliente } from '@/types'
 import {
   getPostsClientPB,
@@ -32,17 +31,12 @@ export default function BlogClient() {
   const [nomeCliente, setNomeCliente] = useState('')
 
   useEffect(() => {
-    const pb = createPocketBase()
     async function fetchCliente() {
       try {
-        const res = await fetch('/api/tenant')
-        const data = (await res.json()) as { tenantId: string | null }
-        const id = data.tenantId
-        if (id) {
-          const c = await pb
-            .collection('clientes_config')
-            .getFirstListItem<Cliente>(`cliente='${id}'`)
-          setNomeCliente(c?.nome ?? '')
+        const res = await fetch('/api/tenant-config', { credentials: 'include' })
+        if (res.ok) {
+          const data = (await res.json()) as Cliente
+          setNomeCliente(data?.nome ?? '')
         } else {
           setNomeCliente('')
         }

@@ -3,7 +3,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import createPocketBase from '@/lib/pocketbase'
 import { calculateGross } from '@/lib/asaasFees'
 
 interface Produto {
@@ -20,24 +19,15 @@ export default function Home() {
   useEffect(() => {
     async function fetchProdutos() {
       try {
-        const pb = createPocketBase()
-        const res = await fetch('/api/tenant')
-        const data = (await res.json()) as { tenantId: string | null }
-        const tenantId = data.tenantId
-
-        const filterStr = tenantId
-          ? `ativo = true && cliente='${tenantId}'`
-          : 'ativo = true'
-        const list = await pb.collection('produtos').getList<Produto>(1, 6, {
-          filter: filterStr,
-          sort: '-created',
-        })
-        const prods = list.items.map((p) => ({
-          ...p,
-          preco: calculateGross(p.preco, 'pix', 1).gross,
-          imagens: (p.imagens || []).map((img) => pb.files.getURL(p, img)),
-        }))
-        setProdutosDestaque(prods)
+        const res = await fetch('/api/produtos', { credentials: 'include' })
+        if (res.ok) {
+          const list = (await res.json()) as Produto[]
+          const prods = list.map((p) => ({
+            ...p,
+            preco: calculateGross(p.preco, 'pix', 1).gross,
+          }))
+          setProdutosDestaque(prods)
+        }
       } catch (err) {
         console.error(err)
       }
