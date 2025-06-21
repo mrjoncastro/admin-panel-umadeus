@@ -1,20 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { requireRole } from '@/lib/apiAuth'
+import { NextResponse } from 'next/server'
+import createPocketBase from '@/lib/pocketbase'
+import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
-export async function GET(req: NextRequest) {
-  const auth = requireRole(req, 'usuario')
-  if ('error' in auth) {
-    return NextResponse.json({ error: auth.error }, { status: auth.status })
+export async function GET(req: Request) {
+  const cookie = req.headers.get('cookie') || ''
+  const pb = createPocketBase()
+  pb.authStore.loadFromCookie(cookie)
+
+  if (!pb.authStore.isValid) {
+    return NextResponse.json([], { status: 401 })
   }
-  const { pb, user } = auth
-  try {
-    const pedidos = await pb.collection('pedidos').getFullList({
-      filter: `responsavel = "${user.id}"`,
-      sort: '-created',
-    })
-    return NextResponse.json(pedidos, { status: 200 })
-  } catch (err) {
-    console.error('Erro ao listar pedidos:', err)
-    return NextResponse.json({ error: 'Erro ao listar' }, { status: 500 })
-  }
+
+  const tenant = await getTenantFromHost()
+  const { items } = await pb
+    .collection('pedidos')
+    .getList(1, 10, { filter: `cliente="${tenant}"`, sort: '-created' })
+
+  return NextResponse.json(items)
 }

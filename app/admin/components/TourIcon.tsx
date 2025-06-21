@@ -1,15 +1,13 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { MapPinned } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import createPocketBase from '@/lib/pocketbase'
 import { useAuthContext } from '@/lib/context/AuthContext'
 
 export default function TourIcon() {
   const { user, isLoggedIn } = useAuthContext()
   const [visible, setVisible] = useState(false)
-  const pb = useMemo(() => createPocketBase(), [])
   const router = useRouter()
 
   useEffect(() => {
@@ -24,7 +22,11 @@ export default function TourIcon() {
     const confirmar = window.confirm('Iniciar tour?')
     if (!confirmar || !user) return
     try {
-      await pb.collection('usuarios').update(user.id, { tour: true })
+      await fetch(`/api/usuarios/${user.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tour: true }),
+      })
     } catch (err) {
       console.error('Erro ao registrar tour', err)
     }

@@ -19,6 +19,7 @@ type AuthContextType = {
     email: string,
     telefone: string,
     cpf: string,
+    dataNascimento: string,
     endereco: string,
     numero: string,
     estado: string,
@@ -113,6 +114,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     email: string,
     telefone: string,
     cpf: string,
+    dataNascimento: string,
     endereco: string,
     numero: string,
     estado: string,
@@ -134,24 +136,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setTenantId(null)
     }
 
-    await pb.collection('usuarios').create({
-      nome,
-      email,
-      telefone,
-      cpf,
-      endereco,
-      numero,
-      estado,
-      cep,
-      cidade,
-      password,
-      passwordConfirm: password,
-      role: 'usuario',
-      cliente: clienteId,
-      tour: false,
+    await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nome,
+        email,
+        telefone,
+        cpf,
+        data_nascimento: dataNascimento,
+        endereco,
+        numero,
+        estado,
+        cep,
+        cidade,
+        password,
+        cliente: clienteId,
+      }),
     })
-    pb.authStore.loadFromCookie(document.cookie)
-    updateBaseAuth(pb.authStore.token, pb.authStore.model)
     await login(email, password)
   }
 

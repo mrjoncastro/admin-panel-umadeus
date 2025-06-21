@@ -21,6 +21,7 @@ export async function PATCH(req: NextRequest) {
       telefone: String(data.telefone || '').trim(),
       cpf: String(data.cpf || '').trim(),
       data_nascimento: String(data.data_nascimento || ''),
+      ...(data.tour !== undefined ? { tour: Boolean(data.tour) } : {}),
       role: user.role,
     })
     return NextResponse.json({ ok: true })

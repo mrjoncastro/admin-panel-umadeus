@@ -1,10 +1,9 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useAuthContext } from '@/lib/context/AuthContext'
-import createPocketBase from '@/lib/pocketbase'
 import { useToast } from '@/lib/context/ToastContext'
 import { FormField, TextField, InputWithMask } from '@/components'
 
@@ -14,7 +13,6 @@ export default function ModalEditarPerfil({
   onClose: () => void
 }) {
   const { user } = useAuthContext()
-  const pb = useMemo(() => createPocketBase(), [])
   const [nome, setNome] = useState(String(user?.nome || ''))
   const [telefone, setTelefone] = useState(String(user?.telefone || ''))
   const [cpf, setCpf] = useState(String(user?.cpf || ''))
@@ -36,17 +34,17 @@ export default function ModalEditarPerfil({
     }
 
     try {
-      await pb.collection('usuarios').update(user.id, {
-        nome: String(nome).trim(),
-        telefone: String(telefone).trim(),
-        cpf: String(cpf).trim(),
-        data_nascimento: String(dataNascimento),
-        endereco: String(endereco).trim(),
-        numero: String(numero).trim(),
-        estado: String(estado).trim(),
-        cep: String(cep).trim(),
-        cidade: String(cidade).trim(),
-        role: user.role,
+      await fetch(`/api/usuarios/${user.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nome: String(nome).trim(),
+          telefone: String(telefone).trim(),
+          cpf: String(cpf).trim(),
+          data_nascimento: String(dataNascimento),
+        }),
       })
 
       showSuccess('Perfil atualizado com sucesso.')

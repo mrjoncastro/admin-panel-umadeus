@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useToast } from '@/lib/context/ToastContext'
 import type { ClientResponseError } from 'pocketbase'
-import createPocketBase from '@/lib/pocketbase' // ajuste para seu caminho real
 import Spinner from '@/components/atoms/Spinner'
 import { FormField, TextField, InputWithMask } from '@/components'
 
@@ -19,7 +18,6 @@ export default function SignUpForm({
   children?: React.ReactNode
 }) {
   const { signUp } = useAuthContext()
-  const pb = createPocketBase()
 
   const [campos, setCampos] = useState<{ id: string; nome: string }[]>([])
   const [campo, setCampo] = useState('')
@@ -48,19 +46,24 @@ export default function SignUpForm({
 
         if (!tenantId) return
 
-        const res = await pb.collection('campos').getFullList({
-          sort: 'nome',
-          filter: `cliente='${tenantId}'`,
-        })
-        const lista = res.map((item) => ({ id: item.id, nome: item.nome }))
-        setCampos(lista)
+        const res = await fetch('/api/campos')
+        if (res.ok) {
+          const data = await res.json()
+          const lista = Array.isArray(data)
+            ? data.map((item: { id: string; nome: string }) => ({
+                id: item.id,
+                nome: item.nome,
+              }))
+            : []
+          setCampos(lista)
+        }
       } catch {
         console.warn('Erro ao carregar os campos')
       }
     }
 
     loadCampos()
-  }, [pb])
+  }, [])
 
   useEffect(() => {
     const cleanCep = cep.replace(/\D/g, '')
@@ -106,6 +109,7 @@ export default function SignUpForm({
         email,
         telefone,
         cpf,
+        dataNascimento,
         endereco,
         numero,
         estado,
