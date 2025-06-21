@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import createPocketBase from '@/lib/pocketbase'
+import { useState } from 'react'
 import { useToast } from '@/lib/context/ToastContext'
 
 export default function RedefinirSenhaModal({
@@ -10,12 +9,16 @@ export default function RedefinirSenhaModal({
   onClose: () => void
 }) {
   const [email, setEmail] = useState('')
-  const pb = useMemo(() => createPocketBase(), [])
   const { showSuccess, showError } = useToast()
 
   const handleResetRequest = async () => {
     try {
-      await pb.collection('usuarios').requestPasswordReset(email)
+      const res = await fetch('/api/usuarios/password-reset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      if (!res.ok) throw new Error('Erro')
       showSuccess('Enviamos um link de redefinição para seu e-mail.')
       onClose()
     } catch (err) {
