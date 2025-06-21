@@ -259,6 +259,8 @@ O sistema possui três níveis de usuário:
 Coordenadores visualizam as métricas financeiras completas no painel.
 Líderes veem apenas a quantidade de inscrições e pedidos do seu campo.
 
+Para mais detalhes de visualização das inscrições e parâmetros de filtro da API, consulte [docs/regras-inscricoes.md](docs/regras-inscricoes.md).
+
 ## Blog e CMS
 
 Os posts agora ficam na coleção `posts` do PocketBase, em vez de arquivos `.mdx`.
