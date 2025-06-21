@@ -173,3 +173,4 @@
 ## [2025-06-21] Build falhou: next not found - dev
 
 ## [2025-06-21] Corrigido erro 403 no dashboard requisitando admin/api/usuarios/${user.id} - dev - ab8a6ee
+## [2025-06-21] Erro ao atualizar configuracoes: ClientResponseError 400: Failed to update record. - development
