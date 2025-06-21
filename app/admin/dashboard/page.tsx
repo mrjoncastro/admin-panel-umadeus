@@ -8,7 +8,7 @@ import DashboardAnalytics from '../components/DashboardAnalytics'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 
 export default function DashboardPage() {
-  const { user, pb, authChecked } = useAuthGuard(['coordenador', 'lider'])
+  const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [pedidos, setPedidos] = useState<Pedido[]>([])
   const [loading, setLoading] = useState(true)
@@ -24,28 +24,34 @@ export default function DashboardPage() {
 
     const fetchData = async () => {
       try {
-        const expandedUser = await pb.collection('usuarios').getOne(user.id, {
-          expand: 'campo',
+        const userRes = await fetch(`/api/usuarios/${user.id}`, {
+          credentials: 'include',
           signal,
         })
+        const expandedUser = await userRes.json()
 
         const perPage = 50
         const filtroCliente = `cliente='${user.cliente}'`
-        const [inscricoesRes, pedidosRes] = await Promise.all([
-          pb.collection('inscricoes').getList(page, perPage, {
-            expand: 'campo,evento,criado_por,pedido',
-            filter: filtroCliente,
+        const params = new URLSearchParams({
+          page: String(page),
+          perPage: String(perPage),
+          filter: filtroCliente,
+        })
+        const [insRes, pedRes] = await Promise.all([
+          fetch(`/api/inscricoes?${params.toString()}`, {
+            credentials: 'include',
             signal,
-          }),
-          pb.collection('pedidos').getList(page, perPage, {
-            expand: 'campo,criado_por',
-            filter: filtroCliente,
+          }).then((r) => r.json()),
+          fetch(`/api/pedidos?${params.toString()}`, {
+            credentials: 'include',
             signal,
-          }),
+          }).then((r) => r.json()),
         ])
-        const rawInscricoes = inscricoesRes.items
-        const rawPedidos = pedidosRes.items
-        setTotalPages(Math.max(inscricoesRes.totalPages, pedidosRes.totalPages))
+        const rawInscricoes = Array.isArray(insRes.items) ? insRes.items : insRes
+        const rawPedidos = Array.isArray(pedRes.items) ? pedRes.items : pedRes
+        if (insRes.totalPages && pedRes.totalPages) {
+          setTotalPages(Math.max(insRes.totalPages, pedRes.totalPages))
+        }
 
         if (!isMounted.current) return
 
@@ -115,7 +121,7 @@ export default function DashboardPage() {
       isMounted.current = false
       controller.abort()
     }
-  }, [authChecked, user?.id, user?.role, user?.cliente, pb, page])
+  }, [authChecked, user?.id, user?.role, user?.cliente, page])
 
   return (
     <main className="min-h-screen  p-4 md:p-6">

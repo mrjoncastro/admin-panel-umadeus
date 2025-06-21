@@ -9,7 +9,7 @@ import ModalEditarPedido from './componentes/ModalEditarPedido'
 import { useToast } from '@/lib/context/ToastContext'
 
 export default function PedidosPage() {
-  const { user, pb, authChecked } = useAuthGuard(['coordenador', 'lider'])
+  const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
 
   const [pedidos, setPedidos] = useState<Pedido[]>([])
   const [loading, setLoading] = useState(true)
@@ -40,14 +40,19 @@ export default function PedidosPage() {
             ? baseFiltro
             : `campo = "${user.campo}" && ${baseFiltro}`
 
-        const res = await pb.collection('pedidos').getList<Pedido>(pagina, 10, {
-          filter: filtro,
-          expand: 'campo,id_inscricao',
+        const params = new URLSearchParams({
+          page: String(pagina),
+          perPage: '10',
+          filter,
           sort: `${ordem === 'desc' ? '-' : ''}created`,
         })
-
-        setPedidos(res.items)
-        setTotalPaginas(res.totalPages)
+        const res = await fetch(`/api/pedidos?${params.toString()}`, {
+          credentials: 'include',
+        })
+        const data = await res.json()
+        const items = Array.isArray(data.items) ? data.items : data
+        setPedidos(items)
+        if (data.totalPages) setTotalPaginas(data.totalPages)
       } catch (err) {
         console.error('Erro ao carregar pedidos', err)
         showError('Erro ao carregar pedidos')
@@ -57,7 +62,7 @@ export default function PedidosPage() {
     }
 
     fetchPedidos()
-  }, [pb, pagina, ordem, user, authChecked, showError])
+  }, [pagina, ordem, user, authChecked, showError])
 
   const pedidosFiltrados = pedidos.filter((p) => {
     const matchStatus = filtroStatus === '' || p.status === filtroStatus
@@ -223,7 +228,10 @@ export default function PedidosPage() {
                           confirm('Tem certeza que deseja excluir este pedido?')
                         ) {
                           try {
-                            await pb.collection('pedidos').delete(pedido.id)
+                            await fetch(`/api/pedidos/${pedido.id}`, {
+                              method: 'DELETE',
+                              credentials: 'include',
+                            })
                             setPedidos((prev) =>
                               prev.filter((p) => p.id !== pedido.id),
                             )
@@ -253,9 +261,13 @@ export default function PedidosPage() {
           onClose={() => setPedidoSelecionado(null)}
           onSave={async (dadosAtualizados) => {
             try {
-              const atualizado = await pb
-                .collection('pedidos')
-                .update(pedidoSelecionado.id, dadosAtualizados)
+              const res = await fetch(`/api/pedidos/${pedidoSelecionado.id}`, {
+                method: 'PATCH',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dadosAtualizados),
+              })
+              const atualizado = await res.json()
               setPedidos((prev) =>
                 prev.map((p) =>
                   p.id === atualizado.id ? { ...p, ...atualizado } : p,

@@ -48,7 +48,7 @@ type Inscricao = {
 }
 
 export default function ListaInscricoesPage() {
-  const { user, pb, authChecked } = useAuthGuard(['coordenador', 'lider'])
+  const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
   const tenantId = user?.cliente || ''
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [role, setRole] = useState('')
@@ -77,16 +77,11 @@ export default function ListaInscricoesPage() {
       return
     }
 
-    pb.autoCancellation(false)
-
     setRole(user.role)
 
-    pb.collection('eventos')
-      .getFullList<Evento>({
-        sort: '-data',
-        filter: `cliente='${tenantId}' && status!='realizado'`,
-      })
-      .then((evs) => {
+    fetch('/api/eventos', { credentials: 'include' })
+      .then((res) => res.json())
+      .then((evs: Evento[]) => {
         setEventos(evs)
         if (evs.length > 0) {
           setEventoId(evs[0].id)
@@ -108,14 +103,12 @@ export default function ListaInscricoesPage() {
         ? baseFiltro
         : `campo='${user.campo}' && ${baseFiltro}`
 
-    pb.collection('inscricoes')
-      .getFullList({
-        sort: '-created',
-        filter: filtro,
-        expand: 'campo,evento,pedido',
-      })
+    fetch(`/api/inscricoes?${new URLSearchParams({ filter: filtro }).toString()}`, {
+      credentials: 'include',
+    })
+      .then((res) => res.json())
       .then((res) => {
-        const lista = res.map((r) => ({
+        const lista = (Array.isArray(res) ? res : res.items).map((r) => ({
           id: r.id,
           nome: r.nome,
           telefone: r.telefone,
@@ -140,14 +133,9 @@ export default function ListaInscricoesPage() {
       .finally(() => setLoading(false))
 
     if (user.role === 'coordenador') {
-      pb.collection('campos')
-        .getFullList({ sort: 'nome', filter: `cliente='${tenantId}'` })
-        .then(() => {
-          // noop
-        })
-        .catch(() => {})
+      fetch('/api/campos', { credentials: 'include' }).catch(() => {})
     }
-  }, [authChecked, pb, tenantId, user, showError])
+  }, [authChecked, tenantId, user, showError])
 
   useEffect(() => {
     if (!user) return
@@ -173,7 +161,10 @@ export default function ListaInscricoesPage() {
   const deletarInscricao = async (id: string) => {
     if (confirm('Tem certeza que deseja excluir esta inscrição?')) {
       try {
-        await pb.collection('inscricoes').delete(id)
+        await fetch(`/api/inscricoes/${id}`, {
+          method: 'DELETE',
+          credentials: 'include',
+        })
         setInscricoes((prev) => prev.filter((i) => i.id !== id))
         showSuccess('Inscrição excluída.')
       } catch {
@@ -188,13 +179,13 @@ export default function ListaInscricoesPage() {
       setConfirmandoId(id)
 
       // 1. Buscar inscrição com expand do campo e produtos
-      const inscricao = await pb
-        .collection('inscricoes')
-        .getOne<
-          InscricaoRecord & { expand?: { produtos?: Produto | Produto[] } }
-        >(id, {
-          expand: 'campo,produto',
-        })
+      const inscricaoRes = await fetch(
+        `/api/inscricoes/${id}?expand=campo,produto`,
+        { credentials: 'include' },
+      )
+      const inscricao: InscricaoRecord & {
+        expand?: { produtos?: Produto | Produto[] }
+      } = await inscricaoRes.json()
 
       // Dados da inscrição obtidos com expand
 
@@ -220,7 +211,12 @@ export default function ListaInscricoesPage() {
       // Fallback se não achou pelo expand
       if (!produtoRecord && produtoId) {
         try {
-          produtoRecord = await pb.collection('produtos').getOne(produtoId)
+          const prodRes = await fetch(`/api/produtos/${produtoId}`, {
+            credentials: 'include',
+          })
+          if (prodRes.ok) {
+            produtoRecord = await prodRes.json()
+          }
         } catch {}
       }
 
@@ -255,7 +251,34 @@ export default function ListaInscricoesPage() {
       // Aqui você pode aplicar algum cálculo se desejar
       const gross = precoProduto // ajuste aqui caso queira aplicar taxas/descontos
 
-      const pedido = await pb.collection('pedidos').create<Pedido>({
+      const pedidoRes = await fetch('/api/pedidos', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id_inscricao: id,
+          valor: precoProduto,
+          status: 'pendente',
+          produto: produtoRecord.nome || 'Produto',
+          cor: 'Roxo',
+          tamanho:
+            inscricao.tamanho ||
+            (Array.isArray(produtoRecord.tamanhos)
+              ? produtoRecord.tamanhos[0]
+              : (produtoRecord.tamanhos as string | undefined)),
+          genero:
+            inscricao.genero ||
+            (Array.isArray(produtoRecord.generos)
+              ? produtoRecord.generos[0]
+              : (produtoRecord.generos as string | undefined)),
+          email: inscricao.email,
+          cliente: tenantId,
+          campo: campo?.id,
+          responsavel: inscricao.criado_por,
+          canal: 'inscricao',
+        }),
+      })
+      const pedido: Pedido = await pedidoRes.json()
         id_inscricao: id,
         valor: precoProduto,
         status: 'pendente',
@@ -298,10 +321,15 @@ export default function ListaInscricoesPage() {
       }
 
       // 4. Atualizar inscrição com o ID do pedido
-      await pb.collection('inscricoes').update<InscricaoRecord>(id, {
-        pedido: pedido.id, // ✅ atualiza campo pedido
-        status: 'aguardando_pagamento',
-        confirmado_por_lider: true,
+      await fetch(`/api/inscricoes/${id}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pedido: pedido.id,
+          status: 'aguardando_pagamento',
+          confirmado_por_lider: true,
+        }),
       })
 
       // Atualizar estado local das inscrições
@@ -607,12 +635,16 @@ export default function ListaInscricoesPage() {
           onSave={async (
             dadosAtualizados: Partial<Inscricao & { eventoId: string }>,
           ) => {
-            await pb
-              .collection('inscricoes')
-              .update<InscricaoRecord>(inscricaoEmEdicao.id, {
+            await fetch(`/api/inscricoes/${inscricaoEmEdicao.id}`, {
+              method: 'PATCH',
+              credentials: 'include',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
                 ...dadosAtualizados,
-                evento: dadosAtualizados.eventoId ?? inscricaoEmEdicao.eventoId,
-              })
+                evento:
+                  dadosAtualizados.eventoId ?? inscricaoEmEdicao.eventoId,
+              }),
+            })
             setInscricoes((prev) =>
               prev.map((i) =>
                 i.id === inscricaoEmEdicao.id
@@ -643,11 +675,12 @@ export default function ListaInscricoesPage() {
               </button>
               <button
                 onClick={async () => {
-                  await pb
-                    .collection('inscricoes')
-                    .update<InscricaoRecord>(inscricaoParaRecusar.id, {
-                      status: 'cancelado',
-                    })
+                  await fetch(`/api/inscricoes/${inscricaoParaRecusar.id}`, {
+                    method: 'PATCH',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'cancelado' }),
+                  })
                   setInscricoes((prev) =>
                     prev.map((i) =>
                       i.id === inscricaoParaRecusar.id

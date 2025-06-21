@@ -1,13 +1,11 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { Bell, X } from 'lucide-react'
-import createPocketBase from '@/lib/pocketbase'
 import type { Inscricao } from '@/types'
 import { useAuthContext } from '@/lib/context/AuthContext'
 
 export default function NotificationBell() {
-  const pb = useMemo(() => createPocketBase(), [])
   const { tenantId } = useAuthContext()
   const [count, setCount] = useState(0)
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
@@ -16,21 +14,27 @@ export default function NotificationBell() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [insList, pedidos] = await Promise.all([
-          pb.collection('inscricoes').getList<Inscricao>(1, 5, {
-            filter: `status='pendente' && cliente='${tenantId}'`,
-            expand: 'campo',
-            sort: '-created',
-            $autoCancel: false,
-          }),
-          pb.collection('pedidos').getList(1, 1, {
-            filter: `status='pendente' && cliente='${tenantId}'`,
-            $autoCancel: false,
-          }),
+        const [insRes, pedRes] = await Promise.all([
+          fetch(
+            `/api/inscricoes?${new URLSearchParams({
+              status: 'pendente',
+              perPage: '5',
+            }).toString()}`,
+            { credentials: 'include' },
+          ).then((r) => r.json()),
+          fetch(
+            `/api/pedidos?${new URLSearchParams({
+              status: 'pendente',
+              perPage: '1',
+            }).toString()}`,
+            { credentials: 'include' },
+          ).then((r) => r.json()),
         ])
 
-        setCount(insList.totalItems + pedidos.totalItems)
-        setInscricoes(insList.items)
+        const insList = Array.isArray(insRes.items) ? insRes.items : insRes
+        const pedidos = Array.isArray(pedRes.items) ? pedRes.items : pedRes
+        setCount(insList.length + pedidos.length)
+        setInscricoes(insList)
       } catch (err) {
         console.error('Erro ao buscar notificações', err)
       }
@@ -39,7 +43,7 @@ export default function NotificationBell() {
     fetchData()
     const id = setInterval(fetchData, 30000)
     return () => clearInterval(id)
-  }, [pb, tenantId])
+  }, [tenantId])
 
   return (
     <div className="fixed bottom-20 right-4 z-50">
