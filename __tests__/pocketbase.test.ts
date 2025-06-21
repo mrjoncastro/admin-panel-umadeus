@@ -35,7 +35,7 @@ describe('pocketbase utilities', () => {
   const env = process.env
   beforeEach(() => {
     vi.resetModules()
-    process.env = { ...env, NEXT_PUBLIC_PB_URL: 'http://test' }
+    process.env = { ...env, PB_URL: 'http://test' }
   })
   afterEach(() => {
     vi.restoreAllMocks()

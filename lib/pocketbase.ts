@@ -1,6 +1,6 @@
 import PocketBase from 'pocketbase'
 
-const PB_URL = process.env.NEXT_PUBLIC_PB_URL!
+const PB_URL = process.env.PB_URL!
 const basePb = new PocketBase(PB_URL)
 
 export function createPocketBase() {

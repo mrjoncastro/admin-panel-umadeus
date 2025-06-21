@@ -331,5 +331,9 @@
 ## [2025-06-21] Componentes de loja e blog movidos para `components/` e inventário atualizado. Lint e build executados.
 
 ## [2025-06-21] Documentadas páginas públicas do admin e adicionados comentários explicativos nos arquivos.
+
+## [2025-07-18] Variável NEXT_PUBLIC_PB_URL removida em favor de PB_URL; README e .env.example atualizados. Rotas publicas de posts criadas. Lint e build executados.
+
 ## [2025-07-21] Orientações de PocketBase atualizadas. README instrui a usar rotas internas
+
 e .env.example observa que a URL do PB deve ser acessada apenas pelo servidor. Impacto: chamadas sem CORS e variáveis de ambiente simplificadas.
