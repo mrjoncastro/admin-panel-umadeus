@@ -55,6 +55,12 @@ export async function PUT(req: NextRequest) {
     })
     return NextResponse.json(updated, { status: 200 })
   } catch (err) {
+    if (err instanceof ClientResponseError && err.status === 404) {
+      return NextResponse.json(
+        { error: 'Configuração não encontrada para o cliente' },
+        { status: 404 },
+      )
+    }
     await logConciliacaoErro(`Erro ao atualizar configuracoes: ${String(err)}`)
     return NextResponse.json({ error: 'Erro ao atualizar' }, { status: 500 })
   }
