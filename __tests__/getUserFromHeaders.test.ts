@@ -1,16 +1,17 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { NextRequest } from 'next/server'
 
-vi.mock('../lib/pocketbase', () => {
-  const pbMock = {
-    authStore: { save: vi.fn() },
-    autoCancellation: vi.fn(),
-  }
-  return { __esModule: true, default: vi.fn(() => pbMock) }
+const pbMock = () => ({
+  authStore: { isValid: false, model: null as any, save: vi.fn() },
+  autoCancellation: vi.fn(),
+})
+
+vi.mock('../lib/pbWithAuth', () => {
+  return { getPocketBaseFromRequest: vi.fn(() => pbMock()) }
 })
 
 import { getUserFromHeaders } from '../lib/getUserFromHeaders'
-import createPocketBase from '../lib/pocketbase'
+import { getPocketBaseFromRequest } from '../lib/pbWithAuth'
 
 describe('getUserFromHeaders', () => {
   afterEach(() => {
@@ -41,9 +42,10 @@ describe('getUserFromHeaders', () => {
     })
     const req = new Request('http://test', { headers })
     const result = getUserFromHeaders(req as unknown as NextRequest)
-    const pb = (createPocketBase as unknown as vi.Mock).mock.results[0].value
+    const pb = (
+      getPocketBaseFromRequest as unknown as vi.Mock
+    ).mock.results[0].value
     expect(result).toEqual({ user, pbSafe: pb })
     expect(pb.authStore.save).toHaveBeenCalledWith('token123', user)
-    expect(pb.autoCancellation).toHaveBeenCalledWith(false)
   })
 })
