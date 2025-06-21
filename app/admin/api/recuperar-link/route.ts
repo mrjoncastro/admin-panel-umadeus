@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import PocketBase from 'pocketbase'
+import createPocketBase from '@/lib/pocketbase'
 import { logInfo } from '@/lib/logger'
 
-const pb = new PocketBase(
-  process.env.NEXT_PUBLIC_PB_URL || 'https://umadeus-production.up.railway.app',
-)
-pb.autoCancellation(false)
-
 export async function POST(req: NextRequest) {
+  const pb = createPocketBase()
   try {
     const { cpf, telefone, cliente } = await req.json()
 

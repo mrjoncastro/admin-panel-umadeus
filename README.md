@@ -81,7 +81,7 @@ Esses documentos também trazem exemplos das classes globais `btn` e
 
 Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 
-- `NEXT_PUBLIC_PB_URL` - URL do PocketBase
+- `PB_URL` - URL do PocketBase
 - `PB_ADMIN_EMAIL` - e-mail do administrador do PocketBase
 - `PB_ADMIN_PASSWORD` - senha do administrador
 - `ASAAS_API_URL` - URL base da API do Asaas (ex.: `https://api-sandbox.asaas.com/api/v3/`)
@@ -96,7 +96,7 @@ Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utiliza
 
 ## Conectando ao PocketBase
 
-1. Defina `NEXT_PUBLIC_PB_URL` apontando para a URL onde o PocketBase está rodando, por exemplo:
+1. Defina `PB_URL` apontando para a URL onde o PocketBase está rodando, por exemplo:
 
 2. Utilize as variáveis `PB_ADMIN_EMAIL` e `PB_ADMIN_PASSWORD` para autenticar a aplicação.
 
