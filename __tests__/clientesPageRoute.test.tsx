@@ -44,7 +44,9 @@ vi.mock('@/lib/pocketbase', () => {
 })
 
 it('chama APIs corretas ao salvar cliente', async () => {
-  const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve([]) })
+  const fetchMock = vi
+    .fn()
+    .mockResolvedValue({ ok: true, json: () => Promise.resolve([]) })
   global.fetch = fetchMock as unknown as typeof fetch
 
   render(<ClientesPage />)

@@ -22,14 +22,30 @@ vi.mock('@/lib/pocketbase', () => {
 })
 
 it('usa APIs publicas ao carregar e salvar', async () => {
-  const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve([]) })
+  const fetchMock = vi
+    .fn()
+    .mockResolvedValue({ ok: true, json: () => Promise.resolve([]) })
   global.fetch = fetchMock as unknown as typeof fetch
 
   render(
     <ModalEditarInscricao
-      inscricao={{ id: 'i1', nome: 'X', telefone: '1', status: 'pendente', eventoId: 'e1', evento: 'E' } as any}
+      inscricao={
+        {
+          id: 'i1',
+          nome: 'X',
+          telefone: '1',
+          status: 'pendente',
+          eventoId: 'e1',
+          evento: 'E',
+        } as any
+      }
       onClose={() => {}}
-      onSave={(data) => fetch(`/api/inscricoes/i1`, { method: 'PATCH', body: JSON.stringify(data) })}
+      onSave={(data) =>
+        fetch(`/api/inscricoes/i1`, {
+          method: 'PATCH',
+          body: JSON.stringify(data),
+        })
+      }
     />,
   )
 
