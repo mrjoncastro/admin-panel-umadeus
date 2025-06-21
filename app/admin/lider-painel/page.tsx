@@ -7,7 +7,7 @@ import type { Inscricao, Pedido } from '@/types'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 
 export default function LiderDashboardPage() {
-  const { user, pb, authChecked } = useAuthGuard(['lider'])
+  const { user, authChecked } = useAuthGuard(['lider'])
 
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [pedidos, setPedidos] = useState<Pedido[]>([])
@@ -27,26 +27,30 @@ export default function LiderDashboardPage() {
     const controller = new AbortController()
     const signal = controller.signal
     const fetchDados = async () => {
-      pb.autoCancellation(false)
       try {
         const campoId = user.campo
 
         const perPage = 50
-        const [inscricoesRes, pedidosRes] = await Promise.all([
-          pb.collection('inscricoes').getList(page, perPage, {
-            filter: `campo="${campoId}" && cliente='${user?.cliente}'`,
-            expand: 'campo,evento,criado_por,pedido',
+        const params = new URLSearchParams({
+          page: String(page),
+          perPage: String(perPage),
+          filter: `campo="${campoId}" && cliente='${user?.cliente}'`,
+        })
+        const [insRes, pedRes] = await Promise.all([
+          fetch(`/api/inscricoes?${params.toString()}`, {
+            credentials: 'include',
             signal,
-          }),
-          pb.collection('pedidos').getList(page, perPage, {
-            filter: `campo="${campoId}" && cliente='${user?.cliente}'`,
-            expand: 'campo,criado_por',
+          }).then((r) => r.json()),
+          fetch(`/api/pedidos?${params.toString()}`, {
+            credentials: 'include',
             signal,
-          }),
+          }).then((r) => r.json()),
         ])
-        const rawInscricoes = inscricoesRes.items
-        const rawPedidos = pedidosRes.items
-        setTotalPages(Math.max(inscricoesRes.totalPages, pedidosRes.totalPages))
+        const rawInscricoes = Array.isArray(insRes.items) ? insRes.items : insRes
+        const rawPedidos = Array.isArray(pedRes.items) ? pedRes.items : pedRes
+        if (insRes.totalPages && pedRes.totalPages) {
+          setTotalPages(Math.max(insRes.totalPages, pedRes.totalPages))
+        }
 
         if (!isMounted.current) return
 
@@ -126,7 +130,7 @@ export default function LiderDashboardPage() {
       isMounted.current = false
       controller.abort()
     }
-  }, [pb, authChecked, user, page])
+  }, [authChecked, user, page])
 
   if (loading) {
     return <LoadingOverlay show={true} text="Carregando dashboard..." />

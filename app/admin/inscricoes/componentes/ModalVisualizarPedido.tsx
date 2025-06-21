@@ -1,7 +1,6 @@
 'use client'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { X, Copy } from 'lucide-react'
-import createPocketBase from '@/lib/pocketbase'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import { useToast } from '@/lib/context/ToastContext'
 import { logInfo } from '@/lib/logger'
@@ -33,7 +32,6 @@ type PedidoExpandido = {
 }
 
 export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
-  const pb = useMemo(() => createPocketBase(), [])
   const [pedido, setPedido] = useState<PedidoExpandido | null>(null)
   const [loading, setLoading] = useState(true)
   const [reenviando, setReenviando] = useState(false)
@@ -42,12 +40,18 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
   const { showSuccess, showError } = useToast()
 
   useEffect(() => {
-    pb.collection('pedidos')
-      .getOne(pedidoId, { expand: 'id_inscricao,campo,responsavel' })
-      .then((res) => setPedido(res as unknown as PedidoExpandido))
+    const controller = new AbortController()
+    const { signal } = controller
+    fetch(`/api/pedidos?id=${pedidoId}`, {
+      credentials: 'include',
+      signal,
+    })
+      .then((res) => res.json())
+      .then((res) => setPedido(res as PedidoExpandido))
       .catch(() => showError('Erro ao carregar dados do pedido'))
       .finally(() => setLoading(false))
-  }, [pb, pedidoId, showError])
+    return () => controller.abort()
+  }, [pedidoId, showError])
 
   const reenviarPagamento = async () => {
     if (!pedido?.id || !pedido?.valor || !pedido?.expand?.id_inscricao) return
