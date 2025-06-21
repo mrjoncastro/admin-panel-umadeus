@@ -177,9 +177,16 @@ export async function POST(req: NextRequest) {
       if (cfg?.confirma_inscricoes === false && evento.cobra_inscricao) {
         const base = req.nextUrl.origin
 
+        const token = pb.authStore.token
+        const headers = {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+          'X-PB-User': JSON.stringify(lider),
+        }
+
         const pedidoRes = await fetch(`${base}/api/pedidos`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({ inscricaoId: inscricao.id }),
         })
 

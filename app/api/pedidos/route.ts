@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
+import { getUserFromHeaders } from '@/lib/getUserFromHeaders'
 import { requireRole } from '@/lib/apiAuth'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro } from '@/lib/server/logger'
@@ -44,7 +45,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const pb = createPocketBase()
+  const auth = getUserFromHeaders(req)
+  const pb = 'error' in auth ? createPocketBase(false) : auth.pbSafe
   try {
     const body = await req.json()
     const { inscricaoId } = body
@@ -59,7 +61,7 @@ export async function POST(req: NextRequest) {
         )
       }
       const { produto, tamanho, cor, genero, campoId, email, valor } = body
-      const userId = pb.authStore.model?.id as string | undefined
+      const userId = 'error' in auth ? undefined : (auth.user.id as string)
 
       if (!userId) {
         return NextResponse.json(

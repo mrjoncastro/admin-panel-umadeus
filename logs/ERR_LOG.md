@@ -175,3 +175,5 @@
 ## [2025-06-21] Corrigido erro 403 no dashboard requisitando admin/api/usuarios/${user.id} - dev - ab8a6ee
 ## [2025-06-21] Erro ao atualizar configuracoes: ClientResponseError 400: Failed to update record. - development
 ## [2025-06-21] Suporte ao campo logo nos eventos e formulários. Rotas corrigidas - dev
+
+## [2025-07-26] Erro 401 ao criar pedido na loja devido a token não enviado; rota ajustada para incluir cabeçalhos de autenticação - dev
