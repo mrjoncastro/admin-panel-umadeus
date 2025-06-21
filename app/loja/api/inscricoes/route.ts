@@ -3,6 +3,7 @@ import createPocketBase from '@/lib/pocketbase'
 import { ClientResponseError } from 'pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro } from '@/lib/server/logger'
+import { criarInscricao, InscricaoTemplate } from '@/lib/templates/inscricao'
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase()
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    const registroParaCriar = {
+    const base: InscricaoTemplate = {
       nome,
       email: data.user_email,
       telefone: String(data.user_phone).replace(/\D/g, ''),
@@ -45,10 +46,11 @@ export async function POST(req: NextRequest) {
       genero: data.user_gender.toLowerCase(),
       campo: data.campo,
       evento: data.evento,
-      status: 'pendente',
       criado_por: usuario.id,
       ...(tenantId ? { cliente: tenantId } : {}),
     }
+
+    const registroParaCriar = criarInscricao(base)
 
     const record = await pb.collection('inscricoes').create(registroParaCriar)
 
