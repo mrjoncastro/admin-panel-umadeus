@@ -114,10 +114,16 @@ export default function ModalProdutoForm({
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                   className="bg-white dark:bg-zinc-900 text-black dark:text-white p-6 rounded-xl z-[130] w-[90vw] max-w-lg space-y-5"
                 >
-                  <Dialog.Title id="modal-produto-title" className="text-xl font-bold">
+                  <Dialog.Title
+                    id="modal-produto-title"
+                    className="text-xl font-bold"
+                  >
                     {initial.nome ? 'Editar Produto' : 'Novo Produto'}
                   </Dialog.Title>
-                  <Dialog.Description id="modal-produto-desc" className="sr-only">
+                  <Dialog.Description
+                    id="modal-produto-desc"
+                    className="sr-only"
+                  >
                     Formulário de produto
                   </Dialog.Description>
                   <div className="space-y-4">
@@ -203,7 +209,11 @@ export default function ModalProdutoForm({
                     </div>
                   </div>
                   <div className="flex justify-end gap-3 pt-4">
-                    <button type="button" className="btn btn-secondary" onClick={onClose}>
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={onClose}
+                    >
                       Cancelar
                     </button>
                     <button type="submit" className="btn btn-primary">

@@ -23,8 +23,7 @@ export default function FormWizard({
   const isLast = current === steps.length - 1
 
   useEffect(() => {
-    if (current === 0)
-      setMessage('Vamos começar! Preencha os dados iniciais.')
+    if (current === 0) setMessage('Vamos começar! Preencha os dados iniciais.')
     else if (current === steps.length - 1)
       setMessage('Último passo! Revise tudo e conclua.')
     else setMessage('Ótimo! Continue preenchendo as próximas informações.')
