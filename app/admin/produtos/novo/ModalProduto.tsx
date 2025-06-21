@@ -1,5 +1,11 @@
 'use client'
 
+/**
+ * Quando `confirmaInscricoes` está habilitado no TenantContext e o usuário não
+ * possui inscrição aprovada para o evento vinculado, o modal exibe a mensagem
+ * "Requer inscrição aprovada" e o botão de compra permanece desativado.
+ */
+
 import { useEffect, useRef, useState } from 'react'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { calculateGross } from '@/lib/asaasFees'

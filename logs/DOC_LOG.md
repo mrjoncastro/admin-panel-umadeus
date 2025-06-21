@@ -358,3 +358,4 @@
 ## [2025-07-26] Mover utilitario criarInscricao para components/templates e gerar senha temporaria na rota da loja. Lint e build falharam localmente.
 ## [2025-07-27] Ajustado fluxo da API de inscrições para criar usuário automaticamente e documentação atualizada com fluxograma.
 ## [2025-07-28] Integrado componente InscricaoWizard na pagina de inscricao e documentado etapas.
+## [2025-06-21] Documentado fluxo de venda e tipos de produtos.

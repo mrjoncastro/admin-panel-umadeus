@@ -249,6 +249,16 @@ em `/api/asaas/saldo`.
 O painel possui o modal `BankAccountModal` para registrar contas bancárias do cliente. O formulário possui campos **Nome do titular** (`ownerName`) e **Nome da conta** (`accountName`) para identificar a conta cadastrada. O campo **Banco** possui filtragem que consulta a BrasilAPI (`NEXT_PUBLIC_BRASILAPI_URL`); quando vazio, apresenta uma lista inicial com quinze bancos. Ao escolher um banco, `bankCode` e `ispb` são preenchidos automaticamente (este último fica oculto no formulário). Agora é possível alternar entre **Conta Bancária** e **PIX** por meio de abas com `SmoothTabs`. Quando selecionado PIX, o modal exibe os campos `pixAddressKey`, `pixAddressKeyType`, `description` e `scheduleDate`. O envio salva na coleção `clientes_pix` ou `clientes_contas_bancarias` conforme o tipo escolhido. A seleção de tipo de conta inclui a opção **Conta Salário**.
 Na página **Transferências**, um botão **Nova conta** abre este modal para facilitar o cadastro durante o fluxo de transferências. O `ModalAnimated` recebeu um `z-index` superior para evitar que elementos fixos como a navbar sobreponham o conteúdo do modal.
 
+## Tipos de Produto e Fluxos de Venda
+
+Existem três formatos principais de produtos:
+
+1. **Independente** – vendido diretamente na loja. O pedido gerado recebe o campo `canal` igual a `loja`.
+2. **Vinculado a evento (sem aprovação)** – criado a partir de um evento que não exige aprovação. O pedido é gerado automaticamente e `canal` passa a ser `inscricao`.
+3. **Vinculado a evento (com aprovação)** – associado a um evento onde `confirmaInscricoes` está habilitado. O usuário vê a mensagem "Requer inscrição aprovada" e o botão de compra permanece desativado até a aprovação.
+
+O fluxograma completo está disponível em [docs/fluxos.md](docs/fluxos.md).
+
 ## Perfis de Acesso
 
 O sistema possui três níveis de usuário:
