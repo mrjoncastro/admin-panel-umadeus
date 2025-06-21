@@ -362,3 +362,4 @@
 ## [2025-07-27] Ajustado fluxo da API de inscrições para criar usuário automaticamente e documentação atualizada com fluxograma.
 ## [2025-07-28] Integrado componente InscricaoWizard na pagina de inscricao e documentado etapas.
 ## [2025-06-21] Wizard aplicado na rota loja/eventos e documentação atualizada
+## [2025-06-21] README menciona que o campo 'canal' indica a origem do pedido e testes de pedidos atualizados.
