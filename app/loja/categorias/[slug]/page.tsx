@@ -1,6 +1,8 @@
 // app/loja/categorias/[slug]/page.tsx
 import createPocketBase from '@/lib/pocketbase'
-import ProdutosFiltrados from './ProdutosFiltrados'
+import dynamic from 'next/dynamic'
+
+const ProdutosFiltrados = dynamic(() => import('./ProdutosFiltrados'))
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
 interface Produto {
