@@ -15,6 +15,25 @@ export async function POST(req: NextRequest) {
       data.user_last_name || ''
     }`.trim()
 
+    let usuario
+    try {
+      usuario = await pb
+        .collection('usuarios')
+        .getFirstListItem(`email='${data.user_email}'`)
+    } catch {
+      if (!tenantId) {
+        return NextResponse.json({ error: 'Tenant não informado' }, { status: 400 })
+      }
+      usuario = await pb.collection('usuarios').create({
+        nome,
+        email: data.user_email,
+        cpf: String(data.user_cpf).replace(/\D/g, ''),
+        cliente: tenantId,
+        campo: data.campo,
+        role: 'usuario',
+      })
+    }
+
     const registroParaCriar = {
       nome,
       email: data.user_email,
@@ -25,6 +44,7 @@ export async function POST(req: NextRequest) {
       campo: data.campo,
       evento: data.evento,
       status: 'pendente',
+      criado_por: usuario.id,
       ...(tenantId ? { cliente: tenantId } : {}),
     }
 

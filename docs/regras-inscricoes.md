@@ -20,6 +20,9 @@ Este documento descreve como cada perfil acessa as inscri\u00e7\u00f5es, o proce
 2. Seleciona o campo desejado e confirma os termos de participa\u00e7\u00e3o.
 3. Escolhe o produto de inscri\u00e7\u00e3o (quando houver) e envia o formul\u00e1rio.
 4. A lideran\u00e7a aprova a inscri\u00e7\u00e3o caso o modo de confirma\u00e7\u00e3o manual esteja habilitado.
+5. A API verifica se já existe usuário com o e-mail informado.
+   - Se existir, o ID é usado em `criado_por`.
+   - Caso contrário, cria usuário e vincula o ID à inscrição.
 
 ## Par\u00e2metros da API
 
