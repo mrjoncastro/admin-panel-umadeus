@@ -13,8 +13,17 @@ interface Produto {
 }
 
 export default async function ProdutosPage() {
-  const pb = createPocketBase()
   const tenantId = await getTenantFromHost()
+
+  if (!tenantId) {
+    return (
+      <p className="p-4 text-center font-sans text-[var(--text-primary)]">
+        Domínio não configurado
+      </p>
+    )
+  }
+
+  const pb = createPocketBase()
   const list = await pb.collection('produtos').getList<Produto>(1, 50, {
     filter: `ativo = true && cliente='${tenantId}'`,
     sort: '-created',
