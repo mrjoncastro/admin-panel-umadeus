@@ -1,88 +1,96 @@
-# Requisitos Funcionais — Inscrição com Criação de Usuário e Produtos Internos
+# Requisitos Funcionais — Inscrição de Participantes
 
 ## 📌 User Story Geral
 
 **Como** participante de um evento,
 **quero** me inscrever por meio de um formulário guiado por etapas,
-**para** que meu cadastro como usuário seja criado automaticamente, vinculado ao campo correto e, se houver, visualizar produtos internos disponíveis conforme meu perfil.
+**para** que meu cadastro como usuário seja criado automaticamente, vinculado ao campo correto, e que eu visualize possíveis cobranças associadas.
 
 ---
 
 ## 📋 Requisitos Funcionais
 
-### RF001 – Campo `exclusivo_user` no cadastro de produtos
+### RF001 – Formulário de inscrição em etapas (FormWizard)
 
-- Campo booleano na coleção `produtos` para definir se o produto é de uso interno.
-- **Nome do campo:** `exclusivo_user`
-- **Tipo:** Boolean (default: `false`)
-- **Visível para perfis:** `coordenador`
-- **UI:** `ToggleSwitch` com label “Produto de uso interno?”
+* **Etapas:**
 
----
+  1. **Identificação Pessoal:** nome, e-mail, CPF, telefone, data de nascimento
+     (agrupados em um único bloco de `FormFieldGroup` para compactação visual)
+  2. **Endereço:** CEP, estado, cidade, número, complemento
+     (bloco de endereço estruturado com autofill por CEP se disponível)
+  3. **Campo de Atuação:** seleção obrigatória de `campo_id`
+     (carregado dinamicamente da coleção `campos`)
+  4. **Termos e Política:** checkbox de aceite com link para política
+  5. **Cobranças/Eventos:** produtos vinculados e detalhes da cobrança (se aplicável)
 
-### RF002 – Formulário de inscrição em etapas (FormWizard)
+* **Componentes UI recomendados:**
 
-- **Etapas:**
+  * `FormWizard`, `FormField`, `InputWithMask`, `SelectField`, `Checkbox`, `AddressField`
+  * **Agrupadores como:** `FormFieldGroup` ou `AccordionGroup` para reduzir densidade visual
 
-  1. Dados Pessoais (nome, e-mail, CPF)
-  2. Seleção do Campo de Atuação
-  3. Confirmação de Termos
-  4. Exibição de Produtos (condicional)
+* **Progress Bar:**
 
-- Componentes UI: `FormWizard`, `FormField`, `InputWithMask`, `SelectField`, `ToggleSwitch`
-
----
-
-### RF003 – Criação automática de usuário
-
-- Se o e-mail informado ainda não existir:
-
-  - Criar usuário com:
-
-    - `nome`, `email`, `cpf`, `cliente`, `perfil = 'usuario'`
-    - `campo_id`: selecionado no formulário
-
-- Se já existir, apenas vincular a inscrição ao usuário existente.
+  * Deve indicar o número total de etapas e destacar a etapa atual.
+  * **Componente:** `Stepper` ou barra de progresso horizontal com número e descrição curta de cada etapa
+  * A etapa ativa deve ter estilo destacado (token de cor do tenant)
 
 ---
 
-### RF004 – Seleção obrigatória do campo
+### RF002 – Criação automática de usuário
 
-- Campo `campo_id` obrigatório no formulário.
-- **Componente:** `SelectField`
-- **Fonte:** coleção `campos` do tenant atual.
-- Validação: lista apenas os campos disponíveis do cliente.
+* Se o e-mail informado ainda não existir:
 
----
+  * Criar usuário com:
 
-### RF005 – Exibição condicional de produtos internos
-
-- Após criação do usuário, sistema busca produtos vinculados ao evento:
-
-  ```js
-  cliente = TENANT_ID AND evento = EVENTO_ID
-  ```
-
-- Exibir etapa de produtos se:
-
-  - Houver produtos disponíveis
-  - Usuário tiver permissão para visualizar (`exclusivo_user = false` ou perfil autorizado)
+    * `nome`, `email`, `cpf`, `telefone`, `data_nascimento`, `cliente`, `perfil = 'usuario'`
+    * `campo_id`: selecionado no formulário
+    * `endereco`: estado, cidade, cep, numero
+* Se já existir, apenas vincular a inscrição ao usuário existente.
 
 ---
 
-### RF006 – Proteção de produtos internos na API
+### RF003 – Seleção obrigatória do campo
 
-- Requisições públicas devem filtrar produtos com:
-
-  ```js
-  exclusivo_user = false
-  ```
-
-- Usuários com perfis especiais (ex.: `usuario`, `lider`, `coordenador`) podem visualizar todos.
+* Campo `campo_id` obrigatório no formulário.
+* **Componente:** `SelectField`
+* **Fonte:** coleção `campos` do tenant atual.
+* Validação: lista apenas os campos disponíveis do cliente.
 
 ---
 
-### RF007 – Adesão ao Design System Multi-tenant
+### RF004 – Verificação de produtos e cobranças vinculadas ao evento
 
-- Componentes devem usar temas e tokens expostos via `TenantProvider`.
-- Campos como `ToggleSwitch`, `SelectField`, `FormWizard` devem ser estilizados com base no design system e documentados no Storybook.
+* Após a criação do usuário, o sistema deve consultar:
+
+  * Se existem **produtos vinculados ao evento atual**.
+  * Se existe alguma **cobrança prevista** (e.g., taxa de inscrição, pacote obrigatório).
+* Se houver cobrança:
+
+  * Exibir etapa com os detalhes dos produtos/cobranças.
+  * Associar os itens selecionados à inscrição e/ou ao usuário.
+* A cobrança pode ser exibida, mas o pagamento pode ser tratado posteriormente.
+
+---
+
+### RF005 – Confirmação da inscrição conforme regras do evento
+
+* O sistema deve verificar, na configuração do evento, o método de confirmação definido:
+
+  * **Modo 1:** Confirmação manual por **líder** ou **coordenador** do campo
+
+    * Inscrição entra com status "pendente de aprovação".
+    * Apenas após aprovação, é liberado acesso ou cobrança.
+  * **Modo 2:** Geração automática do **checkout de pagamento**
+
+    * Após inscrição, sistema já inicia processo de cobrança (via integração como Asaas).
+* A lógica deve se basear no campo `modo_confirmacao` do evento, com valores possíveis:
+
+  * `manual` → fluxo de aprovação
+  * `automatico` → fluxo de pagamento imediato
+
+---
+
+### RF006 – Adesão ao Design System Multi-tenant
+
+* Componentes devem usar temas e tokens expostos via `TenantProvider`.
+* Campos como `SelectField`, `FormWizard`, `Stepper`, `FormFieldGroup` devem ser estilizados com base no design system e documentados no Storybook.
