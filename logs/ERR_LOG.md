@@ -171,3 +171,4 @@
 ## [2025-06-21] Lint falhou: next not found - dev
 
 ## [2025-06-21] Build falhou: next not found - dev
+## [2025-06-21] Corrigido erro 403 no dashboard requisitando admin/api/usuarios/${user.id} - dev - ab8a6ee
