@@ -3,7 +3,6 @@ import { useTenant } from '@/lib/context/TenantContext'
 import { useToast } from '@/lib/context/ToastContext'
 import FormWizard from './FormWizard'
 import { FormField, InputWithMask, TextField } from '@/components'
-import Spinner from '@/components/atoms/Spinner'
 
 interface Produto {
   id: string
@@ -11,15 +10,19 @@ interface Produto {
   tamanhos?: string[]
 }
 
-interface InscricaoWizardProps {
-  liderId: string
+interface Campo {
+  id: string
+  nome: string
+}
+
+interface InscricaoLojaWizardProps {
   eventoId: string
 }
 
-export default function InscricaoWizard({ liderId, eventoId }: InscricaoWizardProps) {
+export default function InscricaoLojaWizard({ eventoId }: InscricaoLojaWizardProps) {
   const { config } = useTenant()
   const { showSuccess, showError } = useToast()
-  const [campoNome, setCampoNome] = useState('')
+  const [campos, setCampos] = useState<Campo[]>([])
   const [produtos, setProdutos] = useState<Produto[]>([])
   const [form, setForm] = useState({
     nome: '',
@@ -32,6 +35,7 @@ export default function InscricaoWizard({ liderId, eventoId }: InscricaoWizardPr
     estado: '',
     cidade: '',
     numero: '',
+    campoId: '',
     produtoId: '',
     tamanho: '',
     paymentMethod: 'pix',
@@ -40,11 +44,11 @@ export default function InscricaoWizard({ liderId, eventoId }: InscricaoWizardPr
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    fetch(`/api/lider/${liderId}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => setCampoNome(data?.campo || ''))
-      .catch(() => setCampoNome(''))
-  }, [liderId])
+    fetch('/api/campos')
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => setCampos(Array.isArray(data) ? data : []))
+      .catch(() => setCampos([]))
+  }, [])
 
   useEffect(() => {
     fetch(`/api/eventos/${eventoId}`)
@@ -78,33 +82,30 @@ export default function InscricaoWizard({ liderId, eventoId }: InscricaoWizardPr
 
   const handleSubmit = async () => {
     setLoading(true)
+    const [firstName, ...rest] = form.nome.split(' ')
     try {
-      const res = await fetch('/api/inscricoes', {
+      const res = await fetch('/loja/api/inscricoes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          nome: form.nome,
-          email: form.email,
-          telefone: form.telefone,
-          cpf: form.cpf,
-          data_nascimento: form.data_nascimento,
-          genero: form.genero,
-          cep: form.cep,
-          estado: form.estado,
-          cidade: form.cidade,
-          numero: form.numero,
-          campoId: campoNome,
-          produtoId: form.produtoId,
-          tamanho: form.tamanho,
-          liderId,
-          eventoId,
-          paymentMethod: form.paymentMethod,
-          installments: form.installments,
+          user_first_name: firstName,
+          user_last_name: rest.join(' '),
+          user_email: form.email,
+          user_phone: form.telefone,
+          user_cpf: form.cpf,
+          user_birth_date: form.data_nascimento,
+          user_gender: form.genero,
+          user_cep: form.cep,
+          user_state: form.estado,
+          user_city: form.cidade,
+          user_number: form.numero,
+          campo: form.campoId,
+          evento: eventoId,
         }),
       })
       if (!res.ok) {
         const data = await res.json()
-        showError(data.erro || 'Erro ao enviar inscrição.')
+        showError(data.error || 'Erro ao enviar inscrição.')
         return
       }
       showSuccess('Inscrição enviada com sucesso!')
@@ -167,8 +168,17 @@ export default function InscricaoWizard({ liderId, eventoId }: InscricaoWizardPr
     {
       title: 'Campo de Atuação',
       content: (
-        <div className="p-4 text-center">
-          {campoNome ? <p>{campoNome}</p> : <Spinner className="w-4 h-4" />}
+        <div className="space-y-4">
+          <FormField label="Campo" htmlFor="campoId">
+            <select id="campoId" name="campoId" value={form.campoId} onChange={handleChange} className="input-base" required>
+              <option value="">Selecione</option>
+              {campos.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nome}
+                </option>
+              ))}
+            </select>
+          </FormField>
         </div>
       ),
     },
@@ -263,6 +273,7 @@ export default function InscricaoWizard({ liderId, eventoId }: InscricaoWizardPr
     <FormWizard
       steps={steps}
       onFinish={handleSubmit}
+      loading={loading}
       className="max-w-lg mx-auto bg-white p-6 rounded-xl shadow"
     />
   )

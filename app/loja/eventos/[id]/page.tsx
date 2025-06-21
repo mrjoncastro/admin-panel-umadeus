@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { headers } from 'next/headers'
-import InscricaoForm from '@/components/organisms/InscricaoForm'
+import { InscricaoLojaWizard } from '@/components/organisms'
 
 interface Evento {
   id: string
@@ -54,7 +54,7 @@ export default async function EventoDetalhePage({
       )}
       <h1 className="text-2xl text-center font-bold">{evento.titulo}</h1>
       <p className="text-center">{evento.descricao}</p>
-      <InscricaoForm eventoId={id} />
+      <InscricaoLojaWizard eventoId={id} />
     </main>
   )
 }
