@@ -26,6 +26,7 @@ describe('POST /api/register', () => {
         data_nascimento: '2000-01-01',
         endereco: 'rua',
         numero: '1',
+        bairro: 'b',
         estado: 'BA',
         cep: '000',
         cidade: 'c',
@@ -49,6 +50,7 @@ describe('POST /api/register', () => {
       data_nascimento: '2000-01-01',
       endereco: 'rua',
       numero: '1',
+      bairro: 'b',
       estado: 'BA',
       cep: '000',
       cidade: 'c',
@@ -61,6 +63,8 @@ describe('POST /api/register', () => {
     })
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(201)
-    expect(createMock).toHaveBeenCalledWith(expect.objectContaining(payload))
+    expect(createMock).toHaveBeenCalledWith(
+      expect.objectContaining({ ...payload, role: 'usuario' }),
+    )
   })
 })
