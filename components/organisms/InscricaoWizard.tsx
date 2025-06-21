@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState, useEffect } from 'react'
 import { useTenant } from '@/lib/context/TenantContext'
 import { useToast } from '@/lib/context/ToastContext'
@@ -51,7 +53,7 @@ export default function InscricaoWizard({ liderId, eventoId }: InscricaoWizardPr
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         const lista = Array.isArray(data?.expand?.produtos)
-          ? data.expand.produtos.map((p: any) => ({
+          ? (data.expand.produtos as Produto[]).map((p) => ({
               id: p.id,
               nome: p.nome,
               tamanhos: Array.isArray(p.tamanhos)
@@ -108,7 +110,7 @@ export default function InscricaoWizard({ liderId, eventoId }: InscricaoWizardPr
         return
       }
       showSuccess('Inscrição enviada com sucesso!')
-    } catch (err) {
+    } catch {
       showError('Erro ao enviar inscrição.')
     } finally {
       setLoading(false)
@@ -263,6 +265,7 @@ export default function InscricaoWizard({ liderId, eventoId }: InscricaoWizardPr
     <FormWizard
       steps={steps}
       onFinish={handleSubmit}
+      loading={loading}
       className="max-w-lg mx-auto bg-white p-6 rounded-xl shadow"
     />
   )

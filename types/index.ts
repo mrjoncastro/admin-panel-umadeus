@@ -99,10 +99,6 @@ export type Produto = {
   checkout_url?: string
   exclusivo_user?: boolean
   ativo?: boolean
-  /** Evento ao qual o produto pode estar vinculado */
-  evento_id?: string
-  /** Se true, requer inscrição aprovada no evento antes da compra */
-  requer_inscricao_aprovada?: boolean
   user_org?: string
   cliente?: string
   categoria?: string
