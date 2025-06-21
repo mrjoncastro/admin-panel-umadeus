@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
-import ProdutosFiltrados from '../app/loja/produtos/ProdutosFiltrados'
+import ProdutosFiltrados from '@/components/organisms/ProdutosFiltrados'
 
 const meta = {
   title: 'Loja/ProdutosFiltrados',

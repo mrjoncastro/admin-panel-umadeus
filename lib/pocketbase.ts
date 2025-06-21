@@ -11,6 +11,9 @@ export function createPocketBase() {
       : new PocketBase(PB_URL)
 
   pb.authStore.save(basePb.authStore.token, basePb.authStore.model)
+  if (typeof document !== 'undefined') {
+    pb.authStore.loadFromCookie(document.cookie)
+  }
   pb.beforeSend = (_, opt) => {
     opt.credentials = 'include'
     return opt

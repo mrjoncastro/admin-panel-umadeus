@@ -1,7 +1,10 @@
 'use client'
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import createPocketBase, { clearBaseAuth } from '@/lib/pocketbase'
+import createPocketBase, {
+  clearBaseAuth,
+  updateBaseAuth,
+} from '@/lib/pocketbase'
 import type { UserModel } from '@/types/UserModel'
 
 type AuthContextType = {
@@ -50,7 +53,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const meRes = await fetch('/api/auth/me', { credentials: 'include' })
         if (meRes.ok) {
           const data = await meRes.json()
-          pb.authStore.clear()
+          pb.authStore.loadFromCookie(document.cookie)
+          updateBaseAuth(pb.authStore.token, pb.authStore.model)
           setUser(data.user as UserModel)
           setIsLoggedIn(true)
         }
@@ -64,7 +68,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (err: unknown) {
         if (err instanceof Error) {
         }
-        pb.authStore.clear()
         clearBaseAuth()
         setUser(null)
         setTenantId(null)
@@ -89,6 +92,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
     if (!res.ok) throw new Error('Login failed')
     const data = await res.json()
+    pb.authStore.loadFromCookie(document.cookie)
+    updateBaseAuth(pb.authStore.token, pb.authStore.model)
     setUser(data.user as UserModel)
     setIsLoggedIn(true)
     if (typeof window !== 'undefined') {
@@ -145,6 +150,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       cliente: clienteId,
       tour: false,
     })
+    pb.authStore.loadFromCookie(document.cookie)
+    updateBaseAuth(pb.authStore.token, pb.authStore.model)
     await login(email, password)
   }
 
