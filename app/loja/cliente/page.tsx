@@ -19,7 +19,7 @@ export default function AreaCliente() {
       'X-PB-User': JSON.stringify(user),
     }
 
-    fetch('/loja/api/minhas-inscricoes', { headers })
+    fetch('/loja/api/minhas-inscricoes', { headers, credentials: 'include' })
       .then((res) => res.json())
       .then((data) => setInscricoes(Array.isArray(data) ? data : []))
       .catch((err) => {
@@ -27,7 +27,7 @@ export default function AreaCliente() {
         setInscricoes([])
       })
 
-    fetch('/loja/api/pedidos', { headers })
+    fetch('/loja/api/pedidos', { headers, credentials: 'include' })
       .then((res) => res.json())
       .then((data) => setPedidos(Array.isArray(data) ? data : []))
       .catch((err) => {
