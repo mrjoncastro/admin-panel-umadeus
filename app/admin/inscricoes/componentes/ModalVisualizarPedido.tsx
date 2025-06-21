@@ -42,7 +42,7 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
   useEffect(() => {
     const controller = new AbortController()
     const { signal } = controller
-    fetch(`/api/pedidos?id=${pedidoId}`, {
+    fetch(`/api/pedidos/${pedidoId}`, {
       credentials: 'include',
       signal,
     })
