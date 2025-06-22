@@ -131,7 +131,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     console.log('[PEDIDOS][POST] Body recebido:', body)
-    const { inscricaoId } = body
+    const inscricaoId = body.id_inscricao ?? body.inscricaoId
 
     if (!inscricaoId) {
       console.log('[PEDIDOS][POST] Criando pedido sem inscriçãoId')
@@ -145,6 +145,7 @@ export async function POST(req: NextRequest) {
       }
 
       const { produto, tamanho, cor, genero, campoId, email, valor } = body
+      const produtoIds = Array.isArray(produto) ? produto : produto ? [produto] : []
       const userId = 'error' in auth ? undefined : (auth.user.id as string)
       console.log('[PEDIDOS][POST] userId:', userId)
 
@@ -158,15 +159,14 @@ export async function POST(req: NextRequest) {
 
       let produtoRecord: Produto | null = null
       try {
-        if (produto) {
-          const produtosList = await pb
+        if (produtoIds[0]) {
+          produtoRecord = await pb
             .collection('produtos')
-            .getList<Produto>(1, 1, { filter: `nome="${produto}"` })
-          produtoRecord = produtosList.items[0] || null
-          console.log('[PEDIDOS][POST] produtoRecord pelo nome:', produtoRecord)
+            .getOne<Produto>(produtoIds[0])
+          console.log('[PEDIDOS][POST] produtoRecord pelo id:', produtoRecord)
         }
       } catch (e) {
-        console.error('[PEDIDOS][POST] Erro ao buscar produto pelo nome:', e)
+        console.error('[PEDIDOS][POST] Erro ao buscar produto pelo id:', e)
       }
 
       if (produtoRecord?.requer_inscricao_aprovada) {
@@ -199,7 +199,7 @@ export async function POST(req: NextRequest) {
       const payload = {
         id_inscricao: '',
         id_pagamento: '',
-        produto: produtoRecord?.nome || produto || 'Produto',
+        produto: produtoIds,
         tamanho,
         status: 'pendente',
         cor: corTratada || 'Roxo',
@@ -288,7 +288,7 @@ export async function POST(req: NextRequest) {
       id_inscricao: inscricaoId,
       valor,
       status: 'pendente',
-      produto: produtoRecord?.nome || inscricao.produto || 'Produto',
+      produto: inscricao.produto ? [inscricao.produto] : produtoRecord ? [produtoRecord.id] : [],
       cor: 'Roxo',
       tamanho:
         inscricao.tamanho ||

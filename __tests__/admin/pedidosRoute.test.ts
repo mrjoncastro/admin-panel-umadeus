@@ -34,7 +34,7 @@ describe('POST /admin/api/pedidos', () => {
     pb.authStore.model = undefined
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({ produto: 'P' }),
+      body: JSON.stringify({ produto: ['P'] }),
     })
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(401)
@@ -49,7 +49,7 @@ describe('POST /admin/api/pedidos', () => {
     const req = new Request('http://test', {
       method: 'POST',
       body: JSON.stringify({
-        produto: 'Produto',
+        produto: ['Produto'],
         valor: 10,
         tamanho: 'M',
         cor: 'Azul',

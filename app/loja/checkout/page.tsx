@@ -196,7 +196,7 @@ function CheckoutContent() {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          produto: firstItem?.id || firstItem?.nome || 'Produto',
+          produto: [firstItem?.id || firstItem?.nome || 'Produto'],
           tamanho: Array.isArray(firstItem?.tamanhos)
             ? firstItem.tamanhos[0]
             : firstItem.tamanho,

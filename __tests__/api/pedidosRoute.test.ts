@@ -153,7 +153,7 @@ describe('POST /api/pedidos', () => {
     })
     const req = new Request('http://test/api/pedidos', {
       method: 'POST',
-      body: JSON.stringify({ produto: 'p1', valor: 5 }),
+      body: JSON.stringify({ produto: ['p1'], valor: 5 }),
     })
     const res = await (
       await import('../../app/api/pedidos/route')
@@ -171,7 +171,7 @@ describe('POST /api/pedidos', () => {
     getFirstMock.mockRejectedValueOnce(new Error('not found'))
     const req = new Request('http://test/api/pedidos', {
       method: 'POST',
-      body: JSON.stringify({ produto: 'p2', valor: 10 }),
+      body: JSON.stringify({ produto: ['p2'], valor: 10 }),
     })
     const res = await (
       await import('../../app/api/pedidos/route')
@@ -195,7 +195,7 @@ describe('POST /api/pedidos', () => {
     })
     const req = new Request('http://test/api/pedidos', {
       method: 'POST',
-      body: JSON.stringify({ produto: 'p3', valor: 15 }),
+      body: JSON.stringify({ produto: ['p3'], valor: 15 }),
     })
     const res = await (
       await import('../../app/api/pedidos/route')
@@ -216,7 +216,7 @@ describe('POST /api/pedidos', () => {
 
     const req = new Request('http://test/api/pedidos', {
       method: 'POST',
-      body: JSON.stringify({ produto: 'p', email: 'e@test.com', valor: 10 }),
+      body: JSON.stringify({ produto: ['p'], email: 'e@test.com', valor: 10 }),
     })
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(200)
@@ -239,7 +239,7 @@ describe('POST /api/pedidos', () => {
 
     const req = new Request('http://test/api/pedidos', {
       method: 'POST',
-      body: JSON.stringify({ inscricaoId: 'ins1' }),
+      body: JSON.stringify({ id_inscricao: 'ins1' }),
     })
 
     const res = await POST(req as unknown as NextRequest)
