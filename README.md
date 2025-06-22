@@ -304,6 +304,18 @@ Para gerar o build de produção execute:
 npm run build
 ```
 
+## Gerar índice de funções
+
+O repositório inclui o script `scripts/generate-index.ts` que mapeia todas as
+funções e componentes exportados em `app/`, `lib/` e `components/`.
+
+Execute o comando abaixo após instalar as dependências para gerar o arquivo
+`docs/function-index.md`:
+
+```bash
+npx ts-node scripts/generate-index.ts
+```
+
 ## Registro de Logs
 
 Os arquivos dentro do diretório `logs/` guardam o histórico do projeto.

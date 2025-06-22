@@ -1,0 +1,565 @@
+# Índice de Funções e Componentes
+
+- **app/admin/api/asaas/estatisticas/route.ts**
+  - GET
+- **app/admin/api/asaas/extrato/route.ts**
+  - GET
+- **app/admin/api/asaas/saldo/route.ts**
+  - GET
+- **app/admin/api/asaas/transferencia/route.ts**
+  - POST
+  - DELETE
+- **app/admin/api/asaas/webhook/route.ts**
+  - POST
+- **app/admin/api/bank-accounts/route.ts**
+  - GET
+  - POST
+- **app/admin/api/campos/[id]/route.ts**
+  - PUT
+  - DELETE
+- **app/admin/api/campos/route.ts**
+  - GET
+  - POST
+- **app/admin/api/categorias/[id]/route.ts**
+  - PUT
+  - DELETE
+- **app/admin/api/categorias/route.ts**
+  - GET
+  - POST
+- **app/admin/api/clientes/[id]/route.ts**
+  - PUT
+- **app/admin/api/clientes/route.ts**
+  - GET
+- **app/admin/api/configuracoes/route.ts**
+  - GET
+  - PUT
+- **app/admin/api/eventos/[id]/route.ts**
+  - GET
+  - PUT
+  - DELETE
+- **app/admin/api/eventos/route.ts**
+  - GET
+  - POST
+- **app/admin/api/pix-keys/route.ts**
+  - GET
+  - POST
+- **app/admin/api/posts/[slug]/route.ts**
+  - GET
+- **app/admin/api/posts/route.ts**
+  - POST
+- **app/admin/api/produtos/[id]/route.ts**
+  - GET
+  - PUT
+  - DELETE
+- **app/admin/api/produtos/route.ts**
+  - GET
+  - POST
+- **app/admin/api/recuperar-link/route.ts**
+  - POST
+- **app/admin/api/usuarios/[id]/route.ts**
+  - GET
+- **app/admin/api/usuarios/route.ts**
+  - GET
+  - POST
+- **app/admin/campos/page.tsx**
+  - GerenciarCamposPage
+- **app/admin/clientes/components/ListaClientes.tsx**
+  - ListaClientes
+- **app/admin/clientes/page.tsx**
+  - ClientesPage
+- **app/admin/components/BackToTopButton.tsx**
+  - BackToTopButton
+- **app/admin/components/DashboardAnalytics.tsx**
+  - DashboardAnalytics
+- **app/admin/components/NotificationBell.tsx**
+  - NotificationBell
+- **app/admin/components/RedefinirSenhaModal.tsx**
+  - RedefinirSenhaModal
+- **app/admin/components/TooltipIcon.tsx**
+  - TooltipIcon
+- **app/admin/components/TourIcon.tsx**
+  - TourIcon
+- **app/admin/configuracoes/page.tsx**
+  - ConfiguracoesPage
+- **app/admin/dashboard/components/DashboardResumo.tsx**
+  - DashboardResumo
+- **app/admin/dashboard/page.tsx**
+  - DashboardPage
+- **app/admin/erro/page.tsx**
+  - ErroPage
+- **app/admin/eventos/editar/[id]/page.tsx**
+  - EditarEventoPage
+- **app/admin/eventos/novo/page.tsx**
+  - NovoEventoPage
+- **app/admin/eventos/page.tsx**
+  - AdminEventosPage
+- **app/admin/financeiro/page.tsx**
+  - FinanceiroPage
+- **app/admin/financeiro/saldo/page.tsx**
+  - SaldoPage
+- **app/admin/financeiro/transferencias/components/TransferenciaForm.tsx**
+  - TransferenciaForm
+- **app/admin/financeiro/transferencias/modals/BankAccountModal.tsx**
+  - BankAccountModal
+- **app/admin/financeiro/transferencias/page.tsx**
+  - TransferenciasPage
+- **app/admin/inscricoes/componentes/ModalEdit.tsx**
+  - ModalEditarInscricao
+- **app/admin/inscricoes/componentes/ModalVisualizarPedido.tsx**
+  - ModalVisualizarPedido
+- **app/admin/inscricoes/page.tsx**
+  - ListaInscricoesPage
+- **app/admin/inscricoes/recuperar/page.tsx**
+  - RecuperarPagamentoPage
+- **app/admin/layout.tsx**
+  - metadata
+  - RootLayout
+- **app/admin/lider-painel/page.tsx**
+  - LiderDashboardPage
+- **app/admin/not-found.tsx**
+  - NotFound
+- **app/admin/obrigado/page.tsx**
+  - ObrigadoPage
+- **app/admin/page.tsx**
+  - AdminIndex
+- **app/admin/pedidos/componentes/ModalEditarPedido.tsx**
+  - ModalEditarPedido
+- **app/admin/pedidos/page.tsx**
+  - PedidosPage
+- **app/admin/pendente/page.tsx**
+  - PagamentoPendentePage
+- **app/admin/perfil/components/ModalEditarPerfil.tsx**
+  - ModalEditarPerfil
+- **app/admin/perfil/page.tsx**
+  - PerfilPage
+- **app/admin/posts/components/EditorToolbar.tsx**
+  - EditorToolbar
+- **app/admin/posts/components/PostContentEditor.tsx**
+  - PostMarkdownEditor
+- **app/admin/posts/editar/[slug]/page.tsx**
+  - EditarPostPage
+- **app/admin/posts/novo/page.tsx**
+  - NovoPostPage
+- **app/admin/posts/page.tsx**
+  - AdminPostsPage
+- **app/admin/produtos/categorias/ModalCategoria.tsx**
+  - ModalCategoria
+- **app/admin/produtos/categorias/page.tsx**
+  - CategoriasAdminPage
+- **app/admin/produtos/editar/[id]/page.tsx**
+  - EditarProdutoPage
+- **app/admin/produtos/novo/ModalProduto.tsx**
+  - ModalProduto
+- **app/admin/produtos/page.tsx**
+  - AdminProdutosPage
+- **app/admin/redefinir-senha/RedefinirSenhaClient.tsx**
+  - RedefinirSenhaClient
+- **app/admin/redefinir-senha/page.tsx**
+  - RedefinirSenhaPage
+- **app/admin/usuarios/novo/page.tsx**
+  - NovoUsuarioPage
+- **app/admin/usuarios/page.tsx**
+  - UsuariosPage
+- **app/api/asaas/checkout/route.ts**
+  - POST
+- **app/api/asaas/route.ts**
+  - POST
+- **app/api/asaas/webhook/route.ts**
+  - POST
+- **app/api/auth/login/route.ts**
+  - POST
+- **app/api/auth/logout/route.ts**
+  - POST
+- **app/api/auth/me/route.ts**
+  - GET
+- **app/api/campos/route.ts**
+  - GET
+  - POST
+- **app/api/checkout-link/route.ts**
+  - GET
+- **app/api/eventos/[id]/route.ts**
+  - GET
+- **app/api/eventos/route.ts**
+  - GET
+- **app/api/inscricoes/[id]/route.ts**
+  - DELETE
+- **app/api/inscricoes/route.ts**
+  - GET
+  - POST
+- **app/api/lider/[id]/route.ts**
+  - GET
+- **app/api/n8n/route.ts**
+  - POST
+- **app/api/pedidos/[id]/route.ts**
+  - GET
+  - PATCH
+  - DELETE
+- **app/api/pedidos/route.ts**
+  - GET
+  - POST
+- **app/api/posts/[slug]/route.ts**
+  - GET
+- **app/api/posts/route.ts**
+  - GET
+- **app/api/produtos/[slug]/route.ts**
+  - GET
+- **app/api/produtos/route.ts**
+  - GET
+- **app/api/register/route.ts**
+  - POST
+- **app/api/signup/route.ts**
+  - POST
+- **app/api/tenant-config/route.ts**
+  - GET
+  - PUT
+- **app/api/tenant/route.ts**
+  - GET
+- **app/api/usuario/atualizar-dados/route.ts**
+  - PATCH
+- **app/api/usuarios/[id]/route.ts**
+  - GET
+  - PATCH
+- **app/api/usuarios/confirm-password-reset/route.ts**
+  - POST
+- **app/api/usuarios/password-reset/route.ts**
+  - POST
+- **app/blog/layout.tsx**
+  - BlogLayout
+- **app/blog/page.tsx**
+  - generateMetadata
+  - BlogPage
+- **app/blog/post/[slug]/page.tsx**
+  - dynamic
+  - generateStaticParams
+  - generateMetadata
+  - BlogPostPage
+- **app/campos/page.tsx**
+  - GerenciarCamposPage
+- **app/cliente/components/DashboardHeader.tsx**
+  - DashboardHeader
+- **app/cliente/components/InscricoesTable.tsx**
+  - InscricoesTable
+- **app/cliente/components/PedidosTable.tsx**
+  - PedidosTable
+- **app/cliente/components/ProfileForm.tsx**
+  - ProfileForm
+- **app/cliente/components/Sidebar.tsx**
+  - Sidebar
+- **app/cliente/dashboard/page.tsx**
+  - DashboardPage
+- **app/cliente/inscricoes/page.tsx**
+  - InscricoesPage
+- **app/cliente/layout.tsx**
+  - ClientLayout
+- **app/cliente/pedidos/page.tsx**
+  - PedidosPage
+- **app/cliente/perfil/page.tsx**
+  - PerfilPage
+- **app/completar-cadastro/page.tsx**
+  - CompletarCadastroPage
+- **app/iniciar-tour/page.tsx**
+  - generateMetadata
+  - IniciarTourPage
+- **app/inscricoes/[liderId]/[eventoId]/page.tsx**
+  - InscricaoPage
+- **app/inscricoes/[liderId]/page.tsx**
+  - EscolherEventoPage
+- **app/inscricoes/obrigado/page.tsx**
+  - ObrigadoPage
+- **app/layout.tsx**
+  - metadata
+  - RootLayout
+- **app/login/page.tsx**
+  - LoginPage
+- **app/loja/api/inscricoes/route.ts**
+  - POST
+- **app/loja/api/minhas-inscricoes/route.ts**
+  - GET
+- **app/loja/api/pedidos/route.ts**
+  - GET
+- **app/loja/carrinho/metadata.ts**
+  - generateMetadata
+- **app/loja/carrinho/page.tsx**
+  - CarrinhoPage
+- **app/loja/categorias/[slug]/metadata.ts**
+  - generateMetadata
+- **app/loja/categorias/[slug]/page.tsx**
+  - CategoriaDetalhe
+- **app/loja/categorias/metadata.ts**
+  - generateMetadata
+- **app/loja/categorias/page.tsx**
+  - dynamic
+  - CategoriasPage
+- **app/loja/checkout/metadata.ts**
+  - generateMetadata
+- **app/loja/checkout/page.tsx**
+  - CheckoutPage
+- **app/loja/cliente/metadata.ts**
+  - generateMetadata
+- **app/loja/cliente/page.tsx**
+  - AreaCliente
+- **app/loja/eventos/[id]/metadata.ts**
+  - generateMetadata
+- **app/loja/eventos/[id]/page.tsx**
+  - EventoDetalhePage
+- **app/loja/eventos/metadata.ts**
+  - generateMetadata
+- **app/loja/eventos/page.tsx**
+  - EventosPage
+- **app/loja/inscricoes/confirmacao/metadata.ts**
+  - generateMetadata
+- **app/loja/inscricoes/confirmacao/page.tsx**
+  - ConfirmacaoInscricaoPage
+- **app/loja/layout.tsx**
+  - RootLayout
+- **app/loja/login/metadata.ts**
+  - generateMetadata
+- **app/loja/login/route.ts**
+  - GET
+- **app/loja/metadata.ts**
+  - generateMetadata
+- **app/loja/not-found.tsx**
+  - NotFound
+- **app/loja/page.tsx**
+  - Home
+- **app/loja/perfil/metadata.ts**
+  - generateMetadata
+- **app/loja/perfil/page.tsx**
+  - PerfilPage
+- **app/loja/produtos/[slug]/metadata.ts**
+  - generateMetadata
+- **app/loja/produtos/[slug]/page.tsx**
+  - ProdutoDetalhe
+- **app/loja/produtos/metadata.ts**
+  - generateMetadata
+- **app/loja/produtos/page.tsx**
+  - dynamic
+  - ProdutosPage
+- **app/loja/sucesso/metadata.ts**
+  - generateMetadata
+- **app/loja/sucesso/page.tsx**
+  - SucessoConfirmacaoPage
+- **app/not-found.tsx**
+  - NotFound
+- **app/page.tsx**
+  - Home
+- **app/signup/page.tsx**
+  - SignUpPage
+- **components/admin/ModalProdutoForm.tsx**
+  - ModalProdutoForm
+- **components/admin/index.ts**
+  - ModalProdutoForm
+- **components/atoms/Button.tsx**
+  - Button
+- **components/atoms/Spinner.tsx**
+  - Spinner
+- **components/atoms/TextField.tsx**
+  - TextField
+- **components/atoms/ToggleSwitch.tsx**
+  - ToggleSwitch
+- **components/atoms/index.ts**
+  - Button
+  - TextField
+  - Spinner
+  - ToggleSwitch
+- **components/molecules/AddToCartButton.tsx**
+  - AddToCartButton
+- **components/molecules/CartButton.tsx**
+  - CartButton
+- **components/molecules/CartPreview.tsx**
+  - CartPreview
+- **components/molecules/FormField.tsx**
+  - FormField
+- **components/molecules/InputWithMask.tsx**
+  - InputWithMask
+- **components/molecules/MdxRenderer.tsx**
+  - MdxRenderer
+- **components/molecules/NextPostButton.tsx**
+  - NextPostButton
+- **components/molecules/SaldoCard.tsx**
+  - SaldoCard
+- **components/molecules/SmoothTabs.tsx**
+  - SmoothTabs
+- **components/molecules/index.ts**
+  - FormField
+  - InputWithMask
+  - SmoothTabs
+  - SaldoCard
+  - NextPostButton
+  - CartButton
+  - CartPreview
+  - AddToCartButton
+- **components/organisms/AuthModal.tsx**
+  - AuthModal
+- **components/organisms/BlogClient.tsx**
+  - BlogClient
+- **components/organisms/BlogHeroCarousel.tsx**
+  - BlogHeroCarousel
+- **components/organisms/BlogPostsList.tsx**
+  - BlogPostsList
+- **components/organisms/BlogSidebar.tsx**
+  - BlogSidebar
+- **components/organisms/FormWizard.tsx**
+  - FormWizard
+- **components/organisms/Hero.tsx**
+  - BlogHeroCarousel
+- **components/organisms/InscricaoForm.tsx**
+  - InscricaoForm
+- **components/organisms/InscricaoLojaWizard.tsx**
+  - InscricaoLojaWizard
+- **components/organisms/InscricaoWizard.tsx**
+  - InscricaoWizard
+- **components/organisms/LoadingOverlay.tsx**
+  - LoadingOverlay
+- **components/organisms/ModalAnimated.tsx**
+  - ModalAnimated
+- **components/organisms/PostSuggestions.tsx**
+  - PostSuggestions
+- **components/organisms/ProdutoInterativo.tsx**
+  - ProdutoInterativo
+- **components/organisms/ProdutosFiltrados.tsx**
+  - ProdutosFiltrados
+- **components/organisms/ProdutosFiltradosCategoria.tsx**
+  - ProdutosFiltrados
+- **components/organisms/index.ts**
+  - LoadingOverlay
+  - ModalAnimated
+  - BlogHeroCarousel
+  - BlogSidebar
+  - PostSuggestions
+  - InscricaoForm
+  - BlogPostsList
+  - FormWizard
+  - InscricaoWizard
+  - InscricaoLojaWizard
+- **components/templates/Footer.tsx**
+  - Footer
+- **components/templates/FooterLoja.tsx**
+  - Footer
+- **components/templates/Header.tsx**
+  - Header
+- **components/templates/HeaderAdmin.tsx**
+  - Header
+- **components/templates/HeaderLoja.tsx**
+  - Header
+- **components/templates/LayoutWrapper.tsx**
+  - LayoutWrapper
+- **components/templates/LayoutWrapperAdmin.tsx**
+  - LayoutWrapper
+- **components/templates/LoginForm.tsx**
+  - LoginForm
+- **components/templates/SignUpForm.tsx**
+  - SignUpForm
+- **components/templates/index.ts**
+  - Header
+  - Footer
+  - LayoutWrapper
+  - HeaderAdmin
+  - LayoutWrapperAdmin
+  - HeaderLoja
+  - FooterLoja
+  - LoginForm
+  - SignUpForm
+- **components/templates/inscricao.ts**
+  - criarInscricao
+- **lib/apiAuth.ts**
+  - requireRole
+- **lib/asaas.ts**
+  - buildCheckoutUrl
+  - buildExternalReference
+  - createCheckout
+- **lib/asaasFees.ts**
+  - getAsaasFees
+  - calculateGross
+  - calculateNet
+- **lib/bankAccounts.ts**
+  - searchBanks
+  - createBankAccount
+  - createPixKey
+  - getPixKeysByTenant
+  - getBankAccountsByTenant
+  - fetchBankAccounts
+  - fetchPixKeys
+  - createBankAccountApi
+  - createPixKeyApi
+- **lib/chartSetup.ts**
+  - setupCharts
+- **lib/clienteAuth.ts**
+  - requireClienteFromHost
+- **lib/constants.ts**
+  - MAX_ITEM_NAME_LENGTH
+  - MAX_ITEM_DESCRIPTION_LENGTH
+- **lib/context/AuthContext.tsx**
+  - AuthProvider
+  - useAuthContext
+- **lib/context/CartContext.tsx**
+  - CartProvider
+  - useCart
+- **lib/context/TenantContext.tsx**
+  - defaultConfig
+  - TenantProvider
+  - useTenant
+- **lib/context/ThemeContext.tsx**
+  - ThemeProvider
+  - useTheme
+- **lib/context/ToastContext.tsx**
+  - ToastProvider
+  - useToast
+- **lib/events.ts**
+  - atualizarStatus
+- **lib/fetchTenantConfig.ts**
+  - fetchTenantConfig
+- **lib/flows/orderFlow.ts**
+  - criarInscricao
+  - criarPedido
+- **lib/getTenantFromHost.ts**
+  - getTenantFromHost
+- **lib/getUserFromHeaders.ts**
+  - getUserFromHeaders
+- **lib/hooks/useAuth.ts**
+  - useAuth
+- **lib/hooks/useAuthGuard.ts**
+  - useAuthGuard
+- **lib/hooks/useInscricoes.ts**
+  - useInscricoes
+- **lib/hooks/useProdutos.ts**
+  - useProdutos
+- **lib/hooks/useSyncTenant.ts**
+  - useSyncTenant
+- **lib/logger.ts**
+  - logInfo
+- **lib/paymentMethodMap.ts**
+  - toAsaasBilling
+- **lib/pbWithAuth.ts**
+  - getPocketBaseFromRequest
+- **lib/pocketbase.ts**
+  - createPocketBase
+  - updateBaseAuth
+  - clearBaseAuth
+- **lib/posts/getPostBySlug.ts**
+  - getPostBySlug
+- **lib/posts/getPostsClientPB.ts**
+  - getPostsClientPB
+- **lib/posts/getPostsFromPB.ts**
+  - getPostsFromPB
+- **lib/posts/getPostsPocketBase.ts**
+  - listPosts
+  - getRecentPosts
+- **lib/posts/getRecentPostsPB.ts**
+  - getRecentPostsPB
+- **lib/posts/getRelatedPosts.ts**
+  - getRelatedPosts
+- **lib/posts/getRelatedPostsFromPB.ts**
+  - getRelatedPostsFromPB
+- **lib/products.ts**
+  - filtrarProdutos
+- **lib/products/getProductBySlug.ts**
+  - getProductBySlug
+- **lib/server/logger.ts**
+  - logConciliacaoErro
+- **lib/services/pocketbase.ts**
+  - fetchInscricoes
+  - fetchProdutos
+  - fetchUsuario
+- **lib/templates/inscricao.ts**
+  - criarInscricao
