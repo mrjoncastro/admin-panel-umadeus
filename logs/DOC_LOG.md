@@ -379,3 +379,9 @@
 ## [2025-08-02] Rotas de inscrições reorganizadas sob `/inscricoes/lider` e `EventForm` passou a solicitar forma de pagamento.
 
 ## [2025-08-03] Unificado InscricaoWizard e InscricaoLojaWizard no EventForm. Páginas agora recebem evento via searchParams. Lint e build falharam (next not found).
+
+## [2025-06-22] Criado resumo em tabela de funções em docs/function-index-table.md
+
+## [2025-06-22] Atualizado arquitetura e script gera tabela de funções.
+
+## [2025-06-22] Objetivos mais descritivos na tabela de funções. Script sem dependência do TypeScript.

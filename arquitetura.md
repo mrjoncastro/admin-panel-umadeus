@@ -75,6 +75,9 @@ public/                  # Arquivos estáticos
 types/                   # Definições TypeScript
 __tests__/               # Testes automatizados
 logs/                    # Registros de documentação e erros
+  - DOC_LOG.md registra mudanças de documentação
+  - ERR_LOG.md cataloga falhas e correções
+scripts/generate-function-table.mjs gera `docs/function-index-table.md` para mapear funções e rotas
 ```
 
 ---

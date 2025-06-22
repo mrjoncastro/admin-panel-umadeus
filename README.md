@@ -328,6 +328,13 @@ Execute o comando abaixo após instalar as dependências para gerar o arquivo
 npx ts-node scripts/generate-index.ts
 ```
 
+Para um resumo em tabela com rota e objetivo, utilize `scripts/generate-function-table.mjs`:
+
+```bash
+node scripts/generate-function-table.mjs
+```
+O script analisa os nomes de arquivo e exportações para elaborar o objetivo de cada item.
+
 ## Registro de Logs
 
 Os arquivos dentro do diretório `logs/` guardam o histórico do projeto.
