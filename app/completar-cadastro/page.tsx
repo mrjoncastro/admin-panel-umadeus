@@ -91,99 +91,121 @@ export default function CompletarCadastroPage() {
   if (!authChecked) return null
 
   return (
-    <div className="max-w-md mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6 text-center text-[var(--accent)]">
-        Completar Cadastro
-      </h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <FormField label="Data de nascimento" htmlFor="cadastro-data">
-          <TextField
-            id="cadastro-data"
-            type="date"
-            value={dataNasc}
-            onChange={(e) => setDataNasc(e.target.value)}
-            required
-          />
-        </FormField>
-        <FormField label="Gênero" htmlFor="cadastro-genero">
-          <select
-            id="cadastro-genero"
-            value={genero}
-            onChange={(e) => setGenero(e.target.value)}
-            className="input-base"
-            required
-          >
-            <option value="">Selecione</option>
-            <option value="masculino">Masculino</option>
-            <option value="feminino">Feminino</option>
-          </select>
-        </FormField>
-        <FormField label="CEP" htmlFor="cadastro-cep">
-          <TextField
-            id="cadastro-cep"
-            value={cep}
-            onChange={(e) => setCep(e.target.value)}
-            required
-          />
-        </FormField>
-        <FormField label="Número" htmlFor="cadastro-numero">
-          <TextField
-            id="cadastro-numero"
-            value={numero}
-            onChange={(e) => setNumero(e.target.value)}
-            required
-          />
-        </FormField>
-        <FormField label="Endereço" htmlFor="cadastro-endereco">
-          <TextField
-            id="cadastro-endereco"
-            value={endereco}
-            onChange={(e) => setEndereco(e.target.value)}
-            required
-          />
-        </FormField>
-        <FormField label="Cidade" htmlFor="cadastro-cidade">
-          <TextField
-            id="cadastro-cidade"
-            value={cidade}
-            onChange={(e) => setCidade(e.target.value)}
-            required
-          />
-        </FormField>
-        <FormField label="Estado" htmlFor="cadastro-estado">
-          <TextField
-            id="cadastro-estado"
-            value={estado}
-            onChange={(e) => setEstado(e.target.value)}
-            required
-          />
-        </FormField>
-        <FormField label="Campo de atuação" htmlFor="cadastro-campo">
-          <select
-            id="cadastro-campo"
-            value={campoId}
-            onChange={(e) => setCampoId(e.target.value)}
-            className="input-base"
-            required
-          >
-            <option value="">Selecione</option>
-            {campos.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.nome}
-              </option>
-            ))}
-          </select>
-        </FormField>
-        <Button type="submit" disabled={loading} className="w-full">
-          {loading ? (
-            <span className="flex items-center justify-center gap-2">
-              <Spinner className="w-4 h-4" /> Enviando...
-            </span>
-          ) : (
-            'Finalizar'
-          )}
-        </Button>
-      </form>
+    <div className="flex flex-col md:flex-row min-h-screen">
+      {/* Coluna de boas-vindas */}
+      <div className="md:w-1/2 bg-[var(--accent)] text-white flex flex-col justify-center p-8">
+        <div className="max-w-md">
+          <h1 className="text-3xl font-bold mb-4 text-white drop-shadow-md">
+            🎉 Bem-vindo(a)!
+          </h1>
+          <p className="text-lg text-white/90 leading-relaxed drop-shadow-sm">
+            Estamos quase lá! Complete as informações abaixo para finalizar seu
+            cadastro e acessar todos os recursos da plataforma.
+          </p>
+        </div>
+      </div>
+
+      {/* Coluna do formulário */}
+      <div className="md:w-1/2 flex items-center justify-center px-6 py-12 bg-white">
+        <div className="w-full max-w-md">
+          <div className="w-full bg-neutral-200 rounded-full h-2 mb-4">
+            <div
+              className="bg-[var(--accent)] h-2 rounded-full transition-all duration-300"
+              style={{ width: '90%' }}
+            />
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <FormField label="Data de nascimento" htmlFor="cadastro-data">
+              <TextField
+                id="cadastro-data"
+                type="date"
+                value={dataNasc}
+                onChange={(e) => setDataNasc(e.target.value)}
+                required
+              />
+            </FormField>
+            <FormField label="Gênero" htmlFor="cadastro-genero">
+              <select
+                id="cadastro-genero"
+                value={genero}
+                onChange={(e) => setGenero(e.target.value)}
+                className="input-base"
+                required
+              >
+                <option value="">Selecione</option>
+                <option value="masculino">Masculino</option>
+                <option value="feminino">Feminino</option>
+              </select>
+            </FormField>
+            <FormField label="CEP" htmlFor="cadastro-cep">
+              <TextField
+                id="cadastro-cep"
+                value={cep}
+                onChange={(e) => setCep(e.target.value)}
+                required
+              />
+            </FormField>
+            <FormField label="Número" htmlFor="cadastro-numero">
+              <TextField
+                id="cadastro-numero"
+                value={numero}
+                onChange={(e) => setNumero(e.target.value)}
+                required
+              />
+            </FormField>
+            <FormField label="Endereço" htmlFor="cadastro-endereco">
+              <TextField
+                id="cadastro-endereco"
+                value={endereco}
+                onChange={(e) => setEndereco(e.target.value)}
+                required
+              />
+            </FormField>
+            <FormField label="Cidade" htmlFor="cadastro-cidade">
+              <TextField
+                id="cadastro-cidade"
+                value={cidade}
+                onChange={(e) => setCidade(e.target.value)}
+                required
+              />
+            </FormField>
+            <FormField label="Estado" htmlFor="cadastro-estado">
+              <TextField
+                id="cadastro-estado"
+                value={estado}
+                onChange={(e) => setEstado(e.target.value)}
+                required
+              />
+            </FormField>
+            <FormField label="Campo" htmlFor="cadastro-campo">
+              <select
+                id="cadastro-campo"
+                value={campoId}
+                onChange={(e) => setCampoId(e.target.value)}
+                className="input-base"
+                required
+              >
+                <option value="">Selecione</option>
+                {campos.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.nome}
+                  </option>
+                ))}
+              </select>
+            </FormField>
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Spinner className="w-4 h-4" /> Enviando...
+                </span>
+              ) : (
+                'Finalizar'
+              )}
+            </Button>
+          </form>
+        </div>
+      </div>
     </div>
   )
 }
