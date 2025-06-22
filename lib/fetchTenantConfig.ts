@@ -3,13 +3,15 @@ import createPocketBase from '@/lib/pocketbase'
 import { defaultConfig, TenantConfig } from '@/lib/context/TenantContext'
 
 export async function fetchTenantConfig(): Promise<TenantConfig> {
-  const headerList = await headers()
+  // chama cookies() normalmente
   const cookieStore = await cookies()
   const fromCookie = cookieStore.get('tenantId')?.value ?? null
 
+  // *inline await* para headers() — assim TS sabe que o .get existe
+  const host = (await headers()).get('host')?.split(':')[0] ?? ''
+
   const pb = createPocketBase()
   try {
-    const host = headerList.get('host')?.split(':')[0] ?? ''
     if (host) {
       const rec = await pb
         .collection('clientes_config')
