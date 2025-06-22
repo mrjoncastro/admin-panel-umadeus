@@ -139,7 +139,8 @@ export default function ProdutoInterativo({
   const { inscricoes } = useInscricoes()
   const aprovado = inscricoes.some(
     (i) =>
-      i.evento === produto.evento_id && (i.aprovada || i.status === 'confirmado'),
+      i.evento === produto.evento_id &&
+      (i.aprovada || i.status === 'confirmado'),
   )
   const precisaAprov = produto.requer_inscricao_aprovada && !aprovado
 
