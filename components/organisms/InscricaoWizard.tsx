@@ -63,8 +63,8 @@ export default function InscricaoWizard({
               tamanhos: Array.isArray(p.tamanhos)
                 ? p.tamanhos
                 : p.tamanhos
-                ? [p.tamanhos]
-                : undefined,
+                  ? [p.tamanhos]
+                  : undefined,
             }))
           : []
         setProdutos(lista)
