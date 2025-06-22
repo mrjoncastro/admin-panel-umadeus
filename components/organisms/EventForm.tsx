@@ -46,6 +46,8 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
     campoId: '',
     produtoId: '',
     tamanho: '',
+    password: '',
+    passwordConfirm: '',
     paymentMethod: 'pix',
     installments: 1,
   })
@@ -111,6 +113,11 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
   const handleSubmit = async () => {
     setLoading(true)
     try {
+      if (!liderId && form.password !== form.passwordConfirm) {
+        showError('As senhas não coincidem.')
+        setLoading(false)
+        return
+      }
       const url = liderId ? '/api/inscricoes' : '/loja/api/inscricoes'
       const [firstName, ...rest] = form.nome.split(' ')
       const payload = liderId
@@ -146,6 +153,10 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
             user_number: form.numero,
             campo: form.campoId,
             evento: eventoId,
+            produtoId: form.produtoId,
+            tamanho: form.tamanho,
+            password: form.password,
+            passwordConfirm: form.passwordConfirm,
             paymentMethod: form.paymentMethod,
             installments: form.installments,
           }
@@ -406,6 +417,36 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
                 </option>
               ))}
             </select>
+          </FormField>
+        </div>
+      ),
+    })
+  }
+
+  if (!liderId) {
+    steps.push({
+      title: 'Criar Senha',
+      content: (
+        <div className="space-y-4">
+          <FormField label="Senha" htmlFor="password">
+            <TextField
+              id="password"
+              name="password"
+              type="password"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
+          </FormField>
+          <FormField label="Confirme a Senha" htmlFor="passwordConfirm">
+            <TextField
+              id="passwordConfirm"
+              name="passwordConfirm"
+              type="password"
+              value={form.passwordConfirm}
+              onChange={handleChange}
+              required
+            />
           </FormField>
         </div>
       ),

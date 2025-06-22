@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
     const nome = `${data.user_first_name || ''} ${
       data.user_last_name || ''
     }`.trim()
+    const senha = data.password || data.passwordConfirm
 
     let usuario
     try {
@@ -39,8 +40,8 @@ export async function POST(req: NextRequest) {
         cliente: tenantId,
         campo: data.campo,
         perfil: 'usuario',
-        password: tempPass,
-        passwordConfirm: tempPass,
+        password: senha || tempPass,
+        passwordConfirm: senha || tempPass,
       })
     }
 
@@ -54,6 +55,8 @@ export async function POST(req: NextRequest) {
       campo: data.campo,
       evento: data.evento,
       criado_por: usuario.id,
+      produto: data.produtoId,
+      tamanho: data.tamanho,
       ...(tenantId ? { cliente: tenantId } : {}),
     }
 
