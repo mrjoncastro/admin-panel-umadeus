@@ -3,7 +3,7 @@ import { POST } from '../../app/api/signup/route'
 import { NextRequest } from 'next/server'
 import createPocketBaseMock from '../mocks/pocketbase'
 
-const createMock = vi.fn()
+const createMock = vi.fn().mockResolvedValue({ id: '1' })
 const pb = createPocketBaseMock()
 pb.collection.mockReturnValue({ create: createMock })
 

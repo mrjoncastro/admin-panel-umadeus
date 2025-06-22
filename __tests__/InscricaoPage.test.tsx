@@ -7,10 +7,15 @@ import { calculateGross } from '@/lib/asaasFees'
 
 vi.mock('next/navigation', () => ({
   useParams: () => ({ liderId: 'lid1', eventoId: 'ev1' }),
+  useRouter: () => ({ push: vi.fn() }),
 }))
 
 vi.mock('@/lib/context/TenantContext', () => ({
   useTenant: () => ({ config: { confirmaInscricoes: true } }),
+}))
+
+vi.mock('@/lib/context/ToastContext', () => ({
+  useToast: () => ({ showSuccess: vi.fn(), showError: vi.fn() }),
 }))
 
 describe('InscricaoPage', () => {
@@ -20,6 +25,10 @@ describe('InscricaoPage', () => {
       .mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ campo: 'Campo' }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ titulo: 'Evento X', descricao: 'Desc' }),
       })
       .mockResolvedValueOnce({
         ok: true,
@@ -37,6 +46,10 @@ describe('InscricaoPage', () => {
       .mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({ campo: 'Campo' }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ titulo: 'Evento', descricao: 'Desc' }),
       })
       .mockResolvedValueOnce({
         ok: true,

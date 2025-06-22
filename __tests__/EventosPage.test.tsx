@@ -12,6 +12,10 @@ vi.mock('next/image', () => ({
   },
 }))
 
+vi.mock('next/headers', () => ({
+  headers: () => new Headers({ host: 'localhost:3000' }),
+}))
+
 describe('EventosPage', () => {
   it('exibe formulario apos clicar em Inscrever', async () => {
     global.fetch = vi
@@ -35,7 +39,7 @@ describe('EventosPage', () => {
         json: () => Promise.resolve([{ id: 'c1', nome: 'Campo 1' }]),
       })
 
-    render(<EventosPage />)
+    render(await EventosPage())
 
     expect(
       screen.queryByRole('combobox', { name: /campo/i }),
@@ -53,7 +57,7 @@ describe('EventosPage', () => {
     })
     global.fetch = fetchMock
 
-    render(<EventosPage />)
+    render(await EventosPage())
 
     await screen.findByRole('heading', { name: /eventos umadeus/i })
     expect(fetchMock).toHaveBeenCalledWith('/api/eventos')
