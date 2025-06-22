@@ -131,3 +131,9 @@
 ## [2025-07-31] Erro ao buscar produto: ClientResponseError 404: The requested resource wasn't found. - production - 2df37e3
 
 ## [2025-06-22] Corrigido erro de tipagem no Next.js para parametros de URL nas páginas de eventos. - dev
+
+## [2025-06-22] Erro ao confirmar inscrição: API /api/asaas retornava "pedidoId e valorBruto são obrigatórios" devido ao uso de pedido.id na página admin/inscricoes. Corrigido para usar pedido.pedidoId. - dev - c89ca25
+## [2025-06-22] Falha ao criar pedido ao aprovar inscrição; página admin/inscricoes enviava `id_inscricao` em vez de `inscricaoId`. Ajustado para enviar o campo correto. - dev - 36974c3
+## [2025-06-22] Campo `aprovada` não era enviado ao confirmar inscrições, impedindo a compra de produtos que exigem aprovação. Página admin/inscricoes agora define `aprovada: true`. - dev - e7773fb
+## [2025-06-22] Recusar inscrição não atualizava `aprovada` nem `confirmado_por_lider`. Ajustado para enviar ambos ao cancelar. - dev - 76c0333
+## [2025-06-22] Erro 'Criando pedido sem inscriçãoId' ao confirmar inscrição; body agora envia 'inscricaoId' e 'id_inscricao' simultaneamente para compatibilidade. - dev

@@ -14,7 +14,6 @@ import { type PaymentMethod } from '@/lib/asaasFees'
 import type {
   Evento,
   Inscricao as InscricaoRecord,
-  Pedido,
   Produto,
 } from '@/types'
 
@@ -42,6 +41,7 @@ type Inscricao = {
   tamanho?: string
   genero?: string
   confirmado_por_lider?: boolean
+  aprovada?: boolean
   data_nascimento?: string
   criado_por?: string
   pedido_id?: string | null
@@ -130,6 +130,7 @@ export default function ListaInscricoesPage() {
           data_nascimento: r.data_nascimento ?? '',
           criado_por: r.criado_por ?? '',
           confirmado_por_lider: r.confirmado_por_lider ?? false,
+          aprovada: r.aprovada ?? false,
           pedido_status: r.expand?.pedido?.status ?? null,
           pedido_id: r.expand?.pedido?.id ?? null,
         }))
@@ -262,11 +263,14 @@ export default function ListaInscricoesPage() {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          inscricaoId: id,
           id_inscricao: id,
           valor: precoProduto,
           status: 'pendente',
           produto: produtoRecord.nome || 'Produto',
-          cor: 'Roxo',
+          cor: Array.isArray(produtoRecord.cores)
+            ? produtoRecord.cores[0] || 'Roxo'
+            : (produtoRecord.cores as string | undefined) || 'Roxo',
           tamanho:
             inscricao.tamanho ||
             (Array.isArray(produtoRecord.tamanhos)
@@ -286,14 +290,14 @@ export default function ListaInscricoesPage() {
       })
 
       // Agora sim, apenas aguardamos o JSON retornado
-      const pedido: Pedido = await pedidoRes.json()
+      const pedido: { pedidoId: string } = await pedidoRes.json()
 
       // 3. Gerar link de pagamento via Asaas
       const asaasRes = await fetch('/api/asaas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          pedidoId: pedido.id,
+          pedidoId: pedido.pedidoId,
           valorBruto: precoProduto,
           paymentMethod: metodo,
           installments: parcelas,
@@ -311,9 +315,10 @@ export default function ListaInscricoesPage() {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          pedido: pedido.id,
+          pedido: pedido.pedidoId,
           status: 'aguardando_pagamento',
           confirmado_por_lider: true,
+          aprovada: true,
         }),
       })
 
@@ -325,6 +330,7 @@ export default function ListaInscricoesPage() {
                 ...i,
                 status: 'aguardando_pagamento',
                 confirmado_por_lider: true,
+                aprovada: true,
               }
             : i,
         ),
@@ -340,7 +346,7 @@ export default function ListaInscricoesPage() {
           cpf: inscricao.cpf,
           evento: inscricao.evento,
           liderId: campo?.responsavel,
-          pedidoId: pedido.id,
+          pedidoId: pedido.pedidoId,
           cliente: tenantId,
           valor: gross,
           url_pagamento: checkout.url,
@@ -663,12 +669,21 @@ export default function ListaInscricoesPage() {
                     method: 'PATCH',
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: 'cancelado' }),
+                    body: JSON.stringify({
+                      status: 'cancelado',
+                      confirmado_por_lider: true,
+                      aprovada: false,
+                    }),
                   })
                   setInscricoes((prev) =>
                     prev.map((i) =>
                       i.id === inscricaoParaRecusar.id
-                        ? { ...i, status: 'cancelado' }
+                        ? {
+                            ...i,
+                            status: 'cancelado',
+                            confirmado_por_lider: true,
+                            aprovada: false,
+                          }
                         : i,
                     ),
                   )
