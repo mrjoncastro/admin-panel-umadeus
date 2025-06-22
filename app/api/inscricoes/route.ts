@@ -176,11 +176,14 @@ export async function POST(req: NextRequest) {
       tamanho,
       cliente: lider.cliente,
     }
-    const dadosInscricao: Inscricao & {
+    const { id: _inscricaoId, ...dadosBaseSemId } = criarInscricao(dadosBase)
+    void _inscricaoId
+
+    const dadosInscricao: Omit<Inscricao, 'id'> & {
       paymentMethod: PaymentMethod
       installments: number
     } = {
-      ...criarInscricao(dadosBase),
+      ...dadosBaseSemId,
       paymentMethod,
       installments,
     }
