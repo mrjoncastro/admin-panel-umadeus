@@ -7,7 +7,7 @@ import type { PaymentMethod } from '@/lib/asaasFees'
 import {
   criarInscricao,
   InscricaoTemplate,
-} from '@/components/templates/inscricao'
+} from '@/lib/templates/inscricao'
 import type { Inscricao } from '@/types'
 
 export async function GET(req: NextRequest) {

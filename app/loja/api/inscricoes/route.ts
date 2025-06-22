@@ -6,7 +6,7 @@ import { logConciliacaoErro } from '@/lib/server/logger'
 import {
   criarInscricao,
   InscricaoTemplate,
-} from '@/components/templates/inscricao'
+} from '@/lib/templates/inscricao'
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase()
