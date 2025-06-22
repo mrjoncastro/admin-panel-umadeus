@@ -131,12 +131,5 @@
 ## [2025-07-31] Erro ao buscar produto: ClientResponseError 404: The requested resource wasn't found. - production - 2df37e3
 
 ## [2025-06-22] Corrigido erro de tipagem no Next.js para parametros de URL nas páginas de eventos. - dev
-## [2025-06-22] Erro 405 ao acessar /api/inscricoes/[id]; implementados métodos GET e PATCH para correção - development - 1cf1de4
 
-## [2025-06-22] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
-
-## [2025-06-22] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
-
-## [2025-06-22] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
-
-## [2025-06-22] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
+## [2025-06-22] Erro ao confirmar inscrição: API /api/asaas retornava "pedidoId e valorBruto são obrigatórios" devido ao uso de pedido.id na página admin/inscricoes. Corrigido para usar pedido.pedidoId. - dev - c89ca25
