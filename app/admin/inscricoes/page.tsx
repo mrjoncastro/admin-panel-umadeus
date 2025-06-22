@@ -14,7 +14,6 @@ import { type PaymentMethod } from '@/lib/asaasFees'
 import type {
   Evento,
   Inscricao as InscricaoRecord,
-  Pedido,
   Produto,
 } from '@/types'
 
@@ -42,6 +41,7 @@ type Inscricao = {
   tamanho?: string
   genero?: string
   confirmado_por_lider?: boolean
+  aprovada?: boolean
   data_nascimento?: string
   criado_por?: string
   pedido_id?: string | null
@@ -130,6 +130,7 @@ export default function ListaInscricoesPage() {
           data_nascimento: r.data_nascimento ?? '',
           criado_por: r.criado_por ?? '',
           confirmado_por_lider: r.confirmado_por_lider ?? false,
+          aprovada: r.aprovada ?? false,
           pedido_status: r.expand?.pedido?.status ?? null,
           pedido_id: r.expand?.pedido?.id ?? null,
         }))
@@ -277,7 +278,9 @@ const confirmarInscricao = async (id: string) => {
           valor: precoProduto,
           status: 'pendente',
           produto: produtoRecord.nome || 'Produto',
-          cor: 'Roxo',
+          cor: Array.isArray(produtoRecord.cores)
+            ? produtoRecord.cores[0] || 'Roxo'
+            : (produtoRecord.cores as string | undefined) || 'Roxo',
           tamanho:
             inscricao.tamanho ||
             (Array.isArray(produtoRecord.tamanhos)
@@ -299,75 +302,67 @@ const confirmarInscricao = async (id: string) => {
       // Agora sim, apenas aguardamos o JSON retornado
       const pedido: { pedidoId: string } = await pedidoRes.json()
 
-    // 3. Gerar link de pagamento via Asaas
-    const asaasBody = {
-      pedidoId: pedido.pedidoId,
-      valorBruto: precoProduto,
-      paymentMethod: metodo,
-      installments: parcelas,
-    }
-    console.log('[confirmarInscricao] Enviando para /api/asaas:', asaasBody)
-    const asaasRes = await fetch('/api/asaas', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(asaasBody),
-    })
-    console.log('[confirmarInscricao] Status asaasRes:', asaasRes.status)
-    const checkout = await asaasRes.json()
-    console.log('[confirmarInscricao] checkout:', checkout)
+      // 3. Gerar link de pagamento via Asaas
+      const asaasRes = await fetch('/api/asaas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pedidoId: pedido.pedidoId,
+          valorBruto: precoProduto,
+          paymentMethod: metodo,
+          installments: parcelas,
+        }),
+      })
+      const checkout = await asaasRes.json()
 
     if (!asaasRes.ok || !checkout?.url) {
       console.error('[confirmarInscricao] Erro ao gerar link de pagamento:', checkout)
       throw new Error('Erro ao gerar link de pagamento.')
     }
 
-    // 4. Atualizar inscrição com o ID do pedido
-    const patchBody = {
-      pedido: pedido.pedidoId,
-      status: 'aguardando_pagamento',
-      confirmado_por_lider: true,
-    }
-    console.log('[confirmarInscricao] PATCH inscrição:', patchBody)
+      // 4. Atualizar inscrição com o ID do pedido
+      await fetch(`/api/inscricoes/${id}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pedido: pedido.pedidoId,
+          status: 'aguardando_pagamento',
+          confirmado_por_lider: true,
+          aprovada: true,
+        }),
+      })
 
-    await fetch(`/api/inscricoes/${id}`, {
-      method: 'PATCH',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(patchBody),
-    })
-    console.log('[confirmarInscricao] Inscrição atualizada para aguardando_pagamento')
+      // Atualizar estado local das inscrições
+      setInscricoes((prev) =>
+        prev.map((i) =>
+          i.id === id
+            ? {
+                ...i,
+                status: 'aguardando_pagamento',
+                confirmado_por_lider: true,
+                aprovada: true,
+              }
+            : i,
+        ),
+      )
 
-    // Atualizar estado local das inscrições
-    setInscricoes((prev) =>
-      prev.map((i) =>
-        i.id === id
-          ? {
-              ...i,
-              status: 'aguardando_pagamento',
-              confirmado_por_lider: true,
-            }
-          : i,
-      ),
-    )
-
-    // 🔹 6. Notificar via n8n webhook de forma assíncrona
-    const n8nBody = {
-      nome: inscricao.nome,
-      telefone: inscricao.telefone,
-      cpf: inscricao.cpf,
-      evento: inscricao.evento,
-      liderId: campo?.responsavel,
-      pedidoId: pedido.pedidoId,
-      cliente: tenantId,
-      valor: gross,
-      url_pagamento: checkout.url,
-    }
-    console.log('[confirmarInscricao] Enviando para n8n:', n8nBody)
-    fetch('/api/n8n', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(n8nBody),
-    }).catch(() => {})
+      // 🔹 6. Notificar via n8n webhook de forma assíncrona
+      fetch('/api/n8n', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome: inscricao.nome,
+          telefone: inscricao.telefone,
+          cpf: inscricao.cpf,
+          evento: inscricao.evento,
+          liderId: campo?.responsavel,
+          pedidoId: pedido.pedidoId,
+          cliente: tenantId,
+          valor: gross,
+          url_pagamento: checkout.url,
+        }),
+      }).catch(() => {})
 
     // 🔹 7. Mostrar sucesso visual
     showSuccess('Link de pagamento enviado com sucesso!')
@@ -688,12 +683,21 @@ const confirmarInscricao = async (id: string) => {
                     method: 'PATCH',
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: 'cancelado' }),
+                    body: JSON.stringify({
+                      status: 'cancelado',
+                      confirmado_por_lider: true,
+                      aprovada: false,
+                    }),
                   })
                   setInscricoes((prev) =>
                     prev.map((i) =>
                       i.id === inscricaoParaRecusar.id
-                        ? { ...i, status: 'cancelado' }
+                        ? {
+                            ...i,
+                            status: 'cancelado',
+                            confirmado_por_lider: true,
+                            aprovada: false,
+                          }
                         : i,
                     ),
                   )
