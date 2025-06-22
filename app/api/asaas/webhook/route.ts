@@ -10,6 +10,20 @@ type AsaasWebhookPayload = {
     externalReference?: string
     customer?: string
   }
+  checkout?: {
+    id?: string
+    status?: string
+    callback?: {
+      successUrl?: string
+      cancelUrl?: string
+      expiredUrl?: string
+    }
+    customerData?: {
+      email?: string
+      cpfCnpj?: string
+      name?: string
+    }
+  }
   event?: string
   accountId?: string
 }
@@ -21,11 +35,45 @@ export async function POST(req: NextRequest) {
   const rawBody = await req.text()
   let body: AsaasWebhookPayload
   try {
-    body = JSON.parse(rawBody) as AsaasWebhookPayload
+    body = JSON.parse(rawBody)
   } catch {
     return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
   }
 
+  // --- NOVA LÓGICA PARA CHECKOUT_PAID ---
+  if (body.event === 'CHECKOUT_PAID' && body.checkout?.callback?.successUrl) {
+    const successUrl = body.checkout.callback.successUrl
+    const pedidoMatch = /pedido=([^&]+)/.exec(successUrl)
+    const pedidoId = pedidoMatch ? pedidoMatch[1] : null
+    const idPagamento = body.checkout?.id
+
+    if (pedidoId) {
+      try {
+        await pb.collection('pedidos').update(pedidoId, {
+          status: 'pago',
+          id_pagamento: idPagamento,
+        })
+        return NextResponse.json({
+          status: 'Pedido atualizado com sucesso (checkout paid)',
+        })
+      } catch (err) {
+        await logConciliacaoErro(
+          `Falha ao atualizar pedido ${pedidoId}: ${String(err)}`,
+        )
+        return NextResponse.json(
+          { error: 'Erro ao atualizar pedido' },
+          { status: 500 },
+        )
+      }
+    } else {
+      return NextResponse.json(
+        { error: 'Pedido não identificado no successUrl' },
+        { status: 400 },
+      )
+    }
+  }
+
+  // --- LÓGICA PADRÃO PARA PAYMENT_RECEIVED/PAYMENT_CONFIRMED ---
   const payment = body.payment
   const paymentId: string | undefined = payment?.id
   const event: string | undefined = body.event
@@ -156,13 +204,16 @@ export async function POST(req: NextRequest) {
   if (!pedidoRecord && asaasCustomerId) {
     try {
       // Busca cliente no Asaas para obter CPF
-      const clienteRes = await fetch(`${baseUrl}/customers/${asaasCustomerId}`, {
-        headers: {
-          accept: 'application/json',
-          'access-token': keyHeader,
-          'User-Agent': clienteNome ?? 'qg3',
+      const clienteRes = await fetch(
+        `${baseUrl}/customers/${asaasCustomerId}`,
+        {
+          headers: {
+            accept: 'application/json',
+            'access-token': keyHeader,
+            'User-Agent': clienteNome ?? 'qg3',
+          },
         },
-      })
+      )
       if (clienteRes.ok) {
         const clienteData = await clienteRes.json()
         const cpf = clienteData.cpfCnpj?.replace(/\D/g, '') // tira pontos/traços
