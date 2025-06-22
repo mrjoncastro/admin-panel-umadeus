@@ -262,7 +262,7 @@ export default function ListaInscricoesPage() {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          id_inscricao: id,
+          inscricaoId: id,
           valor: precoProduto,
           status: 'pendente',
           produto: produtoRecord.nome || 'Produto',
