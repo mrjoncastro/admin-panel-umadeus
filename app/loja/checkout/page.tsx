@@ -15,6 +15,7 @@ import {
 } from '@/lib/constants'
 import { useMemo } from 'react'
 import type { Produto } from '@/types'
+import { useSyncTenant } from '@/lib/hooks/useSyncTenant'
 
 function formatCurrency(n: number) {
   return `R$ ${n.toFixed(2).replace('.', ',')}`
@@ -25,6 +26,7 @@ function CheckoutContent() {
 
   const router = useRouter()
   const { isLoggedIn, user, tenantId } = useAuthContext()
+  useSyncTenant()
   const { showSuccess, showError } = useToast()
 
   const [nome, setNome] = useState(user?.nome || '')
