@@ -11,6 +11,7 @@ import {
   Button,
   Spinner,
 } from '@/components'
+import { LayoutWrapper } from '@/components/templates'
 
 export default function SignUpPage() {
   const { login } = useAuthContext()
@@ -58,11 +59,12 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6 text-center text-[var(--accent)]">
-        Criar Conta
-      </h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <LayoutWrapper>
+      <div className="max-w-md mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold mb-6 text-center text-[var(--accent)]">
+          Criar Conta
+        </h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
         <FormField label="Nome completo" htmlFor="signup-nome">
           <TextField
             id="signup-nome"
@@ -125,7 +127,17 @@ export default function SignUpPage() {
             'Avançar'
           )}
         </Button>
+        <p className="text-center text-sm text-[var(--text-secondary)]">
+          Já possui conta?{' '}
+          <a
+            href="/login"
+            className="underline hover:text-[var(--accent)] transition"
+          >
+            Fazer login
+          </a>
+        </p>
       </form>
     </div>
+    </LayoutWrapper>
   )
 }

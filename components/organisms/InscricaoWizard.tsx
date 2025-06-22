@@ -16,7 +16,6 @@ interface Produto {
 interface InscricaoWizardProps {
   liderId: string
   eventoId: string
-  loading?: boolean
 }
 
 export default function InscricaoWizard({
@@ -344,7 +343,6 @@ export default function InscricaoWizard({
     <FormWizard
       steps={steps}
       onFinish={handleSubmit}
-      loading={loading}
       className="max-w-lg mx-auto bg-white p-6 rounded-xl shadow"
     />
   )
