@@ -10,11 +10,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
     }
     const tenantId = await getTenantFromHost()
+    const telefoneNumerico = String(telefone).replace(/\D/g, '')
+    const cpfNumerico = String(cpf).replace(/\D/g, '')
     const usuario = await pb.collection('usuarios').create({
       nome: String(nome).trim(),
       email: String(email).trim(),
-      telefone: String(telefone).trim(),
-      cpf: String(cpf).trim(),
+      telefone: telefoneNumerico,
+      cpf: cpfNumerico,
       password: String(senha),
       passwordConfirm: String(senha),
       role: 'usuario',
