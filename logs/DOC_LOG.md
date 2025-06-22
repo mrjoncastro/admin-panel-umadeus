@@ -397,3 +397,4 @@
 ## [2025-06-22] Corrigido envio do ID do produto na confirmação de inscrições.
 
 ## [2025-06-22] Padronizado envio do campo produto como array de IDs e exemplos atualizados no manual de aprovação.
+## [2025-06-22] /api/produtos/[slug] passa a retornar objeto de inscrição do usuário (inscricao, inscricaoId e inscricaoAprovada) quando o produto possui evento. Lint e build executados.

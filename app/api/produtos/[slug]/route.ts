@@ -49,15 +49,12 @@ export async function GET(req: NextRequest) {
           ),
         )
 
+    let inscricao: Inscricao | null = null
     let inscricaoAprovada = false
     let inscricaoId: string | null = null
-    if (
-      p.requer_inscricao_aprovada &&
-      p.evento_id &&
-      !('error' in auth)
-    ) {
+    if (p.evento_id && !('error' in auth)) {
       try {
-        const inscricao = await pb
+        inscricao = await pb
           .collection('inscricoes')
           .getFirstListItem<Inscricao>(
             `criado_por='${auth.user.id}' && evento='${p.evento_id}'`,
@@ -65,12 +62,19 @@ export async function GET(req: NextRequest) {
         inscricaoAprovada = Boolean(inscricao.aprovada)
         inscricaoId = inscricao.id
       } catch {
+        inscricao = null
         inscricaoAprovada = false
         inscricaoId = null
       }
     }
 
-    return NextResponse.json({ ...p, imagens, inscricaoAprovada, inscricaoId })
+    return NextResponse.json({
+      ...p,
+      imagens,
+      inscricao,
+      inscricaoAprovada,
+      inscricaoId,
+    })
   } catch (err: unknown) {
     const message = (err as Error)?.message ?? String(err)
     return NextResponse.json(
