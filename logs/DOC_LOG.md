@@ -397,3 +397,4 @@
 
 ## [2025-08-02] Formulário unificado de evento criado e páginas de inscrição atualizadas.
 ## [2025-08-02] Rotas de inscrições reorganizadas sob `/inscricoes/lider` e `EventForm` passou a solicitar forma de pagamento.
+## [2025-08-03] Unificado InscricaoWizard e InscricaoLojaWizard no EventForm. Páginas agora recebem evento via searchParams. Lint e build falharam (next not found).
