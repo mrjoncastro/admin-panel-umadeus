@@ -16,7 +16,7 @@ type Story = StoryObj<typeof meta>
 export const CPF: Story = {
   args: { mask: 'cpf' },
   render: (args) => {
-    const [value, setValue] = useState('')
+    const [value, setValue] = useState('52998224725')
     return (
       <InputWithMask
         {...args}
