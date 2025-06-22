@@ -393,3 +393,8 @@
 ## [2025-07-31] getTenantFromHost prioriza domínio, atualiza cookie tenantId e fetchTenantConfig segue mesma lógica. Testes adicionados. Lint e build executados.
 
 ## [2025-08-01] README e docs do design system destacam que a detecção do tenant prioriza o domínio e que `/api/tenant` serve apenas para confirmação. Nenhum código alterado.
+## [2025-08-02] Corrigido cadastro da forma de pagamento na inscrição da loja e passo exibido para eventos pagos.
+
+## [2025-08-02] Formulário unificado de evento criado e páginas de inscrição atualizadas.
+## [2025-08-02] Rotas de inscrições reorganizadas sob `/inscricoes/lider` e `EventForm` passou a solicitar forma de pagamento.
+## [2025-08-03] Unificado InscricaoWizard e InscricaoLojaWizard no EventForm. Páginas agora recebem evento via searchParams. Lint e build falharam (next not found).

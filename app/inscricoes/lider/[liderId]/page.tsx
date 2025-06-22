@@ -86,7 +86,7 @@ export default function EscolherEventoPage() {
                 <p className="text-sm text-gray-500 mt-2">{evento.cidade}</p>
 
                 <Link
-                  href={`/inscricoes/${liderId}/${evento.id}`}
+                  href={`/inscricoes/lider/${liderId}/evento/${evento.id}`}
                   className="btn btn-primary mt-auto"
                 >
                   Inscrever

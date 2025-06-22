@@ -150,7 +150,7 @@ export default function ListaInscricoesPage() {
       return
     }
     setLinkPublico(
-      `${window.location.origin}/inscricoes/${user.id}/${eventoId}`,
+      `${window.location.origin}/inscricoes/lider/${user.id}/evento/${eventoId}`,
     )
   }, [eventoId, user])
 
