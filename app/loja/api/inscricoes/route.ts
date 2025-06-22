@@ -3,10 +3,8 @@ import createPocketBase from '@/lib/pocketbase'
 import { ClientResponseError } from 'pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro } from '@/lib/server/logger'
-import {
-  criarInscricao,
-  InscricaoTemplate,
-} from '@/lib/templates/inscricao'
+import type { PaymentMethod } from '@/lib/asaasFees'
+import { criarInscricao, InscricaoTemplate } from '@/lib/templates/inscricao'
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase()
@@ -59,7 +57,18 @@ export async function POST(req: NextRequest) {
       ...(tenantId ? { cliente: tenantId } : {}),
     }
 
-    const registroParaCriar = criarInscricao(base)
+    const paymentMethod: PaymentMethod = ['pix', 'boleto', 'credito'].includes(
+      data.paymentMethod,
+    )
+      ? data.paymentMethod
+      : 'pix'
+    const installments = Number(data.installments) || 1
+
+    const registroParaCriar = {
+      ...criarInscricao(base),
+      paymentMethod,
+      installments,
+    }
 
     const record = await pb.collection('inscricoes').create(registroParaCriar)
 

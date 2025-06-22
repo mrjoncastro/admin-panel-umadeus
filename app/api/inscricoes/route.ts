@@ -4,10 +4,7 @@ import { createPocketBase } from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro } from '@/lib/server/logger'
 import type { PaymentMethod } from '@/lib/asaasFees'
-import {
-  criarInscricao,
-  InscricaoTemplate,
-} from '@/lib/templates/inscricao'
+import { criarInscricao, InscricaoTemplate } from '@/lib/templates/inscricao'
 import type { Inscricao } from '@/types'
 
 export async function GET(req: NextRequest) {

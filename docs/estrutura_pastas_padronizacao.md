@@ -2,7 +2,7 @@
 
 ## 1. Visão Geral
 
-```plaintext
+````plaintext
 /app
  ├── api
  │    ├── auth
@@ -105,7 +105,7 @@ No React:
 
 ```tsx
 const { data, error } = useFetch('/api/pedidos', { credentials: 'include' })
-```
+````
 
 ## 5. Boas Práticas de Organização
 

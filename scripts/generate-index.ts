@@ -19,7 +19,10 @@ async function walk(dir: string): Promise<string[]> {
     const full = path.join(dir, entry.name)
     if (entry.isDirectory()) {
       files.push(...(await walk(full)))
-    } else if (/\.(tsx?|ts)$/.test(entry.name) && !entry.name.endsWith('.d.ts')) {
+    } else if (
+      /\.(tsx?|ts)$/.test(entry.name) &&
+      !entry.name.endsWith('.d.ts')
+    ) {
       files.push(full)
     }
   }
@@ -33,10 +36,19 @@ function isExport(modifiers?: readonly ts.ModifierLike[]): boolean {
 function getNamedExports(file: string): string[] {
   const fullPath = path.join(ROOT, file)
   const content = readFileSync(fullPath, 'utf8')
-  const source = ts.createSourceFile(file, content, ts.ScriptTarget.Latest, true)
+  const source = ts.createSourceFile(
+    file,
+    content,
+    ts.ScriptTarget.Latest,
+    true,
+  )
   const names = new Set<string>()
   function visit(node: ts.Node) {
-    if (ts.isFunctionDeclaration(node) && isExport(node.modifiers) && node.name) {
+    if (
+      ts.isFunctionDeclaration(node) &&
+      isExport(node.modifiers) &&
+      node.name
+    ) {
       names.add(node.name.text)
     } else if (ts.isVariableStatement(node) && isExport(node.modifiers)) {
       node.declarationList.declarations.forEach((d) => {
@@ -65,7 +77,10 @@ async function main() {
     }
   }
 
-  const lines: string[] = ['# \u00cdndice de Fun\u00e7\u00f5es e Componentes', '']
+  const lines: string[] = [
+    '# \u00cdndice de Fun\u00e7\u00f5es e Componentes',
+    '',
+  ]
   for (const file of Object.keys(index).sort()) {
     lines.push(`- **${file}**`)
     for (const name of index[file]) {
@@ -74,7 +89,10 @@ async function main() {
   }
 
   await fs.mkdir(path.join(ROOT, 'docs'), { recursive: true })
-  await fs.writeFile(path.join(ROOT, 'docs', 'function-index.md'), lines.join('\n'))
+  await fs.writeFile(
+    path.join(ROOT, 'docs', 'function-index.md'),
+    lines.join('\n'),
+  )
   console.log('\u2705 docs/function-index.md gerado')
 }
 
@@ -82,4 +100,3 @@ main().catch((err) => {
   console.error(err)
   process.exit(1)
 })
-

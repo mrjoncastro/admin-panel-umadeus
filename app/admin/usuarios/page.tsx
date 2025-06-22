@@ -125,7 +125,7 @@ export default function UsuariosPage() {
                     {usuario.role === 'lider' ? (
                       eventos.length > 0 ? (
                         <Link
-                          href={`/inscricoes/${usuario.id}/${eventoId}`}
+                          href={`/inscricoes/lider/${usuario.id}/evento/${eventoId}`}
                           className="text-blue-600 hover:underline"
                           target="_blank"
                         >
