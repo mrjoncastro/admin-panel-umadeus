@@ -268,40 +268,36 @@ const confirmarInscricao = async (id: string) => {
     const gross = precoProduto // ajuste aqui caso queira aplicar taxas/descontos
     console.log('[confirmarInscricao] gross:', gross)
 
-    // Criação do pedido
-    const pedidoBody = {
-      id_inscricao: id,
-      valor: precoProduto,
-      status: 'pendente',
-      produto: produtoRecord.nome || 'Produto',
-      cor: 'Roxo',
-      tamanho:
-        inscricao.tamanho ||
-        (Array.isArray(produtoRecord.tamanhos)
-          ? produtoRecord.tamanhos[0]
-          : (produtoRecord.tamanhos as string | undefined)),
-      genero:
-        inscricao.genero ||
-        (Array.isArray(produtoRecord.generos)
-          ? produtoRecord.generos[0]
-          : (produtoRecord.generos as string | undefined)),
-      email: inscricao.email,
-      cliente: tenantId,
-      campo: campo?.id,
-      responsavel: inscricao.criado_por,
-      canal: 'inscricao',
-    }
-    console.log('[confirmarInscricao] Enviando pedido:', pedidoBody)
+      const pedidoRes = await fetch('/api/pedidos', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          inscricaoId: id,
+          valor: precoProduto,
+          status: 'pendente',
+          produto: produtoRecord.nome || 'Produto',
+          cor: 'Roxo',
+          tamanho:
+            inscricao.tamanho ||
+            (Array.isArray(produtoRecord.tamanhos)
+              ? produtoRecord.tamanhos[0]
+              : (produtoRecord.tamanhos as string | undefined)),
+          genero:
+            inscricao.genero ||
+            (Array.isArray(produtoRecord.generos)
+              ? produtoRecord.generos[0]
+              : (produtoRecord.generos as string | undefined)),
+          email: inscricao.email,
+          cliente: tenantId,
+          campo: campo?.id,
+          responsavel: inscricao.criado_por,
+          canal: 'inscricao',
+        }),
+      })
 
-    const pedidoRes = await fetch('/api/pedidos', {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(pedidoBody),
-    })
-    console.log('[confirmarInscricao] Status pedidoRes:', pedidoRes.status)
-    const pedido: { pedidoId: string } = await pedidoRes.json()
-    console.log('[confirmarInscricao] pedido:', pedido)
+      // Agora sim, apenas aguardamos o JSON retornado
+      const pedido: { pedidoId: string } = await pedidoRes.json()
 
     // 3. Gerar link de pagamento via Asaas
     const asaasBody = {

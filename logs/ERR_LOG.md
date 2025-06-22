@@ -133,3 +133,4 @@
 ## [2025-06-22] Corrigido erro de tipagem no Next.js para parametros de URL nas páginas de eventos. - dev
 
 ## [2025-06-22] Erro ao confirmar inscrição: API /api/asaas retornava "pedidoId e valorBruto são obrigatórios" devido ao uso de pedido.id na página admin/inscricoes. Corrigido para usar pedido.pedidoId. - dev - c89ca25
+## [2025-06-22] Falha ao criar pedido ao aprovar inscrição; página admin/inscricoes enviava `id_inscricao` em vez de `inscricaoId`. Ajustado para enviar o campo correto. - dev - 36974c3
