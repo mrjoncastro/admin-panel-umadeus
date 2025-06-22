@@ -182,6 +182,8 @@
 - **app/api/eventos/route.ts**
   - GET
 - **app/api/inscricoes/[id]/route.ts**
+  - GET
+  - PATCH
   - DELETE
 - **app/api/inscricoes/route.ts**
   - GET
