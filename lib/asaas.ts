@@ -48,6 +48,52 @@ export type CreateCheckoutParams = {
   paymentMethods?: ('PIX' | 'CREDIT_CARD')[]
 }
 
+type AsaasError = {
+  errors?: { description?: string }[]
+  message?: string
+  status?: number
+  error?: string // Incluído para casos como { error: "Cliente não encontrado" }
+}
+
+async function criarClienteAsaas(
+  cliente: CreateCheckoutParams['cliente'],
+  apiKey: string,
+  agentUser: string,
+  baseUrl = process.env.ASAAS_API_URL,
+) {
+  const url = `${baseUrl?.replace(/\/$/, '')}/customers`
+  const payload = {
+    name: cliente.nome,
+    email: cliente.email,
+    phone: cliente.telefone,
+    cpfCnpj: cliente.cpf,
+    postalCode: cliente.cep,
+    address: cliente.endereco,
+    addressNumber: cliente.numero,
+    province: cliente.estado,
+    city: cliente.cidade,
+  }
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      'Content-Type': 'application/json',
+      'access-token': apiKey.startsWith('$') ? apiKey : `$${apiKey}`,
+      'User-Agent': agentUser,
+    },
+    body: JSON.stringify(payload),
+  })
+  const data = await res.json()
+  if (!res.ok) {
+    throw new Error(
+      (data?.errors?.[0]?.description as string) ||
+        (data?.message as string) ||
+        'Erro ao criar cliente no Asaas',
+    )
+  }
+  return data
+}
+
 export async function createCheckout(
   params: CreateCheckoutParams,
   apiKey: string,
@@ -68,7 +114,6 @@ export async function createCheckout(
     params.usuarioId,
     params.inscricaoId,
   )
-  // Aceita valores em string com vírgula ou ponto
   const parsedValor = Number(String(params.valorBruto).replace(/,/g, '.'))
 
   if (Number.isNaN(parsedValor)) {
@@ -94,69 +139,68 @@ export async function createCheckout(
     margin = Number((netAfterFees - 0.01).toFixed(2))
   }
 
-  console.info('✅ Parsed valorBruto:', parsedValor)
-  console.info('✅ Valor bruto calculado:', gross)
-  console.info('✅ Split calculado:', margin)
-  console.info('✅ Valor líquido pós-taxas:', netAfterFees)
-
   const isInstallmentCredit =
     params.paymentMethod === 'credito' && params.installments > 1
 
-  const payload = {
-    billingTypes: params.paymentMethods ?? [
-      toAsaasBilling(params.paymentMethod),
-    ],
-    chargeTypes: isInstallmentCredit
-      ? ['DETACHED', 'INSTALLMENT']
-      : ['DETACHED'],
-    callback: {
-      successUrl: params.successUrl,
-      cancelUrl: params.errorUrl,
-      expiredUrl: params.errorUrl,
-    },
-    minutesToExpire: 15,
-    value: gross,
-    items: params.itens.map((i) => ({
-      description: (i.description ?? i.name).slice(
-        0,
-        MAX_ITEM_DESCRIPTION_LENGTH,
-      ),
-      name: i.name.slice(0, MAX_ITEM_NAME_LENGTH),
-      quantity: i.quantity,
-      value: i.value,
-    })),
-    customerData: {
-      name: params.cliente.nome,
-      email: params.cliente.email,
-      phone: params.cliente.telefone,
-      address: params.cliente.endereco,
-      addressNumber: Number(params.cliente.numero),
-      province: params.cliente.estado,
-      postalCode: params.cliente.cep,
-      city: params.cliente.cidade,
-      cpfCnpj: params.cliente.cpf,
-    },
-    ...(isInstallmentCredit
-      ? { installment: { maxInstallmentCount: params.installments } }
-      : {}),
-    customFields:
-      (params.itens
-        .map((item, idx) =>
-          item.fotoBase64
-            ? { name: `item${idx + 1}Foto`, value: item.fotoBase64 }
-            : null,
-        )
-        .filter(Boolean) as { name: string; value: string }[]) || undefined,
-    split: [
-      {
-        walletId: process.env.WALLETID_M24,
-        fixedValue: margin,
+  function buildPayload(splitMargin: number) {
+    return {
+      billingTypes: params.paymentMethods ?? [
+        toAsaasBilling(params.paymentMethod),
+      ],
+      chargeTypes: isInstallmentCredit
+        ? ['DETACHED', 'INSTALLMENT']
+        : ['DETACHED'],
+      callback: {
+        successUrl: params.successUrl,
+        cancelUrl: params.errorUrl,
+        expiredUrl: params.errorUrl,
       },
-    ],
-    externalReference,
+      minutesToExpire: 15,
+      value: gross,
+      items: params.itens.map((i) => ({
+        description: (i.description ?? i.name).slice(
+          0,
+          MAX_ITEM_DESCRIPTION_LENGTH,
+        ),
+        name: i.name.slice(0, MAX_ITEM_NAME_LENGTH),
+        quantity: i.quantity,
+        value: i.value,
+      })),
+      customerData: {
+        name: params.cliente.nome,
+        email: params.cliente.email,
+        phone: params.cliente.telefone,
+        address: params.cliente.endereco,
+        addressNumber: Number(params.cliente.numero),
+        province: params.cliente.estado,
+        postalCode: params.cliente.cep,
+        city: params.cliente.cidade,
+        cpfCnpj: params.cliente.cpf,
+      },
+      ...(isInstallmentCredit
+        ? { installment: { maxInstallmentCount: params.installments } }
+        : {}),
+      customFields:
+        (params.itens
+          .map((item, idx) =>
+            item.fotoBase64
+              ? { name: `item${idx + 1}Foto`, value: item.fotoBase64 }
+              : null,
+          )
+          .filter(Boolean) as { name: string; value: string }[]) || undefined,
+      split: [
+        {
+          walletId: process.env.WALLETID_M24,
+          fixedValue: splitMargin,
+        },
+      ],
+      externalReference,
+    }
   }
 
-  async function send(): Promise<{ ok: boolean; text: string }> {
+  async function sendCheckout(
+    payload: unknown,
+  ): Promise<{ ok: boolean; text: string }> {
     const res = await fetch(url, {
       method: 'POST',
       headers: {
@@ -168,17 +212,35 @@ export async function createCheckout(
       body: JSON.stringify(payload),
     })
     const text = await res.text()
-    console.log('📨 Resposta do Asaas:', text)
     return { ok: res.ok, text }
   }
 
-  let { ok, text } = await send()
+  let payload = buildPayload(margin)
+  let { ok, text } = await sendCheckout(payload)
 
+  // Tenta criar cliente se necessário
+  try {
+    const parsed: AsaasError = JSON.parse(text)
+    if (parsed && typeof parsed === 'object' && 'error' in parsed) {
+      if (
+        typeof parsed.error === 'string' &&
+        parsed.error.toLowerCase().includes('cliente não encontrado')
+      ) {
+        await criarClienteAsaas(params.cliente, apiKey, agentUser, baseUrl)
+        // Reenvia o checkout agora com cliente criado
+        const result = await sendCheckout(payload)
+        ok = result.ok
+        text = result.text
+      }
+    }
+  } catch {
+    // ignora se não for JSON
+  }
+
+  // Tratamento para split excedido (retry)
   if (!ok) {
     try {
-      const err = JSON.parse(text) as {
-        errors?: { description?: string }[]
-      }
+      const err = JSON.parse(text) as AsaasError
       const desc = err.errors?.[0]?.description ?? ''
       const match = desc.match(/R\$\s*([0-9.,]+)/g)
       if (match && match.length >= 2) {
@@ -187,18 +249,24 @@ export async function createCheckout(
         )
         if (!Number.isNaN(allowed)) {
           const newSplit = Number((allowed - 0.01).toFixed(2))
-          payload.split[0].fixedValue = newSplit
-          console.info('🔄 Split ajustado para:', newSplit)
-          ;({ ok, text } = await send())
+          payload = buildPayload(newSplit)
+          const retry = await sendCheckout(payload)
+          ok = retry.ok
+          text = retry.text
         }
       }
     } catch {
-      /* ignore */
+      // ignore
     }
   }
 
   if (!ok) {
-    throw new Error(text)
+    try {
+      const errObj: AsaasError = JSON.parse(text)
+      throw errObj
+    } catch {
+      throw new Error(text)
+    }
   }
 
   const data = JSON.parse(text)

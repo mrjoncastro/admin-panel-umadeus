@@ -57,10 +57,7 @@ export async function POST(req: NextRequest) {
   const { pb, cliente } = auth
 
   try {
-    logInfo('📥 Recebendo requisição POST em /asaas/checkout')
-
     const body = await req.json()
-    logInfo('🧾 Body recebido:\n' + JSON.stringify(body, null, 2))
 
     const parse = checkoutSchema.safeParse(body)
     if (!parse.success) {
@@ -112,8 +109,6 @@ export async function POST(req: NextRequest) {
       paymentMethods,
     })
 
-    logInfo('🔑 API Key utilizada:', apiKey)
-
     const checkoutUrl = await createCheckout(
       {
         valorBruto,
@@ -131,8 +126,6 @@ export async function POST(req: NextRequest) {
       apiKey,
       userAgent,
     )
-
-    logInfo('✅ Checkout criado com sucesso:', checkoutUrl)
 
     return NextResponse.json({ checkoutUrl })
   } catch (err) {
