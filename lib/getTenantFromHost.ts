@@ -3,9 +3,10 @@ import createPocketBase from '@/lib/pocketbase'
 
 export async function getTenantFromHost(): Promise<string | null> {
   try {
-    const headerList = headers()
+    const headerList = await headers()
     const cookieStore = await cookies()
     const cookieTenant = cookieStore.get('tenantId')?.value ?? null
+
     const host = headerList.get('host')?.split(':')[0] ?? ''
 
     if (host) {
@@ -14,6 +15,7 @@ export async function getTenantFromHost(): Promise<string | null> {
         const cfg = await pb
           .collection('clientes_config')
           .getFirstListItem(`dominio='${host}'`)
+
         if (cfg?.cliente) {
           const tenant = String(cfg.cliente)
           if (tenant !== cookieTenant) {
@@ -27,7 +29,6 @@ export async function getTenantFromHost(): Promise<string | null> {
     }
 
     if (cookieTenant) return cookieTenant
-
     return null
   } catch {
     return null
