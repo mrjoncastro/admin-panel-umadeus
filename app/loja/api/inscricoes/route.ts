@@ -64,8 +64,11 @@ export async function POST(req: NextRequest) {
       : 'pix'
     const installments = Number(data.installments) || 1
 
+    const { id: _inscricaoId, ...inscricaoSemId } = criarInscricao(base)
+    void _inscricaoId
+
     const registroParaCriar = {
-      ...criarInscricao(base),
+      ...inscricaoSemId,
       paymentMethod,
       installments,
     }
