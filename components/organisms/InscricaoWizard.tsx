@@ -6,6 +6,7 @@ import { useToast } from '@/lib/context/ToastContext'
 import FormWizard from './FormWizard'
 import { FormField, InputWithMask, TextField } from '@/components'
 import Spinner from '@/components/atoms/Spinner'
+import LoadingOverlay from './LoadingOverlay'
 
 interface Produto {
   id: string
@@ -26,6 +27,7 @@ export default function InscricaoWizard({
   const { showSuccess, showError } = useToast()
   const [campoNome, setCampoNome] = useState('')
   const [produtos, setProdutos] = useState<Produto[]>([])
+  const [cobraInscricao, setCobraInscricao] = useState(false)
   const [form, setForm] = useState({
     nome: '',
     email: '',
@@ -42,36 +44,44 @@ export default function InscricaoWizard({
     paymentMethod: 'pix',
     installments: 1,
   })
+  const [fetching, setFetching] = useState(true)
 
   useEffect(() => {
-    fetch(`/api/lider/${liderId}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => setCampoNome(data?.campo || ''))
-      .catch(() => setCampoNome(''))
-  }, [liderId])
-
-  useEffect(() => {
-    fetch(`/api/eventos/${eventoId}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        const lista = Array.isArray(data?.expand?.produtos)
-          ? (data.expand.produtos as Produto[]).map((p) => ({
+    async function fetchData() {
+      setFetching(true)
+      try {
+        const [liderRes, eventoRes] = await Promise.all([
+          fetch(`/api/lider/${liderId}`),
+          fetch(`/api/eventos/${eventoId}`),
+        ])
+        const liderData = liderRes.ok ? await liderRes.json() : null
+        setCampoNome(liderData?.campo || '')
+        const eventoData = eventoRes.ok ? await eventoRes.json() : null
+        setCobraInscricao(Boolean(eventoData?.cobra_inscricao))
+        const lista = Array.isArray(eventoData?.expand?.produtos)
+          ? (eventoData.expand.produtos as Produto[]).map((p) => ({
               id: p.id,
               nome: p.nome,
               tamanhos: Array.isArray(p.tamanhos)
                 ? p.tamanhos
                 : p.tamanhos
-                  ? [p.tamanhos]
-                  : undefined,
+                ? [p.tamanhos]
+                : undefined,
             }))
           : []
         setProdutos(lista)
         if (lista.length > 0) {
           setForm((prev) => ({ ...prev, produtoId: lista[0].id }))
         }
-      })
-      .catch(() => setProdutos([]))
-  }, [eventoId])
+      } catch {
+        setCampoNome('')
+        setProdutos([])
+      } finally {
+        setFetching(false)
+      }
+    }
+    fetchData()
+  }, [liderId, eventoId])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -252,11 +262,15 @@ export default function InscricaoWizard({
               onChange={handleChange}
               className="input-base"
             >
-              {produtos.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.nome}
-                </option>
-              ))}
+              {produtos.length === 0 ? (
+                <option value="">Nenhum produto disponível</option>
+              ) : (
+                produtos.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nome}
+                  </option>
+                ))
+              )}
             </select>
           </FormField>
           {produtos.find((p) => p.id === form.produtoId)?.tamanhos && (
@@ -284,7 +298,7 @@ export default function InscricaoWizard({
     },
   ]
 
-  if (!config.confirmaInscricoes) {
+  if (!config.confirmaInscricoes && cobraInscricao) {
     steps.push({
       title: 'Forma de Pagamento',
       content: (
@@ -338,6 +352,10 @@ export default function InscricaoWizard({
       </div>
     ),
   })
+
+  if (fetching) {
+    return <LoadingOverlay show={true} text="Carregando..." />
+  }
 
   return (
     <FormWizard
