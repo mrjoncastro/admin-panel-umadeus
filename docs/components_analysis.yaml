@@ -12,12 +12,18 @@ summary:
     - component: LayoutWrapper
       instances:
         - { name: LayoutWrapper, path: components/templates/LayoutWrapper.tsx }
-        - { name: LayoutWrapperAdmin, path: components/templates/LayoutWrapperAdmin.tsx }
+        - {
+            name: LayoutWrapperAdmin,
+            path: components/templates/LayoutWrapperAdmin.tsx,
+          }
     - component: Modal
       instances:
         - { name: ModalAnimated, path: components/organisms/ModalAnimated.tsx }
         - { name: AuthModal, path: components/organisms/AuthModal.tsx }
-        - { name: ModalProdutoForm, path: components/admin/ModalProdutoForm.tsx }
+        - {
+            name: ModalProdutoForm,
+            path: components/admin/ModalProdutoForm.tsx,
+          }
   missing_components:
     atoms:
       - Text
