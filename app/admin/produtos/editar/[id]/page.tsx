@@ -15,6 +15,11 @@ interface Categoria {
   slug: string
 }
 
+interface Evento {
+  id: string
+  titulo: string
+}
+
 // Função para gerar slug automático
 function slugify(str: string) {
   return str
@@ -34,6 +39,9 @@ export default function EditarProdutoPage() {
   const { authChecked } = useAuthGuard(['coordenador'])
   const [categorias, setCategorias] = useState<Categoria[]>([])
   const [selectedCategoria, setSelectedCategoria] = useState<string>('')
+  const [eventos, setEventos] = useState<Evento[]>([])
+  const [eventoId, setEventoId] = useState('')
+  const [requerAprov, setRequerAprov] = useState(false)
   const [initial, setInitial] = useState<Record<string, unknown> | null>(null)
   const [existingImages, setExistingImages] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
@@ -68,6 +76,12 @@ export default function EditarProdutoPage() {
       .catch(() => {
         setCategorias([])
       })
+    fetch('/api/eventos')
+      .then((r) => r.json())
+      .then((data) => {
+        setEventos(Array.isArray(data) ? data : [])
+      })
+      .catch(() => setEventos([]))
     fetch(`/admin/api/produtos/${id}`)
       .then(async (r) => {
         if (r.status === 401) {
@@ -106,6 +120,8 @@ export default function EditarProdutoPage() {
           categoria: data.categoria,
           ativo: data.ativo,
           exclusivo_user: data.exclusivo_user,
+          evento_id: data.evento_id,
+          requer_inscricao_aprovada: data.requer_inscricao_aprovada,
           cores:
             typeof data.cores === 'string'
               ? data.cores
@@ -120,9 +136,17 @@ export default function EditarProdutoPage() {
             ? (data.categoria[0] ?? '')
             : data.categoria,
         )
+        setEventoId(data.evento_id || '')
+        setRequerAprov(Boolean(data.requer_inscricao_aprovada))
       })
       .finally(() => setLoading(false))
   }, [id, isLoggedIn, router, ctxUser?.role, authChecked])
+
+  useEffect(() => {
+    if (!eventoId) {
+      setRequerAprov(false)
+    }
+  }, [eventoId])
 
   useEffect(() => {
     if (initial?.cores && typeof initial.cores === 'string') {
@@ -142,10 +166,22 @@ export default function EditarProdutoPage() {
           : (initial.categoria as string),
       )
     }
+    if (initial?.evento_id) {
+      setEventoId(String(initial.evento_id))
+    }
+    if (typeof initial?.requer_inscricao_aprovada !== 'undefined') {
+      setRequerAprov(Boolean(initial.requer_inscricao_aprovada))
+    }
     if (typeof initial?.exclusivo_user !== 'undefined') {
       setExclusivo(Boolean(initial.exclusivo_user))
     }
-  }, [initial?.cores, initial?.categoria, initial?.exclusivo_user])
+  }, [
+    initial?.cores,
+    initial?.categoria,
+    initial?.exclusivo_user,
+    initial?.evento_id,
+    initial?.requer_inscricao_aprovada,
+  ])
   if (loading || !initial) {
     return <LoadingOverlay show={true} text="Carregando..." />
   }
@@ -203,6 +239,9 @@ export default function EditarProdutoPage() {
     if (catValue) {
       formData.append('categoria', catValue)
     }
+
+    formData.set('evento_id', eventoId)
+    formData.set('requer_inscricao_aprovada', String(requerAprov))
 
     // <<< AQUI O CONSOLE!
     console.log('---- FormData a ser enviado ----')
@@ -469,6 +508,30 @@ export default function EditarProdutoPage() {
             Selecione uma ou mais imagens do produto.
           </span>
         </fieldset>
+
+        <div>
+          <label className="label-base">Evento</label>
+          <select
+            name="evento_id"
+            value={eventoId}
+            onChange={(e) => setEventoId(e.target.value)}
+            className="input-base w-full"
+          >
+            <option value="">Nenhum</option>
+            {eventos.map((ev) => (
+              <option key={ev.id} value={ev.id}>
+                {ev.titulo}
+              </option>
+            ))}
+          </select>
+        </div>
+        {eventoId && (
+          <ToggleSwitch
+            label="Requer inscrição aprovada"
+            checked={requerAprov}
+            onChange={setRequerAprov}
+          />
+        )}
 
         <ToggleSwitch
           label="Produto de uso interno?"
