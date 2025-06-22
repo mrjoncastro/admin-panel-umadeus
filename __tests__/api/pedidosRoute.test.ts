@@ -239,7 +239,7 @@ describe('POST /api/pedidos', () => {
 
     const req = new Request('http://test/api/pedidos', {
       method: 'POST',
-      body: JSON.stringify({ inscricaoId: 'ins1' }),
+      body: JSON.stringify({ id_inscricao: 'ins1' }),
     })
 
     const res = await POST(req as unknown as NextRequest)

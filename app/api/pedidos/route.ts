@@ -131,7 +131,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     console.log('[PEDIDOS][POST] Body recebido:', body)
-    const { inscricaoId } = body
+    const inscricaoId = body.id_inscricao ?? body.inscricaoId
 
     if (!inscricaoId) {
       console.log('[PEDIDOS][POST] Criando pedido sem inscriçãoId')

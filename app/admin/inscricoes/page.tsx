@@ -274,7 +274,7 @@ const confirmarInscricao = async (id: string) => {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          inscricaoId: id,
+          id_inscricao: id,
           valor: precoProduto,
           status: 'pendente',
           produto: [produtoRecord.id],

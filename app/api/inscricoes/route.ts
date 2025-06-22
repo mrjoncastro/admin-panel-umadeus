@@ -205,7 +205,7 @@ export async function POST(req: NextRequest) {
         const pedidoRes = await fetch(`${base}/api/pedidos`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ inscricaoId: inscricao.id }),
+          body: JSON.stringify({ id_inscricao: inscricao.id }),
         })
 
         if (pedidoRes.ok) {
