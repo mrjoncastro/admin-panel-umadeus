@@ -129,3 +129,4 @@
 ## [2025-07-30] Logout nao funcionava para coordenador e lider; botao agora usa logout() do contexto - dev - 6948482
 
 ## [2025-07-31] Erro ao buscar produto: ClientResponseError 404: The requested resource wasn't found. - production - 2df37e3
+## [2025-06-22] Corrigido erro de tipagem no Next.js para parametros de URL nas páginas de eventos. - dev
