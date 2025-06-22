@@ -1,9 +1,10 @@
 import { headers, cookies } from 'next/headers'
 import createPocketBase from '@/lib/pocketbase'
 import { defaultConfig, TenantConfig } from '@/lib/context/TenantContext'
+import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers'
 
 export async function fetchTenantConfig(): Promise<TenantConfig> {
-  const headerList = headers()
+  const headerList = headers() as unknown as ReadonlyHeaders
   const cookieStore = await cookies()
   const fromCookie = cookieStore.get('tenantId')?.value ?? null
 
