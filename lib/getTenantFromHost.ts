@@ -4,7 +4,7 @@ import createPocketBase from '@/lib/pocketbase'
 export async function getTenantFromHost(): Promise<string | null> {
   try {
     const headerList = headers()
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const cookieTenant = cookieStore.get('tenantId')?.value ?? null
     const host = headerList.get('host')?.split(':')[0] ?? ''
 
