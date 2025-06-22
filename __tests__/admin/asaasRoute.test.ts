@@ -56,7 +56,7 @@ describe('POST /admin/api/asaas', () => {
               id: 'p1',
               id_inscricao: 'i1',
               responsavel: 'u1',
-              produto: 'Produto',
+              produto: ['Produto'],
             }),
             update: vi.fn(),
           }
