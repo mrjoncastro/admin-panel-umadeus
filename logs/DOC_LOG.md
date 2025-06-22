@@ -375,3 +375,4 @@
 ## [2025-06-21] README menciona que o campo 'canal' indica a origem do pedido e testes de pedidos atualizados.
 
 ## [2025-06-21] Implementado fluxo de venda validando inscrição aprovada (commit fe7e6f64893832d14d36b6c8452365f5ecfdd576). Lint e build falharam localmente.
+## [2025-07-30] Corrigido fechamento do bloco de código em arquitetura.md, incluídos diretórios faltantes e ajustado título do Admin. Documentação mais clara.
