@@ -393,3 +393,4 @@
 ## [2025-07-31] getTenantFromHost prioriza domínio, atualiza cookie tenantId e fetchTenantConfig segue mesma lógica. Testes adicionados. Lint e build executados.
 
 ## [2025-08-01] README e docs do design system destacam que a detecção do tenant prioriza o domínio e que `/api/tenant` serve apenas para confirmação. Nenhum código alterado.
+## [2025-08-02] Documentacao atualizada com diretorios lib/flows, lib/server, __tests__ e explicacao dos logs. Lint e build executados.

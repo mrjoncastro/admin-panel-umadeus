@@ -68,9 +68,12 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 /stories/                  # Storybook de componentes
 components/                # Componentes reutilizáveis compartilhados
 lib/                     # Funções principais
+lib/server/              # Utilidades do servidor
+lib/flows/               # Fluxos de negócio
 utils/                   # Utilitários do projeto
 public/                  # Arquivos estáticos
 types/                   # Definições TypeScript
+__tests__/               # Testes automatizados
 logs/                    # Registros de documentação e erros
 ```
 
