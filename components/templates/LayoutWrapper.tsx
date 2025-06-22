@@ -6,6 +6,7 @@ import BackToTopButton from '@/app/admin/components/BackToTopButton'
 import NotificationBell from '@/app/admin/components/NotificationBell'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useMemo } from 'react'
+import { useSyncTenant } from '@/lib/hooks/useSyncTenant'
 
 type UserRole = 'visitante' | 'usuario' | 'lider' | 'coordenador'
 
@@ -14,6 +15,7 @@ export default function LayoutWrapper({
 }: {
   children: React.ReactNode
 }) {
+  useSyncTenant()
   const { isLoggedIn, user } = useAuthContext()
   const role: UserRole = useMemo(() => {
     if (!isLoggedIn) return 'visitante'

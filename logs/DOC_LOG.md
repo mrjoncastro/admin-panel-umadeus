@@ -383,3 +383,4 @@
 ## [2025-06-22] Atualizado components_analysis.yaml removendo paths app/ e revisando componentes ausentes. - Lint: falhou (next not found) - Build: falhou (next not found)
 
 ## [2025-06-22] Ajustado layout da página de eventos em /inscricoes/[liderId] e adicionado overlay de carregamento no InscricaoWizard. Lint e build falharam (next not found).
+## [2025-06-22] README menciona sincronizacao do tenantId via /api/tenant e wrappers chamam a rota.

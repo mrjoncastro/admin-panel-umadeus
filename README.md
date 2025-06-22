@@ -95,6 +95,8 @@ Com esse ID, o backend acessa `m24_clientes` e obtém as credenciais `asaas_api_
 Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utilizar o SDK oficial.
 Quando não há domínio configurado (ex.: durante testes em localhost), defina manualmente o cookie `tenantId` com o ID do cliente ou cadastre o domínio em `clientes_config` para que rotas como `/api/produtos` funcionem corretamente.
 
+Ao abrir páginas que utilizam informações do cliente (checkout, dashboard etc.), o frontend faz uma requisição GET para `/api/tenant` logo no carregamento. Assim o cookie `tenantId` permanece sincronizado com o servidor.
+
 ## Conectando ao PocketBase
 
 1. Defina `PB_URL` apontando para a URL onde o PocketBase está rodando, por exemplo. Se ela não estiver definida, o painel tentará usar `http://127.0.0.1:8090` em ambientes de desenvolvimento:
