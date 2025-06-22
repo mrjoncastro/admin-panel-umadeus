@@ -104,7 +104,7 @@ export async function GET(req: NextRequest) {
     })
 
     return NextResponse.json(items)
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: 'Erro ao listar' }, { status: 500 })
   }
 }
@@ -203,7 +203,7 @@ export async function POST(req: NextRequest) {
         .getOne<Inscricao>(inscricaoId, {
           expand: 'campo,criado_por',
         })
-    } catch (e) {}
+    } catch {}
 
     if (!inscricao) {
       return NextResponse.json(
@@ -270,7 +270,7 @@ export async function POST(req: NextRequest) {
         valor: pedido.valor,
         status: pedido.status,
       })
-    } catch (err: unknown)  {
+    } catch (err: unknown) {
       throw err
     }
   } catch (err: unknown) {
