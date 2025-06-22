@@ -2,49 +2,35 @@ summary:
   duplicates:
     - component: Header
       instances:
-        - { name: Header, path: app/components/Header.tsx }
-        - { name: HeaderAdmin, path: app/admin/components/Header.tsx }
-        - { name: HeaderLoja, path: app/loja/components/Header.tsx }
+        - { name: Header, path: components/templates/Header.tsx }
+        - { name: HeaderAdmin, path: components/templates/HeaderAdmin.tsx }
+        - { name: HeaderLoja, path: components/templates/HeaderLoja.tsx }
     - component: Footer
       instances:
-        - { name: Footer, path: app/components/Footer.tsx }
-        - { name: FooterLoja, path: app/loja/components/Footer.tsx }
+        - { name: Footer, path: components/templates/Footer.tsx }
+        - { name: FooterLoja, path: components/templates/FooterLoja.tsx }
     - component: LayoutWrapper
       instances:
-        - { name: LayoutWrapper, path: app/components/LayoutWrapper.tsx }
-        - {
-            name: LayoutWrapperAdmin,
-            path: app/admin/components/LayoutWrapper.tsx,
-          }
+        - { name: LayoutWrapper, path: components/templates/LayoutWrapper.tsx }
+        - { name: LayoutWrapperAdmin, path: components/templates/LayoutWrapperAdmin.tsx }
     - component: Modal
       instances:
         - { name: ModalAnimated, path: components/organisms/ModalAnimated.tsx }
         - { name: AuthModal, path: components/organisms/AuthModal.tsx }
-        - {
-            name: RedefinirSenhaModal,
-            path: app/admin/components/RedefinirSenhaModal.tsx,
-          }
-        - {
-            name: ModalEditarPerfil,
-            path: app/admin/perfil/components/ModalEditarPerfil.tsx,
-          }
+        - { name: ModalProdutoForm, path: components/admin/ModalProdutoForm.tsx }
   missing_components:
     atoms:
-      - Button
       - Text
       - Input
       - Select
       - Checkbox
       - Radio
-    molecules:
-      - InputWithMask
-      - FormField
+    molecules: []
     organisms:
       - Table
       - Pagination
       - Toast
       - Stepper
-      - FormWizard
     templates:
       - CheckoutForm
       - DashboardLayout
