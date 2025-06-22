@@ -16,6 +16,10 @@ export default function EventForm({ defaultLeaderId }: EventFormProps) {
   const [leader, setLeader] = useState<{ name: string } | null>(null)
   const [loadingLeader, setLoadingLeader] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState<'pix' | 'boleto' | 'credito'>(
+    'pix',
+  )
+  const [installments, setInstallments] = useState(1)
 
   useEffect(() => {
     if (!leaderId) return
@@ -69,6 +73,38 @@ export default function EventForm({ defaultLeaderId }: EventFormProps) {
 
       <FormField label="Nome do Participante" htmlFor="participant-name">
         <TextField id="participant-name" name="participantName" required />
+      </FormField>
+
+      <FormField label="Forma de Pagamento" htmlFor="paymentMethod">
+        <select
+          id="paymentMethod"
+          name="paymentMethod"
+          value={paymentMethod}
+          onChange={(e) =>
+            setPaymentMethod(e.target.value as 'pix' | 'boleto' | 'credito')
+          }
+          className="input-base"
+        >
+          <option value="pix">Pix</option>
+          <option value="boleto">Boleto</option>
+          <option value="credito">Crédito</option>
+        </select>
+      </FormField>
+      <FormField label="Parcelas" htmlFor="installments">
+        <select
+          id="installments"
+          name="installments"
+          value={installments}
+          onChange={(e) => setInstallments(Number(e.target.value))}
+          disabled={paymentMethod !== 'credito'}
+          className="input-base"
+        >
+          {Array.from({ length: 6 }).map((_, i) => (
+            <option key={i + 1} value={i + 1}>
+              {i + 1}x
+            </option>
+          ))}
+        </select>
       </FormField>
 
       {/* TODO: outros campos */}

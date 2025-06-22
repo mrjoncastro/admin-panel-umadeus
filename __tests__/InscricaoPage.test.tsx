@@ -2,7 +2,7 @@
 import React from 'react'
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import InscricaoPage from '@/app/inscricoes/[liderId]/[eventoId]/page'
+import InscricaoPage from '@/app/inscricoes/lider/[liderId]/evento/[eventoId]/page'
 import { calculateGross } from '@/lib/asaasFees'
 
 vi.mock('next/navigation', () => ({

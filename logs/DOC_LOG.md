@@ -396,3 +396,4 @@
 ## [2025-08-02] Corrigido cadastro da forma de pagamento na inscrição da loja e passo exibido para eventos pagos.
 
 ## [2025-08-02] Formulário unificado de evento criado e páginas de inscrição atualizadas.
+## [2025-08-02] Rotas de inscrições reorganizadas sob `/inscricoes/lider` e `EventForm` passou a solicitar forma de pagamento.
