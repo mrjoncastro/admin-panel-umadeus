@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import * as Dialog from '@radix-ui/react-dialog'
 import { AnimatePresence, motion } from 'framer-motion'
 import { TextField } from '@/components/atoms/TextField'
@@ -200,9 +201,11 @@ export default function ModalProdutoForm({
                         onChange={handleImageChange}
                       />
                       {preview && (
-                        <img
+                        <Image
                           src={preview}
                           alt="Pré-visualização"
+                          width={160}
+                          height={160}
                           className="mt-2 max-h-40 rounded-md"
                         />
                       )}
