@@ -136,6 +136,8 @@ Ao abrir páginas que utilizam informações do cliente (checkout, dashboard etc
   uma chamada para `/api/asaas` informando `valorBruto`, `paymentMethod`
   e `installments` para gerar o boleto e salvar o link de pagamento no pedido
   correspondente.
+- Para o passo a passo completo do modo manual consulte
+  [docs/manual-aprovacao-inscricao.md](docs/manual-aprovacao-inscricao.md).
 - **Compras de Loja** – os produtos adicionados ao carrinho são processados na
   página `/loja/checkout`. Esse fluxo usa `/api/asaas/checkout` para
   criar um link de checkout do Asaas e redirecionar o usuário automaticamente.

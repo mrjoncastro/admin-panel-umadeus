@@ -23,3 +23,15 @@ Em ambos os casos o pedido recebe status `pendente` inicialmente e passa a `pago
 - **Desativado** – o pedido é criado imediatamente junto à inscrição, agilizando o fluxo.
 
 Consulte também [docs/regras-inscricoes.md](docs/regras-inscricoes.md) para detalhes sobre o escopo das inscrições.
+
+### Estrutura da coleção `pedidos`
+
+O campo `produto` agora aceita **múltiplos** produtos vinculados ao mesmo pedido. O payload de criação deve enviar `produto: [idProduto]` e a tabela de campos fica:
+
+| Campo      | Tipo    | Observações                         |
+| ---------- | ------- | ---------------------------------- |
+| `id`       | String  | Identificador do pedido             |
+| `produto`  | Rel.[]  | IDs dos produtos selecionados       |
+| `valor`    | Number  | Valor total do pedido               |
+| `status`   | Enum    | `pendente`, `pago` ou `cancelado`   |
+| `canal`    | Enum    | `inscricao` ou `loja`               |
