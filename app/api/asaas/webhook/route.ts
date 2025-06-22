@@ -3,40 +3,25 @@ import createPocketBase from '@/lib/pocketbase'
 import { logConciliacaoErro } from '@/lib/server/logger'
 import type { RecordModel } from 'pocketbase'
 
+type AsaasWebhookPayload = {
+  payment?: {
+    id?: string
+    accountId?: string
+    externalReference?: string
+    customer?: string
+  }
+  event?: string
+  accountId?: string
+}
+
 export async function POST(req: NextRequest) {
   const pb = createPocketBase()
   const baseUrl = process.env.ASAAS_API_URL
 
-  const secretHeader = req.headers.get('asaas-webhook-secret')
-  const secretParam = req.nextUrl.searchParams.get('secret')
-  if (
-    process.env.ASAAS_WEBHOOK_SECRET &&
-    secretHeader !== process.env.ASAAS_WEBHOOK_SECRET &&
-    secretParam !== process.env.ASAAS_WEBHOOK_SECRET
-  ) {
-    return NextResponse.json({ error: 'Segredo inválido' }, { status: 401 })
-  }
-
   const rawBody = await req.text()
-  let body: {
-    payment?: {
-      id?: string
-      accountId?: string
-      externalReference?: string
-    }
-    event?: string
-    accountId?: string
-  }
+  let body: AsaasWebhookPayload
   try {
-    body = JSON.parse(rawBody) as {
-      payment?: {
-        id?: string
-        accountId?: string
-        externalReference?: string
-      }
-      event?: string
-      accountId?: string
-    }
+    body = JSON.parse(rawBody) as AsaasWebhookPayload
   } catch {
     return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
   }
@@ -133,6 +118,7 @@ export async function POST(req: NextRequest) {
 
   const status = paymentData.status as string | undefined
   const externalRef: string | undefined = paymentData.externalReference
+  const asaasCustomerId: string | undefined = paymentData.customer
 
   if (status !== 'RECEIVED' && status !== 'CONFIRMED') {
     return NextResponse.json({ status: 'Aguardando pagamento' })
@@ -148,6 +134,8 @@ export async function POST(req: NextRequest) {
   }
 
   let pedidoRecord: RecordModel | null = null
+
+  // 1. Busca padrão (inscricao/pagamento)
   try {
     if (inscricaoId) {
       const filtro = usuarioId
@@ -162,6 +150,35 @@ export async function POST(req: NextRequest) {
     }
   } catch {
     /* ignore */
+  }
+
+  // 2. Busca pelo customer do Asaas (API Asaas -> CPF -> Pedido)
+  if (!pedidoRecord && asaasCustomerId) {
+    try {
+      // Busca cliente no Asaas para obter CPF
+      const clienteRes = await fetch(`${baseUrl}/customers/${asaasCustomerId}`, {
+        headers: {
+          accept: 'application/json',
+          'access-token': keyHeader,
+          'User-Agent': clienteNome ?? 'qg3',
+        },
+      })
+      if (clienteRes.ok) {
+        const clienteData = await clienteRes.json()
+        const cpf = clienteData.cpfCnpj?.replace(/\D/g, '') // tira pontos/traços
+        if (cpf) {
+          // Busca pedido mais recente pelo CPF
+          const pedidos = await pb
+            .collection('pedidos')
+            .getList(1, 1, { filter: `cpf = "${cpf}"`, sort: '-created' })
+          if (pedidos?.items?.length > 0) {
+            pedidoRecord = pedidos.items[0]
+          }
+        }
+      }
+    } catch {
+      // Cliente não encontrado no Asaas ou erro, segue fluxo
+    }
   }
 
   if (!pedidoRecord) {
@@ -180,6 +197,7 @@ export async function POST(req: NextRequest) {
       id_pagamento: paymentId,
     })
 
+    // Atualiza inscrição, se aplicável
     if (inscricaoId) {
       await pb.collection('inscricoes').update(inscricaoId, {
         status: 'confirmado',
