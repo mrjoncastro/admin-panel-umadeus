@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useTenant } from '@/lib/context/TenantContext'
 import { useToast } from '@/lib/context/ToastContext'
+import { useRouter } from 'next/navigation'
 import FormWizard from './FormWizard'
 import LoadingOverlay from './LoadingOverlay'
 import { FormField, InputWithMask, TextField } from '@/components'
@@ -26,6 +27,7 @@ export interface EventFormProps {
 export default function EventForm({ eventoId, liderId }: EventFormProps) {
   const { config } = useTenant()
   const { showSuccess, showError } = useToast()
+  const router = useRouter()
   const [campoNome, setCampoNome] = useState('')
   const [campos, setCampos] = useState<Campo[]>([])
   const [produtos, setProdutos] = useState<Produto[]>([])
@@ -158,6 +160,9 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
         return
       }
       showSuccess('Inscrição enviada com sucesso!')
+      setTimeout(() => {
+        router.push('/inscricoes/obrigado')
+      }, 500)
     } catch {
       showError('Erro ao enviar inscrição.')
     } finally {

@@ -381,3 +381,5 @@
 ## [2025-08-03] Unificado InscricaoWizard e InscricaoLojaWizard no EventForm. Páginas agora recebem evento via searchParams. Lint e build falharam (next not found).
 
 ## [2025-08-04] Ajustado rotas de inscrição para remover campo id antes de criar registros no PocketBase. Lint e build executados com sucesso.
+
+## [2025-08-05] Formulário de evento redireciona para /inscricoes/obrigado após envio bem-sucedido. Lint e build falharam (next not found).
