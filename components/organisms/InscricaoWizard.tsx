@@ -27,6 +27,7 @@ export default function InscricaoWizard({
   const { showSuccess, showError } = useToast()
   const [campoNome, setCampoNome] = useState('')
   const [produtos, setProdutos] = useState<Produto[]>([])
+  const [cobraInscricao, setCobraInscricao] = useState(false)
   const [form, setForm] = useState({
     nome: '',
     email: '',
@@ -56,6 +57,7 @@ export default function InscricaoWizard({
         const liderData = liderRes.ok ? await liderRes.json() : null
         setCampoNome(liderData?.campo || '')
         const eventoData = eventoRes.ok ? await eventoRes.json() : null
+        setCobraInscricao(Boolean(eventoData?.cobra_inscricao))
         const lista = Array.isArray(eventoData?.expand?.produtos)
           ? (eventoData.expand.produtos as Produto[]).map((p) => ({
               id: p.id,
@@ -63,8 +65,8 @@ export default function InscricaoWizard({
               tamanhos: Array.isArray(p.tamanhos)
                 ? p.tamanhos
                 : p.tamanhos
-                  ? [p.tamanhos]
-                  : undefined,
+                ? [p.tamanhos]
+                : undefined,
             }))
           : []
         setProdutos(lista)
@@ -260,11 +262,15 @@ export default function InscricaoWizard({
               onChange={handleChange}
               className="input-base"
             >
-              {produtos.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.nome}
-                </option>
-              ))}
+              {produtos.length === 0 ? (
+                <option value="">Nenhum produto disponível</option>
+              ) : (
+                produtos.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nome}
+                  </option>
+                ))
+              )}
             </select>
           </FormField>
           {produtos.find((p) => p.id === form.produtoId)?.tamanhos && (
@@ -292,7 +298,7 @@ export default function InscricaoWizard({
     },
   ]
 
-  if (!config.confirmaInscricoes) {
+  if (!config.confirmaInscricoes && cobraInscricao) {
     steps.push({
       title: 'Forma de Pagamento',
       content: (

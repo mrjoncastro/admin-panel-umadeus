@@ -28,6 +28,7 @@ export default function InscricaoLojaWizard({
   const { showSuccess, showError } = useToast()
   const [campos, setCampos] = useState<Campo[]>([])
   const [produtos, setProdutos] = useState<Produto[]>([])
+  const [cobraInscricao, setCobraInscricao] = useState(false)
   const [form, setForm] = useState({
     nome: '',
     email: '',
@@ -59,6 +60,7 @@ export default function InscricaoLojaWizard({
         const camposData = camposRes.ok ? await camposRes.json() : []
         setCampos(Array.isArray(camposData) ? camposData : [])
         const eventoData = eventoRes.ok ? await eventoRes.json() : null
+        setCobraInscricao(Boolean(eventoData?.cobra_inscricao))
         const lista = Array.isArray(eventoData?.expand?.produtos)
           ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
             eventoData.expand.produtos.map((p: any) => ({
@@ -278,11 +280,15 @@ export default function InscricaoLojaWizard({
               onChange={handleChange}
               className="input-base"
             >
-              {produtos.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.nome}
-                </option>
-              ))}
+              {produtos.length === 0 ? (
+                <option value="">Nenhum produto disponível</option>
+              ) : (
+                produtos.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nome}
+                  </option>
+                ))
+              )}
             </select>
           </FormField>
           {produtos.find((p) => p.id === form.produtoId)?.tamanhos && (
@@ -310,7 +316,7 @@ export default function InscricaoLojaWizard({
     },
   ]
 
-  if (!config.confirmaInscricoes) {
+  if (!config.confirmaInscricoes && cobraInscricao) {
     steps.push({
       title: 'Forma de Pagamento',
       content: (
