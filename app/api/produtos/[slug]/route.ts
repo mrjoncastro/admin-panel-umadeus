@@ -14,14 +14,16 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Tenant não informado' }, { status: 400 })
   }
 
-  const id = req.nextUrl.pathname.split('/').pop() ?? ''
+  const slug = req.nextUrl.pathname.split('/').pop() ?? ''
 
-  if (!id) {
-    return NextResponse.json({ error: 'ID não informado' }, { status: 400 })
+  if (!slug) {
+    return NextResponse.json({ error: 'Slug não informado' }, { status: 400 })
   }
 
   try {
-    const p = await pb.collection('produtos').getOne<Produto>(id)
+    const p = await pb
+      .collection('produtos')
+      .getFirstListItem<Produto>(`slug="${slug}"`)
 
     if (p.cliente !== tenantId) {
       return NextResponse.json(
@@ -48,9 +50,9 @@ export async function GET(req: NextRequest) {
         )
 
     return NextResponse.json({ ...p, imagens })
-  } catch {
+  } catch (err: any) {
     return NextResponse.json(
-      { error: 'Produto não encontrado' },
+      { error: 'Produto não encontrado', detalhes: err?.message || err },
       { status: 404 },
     )
   }
