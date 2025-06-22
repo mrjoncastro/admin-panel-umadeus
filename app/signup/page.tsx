@@ -65,79 +65,79 @@ export default function SignUpPage() {
           Criar Conta
         </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
-        <FormField label="Nome completo" htmlFor="signup-nome">
-          <TextField
-            id="signup-nome"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-            required
-          />
-        </FormField>
-        <FormField label="E-mail" htmlFor="signup-email">
-          <TextField
-            id="signup-email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </FormField>
-        <FormField label="Telefone" htmlFor="signup-telefone">
-          <InputWithMask
-            id="signup-telefone"
-            mask="telefone"
-            value={telefone}
-            onChange={(e) => setTelefone(e.target.value)}
-            required
-          />
-        </FormField>
-        <FormField label="CPF" htmlFor="signup-cpf">
-          <InputWithMask
-            id="signup-cpf"
-            mask="cpf"
-            value={cpf}
-            onChange={(e) => setCpf(e.target.value)}
-            required
-          />
-        </FormField>
-        <FormField label="Senha" htmlFor="signup-senha">
-          <TextField
-            id="signup-senha"
-            type="password"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            required
-          />
-        </FormField>
-        <FormField label="Confirme a senha" htmlFor="signup-confirm">
-          <TextField
-            id="signup-confirm"
-            type="password"
-            value={senhaConfirm}
-            onChange={(e) => setSenhaConfirm(e.target.value)}
-            required
-          />
-        </FormField>
-        <Button type="submit" disabled={loading} className="w-full">
-          {loading ? (
-            <span className="flex items-center justify-center gap-2">
-              <Spinner className="w-4 h-4" /> Enviando...
-            </span>
-          ) : (
-            'Avançar'
-          )}
-        </Button>
-        <p className="text-center text-sm text-[var(--text-secondary)]">
-          Já possui conta?{' '}
-          <a
-            href="/login"
-            className="underline hover:text-[var(--accent)] transition"
-          >
-            Fazer login
-          </a>
-        </p>
-      </form>
-    </div>
+          <FormField label="Nome completo" htmlFor="signup-nome">
+            <TextField
+              id="signup-nome"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              required
+            />
+          </FormField>
+          <FormField label="E-mail" htmlFor="signup-email">
+            <TextField
+              id="signup-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </FormField>
+          <FormField label="Telefone" htmlFor="signup-telefone">
+            <InputWithMask
+              id="signup-telefone"
+              mask="telefone"
+              value={telefone}
+              onChange={(e) => setTelefone(e.target.value)}
+              required
+            />
+          </FormField>
+          <FormField label="CPF" htmlFor="signup-cpf">
+            <InputWithMask
+              id="signup-cpf"
+              mask="cpf"
+              value={cpf}
+              onChange={(e) => setCpf(e.target.value)}
+              required
+            />
+          </FormField>
+          <FormField label="Senha" htmlFor="signup-senha">
+            <TextField
+              id="signup-senha"
+              type="password"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              required
+            />
+          </FormField>
+          <FormField label="Confirme a senha" htmlFor="signup-confirm">
+            <TextField
+              id="signup-confirm"
+              type="password"
+              value={senhaConfirm}
+              onChange={(e) => setSenhaConfirm(e.target.value)}
+              required
+            />
+          </FormField>
+          <Button type="submit" disabled={loading} className="w-full">
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <Spinner className="w-4 h-4" /> Enviando...
+              </span>
+            ) : (
+              'Avançar'
+            )}
+          </Button>
+          <p className="text-center text-sm text-[var(--text-secondary)]">
+            Já possui conta?{' '}
+            <a
+              href="/login"
+              className="underline hover:text-[var(--accent)] transition"
+            >
+              Fazer login
+            </a>
+          </p>
+        </form>
+      </div>
     </LayoutWrapper>
   )
 }
