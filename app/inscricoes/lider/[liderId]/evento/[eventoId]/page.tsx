@@ -4,7 +4,6 @@ import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { InscricaoWizard } from '@/components/organisms'
-import { headers } from 'next/headers'
 
 export default function InscricaoPage() {
   // Extrai params apenas uma vez

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useTenant } from '@/lib/context/TenantContext'
 import { useToast } from '@/lib/context/ToastContext'
+import { useRouter } from 'next/navigation'
 import FormWizard from './FormWizard'
 import LoadingOverlay from './LoadingOverlay'
 import { FormField, InputWithMask, TextField } from '@/components'
@@ -26,6 +27,7 @@ export interface EventFormProps {
 export default function EventForm({ eventoId, liderId }: EventFormProps) {
   const { config } = useTenant()
   const { showSuccess, showError } = useToast()
+  const router = useRouter()
   const [campoNome, setCampoNome] = useState('')
   const [campos, setCampos] = useState<Campo[]>([])
   const [produtos, setProdutos] = useState<Produto[]>([])
@@ -44,6 +46,8 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
     campoId: '',
     produtoId: '',
     tamanho: '',
+    password: '',
+    passwordConfirm: '',
     paymentMethod: 'pix',
     installments: 1,
   })
@@ -109,6 +113,11 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
   const handleSubmit = async () => {
     setLoading(true)
     try {
+      if (!liderId && form.password !== form.passwordConfirm) {
+        showError('As senhas não coincidem.')
+        setLoading(false)
+        return
+      }
       const url = liderId ? '/api/inscricoes' : '/loja/api/inscricoes'
       const [firstName, ...rest] = form.nome.split(' ')
       const payload = liderId
@@ -144,6 +153,10 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
             user_number: form.numero,
             campo: form.campoId,
             evento: eventoId,
+            produtoId: form.produtoId,
+            tamanho: form.tamanho,
+            password: form.password,
+            passwordConfirm: form.passwordConfirm,
             paymentMethod: form.paymentMethod,
             installments: form.installments,
           }
@@ -158,6 +171,9 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
         return
       }
       showSuccess('Inscrição enviada com sucesso!')
+      setTimeout(() => {
+        router.push('/inscricoes/obrigado')
+      }, 500)
     } catch {
       showError('Erro ao enviar inscrição.')
     } finally {
@@ -401,6 +417,36 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
                 </option>
               ))}
             </select>
+          </FormField>
+        </div>
+      ),
+    })
+  }
+
+  if (!liderId) {
+    steps.push({
+      title: 'Criar Senha',
+      content: (
+        <div className="space-y-4">
+          <FormField label="Senha" htmlFor="password">
+            <TextField
+              id="password"
+              name="password"
+              type="password"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
+          </FormField>
+          <FormField label="Confirme a Senha" htmlFor="passwordConfirm">
+            <TextField
+              id="passwordConfirm"
+              name="passwordConfirm"
+              type="password"
+              value={form.passwordConfirm}
+              onChange={handleChange}
+              required
+            />
           </FormField>
         </div>
       ),
