@@ -24,7 +24,7 @@ export function criarPedido(
     id: `ped_${inscricao.id}`,
     id_pagamento: '',
     id_inscricao: inscricao.id,
-    produto: produto.nome ?? inscricao.produto ?? 'Kit Camisa + Pulseira',
+    produto: [produto.nome ?? inscricao.produto ?? 'Kit Camisa + Pulseira'],
     tamanho: inscricao.tamanho || first(produto.tamanhos),
     status: 'pendente',
     cor: 'Roxo',

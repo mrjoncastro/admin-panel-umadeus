@@ -47,7 +47,8 @@ const pedidoPayload = {
 {
   "pedido": "ID_DO_PEDIDO",
   "status": "aguardando_pagamento",
-  "confirmado_por_lider": true
+  "confirmado_por_lider": true,
+  "aprovada": true
 }
 ```
 
