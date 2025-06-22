@@ -49,10 +49,29 @@ export async function GET(req: NextRequest) {
           ),
         )
 
-    return NextResponse.json({ ...p, imagens })
-  } catch (err: any) {
+    let inscricaoAprovada = false
+    if (
+      p.requer_inscricao_aprovada &&
+      p.evento_id &&
+      !('error' in auth)
+    ) {
+      try {
+        await pb
+          .collection('inscricoes')
+          .getFirstListItem(
+            `criado_por='${auth.user.id}' && evento='${p.evento_id}' && aprovada=true`,
+          )
+        inscricaoAprovada = true
+      } catch {
+        inscricaoAprovada = false
+      }
+    }
+
+    return NextResponse.json({ ...p, imagens, inscricaoAprovada })
+  } catch (err: unknown) {
+    const message = (err as Error)?.message ?? String(err)
     return NextResponse.json(
-      { error: 'Produto não encontrado', detalhes: err?.message || err },
+      { error: 'Produto não encontrado', detalhes: message },
       { status: 404 },
     )
   }
