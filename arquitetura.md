@@ -67,6 +67,12 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 /scripts/                  # Scripts auxiliares
 /stories/                  # Storybook de componentes
 components/                # Componentes reutilizáveis compartilhados
+lib/                     # Funções principais
+utils/                   # Utilitários do projeto
+public/                  # Arquivos estáticos
+types/                   # Definições TypeScript
+logs/                    # Registros de documentação e erros
+```
 
 ---
 
@@ -94,7 +100,7 @@ components/                # Componentes reutilizáveis compartilhados
 
 ---
 
--## 🛠️ Admin – Boas Práticas
+## 🛠️ Admin – Boas Práticas
 
 - Rotas protegidas com `useAuthGuard` e validação de `role`
 - Algumas rotas de confirmação de inscrição são públicas:
@@ -133,4 +139,3 @@ components/                # Componentes reutilizáveis compartilhados
 ## 📌 Considerações Finais
 
 Esta estrutura busca garantir **clareza, escalabilidade e manutenibilidade** do projeto M24Vendas, atendendo tanto ao público final quanto às lideranças administrativas. Deve ser evoluída com base no crescimento do projeto, mantendo a consistência na organização e nos princípios de performance e segurança.
-```
