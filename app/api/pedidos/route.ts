@@ -5,7 +5,7 @@ import { requireRole } from '@/lib/apiAuth'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro } from '@/lib/server/logger'
 import type { Inscricao, Pedido, Produto } from '@/types'
-import colorName from 'color-name'
+import colorName from 'color-namer'
 
 // Função para hex -> RGB array
 function hexToRgb(hex: string): [number, number, number] | null {
