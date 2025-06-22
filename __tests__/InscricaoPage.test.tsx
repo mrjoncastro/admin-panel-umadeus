@@ -24,11 +24,11 @@ describe('InscricaoPage', () => {
       .fn()
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ campo: 'Campo' }),
+        json: () => Promise.resolve({ titulo: 'Evento X', descricao: 'Desc' }),
       })
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ titulo: 'Evento X', descricao: 'Desc' }),
+        json: () => Promise.resolve({ campo: 'Campo' }),
       })
       .mockResolvedValueOnce({
         ok: true,
@@ -45,11 +45,11 @@ describe('InscricaoPage', () => {
       .fn()
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ campo: 'Campo' }),
+        json: () => Promise.resolve({ titulo: 'Evento', descricao: 'Desc' }),
       })
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ titulo: 'Evento', descricao: 'Desc' }),
+        json: () => Promise.resolve({ campo: 'Campo' }),
       })
       .mockResolvedValueOnce({
         ok: true,

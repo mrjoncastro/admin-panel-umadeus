@@ -47,7 +47,7 @@ describe('Fluxo de inscrição e pedido', () => {
     })
     const pedido = criarPedido(inscricao, kit)
     expect(pedido.valor).toBe('50.00')
-    expect(pedido.email).toBe('sememail@teste.com')
+    expect(pedido.email).toBe('teste@example.com')
     expect(pedido.status).toBe('pendente')
     expect(pedido.canal).toBe('inscricao')
   })

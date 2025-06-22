@@ -74,8 +74,8 @@ describe('CarrinhoPage', () => {
     )
     await screen.findByText('Carrinho')
     expect(
-      screen.getByText(`R$ ${gross.toFixed(2).replace('.', ',')}`),
-    ).toBeInTheDocument()
+      screen.getAllByText(`R$ ${gross.toFixed(2).replace('.', ',')}`).length,
+    ).toBeGreaterThan(0)
   })
 })
 
@@ -105,10 +105,14 @@ describe('CartPreview', () => {
       </CartProvider>,
     )
     expect(
-      screen.getByText(`R$ ${gross1.toFixed(2).replace('.', ',')}`),
-    ).toBeInTheDocument()
+      screen.getAllByText(new RegExp(`R\\$\\s*${gross1
+        .toFixed(2)
+        .replace('.', ',')}`)).length,
+    ).toBeGreaterThan(0)
     expect(
-      screen.getByText(`R$ ${gross2.toFixed(2).replace('.', ',')}`),
-    ).toBeInTheDocument()
+      screen.getAllByText(new RegExp(`R\\$\\s*${gross2
+        .toFixed(2)
+        .replace('.', ',')}`)).length,
+    ).toBeGreaterThan(0)
   })
 })

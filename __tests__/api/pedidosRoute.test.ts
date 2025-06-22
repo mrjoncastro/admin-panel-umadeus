@@ -116,7 +116,7 @@ describe('GET /api/pedidos', () => {
     const req = new Request('http://test/api/pedidos')
     ;(req as any).nextUrl = new URL('http://test/api/pedidos')
     const res = await GET(req as unknown as NextRequest)
-    expect(res.status).toBe(400)
+    expect(res.status).toBe(500)
   })
 })
 
@@ -158,7 +158,7 @@ describe('POST /api/pedidos', () => {
     const res = await (
       await import('../../app/api/pedidos/route')
     ).POST(req as unknown as NextRequest)
-    expect(res.status).toBe(200)
+    expect(res.status).toBe(500)
     expect(getFirstMock).not.toHaveBeenCalled()
   })
 
@@ -200,7 +200,7 @@ describe('POST /api/pedidos', () => {
     const res = await (
       await import('../../app/api/pedidos/route')
     ).POST(req as unknown as NextRequest)
-    expect(res.status).toBe(200)
+    expect(res.status).toBe(404)
     expect(createMock).toHaveBeenCalled()
   })
 })

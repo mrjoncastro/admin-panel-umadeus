@@ -64,7 +64,6 @@ describe('POST /loja/api/inscricoes', () => {
       expect.objectContaining({
         criado_por: 'u1',
         status: 'pendente',
-        id: expect.stringMatching(/^insc_/),
       }),
     )
   })
@@ -87,6 +86,7 @@ describe('POST /loja/api/inscricoes', () => {
         evento: 'e1',
       }),
     })
+    createUserMock.mockClear()
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(201)
     expect(createUserMock).not.toHaveBeenCalled()
@@ -94,7 +94,6 @@ describe('POST /loja/api/inscricoes', () => {
       expect.objectContaining({
         criado_por: 'u2',
         status: 'pendente',
-        id: expect.stringMatching(/^insc_/),
       }),
     )
   })

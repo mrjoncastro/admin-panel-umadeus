@@ -31,6 +31,24 @@ vi.mock('@/app/admin/components/TooltipIcon', () => ({
 }))
 
 test('exibe titulo do evento na tabela', async () => {
+  global.fetch = vi
+    .fn()
+    .mockResolvedValueOnce({
+      ok: true,
+      json: () =>
+        Promise.resolve([{ id: 'e1', titulo: 'Congresso Teste' }]),
+    })
+    .mockResolvedValueOnce({
+      ok: true,
+      json: () =>
+        Promise.resolve([
+          {
+            id: 'i1',
+            expand: { evento: { titulo: 'Congresso Teste' } },
+          },
+        ]),
+    })
+
   render(<ListaInscricoesPage />)
   expect(await screen.findByText('Congresso Teste')).toBeInTheDocument()
 })

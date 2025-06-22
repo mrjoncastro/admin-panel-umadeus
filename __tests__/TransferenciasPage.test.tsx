@@ -8,6 +8,10 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ replace: vi.fn() }),
 }))
 
+vi.mock('@/lib/hooks/useAuthGuard', () => ({
+  useAuthGuard: () => ({ authChecked: true }),
+}))
+
 vi.mock('@/lib/context/AuthContext', () => ({
   useAuthContext: () => ({ isLoggedIn: true }),
 }))

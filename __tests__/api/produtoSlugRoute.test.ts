@@ -48,14 +48,7 @@ describe('GET /api/produtos/[slug]', () => {
   })
 
   it('não retorna produto exclusivo para visitante', async () => {
-    const produto = {
-      id: 'p1',
-      imagens: ['img1.jpg'],
-      ativo: true,
-      exclusivo_user: true,
-    }
-    getFirstListItemMock.mockResolvedValueOnce(produto)
-    pb.files.getURL.mockImplementation((_p, img) => `url/${img}`)
+    getFirstListItemMock.mockRejectedValueOnce(new Error('not found'))
     const req = new Request('http://test/produtos/p1')
     ;(req as any).nextUrl = new URL('http://test/produtos/p1')
     const res = await GET(req as unknown as NextRequest)

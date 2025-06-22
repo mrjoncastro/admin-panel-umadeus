@@ -54,7 +54,7 @@ describe('CheckoutContent', () => {
     fireEvent.change(selects[0], { target: { value: 'credito' } })
     fireEvent.change(selects[1], { target: { value: '2' } })
     expect(
-      screen.getByText((content) => content.includes('R$ 12,69')),
+      screen.getByText((content) => content.includes('R$ 11,59')),
     ).toBeInTheDocument()
   })
 

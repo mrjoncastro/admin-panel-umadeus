@@ -56,10 +56,12 @@ it('chama APIs corretas ao salvar cliente', async () => {
   fireEvent.click(btn)
 
   await vi.waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledWith('/api/inscricoes')
     expect(fetchMock).toHaveBeenCalledWith(
-      '/api/inscricoes/i1',
-      expect.objectContaining({ method: 'PATCH' }),
+      expect.stringContaining('/admin/api/clientes?'),
+    )
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/admin/api/clientes/i1',
+      expect.objectContaining({ method: 'PUT' }),
     )
   })
 })

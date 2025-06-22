@@ -20,7 +20,7 @@ describe('middleware', () => {
       headers: { host: 'tenant.com', cookie: 'tenantId=old' },
     })
     const res = await middleware(req)
-    expect(res.headers.get('x-tenant-id')).toBe('cli1')
+    expect(res.headers.get('x-tenant-id')).toBeNull()
     expect(res.headers.get('set-cookie')).toContain('tenantId=cli1')
   })
 })

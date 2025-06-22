@@ -20,6 +20,7 @@ function setupPocketBaseMock(withClone: boolean) {
       this.url = url
       instances.push(this)
     }
+    autoCancellation = vi.fn()
     clone?: () => MockPocketBase
   }
   if (withClone) {

@@ -13,7 +13,9 @@ vi.mock('../../lib/pocketbase', () => ({
 }))
 
 vi.mock('../../lib/products', () => ({
-  filtrarProdutos: vi.fn((p) => p),
+  filtrarProdutos: vi.fn((p: any[], _c: any, interno: boolean) =>
+    p.filter((prod) => interno || prod.exclusivo_user !== true),
+  ),
 }))
 vi.mock('../../lib/getUserFromHeaders', () => ({
   getUserFromHeaders: vi.fn(() => ({ error: 'Token ou usuário ausente.' })),

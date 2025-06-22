@@ -1,10 +1,20 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { NextRequest } from 'next/server'
 
-const pbMock = () => ({
-  authStore: { isValid: false, model: null as any, save: vi.fn() },
-  autoCancellation: vi.fn(),
-})
+const pbMock = () => {
+  const pb: any = {
+    authStore: {
+      isValid: false,
+      model: null as any,
+      save: vi.fn((_: string, model: any) => {
+        pb.authStore.isValid = true
+        pb.authStore.model = model
+      }),
+    },
+    autoCancellation: vi.fn(),
+  }
+  return pb
+}
 
 vi.mock('../lib/pbWithAuth', () => {
   return { getPocketBaseFromRequest: vi.fn(() => pbMock()) }

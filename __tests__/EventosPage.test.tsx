@@ -44,7 +44,7 @@ describe('EventosPage', () => {
     expect(
       screen.queryByRole('combobox', { name: /campo/i }),
     ).not.toBeInTheDocument()
-    const button = await screen.findByRole('button', { name: /inscrever/i })
+    const button = await screen.findByRole('link', { name: /inscrever-se/i })
     fireEvent.click(button)
     const select = await screen.findByRole('combobox', { name: /campo/i })
     expect(select).toBeInTheDocument()
@@ -59,7 +59,7 @@ describe('EventosPage', () => {
 
     render(await EventosPage())
 
-    await screen.findByRole('heading', { name: /eventos umadeus/i })
+    await screen.findByRole('heading', { name: /eventos/i })
     expect(fetchMock).toHaveBeenCalledWith('/api/eventos')
   })
 })
