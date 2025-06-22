@@ -201,3 +201,4 @@
 ## [2025-06-21] Erro ao criar pedido: ClientResponseError 400: Failed to create record. - development
 
 ## [2025-06-21] Erro no checkout: Error - development
+## [2025-07-31] Erro ao buscar produto: ClientResponseError 404: The requested resource wasn't found. - production - 2df37e3
