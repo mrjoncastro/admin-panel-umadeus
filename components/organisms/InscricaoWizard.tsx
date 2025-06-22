@@ -241,7 +241,7 @@ export default function InscricaoWizard({
       ),
     },
     {
-      title: 'Campo de Atuação',
+      title: 'Campo',
       content: (
         <div className="p-4 text-center">
           {campoNome ? <p>{campoNome}</p> : <Spinner className="w-4 h-4" />}
@@ -249,7 +249,7 @@ export default function InscricaoWizard({
       ),
     },
     {
-      title: 'Produto Vinculado',
+      title: 'Produto',
       content: (
         <div className="space-y-4">
           <FormField label="Produto" htmlFor="produtoId">
