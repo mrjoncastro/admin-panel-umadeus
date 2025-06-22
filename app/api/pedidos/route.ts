@@ -190,8 +190,8 @@ export async function POST(req: NextRequest) {
           valor: pedido.valor,
           status: pedido.status,
         })
-      } catch (e: any) {
-        throw e
+      } catch (err: unknown) {
+        throw err
       }
     }
 
