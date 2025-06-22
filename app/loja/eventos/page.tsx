@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { formatDate } from '@/utils/formatDate'
+import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 
 interface Evento {
   id: string
@@ -18,17 +19,19 @@ interface Evento {
 
 export default function EventosPage() {
   const [eventos, setEventos] = useState<Evento[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function fetchEventos() {
-      fetch('/api/eventos')
-        .then((r) => r.json())
-        .then((data) => {
-          setEventos(Array.isArray(data) ? data : [])
-        })
-        .catch((err) => {
-          console.error('Erro ao carregar eventos:', err)
-        })
+      try {
+        const res = await fetch('/api/eventos')
+        const data = res.ok ? await res.json() : []
+        setEventos(Array.isArray(data) ? data : [])
+      } catch (err) {
+        console.error('Erro ao carregar eventos:', err)
+      } finally {
+        setLoading(false)
+      }
     }
     fetchEventos()
   }, [])
@@ -41,7 +44,9 @@ export default function EventosPage() {
       <h1 id="page-title" className="text-3xl font-bold text-center mb-10">
         Eventos UMADEUS
       </h1>
-      {eventos.length === 0 ? (
+      {loading ? (
+        <LoadingOverlay show={true} text="Carregando..." />
+      ) : eventos.length === 0 ? (
         <p className="text-center text-gray-500">Nenhum evento disponível.</p>
       ) : (
         <div role="list" className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">

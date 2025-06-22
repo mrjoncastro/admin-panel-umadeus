@@ -4,6 +4,7 @@ import { useTenant } from '@/lib/context/TenantContext'
 import { useToast } from '@/lib/context/ToastContext'
 import FormWizard from './FormWizard'
 import { FormField, InputWithMask, TextField } from '@/components'
+import LoadingOverlay from './LoadingOverlay'
 
 interface Produto {
   id: string
@@ -45,21 +46,22 @@ export default function InscricaoLojaWizard({
     installments: 1,
   })
   const [loading, setLoading] = useState(false)
+  const [fetching, setFetching] = useState(true)
 
   useEffect(() => {
-    fetch('/api/campos')
-      .then((r) => (r.ok ? r.json() : []))
-      .then((data) => setCampos(Array.isArray(data) ? data : []))
-      .catch(() => setCampos([]))
-  }, [])
-
-  useEffect(() => {
-    fetch(`/api/eventos/${eventoId}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        const lista = Array.isArray(data?.expand?.produtos)
+    async function fetchData() {
+      setFetching(true)
+      try {
+        const [camposRes, eventoRes] = await Promise.all([
+          fetch('/api/campos'),
+          fetch(`/api/eventos/${eventoId}`),
+        ])
+        const camposData = camposRes.ok ? await camposRes.json() : []
+        setCampos(Array.isArray(camposData) ? camposData : [])
+        const eventoData = eventoRes.ok ? await eventoRes.json() : null
+        const lista = Array.isArray(eventoData?.expand?.produtos)
           ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            data.expand.produtos.map((p: any) => ({
+            eventoData.expand.produtos.map((p: any) => ({
               id: p.id,
               nome: p.nome,
               tamanhos: Array.isArray(p.tamanhos)
@@ -73,8 +75,14 @@ export default function InscricaoLojaWizard({
         if (lista.length > 0) {
           setForm((prev) => ({ ...prev, produtoId: lista[0].id }))
         }
-      })
-      .catch(() => setProdutos([]))
+      } catch {
+        setCampos([])
+        setProdutos([])
+      } finally {
+        setFetching(false)
+      }
+    }
+    fetchData()
   }, [eventoId])
 
   const handleChange = (
@@ -356,6 +364,10 @@ export default function InscricaoLojaWizard({
       </div>
     ),
   })
+
+  if (fetching) {
+    return <LoadingOverlay show={true} text="Carregando..." />
+  }
 
   return (
     <FormWizard
