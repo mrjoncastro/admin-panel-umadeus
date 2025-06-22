@@ -274,11 +274,11 @@ const confirmarInscricao = async (id: string) => {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          inscricaoId: id,
+          id_inscricao: id,
           valor: precoProduto,
           status: 'pendente',
           produto: produtoRecord.nome || 'Produto',
-          cor: Array.isArray(produtoRecord.cores)
+          cores: Array.isArray(produtoRecord.cores)
             ? produtoRecord.cores[0] || 'Roxo'
             : (produtoRecord.cores as string | undefined) || 'Roxo',
           tamanho:
