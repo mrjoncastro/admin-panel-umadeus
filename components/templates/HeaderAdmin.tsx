@@ -3,8 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
-import { useMemo, useState } from 'react'
-import createPocketBase from '@/lib/pocketbase'
+import { useState } from 'react'
 import Image from 'next/image'
 import {
   Menu,
@@ -38,8 +37,7 @@ const getNavLinks = (role?: string) => {
 
 export default function Header() {
   const pathname = usePathname()
-  const { isLoggedIn, user } = useAuthContext()
-  const pb = useMemo(() => createPocketBase(), [])
+  const { isLoggedIn, user, logout } = useAuthContext()
   const [menuAberto, setMenuAberto] = useState(false)
   const [perfilAberto, setPerfilAberto] = useState(false)
   const [financeiroAberto, setFinanceiroAberto] = useState(false)
@@ -73,8 +71,7 @@ export default function Header() {
         ]
 
   const handleLogout = () => {
-    pb.authStore.clear()
-    localStorage.removeItem('pb_user')
+    logout()
     window.location.href = '/login'
   }
 

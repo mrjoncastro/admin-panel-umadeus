@@ -164,6 +164,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     fetch('/api/auth/logout', { method: 'POST' })
     pb.authStore.clear()
     clearBaseAuth()
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('pb_user')
+    }
     setUser(null)
     setTenantId(null)
     setIsLoggedIn(false)
