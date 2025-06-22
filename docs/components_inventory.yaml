@@ -122,3 +122,36 @@ components:
   - name: InscricaoFormNoSSR
     path: components/organisms/InscricaoForm.no-ssr.tsx
     category: Organism
+  - name: AddToCartButton
+    path: components/molecules/AddToCartButton.tsx
+    category: Molecule
+  - name: BlogClient
+    path: components/organisms/BlogClient.tsx
+    category: Organism
+  - name: BlogPostsList
+    path: components/organisms/BlogPostsList.tsx
+    category: Organism
+  - name: FormWizard
+    path: components/organisms/FormWizard.tsx
+    category: Organism
+  - name: InscricaoLojaWizard
+    path: components/organisms/InscricaoLojaWizard.tsx
+    category: Organism
+  - name: InscricaoWizard
+    path: components/organisms/InscricaoWizard.tsx
+    category: Organism
+  - name: MdxRenderer
+    path: components/molecules/MdxRenderer.tsx
+    category: Molecule
+  - name: ModalProdutoForm
+    path: components/admin/ModalProdutoForm.tsx
+    category: Organism
+  - name: ProdutoInterativo
+    path: components/organisms/ProdutoInterativo.tsx
+    category: Organism
+  - name: ProdutosFiltrados
+    path: components/organisms/ProdutosFiltrados.tsx
+    category: Organism
+  - name: ProdutosFiltradosCategoria
+    path: components/organisms/ProdutosFiltradosCategoria.tsx
+    category: Organism
