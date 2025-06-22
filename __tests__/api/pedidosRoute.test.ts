@@ -162,6 +162,19 @@ describe('POST /api/pedidos', () => {
     expect(getFirstMock).not.toHaveBeenCalled()
   })
 
+  it('retorna 404 quando produto não encontrado', async () => {
+    getOneMock.mockRejectedValueOnce(new Error('not found'))
+    const req = new Request('http://test/api/pedidos', {
+      method: 'POST',
+      body: JSON.stringify({ produto: ['pX'], valor: 5 }),
+    })
+    const res = await (
+      await import('../../app/api/pedidos/route')
+    ).POST(req as unknown as NextRequest)
+    expect(res.status).toBe(404)
+    expect(createMock).not.toHaveBeenCalled()
+  })
+
   it('bloqueia quando requer inscricao aprovada e usuario nao possui', async () => {
     getOneMock.mockResolvedValueOnce({
       id: 'p2',

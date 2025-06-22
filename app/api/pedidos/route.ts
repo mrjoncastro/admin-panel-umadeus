@@ -173,6 +173,14 @@ export async function POST(req: NextRequest) {
         console.error('[PEDIDOS][POST] Erro ao buscar produto pelo id:', e)
       }
 
+      if (!produtoRecord) {
+        console.log('[PEDIDOS][POST] Produto não encontrado')
+        return NextResponse.json(
+          { erro: 'Produto não encontrado.' },
+          { status: 404 },
+        )
+      }
+
       if (produtoRecord?.requer_inscricao_aprovada) {
         try {
           const possui = await pb

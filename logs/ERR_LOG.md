@@ -147,3 +147,5 @@
 ## [2025-06-22] Erro ao criar cobrança: status 400 | {"errors":[{"code":"invalid_action","description":"Wallet [906c2a75-b67a-4263-bee1-6bccca34feb3] inexistente."}]} - development
 
 ## [2025-06-22] Erro ao gerar link de pagamento Asaas: Error: Erro ao criar cobrança - development
+
+## [2025-06-22] Erro ao criar pedido sem inscrição quando produto inexistente retornava 400. Rota agora responde 404 antes de criar. - dev - e21e01f
