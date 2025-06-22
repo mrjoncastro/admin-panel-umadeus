@@ -40,6 +40,8 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
     data_nascimento: '',
     genero: '',
     cep: '',
+    endereco: '',
+    bairro: '',
     estado: '',
     cidade: '',
     numero: '',
@@ -129,6 +131,8 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
             data_nascimento: form.data_nascimento,
             genero: form.genero,
             cep: form.cep,
+            endereco: form.endereco,
+            bairro: form.bairro,
             estado: form.estado,
             cidade: form.cidade,
             numero: form.numero,
@@ -148,6 +152,8 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
             user_birth_date: form.data_nascimento,
             user_gender: form.genero,
             user_cep: form.cep,
+            user_address: form.endereco,
+            user_neighborhood: form.bairro,
             user_state: form.estado,
             user_city: form.cidade,
             user_number: form.numero,
@@ -265,6 +271,15 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
               required
             />
           </FormField>
+          <FormField label="Endereço" htmlFor="endereco">
+            <TextField
+              id="endereco"
+              name="endereco"
+              value={form.endereco}
+              onChange={handleChange}
+              required
+            />
+          </FormField>
           <FormField label="Estado" htmlFor="estado">
             <TextField
               id="estado"
@@ -279,6 +294,15 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
               id="cidade"
               name="cidade"
               value={form.cidade}
+              onChange={handleChange}
+              required
+            />
+          </FormField>
+          <FormField label="Bairro" htmlFor="bairro">
+            <TextField
+              id="bairro"
+              name="bairro"
+              value={form.bairro}
               onChange={handleChange}
               required
             />
