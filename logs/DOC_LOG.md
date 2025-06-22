@@ -387,3 +387,4 @@
 ## [2025-08-06] Ajustado cadastro da loja para enviar produto e senha definidos no EventForm. Passo de criação de senha adicionado ao formulário.
 
 ## [2025-08-07] Cadastro passa a enviar endereco completo e role do usuario pela loja.
+## [2025-06-22] Atualizado docs/function-index.md listando métodos GET e PATCH para inscricoes/[id].
