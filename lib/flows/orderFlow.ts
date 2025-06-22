@@ -2,7 +2,7 @@ import { Inscricao, Pedido } from '@/types'
 import {
   criarInscricao as criarInscricaoTemplate,
   InscricaoTemplate,
-} from '@/components/templates/inscricao'
+} from '@/lib/templates/inscricao'
 
 export type DadosInscricao = InscricaoTemplate & { liderId: string }
 
