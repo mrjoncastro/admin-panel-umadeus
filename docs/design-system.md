@@ -190,8 +190,10 @@ O portal permite ajustar fonte, cor primária e logotipo dinamicamente. As confi
 Ao montar, o provedor executa a seguinte sequência:
 
 1. tenta ler as configurações armazenadas no `localStorage`. Se existirem e ainda estiverem válidas, elas são usadas diretamente;
-2. quando não há dados ou eles estão desatualizados, consulta `/api/tenant` para descobrir o ID do cliente e então carrega a coleção `clientes_config` **filtrando pelo campo `cliente`**, e não pelo ID do documento;
+2. quando não há dados ou eles estão desatualizados, consulta `/api/tenant` para **confirmar** o ID detectado pelo domínio e então carrega a coleção `clientes_config` **filtrando pelo campo `cliente`**, e não pelo ID do documento;
 3. caso o usuário esteja autenticado, permite editar as preferências via `/admin/api/configuracoes`.
+
+A detecção do tenant sempre prioriza o **domínio** informado na requisição. A rota `/api/tenant` serve apenas para confirmar esse valor e manter o cookie sincronizado em ambientes sem domínio configurado.
 
 Quando `updateConfig` é chamado, os dados são enviados para essa mesma rota e gravados no `localStorage`, mantendo navegador e PocketBase sincronizados.
 

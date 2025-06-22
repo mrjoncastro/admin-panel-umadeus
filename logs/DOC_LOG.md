@@ -385,3 +385,4 @@
 ## [2025-06-22] Ajustado layout da página de eventos em /inscricoes/[liderId] e adicionado overlay de carregamento no InscricaoWizard. Lint e build falharam (next not found).
 ## [2025-06-22] README menciona sincronizacao do tenantId via /api/tenant e wrappers chamam a rota.
 ## [2025-07-31] getTenantFromHost prioriza domínio, atualiza cookie tenantId e fetchTenantConfig segue mesma lógica. Testes adicionados. Lint e build executados.
+## [2025-08-01] README e docs do design system destacam que a detecção do tenant prioriza o domínio e que `/api/tenant` serve apenas para confirmação. Nenhum código alterado.

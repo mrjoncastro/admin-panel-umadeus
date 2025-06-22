@@ -88,14 +88,14 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `NEXT_PUBLIC_BRASILAPI_URL` - base para chamadas à BrasilAPI
 - `NEXT_PUBLIC_N8N_WEBHOOK_URL` - URL do webhook do n8n para receber inscrições
 
-Os servidores identificam automaticamente o tenant pelo domínio de cada requisição usando `getTenantFromHost`, que consulta a coleção `clientes_config` para descobrir o ID do cliente.
+Os servidores identificam automaticamente o tenant **priorizando o domínio** de cada requisição por meio da função `getTenantFromHost`, que consulta a coleção `clientes_config` para descobrir o ID do cliente.
 
 Com esse ID, o backend acessa `m24_clientes` e obtém as credenciais `asaas_api_key` e `asaas_account_id` da subconta correspondente, garantindo que cada domínio utilize sua própria chave Asaas.
 
 Esta integração realiza chamadas HTTP diretamente na API do Asaas, sem utilizar o SDK oficial.
 Quando não há domínio configurado (ex.: durante testes em localhost), defina manualmente o cookie `tenantId` com o ID do cliente ou cadastre o domínio em `clientes_config` para que rotas como `/api/produtos` funcionem corretamente.
 
-Ao abrir páginas que utilizam informações do cliente (checkout, dashboard etc.), o frontend faz uma requisição GET para `/api/tenant` logo no carregamento. Assim o cookie `tenantId` permanece sincronizado com o servidor.
+Ao abrir páginas que utilizam informações do cliente (checkout, dashboard etc.), o frontend faz uma requisição GET para `/api/tenant` logo no carregamento. Essa rota serve apenas para **confirmar** o ID detectado via domínio e garantir que o cookie `tenantId` permaneça sincronizado com o servidor.
 
 ## Conectando ao PocketBase
 
