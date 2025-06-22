@@ -5,6 +5,68 @@ import { requireRole } from '@/lib/apiAuth'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro } from '@/lib/server/logger'
 import type { Inscricao, Pedido, Produto } from '@/types'
+import colorName from 'color-name'
+
+// Função para hex -> RGB array
+function hexToRgb(hex: string): [number, number, number] | null {
+  const res = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  return res
+    ? [parseInt(res[1], 16), parseInt(res[2], 16), parseInt(res[3], 16)]
+    : null
+}
+
+// Distância entre dois arrays RGB
+function rgbDistance(a: [number, number, number], b: [number, number, number]) {
+  return Math.sqrt(
+    Math.pow(a[0] - b[0], 2) +
+      Math.pow(a[1] - b[1], 2) +
+      Math.pow(a[2] - b[2], 2),
+  )
+}
+
+// Hex para nome em inglês (do color-name)
+function hexToColorName(hex: string): string {
+  const targetRgb = hexToRgb(hex)
+  if (!targetRgb) return 'unknown'
+  let closestName = 'unknown'
+  let smallestDistance = Infinity
+
+  for (const [name, rgb] of Object.entries(colorName)) {
+    const dist = rgbDistance(targetRgb, rgb as [number, number, number])
+    if (dist < smallestDistance) {
+      smallestDistance = dist
+      closestName = name
+    }
+  }
+  return closestName
+}
+
+// Traduzir para nomes aceitos pelo schema
+const nomesPersonalizados: { [key: string]: string } = {
+  maroon: 'Vinho',
+  red: 'Vermelho',
+  blue: 'Azul',
+  teal: 'Verde-azulado',
+  black: 'Preto',
+  white: 'Branco',
+  // ...adicione outros nomes se quiser
+}
+
+function corParaSchema(cor?: string): string {
+  if (!cor) return 'Roxo'
+  if (!cor.startsWith('#')) return cor
+  const nomeEn = hexToColorName(cor)
+  return nomesPersonalizados[nomeEn] || nomeEn
+}
+
+function normalizarGenero(valor?: string): string | undefined {
+  if (!valor) return undefined
+  const valorNormalizado = valor.trim().toLowerCase()
+  const valoresValidos = ['masculino', 'feminino', 'outro']
+  return valoresValidos.includes(valorNormalizado)
+    ? valorNormalizado
+    : undefined
+}
 
 export async function GET(req: NextRequest) {
   const auth = requireRole(req, ['usuario', 'lider', 'coordenador'])
@@ -42,7 +104,7 @@ export async function GET(req: NextRequest) {
     })
 
     return NextResponse.json(items)
-  } catch {
+  } catch (e) {
     return NextResponse.json({ error: 'Erro ao listar' }, { status: 500 })
   }
 }
@@ -77,58 +139,71 @@ export async function POST(req: NextRequest) {
       let produtoRecord: Produto | null = null
       try {
         if (produto) {
-          produtoRecord = await pb
+          const produtosList = await pb
             .collection('produtos')
-            .getOne<Produto>(produto)
+            .getList<Produto>(1, 1, { filter: `nome="${produto}"` })
+          produtoRecord = produtosList.items[0] || null
         }
-      } catch {
-        // ignore
-      }
+      } catch {}
 
       if (produtoRecord?.requer_inscricao_aprovada) {
-        const possui = await pb
-          .collection('inscricoes')
-          .getFirstListItem<Inscricao>(
-            `criado_por='${userId}' && evento='${produtoRecord.evento_id}' && aprovada=true`,
-          )
-          .then(() => true)
-          .catch(() => false)
-        if (!possui) {
-          return NextResponse.json(
-            { erro: 'É necessário possuir inscrição aprovada no evento.' },
-            { status: 400 },
-          )
-        }
+        try {
+          const possui = await pb
+            .collection('inscricoes')
+            .getFirstListItem<Inscricao>(
+              `criado_por='${userId}' && evento='${produtoRecord.evento_id}' && aprovada=true`,
+            )
+            .then(() => true)
+            .catch(() => false)
+          if (!possui) {
+            return NextResponse.json(
+              { erro: 'É necessário possuir inscrição aprovada no evento.' },
+              { status: 400 },
+            )
+          }
+        } catch {}
       }
 
-      const pedido = await pb.collection('pedidos').create<Pedido>({
+      const corTratada = corParaSchema(cor)
+
+      const payload = {
         id_inscricao: '',
         id_pagamento: '',
         produto: produtoRecord?.nome || produto || 'Produto',
         tamanho,
         status: 'pendente',
-        cor: cor || 'Roxo',
+        cor: corTratada || 'Roxo',
         genero: normalizarGenero(genero),
         responsavel: userId,
         cliente: tenantId,
         ...(campoId ? { campo: campoId } : {}),
         email,
-        valor: valor ?? 0,
+        valor: Number(valor) || 0,
         canal: 'loja',
-      })
+      }
 
-      return NextResponse.json({
-        pedidoId: pedido.id,
-        valor: pedido.valor,
-        status: pedido.status,
-      })
+      try {
+        const pedido = await pb.collection('pedidos').create<Pedido>(payload)
+
+        return NextResponse.json({
+          pedidoId: pedido.id,
+          valor: pedido.valor,
+          status: pedido.status,
+        })
+      } catch (e: any) {
+        throw e
+      }
     }
 
-    const inscricao = await pb
-      .collection('inscricoes')
-      .getOne<Inscricao>(inscricaoId, {
-        expand: 'campo,criado_por',
-      })
+    // Pedido com inscrição
+    let inscricao: Inscricao | null = null
+    try {
+      inscricao = await pb
+        .collection('inscricoes')
+        .getOne<Inscricao>(inscricaoId, {
+          expand: 'campo,criado_por',
+        })
+    } catch (e) {}
 
     if (!inscricao) {
       return NextResponse.json(
@@ -158,14 +233,12 @@ export async function POST(req: NextRequest) {
             : []
           produtoRecord = lista.find((p) => p.id === inscricao.produto)
         }
-      } catch {
-        // noop
-      }
+      } catch {}
     }
 
     const valor = produtoRecord?.preco ?? 0
 
-    const pedido = await pb.collection('pedidos').create<Pedido>({
+    const payload = {
       id_inscricao: inscricaoId,
       valor,
       status: 'pendente',
@@ -187,26 +260,21 @@ export async function POST(req: NextRequest) {
       responsavel: responsavelId,
       cliente: inscricao.cliente,
       canal: 'inscricao',
-    })
+    }
 
-    return NextResponse.json({
-      pedidoId: pedido.id,
-      valor: pedido.valor,
-      status: pedido.status,
-    })
+    try {
+      const pedido = await pb.collection('pedidos').create<Pedido>(payload)
+
+      return NextResponse.json({
+        pedidoId: pedido.id,
+        valor: pedido.valor,
+        status: pedido.status,
+      })
+    } catch (e: any) {
+      throw e
+    }
   } catch (err: unknown) {
     await logConciliacaoErro(`Erro ao criar pedido: ${String(err)}`)
     return NextResponse.json({ erro: 'Erro ao criar pedido.' }, { status: 500 })
   }
-}
-
-function normalizarGenero(valor?: string): string | undefined {
-  if (!valor) return undefined
-
-  const valorNormalizado = valor.trim().toLowerCase()
-  const valoresValidos = ['masculino', 'feminino', 'outro']
-
-  return valoresValidos.includes(valorNormalizado)
-    ? valorNormalizado
-    : undefined
 }
