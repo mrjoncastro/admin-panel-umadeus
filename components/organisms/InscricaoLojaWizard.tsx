@@ -115,6 +115,8 @@ export default function InscricaoLojaWizard({
           user_number: form.numero,
           campo: form.campoId,
           evento: eventoId,
+          paymentMethod: form.paymentMethod,
+          installments: form.installments,
         }),
       })
       if (!res.ok) {
@@ -316,7 +318,7 @@ export default function InscricaoLojaWizard({
     },
   ]
 
-  if (!config.confirmaInscricoes && cobraInscricao) {
+  if (cobraInscricao) {
     steps.push({
       title: 'Forma de Pagamento',
       content: (

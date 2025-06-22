@@ -298,7 +298,7 @@ export default function InscricaoWizard({
     },
   ]
 
-  if (!config.confirmaInscricoes && cobraInscricao) {
+  if (cobraInscricao) {
     steps.push({
       title: 'Forma de Pagamento',
       content: (
