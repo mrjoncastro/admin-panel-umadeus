@@ -31,6 +31,8 @@
  └── page.tsx         # Landing page
 /lib
  ├── pocketbase.ts    # Factory de PocketBase (server-only)
+ ├── server/         # Utilidades de backend
+ ├── flows/          # Fluxos de negocio
 /hooks
  ├── useAuth.ts       # useMe, useLogin
  ├── usePedidos.ts    # fetch /api/pedidos
@@ -43,7 +45,10 @@
  └── globals.css      # Tailwind, variáveis, resets
 /next.config.js
 /tsconfig.json
-```
+/scripts             # Scripts auxiliares
+/stories             # Storybook de componentes
+/__tests__           # Testes automatizados
+/logs                # Historico de documentacao e erros
 
 ## 2. Convenções de Nomeação
 
