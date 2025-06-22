@@ -22,7 +22,10 @@ export default function ModalEditarPedido({ pedido, onClose, onSave }: Props) {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target
-    setFormState((prev) => ({ ...prev, [name]: value }))
+    setFormState((prev) => ({
+      ...prev,
+      [name]: name === 'produto' ? [value] : value,
+    }))
   }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -38,7 +41,9 @@ export default function ModalEditarPedido({ pedido, onClose, onSave }: Props) {
           <Input
             name="produto"
             label="Produto"
-            value={formState.produto || ''}
+            value={Array.isArray(formState.produto)
+              ? formState.produto.join(', ')
+              : formState.produto || ''}
             onChange={handleChange}
           />
           <Input

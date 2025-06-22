@@ -277,7 +277,7 @@ const confirmarInscricao = async (id: string) => {
           id_inscricao: id,
           valor: precoProduto,
           status: 'pendente',
-          produto: [produtoRecord.id],
+          produto: [produtoRecord?.id || produtoId].filter(Boolean),
           cor: Array.isArray(produtoRecord.cores)
             ? produtoRecord.cores[0] || 'Roxo'
             : (produtoRecord.cores as string | undefined) || 'Roxo',
