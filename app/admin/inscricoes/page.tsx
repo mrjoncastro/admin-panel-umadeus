@@ -180,181 +180,210 @@ export default function ListaInscricoesPage() {
   }
   const [confirmandoId, setConfirmandoId] = useState<string | null>(null)
 
-  const confirmarInscricao = async (id: string) => {
-    try {
-      setConfirmandoId(id)
+const confirmarInscricao = async (id: string) => {
+  try {
+    console.log('[confirmarInscricao] Iniciando confirmação para id:', id)
+    setConfirmandoId(id)
 
-      // 1. Buscar inscrição com expand do campo e produtos
-      const inscricaoRes = await fetch(
-        `/api/inscricoes/${id}?expand=campo,produto`,
-        { credentials: 'include' },
-      )
-      const inscricao: InscricaoRecord & {
-        expand?: { produtos?: Produto | Produto[] }
-      } = await inscricaoRes.json()
+    // 1. Buscar inscrição com expand do campo e produtos
+    const inscricaoRes = await fetch(
+      `/api/inscricoes/${id}?expand=campo,produto`,
+      { credentials: 'include' },
+    )
+    console.log('[confirmarInscricao] Status inscricaoRes:', inscricaoRes.status)
+    const inscricao: InscricaoRecord & {
+      expand?: { produtos?: Produto | Produto[] }
+    } = await inscricaoRes.json()
+    console.log('[confirmarInscricao] inscricao:', inscricao)
 
-      // Dados da inscrição obtidos com expand
+    // Checar campo correto: produto ou produtos
+    type InscricaoWithProdutos = InscricaoRecord & { produtos?: string }
+    const produtoId =
+      inscricao.produto || (inscricao as InscricaoWithProdutos).produtos
+    console.log('[confirmarInscricao] produtoId:', produtoId)
 
-      // Checar campo correto: produto ou produtos
-      type InscricaoWithProdutos = InscricaoRecord & { produtos?: string }
-      const produtoId =
-        inscricao.produto || (inscricao as InscricaoWithProdutos).produtos
+    // Extrair produto do expand (array ou objeto)
+    let produtoRecord: Produto | undefined = undefined
 
-      // Extrair produto do expand (array ou objeto)
-      let produtoRecord: Produto | undefined = undefined
-
-      // Se expand já trouxe produtos (array ou objeto)
-      if (inscricao.expand?.produtos) {
-        if (Array.isArray(inscricao.expand.produtos)) {
-          produtoRecord = inscricao.expand.produtos.find(
-            (p: Produto) => p.id === produtoId || p.id === inscricao.produto,
-          )
-        } else if (typeof inscricao.expand.produtos === 'object') {
-          produtoRecord = inscricao.expand.produtos as Produto
-        }
-      }
-
-      // Fallback se não achou pelo expand
-      if (!produtoRecord && produtoId) {
-        try {
-          const prodRes = await fetch(`/api/produtos/${produtoId}`, {
-            credentials: 'include',
-          })
-          if (prodRes.ok) {
-            produtoRecord = await prodRes.json()
-          }
-        } catch {}
-      }
-
-      // Novo log: garantir que estamos com preço
-      // Produto final escolhido a partir do expand ou fallback
-
-      // Se mesmo assim não encontrou, aborta!
-      if (!produtoRecord || typeof produtoRecord.preco !== 'number') {
-        showError(
-          'Não foi possível identificar o produto ou o preço da inscrição.',
+    // Se expand já trouxe produtos (array ou objeto)
+    if (inscricao.expand?.produtos) {
+      if (Array.isArray(inscricao.expand.produtos)) {
+        produtoRecord = inscricao.expand.produtos.find(
+          (p: Produto) => p.id === produtoId || p.id === inscricao.produto,
         )
-        setConfirmandoId(null)
-        return
+        console.log('[confirmarInscricao] produtoRecord (array):', produtoRecord)
+      } else if (typeof inscricao.expand.produtos === 'object') {
+        produtoRecord = inscricao.expand.produtos as Produto
+        console.log('[confirmarInscricao] produtoRecord (obj):', produtoRecord)
       }
-
-      // Obter o campo expandido normalmente
-      const campo = inscricao.expand?.campo as
-        | { id?: string; responsavel?: string }
-        | undefined
-
-      const insc = inscricao as InscricaoRecord & {
-        paymentMethod?: PaymentMethod
-        installments?: number
-      }
-
-      const metodo = insc.paymentMethod ?? 'boleto'
-      const parcelas = insc.installments ?? 1
-
-      // Valor base do produto
-      const precoProduto = Number(produtoRecord?.preco ?? 0)
-
-      // Aqui você pode aplicar algum cálculo se desejar
-      const gross = precoProduto // ajuste aqui caso queira aplicar taxas/descontos
-
-      const pedidoRes = await fetch('/api/pedidos', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id_inscricao: id,
-          valor: precoProduto,
-          status: 'pendente',
-          produto: produtoRecord.nome || 'Produto',
-          cor: 'Roxo',
-          tamanho:
-            inscricao.tamanho ||
-            (Array.isArray(produtoRecord.tamanhos)
-              ? produtoRecord.tamanhos[0]
-              : (produtoRecord.tamanhos as string | undefined)),
-          genero:
-            inscricao.genero ||
-            (Array.isArray(produtoRecord.generos)
-              ? produtoRecord.generos[0]
-              : (produtoRecord.generos as string | undefined)),
-          email: inscricao.email,
-          cliente: tenantId,
-          campo: campo?.id,
-          responsavel: inscricao.criado_por,
-          canal: 'inscricao',
-        }),
-      })
-
-      // Agora sim, apenas aguardamos o JSON retornado
-      const pedido: { pedidoId: string } = await pedidoRes.json()
-
-      // 3. Gerar link de pagamento via Asaas
-      const asaasRes = await fetch('/api/asaas', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pedidoId: pedido.pedidoId,
-          valorBruto: precoProduto,
-          paymentMethod: metodo,
-          installments: parcelas,
-        }),
-      })
-      const checkout = await asaasRes.json()
-
-      if (!asaasRes.ok || !checkout?.url) {
-        throw new Error('Erro ao gerar link de pagamento.')
-      }
-
-      // 4. Atualizar inscrição com o ID do pedido
-      await fetch(`/api/inscricoes/${id}`, {
-        method: 'PATCH',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pedido: pedido.pedidoId,
-          status: 'aguardando_pagamento',
-          confirmado_por_lider: true,
-        }),
-      })
-
-      // Atualizar estado local das inscrições
-      setInscricoes((prev) =>
-        prev.map((i) =>
-          i.id === id
-            ? {
-                ...i,
-                status: 'aguardando_pagamento',
-                confirmado_por_lider: true,
-              }
-            : i,
-        ),
-      )
-
-      // 🔹 6. Notificar via n8n webhook de forma assíncrona
-      fetch('/api/n8n', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nome: inscricao.nome,
-          telefone: inscricao.telefone,
-          cpf: inscricao.cpf,
-          evento: inscricao.evento,
-          liderId: campo?.responsavel,
-          pedidoId: pedido.pedidoId,
-          cliente: tenantId,
-          valor: gross,
-          url_pagamento: checkout.url,
-        }),
-      }).catch(() => {})
-
-      // 🔹 7. Mostrar sucesso visual
-      showSuccess('Link de pagamento enviado com sucesso!')
-    } catch {
-      showError('Erro ao confirmar inscrição e gerar pedido.')
-    } finally {
-      setConfirmandoId(null)
     }
+
+    // Fallback se não achou pelo expand
+    if (!produtoRecord && produtoId) {
+      try {
+        const prodRes = await fetch(`/api/produtos/${produtoId}`, {
+          credentials: 'include',
+        })
+        console.log('[confirmarInscricao] Status prodRes:', prodRes.status)
+        if (prodRes.ok) {
+          produtoRecord = await prodRes.json()
+          console.log('[confirmarInscricao] produtoRecord (fallback):', produtoRecord)
+        }
+      } catch (e) {
+        console.error('[confirmarInscricao] Erro fetch produto:', e)
+      }
+    }
+
+    // Log do produto final escolhido
+    console.log('[confirmarInscricao] Produto final:', produtoRecord)
+
+    // Se mesmo assim não encontrou, aborta!
+    if (!produtoRecord || typeof produtoRecord.preco !== 'number') {
+      showError('Não foi possível identificar o produto ou o preço da inscrição.')
+      setConfirmandoId(null)
+      console.log('[confirmarInscricao] Produto/preço não encontrado, abortando!')
+      return
+    }
+
+    // Obter o campo expandido normalmente
+    const campo = inscricao.expand?.campo as
+      | { id?: string; responsavel?: string }
+      | undefined
+    console.log('[confirmarInscricao] campo expand:', campo)
+
+    const insc = inscricao as InscricaoRecord & {
+      paymentMethod?: PaymentMethod
+      installments?: number
+    }
+
+    const metodo = insc.paymentMethod ?? 'boleto'
+    const parcelas = insc.installments ?? 1
+    console.log('[confirmarInscricao] metodo:', metodo, 'parcelas:', parcelas)
+
+    // Valor base do produto
+    const precoProduto = Number(produtoRecord?.preco ?? 0)
+    console.log('[confirmarInscricao] precoProduto:', precoProduto)
+
+    // Aqui você pode aplicar algum cálculo se desejar
+    const gross = precoProduto // ajuste aqui caso queira aplicar taxas/descontos
+    console.log('[confirmarInscricao] gross:', gross)
+
+    // Criação do pedido
+    const pedidoBody = {
+      id_inscricao: id,
+      valor: precoProduto,
+      status: 'pendente',
+      produto: produtoRecord.nome || 'Produto',
+      cor: 'Roxo',
+      tamanho:
+        inscricao.tamanho ||
+        (Array.isArray(produtoRecord.tamanhos)
+          ? produtoRecord.tamanhos[0]
+          : (produtoRecord.tamanhos as string | undefined)),
+      genero:
+        inscricao.genero ||
+        (Array.isArray(produtoRecord.generos)
+          ? produtoRecord.generos[0]
+          : (produtoRecord.generos as string | undefined)),
+      email: inscricao.email,
+      cliente: tenantId,
+      campo: campo?.id,
+      responsavel: inscricao.criado_por,
+      canal: 'inscricao',
+    }
+    console.log('[confirmarInscricao] Enviando pedido:', pedidoBody)
+
+    const pedidoRes = await fetch('/api/pedidos', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(pedidoBody),
+    })
+    console.log('[confirmarInscricao] Status pedidoRes:', pedidoRes.status)
+    const pedido: { pedidoId: string } = await pedidoRes.json()
+    console.log('[confirmarInscricao] pedido:', pedido)
+
+    // 3. Gerar link de pagamento via Asaas
+    const asaasBody = {
+      pedidoId: pedido.pedidoId,
+      valorBruto: precoProduto,
+      paymentMethod: metodo,
+      installments: parcelas,
+    }
+    console.log('[confirmarInscricao] Enviando para /api/asaas:', asaasBody)
+    const asaasRes = await fetch('/api/asaas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(asaasBody),
+    })
+    console.log('[confirmarInscricao] Status asaasRes:', asaasRes.status)
+    const checkout = await asaasRes.json()
+    console.log('[confirmarInscricao] checkout:', checkout)
+
+    if (!asaasRes.ok || !checkout?.url) {
+      console.error('[confirmarInscricao] Erro ao gerar link de pagamento:', checkout)
+      throw new Error('Erro ao gerar link de pagamento.')
+    }
+
+    // 4. Atualizar inscrição com o ID do pedido
+    const patchBody = {
+      pedido: pedido.pedidoId,
+      status: 'aguardando_pagamento',
+      confirmado_por_lider: true,
+    }
+    console.log('[confirmarInscricao] PATCH inscrição:', patchBody)
+
+    await fetch(`/api/inscricoes/${id}`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(patchBody),
+    })
+    console.log('[confirmarInscricao] Inscrição atualizada para aguardando_pagamento')
+
+    // Atualizar estado local das inscrições
+    setInscricoes((prev) =>
+      prev.map((i) =>
+        i.id === id
+          ? {
+              ...i,
+              status: 'aguardando_pagamento',
+              confirmado_por_lider: true,
+            }
+          : i,
+      ),
+    )
+
+    // 🔹 6. Notificar via n8n webhook de forma assíncrona
+    const n8nBody = {
+      nome: inscricao.nome,
+      telefone: inscricao.telefone,
+      cpf: inscricao.cpf,
+      evento: inscricao.evento,
+      liderId: campo?.responsavel,
+      pedidoId: pedido.pedidoId,
+      cliente: tenantId,
+      valor: gross,
+      url_pagamento: checkout.url,
+    }
+    console.log('[confirmarInscricao] Enviando para n8n:', n8nBody)
+    fetch('/api/n8n', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(n8nBody),
+    }).catch(() => {})
+
+    // 🔹 7. Mostrar sucesso visual
+    showSuccess('Link de pagamento enviado com sucesso!')
+  } catch (e) {
+    console.error('[confirmarInscricao] Erro:', e)
+    showError('Erro ao confirmar inscrição e gerar pedido.')
+  } finally {
+    setConfirmandoId(null)
+    console.log('[confirmarInscricao] Fim do fluxo.')
   }
+}
+
 
   const [inscricaoParaRecusar, setInscricaoParaRecusar] =
     useState<Inscricao | null>(null)

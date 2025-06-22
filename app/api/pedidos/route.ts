@@ -69,8 +69,10 @@ function normalizarGenero(valor?: string): string | undefined {
 }
 
 export async function GET(req: NextRequest) {
+  console.log('[PEDIDOS][GET] Nova requisição recebida')
   const auth = requireRole(req, ['usuario', 'lider', 'coordenador'])
   if ('error' in auth) {
+    console.log('[PEDIDOS][GET] Erro de autenticação:', auth.error)
     return NextResponse.json({ error: auth.error }, { status: auth.status })
   }
 
@@ -78,6 +80,14 @@ export async function GET(req: NextRequest) {
   const page = Number(req.nextUrl.searchParams.get('page') || '1')
   const perPage = Number(req.nextUrl.searchParams.get('perPage') || '50')
   const status = req.nextUrl.searchParams.get('status') || ''
+  console.log(
+    '[PEDIDOS][GET] page:',
+    page,
+    'perPage:',
+    perPage,
+    'status:',
+    status,
+  )
 
   try {
     let baseFilter = ''
@@ -88,6 +98,7 @@ export async function GET(req: NextRequest) {
     } else {
       const tenantId = await getTenantFromHost()
       if (!tenantId) {
+        console.log('[PEDIDOS][GET] Tenant não informado')
         return NextResponse.json(
           { error: 'Tenant não informado' },
           { status: 400 },
@@ -97,29 +108,36 @@ export async function GET(req: NextRequest) {
     }
 
     const filtro = status ? `${baseFilter} && status='${status}'` : baseFilter
+    console.log('[PEDIDOS][GET] Filtro final:', filtro)
     const { items } = await pb.collection('pedidos').getList(page, perPage, {
       filter: filtro,
       sort: '-created',
       expand: 'campo,id_inscricao',
     })
-
+    console.log('[PEDIDOS][GET] Retornando pedidos:', items.length)
     return NextResponse.json(items)
-  } catch {
+  } catch (err) {
+    console.error('[PEDIDOS][GET] Erro ao listar:', err)
     return NextResponse.json({ error: 'Erro ao listar' }, { status: 500 })
   }
 }
 
 export async function POST(req: NextRequest) {
+  console.log('[PEDIDOS][POST] Nova requisição recebida')
   const auth = getUserFromHeaders(req)
+  console.log('[PEDIDOS][POST] Auth:', auth)
   const pb = 'error' in auth ? createPocketBase(false) : auth.pbSafe
 
   try {
     const body = await req.json()
+    console.log('[PEDIDOS][POST] Body recebido:', body)
     const { inscricaoId } = body
 
     if (!inscricaoId) {
+      console.log('[PEDIDOS][POST] Criando pedido sem inscriçãoId')
       const tenantId = await getTenantFromHost()
       if (!tenantId) {
+        console.log('[PEDIDOS][POST] Tenant não encontrado')
         return NextResponse.json(
           { erro: 'Tenant não encontrado' },
           { status: 400 },
@@ -128,8 +146,10 @@ export async function POST(req: NextRequest) {
 
       const { produto, tamanho, cor, genero, campoId, email, valor } = body
       const userId = 'error' in auth ? undefined : (auth.user.id as string)
+      console.log('[PEDIDOS][POST] userId:', userId)
 
       if (!userId) {
+        console.log('[PEDIDOS][POST] Usuário não autenticado')
         return NextResponse.json(
           { erro: 'Usuário não autenticado' },
           { status: 401 },
@@ -143,8 +163,11 @@ export async function POST(req: NextRequest) {
             .collection('produtos')
             .getList<Produto>(1, 1, { filter: `nome="${produto}"` })
           produtoRecord = produtosList.items[0] || null
+          console.log('[PEDIDOS][POST] produtoRecord pelo nome:', produtoRecord)
         }
-      } catch {}
+      } catch (e) {
+        console.error('[PEDIDOS][POST] Erro ao buscar produto pelo nome:', e)
+      }
 
       if (produtoRecord?.requer_inscricao_aprovada) {
         try {
@@ -155,16 +178,23 @@ export async function POST(req: NextRequest) {
             )
             .then(() => true)
             .catch(() => false)
+          console.log('[PEDIDOS][POST] Possui inscrição aprovada?', possui)
           if (!possui) {
             return NextResponse.json(
               { erro: 'É necessário possuir inscrição aprovada no evento.' },
               { status: 400 },
             )
           }
-        } catch {}
+        } catch (e) {
+          console.error(
+            '[PEDIDOS][POST] Erro ao verificar inscrição aprovada:',
+            e,
+          )
+        }
       }
 
       const corTratada = corParaSchema(cor)
+      console.log('[PEDIDOS][POST] corTratada:', corTratada)
 
       const payload = {
         id_inscricao: '',
@@ -181,9 +211,11 @@ export async function POST(req: NextRequest) {
         valor: Number(valor) || 0,
         canal: 'loja',
       }
+      console.log('[PEDIDOS][POST] Payload para criação:', payload)
 
       try {
         const pedido = await pb.collection('pedidos').create<Pedido>(payload)
+        console.log('[PEDIDOS][POST] Pedido criado:', pedido)
 
         return NextResponse.json({
           pedidoId: pedido.id,
@@ -191,6 +223,7 @@ export async function POST(req: NextRequest) {
           status: pedido.status,
         })
       } catch (err: unknown) {
+        console.error('[PEDIDOS][POST] Erro ao criar pedido:', err)
         throw err
       }
     }
@@ -203,9 +236,13 @@ export async function POST(req: NextRequest) {
         .getOne<Inscricao>(inscricaoId, {
           expand: 'campo,criado_por',
         })
-    } catch {}
+      console.log('[PEDIDOS][POST] Inscrição encontrada:', inscricao)
+    } catch (e) {
+      console.error('[PEDIDOS][POST] Erro ao buscar inscrição:', e)
+    }
 
     if (!inscricao) {
+      console.log('[PEDIDOS][POST] Inscrição não encontrada')
       return NextResponse.json(
         { erro: 'Inscrição não encontrada.' },
         { status: 404 },
@@ -221,8 +258,10 @@ export async function POST(req: NextRequest) {
         produtoRecord = await pb
           .collection('produtos')
           .getOne(inscricao.produto)
+        console.log('[PEDIDOS][POST] produtoRecord pelo id:', produtoRecord)
       }
-    } catch {
+    } catch (e) {
+      console.error('[PEDIDOS][POST] Erro ao buscar produto pelo id:', e)
       try {
         if (inscricao.evento) {
           const ev = await pb
@@ -232,11 +271,18 @@ export async function POST(req: NextRequest) {
             ? (ev.expand.produtos as Produto[])
             : []
           produtoRecord = lista.find((p) => p.id === inscricao.produto)
+          console.log(
+            '[PEDIDOS][POST] produtoRecord via evento:',
+            produtoRecord,
+          )
         }
-      } catch {}
+      } catch (ee) {
+        console.error('[PEDIDOS][POST] Erro ao buscar produto via evento:', ee)
+      }
     }
 
     const valor = produtoRecord?.preco ?? 0
+    console.log('[PEDIDOS][POST] Valor final do pedido:', valor)
 
     const payload = {
       id_inscricao: inscricaoId,
@@ -261,9 +307,11 @@ export async function POST(req: NextRequest) {
       cliente: inscricao.cliente,
       canal: 'inscricao',
     }
+    console.log('[PEDIDOS][POST] Payload com inscrição:', payload)
 
     try {
       const pedido = await pb.collection('pedidos').create<Pedido>(payload)
+      console.log('[PEDIDOS][POST] Pedido criado:', pedido)
 
       return NextResponse.json({
         pedidoId: pedido.id,
@@ -271,10 +319,12 @@ export async function POST(req: NextRequest) {
         status: pedido.status,
       })
     } catch (err: unknown) {
+      console.error('[PEDIDOS][POST] Erro ao criar pedido com inscrição:', err)
       throw err
     }
   } catch (err: unknown) {
     await logConciliacaoErro(`Erro ao criar pedido: ${String(err)}`)
+    console.error('[PEDIDOS][POST] Erro geral:', err)
     return NextResponse.json({ erro: 'Erro ao criar pedido.' }, { status: 500 })
   }
 }

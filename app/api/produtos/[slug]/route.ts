@@ -13,13 +13,32 @@ export async function GET(req: NextRequest) {
   if (!tenantId) {
     return NextResponse.json({ error: 'Tenant não informado' }, { status: 400 })
   }
-  const slug = req.nextUrl.pathname.split('/').pop() ?? ''
-  let filter = `ativo = true && slug = '${slug}' && cliente='${tenantId}'`
-  if (!role) {
-    filter += ' && exclusivo_user = false'
+
+  const id = req.nextUrl.pathname.split('/').pop() ?? ''
+
+  if (!id) {
+    return NextResponse.json({ error: 'ID não informado' }, { status: 400 })
   }
+
   try {
-    const p = await pb.collection('produtos').getFirstListItem<Produto>(filter)
+    const p = await pb.collection('produtos').getOne<Produto>(id)
+
+    if (p.cliente !== tenantId) {
+      return NextResponse.json(
+        { error: 'Produto não pertence ao tenant' },
+        { status: 403 },
+      )
+    }
+    if (!role && p.exclusivo_user) {
+      return NextResponse.json(
+        { error: 'Produto exclusivo para usuários logados' },
+        { status: 403 },
+      )
+    }
+    if (!p.ativo) {
+      return NextResponse.json({ error: 'Produto inativo' }, { status: 404 })
+    }
+
     const imagens = Array.isArray(p.imagens)
       ? p.imagens.map((img) => pb.files.getURL(p, img))
       : Object.fromEntries(
@@ -27,6 +46,7 @@ export async function GET(req: NextRequest) {
             ([g, arr]) => [g, arr.map((img) => pb.files.getURL(p, img))],
           ),
         )
+
     return NextResponse.json({ ...p, imagens })
   } catch {
     return NextResponse.json(
