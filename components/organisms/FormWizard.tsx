@@ -1,5 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react'
+import LoadingOverlay from './LoadingOverlay'
 
 export interface WizardStep {
   title: string
@@ -17,6 +18,7 @@ export default function FormWizard({
   steps,
   onFinish,
   className = '',
+  loading = false,
 }: FormWizardProps) {
   const [current, setCurrent] = useState(0)
   const [message, setMessage] = useState('')
@@ -38,6 +40,7 @@ export default function FormWizard({
 
   return (
     <div className={className}>
+      <LoadingOverlay show={loading} text="Processando..." />
       <div className="w-full bg-neutral-200 rounded-full h-2 mb-4">
         <div
           className="bg-[var(--accent)] h-2 rounded-full transition-all duration-300"
@@ -57,12 +60,17 @@ export default function FormWizard({
         <button
           type="button"
           onClick={prev}
-          disabled={current === 0}
+          disabled={current === 0 || loading}
           className="btn"
         >
           Voltar
         </button>
-        <button type="button" onClick={next} className="btn btn-primary">
+        <button
+          type="button"
+          onClick={next}
+          className="btn btn-primary"
+          disabled={loading}
+        >
           {isLast ? 'Concluir' : 'Avançar'}
         </button>
       </div>
