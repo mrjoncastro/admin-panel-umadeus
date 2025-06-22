@@ -37,7 +37,8 @@ export async function GET(req: NextRequest) {
   }
   const { pb, user } = auth
   try {
-    const expand = req.nextUrl.searchParams.get('expand') || 'evento,campo,pedido'
+    const expand =
+      req.nextUrl.searchParams.get('expand') || 'evento,campo,pedido'
     const record = await pb
       .collection('inscricoes')
       .getOne<Inscricao>(id, { expand })

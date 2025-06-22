@@ -145,7 +145,11 @@ export async function POST(req: NextRequest) {
       }
 
       const { produto, tamanho, cor, genero, campoId, email, valor } = body
-      const produtoIds = Array.isArray(produto) ? produto : produto ? [produto] : []
+      const produtoIds = Array.isArray(produto)
+        ? produto
+        : produto
+          ? [produto]
+          : []
       const userId = 'error' in auth ? undefined : (auth.user.id as string)
       console.log('[PEDIDOS][POST] userId:', userId)
 
@@ -288,7 +292,11 @@ export async function POST(req: NextRequest) {
       id_inscricao: inscricaoId,
       valor,
       status: 'pendente',
-      produto: inscricao.produto ? [inscricao.produto] : produtoRecord ? [produtoRecord.id] : [],
+      produto: inscricao.produto
+        ? [inscricao.produto]
+        : produtoRecord
+          ? [produtoRecord.id]
+          : [],
       cor: 'Roxo',
       tamanho:
         inscricao.tamanho ||

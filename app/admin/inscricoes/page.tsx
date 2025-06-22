@@ -11,11 +11,7 @@ import TooltipIcon from '../components/TooltipIcon'
 import { useToast } from '@/lib/context/ToastContext'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import { type PaymentMethod } from '@/lib/asaasFees'
-import type {
-  Evento,
-  Inscricao as InscricaoRecord,
-  Produto,
-} from '@/types'
+import type { Evento, Inscricao as InscricaoRecord, Produto } from '@/types'
 
 const statusBadge = {
   pendente: 'bg-yellow-100 text-yellow-800',
@@ -181,93 +177,109 @@ export default function ListaInscricoesPage() {
   }
   const [confirmandoId, setConfirmandoId] = useState<string | null>(null)
 
-const confirmarInscricao = async (id: string) => {
-  try {
-    console.log('[confirmarInscricao] Iniciando confirmação para id:', id)
-    setConfirmandoId(id)
+  const confirmarInscricao = async (id: string) => {
+    try {
+      console.log('[confirmarInscricao] Iniciando confirmação para id:', id)
+      setConfirmandoId(id)
 
-    // 1. Buscar inscrição com expand do campo e produtos
-    const inscricaoRes = await fetch(
-      `/api/inscricoes/${id}?expand=campo,produto`,
-      { credentials: 'include' },
-    )
-    console.log('[confirmarInscricao] Status inscricaoRes:', inscricaoRes.status)
-    const inscricao: InscricaoRecord & {
-      expand?: { produtos?: Produto | Produto[] }
-    } = await inscricaoRes.json()
-    console.log('[confirmarInscricao] inscricao:', inscricao)
+      // 1. Buscar inscrição com expand do campo e produtos
+      const inscricaoRes = await fetch(
+        `/api/inscricoes/${id}?expand=campo,produto`,
+        { credentials: 'include' },
+      )
+      console.log(
+        '[confirmarInscricao] Status inscricaoRes:',
+        inscricaoRes.status,
+      )
+      const inscricao: InscricaoRecord & {
+        expand?: { produtos?: Produto | Produto[] }
+      } = await inscricaoRes.json()
+      console.log('[confirmarInscricao] inscricao:', inscricao)
 
-    // Checar campo correto: produto ou produtos
-    type InscricaoWithProdutos = InscricaoRecord & { produtos?: string }
-    const produtoId =
-      inscricao.produto || (inscricao as InscricaoWithProdutos).produtos
-    console.log('[confirmarInscricao] produtoId:', produtoId)
+      // Checar campo correto: produto ou produtos
+      type InscricaoWithProdutos = InscricaoRecord & { produtos?: string }
+      const produtoId =
+        inscricao.produto || (inscricao as InscricaoWithProdutos).produtos
+      console.log('[confirmarInscricao] produtoId:', produtoId)
 
-    // Extrair produto do expand (array ou objeto)
-    let produtoRecord: Produto | undefined = undefined
+      // Extrair produto do expand (array ou objeto)
+      let produtoRecord: Produto | undefined = undefined
 
-    // Se expand já trouxe produtos (array ou objeto)
-    if (inscricao.expand?.produtos) {
-      if (Array.isArray(inscricao.expand.produtos)) {
-        produtoRecord = inscricao.expand.produtos.find(
-          (p: Produto) => p.id === produtoId || p.id === inscricao.produto,
-        )
-        console.log('[confirmarInscricao] produtoRecord (array):', produtoRecord)
-      } else if (typeof inscricao.expand.produtos === 'object') {
-        produtoRecord = inscricao.expand.produtos as Produto
-        console.log('[confirmarInscricao] produtoRecord (obj):', produtoRecord)
-      }
-    }
-
-    // Fallback se não achou pelo expand
-    if (!produtoRecord && produtoId) {
-      try {
-        const prodRes = await fetch(`/api/produtos/${produtoId}`, {
-          credentials: 'include',
-        })
-        console.log('[confirmarInscricao] Status prodRes:', prodRes.status)
-        if (prodRes.ok) {
-          produtoRecord = await prodRes.json()
-          console.log('[confirmarInscricao] produtoRecord (fallback):', produtoRecord)
+      // Se expand já trouxe produtos (array ou objeto)
+      if (inscricao.expand?.produtos) {
+        if (Array.isArray(inscricao.expand.produtos)) {
+          produtoRecord = inscricao.expand.produtos.find(
+            (p: Produto) => p.id === produtoId || p.id === inscricao.produto,
+          )
+          console.log(
+            '[confirmarInscricao] produtoRecord (array):',
+            produtoRecord,
+          )
+        } else if (typeof inscricao.expand.produtos === 'object') {
+          produtoRecord = inscricao.expand.produtos as Produto
+          console.log(
+            '[confirmarInscricao] produtoRecord (obj):',
+            produtoRecord,
+          )
         }
-      } catch (e) {
-        console.error('[confirmarInscricao] Erro fetch produto:', e)
       }
-    }
 
-    // Log do produto final escolhido
-    console.log('[confirmarInscricao] Produto final:', produtoRecord)
+      // Fallback se não achou pelo expand
+      if (!produtoRecord && produtoId) {
+        try {
+          const prodRes = await fetch(`/api/produtos/${produtoId}`, {
+            credentials: 'include',
+          })
+          console.log('[confirmarInscricao] Status prodRes:', prodRes.status)
+          if (prodRes.ok) {
+            produtoRecord = await prodRes.json()
+            console.log(
+              '[confirmarInscricao] produtoRecord (fallback):',
+              produtoRecord,
+            )
+          }
+        } catch (e) {
+          console.error('[confirmarInscricao] Erro fetch produto:', e)
+        }
+      }
 
-    // Se mesmo assim não encontrou, aborta!
-    if (!produtoRecord || typeof produtoRecord.preco !== 'number') {
-      showError('Não foi possível identificar o produto ou o preço da inscrição.')
-      setConfirmandoId(null)
-      console.log('[confirmarInscricao] Produto/preço não encontrado, abortando!')
-      return
-    }
+      // Log do produto final escolhido
+      console.log('[confirmarInscricao] Produto final:', produtoRecord)
 
-    // Obter o campo expandido normalmente
-    const campo = inscricao.expand?.campo as
-      | { id?: string; responsavel?: string }
-      | undefined
-    console.log('[confirmarInscricao] campo expand:', campo)
+      // Se mesmo assim não encontrou, aborta!
+      if (!produtoRecord || typeof produtoRecord.preco !== 'number') {
+        showError(
+          'Não foi possível identificar o produto ou o preço da inscrição.',
+        )
+        setConfirmandoId(null)
+        console.log(
+          '[confirmarInscricao] Produto/preço não encontrado, abortando!',
+        )
+        return
+      }
 
-    const insc = inscricao as InscricaoRecord & {
-      paymentMethod?: PaymentMethod
-      installments?: number
-    }
+      // Obter o campo expandido normalmente
+      const campo = inscricao.expand?.campo as
+        | { id?: string; responsavel?: string }
+        | undefined
+      console.log('[confirmarInscricao] campo expand:', campo)
 
-    const metodo = insc.paymentMethod ?? 'boleto'
-    const parcelas = insc.installments ?? 1
-    console.log('[confirmarInscricao] metodo:', metodo, 'parcelas:', parcelas)
+      const insc = inscricao as InscricaoRecord & {
+        paymentMethod?: PaymentMethod
+        installments?: number
+      }
 
-    // Valor base do produto
-    const precoProduto = Number(produtoRecord?.preco ?? 0)
-    console.log('[confirmarInscricao] precoProduto:', precoProduto)
+      const metodo = insc.paymentMethod ?? 'boleto'
+      const parcelas = insc.installments ?? 1
+      console.log('[confirmarInscricao] metodo:', metodo, 'parcelas:', parcelas)
 
-    // Aqui você pode aplicar algum cálculo se desejar
-    const gross = precoProduto // ajuste aqui caso queira aplicar taxas/descontos
-    console.log('[confirmarInscricao] gross:', gross)
+      // Valor base do produto
+      const precoProduto = Number(produtoRecord?.preco ?? 0)
+      console.log('[confirmarInscricao] precoProduto:', precoProduto)
+
+      // Aqui você pode aplicar algum cálculo se desejar
+      const gross = precoProduto // ajuste aqui caso queira aplicar taxas/descontos
+      console.log('[confirmarInscricao] gross:', gross)
 
       const pedidoRes = await fetch('/api/pedidos', {
         method: 'POST',
@@ -315,10 +327,13 @@ const confirmarInscricao = async (id: string) => {
       })
       const checkout = await asaasRes.json()
 
-    if (!asaasRes.ok || !checkout?.url) {
-      console.error('[confirmarInscricao] Erro ao gerar link de pagamento:', checkout)
-      throw new Error('Erro ao gerar link de pagamento.')
-    }
+      if (!asaasRes.ok || !checkout?.url) {
+        console.error(
+          '[confirmarInscricao] Erro ao gerar link de pagamento:',
+          checkout,
+        )
+        throw new Error('Erro ao gerar link de pagamento.')
+      }
 
       // 4. Atualizar inscrição com o ID do pedido
       await fetch(`/api/inscricoes/${id}`, {
@@ -364,17 +379,16 @@ const confirmarInscricao = async (id: string) => {
         }),
       }).catch(() => {})
 
-    // 🔹 7. Mostrar sucesso visual
-    showSuccess('Link de pagamento enviado com sucesso!')
-  } catch (e) {
-    console.error('[confirmarInscricao] Erro:', e)
-    showError('Erro ao confirmar inscrição e gerar pedido.')
-  } finally {
-    setConfirmandoId(null)
-    console.log('[confirmarInscricao] Fim do fluxo.')
+      // 🔹 7. Mostrar sucesso visual
+      showSuccess('Link de pagamento enviado com sucesso!')
+    } catch (e) {
+      console.error('[confirmarInscricao] Erro:', e)
+      showError('Erro ao confirmar inscrição e gerar pedido.')
+    } finally {
+      setConfirmandoId(null)
+      console.log('[confirmarInscricao] Fim do fluxo.')
+    }
   }
-}
-
 
   const [inscricaoParaRecusar, setInscricaoParaRecusar] =
     useState<Inscricao | null>(null)

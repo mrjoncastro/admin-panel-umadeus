@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireClienteFromHost } from '@/lib/clienteAuth'
-import { logInfo } from '@/lib/logger'
 import { logConciliacaoErro } from '@/lib/server/logger'
 
 export async function GET(req: NextRequest) {

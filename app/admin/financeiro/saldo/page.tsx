@@ -44,7 +44,9 @@ export default function SaldoPage() {
           const data: { balance: number } = await saldoRes.json()
           setSaldoDisponivel(data.balance)
         }
-        const statsRes = await fetch('/admin/api/asaas/estatisticas?status=PENDING')
+        const statsRes = await fetch(
+          '/admin/api/asaas/estatisticas?status=PENDING',
+        )
         if (statsRes.ok) {
           const stats: Statistics = await statsRes.json()
           setALiberar(stats.netValue)

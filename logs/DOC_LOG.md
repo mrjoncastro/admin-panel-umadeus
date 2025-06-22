@@ -387,8 +387,13 @@
 ## [2025-08-06] Ajustado cadastro da loja para enviar produto e senha definidos no EventForm. Passo de criação de senha adicionado ao formulário.
 
 ## [2025-08-07] Cadastro passa a enviar endereco completo e role do usuario pela loja.
+
 ## [2025-06-22] Atualizado docs/function-index.md listando métodos GET e PATCH para inscricoes/[id].
+
 ## [2025-06-22] Documentado fluxo manual de inscrições e campo produto múltiplo em pedidos.
+
 ## [2025-06-22] Padronizado envio do campo produto como array de IDs e exemplos atualizados no manual de aprovação.
+
 ## [2025-06-22] Corrigido envio do ID do produto na confirmação de inscrições.
+
 ## [2025-06-22] Padronizado envio do campo produto como array de IDs e exemplos atualizados no manual de aprovação.
