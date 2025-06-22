@@ -105,14 +105,14 @@ describe('CartPreview', () => {
       </CartProvider>,
     )
     expect(
-      screen.getAllByText(new RegExp(`R\\$\\s*${gross1
-        .toFixed(2)
-        .replace('.', ',')}`)).length,
+      screen.getAllByText(
+        new RegExp(`R\\$\\s*${gross1.toFixed(2).replace('.', ',')}`),
+      ).length,
     ).toBeGreaterThan(0)
     expect(
-      screen.getAllByText(new RegExp(`R\\$\\s*${gross2
-        .toFixed(2)
-        .replace('.', ',')}`)).length,
+      screen.getAllByText(
+        new RegExp(`R\\$\\s*${gross2.toFixed(2).replace('.', ',')}`),
+      ).length,
     ).toBeGreaterThan(0)
   })
 })

@@ -35,8 +35,7 @@ test('exibe titulo do evento na tabela', async () => {
     .fn()
     .mockResolvedValueOnce({
       ok: true,
-      json: () =>
-        Promise.resolve([{ id: 'e1', titulo: 'Congresso Teste' }]),
+      json: () => Promise.resolve([{ id: 'e1', titulo: 'Congresso Teste' }]),
     })
     .mockResolvedValueOnce({
       ok: true,
