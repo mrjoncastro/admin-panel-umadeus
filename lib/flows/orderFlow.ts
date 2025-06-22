@@ -11,6 +11,7 @@ export const criarInscricao = criarInscricaoTemplate
 export function criarPedido(
   inscricao: Inscricao,
   produto: {
+    id: string
     nome?: string
     preco: number
     tamanhos?: string[] | string
@@ -24,7 +25,7 @@ export function criarPedido(
     id: `ped_${inscricao.id}`,
     id_pagamento: '',
     id_inscricao: inscricao.id,
-    produto: [produto.nome ?? inscricao.produto ?? 'Kit Camisa + Pulseira'],
+    produto: [produto.id],
     tamanho: inscricao.tamanho || first(produto.tamanhos),
     status: 'pendente',
     cor: 'Roxo',
