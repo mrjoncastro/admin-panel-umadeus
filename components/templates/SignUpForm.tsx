@@ -1,14 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { fetchCep } from '@/utils/cep'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useToast } from '@/lib/context/ToastContext'
 import type { ClientResponseError } from 'pocketbase'
 import Spinner from '@/components/atoms/Spinner'
 import { FormField, TextField, InputWithMask } from '@/components'
-
-const VIA_CEP_URL =
-  process.env.NEXT_PUBLIC_VIA_CEP_URL || 'https://viacep.com.br/ws'
 
 export default function SignUpForm({
   onSuccess,
@@ -67,30 +65,22 @@ export default function SignUpForm({
   }, [])
 
   useEffect(() => {
-    const cleanCep = cep.replace(/\D/g, '')
-    if (cleanCep.length !== 8) return
-    fetch(`${VIA_CEP_URL}/${cleanCep}/json/`)
-      .then(async (res) => {
-        if (!res.ok) {
-          showError('CEP n\u00e3o encontrado.')
-          setEndereco('')
-          setCidade('')
-          setEstado('')
-          setBairro('')
-          return null
-        }
-        return res.json()
-      })
-      .then((data) => {
-        if (!data || data.erro) return
-        setEndereco(data.logradouro || '')
-        setCidade(data.localidade || '')
-        setEstado(data.uf || '')
-        setBairro(data.bairro || '')
-      })
-      .catch(() => {
-        showError('Erro ao buscar o CEP.')
-      })
+    async function lookup() {
+      const data = await fetchCep(cep).catch(() => null)
+      if (!data) {
+        showError('CEP n\u00e3o encontrado.')
+        setEndereco('')
+        setCidade('')
+        setEstado('')
+        setBairro('')
+        return
+      }
+      setEndereco(data.street)
+      setCidade(data.city)
+      setEstado(data.state)
+      setBairro(data.neighborhood)
+    }
+    if (cep.replace(/\D/g, '').length === 8) lookup()
   }, [cep, showError])
 
   async function handleSubmit(e: React.FormEvent) {

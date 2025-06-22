@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { fetchCep } from '@/utils/cep'
 import { useRouter } from 'next/navigation'
 import { TextField, FormField, Button, Spinner } from '@/components'
 import { useToast } from '@/lib/context/ToastContext'
@@ -38,20 +39,17 @@ export default function CompletarCadastroPage() {
   }, [authChecked])
 
   useEffect(() => {
-    const clean = cep.replace(/\D/g, '')
-    if (clean.length !== 8) return
-    fetch(`https://viacep.com.br/ws/${clean}/json/`)
-      .then((r) => r.json())
-      .then((d) => {
-        if (!d || d.erro) {
-          showError('CEP não encontrado.')
-          return
-        }
-        setEndereco(d.logradouro || '')
-        setCidade(d.localidade || '')
-        setEstado(d.uf || '')
-      })
-      .catch(() => showError('Erro ao buscar o CEP.'))
+    async function lookup() {
+      const data = await fetchCep(cep).catch(() => null)
+      if (!data) {
+        showError('CEP não encontrado.')
+        return
+      }
+      setEndereco(data.street)
+      setCidade(data.city)
+      setEstado(data.state)
+    }
+    if (cep.replace(/\D/g, '').length === 8) lookup()
   }, [cep, showError])
 
   async function handleSubmit(e: React.FormEvent) {

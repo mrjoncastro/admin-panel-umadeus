@@ -6,11 +6,7 @@ import { useAuthContext } from '@/lib/context/AuthContext'
 import { useToast } from '@/lib/context/ToastContext'
 import Spinner from '@/components/atoms/Spinner'
 import { FormField, TextField, InputWithMask } from '@/components'
-
-const CEP_BASE_URL =
-  process.env.NEXT_PUBLIC_VIA_CEP_URL ||
-  process.env.NEXT_PUBLIC_BRASILAPI_URL ||
-  ''
+import { fetchCep } from '@/utils/cep'
 
 interface Campo {
   id: string
@@ -73,25 +69,15 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
   }, [user, firstName, lastName])
 
   useEffect(() => {
-    const cleanCep = cep.replace(/\D/g, '')
-    if (cleanCep.length !== 8 || !CEP_BASE_URL) return
-    const url = process.env.NEXT_PUBLIC_VIA_CEP_URL
-      ? `${CEP_BASE_URL}/${cleanCep}/json/`
-      : `${CEP_BASE_URL}/cep/v1/${cleanCep}`
-    fetch(url)
-      .then(async (res) => {
-        if (!res.ok) {
-          throw new Error('CEP not found')
-        }
-        return res.json()
-      })
-      .then((data) => {
-        setEndereco(data.logradouro || data.street || '')
-        setCidade(data.localidade || data.city || '')
-        setEstado(data.uf || data.state || '')
-        setBairro(data.bairro || data.neighborhood || '')
-      })
-      .catch(() => console.warn('Erro ao buscar o CEP'))
+    async function lookup() {
+      const data = await fetchCep(cep).catch(() => null)
+      if (!data) return
+      setEndereco(data.street)
+      setCidade(data.city)
+      setEstado(data.state)
+      setBairro(data.neighborhood)
+    }
+    if (cep.replace(/\D/g, '').length === 8) lookup()
   }, [cep])
 
   const router = useRouter()
