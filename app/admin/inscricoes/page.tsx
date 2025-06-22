@@ -286,14 +286,14 @@ export default function ListaInscricoesPage() {
       })
 
       // Agora sim, apenas aguardamos o JSON retornado
-      const pedido: Pedido = await pedidoRes.json()
+      const pedido: { pedidoId: string } = await pedidoRes.json()
 
       // 3. Gerar link de pagamento via Asaas
       const asaasRes = await fetch('/api/asaas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          pedidoId: pedido.id,
+          pedidoId: pedido.pedidoId,
           valorBruto: precoProduto,
           paymentMethod: metodo,
           installments: parcelas,
@@ -311,7 +311,7 @@ export default function ListaInscricoesPage() {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          pedido: pedido.id,
+          pedido: pedido.pedidoId,
           status: 'aguardando_pagamento',
           confirmado_por_lider: true,
         }),
@@ -340,7 +340,7 @@ export default function ListaInscricoesPage() {
           cpf: inscricao.cpf,
           evento: inscricao.evento,
           liderId: campo?.responsavel,
-          pedidoId: pedido.id,
+          pedidoId: pedido.pedidoId,
           cliente: tenantId,
           valor: gross,
           url_pagamento: checkout.url,
