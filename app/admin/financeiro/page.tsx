@@ -28,12 +28,12 @@ export default function FinanceiroPage() {
     const fetchSaldo = async () => {
       try {
         setLoading(true)
-        const saldoRes = await fetch(`/api/asaas/saldo`)
+        const saldoRes = await fetch(`/admin/api/asaas/saldo`)
         if (saldoRes.ok) {
           const data: { balance: number } = await saldoRes.json()
           setSaldoDisponivel(data.balance)
         }
-        const statsRes = await fetch(`/api/asaas/estatisticas?status=PENDING`)
+        const statsRes = await fetch(`/admin/api/asaas/estatisticas?status=PENDING`)
         if (statsRes.ok) {
           const stats: Statistics = await statsRes.json()
           setALiberar(stats.netValue)

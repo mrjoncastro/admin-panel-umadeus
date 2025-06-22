@@ -139,3 +139,5 @@
 
 ## [2025-06-22] Erro ao confirmar inscrição: API /api/asaas retornava "pedidoId e valorBruto são obrigatórios" devido ao uso de pedido.id na página admin/inscricoes. Corrigido para usar pedido.pedidoId. - dev - c89ca25
 ## [2025-06-22] Falha ao criar pedido ao aprovar inscrição; página admin/inscricoes enviava `id_inscricao` em vez de `inscricaoId`. Ajustado para enviar o campo correto. - dev - 36974c3
+## [2025-06-22] Erro ao criar cobrança: status 400 | {"errors":[{"code":"invalid_action","description":"Wallet [906c2a75-b67a-4263-bee1-6bccca34feb3] inexistente."}]} - development
+## [2025-06-22] Erro ao gerar link de pagamento Asaas: Error: Erro ao criar cobrança - development

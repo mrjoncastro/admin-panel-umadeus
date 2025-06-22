@@ -26,7 +26,7 @@ Utilize esta rota para obter valores agregados das cobranças no Asaas. Todos os
 parâmetros enviados são repassados para `/finance/payment/statistics`.
 
 ```bash
-GET /api/asaas/estatisticas?status=PENDING
+GET /admin/api/asaas/estatisticas?status=PENDING
 ```
 
 Resposta:

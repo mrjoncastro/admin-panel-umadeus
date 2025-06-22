@@ -21,11 +21,7 @@ export async function GET(req: NextRequest) {
     )
   }
 
-  logInfo('🔑 API Key utilizada:', apiKey)
-
   const keyHeader = apiKey.startsWith('$') ? apiKey : `$${apiKey}`
-  logInfo('🔑 ASAAS_API_URL:', baseUrl)
-  logInfo('🔑 ASAAS_API_KEY final:', keyHeader)
 
   try {
     const res = await fetch(`${baseUrl}/finance/balance`, {

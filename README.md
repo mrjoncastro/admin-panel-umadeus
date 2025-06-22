@@ -240,12 +240,12 @@ Para PIX:
 
 Essas rotas utilizam a chave do Asaas de cada cliente (tenant) conforme descrito em [docs/plano-negocio.md](docs/plano-negocio.md).
 
-### Endpoint `/api/asaas/extrato`
+### Endpoint `/admin/api/asaas/extrato`
 
 Retorna as movimentações financeiras do período informado:
 
 ```bash
-GET /api/asaas/extrato?start=2025-01-01&end=2025-01-31
+GET /admin/api/asaas/extrato?start=2025-01-01&end=2025-01-31
 ```
 
 Resposta de exemplo:
