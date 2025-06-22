@@ -4,7 +4,7 @@ import { defaultConfig, TenantConfig } from '@/lib/context/TenantContext'
 
 export async function fetchTenantConfig(): Promise<TenantConfig> {
   const headerList = headers()
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const fromCookie = cookieStore.get('tenantId')?.value ?? null
 
   const pb = createPocketBase()
