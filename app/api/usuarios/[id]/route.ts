@@ -42,8 +42,8 @@ export async function PATCH(req: NextRequest) {
     const data = await req.json()
     await pb.collection('usuarios').update(id, {
       nome: String(data.nome || '').trim(),
-      telefone: String(data.telefone || '').trim(),
-      cpf: String(data.cpf || '').trim(),
+      telefone: String(data.telefone || '').replace(/\D/g, ''),
+      cpf: String(data.cpf || '').replace(/\D/g, ''),
       data_nascimento: String(data.data_nascimento || ''),
       ...(data.tour !== undefined ? { tour: Boolean(data.tour) } : {}),
       role: user.role,
