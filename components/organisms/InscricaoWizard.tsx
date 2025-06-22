@@ -21,7 +21,6 @@ interface InscricaoWizardProps {
 export default function InscricaoWizard({
   liderId,
   eventoId,
-  
 }: InscricaoWizardProps) {
   const { config } = useTenant()
   const { showSuccess, showError } = useToast()
