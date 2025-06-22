@@ -85,6 +85,11 @@ export default function AdminProdutosPage() {
     } else if (form.cores) {
       formData.set('cores', String(form.cores))
     }
+    if (form.evento_id) formData.set('evento_id', String(form.evento_id))
+    formData.set(
+      'requer_inscricao_aprovada',
+      String(form.requer_inscricao_aprovada ? 'true' : 'false'),
+    )
     formData.set('ativo', String(form.ativo ? 'true' : 'false'))
     if (form.imagens && form.imagens instanceof FileList) {
       Array.from(form.imagens).forEach((file) =>

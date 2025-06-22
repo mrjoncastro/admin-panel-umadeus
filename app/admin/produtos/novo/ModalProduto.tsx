@@ -32,6 +32,10 @@ export interface ModalProdutoProps<T extends Record<string, unknown>> {
     ativo?: boolean
     exclusivo_user?: boolean
     cores?: string | string[]
+    /** ID do evento relacionado */
+    evento_id?: string | null
+    /** Se verdadeiro, exige aprovação de inscrição */
+    requer_inscricao_aprovada?: boolean
   }
 }
 
@@ -39,6 +43,11 @@ interface Categoria {
   id: string
   nome: string
   slug: string
+}
+
+interface Evento {
+  id: string
+  titulo: string
 }
 
 // Função para gerar slug automático
@@ -64,6 +73,11 @@ export function ModalProduto<T extends Record<string, unknown>>({
   const [selectedCategoria, setSelectedCategoria] = useState<string>(
     initial.categoria || '',
   )
+  const [eventos, setEventos] = useState<Evento[]>([])
+  const [eventoId, setEventoId] = useState<string>(initial.evento_id || '')
+  const [requerAprov, setRequerAprov] = useState<boolean>(
+    initial.requer_inscricao_aprovada ?? false,
+  )
   const { isLoggedIn, user: ctxUser } = useAuthContext()
   const { showSuccess, showError } = useToast()
   const [exclusivo, setExclusivo] = useState<boolean>(
@@ -83,8 +97,28 @@ export function ModalProduto<T extends Record<string, unknown>>({
   }, [open])
 
   useEffect(() => {
+    if (open) {
+      fetch('/api/eventos')
+        .then((r) => r.json())
+        .then((data) => {
+          if (Array.isArray(data)) setEventos(data)
+          else setEventos([])
+        })
+        .catch(() => setEventos([]))
+    }
+  }, [open])
+
+  useEffect(() => {
     setSelectedCategoria(initial.categoria || '')
   }, [initial.categoria, open])
+
+  useEffect(() => {
+    setEventoId(initial.evento_id || '')
+  }, [initial.evento_id, open])
+
+  useEffect(() => {
+    setRequerAprov(initial.requer_inscricao_aprovada ?? false)
+  }, [initial.requer_inscricao_aprovada, open])
 
   useEffect(() => {
     setExclusivo(initial.exclusivo_user ?? false)
@@ -102,6 +136,12 @@ export function ModalProduto<T extends Record<string, unknown>>({
         setCategorias([])
       })
   }, [isLoggedIn, ctxUser?.role, open])
+
+  useEffect(() => {
+    if (!eventoId) {
+      setRequerAprov(false)
+    }
+  }, [eventoId])
 
   // Preenche cores iniciais (em modo editar)
   useEffect(() => {
@@ -182,6 +222,9 @@ export function ModalProduto<T extends Record<string, unknown>>({
     form.cores = cores.join(',')
 
     form.exclusivo_user = exclusivo
+
+    form.evento_id = eventoId || ''
+    form.requer_inscricao_aprovada = requerAprov
 
     // Slug automático (sempre gerado a partir do nome)
     if (typeof form.nome === 'string') {
@@ -378,6 +421,31 @@ export function ModalProduto<T extends Record<string, unknown>>({
               </span>
             </div>
           </div>
+
+          <div>
+            <label className="label-base">Evento</label>
+            <select
+              name="evento_id"
+              value={eventoId}
+              onChange={(e) => setEventoId(e.target.value)}
+              className="input-base w-full"
+            >
+              <option value="">Nenhum</option>
+              {eventos.map((ev) => (
+                <option key={ev.id} value={ev.id}>
+                  {ev.titulo}
+                </option>
+              ))}
+            </select>
+          </div>
+          {eventoId && (
+            <ToggleSwitch
+              label="Requer inscrição aprovada"
+              checked={requerAprov}
+              onChange={setRequerAprov}
+              className="mt-2"
+            />
+          )}
 
           {/* Campo para selecionar cores */}
           <div>
