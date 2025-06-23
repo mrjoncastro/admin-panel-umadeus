@@ -245,7 +245,7 @@ export default function ListaInscricoesPage() {
       // Fallback se não achou pelo expand
       if (!produtoRecord && produtoId) {
         try {
-          const prodRes = await fetch(`/api/produtos/${produtoId}`, {
+          const prodRes = await fetch(`/admin/api/produtos/${produtoId}`, {
             credentials: 'include',
           })
           console.log('[confirmarInscricao] Status prodRes:', prodRes.status)
