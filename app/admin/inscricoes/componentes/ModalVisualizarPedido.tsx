@@ -27,6 +27,7 @@ type PedidoExpandido = {
       telefone: string
       cpf: string
       evento: string
+      expand?: { criado_por?: { id?: string } }
     }
     produto?: { nome: string } | { nome: string }[]
   }
@@ -82,6 +83,19 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
           url_pagamento: url,
         }),
       }).catch((err) => logInfo('⚠️ Falha ao notificar o n8n', err))
+
+      const userId = pedido.expand.id_inscricao.expand?.criado_por?.id
+      if (userId) {
+        await fetch('/api/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventType: 'confirmacao_inscricao',
+            userId,
+            paymentLink: url,
+          }),
+        })
+      }
 
       showSuccess('Link reenviado com sucesso!')
     } catch {
