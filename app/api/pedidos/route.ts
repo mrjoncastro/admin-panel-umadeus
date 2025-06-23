@@ -112,8 +112,29 @@ export async function GET(req: NextRequest) {
     const { items } = await pb.collection('pedidos').getList(page, perPage, {
       filter: filtro,
       sort: '-created',
-      expand: 'campo,id_inscricao',
+      expand: 'campo,id_inscricao,produto',
     })
+
+    // Caso a expansão de produto falhe, buscar manualmente
+    for (const item of items) {
+      if (!item.expand?.produto && item.produto) {
+        const ids = Array.isArray(item.produto) ? item.produto : [item.produto]
+        const produtos = await Promise.all(
+          ids.map((id) =>
+            pb
+              .collection('produtos')
+              .getOne<Produto>(id)
+              .catch(() => null),
+          ),
+        )
+        const valid = produtos.filter(Boolean) as Produto[]
+        item.expand = {
+          ...item.expand,
+          produto: ids.length > 1 ? valid : valid[0],
+        }
+      }
+    }
+
     console.log('[PEDIDOS][GET] Retornando pedidos:', items.length)
     return NextResponse.json(items)
   } catch (err) {
