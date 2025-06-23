@@ -57,21 +57,22 @@ SMTP_FROM=
 
 Para **multi-tenant**, adicione campos na coleção `clientes_config`:
 
-| Campo      | Tipo    | Descrição                                     |
-| ---------- | ------- | --------------------------------------------- |
-| smtpHost   | String  | Endereço do servidor SMTP                     |
-| smtpPort   | Number  | Porta do servidor SMTP                        |
-| smtpSecure | Boolean | true para TLS/SSL                             |
-| smtpUser   | String  | Usuário de autenticação                       |
-| smtpPass   | String  | Senha de autenticação                         |
-| smtpFrom   | String  | Nome e e-mail remetente (`App <noreply@...>`) |
+| Campo       | Tipo    | Descrição                                                  |
+| ----------- | ------- | ---------------------------------------------------------- |
+| smtpHost    | String  | Endereço do servidor SMTP                                  |
+| smtpPort    | Number  | Porta do servidor SMTP                                     |
+| smtpSecure  | Boolean | true para TLS/SSL                                          |
+| smtpUser    | String  | Usuário de autenticação                                    |
+| smtpPass    | String  | Senha de autenticação                                      |
+| smtpFrom    | String  | Nome e e-mail remetente (`App <noreply@...>`)              |
+| cor_primary | String  | Cor primária do tenant (hex, rgb ou variável CSS dinâmica) |
 
 > O `TenantProvider` (ou `getTenantFromHost(req)`) retorna `tenantId`, usado para buscar essas configurações.
 
 ### 3.1 Configuração e Testes Multi-Tenant
 
-1. **Preenchimento no PocketBase**: no painel de administração, configure em **clientes_config** os campos `smtpHost`, `smtpPort`, `smtpSecure`, `smtpUser`, `smtpPass` e `smtpFrom` para cada tenant.
-2. **Verificação no Código**: assegure-se de que `await pb.collection('clientes_config').getOne(tenantId)` retorna todos os campos SMTP corretamente.
+1. **Preenchimento no PocketBase**: no painel de administração, configure em **clientes_config** os campos `smtpHost`, `smtpPort`, `smtpSecure`, `smtpUser`, `smtpPass`, `smtpFrom` e `cor_primary` para cada tenant.
+2. **Verificação no Código**: assegure-se de que `await pb.collection('clientes_config').getOne(tenantId)` retorna todos os campos SMTP e `cor_primary` corretamente.
 3. **Testes de Envio**: execute chamadas à rota `/api/email` utilizando cada tipo de evento:
 
    - `nova_inscricao`
@@ -79,6 +80,8 @@ Para **multi-tenant**, adicione campos na coleção `clientes_config`:
    - `nova_cobranca` (fornecendo `chargeId`)
 
 4. **Conferência de Logs**: examine o console do servidor Next.js para confirmar a autenticação do Nodemailer e o envio dos e-mails, identificando possíveis erros.
+
+---
 
 ## 4. Estrutura de Dados no PocketBase
 
@@ -96,7 +99,8 @@ Para **multi-tenant**, adicione campos na coleção `clientes_config`:
 >   "smtpSecure": true,
 >   "smtpUser": "user@servico.com",
 >   "smtpPass": "segredo",
->   "smtpFrom": "MeuApp <no-reply@meuapp.com>"
+>   "smtpFrom": "MeuApp <no-reply@meuapp.com>",
+>   "cor_primary": "#1a73e8"
 > }
 > ```
 
@@ -248,11 +252,9 @@ Verifique logs no console do servidor e retornos HTTP (200 OK ou erros 4xx/5xx).
 
 ---
 
-Com este guia em mãos, implemente com segurança e mantenha a escalabilidade multi-tenant do seu sistema. Qualquer dúvida, acompanhe os logs e a documentação dos módulos referenciados.
-
 ## 10. Modelos de Templates de E-mail
 
-Os templates abaixo usam tokens do nosso Design System (cores, tipografia e espaçamentos) definidos em `app/globals.css`, integrando variáveis CSS e classes utilitárias conforme definido em `docs/design-system.md` fileciteturn1file0 e `docs/design-tokens.md` fileciteturn1file1.
+Os templates abaixo usam tokens do nosso Design System (cores, tipografia e espaçamentos) definidos em `app/globals.css`, integrando variáveis CSS e classes utilitárias conforme definido em `docs/design-system.md` fileciteturn1file0 e `docs/design-tokens.md` citeturn1file1.
 
 ### 10.1 Template: Nova Inscrição
 
@@ -291,7 +293,9 @@ Os templates abaixo usam tokens do nosso Design System (cores, tipografia e espa
             <!-- Body -->
             <tr>
               <td style="padding:var(--space-md); color:var(--text-primary);">
-                <h2 class="heading">Olá, {{userName}}</h2>
+                <h2 class="heading" style="color: {{cor_primary}};">
+                  Olá, {{userName}}
+                </h2>
                 <p>Sua inscrição foi registrada com sucesso.</p>
                 <p>Em breve entraremos em contato com os próximos passos.</p>
               </td>
@@ -346,15 +350,17 @@ Os templates abaixo usam tokens do nosso Design System (cores, tipografia e espa
             </tr>
             <tr>
               <td style="padding:var(--space-md); color:var(--text-primary);">
-                <h2 class="heading">Parabéns, {{userName}}!</h2>
-                <p>Sua inscrição foi confirmada e está tudo pronto.</p>
+                <h2 class="heading" style="color: {{cor_primary}};">
+                  Parabéns, {{userName}}!
+                </h2>
+                <p>Sua inscrição foi confirmada e está tudo pronto。</p>
               </td>
             </tr>
             <tr>
               <td
                 style="padding:var(--space-md); font-size:0.875rem; color:var(--text-secondary); text-align:center;"
               >
-                <p>Se não solicitou este e‑mail, ignore-o.</p>
+                <p>Se não solicitou este e‑mail, ignore-o。</p>
               </td>
             </tr>
           </table>
@@ -380,7 +386,7 @@ Os templates abaixo usam tokens do nosso Design System (cores, tipografia e espa
   >
     <span
       style="display:none; font-size:1px; line-height:1px; max-height:0; max-width:0; opacity:0; overflow:hidden;"
-      >Uma nova cobrança foi gerada.</span
+      >Uma nova cobrança foi gerada。</span
     >
     <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
       <tr>
@@ -399,17 +405,18 @@ Os templates abaixo usam tokens do nosso Design System (cores, tipografia e espa
             </tr>
             <tr>
               <td style="padding:var(--space-md); color:var(--text-primary);">
-                <h2 class="heading">Olá, {{userName}}</h2>
+                <h2 class="heading" style="color: {{cor_primary}};">
+                  Olá, {{userName}}
+                </h2>
                 <p>
                   Uma nova cobrança de <strong>R$ {{amount}}</strong> foi
-                  gerada.
+                  gerada。
                 </p>
                 <p>Vencimento: {{dueDate}}</p>
                 <p>
                   <a
                     href="{{paymentLink}}"
-                    class="btn btn-primary"
-                    style="margin-top:var(--space-md);"
+                    style="display:inline-block; padding:12px 24px; border-radius:4px; text-decoration:none; color:#ffffff; background-color: {{cor_primary}}; margin-top:var(--space-md);"
                     >Pagar Agora</a
                   >
                 </p>
@@ -419,7 +426,7 @@ Os templates abaixo usam tokens do nosso Design System (cores, tipografia e espa
               <td
                 style="padding:var(--space-md); font-size:0.875rem; color:var(--text-secondary); text-align:center;"
               >
-                <p>Se não solicitou este e‑mail, ignore-o.</p>
+                <p>Se não solicitou este e‑mail, ignore-o。</p>
               </td>
             </tr>
           </table>
@@ -430,10 +437,10 @@ Os templates abaixo usam tokens do nosso Design System (cores, tipografia e espa
 </html>
 ```
 
-> **Aprimoramentos**:
+> Aprimoramentos\*\*:
 >
 > - Tipografia via `var(--font-body)` e classes `.heading`.
 > - Espaçamentos com `var(--space-*)`.
-> - Cores de texto e fundo referenciadas por tokens CSS.
-> - Botões estilizados com classes `btn btn-primary` do design system.
+> - Cores de texto e fundo referenciadas por tokens CSS e pelo campo `cor_primary`.
+> - Botões estilizados com classes `btn btn-primary` do design system, utilizando `cor_primary` para `background-color` inline.
 > - Estrutura responsiva e compatível com Gmail/Outlook (tabelas e inline CSS).
