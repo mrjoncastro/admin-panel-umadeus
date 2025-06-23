@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
       campo: data.campo,
       evento: data.evento,
       criado_por: usuario.id,
-      produto: data.produtoId,
+      plano: data.produtoId,
       tamanho: data.tamanho,
       ...(tenantId ? { cliente: tenantId } : {}),
     }

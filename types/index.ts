@@ -6,6 +6,8 @@ export type Inscricao = {
   status?: 'pendente' | 'aguardando_pagamento' | 'confirmado' | 'cancelado'
   tamanho?: string
   produto?: string
+  /** Produto selecionado na inscrição */
+  plano?: string
   genero?: string
   evento?: string
   data_nascimento?: string
@@ -31,6 +33,7 @@ export type Inscricao = {
       status: 'pago' | 'pendente' | 'cancelado'
       valor: number | string
     }
+    plano?: Produto
     id_inscricao?: {
       nome: string
       telefone?: string

@@ -252,12 +252,13 @@ export async function POST(req: NextRequest) {
     const campoId = inscricao.expand?.campo?.id
     const responsavelId = inscricao.expand?.criado_por
     let produtoRecord: Produto | undefined
+    const produtoIdInscricao = inscricao.plano || inscricao.produto
 
     try {
-      if (inscricao.produto) {
+      if (produtoIdInscricao) {
         produtoRecord = await pb
           .collection('produtos')
-          .getOne(inscricao.produto)
+          .getOne(produtoIdInscricao)
         console.log('[PEDIDOS][POST] produtoRecord pelo id:', produtoRecord)
       }
     } catch (e) {
@@ -270,7 +271,7 @@ export async function POST(req: NextRequest) {
           const lista = Array.isArray(ev.expand?.produtos)
             ? (ev.expand.produtos as Produto[])
             : []
-          produtoRecord = lista.find((p) => p.id === inscricao.produto)
+          produtoRecord = lista.find((p) => p.id === produtoIdInscricao)
           console.log(
             '[PEDIDOS][POST] produtoRecord via evento:',
             produtoRecord,
@@ -288,7 +289,12 @@ export async function POST(req: NextRequest) {
       id_inscricao: inscricaoId,
       valor,
       status: 'pendente',
-      produto: inscricao.produto ? [inscricao.produto] : produtoRecord ? [produtoRecord.id] : [],
+      produto:
+        produtoIdInscricao
+          ? [produtoIdInscricao]
+          : produtoRecord
+          ? [produtoRecord.id]
+          : [],
       cor: 'Roxo',
       tamanho:
         inscricao.tamanho ||

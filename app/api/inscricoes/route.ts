@@ -55,6 +55,7 @@ export async function POST(req: NextRequest) {
       data_nascimento,
       tamanho,
       produtoId,
+      planoId,
       genero,
       paymentMethod = 'pix' as PaymentMethod,
       installments = 1,
@@ -62,6 +63,8 @@ export async function POST(req: NextRequest) {
       eventoId,
       evento: eventoBody,
     } = body
+
+    const planoIdFinal: string | undefined = planoId || produtoId
 
     // Limpa CPF e telefone
     const cpfNumerico = cpf.replace(/\D/g, '')
@@ -172,7 +175,7 @@ export async function POST(req: NextRequest) {
       evento: eventoIdFinal!,
       campo: campoId,
       criado_por: usuario.id,
-      produto: produtoId,
+      plano: planoIdFinal,
       tamanho,
       cliente: lider.cliente,
     }
@@ -240,7 +243,7 @@ export async function POST(req: NextRequest) {
       nome,
       email,
       tamanho,
-      produto: produtoId,
+      plano: planoIdFinal,
       genero,
       responsavel: liderId,
     }
