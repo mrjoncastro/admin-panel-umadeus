@@ -5,7 +5,6 @@ export type Inscricao = {
   email?: string
   status?: 'pendente' | 'aguardando_pagamento' | 'confirmado' | 'cancelado'
   tamanho?: string
-  produto?: string
   /** Produto selecionado na inscrição */
   produto?: string
   genero?: string
