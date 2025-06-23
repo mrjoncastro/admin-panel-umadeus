@@ -28,6 +28,7 @@ type PedidoExpandido = {
       cpf: string
       evento: string
     }
+    produto?: { nome: string } | { nome: string }[]
   }
 }
 
@@ -125,7 +126,10 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
               <strong>Status:</strong> {pedido.status}
             </p>
             <p>
-              <strong>Produto:</strong> {pedido.produto.join(', ')}
+              <strong>Produto:</strong>{' '}
+              {Array.isArray(pedido.expand?.produto)
+                ? pedido.expand.produto.map((p) => p.nome).join(', ')
+                : pedido.expand?.produto?.nome || pedido.produto.join(', ')}
             </p>
             <p>
               <strong>Tamanho:</strong> {pedido.tamanho || '—'}

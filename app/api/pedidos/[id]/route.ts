@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
   try {
     const pedido = await pb
       .collection('pedidos')
-      .getOne<Pedido>(id, { expand: 'campo,responsavel,id_inscricao' })
+      .getOne<Pedido>(id, { expand: 'campo,responsavel,id_inscricao,produto' })
     const access = await checkAccess(pedido, user)
     if ('error' in access) {
       return NextResponse.json(

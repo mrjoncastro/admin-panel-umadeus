@@ -79,6 +79,8 @@ export type Pedido = {
       cpf?: string
     }
     evento?: Evento
+    /** Produto associado ao pedido */
+    produto?: Produto | Produto[]
   }
 }
 
