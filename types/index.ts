@@ -59,6 +59,8 @@ export type Pedido = {
   canal: 'loja' | 'inscricao'
   created?: string
   valor: string
+  /** URL gerada pelo Asaas */
+  link_pagamento?: string
   expand?: {
     campo?: {
       id: string
