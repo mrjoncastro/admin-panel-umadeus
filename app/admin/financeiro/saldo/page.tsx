@@ -8,6 +8,7 @@ import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import * as XLSX from 'xlsx'
 import jsPDF from 'jspdf'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
+import { DateRangePicker } from '@/components/molecules'
 
 interface Statistics {
   netValue: number
@@ -29,6 +30,7 @@ export default function SaldoPage() {
   const [aLiberar, setALiberar] = useState<number | null>(null)
   const [extrato, setExtrato] = useState<ExtratoItem[]>([])
   const [loading, setLoading] = useState(false)
+  const [range, setRange] = useState({ start: '', end: '' })
 
   useEffect(() => {
     if (!authChecked) return
@@ -51,7 +53,12 @@ export default function SaldoPage() {
           const stats: Statistics = await statsRes.json()
           setALiberar(stats.netValue)
         }
-        const extratoRes = await fetch('/admin/api/asaas/extrato')
+        const params = new URLSearchParams()
+        if (range.start) params.append('start', range.start)
+        if (range.end) params.append('end', range.end)
+        const extratoRes = await fetch(
+          `/admin/api/asaas/extrato?${params.toString()}`,
+        )
         if (extratoRes.ok) {
           const data = await extratoRes.json()
           setExtrato(data.data || [])
@@ -63,7 +70,7 @@ export default function SaldoPage() {
       }
     }
     fetchData()
-  }, [isLoggedIn, router, authChecked])
+  }, [isLoggedIn, router, authChecked, range.start, range.end])
 
   const exportXLSM = () => {
     const worksheet = XLSX.utils.json_to_sheet(extrato)
@@ -116,6 +123,12 @@ export default function SaldoPage() {
           </div>
           <div className="mb-6">
             <h3 className="heading">Extrato</h3>
+            <DateRangePicker
+              start={range.start}
+              end={range.end}
+              onChange={setRange}
+              className="mb-4"
+            />
             <div className="overflow-x-auto rounded border shadow-sm bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700">
               <table className="table-base">
                 <thead>
