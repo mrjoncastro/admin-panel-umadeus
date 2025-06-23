@@ -64,7 +64,7 @@ export default function TransferenciasPage() {
         className="btn btn-secondary mb-4"
         onClick={() => setOpenAccountModal(true)}
       >
-        Nova conta
+        Nova conta ou PIX
       </button>
       <TransferenciaForm onTransfer={handleTransfer} />
       <BankAccountModal
