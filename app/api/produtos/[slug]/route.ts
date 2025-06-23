@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { getUserFromHeaders } from '@/lib/getUserFromHeaders'
-import type { Produto } from '@/types'
+import type { Produto, Inscricao } from '@/types'
 
 export async function GET(req: NextRequest) {
   const auth = getUserFromHeaders(req)
@@ -49,10 +49,36 @@ export async function GET(req: NextRequest) {
           ),
         )
 
-    return NextResponse.json({ ...p, imagens })
-  } catch (err: any) {
+    let inscricao: Inscricao | null = null
+    let inscricaoAprovada = false
+    let inscricaoId: string | null = null
+    if (p.evento_id && !('error' in auth)) {
+      try {
+        inscricao = await pb
+          .collection('inscricoes')
+          .getFirstListItem<Inscricao>(
+            `criado_por='${auth.user.id}' && evento='${p.evento_id}'`,
+          )
+        inscricaoAprovada = Boolean(inscricao.aprovada)
+        inscricaoId = inscricao.id
+      } catch {
+        inscricao = null
+        inscricaoAprovada = false
+        inscricaoId = null
+      }
+    }
+
+    return NextResponse.json({
+      ...p,
+      imagens,
+      inscricao,
+      inscricaoAprovada,
+      inscricaoId,
+    })
+  } catch (err: unknown) {
+    const message = (err as Error)?.message ?? String(err)
     return NextResponse.json(
-      { error: 'Produto não encontrado', detalhes: err?.message || err },
+      { error: 'Produto não encontrado', detalhes: message },
       { status: 404 },
     )
   }
