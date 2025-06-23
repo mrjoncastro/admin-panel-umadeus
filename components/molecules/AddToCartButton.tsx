@@ -5,13 +5,11 @@ import type { Produto } from '@/types'
 import { ShoppingCart } from 'lucide-react'
 import useInscricoes from '@/lib/hooks/useInscricoes'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 
 export default function AddToCartButton({ produto }: { produto: Produto }) {
   const { addItem } = useCart()
   const { showSuccess, showError } = useToast()
   const { inscricoes } = useInscricoes()
-  const router = useRouter()
 
   const inscricao = inscricoes.find((i) => i.evento === produto.evento_id)
   const pago = inscricao?.status === 'confirmado'
@@ -90,10 +88,9 @@ export default function AddToCartButton({ produto }: { produto: Produto }) {
           showError('Erro ao gerar pagamento')
           return
         }
-      }
 
-      addItem(produto)
-      router.push('/loja/checkout')
+        return
+      }
     }
 
     return (
