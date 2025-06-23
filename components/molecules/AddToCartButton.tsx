@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 
 export default function AddToCartButton({ produto }: { produto: Produto }) {
   const { addItem } = useCart()
-  const { showSuccess } = useToast()
+  const { showSuccess, showError } = useToast()
   const { inscricoes } = useInscricoes()
   const router = useRouter()
 
@@ -42,7 +42,56 @@ export default function AddToCartButton({ produto }: { produto: Produto }) {
       )
     }
 
-    const handlePagar = () => {
+    const handlePagar = async () => {
+      const pedido = inscricao?.expand?.pedido as
+        | {
+            id: string
+            produto?: string | string[]
+            link_pagamento?: string
+            status?: string
+          }
+        | undefined
+
+      const prodPedido = Array.isArray(pedido?.produto)
+        ? pedido?.produto[0]
+        : pedido?.produto
+
+      if (pedido && pedido.status === 'pendente') {
+        if (prodPedido === produto.id && pedido.link_pagamento) {
+          window.location.href = pedido.link_pagamento
+          return
+        }
+
+        try {
+          await fetch(`/api/pedidos/${pedido.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ produto: produto.id }),
+          })
+
+          const res = await fetch('/api/asaas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              pedidoId: pedido.id,
+              valorBruto: produto.preco,
+            }),
+          })
+
+          const data = await res.json()
+
+          if (res.ok && data.url) {
+            window.location.href = data.url
+            return
+          }
+        } catch {
+          showError('Erro ao gerar pagamento')
+          return
+        }
+      }
+
       addItem(produto)
       router.push('/loja/checkout')
     }
