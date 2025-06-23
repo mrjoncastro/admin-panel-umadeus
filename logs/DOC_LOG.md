@@ -408,3 +408,5 @@
 
 ## [2025-06-23] Interface de produtos permite excluir itens pela lista. Lint e build executados.
 ## [2025-06-23] Adicionado filtro de datas ao extrato Asaas com componente DateRangePicker. Lint e build executados.
+## [2025-06-23] Rota /api/email criada com envio SMTP e templates. Lint e build executados.
+## [2025-06-23] README e .env.example atualizados com orientações sobre variáveis SMTP. Lint e build executados.
