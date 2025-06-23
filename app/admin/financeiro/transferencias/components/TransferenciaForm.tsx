@@ -99,6 +99,8 @@ export default function TransferenciaForm({
         className="input-base"
         placeholder="Valor (R$)"
         value={valor}
+        min="0.01"
+        step="0.01"
         onChange={(e) => setValor(e.target.value)}
       />
       <button type="submit" className="btn btn-primary" disabled={loading}>
