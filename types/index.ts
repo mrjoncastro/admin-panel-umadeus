@@ -7,7 +7,7 @@ export type Inscricao = {
   tamanho?: string
   produto?: string
   /** Produto selecionado na inscrição */
-  plano?: string
+  produto?: string
   genero?: string
   evento?: string
   data_nascimento?: string
@@ -33,7 +33,7 @@ export type Inscricao = {
       status: 'pago' | 'pendente' | 'cancelado'
       valor: number | string
     }
-    plano?: Produto
+    produto?: Produto
     id_inscricao?: {
       nome: string
       telefone?: string

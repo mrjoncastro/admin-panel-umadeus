@@ -12,7 +12,7 @@ export interface InscricaoTemplate {
   campo: string
   criado_por: string
   produto?: string
-  plano?: string
+  produto?: string
   tamanho?: string
   cliente?: string
   paymentMethod?: PaymentMethod
@@ -52,7 +52,7 @@ export function criarInscricao(dados: InscricaoTemplate): Inscricao {
     campo: dados.campo,
     criado_por: dados.criado_por,
     produto: dados.produto,
-    plano: dados.plano,
+    produto: dados.produto,
     tamanho: dados.tamanho,
     cliente: dados.cliente,
     status: 'pendente',
