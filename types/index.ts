@@ -45,6 +45,9 @@ export type Inscricao = {
 export type Pedido = {
   id: string
   id_pagamento: string
+  /** URL para pagamento gerada pelo Asaas*/
+  link_pagamento?: string
+
   id_inscricao: string
   produto: string[]
   tamanho?: string
@@ -59,6 +62,7 @@ export type Pedido = {
   canal: 'loja' | 'inscricao'
   created?: string
   valor: string
+
   expand?: {
     campo?: {
       id: string
