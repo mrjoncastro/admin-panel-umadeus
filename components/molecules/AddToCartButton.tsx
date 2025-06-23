@@ -50,46 +50,53 @@ export default function AddToCartButton({ produto }: { produto: Produto }) {
           }
         | undefined
 
-      const prodPedido = Array.isArray(pedido?.produto)
-        ? pedido?.produto[0]
-        : pedido?.produto
-
-      if (pedido && pedido.status === 'pendente') {
-        if (prodPedido === produto.id && pedido.link_pagamento) {
-          window.location.href = pedido.link_pagamento
-          return
-        }
-
-        try {
-          await fetch(`/api/pedidos/${pedido.id}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ produto: produto.id }),
-          })
-
-          const res = await fetch('/api/asaas', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({
-              pedidoId: pedido.id,
-              valorBruto: produto.preco,
-            }),
-          })
-
-          const data = await res.json()
-
-          if (res.ok && data.url) {
-            window.location.href = data.url
-            return
-          }
-        } catch {
-          showError('Erro ao gerar pagamento')
-          return
-        }
-
+      if (!pedido) {
+        showError('Pedido não encontrado')
         return
+      }
+
+      if (pedido.status !== 'pendente') {
+        showError('Pagamento indisponível')
+        return
+      }
+
+      const prodPedido = Array.isArray(pedido.produto)
+        ? pedido.produto[0]
+        : pedido.produto
+
+      if (prodPedido === produto.id && pedido.link_pagamento) {
+        window.location.href = pedido.link_pagamento
+        return
+      }
+
+      try {
+        await fetch(`/api/pedidos/${pedido.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ produto: produto.id }),
+        })
+
+        const res = await fetch('/api/asaas', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            pedidoId: pedido.id,
+            valorBruto: produto.preco,
+          }),
+        })
+
+        const data = await res.json()
+
+        if (res.ok && data.url) {
+          window.location.href = data.url
+          return
+        }
+
+        showError('Erro ao gerar pagamento')
+      } catch {
+        showError('Erro ao gerar pagamento')
       }
     }
 
