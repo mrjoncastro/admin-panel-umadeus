@@ -35,8 +35,7 @@ export default function ProdutosFiltrados({
   const possuiAprovacao = (prod: Produto) =>
     inscricoes.some(
       (i) =>
-        i.evento === prod.evento_id &&
-        (i.aprovada || i.status === 'confirmado'),
+        i.evento === prod.evento_id && (i.aprovada || i.status === 'confirmado'),
     )
 
   const filtrados = useMemo(() => {
