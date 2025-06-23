@@ -45,6 +45,13 @@ type Inscricao = {
   produtoNome?: string
 }
 
+type ExpandInscricao = {
+  produto?: { nome?: string }
+  campo?: { nome?: string }
+  evento?: { titulo?: string }
+  pedido?: { status?: string; id?: string }
+}
+
 export default function ListaInscricoesPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
   const tenantId = user?.cliente || ''
@@ -115,30 +122,35 @@ export default function ListaInscricoesPage() {
           r.json(),
       )
       .then((res) => {
-        const lista = (Array.isArray(res) ? res : res.items).map((r) => ({
-          id: r.id,
-          nome: r.nome ?? '',
-          telefone: r.telefone ?? '',
-          evento: r.expand?.evento?.titulo ?? '—',
-          eventoId: r.evento ?? '',
-          cpf: r.cpf ?? '',
-          status: r.status ?? 'pendente',
-          created: r.created ?? '',
-          campo: r.expand?.campo?.nome ?? '—',
-          tamanho: r.tamanho ?? '',
-          produto: r.produto ?? '',
-          produtoNome: (r.expand as any)?.produto?.nome ?? '',
-          genero: r.genero ?? '',
-          data_nascimento: r.data_nascimento ?? '',
-          criado_por: r.criado_por ?? '',
-          confirmado_por_lider: r.confirmado_por_lider ?? false,
-          aprovada: r.aprovada ?? false,
-          pedido_status: r.expand?.pedido?.status ?? null,
-          pedido_id: r.expand?.pedido?.id ?? null,
-        }))
+        const lista = (Array.isArray(res) ? res : res.items).map((r) => {
+          const expand = r.expand as ExpandInscricao
+
+          return {
+            id: r.id,
+            nome: r.nome ?? '',
+            telefone: r.telefone ?? '',
+            evento: expand?.evento?.titulo ?? '—',
+            eventoId: r.evento ?? '',
+            cpf: r.cpf ?? '',
+            status: r.status ?? 'pendente',
+            created: r.created ?? '',
+            campo: expand?.campo?.nome ?? '—',
+            tamanho: r.tamanho ?? '',
+            produto: r.produto ?? '',
+            produtoNome: expand?.produto?.nome ?? '',
+            genero: r.genero ?? '',
+            data_nascimento: r.data_nascimento ?? '',
+            criado_por: r.criado_por ?? '',
+            confirmado_por_lider: r.confirmado_por_lider ?? false,
+            aprovada: r.aprovada ?? false,
+            pedido_status: expand?.pedido?.status ?? null,
+            pedido_id: expand?.pedido?.id ?? null,
+          }
+        })
 
         setInscricoes(lista)
       })
+
       .catch(() => showError('Erro ao carregar inscrições.'))
       .finally(() => setLoading(false))
 
