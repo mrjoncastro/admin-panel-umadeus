@@ -16,6 +16,7 @@ type PedidoExpandido = {
   status: string
   produto: string[]
   id_pagamento?: string
+  link_pagamento?: string
   cor?: string
   tamanho?: string
   genero?: string
@@ -50,39 +51,36 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
       signal,
     })
       .then((res) => res.json())
-      .then((res) => setPedido(res as PedidoExpandido))
+      .then((res) => {
+        setPedido(res as PedidoExpandido)
+        if (res.link_pagamento) {
+          setUrlPagamento(res.link_pagamento)
+        }
+      })
       .catch(() => showError('Erro ao carregar dados do pedido'))
       .finally(() => setLoading(false))
     return () => controller.abort()
   }, [pedidoId, showError])
 
   const reenviarPagamento = async () => {
-    if (!pedido?.id || !pedido?.valor || !pedido?.expand?.id_inscricao) return
+    if (!pedido?.expand?.id_inscricao || !pedido.link_pagamento) {
+      return
+    }
+
+    const url = pedido.link_pagamento
 
     setReenviando(true)
+    setUrlPagamento(url)
     try {
-      const checkoutRes = await fetch('/api/asaas', {
+      await fetch('/api/email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pedidoId: pedido.id, valor: pedido.valor }),
+        body: JSON.stringify({
+          eventType: 'confirmacao_inscricao',
+          userId: pedido.expand?.responsavel?.id,
+          paymentLink: url,
+        }),
       })
-
-      const { url } = await checkoutRes.json()
-      setUrlPagamento(url)
-
-      try {
-        await fetch('/api/email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            eventType: 'nova_cobranca',
-            userId: pedido.expand?.responsavel?.id,
-            chargeId: pedido.id_pagamento,
-          }),
-        })
-      } catch {
-        showError('Erro ao enviar e-mail')
-      }
 
       fetch('/api/n8n', {
         method: 'POST',

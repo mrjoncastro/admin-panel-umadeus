@@ -18,6 +18,7 @@ function mockPedido() {
     status: 'pendente',
     produto: [],
     id_pagamento: 'c1',
+    link_pagamento: 'pay',
     expand: {
       id_inscricao: {
         nome: 'Fulano',
@@ -42,10 +43,7 @@ describe('ModalVisualizarPedido', () => {
         ok: true,
         json: () => Promise.resolve(mockPedido()),
       })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve({ url: 'pay' }),
-      })
+      .mockResolvedValueOnce({ ok: true })
       .mockResolvedValueOnce({ ok: true })
       .mockResolvedValueOnce({ ok: true })
     global.fetch = fetchMock as unknown as typeof fetch
@@ -70,11 +68,8 @@ describe('ModalVisualizarPedido', () => {
         ok: true,
         json: () => Promise.resolve(mockPedido()),
       })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve({ url: 'pay' }),
-      })
       .mockRejectedValueOnce(new Error('fail'))
+      .mockResolvedValueOnce({ ok: true })
       .mockResolvedValueOnce({ ok: true })
     global.fetch = fetchMock as unknown as typeof fetch
 
