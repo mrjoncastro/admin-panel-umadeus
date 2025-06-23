@@ -195,7 +195,10 @@ export default function ListaInscricoesPage() {
       const inscricao: InscricaoRecord & {
         expand?: {
           plano?: Produto | Produto[]
-          pedido?: { status: 'pendente' | 'pago' | 'cancelado'; link_pagamento?: string }
+          pedido?: {
+            status: 'pendente' | 'pago' | 'cancelado'
+            link_pagamento?: string
+          }
         }
       } = await inscricaoRes.json()
       console.log('[confirmarInscricao] inscricao:', inscricao)
@@ -217,7 +220,9 @@ export default function ListaInscricoesPage() {
       // Checar campo correto: plano ou produto
       type InscricaoWithPlano = InscricaoRecord & { plano?: string }
       const produtoId =
-        inscricao.plano || inscricao.produto || (inscricao as InscricaoWithPlano).plano
+        inscricao.plano ||
+        inscricao.produto ||
+        (inscricao as InscricaoWithPlano).plano
       console.log('[confirmarInscricao] produtoId:', produtoId)
 
       // Extrair produto do expand (array ou objeto)

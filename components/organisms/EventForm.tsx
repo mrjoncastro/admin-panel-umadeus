@@ -104,8 +104,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
                   : undefined,
             },
           ]
-        }
-        else if (eventoData?.produto_inscricao) {
+        } else if (eventoData?.produto_inscricao) {
           lista = [{ id: eventoData.produto_inscricao, nome: 'Produto' }]
         }
         setProdutos(lista)
@@ -202,7 +201,10 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
             tamanho: form.tamanho,
             ...(isLoggedIn
               ? {}
-              : { password: form.password, passwordConfirm: form.passwordConfirm }),
+              : {
+                  password: form.password,
+                  passwordConfirm: form.passwordConfirm,
+                }),
             paymentMethod: form.paymentMethod,
             installments: form.installments,
           }
