@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useTenant } from '@/lib/context/TenantContext'
 import { useToast } from '@/lib/context/ToastContext'
 import { useRouter } from 'next/navigation'
+import { useAuthContext } from '@/lib/context/AuthContext'
 import FormWizard from './FormWizard'
 import LoadingOverlay from './LoadingOverlay'
 import { FormField, InputWithMask, TextField } from '@/components'
@@ -28,6 +29,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
   const { config } = useTenant()
   const { showSuccess, showError } = useToast()
   const router = useRouter()
+  const { isLoggedIn, user } = useAuthContext()
   const [campoNome, setCampoNome] = useState('')
   const [campos, setCampos] = useState<Campo[]>([])
   const [produtos, setProdutos] = useState<Produto[]>([])
@@ -105,6 +107,27 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
     fetchData()
   }, [eventoId, liderId])
 
+  useEffect(() => {
+    if (isLoggedIn && user) {
+      setForm((prev) => ({
+        ...prev,
+        nome: user.nome || '',
+        email: user.email || '',
+        telefone: user.telefone || '',
+        cpf: user.cpf || '',
+        data_nascimento: user.data_nascimento || '',
+        genero: (user as Record<string, string>).genero || '',
+        cep: user.cep || '',
+        endereco: user.endereco || '',
+        bairro: user.bairro || '',
+        estado: user.estado || '',
+        cidade: user.cidade || '',
+        numero: user.numero || '',
+        campoId: (user.campo as string) || prev.campoId,
+      }))
+    }
+  }, [isLoggedIn, user])
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
@@ -115,7 +138,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
   const handleSubmit = async () => {
     setLoading(true)
     try {
-      if (!liderId && form.password !== form.passwordConfirm) {
+      if (!liderId && !isLoggedIn && form.password !== form.passwordConfirm) {
         showError('As senhas não coincidem.')
         setLoading(false)
         return
@@ -161,8 +184,9 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
             evento: eventoId,
             produtoId: form.produtoId,
             tamanho: form.tamanho,
-            password: form.password,
-            passwordConfirm: form.passwordConfirm,
+            ...(isLoggedIn
+              ? {}
+              : { password: form.password, passwordConfirm: form.passwordConfirm }),
             paymentMethod: form.paymentMethod,
             installments: form.installments,
           }
@@ -447,7 +471,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
     })
   }
 
-  if (!liderId) {
+  if (!liderId && !isLoggedIn) {
     steps.push({
       title: 'Criar Senha',
       content: (
