@@ -154,3 +154,4 @@
 ## [2025-06-22] Falha ao atualizar pedido z845p88270drm85: ClientResponseError 404: The requested resource wasn't found. | {"data":{},"message":"The requested resource wasn't found.","status":404} - development
 ## [2025-06-22] Falha ao atualizar pedido z845p88270drm85: ClientResponseError 404: The requested resource wasn't found. | {"data":{},"message":"The requested resource wasn't found.","status":404} - development
 ## [2025-06-22] Falha ao atualizar pedido z845p88270drm85: ClientResponseError 404: The requested resource wasn't found. | {"data":{},"message":"The requested resource wasn't found.","status":404} - development
+## [2025-06-23] Corrigido erro 404 ao buscar produto por id na confirmação de inscrição; rota /admin/api/produtos aplicada - dev - e78de4c
