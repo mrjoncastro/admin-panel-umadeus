@@ -52,19 +52,23 @@ export async function GET(req: NextRequest) {
     let inscricao: Inscricao | null = null
     let inscricaoAprovada = false
     let inscricaoId: string | null = null
+    let inscricaoPedido: NonNullable<Inscricao['expand']>['pedido'] | null = null
     if (p.evento_id && !('error' in auth)) {
       try {
         inscricao = await pb
           .collection('inscricoes')
           .getFirstListItem<Inscricao>(
             `criado_por='${auth.user.id}' && evento='${p.evento_id}'`,
+            { expand: 'pedido' },
           )
         inscricaoAprovada = Boolean(inscricao.aprovada)
         inscricaoId = inscricao.id
+        inscricaoPedido = inscricao.expand?.pedido ?? null
       } catch {
         inscricao = null
         inscricaoAprovada = false
         inscricaoId = null
+        inscricaoPedido = null
       }
     }
 
@@ -74,6 +78,7 @@ export async function GET(req: NextRequest) {
       inscricao,
       inscricaoAprovada,
       inscricaoId,
+      inscricaoPedido,
     })
   } catch (err: unknown) {
     const message = (err as Error)?.message ?? String(err)
