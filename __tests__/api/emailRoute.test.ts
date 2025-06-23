@@ -15,12 +15,10 @@ const cfgMock = {
   logo_url: 'logo.png',
 }
 const userGetMock = vi.fn()
-const chargeGetMock = vi.fn()
 
 pb.collection.mockImplementation((name: string) => {
   if (name === 'clientes_config') return { getOne: vi.fn().mockResolvedValue(cfgMock) }
   if (name === 'users') return { getOne: userGetMock }
-  if (name === 'cobrancas') return { getOne: chargeGetMock }
   return {}
 })
 
@@ -35,7 +33,6 @@ vi.mock('nodemailer', () => ({
 
 beforeEach(() => {
   userGetMock.mockReset()
-  chargeGetMock.mockReset()
   sendMailMock.mockClear()
   getTenantMock.mockResolvedValue('t1')
 })
@@ -61,7 +58,7 @@ describe('POST /api/email', () => {
     userGetMock.mockResolvedValueOnce({ id: 'u1', email: 'e@test.com', nome: 'Nome' })
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({ eventType: 'nova_inscricao', userId: 'u1' }),
+      body: JSON.stringify({ eventType: 'confirmacao_inscricao', userId: 'u1', paymentLink: 'http://pay' }),
     })
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(200)

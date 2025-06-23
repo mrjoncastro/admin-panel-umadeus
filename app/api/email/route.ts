@@ -5,9 +5,9 @@ import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
 export type Body = {
-  eventType: 'nova_inscricao' | 'nova_cobranca' | 'confirmacao_inscricao'
+  eventType: 'nova_inscricao' | 'confirmacao_inscricao'
   userId: string
-  chargeId?: string
+  paymentLink?: string
 }
 
 async function loadTemplate(name: string) {
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   const pb = createPocketBase()
   try {
     const body = (await req.json()) as Body
-    const { eventType, userId, chargeId } = body
+    const { eventType, userId, paymentLink } = body
 
     if (!eventType || !userId) {
       return NextResponse.json(
@@ -76,25 +76,7 @@ export async function POST(req: NextRequest) {
         html = await loadTemplate('confirmacaoInscricao')
         html = html
           .replace(/{{userName}}/g, user.nome || user.name || '')
-          .replace(/{{logoUrl}}/g, logo)
-          .replace(/{{cor_primary}}/g, cor)
-        break
-      }
-      case 'nova_cobranca': {
-        if (!chargeId) {
-          return NextResponse.json(
-            { error: 'chargeId ausente' },
-            { status: 400 },
-          )
-        }
-        const charge = await pb.collection('cobrancas').getOne(chargeId)
-        subject = '💰 Nova Cobrança Disponível'
-        html = await loadTemplate('novaCobranca')
-        html = html
-          .replace(/{{userName}}/g, user.nome || user.name || '')
-          .replace(/{{amount}}/g, Number(charge.valor).toFixed(2))
-          .replace(/{{dueDate}}/g, new Date(charge.vencimento).toLocaleDateString('pt-BR'))
-          .replace(/{{paymentLink}}/g, charge.link_pagamento || '')
+          .replace(/{{paymentLink}}/g, paymentLink || '')
           .replace(/{{logoUrl}}/g, logo)
           .replace(/{{cor_primary}}/g, cor)
         break

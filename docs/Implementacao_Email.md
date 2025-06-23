@@ -3,7 +3,6 @@
 Este guia detalha os passos para criar uma rota unificada no Next.js que dispare e-mails aos usuários nos eventos:
 
 - **nova_inscricao**
-- **nova_cobranca**
 - **confirmacao_inscricao**
 
 O fluxo abrange desde a configuração de SMTP por tenant no PocketBase até os testes das chamadas.
@@ -76,8 +75,7 @@ Para **multi-tenant**, adicione campos na coleção `clientes_config`:
 3. **Testes de Envio**: execute chamadas à rota `/api/email` utilizando cada tipo de evento:
 
    - `nova_inscricao`
-   - `confirmacao_inscricao`
-   - `nova_cobranca` (fornecendo `chargeId`)
+   - `confirmacao_inscricao` (opcionalmente fornecendo `paymentLink`)
 
 4. **Conferência de Logs**: examine o console do servidor Next.js para confirmar a autenticação do Nodemailer e o envio dos e-mails, identificando possíveis erros.
 
@@ -120,9 +118,9 @@ import { getTenantFromHost } from '@/lib/server/tenancy'
 
 ```ts
 type Body = {
-  eventType: 'nova_inscricao' | 'nova_cobranca' | 'confirmacao_inscricao'
+  eventType: 'nova_inscricao' | 'confirmacao_inscricao'
   userId: string
-  chargeId?: string
+  paymentLink?: string
 }
 ```
 
@@ -161,15 +159,9 @@ switch (eventType) {
   case 'confirmacao_inscricao':
     subject = '✅ Inscrição Confirmada'
     html = `<p>Parabéns, ${user.name}! Sua inscrição foi confirmada.</p>`
-    break
-
-  case 'nova_cobranca':
-    if (!chargeId) throw new Error('Falta chargeId')
-    const charge = await pb.collection('cobrancas').getOne(chargeId)
-    subject = '💰 Nova Cobrança Disponível'
-    html = `<p>Olá ${user.name},</p>
-            <p>Uma nova cobrança de <strong>R$ ${charge.valor}</strong> foi gerada.</p>
-            <p>Vencimento: ${new Date(charge.vencimento).toLocaleDateString('pt-BR')}</p>`
+    if (paymentLink) {
+      html += `<p><a href="${paymentLink}">Pagar Agora</a></p>`
+    }
     break
 }
 ```
@@ -220,9 +212,9 @@ return NextResponse.json({
   await fetch('/api/email', {
     method: 'POST',
     body: JSON.stringify({
-      eventType: 'nova_cobranca',
+      eventType: 'confirmacao_inscricao',
       userId: 'abc123',
-      chargeId: 'ghi789',
+      paymentLink: 'https://pagamento.exemplo/link',
     }),
   })
   ```
