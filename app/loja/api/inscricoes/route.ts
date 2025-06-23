@@ -8,6 +8,7 @@ import { criarInscricao, InscricaoTemplate } from '@/lib/templates/inscricao'
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase()
+  pb.authStore.loadFromCookie(req.headers.get('cookie') || '')
   const tenantId = await getTenantFromHost()
 
   try {
@@ -19,38 +20,42 @@ export async function POST(req: NextRequest) {
     const senha = data.password || data.passwordConfirm
 
     let usuario
-    try {
-      usuario = await pb
-        .collection('usuarios')
-        .getFirstListItem(`email='${data.user_email}'`)
-    } catch {
-      if (!tenantId) {
-        return NextResponse.json(
-          { error: 'Tenant não informado' },
-          { status: 400 },
-        )
+    if (pb.authStore.isValid && pb.authStore.model) {
+      usuario = pb.authStore.model
+    } else {
+      try {
+        usuario = await pb
+          .collection('usuarios')
+          .getFirstListItem(`email='${data.user_email}'`)
+      } catch {
+        if (!tenantId) {
+          return NextResponse.json(
+            { error: 'Tenant não informado' },
+            { status: 400 },
+          )
+        }
+        const tempPass = Math.random().toString(36).slice(2, 10)
+        usuario = await pb.collection('usuarios').create({
+          nome,
+          email: data.user_email,
+          cpf: String(data.user_cpf).replace(/\D/g, ''),
+          telefone: String(data.user_phone).replace(/\D/g, ''),
+          data_nascimento: data.user_birth_date,
+          genero: data.user_gender?.toLowerCase(),
+          endereco: data.user_address,
+          bairro: data.user_neighborhood,
+          cep: data.user_cep,
+          cidade: data.user_city,
+          estado: data.user_state,
+          numero: data.user_number,
+          cliente: tenantId,
+          campo: data.campo,
+          perfil: 'usuario',
+          role: 'usuario',
+          password: senha || tempPass,
+          passwordConfirm: senha || tempPass,
+        })
       }
-      const tempPass = Math.random().toString(36).slice(2, 10)
-      usuario = await pb.collection('usuarios').create({
-        nome,
-        email: data.user_email,
-        cpf: String(data.user_cpf).replace(/\D/g, ''),
-        telefone: String(data.user_phone).replace(/\D/g, ''),
-        data_nascimento: data.user_birth_date,
-        genero: data.user_gender?.toLowerCase(),
-        endereco: data.user_address,
-        bairro: data.user_neighborhood,
-        cep: data.user_cep,
-        cidade: data.user_city,
-        estado: data.user_state,
-        numero: data.user_number,
-        cliente: tenantId,
-        campo: data.campo,
-        perfil: 'usuario',
-        role: 'usuario',
-        password: senha || tempPass,
-        passwordConfirm: senha || tempPass,
-      })
     }
 
     const base: InscricaoTemplate = {
