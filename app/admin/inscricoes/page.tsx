@@ -42,6 +42,7 @@ type Inscricao = {
   criado_por?: string
   pedido_id?: string | null
   produto?: string
+  produtoNome?: string
 }
 
 export default function ListaInscricoesPage() {
@@ -99,7 +100,10 @@ export default function ListaInscricoesPage() {
         : `campo='${user.campo}' && ${baseFiltro}`
 
     fetch(
-      `/api/inscricoes?${new URLSearchParams({ filter: filtro }).toString()}`,
+      `/api/inscricoes?${new URLSearchParams({
+        filter: filtro,
+        expand: 'evento,campo,produto,pedido',
+      }).toString()}`,
       {
         credentials: 'include',
       },
@@ -111,26 +115,35 @@ export default function ListaInscricoesPage() {
           r.json(),
       )
       .then((res) => {
-        const lista = (Array.isArray(res) ? res : res.items).map((r) => ({
-          id: r.id,
-          nome: r.nome ?? '',
-          telefone: r.telefone ?? '',
-          evento: r.expand?.evento?.titulo ?? '—',
-          eventoId: r.evento ?? '',
+        const lista = (Array.isArray(res) ? res : res.items).map((r) => {
+          const produtoExpand = (
+            r.expand as { produto?: Produto | Produto[] } | undefined
+          )?.produto
+          const produtoNome = Array.isArray(produtoExpand)
+            ? produtoExpand[0]?.nome ?? ''
+            : produtoExpand?.nome ?? ''
+          return {
+            id: r.id,
+            nome: r.nome ?? '',
+            telefone: r.telefone ?? '',
+            evento: r.expand?.evento?.titulo ?? '—',
+            eventoId: r.evento ?? '',
           cpf: r.cpf ?? '',
           status: r.status ?? 'pendente',
           created: r.created ?? '',
           campo: r.expand?.campo?.nome ?? '—',
           tamanho: r.tamanho ?? '',
           produto: r.produto ?? '',
-          genero: r.genero ?? '',
-          data_nascimento: r.data_nascimento ?? '',
-          criado_por: r.criado_por ?? '',
-          confirmado_por_lider: r.confirmado_por_lider ?? false,
-          aprovada: r.aprovada ?? false,
-          pedido_status: r.expand?.pedido?.status ?? null,
-          pedido_id: r.expand?.pedido?.id ?? null,
-        }))
+          produtoNome,
+            genero: r.genero ?? '',
+            data_nascimento: r.data_nascimento ?? '',
+            criado_por: r.criado_por ?? '',
+            confirmado_por_lider: r.confirmado_por_lider ?? false,
+            aprovada: r.aprovada ?? false,
+            pedido_status: r.expand?.pedido?.status ?? null,
+            pedido_id: r.expand?.pedido?.id ?? null,
+          }
+        })
 
         setInscricoes(lista)
       })
@@ -547,6 +560,7 @@ export default function ListaInscricoesPage() {
                 <th>Evento</th>
                 <th>Status</th>
                 <th>Campo</th>
+                <th>Produto</th>
                 <th>Criado em</th>
                 <th>Confirmação</th>
                 {role === 'coordenador' && <th>Ação</th>}
@@ -568,6 +582,10 @@ export default function ListaInscricoesPage() {
                     </span>
                   </td>
                   <td>{i.campo}</td>
+                  <td>
+                    {i.produtoNome || '—'}
+                    {i.tamanho ? ` - ${i.tamanho}` : ''}
+                  </td>
                   <td>{new Date(i.created).toLocaleDateString('pt-BR')}</td>
                   <td className="text-left text-xs">
                     <div className="flex items-center gap-3">
