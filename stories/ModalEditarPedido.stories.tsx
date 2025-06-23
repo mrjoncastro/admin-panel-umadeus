@@ -17,7 +17,7 @@ const meta = {
   args: {
     pedido: {
       id: '1',
-      produto: ['Camisa'],
+      produto: ['prod1'],
       email: 'teste@exemplo.com',
       tamanho: 'M',
       cor: 'Azul',

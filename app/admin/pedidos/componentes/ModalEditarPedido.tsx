@@ -41,11 +41,9 @@ export default function ModalEditarPedido({ pedido, onClose, onSave }: Props) {
           <Input
             name="produto"
             label="Produto"
-            value={
-              Array.isArray(formState.produto)
-                ? formState.produto.join(', ')
-                : formState.produto || ''
-            }
+            value={Array.isArray(formState.produto)
+              ? formState.produto.join(', ')
+              : formState.produto || ''}
             onChange={handleChange}
           />
           <Input
