@@ -14,6 +14,9 @@
 - **app/admin/api/bank-accounts/route.ts**
   - GET
   - POST
+- **app/admin/api/bank-accounts/[id]/route.ts**
+  - PUT
+  - DELETE
 - **app/admin/api/campos/[id]/route.ts**
   - PUT
   - DELETE
@@ -43,6 +46,9 @@
 - **app/admin/api/pix-keys/route.ts**
   - GET
   - POST
+- **app/admin/api/pix-keys/[id]/route.ts**
+  - PUT
+  - DELETE
 - **app/admin/api/posts/[slug]/route.ts**
   - GET
 - **app/admin/api/posts/route.ts**

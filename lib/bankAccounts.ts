@@ -159,3 +159,65 @@ export async function createPixKeyApi(
   }
   return res.json()
 }
+
+export async function updateBankAccountApi(
+  id: string,
+  account: Partial<BankAccount>,
+  fetchFn: typeof fetch = fetch,
+) {
+  const res = await fetchFn(`/admin/api/bank-accounts/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(account),
+  })
+  if (!res.ok) {
+    throw new Error('Erro ao atualizar conta')
+  }
+  return res.json()
+}
+
+export async function deleteBankAccountApi(
+  id: string,
+  fetchFn: typeof fetch = fetch,
+) {
+  const res = await fetchFn(`/admin/api/bank-accounts/${id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  })
+  if (!res.ok) {
+    throw new Error('Erro ao excluir conta')
+  }
+  return res.json()
+}
+
+export async function updatePixKeyApi(
+  id: string,
+  pix: Partial<PixKey>,
+  fetchFn: typeof fetch = fetch,
+) {
+  const res = await fetchFn(`/admin/api/pix-keys/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(pix),
+  })
+  if (!res.ok) {
+    throw new Error('Erro ao atualizar pix')
+  }
+  return res.json()
+}
+
+export async function deletePixKeyApi(
+  id: string,
+  fetchFn: typeof fetch = fetch,
+) {
+  const res = await fetchFn(`/admin/api/pix-keys/${id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  })
+  if (!res.ok) {
+    throw new Error('Erro ao excluir pix')
+  }
+  return res.json()
+}
