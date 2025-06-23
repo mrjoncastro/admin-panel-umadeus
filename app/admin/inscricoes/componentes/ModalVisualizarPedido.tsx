@@ -14,7 +14,7 @@ type PedidoExpandido = {
   id: string
   valor: number
   status: string
-  produto: string
+  produto: string[]
   cor?: string
   tamanho?: string
   genero?: string
@@ -125,7 +125,7 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
               <strong>Status:</strong> {pedido.status}
             </p>
             <p>
-              <strong>Produto:</strong> {pedido.produto}
+              <strong>Produto:</strong> {pedido.produto.join(', ')}
             </p>
             <p>
               <strong>Tamanho:</strong> {pedido.tamanho || '—'}

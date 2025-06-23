@@ -16,8 +16,8 @@ const dadosValidos = {
   tamanho: 'M',
 }
 
-const pulseira = { nome: 'Somente Pulseira', preco: 10 }
-const kit = { nome: 'Kit Camisa + Pulseira', preco: 50 }
+const pulseira = { id: 'p1', nome: 'Somente Pulseira', preco: 10 }
+const kit = { id: 'p2', nome: 'Kit Camisa + Pulseira', preco: 50 }
 
 describe('Fluxo de inscrição e pedido', () => {
   it('cria inscrição válida com status pendente', () => {
@@ -38,6 +38,7 @@ describe('Fluxo de inscrição e pedido', () => {
     expect(pedido.valor).toBe('10.00')
     expect(pedido.status).toBe('pendente')
     expect(pedido.canal).toBe('inscricao')
+    expect(pedido.produto).toEqual([pulseira.id])
   })
 
   it('gera pedido para kit completo com valor 50', () => {
@@ -50,5 +51,6 @@ describe('Fluxo de inscrição e pedido', () => {
     expect(pedido.email).toBe('teste@example.com')
     expect(pedido.status).toBe('pendente')
     expect(pedido.canal).toBe('inscricao')
+    expect(pedido.produto).toEqual([kit.id])
   })
 })

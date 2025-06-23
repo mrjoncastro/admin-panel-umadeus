@@ -246,7 +246,9 @@ export async function POST(req: NextRequest) {
       billingType,
       value: gross,
       dueDate: dueDateStr,
-      description: pedido.produto || 'Produto',
+      description: Array.isArray(pedido.produto)
+        ? pedido.produto.join(', ')
+        : pedido.produto || 'Produto',
       split: [
         {
           walletId: process.env.WALLETID_M24,

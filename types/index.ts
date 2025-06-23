@@ -44,7 +44,7 @@ export type Pedido = {
   id: string
   id_pagamento: string
   id_inscricao: string
-  produto: string
+  produto: string[]
   tamanho?: string
   status: 'pendente' | 'pago' | 'cancelado'
   cor: string

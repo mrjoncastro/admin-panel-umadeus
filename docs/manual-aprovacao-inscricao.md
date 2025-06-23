@@ -22,7 +22,7 @@ const coresSelecionadas = Array.isArray(produto.cores) && produto.cores.length >
 
 const pedidoPayload = {
   id_inscricao: inscricao.id,
-  produto: [produto.id], // agora múltiplo
+  produto: [produto.id], // IDs enviados em array
   cores: coresSelecionadas,
   tamanho: inscricao.tamanho ?? (Array.isArray(produto.tamanhos) ? produto.tamanhos[0] : 'M'),
   genero: inscricao.genero ?? (Array.isArray(produto.generos) ? produto.generos[0] : 'feminino'),
@@ -47,7 +47,8 @@ const pedidoPayload = {
 {
   "pedido": "ID_DO_PEDIDO",
   "status": "aguardando_pagamento",
-  "confirmado_por_lider": true
+  "confirmado_por_lider": true,
+  "aprovada": true
 }
 ```
 

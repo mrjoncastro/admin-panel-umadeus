@@ -194,7 +194,11 @@ export default function PedidosPage() {
             <tbody>
               {pedidosFiltrados.map((pedido) => (
                 <tr key={pedido.id}>
-                  <td className="font-medium">{pedido.produto}</td>
+                  <td className="font-medium">
+                    {Array.isArray(pedido.produto)
+                      ? pedido.produto.join(', ')
+                      : pedido.produto}
+                  </td>
                   <td>{pedido.expand?.id_inscricao?.nome || '—'}</td>
                   <td>{pedido.email}</td>
                   <td>{pedido.tamanho || '—'}</td>
