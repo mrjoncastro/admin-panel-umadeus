@@ -17,14 +17,17 @@ const cfgMock = {
 const userGetMock = vi.fn()
 
 pb.collection.mockImplementation((name: string) => {
-  if (name === 'clientes_config') return { getOne: vi.fn().mockResolvedValue(cfgMock) }
+  if (name === 'clientes_config')
+    return { getOne: vi.fn().mockResolvedValue(cfgMock) }
   if (name === 'users') return { getOne: userGetMock }
   return {}
 })
 
 vi.mock('../../lib/pocketbase', () => ({ default: vi.fn(() => pb) }))
 const getTenantMock = vi.fn().mockResolvedValue('t1')
-vi.mock('../../lib/getTenantFromHost', () => ({ getTenantFromHost: (...a: any[]) => getTenantMock(...a) }))
+vi.mock('../../lib/getTenantFromHost', () => ({
+  getTenantFromHost: (...a: any[]) => getTenantMock(...a),
+}))
 
 const sendMailMock = vi.fn().mockResolvedValue({ messageId: 'm1' })
 vi.mock('nodemailer', () => ({
@@ -39,7 +42,10 @@ beforeEach(() => {
 
 describe('POST /api/email', () => {
   it('retorna 400 se faltar parametros', async () => {
-    const req = new Request('http://test', { method: 'POST', body: JSON.stringify({}) })
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({}),
+    })
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(400)
   })
@@ -55,10 +61,18 @@ describe('POST /api/email', () => {
   })
 
   it('envia email com sucesso', async () => {
-    userGetMock.mockResolvedValueOnce({ id: 'u1', email: 'e@test.com', nome: 'Nome' })
+    userGetMock.mockResolvedValueOnce({
+      id: 'u1',
+      email: 'e@test.com',
+      nome: 'Nome',
+    })
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({ eventType: 'confirmacao_inscricao', userId: 'u1', paymentLink: 'http://pay' }),
+      body: JSON.stringify({
+        eventType: 'confirmacao_inscricao',
+        userId: 'u1',
+        paymentLink: 'http://pay',
+      }),
     })
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(200)

@@ -24,7 +24,12 @@ export default function DateRangePicker({
   return (
     <div className={`flex gap-2 ${className}`.trim()}>
       <FormField label="Início" htmlFor="start" className="flex-1">
-        <TextField id="start" type="date" value={start} onChange={handleStart} />
+        <TextField
+          id="start"
+          type="date"
+          value={start}
+          onChange={handleStart}
+        />
       </FormField>
       <FormField label="Fim" htmlFor="end" className="flex-1">
         <TextField id="end" type="date" value={end} onChange={handleEnd} />

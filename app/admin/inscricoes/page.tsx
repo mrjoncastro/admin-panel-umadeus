@@ -120,21 +120,21 @@ export default function ListaInscricoesPage() {
             r.expand as { produto?: Produto | Produto[] } | undefined
           )?.produto
           const produtoNome = Array.isArray(produtoExpand)
-            ? produtoExpand[0]?.nome ?? ''
-            : produtoExpand?.nome ?? ''
+            ? (produtoExpand[0]?.nome ?? '')
+            : (produtoExpand?.nome ?? '')
           return {
             id: r.id,
             nome: r.nome ?? '',
             telefone: r.telefone ?? '',
             evento: r.expand?.evento?.titulo ?? '—',
             eventoId: r.evento ?? '',
-          cpf: r.cpf ?? '',
-          status: r.status ?? 'pendente',
-          created: r.created ?? '',
-          campo: r.expand?.campo?.nome ?? '—',
-          tamanho: r.tamanho ?? '',
-          produto: r.produto ?? '',
-          produtoNome,
+            cpf: r.cpf ?? '',
+            status: r.status ?? 'pendente',
+            created: r.created ?? '',
+            campo: r.expand?.campo?.nome ?? '—',
+            tamanho: r.tamanho ?? '',
+            produto: r.produto ?? '',
+            produtoNome,
             genero: r.genero ?? '',
             data_nascimento: r.data_nascimento ?? '',
             criado_por: r.criado_por ?? '',

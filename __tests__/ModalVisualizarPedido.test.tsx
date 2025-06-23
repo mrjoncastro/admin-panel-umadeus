@@ -19,7 +19,12 @@ function mockPedido() {
     produto: [],
     id_pagamento: 'c1',
     expand: {
-      id_inscricao: { nome: 'Fulano', telefone: '1', cpf: '000', evento: 'ev1' },
+      id_inscricao: {
+        nome: 'Fulano',
+        telefone: '1',
+        cpf: '000',
+        evento: 'ev1',
+      },
       responsavel: { id: 'u1', nome: 'User' },
     },
   }
@@ -33,8 +38,14 @@ describe('ModalVisualizarPedido', () => {
   it('envia e-mail ao reenviar pagamento', async () => {
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockPedido()) })
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ url: 'pay' }) })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockPedido()),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ url: 'pay' }),
+      })
       .mockResolvedValueOnce({ ok: true })
       .mockResolvedValueOnce({ ok: true })
     global.fetch = fetchMock as unknown as typeof fetch
@@ -43,7 +54,9 @@ describe('ModalVisualizarPedido', () => {
 
     await screen.findByText(/Detalhes do Pedido/i)
 
-    fireEvent.click(screen.getByRole('button', { name: /Reenviar link de pagamento/i }))
+    fireEvent.click(
+      screen.getByRole('button', { name: /Reenviar link de pagamento/i }),
+    )
 
     await vi.waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith('/api/email', expect.any(Object))
@@ -53,8 +66,14 @@ describe('ModalVisualizarPedido', () => {
   it('exibe erro quando falha envio de e-mail', async () => {
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockPedido()) })
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ url: 'pay' }) })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockPedido()),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ url: 'pay' }),
+      })
       .mockRejectedValueOnce(new Error('fail'))
       .mockResolvedValueOnce({ ok: true })
     global.fetch = fetchMock as unknown as typeof fetch
@@ -63,7 +82,9 @@ describe('ModalVisualizarPedido', () => {
 
     await screen.findByText(/Detalhes do Pedido/i)
 
-    fireEvent.click(screen.getByRole('button', { name: /Reenviar link de pagamento/i }))
+    fireEvent.click(
+      screen.getByRole('button', { name: /Reenviar link de pagamento/i }),
+    )
 
     await vi.waitFor(() => {
       expect(toast.showError).toHaveBeenCalled()

@@ -90,9 +90,15 @@ export async function POST(req: NextRequest) {
       html,
     })
 
-    return NextResponse.json({ message: 'E-mail enviado', messageId: info.messageId })
+    return NextResponse.json({
+      message: 'E-mail enviado',
+      messageId: info.messageId,
+    })
   } catch (err) {
     console.error('Erro ao enviar e-mail:', err)
-    return NextResponse.json({ error: 'Erro ao enviar e-mail' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Erro ao enviar e-mail' },
+      { status: 500 },
+    )
   }
 }

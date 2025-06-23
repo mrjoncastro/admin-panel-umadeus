@@ -37,11 +37,9 @@ export async function GET(req: NextRequest) {
   }
   const { pb, user } = auth
   try {
-    const pedido = await pb
-      .collection('pedidos')
-      .getOne<Pedido>(id, {
-        expand: 'campo,responsavel,id_inscricao,id_inscricao.criado_por,produto',
-      })
+    const pedido = await pb.collection('pedidos').getOne<Pedido>(id, {
+      expand: 'campo,responsavel,id_inscricao,id_inscricao.criado_por,produto',
+    })
 
     // Garantir dados do produto mesmo se expand falhar
     if (!pedido.expand?.produto && pedido.produto) {

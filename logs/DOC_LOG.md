@@ -407,7 +407,11 @@
 ## [2025-08-08] Endpoints para atualizar e excluir contas bancárias e PIX adicionados. README e function-index atualizados.
 
 ## [2025-06-23] Interface de produtos permite excluir itens pela lista. Lint e build executados.
+
 ## [2025-06-23] Adicionado filtro de datas ao extrato Asaas com componente DateRangePicker. Lint e build executados.
+
 ## [2025-06-23] Rota /api/email criada com envio SMTP e templates. Lint e build executados.
+
 ## [2025-06-23] README e .env.example atualizados com orientações sobre variáveis SMTP. Lint e build executados.
+
 ## [2025-06-23] Evento `nova_cobranca` removido. Reenvio de pagamento agora usa `confirmacao_inscricao` com link via e-mail. Templates e testes atualizados; lint e build executados.
