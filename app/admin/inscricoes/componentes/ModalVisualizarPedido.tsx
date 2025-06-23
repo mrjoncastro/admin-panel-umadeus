@@ -72,15 +72,17 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
     setReenviando(true)
     setUrlPagamento(url)
     try {
-      await fetch('/api/email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          eventType: 'confirmacao_inscricao',
-          userId: pedido.expand?.responsavel?.id,
-          paymentLink: url,
-        }),
-      })
+      if (pedido.expand?.responsavel?.id) {
+        await fetch('/api/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventType: 'confirmacao_inscricao',
+            userId: pedido.expand.responsavel.id,
+            paymentLink: url,
+          }),
+        })
+      }
 
       fetch('/api/n8n', {
         method: 'POST',

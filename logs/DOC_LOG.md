@@ -416,3 +416,4 @@
 
 ## [2025-06-23] Evento `nova_cobranca` removido. Reenvio de pagamento agora usa `confirmacao_inscricao` com link via e-mail. Templates e testes atualizados; lint e build executados.
 ## [2025-06-23] Reenvio de pagamento usa link_pagamento existente e nao chama /api/asaas. Testes atualizados. Lint e build executados.
+## [2025-06-23] Reenvio de pagamento verifica responsavel antes de enviar e-mail. Testes atualizados. Lint e build executados.

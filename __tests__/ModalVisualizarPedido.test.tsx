@@ -31,6 +31,13 @@ function mockPedido() {
   }
 }
 
+function mockPedidoSemResponsavel() {
+  const p = mockPedido()
+  // @ts-expect-error removing responsavel for test
+  delete p.expand.responsavel
+  return p
+}
+
 describe('ModalVisualizarPedido', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -83,6 +90,29 @@ describe('ModalVisualizarPedido', () => {
 
     await vi.waitFor(() => {
       expect(toast.showError).toHaveBeenCalled()
+    })
+  })
+
+  it('nao envia email se pedido nao tem responsavel', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockPedidoSemResponsavel()),
+      })
+      .mockResolvedValueOnce({ ok: true })
+    global.fetch = fetchMock as unknown as typeof fetch
+
+    render(<ModalVisualizarPedido pedidoId="p1" onClose={() => {}} />)
+
+    await screen.findByText(/Detalhes do Pedido/i)
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /Reenviar link de pagamento/i }),
+    )
+
+    await vi.waitFor(() => {
+      expect(fetchMock).not.toHaveBeenCalledWith('/api/email', expect.any(Object))
     })
   })
 })
