@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
     const filtro = status ? `${baseFilter} && status='${status}'` : baseFilter
     const { items } = await pb.collection('inscricoes').getList(1, perPage, {
       filter: filtro,
-      expand: 'evento,campo,pedido',
+      expand: 'evento,campo,pedido,produto',
       sort: '-created',
     })
     return NextResponse.json(items, { status: 200 })
