@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
-import type { Pedido } from '@/types'
+import type { Pedido, Produto } from '@/types'
 import type { RecordModel } from 'pocketbase'
 
 async function checkAccess(
@@ -39,7 +39,27 @@ export async function GET(req: NextRequest) {
   try {
     const pedido = await pb
       .collection('pedidos')
-      .getOne<Pedido>(id, { expand: 'campo,responsavel,id_inscricao' })
+      .getOne<Pedido>(id, { expand: 'campo,responsavel,id_inscricao,produto' })
+
+    // Garantir dados do produto mesmo se expand falhar
+    if (!pedido.expand?.produto && pedido.produto) {
+      const ids = Array.isArray(pedido.produto)
+        ? pedido.produto
+        : [pedido.produto]
+      const produtos = await Promise.all(
+        ids.map((pid) =>
+          pb
+            .collection('produtos')
+            .getOne<Produto>(pid)
+            .catch(() => null),
+        ),
+      )
+      const validProds = produtos.filter(Boolean) as Produto[]
+      pedido.expand = {
+        ...pedido.expand,
+        produto: ids.length > 1 ? validProds : validProds[0],
+      }
+    }
     const access = await checkAccess(pedido, user)
     if ('error' in access) {
       return NextResponse.json(
