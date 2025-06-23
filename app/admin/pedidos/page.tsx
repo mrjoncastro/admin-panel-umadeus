@@ -72,7 +72,7 @@ export default function PedidosPage() {
     const produtoStr = Array.isArray(p.expand?.produto)
       ? p.expand.produto.map((prod: Produto) => prod.nome).join(', ')
       : (p.expand?.produto as Produto | undefined)?.nome ||
-        (Array.isArray(p.produto) ? p.produto.join(', ') : p.produto ?? '')
+        (Array.isArray(p.produto) ? p.produto.join(', ') : (p.produto ?? ''))
 
     const matchBuscaGlobal =
       buscaGlobal === '' ||
