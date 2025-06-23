@@ -1,7 +1,7 @@
 'use client'
 import { useCart } from '@/lib/context/CartContext'
 import { useToast } from '@/lib/context/ToastContext'
-import type { Produto } from '@/types'
+import type { Produto, Pedido } from '@/types'
 import { ShoppingCart } from 'lucide-react'
 import useInscricoes from '@/lib/hooks/useInscricoes'
 import Link from 'next/link'
@@ -43,9 +43,7 @@ export default function AddToCartButton({ produto }: { produto: Produto }) {
     }
 
     const handlePagar = () => {
-      const pedido = inscricao?.expand?.pedido as
-        | { link_pagamento?: string }
-        | undefined
+      const pedido = inscricao?.expand?.pedido as Pedido | undefined
 
       if (!pedido || !pedido.link_pagamento) {
         showError('Link de pagamento não disponível')
