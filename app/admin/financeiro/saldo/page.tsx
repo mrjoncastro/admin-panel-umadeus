@@ -115,22 +115,22 @@ export default function SaldoPage() {
             </div>
           </div>
           <div className="mb-6">
-            <h3 className="font-semibold mb-2">Extrato</h3>
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-sm">
+            <h3 className="heading">Extrato</h3>
+            <div className="overflow-x-auto rounded border shadow-sm bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700">
+              <table className="table-base">
                 <thead>
                   <tr className="text-left">
-                    <th className="px-2">Data</th>
-                    <th className="px-2">Descrição</th>
-                    <th className="px-2">Valor</th>
+                    <th>Data</th>
+                    <th>Descrição</th>
+                    <th>Valor</th>
                   </tr>
                 </thead>
                 <tbody>
                   {extrato.map((t) => (
                     <tr key={t.id}>
-                      <td className="px-2">{t.date}</td>
-                      <td className="px-2">{t.description}</td>
-                      <td className="px-2">
+                      <td>{t.date}</td>
+                      <td>{t.description}</td>
+                      <td>
                         {typeof t.value === 'number' ? t.value.toFixed(2) : '—'}
                       </td>
                     </tr>
