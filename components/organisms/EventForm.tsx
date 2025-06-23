@@ -15,6 +15,12 @@ interface Produto {
   tamanhos?: string[]
 }
 
+interface ProdutoApi {
+  id: string
+  nome: string
+  tamanhos?: string[] | string
+}
+
 interface Campo {
   id: string
   nome: string
@@ -82,7 +88,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
         setCobraInscricao(Boolean(eventoData?.cobra_inscricao))
         let lista: Produto[] = []
         if (Array.isArray(eventoData?.expand?.produtos)) {
-          lista = (eventoData.expand.produtos as any[]).map((p) => ({
+          lista = (eventoData.expand.produtos as ProdutoApi[]).map((p) => ({
             id: p.id,
             nome: p.nome,
             tamanhos: Array.isArray(p.tamanhos)
@@ -92,7 +98,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
                 : undefined,
           }))
         } else if (eventoData?.expand?.produto_inscricao) {
-          const p = eventoData.expand.produto_inscricao as any
+          const p = eventoData.expand.produto_inscricao as ProdutoApi
           lista = [
             {
               id: p.id,
