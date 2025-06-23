@@ -41,7 +41,7 @@ type Inscricao = {
   data_nascimento?: string
   criado_por?: string
   pedido_id?: string | null
-  plano?: string
+  produto?: string
 }
 
 export default function ListaInscricoesPage() {
@@ -122,7 +122,7 @@ export default function ListaInscricoesPage() {
           created: r.created ?? '',
           campo: r.expand?.campo?.nome ?? '—',
           tamanho: r.tamanho ?? '',
-          plano: r.plano ?? '',
+          produto: r.produto ?? '',
           genero: r.genero ?? '',
           data_nascimento: r.data_nascimento ?? '',
           criado_por: r.criado_por ?? '',
@@ -183,9 +183,9 @@ export default function ListaInscricoesPage() {
       console.log('[confirmarInscricao] Iniciando confirmação para id:', id)
       setConfirmandoId(id)
 
-      // 1. Buscar inscrição com expand do campo, plano e pedido
+      // 1. Buscar inscrição com expand do campo, produto e pedido
       const inscricaoRes = await fetch(
-        `/api/inscricoes/${id}?expand=campo,plano,pedido`,
+        `/api/inscricoes/${id}?expand=campo,produto,pedido`,
         { credentials: 'include' },
       )
       console.log(
@@ -194,7 +194,7 @@ export default function ListaInscricoesPage() {
       )
       const inscricao: InscricaoRecord & {
         expand?: {
-          plano?: Produto | Produto[]
+          produto?: Produto | Produto[]
           pedido?: {
             status: 'pendente' | 'pago' | 'cancelado'
             link_pagamento?: string
@@ -217,29 +217,29 @@ export default function ListaInscricoesPage() {
         }
       }
 
-      // Checar campo correto: plano ou produto
-      type InscricaoWithPlano = InscricaoRecord & { plano?: string }
+      // Checar campo correto: produto ou produto
+      type InscricaoWithProduto = InscricaoRecord & { produto?: string }
       const produtoId =
-        inscricao.plano ||
         inscricao.produto ||
-        (inscricao as InscricaoWithPlano).plano
+        inscricao.produto ||
+        (inscricao as InscricaoWithProduto).produto
       console.log('[confirmarInscricao] produtoId:', produtoId)
 
       // Extrair produto do expand (array ou objeto)
       let produtoRecord: Produto | undefined = undefined
 
-      // Se expand já trouxe plano (array ou objeto)
-      if (inscricao.expand?.plano) {
-        if (Array.isArray(inscricao.expand.plano)) {
-          produtoRecord = inscricao.expand.plano.find(
-            (p: Produto) => p.id === produtoId || p.id === inscricao.plano,
+      // Se expand já trouxe produto (array ou objeto)
+      if (inscricao.expand?.produto) {
+        if (Array.isArray(inscricao.expand.produto)) {
+          produtoRecord = inscricao.expand.produto.find(
+            (p: Produto) => p.id === produtoId || p.id === inscricao.produto,
           )
           console.log(
             '[confirmarInscricao] produtoRecord (array):',
             produtoRecord,
           )
-        } else if (typeof inscricao.expand.plano === 'object') {
-          produtoRecord = inscricao.expand.plano as Produto
+        } else if (typeof inscricao.expand.produto === 'object') {
+          produtoRecord = inscricao.expand.produto as Produto
           console.log(
             '[confirmarInscricao] produtoRecord (obj):',
             produtoRecord,
