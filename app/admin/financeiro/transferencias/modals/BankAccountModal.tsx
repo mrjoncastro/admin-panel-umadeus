@@ -137,6 +137,7 @@ export default function BankAccountModal({
                     value={ownerName}
                     onChange={(e) => setOwnerName(e.target.value)}
                     required
+                    autoFocus={open}
                   />
                   <input
                     className="input-base"
