@@ -44,6 +44,25 @@ export default function BankAccountModal({
   const [scheduleDate, setScheduleDate] = useState('')
   const { showError, showSuccess } = useToast()
 
+  const resetFields = () => {
+    setType('bank')
+    setOwnerName('')
+    setAccountName('')
+    setCpfCnpj('')
+    setOwnerBirthDate('')
+    setBankName('')
+    setBankCode('')
+    setIspb('')
+    setAgency('')
+    setAccount('')
+    setAccountDigit('')
+    setBankAccountType('conta_corrente')
+    setPixAddressKey('')
+    setPixAddressKeyType('cpf')
+    setDescription('')
+    setScheduleDate('')
+  }
+
   useEffect(() => {
     searchBanks('')
       .then(setBanks)
@@ -106,6 +125,7 @@ export default function BankAccountModal({
         })
       }
       showSuccess('Conta salva!')
+      resetFields()
       onClose()
     } catch (err) {
       console.error(err)
@@ -113,8 +133,13 @@ export default function BankAccountModal({
     }
   }
 
+  const handleClose = () => {
+    resetFields()
+    onClose()
+  }
+
   return (
-    <ModalAnimated open={open} onOpenChange={(v) => !v && onClose()}>
+    <ModalAnimated open={open} onOpenChange={(v) => !v && handleClose()}>
       <form onSubmit={handleSubmit} className="space-y-3 w-80">
         <Dialog.Title asChild>
           <h3 className="text-lg font-semibold text-center">Adicionar Conta</h3>
@@ -257,7 +282,7 @@ export default function BankAccountModal({
           ]}
         />
         <div className="flex justify-end gap-2 pt-2">
-          <button type="button" className="btn btn-secondary" onClick={onClose}>
+          <button type="button" className="btn btn-secondary" onClick={handleClose}>
             Cancelar
           </button>
           <button type="submit" className="btn btn-primary">
