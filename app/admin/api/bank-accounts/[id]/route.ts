@@ -13,7 +13,9 @@ export async function PUT(req: NextRequest) {
   const { pb } = auth
   try {
     const data = await req.json()
-    const conta = await pb.collection('clientes_contas_bancarias').update(id, data)
+    const conta = await pb
+      .collection('clientes_contas_bancarias')
+      .update(id, data)
     return NextResponse.json(conta, { status: 200 })
   } catch (err) {
     await logConciliacaoErro(`Erro ao atualizar conta bancaria: ${String(err)}`)
