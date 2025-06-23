@@ -12,7 +12,6 @@ export interface InscricaoTemplate {
   campo: string
   criado_por: string
   produto?: string
-  produto?: string
   tamanho?: string
   cliente?: string
   paymentMethod?: PaymentMethod
@@ -51,7 +50,6 @@ export function criarInscricao(dados: InscricaoTemplate): Inscricao {
     evento: dados.evento,
     campo: dados.campo,
     criado_por: dados.criado_por,
-    produto: dados.produto,
     produto: dados.produto,
     tamanho: dados.tamanho,
     cliente: dados.cliente,
