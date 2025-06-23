@@ -121,6 +121,25 @@ export default function AdminProdutosPage() {
     setPage(1)
   }
 
+  async function handleExcluirProduto(id: string) {
+    if (!confirm('Confirma excluir?')) return
+    try {
+      const res = await fetch(`/admin/api/produtos/${id}`, {
+        method: 'DELETE',
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        showError('Erro: ' + (data.error || 'Não foi possível excluir.'))
+        return
+      }
+      setProdutos((prev) => prev.filter((p) => p.id !== id))
+      showSuccess('Produto excluído')
+    } catch (err) {
+      console.error('Erro ao excluir produto:', err)
+      showError('Erro ao excluir produto')
+    }
+  }
+
   if (!authChecked) return null
 
   return (
@@ -208,12 +227,21 @@ export default function AdminProdutosPage() {
                     )}
                   </td>
                   <td>
-                    <Link
-                      href={`/admin/produtos/editar/${produto.id}`}
-                      className="text-[var(--accent)] hover:underline"
-                    >
-                      Editar
-                    </Link>
+                    <div className="flex gap-2 justify-end">
+                      <Link
+                        href={`/admin/produtos/editar/${produto.id}`}
+                        className="btn"
+                      >
+                        Editar
+                      </Link>
+                      <button
+                        className="btn"
+                        style={{ color: 'var(--accent)' }}
+                        onClick={() => handleExcluirProduto(produto.id)}
+                      >
+                        Excluir
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))
