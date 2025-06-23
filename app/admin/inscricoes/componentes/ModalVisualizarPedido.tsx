@@ -15,6 +15,7 @@ type PedidoExpandido = {
   valor: number
   status: string
   produto: string[]
+  id_pagamento?: string
   cor?: string
   tamanho?: string
   genero?: string
@@ -67,6 +68,20 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
 
       const { url } = await checkoutRes.json()
       setUrlPagamento(url)
+
+      try {
+        await fetch('/api/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventType: 'nova_cobranca',
+            userId: pedido.expand?.responsavel?.id,
+            chargeId: pedido.id_pagamento,
+          }),
+        })
+      } catch {
+        showError('Erro ao enviar e-mail')
+      }
 
       fetch('/api/n8n', {
         method: 'POST',
