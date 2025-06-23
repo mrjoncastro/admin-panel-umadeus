@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
-import { Pedido } from '@/types'
+import type { Pedido, Produto } from '@/types'
 import { saveAs } from 'file-saver'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import ModalEditarPedido from './componentes/ModalEditarPedido'
@@ -69,9 +69,10 @@ export default function PedidosPage() {
     const matchCampo =
       filtroCampo === '' ||
       p.expand?.campo?.nome?.toLowerCase().includes(filtroCampo.toLowerCase())
-    const produtoStr = Array.isArray(p.produto)
-      ? p.produto.join(', ')
-      : (p.produto ?? '')
+    const produtoStr = Array.isArray(p.expand?.produto)
+      ? p.expand.produto.map((prod: Produto) => prod.nome).join(', ')
+      : (p.expand?.produto as Produto | undefined)?.nome ||
+        (Array.isArray(p.produto) ? p.produto.join(', ') : p.produto ?? '')
 
     const matchBuscaGlobal =
       buscaGlobal === '' ||
@@ -104,7 +105,9 @@ export default function PedidosPage() {
     ]
 
     const linhas = pedidosFiltrados.map((p) => [
-      p.produto,
+      Array.isArray(p.expand?.produto)
+        ? p.expand.produto.map((prod: Produto) => prod.nome).join(', ')
+        : (p.expand?.produto as Produto | undefined)?.nome || p.produto,
       p.expand?.id_inscricao?.nome || '',
       p.email,
       p.tamanho || '',
@@ -199,9 +202,14 @@ export default function PedidosPage() {
               {pedidosFiltrados.map((pedido) => (
                 <tr key={pedido.id}>
                   <td className="font-medium">
-                    {Array.isArray(pedido.produto)
-                      ? pedido.produto.join(', ')
-                      : pedido.produto}
+                    {Array.isArray(pedido.expand?.produto)
+                      ? pedido.expand?.produto
+                          .map((p: Produto) => p.nome)
+                          .join(', ')
+                      : (pedido.expand?.produto as Produto | undefined)?.nome ||
+                        (Array.isArray(pedido.produto)
+                          ? pedido.produto.join(', ')
+                          : pedido.produto)}
                   </td>
                   <td>{pedido.expand?.id_inscricao?.nome || '—'}</td>
                   <td>{pedido.email}</td>

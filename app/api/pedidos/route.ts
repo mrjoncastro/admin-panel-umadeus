@@ -112,7 +112,7 @@ export async function GET(req: NextRequest) {
     const { items } = await pb.collection('pedidos').getList(page, perPage, {
       filter: filtro,
       sort: '-created',
-      expand: 'campo,id_inscricao',
+      expand: 'campo,id_inscricao,produto',
     })
     console.log('[PEDIDOS][GET] Retornando pedidos:', items.length)
     return NextResponse.json(items)
