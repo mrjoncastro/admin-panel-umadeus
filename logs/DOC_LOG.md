@@ -401,6 +401,8 @@
 ## [2025-06-22] /api/produtos/[slug] passa a retornar objeto de inscrição do usuário (inscricao, inscricaoId e inscricaoAprovada) quando o produto possui evento. Lint e build executados.
 
 ## [2025-06-23] Botão de compra ajustado para inscrições: redireciona para pagamento quando aprovado e bloqueia se já pago.
+
+## [2025-06-23] Tabela de inscrições agora exibe nome do produto e tamanho. Rotas de inscrições incluem expand de produto. Lint e build falharam (next not found).
 ## [2025-08-08] Endpoints para atualizar e excluir contas bancárias e PIX adicionados. README e function-index atualizados.
 
 ## [2025-06-23] Interface de produtos permite excluir itens pela lista. Lint e build executados.

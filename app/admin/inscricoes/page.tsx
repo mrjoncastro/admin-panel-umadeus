@@ -42,6 +42,7 @@ type Inscricao = {
   criado_por?: string
   pedido_id?: string | null
   produto?: string
+  produtoNome?: string
 }
 
 export default function ListaInscricoesPage() {
@@ -99,7 +100,10 @@ export default function ListaInscricoesPage() {
         : `campo='${user.campo}' && ${baseFiltro}`
 
     fetch(
-      `/api/inscricoes?${new URLSearchParams({ filter: filtro }).toString()}`,
+      `/api/inscricoes?${new URLSearchParams({
+        filter: filtro,
+        expand: 'evento,campo,produto,pedido',
+      }).toString()}`,
       {
         credentials: 'include',
       },
@@ -123,6 +127,7 @@ export default function ListaInscricoesPage() {
           campo: r.expand?.campo?.nome ?? '—',
           tamanho: r.tamanho ?? '',
           produto: r.produto ?? '',
+          produtoNome: (r.expand as any)?.produto?.nome ?? '',
           genero: r.genero ?? '',
           data_nascimento: r.data_nascimento ?? '',
           criado_por: r.criado_por ?? '',
@@ -547,6 +552,7 @@ export default function ListaInscricoesPage() {
                 <th>Evento</th>
                 <th>Status</th>
                 <th>Campo</th>
+                <th>Produto</th>
                 <th>Criado em</th>
                 <th>Confirmação</th>
                 {role === 'coordenador' && <th>Ação</th>}
@@ -568,6 +574,10 @@ export default function ListaInscricoesPage() {
                     </span>
                   </td>
                   <td>{i.campo}</td>
+                  <td>
+                    {i.produtoNome || i.produto || '—'}
+                    {i.tamanho ? ` - ${i.tamanho}` : ''}
+                  </td>
                   <td>{new Date(i.created).toLocaleDateString('pt-BR')}</td>
                   <td className="text-left text-xs">
                     <div className="flex items-center gap-3">
