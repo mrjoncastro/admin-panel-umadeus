@@ -78,9 +78,21 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
         }
         const eventoData = eventoRes.ok ? await eventoRes.json() : null
         setCobraInscricao(Boolean(eventoData?.cobra_inscricao))
-        const lista = Array.isArray(eventoData?.expand?.produtos)
-          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (eventoData.expand.produtos as any[]).map((p) => ({
+        let lista: Produto[] = []
+        if (Array.isArray(eventoData?.expand?.produtos)) {
+          lista = (eventoData.expand.produtos as any[]).map((p) => ({
+            id: p.id,
+            nome: p.nome,
+            tamanhos: Array.isArray(p.tamanhos)
+              ? p.tamanhos
+              : p.tamanhos
+                ? [p.tamanhos]
+                : undefined,
+          }))
+        } else if (eventoData?.expand?.produto_inscricao) {
+          const p = eventoData.expand.produto_inscricao as any
+          lista = [
+            {
               id: p.id,
               nome: p.nome,
               tamanhos: Array.isArray(p.tamanhos)
@@ -88,8 +100,12 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
                 : p.tamanhos
                   ? [p.tamanhos]
                   : undefined,
-            }))
-          : []
+            },
+          ]
+        }
+        else if (eventoData?.produto_inscricao) {
+          lista = [{ id: eventoData.produto_inscricao, nome: 'Produto' }]
+        }
         setProdutos(lista)
         if (lista.length > 0) {
           setForm((prev) => ({ ...prev, produtoId: lista[0].id }))

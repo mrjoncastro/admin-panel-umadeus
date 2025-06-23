@@ -17,7 +17,7 @@ export async function GET() {
     const eventos = await pb.collection('eventos').getFullList<EventoRecord>({
       sort: '-data',
       filter: `cliente='${tenant}'`,
-      expand: 'produtos',
+      expand: 'produtos,produto_inscricao',
     })
     await atualizarStatus(eventos, pb)
     const comUrls = eventos.map((e) => {

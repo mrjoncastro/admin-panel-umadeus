@@ -12,7 +12,9 @@ export async function GET(req: NextRequest) {
   try {
     const evento = await pb
       .collection('eventos')
-      .getOne<EventoRecord>(id, { expand: 'produtos' })
+      .getOne<EventoRecord>(id, {
+        expand: 'produtos,produto_inscricao',
+      })
     const fileName = evento.imagem || evento.logo
     const withUrl = {
       ...evento,
