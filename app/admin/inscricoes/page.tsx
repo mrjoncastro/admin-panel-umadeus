@@ -182,9 +182,9 @@ export default function ListaInscricoesPage() {
       console.log('[confirmarInscricao] Iniciando confirmação para id:', id)
       setConfirmandoId(id)
 
-      // 1. Buscar inscrição com expand do campo e produtos
+      // 1. Buscar inscrição com expand do campo, produto e pedido
       const inscricaoRes = await fetch(
-        `/api/inscricoes/${id}?expand=campo,produto`,
+        `/api/inscricoes/${id}?expand=campo,produto,pedido`,
         { credentials: 'include' },
       )
       console.log(
@@ -192,9 +192,26 @@ export default function ListaInscricoesPage() {
         inscricaoRes.status,
       )
       const inscricao: InscricaoRecord & {
-        expand?: { produtos?: Produto | Produto[] }
+        expand?: {
+          produtos?: Produto | Produto[]
+          pedido?: { status: 'pendente' | 'pago' | 'cancelado'; link_pagamento?: string }
+        }
       } = await inscricaoRes.json()
       console.log('[confirmarInscricao] inscricao:', inscricao)
+
+      const pedidoExistente = inscricao.expand?.pedido
+      if (pedidoExistente) {
+        if (pedidoExistente.status === 'pago') {
+          showSuccess('Pagamento já confirmado.')
+          setConfirmandoId(null)
+          return
+        }
+        if (pedidoExistente.status === 'pendente') {
+          showSuccess('Link de pagamento enviado com sucesso!')
+          setConfirmandoId(null)
+          return
+        }
+      }
 
       // Checar campo correto: produto ou produtos
       type InscricaoWithProdutos = InscricaoRecord & { produtos?: string }
