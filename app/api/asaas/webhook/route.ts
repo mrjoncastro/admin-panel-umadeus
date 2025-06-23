@@ -1,3 +1,4 @@
+// ./app/api/asaas/webhook/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { logConciliacaoErro } from '@/lib/server/logger'
@@ -9,20 +10,6 @@ type AsaasWebhookPayload = {
     accountId?: string
     externalReference?: string
     customer?: string
-  }
-  checkout?: {
-    id?: string
-    status?: string
-    callback?: {
-      successUrl?: string
-      cancelUrl?: string
-      expiredUrl?: string
-    }
-    customerData?: {
-      email?: string
-      cpfCnpj?: string
-      name?: string
-    }
   }
   event?: string
   accountId?: string
@@ -40,40 +27,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
   }
 
-  // --- NOVA LÓGICA PARA CHECKOUT_PAID ---
-  if (body.event === 'CHECKOUT_PAID' && body.checkout?.callback?.successUrl) {
-    const successUrl = body.checkout.callback.successUrl
-    const pedidoMatch = /pedido=([^&]+)/.exec(successUrl)
-    const pedidoId = pedidoMatch ? pedidoMatch[1] : null
-    const idPagamento = body.checkout?.id
-
-    if (pedidoId) {
-      try {
-        await pb.collection('pedidos').update(pedidoId, {
-          status: 'pago',
-          id_pagamento: idPagamento,
-        })
-        return NextResponse.json({
-          status: 'Pedido atualizado com sucesso (checkout paid)',
-        })
-      } catch (err) {
-        await logConciliacaoErro(
-          `Falha ao atualizar pedido ${pedidoId}: ${String(err)}`,
-        )
-        return NextResponse.json(
-          { error: 'Erro ao atualizar pedido' },
-          { status: 500 },
-        )
-      }
-    } else {
-      return NextResponse.json(
-        { error: 'Pedido não identificado no successUrl' },
-        { status: 400 },
-      )
-    }
+  // Garantir autenticação antes de tudo
+  if (!pb.authStore.isValid) {
+    await pb.admins.authWithPassword(
+      process.env.PB_ADMIN_EMAIL!,
+      process.env.PB_ADMIN_PASSWORD!,
+    )
   }
 
-  // --- LÓGICA PADRÃO PARA PAYMENT_RECEIVED/PAYMENT_CONFIRMED ---
+  // --- Apenas eventos de pagamento ---
   const payment = body.payment
   const paymentId: string | undefined = payment?.id
   const event: string | undefined = body.event
@@ -86,13 +48,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ status: 'Ignorado' })
   }
 
-  if (!pb.authStore.isValid) {
-    await pb.admins.authWithPassword(
-      process.env.PB_ADMIN_EMAIL!,
-      process.env.PB_ADMIN_PASSWORD!,
-    )
-  }
-
+  // Buscar configs do cliente pelo accountId, se disponível
   let clienteApiKey: string | null = null
   let clienteId: string | null = null
   let clienteNome: string | null = null
@@ -146,6 +102,7 @@ export async function POST(req: NextRequest) {
     ? clienteApiKey
     : `$${clienteApiKey}`
 
+  // Puxa dados do pagamento na API do Asaas
   const paymentRes = await fetch(`${baseUrl}/payments/${paymentId}`, {
     headers: {
       accept: 'application/json',
@@ -163,7 +120,6 @@ export async function POST(req: NextRequest) {
   }
 
   const paymentData = await paymentRes.json()
-
   const status = paymentData.status as string | undefined
   const externalRef: string | undefined = paymentData.externalReference
   const asaasCustomerId: string | undefined = paymentData.customer
@@ -172,6 +128,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ status: 'Aguardando pagamento' })
   }
 
+  // Busca pelo pedido
   if (externalRef && !inscricaoId) {
     const m = /cliente_([^_]+)_usuario_([^_]+)(?:_inscricao_([^_]+))?/.exec(
       externalRef,
@@ -183,7 +140,6 @@ export async function POST(req: NextRequest) {
 
   let pedidoRecord: RecordModel | null = null
 
-  // 1. Busca padrão (inscricao/pagamento)
   try {
     if (inscricaoId) {
       const filtro = usuarioId
@@ -197,7 +153,7 @@ export async function POST(req: NextRequest) {
       pedidoRecord = await pb.collection('pedidos').getFirstListItem(filtro)
     }
   } catch {
-    /* ignore */
+    // ignore
   }
 
   // 2. Busca pelo customer do Asaas (API Asaas -> CPF -> Pedido)
@@ -216,7 +172,7 @@ export async function POST(req: NextRequest) {
       )
       if (clienteRes.ok) {
         const clienteData = await clienteRes.json()
-        const cpf = clienteData.cpfCnpj?.replace(/\D/g, '') // tira pontos/traços
+        const cpf = clienteData.cpfCnpj?.replace(/\D/g, '')
         if (cpf) {
           // Busca pedido mais recente pelo CPF
           const pedidos = await pb

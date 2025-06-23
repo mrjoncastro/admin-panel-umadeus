@@ -149,3 +149,8 @@
 ## [2025-06-22] Erro ao gerar link de pagamento Asaas: Error: Erro ao criar cobrança - development
 
 ## [2025-06-22] Erro ao criar pedido: ClientResponseError 400: Failed to create record. - development
+## [2025-06-22] Falha ao atualizar pedido z845p88270drm85: ClientResponseError 404: The requested resource wasn't found. - development
+## [2025-06-22] Falha ao atualizar pedido z845p88270drm85: ClientResponseError 404: The requested resource wasn't found. - development
+## [2025-06-22] Falha ao atualizar pedido z845p88270drm85: ClientResponseError 404: The requested resource wasn't found. | {"data":{},"message":"The requested resource wasn't found.","status":404} - development
+## [2025-06-22] Falha ao atualizar pedido z845p88270drm85: ClientResponseError 404: The requested resource wasn't found. | {"data":{},"message":"The requested resource wasn't found.","status":404} - development
+## [2025-06-22] Falha ao atualizar pedido z845p88270drm85: ClientResponseError 404: The requested resource wasn't found. | {"data":{},"message":"The requested resource wasn't found.","status":404} - development
