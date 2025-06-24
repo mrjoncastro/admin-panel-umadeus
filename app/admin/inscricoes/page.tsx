@@ -193,17 +193,12 @@ export default function ListaInscricoesPage() {
 
   const confirmarInscricao = async (id: string) => {
     try {
-      console.log('[confirmarInscricao] Iniciando confirmação para id:', id)
       setConfirmandoId(id)
 
       // 1. Buscar inscrição com expand do campo, produto e pedido
       const inscricaoRes = await fetch(
         `/api/inscricoes/${id}?expand=campo,produto,pedido`,
         { credentials: 'include' },
-      )
-      console.log(
-        '[confirmarInscricao] Status inscricaoRes:',
-        inscricaoRes.status,
       )
       const inscricao: InscricaoRecord & {
         expand?: {
@@ -214,7 +209,6 @@ export default function ListaInscricoesPage() {
           }
         }
       } = await inscricaoRes.json()
-      console.log('[confirmarInscricao] inscricao:', inscricao)
 
       const pedidoExistente = inscricao.expand?.pedido
       if (pedidoExistente) {
@@ -236,7 +230,6 @@ export default function ListaInscricoesPage() {
         inscricao.produto ||
         inscricao.produto ||
         (inscricao as InscricaoWithProduto).produto
-      console.log('[confirmarInscricao] produtoId:', produtoId)
 
       // Extrair produto do expand (array ou objeto)
       let produtoRecord: Produto | undefined = undefined
@@ -246,15 +239,11 @@ export default function ListaInscricoesPage() {
         if (Array.isArray(inscricao.expand.produto)) {
           produtoRecord = inscricao.expand.produto.find(
             (p: Produto) => p.id === produtoId || p.id === inscricao.produto,
-          )
-          console.log(
-            '[confirmarInscricao] produtoRecord (array):',
+          ):',
             produtoRecord,
           )
         } else if (typeof inscricao.expand.produto === 'object') {
-          produtoRecord = inscricao.expand.produto as Produto
-          console.log(
-            '[confirmarInscricao] produtoRecord (obj):',
+          produtoRecord = inscricao.expand.produto as Produto:',
             produtoRecord,
           )
         }
@@ -266,11 +255,8 @@ export default function ListaInscricoesPage() {
           const prodRes = await fetch(`/admin/api/produtos/${produtoId}`, {
             credentials: 'include',
           })
-          console.log('[confirmarInscricao] Status prodRes:', prodRes.status)
           if (prodRes.ok) {
-            produtoRecord = await prodRes.json()
-            console.log(
-              '[confirmarInscricao] produtoRecord (fallback):',
+            produtoRecord = await prodRes.json():',
               produtoRecord,
             )
           }
@@ -280,7 +266,6 @@ export default function ListaInscricoesPage() {
       }
 
       // Log do produto final escolhido
-      console.log('[confirmarInscricao] Produto final:', produtoRecord)
 
       // Se mesmo assim não encontrou, aborta!
       if (!produtoRecord || typeof produtoRecord.preco !== 'number') {
@@ -288,9 +273,6 @@ export default function ListaInscricoesPage() {
           'Não foi possível identificar o produto ou o preço da inscrição.',
         )
         setConfirmandoId(null)
-        console.log(
-          '[confirmarInscricao] Produto/preço não encontrado, abortando!',
-        )
         return
       }
 
@@ -298,7 +280,6 @@ export default function ListaInscricoesPage() {
       const campo = inscricao.expand?.campo as
         | { id?: string; responsavel?: string }
         | undefined
-      console.log('[confirmarInscricao] campo expand:', campo)
 
       const insc = inscricao as InscricaoRecord & {
         paymentMethod?: PaymentMethod
@@ -307,15 +288,12 @@ export default function ListaInscricoesPage() {
 
       const metodo = insc.paymentMethod ?? 'boleto'
       const parcelas = insc.installments ?? 1
-      console.log('[confirmarInscricao] metodo:', metodo, 'parcelas:', parcelas)
 
       // Valor base do produto
       const precoProduto = Number(produtoRecord?.preco ?? 0)
-      console.log('[confirmarInscricao] precoProduto:', precoProduto)
 
       // Aqui você pode aplicar algum cálculo se desejar
       const gross = precoProduto // ajuste aqui caso queira aplicar taxas/descontos
-      console.log('[confirmarInscricao] gross:', gross)
 
       const pedidoRes = await fetch('/api/pedidos', {
         method: 'POST',
@@ -422,7 +400,6 @@ export default function ListaInscricoesPage() {
       showError('Erro ao confirmar inscrição e gerar pedido.')
     } finally {
       setConfirmandoId(null)
-      console.log('[confirmarInscricao] Fim do fluxo.')
     }
   }
 

@@ -244,11 +244,6 @@ export default function EditarProdutoPage() {
     formData.set('requer_inscricao_aprovada', String(requerAprov))
 
     // <<< AQUI O CONSOLE!
-    console.log('---- FormData a ser enviado ----')
-    for (const [key, value] of formData.entries()) {
-      console.log(key, value)
-    }
-    console.log('-------------------------------')
 
     try {
       const res = await fetch(`/admin/api/produtos/${id}`, {

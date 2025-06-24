@@ -109,7 +109,6 @@ export default function AdminProdutosPage() {
         return
       }
       const data = await res.json()
-      console.log('Produto criado:', data)
       setProdutos((prev) => [data, ...prev])
       showSuccess('Produto criado')
     } catch (err) {
