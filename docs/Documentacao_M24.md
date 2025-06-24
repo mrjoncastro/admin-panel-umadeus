@@ -8,15 +8,16 @@
   - [1. produtos](#1-produtos)
   - [2. posts](#2-posts)
   - [3. pedidos](#3-pedidos)
-  - [4. m24\_clientes](#4-m24_clientes)
+  - [4. m24_clientes](#4-m24_clientes)
   - [5. inscricoes](#5-inscricoes)
   - [6. eventos](#6-eventos)
-  - [7. clientes\_pix](#7-clientes_pix)
-  - [8. clientes\_contas\_bancarias](#8-clientes_contas_bancarias)
-  - [9. clientes\_config](#9-clientes_config)
+  - [7. clientes_pix](#7-clientes_pix)
+  - [8. clientes_contas_bancarias](#8-clientes_contas_bancarias)
+  - [9. clientes_config](#9-clientes_config)
   - [10. categorias](#10-categorias)
   - [11. campos](#11-campos)
   - [12. usuarios](#12-usuarios)
+  - [13. usuarios](#12-usuarios)
 
 ---
 
@@ -52,10 +53,10 @@ Para cada coleção, utilize a seguinte estrutura:
 1. **Nome da coleção**
 2. **Descrição resumida**
 3. **Campos**
-   | Campo           | Tipo    | Obrigatório | Descrição / Observações |
+   | Campo | Tipo | Obrigatório | Descrição / Observações |
    | --------------- | ------- | ----------- | ----------------------- |
-   | `campo_exemplo` | String  | Sim         | Ex.: CPF ou CNPJ, único |
-   | `outro_campo`   | Boolean | Não         | Ex.: flag de ativação   |
+   | `campo_exemplo` | String | Sim | Ex.: CPF ou CNPJ, único |
+   | `outro_campo` | Boolean | Não | Ex.: flag de ativação |
 4. **Permissões / Roles**
    - Quem pode ler, criar, editar, deletar
    - Escopo multi-tenant (campo `cliente`)
@@ -153,7 +154,17 @@ Para cada coleção, utilize a seguinte estrutura:
 **Exemplo de Payload**
 
 ```json
-{  "nome": "Camiseta Básica Preta",  "user_org": "abc123usuario",  "quantidade": 50,  "preco": 4990,  "ativo": true,  "tamanhos": ["P", "M", "G"],  "slug": "camiseta-basica-preta",  "cliente": "tenant_xyz",  "requer_inscricao_aprovada": false}
+{
+  "nome": "Camiseta Básica Preta",
+  "user_org": "abc123usuario",
+  "quantidade": 50,
+  "preco": 4990,
+  "ativo": true,
+  "tamanhos": ["P", "M", "G"],
+  "slug": "camiseta-basica-preta",
+  "cliente": "tenant_xyz",
+  "requer_inscricao_aprovada": false
+}
 ```
 
 **Notas Adicionais**
@@ -191,7 +202,7 @@ Para cada coleção, utilize a seguinte estrutura:
 **Relacionamentos**
 
 - `category` → `categorias.id`
-- `cliente`  → `m24_clientes.id`
+- `cliente` → `m24_clientes.id`
 
 **Endpoints de API**
 
@@ -212,7 +223,17 @@ Para cada coleção, utilize a seguinte estrutura:
 **Exemplo de Payload**
 
 ```json
-{  "title": "Como Integrar Next.js com PocketBase Multipart",  "slug": "integrar-nextjs-pocketbase-multipart",  "summary": "Passo a passo para enviar arquivos no PocketBase via Next.js API routes.",  "content": "<h2>Introdução</h2><p>...</p>",  "category": "cat123blog",  "thumbnail": "file_abcd1234",  "keywords": ["nextjs","pocketbase","api","files"],  "cliente": "tenant_xyz",  "date": "2025-07-01"}
+{
+  "title": "Como Integrar Next.js com PocketBase Multipart",
+  "slug": "integrar-nextjs-pocketbase-multipart",
+  "summary": "Passo a passo para enviar arquivos no PocketBase via Next.js API routes.",
+  "content": "<h2>Introdução</h2><p>...</p>",
+  "category": "cat123blog",
+  "thumbnail": "file_abcd1234",
+  "keywords": ["nextjs", "pocketbase", "api", "files"],
+  "cliente": "tenant_xyz",
+  "date": "2025-07-01"
+}
 ```
 
 **Notas Adicionais**
@@ -278,7 +299,17 @@ Para cada coleção, utilize a seguinte estrutura:
 **Exemplo de Payload**
 
 ```json
-{  "id_inscricao": "insc_abc123",  "email": "user@example.com",  "tamanho": "M",  "status": "pendente",  "valor": 5990,  "link_pagamento": "https://asaas.com/pay/xyz",  "cliente": "tenant_xyz",  "canal": "loja",  "produto": ["prod_123","prod_456"]}
+{
+  "id_inscricao": "insc_abc123",
+  "email": "user@example.com",
+  "tamanho": "M",
+  "status": "pendente",
+  "valor": 5990,
+  "link_pagamento": "https://asaas.com/pay/xyz",
+  "cliente": "tenant_xyz",
+  "canal": "loja",
+  "produto": ["prod_123", "prod_456"]
+}
 ```
 
 **Notas Adicionais**
@@ -338,7 +369,19 @@ Para cada coleção, utilize a seguinte estrutura:
 **Exemplo de Payload**
 
 ```json
-{  "nome": "Empresa XYZ LTDA",  "dominio": "app.empresaxyz.com",  "responsavel_email": "contato@empresaxyz.com",  "ativo": true,  "documento": "12.345.678/0001-99",  "asaas_account_id": "acc_abc123",  "asaas_api_key": "key_xyz987",  "verificado": false,  "tipo_dominio": "proprio",  "modo_validacao": "manual",  "usuario": "user_abc123"}
+{
+  "nome": "Empresa XYZ LTDA",
+  "dominio": "app.empresaxyz.com",
+  "responsavel_email": "contato@empresaxyz.com",
+  "ativo": true,
+  "documento": "12.345.678/0001-99",
+  "asaas_account_id": "acc_abc123",
+  "asaas_api_key": "key_xyz987",
+  "verificado": false,
+  "tipo_dominio": "proprio",
+  "modo_validacao": "manual",
+  "usuario": "user_abc123"
+}
 ```
 
 **Notas Adicionais**
@@ -634,8 +677,8 @@ Para cada coleção, utilize a seguinte estrutura:
 
 **Permissões / Roles**
 
-- Leitura: público.
-- Gravação: `admin`, `user_org`.
+- **Leitura**: público.
+- **Gravação**: `admin`, `user_org`.
 
 **Relacionamentos**
 
@@ -643,7 +686,196 @@ Para cada coleção, utilize a seguinte estrutura:
 
 **Endpoints de API**
 
-| Rota                                                             | Métodos | Descrição |
-| ---------------------------------------------------------------- | ------- | --------- |
-| DOI\:truncate due to lack time in real environment truncated\*\* |         |           |
+| Rota                         | Métodos | Descrição                            |
+| ---------------------------- | ------- | ------------------------------------ |
+| `GET    /api/categorias`     | GET     | Lista todas as categorias do tenant  |
+| `GET    /api/categorias/:id` | GET     | Retorna os detalhes de uma categoria |
+| `POST   /api/categorias`     | POST    | Cria uma nova categoria              |
+| `PATCH  /api/categorias/:id` | PATCH   | Atualiza uma categoria existente     |
+| `DELETE /api/categorias/:id` | DELETE  | Remove uma categoria                 |
 
+## 11. campos
+
+**Descrição**: armazena as áreas de atuação ou categorias de “campo” usadas para classificar usuários, inscrições e produtos em cada tenant.
+
+| Campo     | Tipo                      | Obrigatório | Descrição                                      |
+| --------- | ------------------------- | ----------- | ---------------------------------------------- |
+| `id`      | ID                        | Sim         | Identificador único gerado pelo PocketBase     |
+| `nome`    | String                    | Sim         | Nome do campo (ex.: “Tecnologia”, “Marketing”) |
+| `cliente` | Relation → `m24_clientes` | Sim         | Tenant proprietário (multi-tenant)             |
+| `created` | DateTime                  | Sim         | Timestamp de criação                           |
+| `updated` | DateTime                  | Sim         | Timestamp da última atualização                |
+
+### Permissões / Roles
+
+- **Leitura**:
+  - `admin` e `user_org`: acessam todos os campos.
+  - `usuario`: lê lista e detalhes para seu próprio tenant.
+- **Gravação**:
+  - `admin` e `user_org`: podem criar, editar e deletar.
+  - `usuario`: sem permissão de escrita.
+
+### Relacionamentos
+
+- Referenciado por:
+  - `produtos.campo`
+  - `inscricoes.campo`
+  - `usuarios.campo`
+
+### Endpoints de API
+
+| Rota                     | Métodos | Descrição                       |
+| ------------------------ | ------- | ------------------------------- |
+| `GET  /api/campos`       | GET     | Lista todos os campos do tenant |
+| `GET  /api/campos/:id`   | GET     | Detalha um campo                |
+| `POST /api/campos`       | POST    | Cria novo campo                 |
+| `PATCH /api/campos/:id`  | PATCH   | Atualiza um campo               |
+| `DELETE /api/campos/:id` | DELETE  | Remove um campo                 |
+
+### Fluxos de Negócio
+
+1. **Criação**
+   - `POST /api/campos` com `{ nome, cliente }`.
+2. **Atualização**
+   - `PATCH` permite renomear ou ajustar regras de uso.
+3. **Exclusão**
+   - `DELETE` impede remoção se houver referências ativas; alterna para flag “inativo” em vez de apagar, se preferir.
+
+### Exemplo de Payload
+
+`````json
+{
+  "nome": "Design",
+  "cliente": "tenant_xyz"
+}
+
+
+## 12. usuarios
+
+**Descrição**: gerencia os usuários do sistema, com autenticação, roles e dados de perfil.
+
+| Campo             | Tipo                      | Obrigatório | Descrição                                          |
+| ----------------- | ------------------------- | ----------- | -------------------------------------------------- |
+| `id`              | ID                        | Sim         | Identificador único gerado pelo PocketBase         |
+| `password`        | Hidden                    | Sim         | Hash da senha (não exposto em queries públicas)    |
+| `tokenKey`        | Hidden                    | Sim         | Chave usada para revogar sessões                   |
+| `email`           | String                    | Sim         | E-mail de login (único)                            |
+| `emailVisibility` | Boolean                   | Não         | Se o e-mail pode ser exibido para outros usuários  |
+| `verified`        | Boolean                   | Não         | Se o e-mail foi verificado por link de confirmação |
+| `nome`            | String                    | Não         | Nome completo do usuário                           |
+| `role`            | Select (maxSelect 1)      | Sim         | Função: `coordenador` • `lider` • `usuario`        |
+| `campo`           | Relation → `campos`       | Não         | Área de atuação / campo de interesse               |
+| `telefone`        | String                    | Não         | Telefone de contato                                |
+| `cpf`             | String                    | Não         | CPF para identificação (índice único)              |
+| `data_nascimento` | Date                      | Não         | Data de nascimento                                 |
+| `cliente`         | Relation → `m24_clientes` | Sim         | Tenant ao qual o usuário pertence                  |
+| `endereco`        | String                    | Não         | Logradouro                                         |
+| `estado`          | String                    | Não         | Estado                                             |
+| `cep`             | String                    | Não         | CEP                                                |
+| `cidade`          | String                    | Não         | Cidade                                             |
+| `numero`          | String                    | Não         | Número / complemento                               |
+| `bairro`          | String                    | Não         | Bairro                                             |
+| `genero`          | Select (maxSelect 1)      | Não         | Gênero: `masculino` • `feminino`                   |
+| `created`         | DateTime                  | Sim         | Timestamp de criação                               |
+| `updated`         | DateTime                  | Sim         | Timestamp da última atualização                    |
+
+#### Permissões / Roles
+
+- **Leitura**:
+  - `admin` e `user_org`: acessam todos os campos.
+  - `usuario`: lê apenas seu próprio registro (exceto `password`/`tokenKey`).
+- **Gravação**:
+  - `admin` e `user_org`: criar/editar/deletar usuários.
+  - `usuario`: editar apenas seu próprio perfil (limitado).
+
+#### Relacionamentos
+
+- `campo` → `campos.id`
+- `cliente` → `m24_clientes.id`
+
+#### Endpoints de API
+
+| Rota                       | Métodos | Descrição                                      |
+| -------------------------- | ------- | ---------------------------------------------- |
+| `GET  /api/usuarios`       | GET     | Lista usuários (filtros por `role`, `cliente`) |
+| `GET  /api/usuarios/:id`   | GET     | Detalha um usuário                             |
+| `POST /api/usuarios`       | POST    | Cria novo usuário                              |
+| `PATCH /api/usuarios/:id`  | PATCH   | Atualiza dados de um usuário                   |
+| `DELETE /api/usuarios/:id` | DELETE  | Remove usuário                                 |
+
+#### Fluxos de Negócio
+
+1. **Cadastro**: após `POST`, enviar e-mail de confirmação.
+2. **Login/Logout**: gera `tokenKey`; logout revoga via limpeza desse campo.
+3. **Verificação**: confirmação de e-mail seta `verified=true`.
+
+#### Exemplo de Payload
+
+````json
+{
+  "email": "joao@example.com",
+  "password": "hash123...",
+  "nome": "João Silva",
+  "role": "usuario",
+  "cpf": "123.456.789-00",
+  "cliente": "tenant_xyz"
+}
+
+## 13. manifesto_clientes
+
+**Descrição**: configurações mínimas para gerar dinamicamente o Web App Manifest de cada tenant, usando um único campo de logo-base e defaults de exibição/orientação.
+
+| Campo                 | Tipo                            | Obrigatório | Descrição                                                         |
+| --------------------- | ------------------------------- | ----------- | ----------------------------------------------------------------- |
+| `id`                  | ID                              | Sim         | Identificador único gerado pelo PocketBase                        |
+| `cliente`             | Relation → `m24_clientes`       | Sim         | Tenant proprietário (multi-tenant)                                |
+| `logo`                | File                            | Não         | Imagem base para geração dinâmica de ícones                       |
+| `name`                | String                          | Não         | Nome completo do app (Web App Manifest)                           |
+| `short_name`          | String                          | Não         | Nome curto para launcher                                          |
+| `description`         | Text                            | Não         | Descrição curta do PWA                                            |
+| `theme_color`         | String                          | Não         | Cor primária (hex, ex.: `#0055AA`)                                |
+| `background_color`    | String                          | Não         | Cor de fundo (hex)                                                |
+| `start_url`           | String                          | Não         | Caminho inicial ao abrir o PWA                                    |
+| `display_default`     | Select (maxSelect 1)            | Não         | `standalone` • `minimal-ui` • `browser` • `fullscreen`            |
+| `orientation_default` | Select (maxSelect 1)            | Não         | `portrait` • `landscape`                                          |
+| `created`             | DateTime                        | Sim         | Timestamp de criação                                              |
+| `updated`             | DateTime                        | Sim         | Timestamp da última atualização                                   |
+
+### Permissões / Roles
+- **Leitura**: público via `/api/manifest.json` (tenant identificado pelo host).
+- **Gravação**: somente `admin` e `user_org`.
+
+### Relacionamentos
+- `cliente` → `m24_clientes.id`
+
+### Endpoints de API
+| Rota                            | Métodos  | Descrição                                           |
+| ------------------------------- | -------- | --------------------------------------------------- |
+| `GET  /api/manifesto_clientes`       | GET      | Lista configurações de manifesto (admin)            |
+| `GET  /api/manifesto_clientes/:id`   | GET      | Detalha uma configuração de manifesto (admin)       |
+| `POST /api/manifesto_clientes`       | POST     | Cria nova configuração de manifesto (admin)         |
+| `PATCH /api/manifesto_clientes/:id`  | PATCH    | Atualiza configuração de manifesto (admin)          |
+| `DELETE /api/manifesto_clientes/:id` | DELETE   | Remove configuração de manifesto (admin)            |
+| `GET  /api/manifest.json`            | GET      | Retorna Web App Manifest dinâmico conforme host     |
+
+### Fluxos de Negócio
+1. **CRUD Admin**: `logo`, cores e defaults são gerenciados; timestamps automáticos.
+2. **Geração de Ícones**: handler redimensiona `logo` on-the-fly via query-params (`?w=&h=`).
+3. **Servir Manifesto**: `/api/manifest.json` detecta `host`, busca registro e retorna JSON.
+4. **Cache**: atualizar registro dispara webhook para invalidar CDN.
+
+### Exemplo de Payload
+```json
+{
+  "cliente": "tenant_xyz",
+  "logo": "file_abcd1234",
+  "name": "MultiApp Portal",
+  "short_name": "MultiApp",
+  "description": "Portal e loja multi-tenant em Next.js",
+  "theme_color": "#0055AA",
+  "background_color": "#FFFFFF",
+  "start_url": "/",
+  "display_default": "standalone",
+  "orientation_default": "portrait"
+}
+`````
