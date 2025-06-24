@@ -274,6 +274,15 @@ Agora também é possível **editar** ou **excluir** contas existentes. Utilize 
 `/admin/api/bank-accounts/[id]` e `/admin/api/pix-keys/[id]` para atualizar ou
 remover registros conforme o tipo.
 
+### Endpoint `/api/upload-image`
+
+Envie um `POST` contendo o arquivo no corpo (campo `file`). O servidor converte
+o arquivo para WebP com `sharp`, salva em `public/uploads` e retorna:
+
+```json
+{ "urlWebp": "/uploads/arquivo.webp" }
+```
+
 ## Tipos de Produto e Fluxos de Venda
 
 Existem três formatos principais de produtos:

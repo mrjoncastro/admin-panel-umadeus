@@ -6,7 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { useToast } from '@/lib/context/ToastContext'
 
 export default function RedefinirSenhaClient() {
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams()!
   const router = useRouter()
   const token = searchParams.get('token') ?? ''
 

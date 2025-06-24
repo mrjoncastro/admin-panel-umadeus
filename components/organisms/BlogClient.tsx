@@ -58,7 +58,7 @@ export default function BlogClient() {
   const [search, setSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
 
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams()!
   const categoriaSelecionada =
     searchParams.get('categoria')?.toLowerCase() || ''
 

@@ -10,7 +10,7 @@ import { useToast } from '@/lib/context/ToastContext'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 export default function EditarEventoPage() {
-  const { id } = useParams<{ id: string }>()
+  const { id } = useParams() as { id: string }
   const { user: ctxUser, isLoggedIn } = useAuthContext()
   const { showSuccess, showError } = useToast()
   const { authChecked } = useAuthGuard(['coordenador'])

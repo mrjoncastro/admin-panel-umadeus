@@ -104,13 +104,25 @@ export default function ConfiguracoesPage() {
     }
     const file = e.target.files?.[0]
     if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => {
-      const url = reader.result as string
-      setLogoUrl(url)
-      updateConfig({ logoUrl: url })
-    }
-    reader.readAsDataURL(file)
+    const data = new FormData()
+    data.append('file', file)
+    fetch('/api/upload-image', { method: 'POST', body: data })
+      .then((r) => r.json())
+      .then((res) => {
+        if (res.urlWebp) {
+          setLogoUrl(res.urlWebp as string)
+          updateConfig({ logoUrl: res.urlWebp as string })
+        }
+      })
+      .catch(() => {
+        const reader = new FileReader()
+        reader.onload = () => {
+          const url = reader.result as string
+          setLogoUrl(url)
+          updateConfig({ logoUrl: url })
+        }
+        reader.readAsDataURL(file)
+      })
   }
 
   const handleColorChange = (e: ChangeEvent<HTMLInputElement>) => {

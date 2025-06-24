@@ -15,7 +15,7 @@ type Post = PostClientRecord
 export default function BlogSidebar() {
   const [popular, setPopular] = useState<Post[]>([])
   const [categories, setCategories] = useState<string[]>([])
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams()!
   const current = searchParams.get('categoria')?.toLowerCase()
 
   useEffect(() => {

@@ -7,7 +7,7 @@ import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import ProdutoInterativo from '@/components/organisms/ProdutoInterativo'
 import type { Produto as ProdutoBase } from '@/types'
 export default function ProdutoDetalhe() {
-  const { slug } = useParams<{ slug: string }>()
+  const { slug } = useParams() as { slug: string }
   const [produto, setProduto] = useState<ProdutoBase | null>(null)
   const [erro, setErro] = useState(false)
 

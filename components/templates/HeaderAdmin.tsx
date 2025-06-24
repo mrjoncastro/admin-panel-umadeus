@@ -36,7 +36,7 @@ const getNavLinks = (role?: string) => {
 }
 
 export default function Header() {
-  const pathname = usePathname()
+  const pathname = usePathname()!
   const { isLoggedIn, user, logout } = useAuthContext()
   const [menuAberto, setMenuAberto] = useState(false)
   const [perfilAberto, setPerfilAberto] = useState(false)

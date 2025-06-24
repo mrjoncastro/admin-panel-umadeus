@@ -9,7 +9,7 @@ import { formatDate } from '@/utils/formatDate'
 import type { Evento } from '@/types'
 
 export default function EscolherEventoPage() {
-  const params = useParams()
+  const params = useParams()!
   const liderId = params.liderId as string
   const [eventos, setEventos] = useState<Evento[]>([])
   const [loading, setLoading] = useState(true)

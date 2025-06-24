@@ -29,7 +29,7 @@ export default function AdminProdutosPage() {
   const [produtos, setProdutos] = useState<Produto[]>([])
   const [page, setPage] = useState(1)
   const [modalOpen, setModalOpen] = useState(false)
-  const pathname = usePathname()
+  const pathname = usePathname()!
 
   useEffect(() => {
     if (!authChecked) return
