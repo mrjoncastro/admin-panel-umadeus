@@ -9,7 +9,7 @@ import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
 export type Body = {
   eventType: 'nova_inscricao' | 'confirmacao_inscricao'
-  userId:    string
+  userId: string
   paymentLink?: string
 }
 
@@ -24,7 +24,10 @@ export async function POST(req: NextRequest) {
     // 1) parse + validação
     const { eventType, userId, paymentLink } = (await req.json()) as Body
     if (!eventType || !userId) {
-      return NextResponse.json({ error: 'Parâmetros faltando' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Parâmetros faltando' },
+        { status: 400 },
+      )
     }
 
     // 2) identifica o tenant e autentica no PB
@@ -41,7 +44,10 @@ export async function POST(req: NextRequest) {
       .collection('clientes_config')
       .getFirstListItem(`cliente='${clienteId}'`)
     if (!cfg) {
-      return NextResponse.json({ error: 'Configuração não encontrada' }, { status: 404 })
+      return NextResponse.json(
+        { error: 'Configuração não encontrada' },
+        { status: 404 },
+      )
     }
 
     // 4) busca usuário
@@ -51,17 +57,17 @@ export async function POST(req: NextRequest) {
     }
 
     // 5) monta subject + html
-    const cor  = cfg.cor_primary || '#7c3aed'
-    const logo = cfg.logo_url    || ''
+    const cor = cfg.cor_primary || '#7c3aed'
+    const logo = cfg.logo_url || ''
     let subject: string, html: string
 
     if (eventType === 'nova_inscricao') {
       subject = '📝 Recebemos sua inscrição!'
-      html    = await loadTemplate('novaInscricao')
+      html = await loadTemplate('novaInscricao')
     } else {
       subject = '✅ Inscrição Confirmada'
-      html    = await loadTemplate('confirmacaoInscricao')
-      html    = html.replace(/{{paymentLink}}/g, paymentLink || '')
+      html = await loadTemplate('confirmacaoInscricao')
+      html = html.replace(/{{paymentLink}}/g, paymentLink || '')
     }
 
     html = html
@@ -71,33 +77,39 @@ export async function POST(req: NextRequest) {
 
     // 6) configura o Nodemailer
     const transporter = nodemailer.createTransport({
-      host:   cfg.smtpHost   || process.env.SMTP_HOST,
-      port:   Number(cfg.smtpPort   || process.env.SMTP_PORT   || 587),
-      secure: cfg.smtpSecure ?? (process.env.SMTP_SECURE === 'true'),
+      host: cfg.smtpHost || process.env.SMTP_HOST,
+      port: Number(cfg.smtpPort || process.env.SMTP_PORT || 587),
+      secure: cfg.smtpSecure ?? process.env.SMTP_SECURE === 'true',
       auth: {
-        user: cfg.smtpUser   || process.env.SMTP_USER,
-        pass: cfg.smtpPass   || process.env.SMTP_PASS,
+        user: cfg.smtpUser || process.env.SMTP_USER,
+        pass: cfg.smtpPass || process.env.SMTP_PASS,
       },
       connectionTimeout: 10_000,
-      tls: { rejectUnauthorized: false }
+      tls: { rejectUnauthorized: false },
     })
 
     // 7) envia o e-mail
     await transporter.verify()
     await transporter.sendMail({
-      from:    cfg.smtpFrom || process.env.SMTP_FROM!,
-      to:      user.email,
+      from: cfg.smtpFrom || process.env.SMTP_FROM!,
+      to: user.email,
       subject,
       html,
     })
 
-    return NextResponse.json({ message: 'E-mail enviado com sucesso' }, { status: 200 })
+    return NextResponse.json(
+      { message: 'E-mail enviado com sucesso' },
+      { status: 200 },
+    )
   } catch (err: unknown) {
     // só log no servidor, sem expor detalhes ao cliente
     if (err instanceof Error) {
       console.error('🚨 [email/route] erro ao enviar e-mail:', err)
     } else {
-      console.error('🚨 [email/route] erro ao enviar e-mail (não-Error):', String(err))
+      console.error(
+        '🚨 [email/route] erro ao enviar e-mail (não-Error):',
+        String(err),
+      )
     }
     return NextResponse.json(
       { error: 'Erro interno ao enviar e-mail' },
