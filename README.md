@@ -11,6 +11,8 @@ Coordenadores podem iniciar o tour clicando no ícone de mapa ao lado do sino de
 
 A página inicial pode ser montada dinamicamente. As seções são configuradas em
 `/admin/page-builder/home` e consumidas pela rota `/api/home-sections`.
+Após salvar as alterações, clique em **Publicar** para revalidar a página da
+loja pelo endpoint `/admin/api/revalidate-loja`.
 
 ## Diretórios Principais
 
