@@ -43,6 +43,22 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    if (!pb.authStore.isValid) {
+      console.log('🔐 Autenticando admin PocketBase...')
+      try {
+        await pb.admins.authWithPassword(
+          process.env.PB_ADMIN_EMAIL!,
+          process.env.PB_ADMIN_PASSWORD!,
+        )
+      } catch (err) {
+        console.error('❌ Falha ao autenticar admin PocketBase:', err)
+        return NextResponse.json(
+          { error: 'Falha na autenticação do servidor' },
+          { status: 500 },
+        )
+      }
+    }
+
     const cfg = await pb.collection('clientes_config').getOne(tenantId)
     console.log('⚙️ Configurações do tenant:', cfg)
 
