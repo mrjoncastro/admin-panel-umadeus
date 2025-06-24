@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer'
 import { promises as fs } from 'fs'
 import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
+import { ClientResponseError } from 'pocketbase'
 
 export type Body = {
   eventType: 'nova_inscricao' | 'confirmacao_inscricao'
@@ -43,7 +44,21 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const cfg = await pb.collection('clientes_config').getOne(tenantId)
+    let cfg
+    try {
+      cfg = await pb.collection('clientes_config').getOne(tenantId)
+    } catch (err) {
+      if (err instanceof ClientResponseError && err.status === 404) {
+        console.error(
+          `❌ Configuração não encontrada para o cliente: ${tenantId}`,
+        )
+        return NextResponse.json(
+          { error: 'Configuração do cliente não encontrada' },
+          { status: 404 },
+        )
+      }
+      throw err
+    }
     console.log('⚙️ Configurações do tenant:', cfg)
 
     const transporter = nodemailer.createTransport({
