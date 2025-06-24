@@ -108,14 +108,7 @@ export default function EditarPostPage() {
 
           <div className="flex flex-wrap items-center gap-4 text-[0.9375rem] mb-6">
             <div className="flex items-center gap-2 min-w-0">
-              <Image
-                src="/img/avatar_m24.webp"
-                alt="Autor"
-                width={40}
-                height={40}
-                className="flex-shrink-0 w-9 h-9 rounded-full object-cover"
-              />
-              <span>Redação M24</span>
+              <span className="font-semibold">Redação M24</span>
             </div>
 
             <div className="flex items-center gap-1">

@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const imagem =
     produto.imagens && produto.imagens.length
       ? pb.files.getURL(produto, produto.imagens[0])
-      : '/img/og-default.jpg'
+      : undefined
   const title = `Loja - ${produto.nome}`
   const description = produto.descricao || ''
   return {
@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      images: [imagem],
+      ...(imagem ? { images: [imagem] } : {}),
     },
   }
 }

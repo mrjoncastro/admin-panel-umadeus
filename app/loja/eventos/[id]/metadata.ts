@@ -31,14 +31,14 @@ export async function generateMetadata({
   const evento = await getEvento(params.id)
   const title = evento ? evento.titulo : 'Evento'
   const description = evento?.descricao || 'Detalhes do evento.'
-  const image = evento?.imagem || '/img/og-default.jpg'
+  const image = evento?.imagem || undefined
   return {
     title,
     description,
     openGraph: {
       title,
       description,
-      images: [image],
+      ...(image ? { images: [image] } : {}),
     },
   }
 }

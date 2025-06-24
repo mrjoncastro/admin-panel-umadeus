@@ -110,13 +110,15 @@ export default function Header() {
             className="flex items-center gap-2 text-xl md:text-2xl font-bold tracking-wide font-bebas"
             aria-label="Página inicial"
           >
-            <Image
-              src={config.logoUrl || '/img/logo_umadeus_branco.png'}
-              alt="UMADEUS"
-              width={36}
-              height={36}
-              className="h-9 w-auto"
-            />
+            {config.logoUrl && (
+              <Image
+                src={config.logoUrl}
+                alt="UMADEUS"
+                width={36}
+                height={36}
+                className="h-9 w-auto"
+              />
+            )}
           </Link>
 
           {/* Navegação Desktop */}

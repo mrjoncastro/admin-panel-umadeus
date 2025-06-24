@@ -79,14 +79,16 @@ export default function Header() {
     <header className="bg-animated backdrop-blur-md text-[var(--text-header-primary)] shadow-md sticky top-0 z-50 gradient-x">
       <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
         <Link href="/" className="flex items-center">
-          <Image
-            src={config.logoUrl || '/img/logo_umadeus_branco.png'}
-            alt="Logotipo UMADEUS"
-            width={160}
-            height={40}
-            className="h-10 w-auto"
-            priority
-          />
+          {config.logoUrl && (
+            <Image
+              src={config.logoUrl}
+              alt="Logotipo"
+              width={160}
+              height={40}
+              className="h-10 w-auto"
+              priority
+            />
+          )}
         </Link>
 
         {/* Botão hambúrguer */}

@@ -21,14 +21,14 @@ export async function generateMetadata({
     ? produto.imagens[0]
     : typeof produto.imagens === 'object'
       ? Object.values(produto.imagens as Record<string, string[]>)[0]?.[0]
-      : produto.imagem || '/img/og-default.jpg'
+      : produto.imagem || undefined
   return {
     title: produto.nome,
     description: produto.descricao || '',
     openGraph: {
       title: produto.nome,
       description: produto.descricao || '',
-      images: [imagem],
+      ...(imagem ? { images: [imagem] } : {}),
     },
   }
 }

@@ -59,16 +59,7 @@ export default function Home() {
           </Link>
         </div>
         {/* Direita: Imagem crua */}
-        <div className="relative w-full h-[300px] md:h-auto">
-          <Image
-            src="/img/qg3_tech.webp"
-            alt="Congresso UMADEUS"
-            fill
-            style={{ objectFit: 'cover' }}
-            className="w-full h-full"
-            priority
-          />
-        </div>
+        <div className="relative w-full h-[300px] md:h-auto" />
       </section>
 
       {/* PRODUTOS DESTAQUE */}
