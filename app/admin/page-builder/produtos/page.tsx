@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import ContentEditable from 'react-contenteditable'
+import ContentEditable, { type ContentEditableEvent } from 'react-contenteditable'
 import { Button, FormField, TextField } from '@/components'
 import { Produto } from '@/types'
 import ProdutoCardPreview from '@/components/admin/ProdutoCardPreview'
@@ -16,7 +16,7 @@ export default function ProdutoBuilderPage() {
     setForm((f) => ({ ...f, [name]: value }))
   }
 
-  function handleDescChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleDescChange(e: ContentEditableEvent) {
     setForm((f) => ({ ...f, descricao: e.target.value }))
   }
 
@@ -58,7 +58,7 @@ export default function ProdutoBuilderPage() {
         <FormField label="Descrição">
           <ContentEditable
             html={form.descricao}
-            onChange={handleDescChange as unknown as React.ChangeEventHandler<HTMLInputElement>}
+            onChange={handleDescChange}
             className="input-base min-h-[80px]"
           />
         </FormField>
