@@ -7,6 +7,11 @@ As preferências de fonte, cor, logotipo e confirmação de inscrições ficam n
 Para um passo a passo inicial do sistema consulte [docs/iniciar-tour.md](docs/iniciar-tour.md).
 Coordenadores podem iniciar o tour clicando no ícone de mapa ao lado do sino de notificações no painel admin ou acessando `/iniciar-tour` diretamente.
 
+## Page Builder
+
+A página inicial pode ser montada dinamicamente. As seções são configuradas em
+`/admin/page-builder/home` e consumidas pela rota `/api/home-sections`.
+
 ## Diretórios Principais
 
 - `app/` - rotas e páginas
