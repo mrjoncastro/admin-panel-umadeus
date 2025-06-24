@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { UAParser } from 'ua-parser-js'
-import PocketBase from 'pocketbase'
+import PocketBase, { ClientResponseError } from 'pocketbase'
 import { logConciliacaoErro } from '@/lib/server/logger'
 
 export const config = { runtime: 'edge' }
@@ -119,6 +119,45 @@ export default async function handler(req: NextRequest) {
       background_color: cfg.background_color,
       theme_color: cfg.theme_color,
       icons,
+    }
+
+    try {
+      const manifestoData = {
+        cliente: cfg.cliente,
+        logo: cfg.logo,
+        name: cfg.name,
+        short_name: cfg.short_name,
+        description: cfg.description,
+        theme_color: cfg.theme_color,
+        background_color: cfg.background_color,
+        start_url: cfg.start_url,
+        display_default: cfg.display_default,
+        orientation_default: cfg.orientation_default,
+      }
+      try {
+        const record = await pb
+          .collection('manifesto_clientes')
+          .getFirstListItem(`cliente='${cfg.cliente}'`)
+        await pb.collection('manifesto_clientes').update(record.id, manifestoData)
+      } catch (err) {
+        if (err instanceof ClientResponseError && err.status === 404) {
+          try {
+            await pb.collection('manifesto_clientes').create(manifestoData)
+          } catch (createErr) {
+            await logConciliacaoErro(
+              `[manifest.json] erro ao criar manifesto: ${String(createErr)}`,
+            )
+          }
+        } else {
+          await logConciliacaoErro(
+            `[manifest.json] erro ao atualizar manifesto: ${String(err)}`,
+          )
+        }
+      }
+    } catch (err) {
+      await logConciliacaoErro(
+        `[manifest.json] erro ao processar manifesto: ${String(err)}`,
+      )
     }
 
     const etag = `"${cfg.updated}"`
