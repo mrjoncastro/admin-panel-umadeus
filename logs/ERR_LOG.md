@@ -163,3 +163,6 @@
 ## [2025-06-23] Pagamento de inscrição redirecionava ao checkout em vez de usar o link existente. Botão corrigido para reutilizar link_pagamento do pedido. - dev - f095415
 
 ## [2025-06-23] Erro ao gerar link de pagamento Asaas: TypeError: ranges is not iterable - development
+
+## [2025-06-24] sections.map nao era funcao na loja; adicionado getSections com verificacao de array - dev - 164aacff79c6a747b2346877946f764566524bc7
+## [2025-06-24] Logger usava fs/promises no Edge; implementado import dinamico e fallback para console - dev - 3cf4308
