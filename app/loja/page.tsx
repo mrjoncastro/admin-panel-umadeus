@@ -9,13 +9,23 @@ interface HomeSection {
   props?: Record<string, unknown>
 }
 
+async function getSections(): Promise<HomeSection[]> {
+  try {
+    const host = (await headers()).get('host') || 'localhost:3000'
+    const protocol = host.includes('localhost') ? 'http' : 'https'
+    const res = await fetch(`${protocol}://${host}/api/home-sections`, {
+      next: { revalidate: 60 },
+    })
+    if (!res.ok) return []
+    const data = await res.json()
+    return Array.isArray(data) ? (data as HomeSection[]) : []
+  } catch {
+    return []
+  }
+}
+
 export default async function LojaPage() {
-  const host = (await headers()).get('host') || 'localhost:3000'
-  const protocol = host.includes('localhost') ? 'http' : 'https'
-  const res = await fetch(`${protocol}://${host}/api/home-sections`, {
-    next: { revalidate: 60 },
-  })
-  const sections: HomeSection[] = await res.json()
+  const sections = await getSections()
 
   return (
     <>
