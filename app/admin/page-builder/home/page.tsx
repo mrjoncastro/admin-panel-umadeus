@@ -88,6 +88,17 @@ export default function HomeBuilderPage() {
     showSuccess('Ordem salva')
   }
 
+  async function publicar() {
+    const res = await fetch('/admin/api/revalidate-loja', {
+      method: 'POST',
+    })
+    if (res.ok) {
+      showSuccess('Página publicada')
+    } else {
+      showError('Erro ao publicar')
+    }
+  }
+
   async function adicionarSecao(e: React.FormEvent) {
     e.preventDefault()
     const res = await fetch('/api/home-sections', {
@@ -134,6 +145,9 @@ export default function HomeBuilderPage() {
       </DndContext>
       <Button onClick={salvarOrdem} className="mt-4">
         Salvar ordem
+      </Button>
+      <Button onClick={publicar} className="mt-2" variant="secondary">
+        Publicar
       </Button>
     </div>
   )
