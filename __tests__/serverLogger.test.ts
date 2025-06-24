@@ -1,34 +1,31 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import path from 'path'
-
-vi.mock('fs/promises', () => ({ appendFile: vi.fn() }))
-
-import { logConciliacaoErro } from '../lib/server/logger'
-import * as fsPromises from 'fs/promises'
+import { logConciliacaoErro, logError } from '../lib/server/logger'
 
 describe('logConciliacaoErro', () => {
   afterEach(() => {
     vi.restoreAllMocks()
   })
 
-  it('escreve mensagem no arquivo de log', async () => {
-    const appendFileSpy = vi.spyOn(fsPromises, 'appendFile')
-    await logConciliacaoErro('teste')
-    const logPath = path.join(process.cwd(), 'logs', 'ERR_LOG.md')
-    expect(appendFileSpy).toHaveBeenCalledWith(
-      logPath,
-      expect.stringContaining('teste'),
-    )
-  })
-
-  it('exibe erro no console quando falha', async () => {
-    const err = new Error('fail')
-    const appendFileSpy = vi
-      .spyOn(fsPromises, 'appendFile')
-      .mockRejectedValue(err)
+  it('envia mensagem para o console', async () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     await logConciliacaoErro('teste')
-    expect(consoleSpy).toHaveBeenCalledWith('Falha ao registrar ERR_LOG', err)
-    expect(appendFileSpy).toHaveBeenCalled()
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ message: 'teste' }),
+    )
+  })
+})
+
+describe('logError', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('registra erro detalhado', async () => {
+    const err = new Error('fail')
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    await logError(err)
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ message: 'fail' }),
+    )
   })
 })

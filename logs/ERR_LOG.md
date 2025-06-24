@@ -1,3 +1,5 @@
+## [2025-06-24] Ajustado logger para usar console.error no Edge - dev - 8e00e3c
+
 ## [2025-06-07] Corrigida tipagem da página de categoria que quebrava build - dev - 450cce4
 
 ## [2025-06-07] Corrigido efeito em ListaInscricoes que não respondia a mudanças de autenticação - dev - 668eeb0
