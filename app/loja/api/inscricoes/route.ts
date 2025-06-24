@@ -91,8 +91,6 @@ export async function POST(req: NextRequest) {
 
     const record = await pb.collection('inscricoes').create(registroParaCriar)
 
-    console.log('Registro criado com sucesso:', record)
-
     return NextResponse.json(record, { status: 201 })
   } catch (err: unknown) {
     console.error('Erro ao criar inscrição:', err)
