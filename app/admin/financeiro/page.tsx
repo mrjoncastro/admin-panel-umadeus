@@ -41,7 +41,6 @@ export default function FinanceiroPage() {
           setALiberar(stats.netValue)
         }
       } catch (err) {
-        console.error('Erro ao obter saldo:', err)
       } finally {
         setLoading(false)
       }

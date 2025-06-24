@@ -23,7 +23,6 @@ export default function AreaCliente() {
       .then((res) => res.json())
       .then((data) => setInscricoes(Array.isArray(data) ? data : []))
       .catch((err) => {
-        console.error('Erro ao carregar inscricoes', err)
         setInscricoes([])
       })
 
@@ -31,7 +30,6 @@ export default function AreaCliente() {
       .then((res) => res.json())
       .then((data) => setPedidos(Array.isArray(data) ? data : []))
       .catch((err) => {
-        console.error('Erro ao carregar pedidos', err)
         setPedidos([])
       })
   }, [authChecked, user, pb])

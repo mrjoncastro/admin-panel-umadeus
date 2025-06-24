@@ -81,7 +81,6 @@ export default function NovoEventoPage() {
       setProdutos((prev) => [data, ...prev])
       setSelectedProdutos((prev) => [...prev, data.id])
     } catch (err) {
-      console.error('Erro ao criar produto:', err)
     } finally {
       setProdutoModalOpen(false)
     }
@@ -114,7 +113,6 @@ export default function NovoEventoPage() {
         showError('Falha ao salvar evento')
       }
     } catch (err) {
-      console.error('Erro ao salvar evento:', err)
       showError('Falha ao salvar evento')
     }
   }

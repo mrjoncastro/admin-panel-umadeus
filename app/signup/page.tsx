@@ -51,7 +51,6 @@ export default function SignUpPage() {
       showSuccess('Conta criada com sucesso!')
       router.push('/completar-cadastro')
     } catch (err) {
-      console.error('Erro no cadastro:', err)
       showError('Erro ao criar conta.')
     } finally {
       setLoading(false)

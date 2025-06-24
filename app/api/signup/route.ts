@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
+import { logConciliacaoErro } from '@/lib/server/logger'
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase()
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
     if (e.response?.data) {
       return NextResponse.json(e.response.data, { status: 400 })
     }
-    console.error('Erro em /api/signup:', err)
+    await logConciliacaoErro(`Erro em /api/signup: ${String(err)}`)
     return NextResponse.json(
       { error: 'Erro ao criar usuário' },
       { status: 500 },

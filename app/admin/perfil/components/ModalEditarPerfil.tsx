@@ -49,7 +49,6 @@ export default function ModalEditarPerfil({
 
       showSuccess('Perfil atualizado com sucesso.')
     } catch (err) {
-      console.error(err)
       showError('Erro ao atualizar perfil. Verifique os dados.')
     }
   }

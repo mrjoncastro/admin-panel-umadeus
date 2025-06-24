@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
     })
     return NextResponse.json(items, { status: 200 })
   } catch (err) {
-    console.error('Erro ao listar inscricoes:', err)
+    await logConciliacaoErro(`Erro ao listar inscricoes: ${String(err)}`)
     return NextResponse.json({ error: 'Erro ao listar' }, { status: 500 })
   }
 }
@@ -233,7 +233,9 @@ export async function POST(req: NextRequest) {
         }
       }
     } catch (e) {
-      console.error('Erro ao gerar pagamento automático:', e)
+      await logConciliacaoErro(
+        `Erro ao gerar pagamento automático: ${String(e)}`,
+      )
     }
 
     const responseData: Record<string, unknown> = {

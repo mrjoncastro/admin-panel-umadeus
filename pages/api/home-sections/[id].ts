@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
+import { logConciliacaoErro } from '@/lib/server/logger'
 
 export const config = { runtime: 'edge' }
 
@@ -29,7 +30,7 @@ export default async function handler(req: NextRequest) {
     }
     return new NextResponse('Method Not Allowed', { status: 405 })
   } catch (err) {
-    console.error('Erro em home-sections/[id]:', err)
+    await logConciliacaoErro(`Erro em home-sections/[id]: ${String(err)}`)
     return NextResponse.json({ error: 'Erro no servidor' }, { status: 500 })
   }
 }

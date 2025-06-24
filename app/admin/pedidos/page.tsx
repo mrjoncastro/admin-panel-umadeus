@@ -54,7 +54,6 @@ export default function PedidosPage() {
         setPedidos(items)
         if (data.totalPages) setTotalPaginas(data.totalPages)
       } catch (err) {
-        console.error('Erro ao carregar pedidos', err)
         showError('Erro ao carregar pedidos')
       } finally {
         setLoading(false)
@@ -253,7 +252,6 @@ export default function PedidosPage() {
                             )
                             showSuccess('Pedido excluído')
                           } catch (e) {
-                            console.error('Erro ao excluir:', e)
                             showError('Erro ao excluir pedido')
                           }
                         }
@@ -292,7 +290,6 @@ export default function PedidosPage() {
               setPedidoSelecionado(null)
               showSuccess('Pedido atualizado')
             } catch (e) {
-              console.error('Erro ao salvar edição:', e)
               showError('Erro ao salvar edição')
             }
           }}

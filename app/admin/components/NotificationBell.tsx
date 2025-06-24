@@ -40,7 +40,6 @@ export default function NotificationBell() {
         setCount(insList.length + pedidos.length)
         setInscricoes(insList)
       } catch (err) {
-        console.error('Erro ao buscar notificações', err)
       }
     }
 

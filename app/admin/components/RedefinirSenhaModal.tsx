@@ -22,7 +22,6 @@ export default function RedefinirSenhaModal({
       showSuccess('Enviamos um link de redefinição para seu e-mail.')
       onClose()
     } catch (err) {
-      console.error(err)
       showError('Não foi possível enviar o link. Verifique o e-mail.')
     }
   }

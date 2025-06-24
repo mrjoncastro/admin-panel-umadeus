@@ -261,7 +261,6 @@ export default function ListaInscricoesPage() {
             )
           }
         } catch (e) {
-          console.error('[confirmarInscricao] Erro fetch produto:', e)
         }
       }
 
@@ -342,7 +341,6 @@ export default function ListaInscricoesPage() {
       const checkout = await asaasRes.json()
 
       if (!asaasRes.ok || !checkout?.url) {
-        console.error(
           '[confirmarInscricao] Erro ao gerar link de pagamento:',
           checkout,
         )
@@ -396,7 +394,6 @@ export default function ListaInscricoesPage() {
       // 🔹 7. Mostrar sucesso visual
       showSuccess('Link de pagamento enviado com sucesso!')
     } catch (e) {
-      console.error('[confirmarInscricao] Erro:', e)
       showError('Erro ao confirmar inscrição e gerar pedido.')
     } finally {
       setConfirmandoId(null)

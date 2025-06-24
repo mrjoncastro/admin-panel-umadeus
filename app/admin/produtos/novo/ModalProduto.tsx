@@ -132,7 +132,6 @@ export function ModalProduto<T extends Record<string, unknown>>({
         setCategorias(Array.isArray(data) ? data : [])
       })
       .catch((err) => {
-        console.error('Erro ao carregar categorias:', err)
         setCategorias([])
       })
   }, [isLoggedIn, ctxUser?.role, open])
@@ -182,7 +181,6 @@ export function ModalProduto<T extends Record<string, unknown>>({
         setSelectedCategoria(data.id)
         showSuccess('Categoria criada')
       } else {
-        console.error(data)
         showError('Erro ao criar categoria')
       }
     } finally {
