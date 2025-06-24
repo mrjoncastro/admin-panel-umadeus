@@ -15,7 +15,7 @@ export default function LoginPage() {
 
 function LoginClient() {
   'use client'
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams()!
   const redirectTo = searchParams.get('redirect') || undefined
 
   return (

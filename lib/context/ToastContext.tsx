@@ -23,7 +23,7 @@ const ToastContext = createContext<ToastContextType>({
 })
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
+  const pathname = usePathname()!
   const [toasts, setToasts] = useState<
     { id: string; message: string; type: ToastType }[]
   >([])

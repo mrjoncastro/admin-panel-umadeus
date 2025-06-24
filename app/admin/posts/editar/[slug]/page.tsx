@@ -12,7 +12,7 @@ import { isExternalUrl } from '@/utils/isExternalUrl'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 
 export default function EditarPostPage() {
-  const { slug } = useParams<{ slug: string }>()
+  const { slug } = useParams() as { slug: string }
 
   const [conteudo, setConteudo] = useState('')
   const [preview, setPreview] = useState(false)

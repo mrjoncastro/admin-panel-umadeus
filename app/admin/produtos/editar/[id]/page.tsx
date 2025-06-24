@@ -32,7 +32,7 @@ function slugify(str: string) {
 }
 
 export default function EditarProdutoPage() {
-  const { id } = useParams<{ id: string }>()
+  const { id } = useParams() as { id: string }
   const { user: ctxUser, isLoggedIn } = useAuthContext()
   const router = useRouter()
   const { showSuccess, showError } = useToast()
