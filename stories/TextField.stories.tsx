@@ -21,7 +21,7 @@ export const TemaDinamico: Story = {
         initialConfig={{
           primaryColor: '#2563eb',
           font: 'var(--font-geist)',
-          logoUrl: '/img/logo_umadeus_branco.png',
+          logoUrl: 'https://placehold.co/120x120',
           confirmaInscricoes: false,
         }}
       >
@@ -31,7 +31,7 @@ export const TemaDinamico: Story = {
         initialConfig={{
           primaryColor: '#dc2626',
           font: 'var(--font-geist)',
-          logoUrl: '/img/logo_umadeus_branco.png',
+          logoUrl: 'https://placehold.co/120x120',
           confirmaInscricoes: false,
         }}
       >

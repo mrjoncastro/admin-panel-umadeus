@@ -51,7 +51,7 @@ export function getRelatedPosts(
         slug,
         title: data.title,
         summary: data.summary,
-        thumbnail: data.thumbnail || '/img/og-default.jpg', // 🔒 fallback garantido
+        thumbnail: data.thumbnail || '',
         category: data.category,
         date: isoDate,
       }

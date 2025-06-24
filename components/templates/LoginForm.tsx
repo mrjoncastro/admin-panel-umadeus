@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import Image from 'next/image'
+import { useTenant } from '@/lib/context/TenantContext'
 import RedefinirSenhaModal from '@/app/admin/components/RedefinirSenhaModal'
 import { useToast } from '@/lib/context/ToastContext'
 import '@/app/globals.css' // Certifique-se de que o CSS global está importado
@@ -18,6 +19,7 @@ export default function LoginForm({
 }) {
   const router = useRouter()
   const { login, isLoggedIn, isLoading, user } = useAuthContext()
+  const { config } = useTenant()
 
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
@@ -70,13 +72,15 @@ export default function LoginForm({
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6">
       <div className="relative z-10 w-full max-w-sm sm:max-w-md p-6 sm:p-8 bg-animated rounded-2xl backdrop-blur-md text-gray-200 shadow-lg">
         <div className="flex flex-col items-center gap-3 mb-6">
-          <Image
-            src="/img/logo_umadeus_branco.png"
-            alt="Logo UMADEUS"
-            width={120}
-            height={120}
-            priority
-          />
+          {config.logoUrl && (
+            <Image
+              src={config.logoUrl}
+              alt="Logo"
+              width={120}
+              height={120}
+              priority
+            />
+          )}
         </div>
 
         <motion.h1

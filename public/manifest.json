@@ -1,0 +1,12 @@
+{
+  "name": "UMADEUS - Juventude em Missão",
+  "short_name": "UMADEUS",
+  "icons": [],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "description": "Participe dos eventos e apoie a missão da juventude evangélica da Bahia. Inscreva-se e adquira seu kit UMADEUS com facilidade.",
+  "lang": "pt-BR"
+}

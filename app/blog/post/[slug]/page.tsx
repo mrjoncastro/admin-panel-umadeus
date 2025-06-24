@@ -41,7 +41,7 @@ export async function generateMetadata({
     openGraph: {
       title: post.title,
       description: post.summary || '',
-      images: [post.thumbnail || '/img/og-default.jpg'],
+      ...(post.thumbnail ? { images: [post.thumbnail] } : {}),
     },
   }
 }
@@ -80,7 +80,9 @@ export default async function BlogPostPage({
     description: post.summary || '',
     image: isExternalUrl(post.thumbnail || '')
       ? post.thumbnail
-      : `${siteUrl}${post.thumbnail || '/img/og-default.jpg'}`,
+      : post.thumbnail
+        ? `${siteUrl}${post.thumbnail}`
+        : undefined,
     author: {
       '@type': 'Person',
       name: 'Redação M24',
@@ -88,10 +90,6 @@ export default async function BlogPostPage({
     publisher: {
       '@type': 'Organization',
       name: 'M24 Saúde',
-      logo: {
-        '@type': 'ImageObject',
-        url: `${siteUrl}/img/M24.webp`,
-      },
     },
     datePublished: post.date || new Date().toISOString(),
     mainEntityOfPage: {
@@ -141,14 +139,7 @@ export default async function BlogPostPage({
 
         <div className="flex flex-wrap items-center gap-4 text-[0.9375rem] mb-6">
           <div className="flex items-center gap-2 min-w-0">
-            <Image
-              src="/img/avatar_m24.webp"
-              alt="Autor"
-              width={40}
-              height={40}
-              className="flex-shrink-0 w-9 h-9 rounded-full object-cover"
-            />
-            <span>Redação M24</span>
+            <span className="font-semibold">Redação M24</span>
           </div>
 
           <div className="flex items-center gap-1">

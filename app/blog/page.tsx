@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
     ? isExternalUrl(first.thumbnail)
       ? first.thumbnail
       : `${siteUrl}${first.thumbnail}`
-    : '/img/og-default.jpg'
+    : undefined
   const title = `Blog - ${first.title}`
   const description = first.summary || ''
   return {
@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      images: [image],
+      ...(image ? { images: [image] } : {}),
     },
   }
 }

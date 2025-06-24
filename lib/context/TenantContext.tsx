@@ -15,7 +15,7 @@ export type TenantConfig = {
 export const defaultConfig: TenantConfig = {
   font: 'var(--font-geist)',
   primaryColor: '#7c3aed',
-  logoUrl: '/img/logo_umadeus_branco.png',
+  logoUrl: '',
   confirmaInscricoes: false,
 }
 

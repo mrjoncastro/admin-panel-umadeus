@@ -9,7 +9,6 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      images: ['/img/og-default.jpg'],
     },
   }
 }
