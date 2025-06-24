@@ -48,7 +48,7 @@ export default function ModalEditarPerfil({
       })
 
       showSuccess('Perfil atualizado com sucesso.')
-    } catch (err) {
+    } catch {
       showError('Erro ao atualizar perfil. Verifique os dados.')
     }
   }

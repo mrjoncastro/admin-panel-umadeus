@@ -53,7 +53,7 @@ export default function PedidosPage() {
         const items = Array.isArray(data.items) ? data.items : data
         setPedidos(items)
         if (data.totalPages) setTotalPaginas(data.totalPages)
-      } catch (err) {
+      } catch {
         showError('Erro ao carregar pedidos')
       } finally {
         setLoading(false)
@@ -251,7 +251,7 @@ export default function PedidosPage() {
                               prev.filter((p) => p.id !== pedido.id),
                             )
                             showSuccess('Pedido excluído')
-                          } catch (e) {
+                          } catch {
                             showError('Erro ao excluir pedido')
                           }
                         }
@@ -289,7 +289,7 @@ export default function PedidosPage() {
               )
               setPedidoSelecionado(null)
               showSuccess('Pedido atualizado')
-            } catch (e) {
+            } catch {
               showError('Erro ao salvar edição')
             }
           }}

@@ -27,7 +27,7 @@ export default function TourIcon() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tour: true }),
       })
-    } catch (err) {
+    } catch {
     }
     router.push('/iniciar-tour')
   }

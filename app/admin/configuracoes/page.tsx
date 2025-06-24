@@ -164,7 +164,7 @@ export default function ConfiguracoesPage() {
       } else {
         showError('Erro ao salvar configurações')
       }
-    } catch (err) {
+    } catch {
       showError('Erro ao salvar configurações')
     }
 

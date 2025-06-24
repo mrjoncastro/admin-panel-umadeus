@@ -78,7 +78,7 @@ export default function CompletarCadastroPage() {
       }
       showSuccess('Dados atualizados!')
       router.push('/loja/cliente')
-    } catch (err) {
+    } catch {
       showError('Erro ao atualizar dados.')
     } finally {
       setLoading(false)

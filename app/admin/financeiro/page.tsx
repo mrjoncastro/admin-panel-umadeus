@@ -40,7 +40,7 @@ export default function FinanceiroPage() {
           const stats: Statistics = await statsRes.json()
           setALiberar(stats.netValue)
         }
-      } catch (err) {
+      } catch {
       } finally {
         setLoading(false)
       }

@@ -39,7 +39,7 @@ export default function NotificationBell() {
         const pedidos = Array.isArray(pedRes.items) ? pedRes.items : pedRes
         setCount(insList.length + pedidos.length)
         setInscricoes(insList)
-      } catch (err) {
+      } catch {
       }
     }
 

@@ -93,3 +93,22 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(record, { status: 201 })
   } catch (err: unknown) {
+    
+    let detalhes: unknown = null
+    if (err instanceof ClientResponseError) {
+      detalhes = err.response
+    } else if (err && typeof err === 'object') {
+      const errorData = err as Record<string, unknown>
+      if ('response' in errorData) {
+        detalhes = errorData.response
+      }
+    }
+
+    await logConciliacaoErro(`Erro ao criar inscrição na loja: ${String(err)}`)
+    return NextResponse.json(
+      { error: 'Erro ao salvar', detalhes },
+      { status: 500 },
+    )
+  }
+}
+

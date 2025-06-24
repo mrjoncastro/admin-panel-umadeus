@@ -107,7 +107,7 @@ export default function BankAccountModal({
       }
       showSuccess('Conta salva!')
       onClose()
-    } catch (err) {
+    } catch {
       showError('Erro ao salvar.')
     }
   }

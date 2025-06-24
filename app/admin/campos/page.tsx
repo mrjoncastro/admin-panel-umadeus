@@ -58,7 +58,7 @@ export default function GerenciarCamposPage() {
 
         setCampos(data)
         setCamposCarregados(true) // Só carrega uma vez!
-      } catch (err) {
+      } catch {
         showError('Erro ao carregar campos.')
       }
     }
@@ -100,9 +100,7 @@ export default function GerenciarCamposPage() {
       } else {
         showError('Erro: ' + data.error)
       }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-      }
+    } catch {
       showError('Erro ao enviar dados.')
     } finally {
       setLoading(false)
@@ -116,7 +114,7 @@ export default function GerenciarCamposPage() {
       const res = await fetch('/admin/api/campos')
       const data = await res.json()
       if (res.ok) setCampos(data)
-    } catch (err: unknown) {
+    } catch {
     }
   }
 

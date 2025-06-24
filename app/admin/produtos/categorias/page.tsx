@@ -37,7 +37,7 @@ export default function CategoriasAdminPage() {
       .then((data) => {
         setCategorias(Array.isArray(data) ? data : [])
       })
-      .catch((err) => {
+      .catch(() => {
         setCategorias([])
       })
   }, [isLoggedIn, ctxUser?.role, authChecked])
@@ -62,13 +62,13 @@ export default function CategoriasAdminPage() {
         fetch('/admin/api/categorias')
           .then((r) => r.json())
           .then((cats) => setCategorias(Array.isArray(cats) ? cats : []))
-          .catch((err) => {
+          .catch(() => {
             setCategorias([])
           })
       } else {
         showError('Erro: ' + data.error)
       }
-    } catch (err) {
+    } catch {
       showError('Erro ao salvar categoria')
     } finally {
       setModalOpen(false)
@@ -90,7 +90,7 @@ export default function CategoriasAdminPage() {
       }
       setCategorias((prev) => prev.filter((c) => c.id !== id))
       showSuccess('Categoria excluída')
-    } catch (err) {
+    } catch {
       showError('Erro ao excluir categoria')
     }
   }

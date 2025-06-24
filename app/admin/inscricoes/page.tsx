@@ -239,13 +239,9 @@ export default function ListaInscricoesPage() {
         if (Array.isArray(inscricao.expand.produto)) {
           produtoRecord = inscricao.expand.produto.find(
             (p: Produto) => p.id === produtoId || p.id === inscricao.produto,
-          ):',
-            produtoRecord,
           )
         } else if (typeof inscricao.expand.produto === 'object') {
-          produtoRecord = inscricao.expand.produto as Produto:',
-            produtoRecord,
-          )
+          produtoRecord = inscricao.expand.produto as Produto
         }
       }
 
@@ -256,11 +252,10 @@ export default function ListaInscricoesPage() {
             credentials: 'include',
           })
           if (prodRes.ok) {
-            produtoRecord = await prodRes.json():',
-              produtoRecord,
-            )
+            produtoRecord = await prodRes.json()
           }
-        } catch (e) {
+        } catch {
+
         }
       }
 
@@ -341,9 +336,6 @@ export default function ListaInscricoesPage() {
       const checkout = await asaasRes.json()
 
       if (!asaasRes.ok || !checkout?.url) {
-          '[confirmarInscricao] Erro ao gerar link de pagamento:',
-          checkout,
-        )
         throw new Error('Erro ao gerar link de pagamento.')
       }
 
@@ -393,7 +385,7 @@ export default function ListaInscricoesPage() {
 
       // 🔹 7. Mostrar sucesso visual
       showSuccess('Link de pagamento enviado com sucesso!')
-    } catch (e) {
+    } catch {
       showError('Erro ao confirmar inscrição e gerar pedido.')
     } finally {
       setConfirmandoId(null)

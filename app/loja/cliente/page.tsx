@@ -22,14 +22,14 @@ export default function AreaCliente() {
     fetch('/loja/api/minhas-inscricoes', { headers, credentials: 'include' })
       .then((res) => res.json())
       .then((data) => setInscricoes(Array.isArray(data) ? data : []))
-      .catch((err) => {
+      .catch(() => {
         setInscricoes([])
       })
 
     fetch('/loja/api/pedidos', { headers, credentials: 'include' })
       .then((res) => res.json())
       .then((data) => setPedidos(Array.isArray(data) ? data : []))
-      .catch((err) => {
+      .catch(() => {
         setPedidos([])
       })
   }, [authChecked, user, pb])

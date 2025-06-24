@@ -41,7 +41,7 @@ export default function UsuariosPage() {
 
         const data = await res.json()
         setUsuarios(data)
-      } catch (error) {
+      } catch {
         showError('Erro inesperado ao carregar usuários.')
       } finally {
         setLoading(false)
@@ -63,7 +63,7 @@ export default function UsuariosPage() {
           : []
         setEventos(ativos)
         if (ativos.length > 0) setEventoId(ativos[0].id)
-      } catch (err) {
+      } catch {
       }
     }
 

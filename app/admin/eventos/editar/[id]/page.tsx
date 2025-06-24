@@ -108,7 +108,7 @@ export default function EditarEventoPage() {
       const data = await res.json()
       setProdutos((prev) => [data, ...prev])
       setSelectedProdutos((prev) => [...prev, data.id])
-    } catch (err) {
+    } catch {
     } finally {
       setProdutoModalOpen(false)
     }
@@ -144,7 +144,7 @@ export default function EditarEventoPage() {
       } else {
         showError('Falha ao salvar evento')
       }
-    } catch (err) {
+    } catch {
       showError('Falha ao salvar evento')
     }
   }

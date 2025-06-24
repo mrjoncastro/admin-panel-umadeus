@@ -31,7 +31,7 @@ export default function AdminPostsPage() {
   useEffect(() => {
     getPostsClientPB()
       .then(setPosts)
-      .catch((err) => {
+      .catch(() => {
       })
   }, [setPosts])
 

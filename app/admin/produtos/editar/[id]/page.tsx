@@ -257,7 +257,7 @@ export default function EditarProdutoPage() {
       } else {
         showError('Erro ao atualizar produto')
       }
-    } catch (err) {
+    } catch {
       showError('Erro ao atualizar produto')
     }
   }

@@ -47,7 +47,7 @@ export default function AdminProdutosPage() {
         const res = await fetch('/admin/api/produtos')
         const data = await res.json()
         setProdutos(Array.isArray(data) ? data : (data.items ?? []))
-      } catch (err) {
+      } catch {
       }
     }
     fetchProdutos()
@@ -102,14 +102,14 @@ export default function AdminProdutosPage() {
         body: formData,
       })
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
+        await res.json().catch(() => ({}))
         showError('Erro ao criar produto')
         return
       }
       const data = await res.json()
       setProdutos((prev) => [data, ...prev])
       showSuccess('Produto criado')
-    } catch (err) {
+    } catch {
       showError('Erro ao criar produto')
     }
 
@@ -130,7 +130,7 @@ export default function AdminProdutosPage() {
       }
       setProdutos((prev) => prev.filter((p) => p.id !== id))
       showSuccess('Produto excluído')
-    } catch (err) {
+    } catch {
       showError('Erro ao excluir produto')
     }
   }

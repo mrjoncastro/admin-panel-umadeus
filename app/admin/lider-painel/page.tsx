@@ -122,7 +122,7 @@ export default function LiderDashboardPage() {
         }
 
         setTotais({ inscricoes: resumoInscricoes, pedidos: resumoPedidos })
-      } catch (err) {
+      } catch {
       } finally {
         if (isMounted.current) setLoading(false)
       }

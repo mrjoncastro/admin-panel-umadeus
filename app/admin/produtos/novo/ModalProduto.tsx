@@ -131,7 +131,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
       .then((data) => {
         setCategorias(Array.isArray(data) ? data : [])
       })
-      .catch((err) => {
+      .catch(() => {
         setCategorias([])
       })
   }, [isLoggedIn, ctxUser?.role, open])
