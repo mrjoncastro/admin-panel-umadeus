@@ -16,3 +16,10 @@ reordenadas no painel administrativo.
 O construtor visual está acessível em `/admin/page-builder/home`. Ele utiliza
 `@dnd-kit` para arrastar e soltar os blocos e os componentes do design system
 para os formulários de criação.
+
+## Construtor de Produtos
+
+A página `/admin/page-builder/produtos` permite pré-visualizar cartões e detalhes de produtos.
+Os campos do formulário usam os componentes do design system e edições inline via `react-contenteditable`.
+Ao enviar, os dados são enviados para `/admin/api/preview-produto`,
+retornando o JSON exibido nos componentes `ProdutoCardPreview` e `ProdutoDetailPreview`.
