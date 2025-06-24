@@ -58,9 +58,8 @@ export default function GerenciarCamposPage() {
 
         setCampos(data)
         setCamposCarregados(true) // Só carrega uma vez!
-      } catch (err) {
+      } catch {
         showError('Erro ao carregar campos.')
-        console.error(err)
       }
     }
 
@@ -100,12 +99,8 @@ export default function GerenciarCamposPage() {
         await fetchCampos() // chamada separada para carregar após salvar
       } else {
         showError('Erro: ' + data.error)
-        console.error('❌ Erro no envio:', data)
       }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error('Erro:', err.message)
-      }
+    } catch {
       showError('Erro ao enviar dados.')
     } finally {
       setLoading(false)
@@ -119,8 +114,7 @@ export default function GerenciarCamposPage() {
       const res = await fetch('/admin/api/campos')
       const data = await res.json()
       if (res.ok) setCampos(data)
-    } catch (err: unknown) {
-      if (err instanceof Error) console.error(err.message)
+    } catch {
     }
   }
 
@@ -149,11 +143,9 @@ export default function GerenciarCamposPage() {
   //       await fetchCampos();
   //     } else {
   //       setMensagem("Erro: " + data.error);
-  //       console.error("❌ Erro ao excluir:", data);
   //     }
   //   } catch (err: unknown) {
   //     if (err instanceof Error) {
-  //       console.error("Erro:", err.message);
   //     }
   //   }
   // }

@@ -122,8 +122,7 @@ export default function LiderDashboardPage() {
         }
 
         setTotais({ inscricoes: resumoInscricoes, pedidos: resumoPedidos })
-      } catch (err) {
-        console.error('Erro ao carregar dados:', err)
+      } catch {
       } finally {
         if (isMounted.current) setLoading(false)
       }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
+import { logConciliacaoErro } from '@/lib/server/logger'
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,7 +9,7 @@ export async function POST(req: NextRequest) {
     await pb.collection('usuarios').requestPasswordReset(String(email))
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error('Erro ao solicitar reset:', err)
+    await logConciliacaoErro(`Erro ao solicitar reset: ${String(err)}`)
     return NextResponse.json({ error: 'Erro ao solicitar' }, { status: 500 })
   }
 }

@@ -40,8 +40,7 @@ export default function FinanceiroPage() {
           const stats: Statistics = await statsRes.json()
           setALiberar(stats.netValue)
         }
-      } catch (err) {
-        console.error('Erro ao obter saldo:', err)
+      } catch {
       } finally {
         setLoading(false)
       }

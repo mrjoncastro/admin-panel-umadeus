@@ -164,8 +164,7 @@ export default function ConfiguracoesPage() {
       } else {
         showError('Erro ao salvar configurações')
       }
-    } catch (err) {
-      console.error('Erro ao salvar configura\u00e7\u00f5es:', err)
+    } catch {
       showError('Erro ao salvar configurações')
     }
 

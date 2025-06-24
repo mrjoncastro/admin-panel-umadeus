@@ -31,8 +31,7 @@ export default function AdminPostsPage() {
   useEffect(() => {
     getPostsClientPB()
       .then(setPosts)
-      .catch((err) => {
-        console.error('Erro ao carregar posts:', err)
+      .catch(() => {
       })
   }, [setPosts])
 

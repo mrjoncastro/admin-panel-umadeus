@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { requireRole } from '@/lib/apiAuth'
 import createPocketBase from '@/lib/pocketbase'
+import { logConciliacaoErro } from '@/lib/server/logger'
 
 export const config = { runtime: 'edge' }
 
@@ -20,7 +21,7 @@ export default async function handler(req: NextRequest) {
       })
       return NextResponse.json(sections)
     } catch (err) {
-      console.error('Erro ao listar home-sections:', err)
+      await logConciliacaoErro(`Erro ao listar home-sections: ${String(err)}`)
       return NextResponse.json({ error: 'Erro ao listar' }, { status: 500 })
     }
   }
@@ -38,7 +39,7 @@ export default async function handler(req: NextRequest) {
         .create({ ...data, cliente: user.cliente })
       return NextResponse.json(created, { status: 201 })
     } catch (err) {
-      console.error('Erro ao criar home-section:', err)
+      await logConciliacaoErro(`Erro ao criar home-section: ${String(err)}`)
       return NextResponse.json({ error: 'Erro ao criar' }, { status: 500 })
     }
   }

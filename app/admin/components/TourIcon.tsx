@@ -27,8 +27,7 @@ export default function TourIcon() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tour: true }),
       })
-    } catch (err) {
-      console.error('Erro ao registrar tour', err)
+    } catch {
     }
     router.push('/iniciar-tour')
   }

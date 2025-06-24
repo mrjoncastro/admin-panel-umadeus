@@ -80,8 +80,7 @@ export default function NovoEventoPage() {
       const data = await res.json()
       setProdutos((prev) => [data, ...prev])
       setSelectedProdutos((prev) => [...prev, data.id])
-    } catch (err) {
-      console.error('Erro ao criar produto:', err)
+    } catch {
     } finally {
       setProdutoModalOpen(false)
     }
@@ -113,8 +112,7 @@ export default function NovoEventoPage() {
       } else {
         showError('Falha ao salvar evento')
       }
-    } catch (err) {
-      console.error('Erro ao salvar evento:', err)
+    } catch {
       showError('Falha ao salvar evento')
     }
   }

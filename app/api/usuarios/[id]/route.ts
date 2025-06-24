@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
+import { logConciliacaoErro } from '@/lib/server/logger'
 
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.pathname.split('/').pop() || ''
@@ -20,7 +21,7 @@ export async function GET(req: NextRequest) {
       .getOne(id, { expand: 'campo' })
     return NextResponse.json(record, { status: 200 })
   } catch (err) {
-    console.error('Erro ao obter usuario:', err)
+    await logConciliacaoErro(`Erro ao obter usuario: ${String(err)}`)
     return NextResponse.json({ error: 'Erro ao obter' }, { status: 500 })
   }
 }
@@ -50,7 +51,7 @@ export async function PATCH(req: NextRequest) {
     })
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error('Erro ao atualizar perfil:', err)
+    await logConciliacaoErro(`Erro ao atualizar perfil: ${String(err)}`)
     return NextResponse.json({ error: 'Erro ao atualizar' }, { status: 500 })
   }
 }

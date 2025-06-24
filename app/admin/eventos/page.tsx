@@ -38,8 +38,7 @@ export default function AdminEventosPage() {
         const res = await fetch('/admin/api/eventos')
         const data = await res.json()
         setEventos(Array.isArray(data) ? data : (data.items ?? []))
-      } catch (err) {
-        console.error('Erro ao carregar eventos:', err)
+      } catch {
       }
     }
 

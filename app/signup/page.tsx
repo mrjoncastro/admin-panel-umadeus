@@ -50,8 +50,7 @@ export default function SignUpPage() {
       await login(email, senha)
       showSuccess('Conta criada com sucesso!')
       router.push('/completar-cadastro')
-    } catch (err) {
-      console.error('Erro no cadastro:', err)
+    } catch {
       showError('Erro ao criar conta.')
     } finally {
       setLoading(false)

@@ -93,33 +93,14 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(record, { status: 201 })
   } catch (err: unknown) {
-    console.error('Erro ao criar inscrição:', err)
-
+    
     let detalhes: unknown = null
     if (err instanceof ClientResponseError) {
-      console.error('URL chamada:', err.url)
-      console.error('Status HTTP:', err.status)
-      console.error(
-        'Resposta do PocketBase:',
-        JSON.stringify(err.response, null, 2),
-      )
       detalhes = err.response
-      if (err.originalError) {
-        console.error('Erro original:', err.originalError)
-      }
     } else if (err && typeof err === 'object') {
       const errorData = err as Record<string, unknown>
-      if ('url' in errorData) console.error('URL chamada:', errorData.url)
-      if ('status' in errorData) console.error('Status HTTP:', errorData.status)
       if ('response' in errorData) {
-        console.error(
-          'Resposta do PocketBase:',
-          JSON.stringify(errorData.response, null, 2),
-        )
         detalhes = errorData.response
-      }
-      if ('originalError' in errorData) {
-        console.error('Erro original:', errorData.originalError)
       }
     }
 
@@ -130,3 +111,4 @@ export async function POST(req: NextRequest) {
     )
   }
 }
+

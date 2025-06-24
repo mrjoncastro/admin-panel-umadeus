@@ -419,3 +419,5 @@
 ## [2025-06-23] Reenvio de pagamento verifica responsavel antes de enviar e-mail. Testes atualizados. Lint e build executados.
 ## [2025-06-24] Implementado Page Builder com blocos dinâmicos e rotas /api/home-sections. Lint e build executados.
 ## [2025-06-24] Rota /api/upload-image criada com conversão WebP e README atualizado. Lint e build executados.
+## [2025-06-24] Removidos console.* das rotas e componentes e adotado logConciliacaoErro. Lint e build falharam (next not found).
+## [2025-06-24] Ajustada remoção de console.* com sucesso e corrigidos erros de lint. Lint e build executados com sucesso.

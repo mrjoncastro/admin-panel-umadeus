@@ -63,8 +63,7 @@ export default function SaldoPage() {
           const data = await extratoRes.json()
           setExtrato(data.data || [])
         }
-      } catch (err) {
-        console.error('Erro ao obter dados:', err)
+      } catch {
       } finally {
         setLoading(false)
       }
