@@ -17,7 +17,7 @@
   - [10. categorias](#10-categorias)
   - [11. campos](#11-campos)
   - [12. usuarios](#12-usuarios)
-  - [13. usuarios](#12-usuarios)
+  - [13. manifesto_clientes](#13-manifesto_clientes)
 
 ---
 
