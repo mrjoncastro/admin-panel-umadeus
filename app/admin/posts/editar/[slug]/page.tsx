@@ -55,7 +55,6 @@ export default function EditarPostPage() {
           setKeywords(data.keywords)
         },
       )
-      .catch((err) => console.error('Erro ao carregar post:', err))
   }, [slug])
 
   if (!authChecked) return null
@@ -155,7 +154,6 @@ export default function EditarPostPage() {
             })
               .then((res) => res.json())
               .then(() => router.push('/admin/posts'))
-              .catch((err) => console.error('Erro ao salvar post:', err))
           }}
           className="space-y-4"
         >

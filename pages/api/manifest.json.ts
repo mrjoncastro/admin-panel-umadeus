@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { UAParser } from 'ua-parser-js'
 import PocketBase from 'pocketbase'
+import { logConciliacaoErro } from '@/lib/server/logger'
 
 export const config = { runtime: 'edge' }
 
@@ -137,7 +138,7 @@ export default async function handler(req: NextRequest) {
       },
     })
   } catch (err) {
-    console.error('[manifest.json] erro:', err)
+    await logConciliacaoErro(`[manifest.json] erro: ${String(err)}`)
     return new NextResponse(null, { status: 500 })
   }
 }

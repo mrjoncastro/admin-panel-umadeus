@@ -64,7 +64,6 @@ export default function SaldoPage() {
           setExtrato(data.data || [])
         }
       } catch (err) {
-        console.error('Erro ao obter dados:', err)
       } finally {
         setLoading(false)
       }

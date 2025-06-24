@@ -258,7 +258,6 @@ export default function EditarProdutoPage() {
         showError('Erro ao atualizar produto')
       }
     } catch (err) {
-      console.error('Erro ao atualizar produto:', err)
       showError('Erro ao atualizar produto')
     }
   }

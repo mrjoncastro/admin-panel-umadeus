@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getUserFromHeaders } from '@/lib/getUserFromHeaders'
+import { logConciliacaoErro } from '@/lib/server/logger'
 
 export async function PATCH(req: NextRequest) {
   const auth = getUserFromHeaders(req)
@@ -33,7 +34,7 @@ export async function PATCH(req: NextRequest) {
     const updated = await pbSafe.collection('usuarios').update(user.id, data)
     return NextResponse.json(updated, { status: 200 })
   } catch (err) {
-    console.error('Erro ao atualizar dados:', err)
+    await logConciliacaoErro(`Erro ao atualizar dados: ${String(err)}`)
     return NextResponse.json(
       { error: 'Erro ao atualizar dados' },
       { status: 500 },

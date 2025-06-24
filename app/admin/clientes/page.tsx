@@ -39,7 +39,6 @@ export default function ClientesPage() {
         }))
         setClientes(mapped)
       } catch (err) {
-        console.error('Erro ao carregar clientes', err)
         showError('Erro ao carregar clientes')
       } finally {
         setLoading(false)
@@ -72,7 +71,6 @@ export default function ClientesPage() {
       )
       showSuccess('Cliente atualizado')
     } catch (err) {
-      console.error('Erro ao salvar cliente', err)
       showError('Erro ao salvar cliente')
     } finally {
       setClienteEmEdicao(null)

@@ -6,6 +6,7 @@ import nodemailer from 'nodemailer'
 import { promises as fs } from 'fs'
 import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
+import { logConciliacaoErro } from '@/lib/server/logger'
 
 export type Body = {
   eventType: 'nova_inscricao' | 'confirmacao_inscricao'
@@ -94,11 +95,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'E-mail enviado com sucesso' }, { status: 200 })
   } catch (err: unknown) {
     // só log no servidor, sem expor detalhes ao cliente
-    if (err instanceof Error) {
-      console.error('🚨 [email/route] erro ao enviar e-mail:', err)
-    } else {
-      console.error('🚨 [email/route] erro ao enviar e-mail (não-Error):', String(err))
-    }
+    const msg =
+      err instanceof Error
+        ? `🚨 [email/route] erro ao enviar e-mail: ${err.message}`
+        : `🚨 [email/route] erro ao enviar e-mail (não-Error): ${String(err)}`
+    await logConciliacaoErro(msg)
     return NextResponse.json(
       { error: 'Erro interno ao enviar e-mail' },
       { status: 500 },

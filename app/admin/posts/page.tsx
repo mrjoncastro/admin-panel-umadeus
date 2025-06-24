@@ -32,7 +32,6 @@ export default function AdminPostsPage() {
     getPostsClientPB()
       .then(setPosts)
       .catch((err) => {
-        console.error('Erro ao carregar posts:', err)
       })
   }, [setPosts])
 

@@ -124,7 +124,7 @@ export async function GET(req: NextRequest) {
     }
     return NextResponse.json(items)
   } catch (err) {
-    console.error('[PEDIDOS][GET] Erro ao listar:', err)
+    await logConciliacaoErro(`[PEDIDOS][GET] Erro ao listar: ${String(err)}`)
     return NextResponse.json({ error: 'Erro ao listar' }, { status: 500 })
   }
 }
@@ -169,7 +169,9 @@ export async function POST(req: NextRequest) {
             .getOne<Produto>(produtoIds[0])
         }
       } catch (e) {
-        console.error('[PEDIDOS][POST] Erro ao buscar produto pelo id:', e)
+        await logConciliacaoErro(
+          `[PEDIDOS][POST] Erro ao buscar produto pelo id: ${String(e)}`,
+        )
       }
 
       if (produtoRecord?.requer_inscricao_aprovada) {
@@ -188,9 +190,8 @@ export async function POST(req: NextRequest) {
             )
           }
         } catch (e) {
-          console.error(
-            '[PEDIDOS][POST] Erro ao verificar inscrição aprovada:',
-            e,
+          await logConciliacaoErro(
+            `[PEDIDOS][POST] Erro ao verificar inscrição aprovada: ${String(e)}`,
           )
         }
       }
@@ -222,7 +223,9 @@ export async function POST(req: NextRequest) {
           status: pedido.status,
         })
       } catch (err: unknown) {
-        console.error('[PEDIDOS][POST] Erro ao criar pedido:', err)
+        await logConciliacaoErro(
+          `[PEDIDOS][POST] Erro ao criar pedido: ${String(err)}`,
+        )
         throw err
       }
     }
@@ -236,7 +239,9 @@ export async function POST(req: NextRequest) {
           expand: 'campo,criado_por',
         })
     } catch (e) {
-      console.error('[PEDIDOS][POST] Erro ao buscar inscrição:', e)
+      await logConciliacaoErro(
+        `[PEDIDOS][POST] Erro ao buscar inscrição: ${String(e)}`,
+      )
     }
 
     if (!inscricao) {
@@ -258,7 +263,9 @@ export async function POST(req: NextRequest) {
           .getOne(produtoIdInscricao)
       }
     } catch (e) {
-      console.error('[PEDIDOS][POST] Erro ao buscar produto pelo id:', e)
+      await logConciliacaoErro(
+        `[PEDIDOS][POST] Erro ao buscar produto pelo id: ${String(e)}`,
+      )
       try {
         if (inscricao.evento) {
           const ev = await pb
@@ -270,7 +277,9 @@ export async function POST(req: NextRequest) {
           produtoRecord = lista.find((p) => p.id === produtoIdInscricao)
         }
       } catch (ee) {
-        console.error('[PEDIDOS][POST] Erro ao buscar produto via evento:', ee)
+        await logConciliacaoErro(
+          `[PEDIDOS][POST] Erro ao buscar produto via evento: ${String(ee)}`,
+        )
       }
     }
 
@@ -313,12 +322,13 @@ export async function POST(req: NextRequest) {
         status: pedido.status,
       })
     } catch (err: unknown) {
-      console.error('[PEDIDOS][POST] Erro ao criar pedido com inscrição:', err)
+      await logConciliacaoErro(
+        `[PEDIDOS][POST] Erro ao criar pedido com inscrição: ${String(err)}`,
+      )
       throw err
     }
   } catch (err: unknown) {
     await logConciliacaoErro(`Erro ao criar pedido: ${String(err)}`)
-    console.error('[PEDIDOS][POST] Erro geral:', err)
     return NextResponse.json({ erro: 'Erro ao criar pedido.' }, { status: 500 })
   }
 }

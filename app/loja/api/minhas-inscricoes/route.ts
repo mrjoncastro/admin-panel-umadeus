@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
+import { logConciliacaoErro } from '@/lib/server/logger'
 
 export async function GET(req: NextRequest) {
   const auth = requireRole(req, 'usuario')
@@ -15,7 +16,7 @@ export async function GET(req: NextRequest) {
     })
     return NextResponse.json(inscricoes, { status: 200 })
   } catch (err) {
-    console.error('Erro ao listar inscricoes:', err)
+    await logConciliacaoErro(`Erro ao listar inscricoes: ${String(err)}`)
     return NextResponse.json({ error: 'Erro ao listar' }, { status: 500 })
   }
 }

@@ -28,7 +28,6 @@ export default function TourIcon() {
         body: JSON.stringify({ tour: true }),
       })
     } catch (err) {
-      console.error('Erro ao registrar tour', err)
     }
     router.push('/iniciar-tour')
   }

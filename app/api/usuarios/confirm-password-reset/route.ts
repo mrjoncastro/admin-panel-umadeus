@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
+import { logConciliacaoErro } from '@/lib/server/logger'
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,7 +11,7 @@ export async function POST(req: NextRequest) {
       .confirmPasswordReset(token, password, passwordConfirm)
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error('Erro ao redefinir senha:', err)
+    await logConciliacaoErro(`Erro ao redefinir senha: ${String(err)}`)
     return NextResponse.json({ error: 'Erro ao redefinir' }, { status: 500 })
   }
 }

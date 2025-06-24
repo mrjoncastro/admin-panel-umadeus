@@ -48,7 +48,6 @@ export default function AdminProdutosPage() {
         const data = await res.json()
         setProdutos(Array.isArray(data) ? data : (data.items ?? []))
       } catch (err) {
-        console.error('Erro ao carregar produtos:', err)
       }
     }
     fetchProdutos()
@@ -104,7 +103,6 @@ export default function AdminProdutosPage() {
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        console.error('Falha ao criar produto', res.status, data)
         showError('Erro ao criar produto')
         return
       }
@@ -112,7 +110,6 @@ export default function AdminProdutosPage() {
       setProdutos((prev) => [data, ...prev])
       showSuccess('Produto criado')
     } catch (err) {
-      console.error('Erro ao criar produto:', err)
       showError('Erro ao criar produto')
     }
 
@@ -134,7 +131,6 @@ export default function AdminProdutosPage() {
       setProdutos((prev) => prev.filter((p) => p.id !== id))
       showSuccess('Produto excluído')
     } catch (err) {
-      console.error('Erro ao excluir produto:', err)
       showError('Erro ao excluir produto')
     }
   }

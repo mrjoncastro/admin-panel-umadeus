@@ -57,7 +57,6 @@ export default function NovoPostPage() {
           })
             .then((res) => res.json())
             .then(() => router.push('/admin/posts'))
-            .catch((err) => console.error('Erro ao salvar post:', err))
         }}
         className="space-y-4"
       >

@@ -3,6 +3,7 @@ import { requireRole } from '@/lib/apiAuth'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import type { Pedido, Produto } from '@/types'
 import type { RecordModel } from 'pocketbase'
+import { logConciliacaoErro } from '@/lib/server/logger'
 
 async function checkAccess(
   pedido: Pedido,
@@ -69,7 +70,7 @@ export async function GET(req: NextRequest) {
     }
     return NextResponse.json(pedido)
   } catch (err) {
-    console.error('Erro ao obter pedido:', err)
+    await logConciliacaoErro(`Erro ao obter pedido: ${String(err)}`)
     return NextResponse.json({ error: 'Erro ao obter' }, { status: 500 })
   }
 }
@@ -101,7 +102,7 @@ export async function PATCH(req: NextRequest) {
     })
     return NextResponse.json(updated)
   } catch (err) {
-    console.error('Erro ao atualizar pedido:', err)
+    await logConciliacaoErro(`Erro ao atualizar pedido: ${String(err)}`)
     return NextResponse.json({ error: 'Erro ao atualizar' }, { status: 500 })
   }
 }
@@ -126,7 +127,7 @@ export async function DELETE(req: NextRequest) {
     await pb.collection('pedidos').delete(id)
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error('Erro ao excluir pedido:', err)
+    await logConciliacaoErro(`Erro ao excluir pedido: ${String(err)}`)
     return NextResponse.json({ error: 'Erro ao excluir' }, { status: 500 })
   }
 }
