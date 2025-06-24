@@ -58,6 +58,11 @@ export default async function handler(req: NextRequest) {
     const adminToken = process.env.PB_ADMIN_TOKEN
     if (adminToken) {
       pb.authStore.save(adminToken, null)
+      try {
+        await pb.admins.authRefresh()
+      } catch {
+        pb.authStore.clear()
+      }
     }
 
     const cfg = await pb
