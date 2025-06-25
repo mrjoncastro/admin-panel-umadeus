@@ -1,165 +1,403 @@
-# Guia Simplificado de Integração com Evolution Chats API v2.2.2
+## 1. Integração – Endpoints Principais
 
-Este guia descreve passo a passo como integrar a Evolution Chats API (v2.2.2) em um projeto Next.js + PocketBase, incluindo requisitos, modelagem de dados, endpoints e fluxo de onboarding.
+Nesta seção, detalhamos todos os endpoints disponíveis na Evolution API v2, incluindo parâmetros, exemplos de requisição/resposta e códigos de status.
 
----
+> **Header obrigatório em todas as requisições**:
+>
+> ```http
+> apikey: <SUA_CHAVE>
+> Content-Type: application/json
+> ```
 
-## 1. Requisitos Funcionais
+**Base URL**: definida via variável de ambiente `EVOLUTION_API_URL`
 
-1. **Cadastro de Telefone**
-   Usuário insere número de WhatsApp em formato E.164.
-2. **Persistência de Instância**
-   Armazenar `cliente`, `instanceName` e `apiKey` na coleção `whatsapp_clientes`.
-3. **Geração de QR Code**
-   Atualização automática via evento `qrCode` do webhook.
-4. **Gerenciamento de Sessão**
-   Atualizar `sessionStatus` conforme eventos (`ready`, `disconnected`).
-5. **Envio de Mensagens**
-   Endpoints para envio de texto e mídia (`sendText`, opcional `sendMedia`/`sendPtv`).
-6. **Onboarding Guiado**
-   Wizard em 4 passos para coordenadores, sem expor configuração manual de instância.
-7. **Segurança**
-   Validação de `x-tenant-id`, autenticação PocketBase, HMAC nos webhooks (opcional).
-8. **Testabilidade**
-   Endpoints de teste para simular webhook e envio de mensagem.
-
-9. **Docs** 
-    Consta em (docs/Evolution/) documentos auxiliares
----
-
-## 2. Modelagem da Coleção `whatsapp_clientes`
-
-Armazena as instâncias de WhatsApp por cliente.
-
-| Campo           | Tipo     | Obrigatório | Validação                            | Descrição                                           |
-| --------------- | -------- | ----------- | ------------------------------------ | --------------------------------------------------- |
-| `cliente`       | Relation | Sim         | Referência a `m24_cliente`           | Cliente/tenant do sistema                           |
-| `instanceName`  | Text     | Sim         | `^[a-z0-9-]+$`                       | Nome da instância (igual ao configurado no Manager) |
-| `apiKey`        | Text     | Sim         | Mínimo 32 caracteres                 | Chave de autenticação da instância                  |
-| `qrCode`        | Text     | Não         | URL ou Base64                        | QR Code gerado para autenticação                    |
-| `sessionStatus` | Select   | Sim         | `pending`/`connected`/`disconnected` | Estado atual da sessão (padrão: `pending`)          |
-
-### 2.1 Exemplo de Registro
-
-```json
-{
-  "id": "abc123",
-  "cliente": "m24_cliente/xyz789",
-  "instanceName": "bayleys",
-  "apiKey": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  "qrCode": "data:image/png;base64,iVBORw0K...",
-  "sessionStatus": "connected"
-}
-```
+> Exemplo (Linux/macOS):
+>
+> ```bash
+> export EVOLUTION_API_URL=https://apievolution-evolution.r8dlf0.easypanel.host
+> ```
 
 ---
 
-## 3. Endpoints da API Interna
+### 1.1 Instâncias
 
-A aplicação Next.js expõe rotas que consomem a Evolution Chats API:
+#### 1.1.1 Criar Instância
 
-| Método | Caminho              | Descrição                                                           | Body de Exemplo    |
-| ------ | -------------------- | ------------------------------------------------------------------- | ------------------ |
-| POST   | `/api/chats/webhook` | Recebe eventos da Evolution (qrCode, ready, disconnected, messages) | **HTTP POST**<br/> |
+- **Endpoint**: `POST /instance/create`
+- **Body (JSON)**:
 
-````json
-{
-  "eventName": "qrCode",
-  "body": { "instanceName": "bayleys", "qrCode": "data:image/png;base64,..." }
-}
-```  |
-| POST   | `/api/chats/whatsapp/cadastrar`      | Cria registro em `whatsapp_clientes` com instância `WHATSAPP-BAILEYS` | **HTTP POST**<br/>
-```json
-{ "telefone": "5511999999999", "instanceName": "WHATSAPP-BAILEYS" }
-```  |
-| POST   | `/api/chats/message/sendText`            | Envia mensagem de texto pelo WhatsApp                                | **HTTP POST**<br/>
-```json
-{ "to": "5511999999999", "message": "Mensagem de teste" }
-```  |
-
-> *Observação: os eventos de sessão e geração de QR Code são tratados automaticamente pelo webhook.*
-
----
-
-## 4. Onboarding Wizard do Coordenador
-
-Fluxo em 4 etapas:
-1. **Cadastro de Telefone** (`/whatsapp/cadastrar`)
-2. **Configuração Automática**
-   - Exibe spinner “Configurando sua instância...” por 2 segundos.
-3. **Exibição de QR Code**
-   - QR exibido no painel, atualizado pelo webhook.
-4. **Envio de Mensagem de Teste** (`/api/chats/message/sendText`)
-
-```tsx
-'use client';
-import { useState, useEffect } from 'react';
-import { Step1, Step3, Step4 } from './steps';
-
-type Step = 1|2|3|4;
-export default function OnboardingWizard() {
-  const [step, setStep] = useState<Step>(1);
-  const next = () => setStep(s => (s < 4 ? (s + 1) as Step : s));
-  useEffect(() => { if (step === 2) setTimeout(next, 2000); }, [step]);
-  return (
-    <div className="wizard-container">
-      {step === 1 && <Step1 onNext={next} />}
-      {step === 2 && (
-        <div className="flex flex-col items-center p-8">
-          <span>Configurando sua instância...</span>
-          <div className="animate-spin h-12 w-12 border-4 border-t-green-600 rounded-full" />
-        </div>
-      )}
-      {step === 3 && <Step3 onNext={next} />}
-      {step === 4 && <Step4 />}
-    </div>
-  );
-}
-````
-
----
-
-## 5. Fluxograma de Integração
-
-```mermaid
-flowchart TB
-  A[Wizard: Usuário cadastra número] --> B[POST /api/chats/whatsapp/cadastrar]
-  B --> C[Cria registro em whatsapp_clientes]
-  C --> D[Wizard: QR & Teste]
-  D --> E[Envio de mensagem de teste]
-  E --> F[POST /api/chats/message/send]
-  F --> G[Via Manager → WhatsApp]
-```
-
----
-
-## 6. Configuração no Manager
-
-1. Acesse: `https://apievolution-evolution.r8dlf0.easypanel.host/manager/`
-2. **API Keys**: copie a `apiKey` da instância.
-3. **Webhooks**: callback para `/api/chats/webhook`, eventos `qrCode`, `authenticated`, `disconnected`, `messages.upsert`.
-4. **InstanceName**: defina no PocketBase exatamente como está no Manager.
-
----
-
-## 7. Consumo no Next.js + PocketBase
-
-- **Variáveis de Ambiente**:
-
-  ```env
-  EVOLUTION_API_URL=https://apievolution-evolution.r8dlf0.easypanel.host
-  PB_URL=https://<seu-pb-domain>
+  ```json
+  {
+    "instanceName": "nomeDaInstancia",
+    "qrcode": true,
+    "integration": "WHATSAPP-BAILEYS"
+    // ou "WHATSAPP-BUSINESS-API"
+  }
   ```
 
-- **Serviço** (`lib/server/chats.ts`): funções `getClient`, `saveClient`, `generateQr`, `sendMessage`.
-- **Rotas**: `/api/chats/webhook`, `/api/chats/whatsapp/cadastrar`, `/api/chats/message/sendText`.
+- **Resposta 201**:
+
+  ```json
+  {
+    "instance": "nomeDaInstancia",
+    "status": "pending",
+    "qrCodeUrl": "https://..."
+  }
+  ```
+
+- **Erros Comuns**:
+
+  - `400 Bad Request` – parâmetro faltando ou inválido
+  - `409 Conflict` – instância já existe
+
+#### 1.1.2 Listar Instâncias
+
+- **Endpoint**: `GET /instance/fetchInstances`
+- **Resposta 200**:
+
+  ```json
+  [
+    { "instance": "inst1", "status": "connected" },
+    { "instance": "inst2", "status": "disconnected" }
+  ]
+  ```
+
+#### 1.1.3 Conectar Instância
+
+- **Endpoint**: `GET /instance/connect/{instance}`
+- **Path Parameter**:
+
+  - `instance`: nome da instância
+
+- **Resposta 200**:
+
+  ```json
+  { "instance": "inst1", "status": "connected" }
+  ```
+
+- **Uso**: força reconexão à conta WhatsApp e atualiza o status.
+
+#### 1.1.4 Reiniciar Instância
+
+- **Endpoint**: `POST /instance/restart/{instance}`
+- **Resposta 200**:
+
+  ```json
+  { "instance": "inst1", "status": "restarting" }
+  ```
+
+#### 1.1.5 Definir Presença (Online/Away)
+
+- **Endpoint**: `POST /instance/setPresence/{instance}`
+- **Body**:
+
+  ```json
+  { "presence": "available" }
+  ```
+
+- **Valores**: `available`, `unavailable`, `composing`, `recording`, `paused`
+- **Resposta 200**:
+
+  ```json
+  { "instance": "inst1", "presence": "available" }
+  ```
+
+#### 1.1.6 Status de Conexão
+
+- **Endpoint**: `GET /instance/connectionState/{instance}`
+- **Resposta 200**:
+
+  ```json
+  { "instance": "inst1", "connectionState": "CONNECTED" }
+  ```
+
+#### 1.1.7 Logout e Deleção
+
+- **Logout**: `DELETE /instance/logout/{instance}` retorna `204 No Content`
+- **Remover Instância**: `DELETE /instance/delete/{instance}` retorna `204 No Content`
 
 ---
 
-## 8. Testes e Considerações Finais
+### 1.2 Proxy
 
-- Valide o webhook enviando eventos de `qrCode` e `ready` no Manager.
-- Teste o envio de mensagens pelo painel e por fluxo automático.
-- Monitore logs de erros e reinicie instâncias pelo Manager em caso de falhas.
+#### 1.2.1 Configurar Proxy
 
+- **Endpoint**: `POST /proxy/set/{instance}`
+- **Body**:
 
+  ```json
+  {
+    "host": "proxy.exemplo.com",
+    "port": 8080,
+    "username": "user", // opcional
+    "password": "pass" // opcional
+  }
+  ```
+
+- **Resposta 200**: confirma configuração
+
+#### 1.2.2 Obter Proxy
+
+- **Endpoint**: `GET /proxy/find/{instance}`
+- **Resposta 200**:
+
+  ```json
+  { "host": "proxy.exemplo.com", "port": 8080 }
+  ```
+
+---
+
+### 1.3 Configurações Gerais
+
+#### 1.3.1 Definir Configurações
+
+- **Endpoint**: `POST /settings/set/{instance}`
+- **Body**: qualquer chave suportada (e.g., `autoMarkRead`, `disableWebhook`)
+
+  ```json
+  { "autoMarkRead": true }
+  ```
+
+- **Resposta 200**: mapa completo das configurações ativas
+
+#### 1.3.2 Obter Configurações
+
+- **Endpoint**: `GET /settings/find/{instance}`
+- **Resposta 200**:
+
+  ```json
+  { "autoMarkRead": true, "disableWebhook": false }
+  ```
+
+---
+
+### 1.4 Envio de Mensagens
+
+Para todos os endpoints de envio, o campo `instance` no path identifica a instância alvo.
+
+#### 1.4.1 Enviar Texto
+
+- **Endpoint**: `POST /message/sendText/{instance}`
+- **Body**:
+
+  ```json
+  {
+    "number": "5511999999999",
+    "text": "Olá, mundo!"
+  }
+  ```
+
+- **Resposta 200**:
+
+  ```json
+  { "messageId": "abc123" }
+  ```
+
+#### 1.4.2 Enviar Mídia
+
+- **Endpoint**: `POST /message/sendMedia/{instance}`
+- **Body** (URL ou base64):
+
+  ```json
+  {
+    "number": "5511999999999",
+    "mediaUrl": "https://.../imagem.jpg",
+    "caption": "Legenda opcional"
+  }
+  ```
+
+#### 1.4.3 Outros Tipos de Mensagem
+
+- **PTV (vCard)**: `POST /message/sendPtv/{instance}`
+- **Áudio (narrado)**: `POST /message/sendWhatsAppAudio/{instance}`
+- **Sticker**: `POST /message/sendSticker/{instance}`
+- **Localização**: `POST /message/sendLocation/{instance}`
+- **Contatos**: `POST /message/sendContact/{instance}`
+- **Reação**: `POST /message/sendReaction/{instance}`
+- **Enquetes/Listas/Botões**: endpoints em `/message/sendPoll`, `/message/sendList`, `/message/sendButtons`
+
+---
+
+### 1.5 Chamadas (Voice & Fake)
+
+- **Pasta**: `/call`
+- **Endpoints**:
+
+  - `POST /call/voice/{instance}`
+  - `POST /call/fakeCall/{instance}`
+
+- **Uso**: iniciar chamadas de voz ou simular chamada recebida
+
+---
+
+### 1.6 Operações de Chat, Labels e Perfil
+
+#### 1.6.1 Chat
+
+- **Listar Chats**: `GET /chat/list/{instance}`
+- **Buscar Mensagens**: `GET /chat/fetchMessages/{instance}?chatId=<id>`
+- **Marcar Lidas**: `POST /chat/markRead/{instance}`
+
+#### 1.6.2 Labels
+
+- **Criar Tag**: `POST /label/create/{instance}`
+- **Aplicar Tag**: `POST /label/apply/{instance}`
+- **Listar Tags**: `GET /label/list/{instance}`
+
+#### 1.6.3 Perfil
+
+- **Atualizar Nome/Status**: `POST /profile/updateName/{instance}` e `/profile/updateStatus/{instance}`
+- **Atualizar Foto**: `POST /profile/updateProfilePicture/{instance}`
+- **Privacidade**: endpoints em `/profile/privacy/*`
+
+---
+
+### 1.7 Grupos
+
+- **Criar Grupo**: `POST /group/create/{instance}`
+- **Editar Grupo**: `POST /group/edit/{instance}`
+- **Buscar Convite**: `GET /group/fetchInvite/{instance}`
+- **Participar**: `POST /group/join/{instance}`
+
+---
+
+### 1.8 Integrações Externas
+
+Endpoints para configurar e testar integrações:
+
+- **Webhooks**:
+
+  - `POST /integration/webhook/set/{instance}`
+  - `DELETE /integration/webhook/remove/{instance}`
+
+- **RabbitMQ / SQS**:
+
+  - `POST /integration/rabbitmq/set/{instance}`
+  - `POST /integration/sqs/set/{instance}`
+
+- **Chatwoot**: `POST /integration/chatwoot/set/{instance}`
+- **Typebot**: `POST /integration/typebot/set/{instance}`
+- **OpenAI & Dify**: configurar fluxos de NLP em `/integration/openai/set` e `/integration/dify/set`
+
+---
+
+### 1.9 Informações da API
+
+- **Obter Status & Versão**: `GET /info`
+- **Resposta 200**:
+
+  ```json
+  {
+    "status": 200,
+    "message": "API funcionando",
+    "version": "2.x.x"
+  }
+  ```
+
+---
+
+## 2. Configuração de Ambiente
+
+Antes de tudo, defina as variáveis:
+
+```bash
+export EVOLUTION_API_URL=https://apievolution-evolution.r8dlf0.easypanel.host
+export POCKETBASE_URL=https://your-pocketbase-instance.url
+```
+
+## 3. Exemplos de Uso em JavaScript
+
+```js
+import axios from 'axios'
+import PocketBase from 'pocketbase'
+
+// Inicializa cliente PocketBase
+const pb = new PocketBase(process.env.POCKETBASE_URL)
+
+;(async () => {
+  try {
+    // Obtém registro na coleção whatsapp_clientes
+    const cliente = await pb
+      .collection('whatsapp_clientes')
+      .getOne('ID_DO_REGISTRO')
+
+    // Cria cliente Axios para Evolution API
+    const evo = axios.create({
+      baseURL: process.env.EVOLUTION_API_URL,
+      headers: { apikey: cliente.apiKey },
+    })
+
+    // Envia mensagem de texto
+    const res = await evo.post(`/message/sendText/${cliente.instanceName}`, {
+      number: '5511999999999',
+      text: 'Olá, mundo!',
+    })
+
+    console.log('Mensagem enviada, ID:', res.data.messageId)
+  } catch (err) {
+    console.error('Erro ao enviar mensagem:', err.response?.data || err.message)
+  }
+})()
+```
+
+> **Observação**: o `apiKey` é recuperado dinamicamente da coleção `whatsapp_clientes` no PocketBase para garantir segurança e multi-tenant.\*\*: Consulte sempre a documentação oficial para parâmetros avançados, limites de taxa e exemplos adicionais.
+
+## 3. Coleção `whatsapp_clientes`
+
+A coleção **whatsapp_clientes** possui o seguinte esquema de campos no PocketBase:
+
+| Campo             | Tipo PB  | Detalhes                                       | Obrigatório | Descrição                                                          |
+| ----------------- | -------- | ---------------------------------------------- | ----------- | ------------------------------------------------------------------ |
+| `id`              | Id       | -                                              | Sim         | Identificador único do registro                                    |
+| `cliente`         | Relation | Single m24_clientes                            | Sim         | Referência ao cliente no sistema                                   |
+| `instanceName`    | Text     | Single                                         | Sim         | Nome da instância configurada na Evolution API                     |
+| `instanceId`      | Text     | Single                                         | Sim         | ID interno gerado pela Evolution API                               |
+| `apiKey`          | Text     | Single                                         | Sim         | Chave de API associada à instância                                 |
+| `pairingCode`     | Text     | Single                                         | Não         | Código de pareamento (apenas enquanto `sessionStatus` = `pending`) |
+| `sessionStatus`   | Select   | opções: `pending`, `connected`, `disconnected` | Sim         | Status da sessão                                                   |
+| `qrCode`          | Text     | Single                                         | Não         | URL ou Base64 do QR Code para autenticação inicial                 |
+| `config_finished` | Boolean  | -                                              | Não         | Indica se a configuração inicial foi completa                      |
+| `created`         | Created  | timestamp                                      | Sim         | Data de criação do registro                                        |
+| `updated`         | Updated  | timestamp                                      | Sim         | Data da última atualização do registro                             |
+
+### 3.1 Endpoints de CRUD (`/admin/api/collections/whatsapp_clientes/records`)
+
+Acesse a coleção via API administrativa (PocketBase) para criar, ler, atualizar e excluir registros:
+
+- **Listar Clientes**
+
+  ```http
+  GET /admin/api/collections/whatsapp_clientes/records
+  ```
+
+- **Obter Cliente**
+
+  ```http
+  GET /admin/api/collections/whatsapp_clientes/records/{id}
+  ```
+
+- **Criar Cliente**
+
+  ```http
+  POST /admin/api/collections/whatsapp_clientes/records
+  Content-Type: application/json
+
+  { "cliente": "m24_clientes", "instanceName": "inst1", /* outros campos */ }
+  ```
+
+- **Atualizar Cliente**
+
+  ```http
+  PATCH /admin/api/collections/whatsapp_clientes/records/{id}
+  Content-Type: application/json
+
+  { "sessionStatus": "connected" }
+  ```
+
+- **Excluir Cliente**
+
+  ```http
+  DELETE /admin/api/collections/whatsapp_clientes/records/{id}
+  ```
+
+> Utilize autenticação administrativa (token ou cookie de sessão) para acessar estes endpoints de CRUD.
