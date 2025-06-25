@@ -73,20 +73,17 @@ export default function OnboardingWizard() {
   // 1) check initial
   useEffect(() => {
     const tenant = localStorage.getItem('tenantId') || ''
-    console.log('[Onboarding] Iniciando check inicial, tenant:', tenant)
+    console.log('[Onboarding] Iniciando verificacao da instancia, tenant:', tenant)
     ;(async () => {
       try {
-        const res = await fetch(
-          `/api/chats/whatsapp/message/sendTest/${instanceName}`,
-          {
-            headers: { 'x-tenant-id': tenant },
-          },
-        )
-        console.log('[Onboarding] /instance/check status:', res.status)
+        const res = await fetch('/api/chats/whatsapp/instance/check', {
+          headers: { 'x-tenant-id': tenant },
+        })
+        console.log('[Onboarding] check status:', res.status)
 
-        const chk = (await res.json()) as CheckResponse
-        console.log('[Onboarding] check response:', chk)
-        if (!chk) {
+        const check = (await res.json()) as CheckResponse
+        console.log('[Onboarding] check response:', check)
+        if (!check) {
           console.log(
             '[Onboarding] nenhuma instância encontrada — permanece step 1',
           )
@@ -95,14 +92,14 @@ export default function OnboardingWizard() {
 
         console.log(
           '[Onboarding] instância encontrada:',
-          chk.instanceName,
+          check.instanceName,
           'status:',
-          chk.sessionStatus,
+          check.sessionStatus,
         )
-        setInstanceName(chk.instanceName)
-        setApiKey(chk.apiKey)
+        setInstanceName(check.instanceName)
+        setApiKey(check.apiKey)
 
-        if (chk.sessionStatus === 'connected') {
+        if (check.sessionStatus === 'connected') {
           console.log('[Onboarding] status connected — pulando para step 4')
           setStep(4)
         } else {
