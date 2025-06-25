@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     const cliente = await pbUser.collection('m24_clientes').getOne(tenant)
     const instanceName = cliente.nome.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 
-    // 4) Create Instance + webhook
+    // 4) Create Instance + webhook (não passar token no body)
     const createRes = await fetch(
       `${process.env.EVOLUTION_API_URL}/instance/create`,
       {
@@ -43,7 +43,6 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           instanceName,
-          token: process.env.EVOLUTION_INSTANCE_TOKEN!,
           qrcode: true,
           number: telefone,
           integration: 'WHATSAPP-BAILEYS',
