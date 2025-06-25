@@ -238,17 +238,24 @@ export default function OnboardingWizard() {
     setLoading(true)
     setError(undefined)
     try {
-      const res = await fetch(`/api/chats/message/sendText/${instanceName}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-tenant-id': localStorage.getItem('tenantId') || '',
+      const res = await fetch(
+        `/api/chats/whatsapp/message/sendTest/${instanceName}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-tenant-id': localStorage.getItem('tenantId') || '',
+          },
+          body: JSON.stringify({
+            to: `55${raw}`,
+            message: 'Olá! QR autenticado com sucesso!',
+          }),
         },
-        body: JSON.stringify({
-          to: `55${raw}`,
-          message: 'Olá! QR autenticado com sucesso!',
-        }),
-      })
+      )
+      if (res.status === 409) {
+        setSentOk(true)
+        return setStep(5)
+      }
       if (!res.ok) throw new Error((await res.json()).error || 'Erro ao enviar')
       setSentOk(true)
       setStep(5)
