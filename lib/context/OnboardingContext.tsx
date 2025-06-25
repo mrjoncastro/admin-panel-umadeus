@@ -8,6 +8,8 @@ interface OnboardingContextType {
   instanceName: string
   apiKey: string
   connection: ConnectionStatus
+  loading: boolean
+  setLoading: (v: boolean) => void
   setStep: (s: 1 | 2 | 3 | 4) => void
   setInstanceName: (v: string) => void
   setApiKey: (v: string) => void
@@ -19,6 +21,8 @@ const OnboardingContext = createContext<OnboardingContextType>({
   instanceName: '',
   apiKey: '',
   connection: 'idle',
+  loading: false,
+  setLoading: () => {},
   setStep: () => {},
   setInstanceName: () => {},
   setApiKey: () => {},
@@ -34,6 +38,7 @@ export function OnboardingProvider({
   const [instanceName, setInstanceName] = useState('')
   const [apiKey, setApiKey] = useState('')
   const [connection, setConnection] = useState<ConnectionStatus>('idle')
+  const [loading, setLoading] = useState(false)
 
   return (
     <OnboardingContext.Provider
@@ -42,6 +47,8 @@ export function OnboardingProvider({
         instanceName,
         apiKey,
         connection,
+        loading,
+        setLoading,
         setStep,
         setInstanceName,
         setApiKey,

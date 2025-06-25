@@ -28,10 +28,10 @@ export default function StepPairing({
   qrBase64,
   onConnected,
 }: StepPairingProps) {
-  const { instanceName, apiKey, setConnection } = useOnboarding()
+  const { instanceName, apiKey, setConnection, loading, setLoading } =
+    useOnboarding()
   const [codeUrl, setCodeUrl] = useState(qrCodeUrl)
   const [codeBase, setCodeBase] = useState(qrBase64)
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string>()
   const attempts = useRef(0)
   const timeoutRef = useRef<number>()
@@ -101,7 +101,7 @@ export default function StepPairing({
         alt="QR Code"
         className="mx-auto"
       />
-      {error && <p className="text-red-600">{error}</p>}
+      {error && <p className="text-red-600 text-sm">{error}</p>}
       <div className="flex gap-2 justify-center">
         <Button
           variant="secondary"

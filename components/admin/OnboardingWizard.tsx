@@ -5,6 +5,7 @@ import StepSelectClient from '../onboarding/StepSelectClient'
 import StepCreateInstance from '../onboarding/StepCreateInstance'
 import StepPairing from '../onboarding/StepPairing'
 import StepComplete from '../onboarding/StepComplete'
+import OnboardingProgress from '../onboarding/OnboardingProgress'
 import {
   OnboardingProvider,
   useOnboarding,
@@ -58,6 +59,7 @@ function WizardSteps() {
 
   return (
     <div className="wizard-container max-w-sm mx-auto">
+      <OnboardingProgress />
       {step === 1 && <StepSelectClient onRegistered={handleRegistered} />}
       {step === 2 && <StepCreateInstance />}
       {step === 3 && (
