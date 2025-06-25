@@ -23,6 +23,8 @@ Este guia descreve passo a passo como integrar a Evolution Chats API (v2.2.2) em
 8. **Testabilidade**
    Endpoints de teste para simular webhook e envio de mensagem.
 
+9. **Docs** 
+    Consta em (docs/Evolution/) documentos auxiliares
 ---
 
 ## 2. Modelagem da Coleção `whatsapp_clientes`
@@ -160,4 +162,4 @@ flowchart TB
 - Teste o envio de mensagens pelo painel e por fluxo automático.
 - Monitore logs de erros e reinicie instâncias pelo Manager em caso de falhas.
 
-_Fim do guia._
+
