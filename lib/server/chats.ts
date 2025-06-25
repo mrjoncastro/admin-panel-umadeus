@@ -2,7 +2,7 @@
 
 import PocketBase from 'pocketbase'
 
-const CHATS_API_URL = process.env.CHATS_API_URL?.replace(/\/$/, '')
+const EVOLUTION_API_URL = process.env.EVOLUTION_API_URL?.replace(/\/$/, '')
 const PB_URL = process.env.PB_URL!
 
 /** Retorna um cliente admin autenticado do PocketBase */
@@ -54,15 +54,18 @@ export async function saveClient(data: {
 
 /** Gera o QR Code chamando o endpoint de connect da Evolution API */
 export async function generateQr(instanceName: string, apiKey: string) {
-  if (!CHATS_API_URL) throw new Error('CHATS_API_URL not set')
+  if (!EVOLUTION_API_URL) throw new Error('EVOLUTION_API_URL not set')
 
-  const res = await fetch(`${CHATS_API_URL}/instance/connect/${instanceName}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      apikey: apiKey,
+  const res = await fetch(
+    `${EVOLUTION_API_URL}/instance/connect/${instanceName}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: apiKey,
+      },
     },
-  })
+  )
   if (!res.ok) {
     const txt = await res.text()
     throw new Error(`Falha ao gerar QR Code: ${txt}`)
@@ -77,10 +80,10 @@ export async function sendTextMessage(params: {
   to: string
   message: string
 }) {
-  if (!CHATS_API_URL) throw new Error('CHATS_API_URL not set')
+  if (!EVOLUTION_API_URL) throw new Error('EVOLUTION_API_URL not set')
 
-  const url = `${CHATS_API_URL}/message/sendText/${params.instanceName}`
-  const body = { to: params.to, message: params.message }
+  const url = `${EVOLUTION_API_URL}/message/sendText/${params.instanceName}`
+  const body = { number: params.to, text: params.message }
 
   const res = await fetch(url, {
     method: 'POST',

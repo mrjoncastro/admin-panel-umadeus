@@ -1,6 +1,12 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 
+type CheckResponse = {
+  instanceName: string
+  apiKey: string
+  sessionStatus: 'pending' | 'connected' | 'disconnected'
+} | null
+
 type RegisterResponse = {
   instance: { instanceId: string; instanceName: string }
   apiKey: string
@@ -15,8 +21,9 @@ type ConnectResponse = {
   qrBase64: string
 }
 
-type StateResponse = {
-  status: 'pending' | 'connected' | 'disconnected'
+type RawStateResponse = {
+  instance?: { state?: string }
+  state?: string
 }
 
 export default function OnboardingWizard() {
@@ -31,13 +38,11 @@ export default function OnboardingWizard() {
   const [error, setError] = useState<string>()
   const [sentOk, setSentOk] = useState(false)
 
-  // polling state
   const attempts = useRef(0)
   const timeoutRef = useRef<number>()
-  const [countdown, setCountdown] = useState<number>(0)
+  const [countdown, setCountdown] = useState(0)
   const countdownInterval = useRef<number>()
 
-  // mask helpers
   const maskPhone = (digits: string) => {
     const d = digits.slice(0, 2),
       n = digits.slice(2)
@@ -54,7 +59,6 @@ export default function OnboardingWizard() {
     return `(${d}) ${p1}${p2 ? '-' + p2 : ''}`
   }
 
-  // input handlers
   const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let r = e.target.value.replace(/\D/g, '')
     if (r.length > 11) r = r.slice(0, 11)
@@ -66,86 +70,225 @@ export default function OnboardingWizard() {
     setDestLocal(r)
   }
 
-  // doGenerate logic as before (omitted for brevity)
-  const doGenerate = async (connectOnly = false) => {
-    // ... same as previous version ...
-    // on create success: setStep(3); attempts.current = 0
-  }
-  const handleRegister = () => doGenerate(false)
-  const handleRegenerateQr = () => doGenerate(true)
+  // 1) check initial
+  useEffect(() => {
+    const tenant = localStorage.getItem('tenantId') || ''
+    console.log('[Onboarding] Iniciando check inicial, tenant:', tenant)
+    ;(async () => {
+      try {
+        const res = await fetch('/api/chats/whatsapp/instance/check', {
+          headers: { 'x-tenant-id': tenant },
+        })
+        console.log('[Onboarding] /instance/check status:', res.status)
 
-  // countdown effect
+        const chk = (await res.json()) as CheckResponse
+        console.log('[Onboarding] check response:', chk)
+        if (!chk) {
+          console.log(
+            '[Onboarding] nenhuma instância encontrada — permanece step 1',
+          )
+          return
+        }
+
+        console.log(
+          '[Onboarding] instância encontrada:',
+          chk.instanceName,
+          'status:',
+          chk.sessionStatus,
+        )
+        setInstanceName(chk.instanceName)
+        setApiKey(chk.apiKey)
+
+        if (chk.sessionStatus === 'connected') {
+          console.log('[Onboarding] status connected — pulando para step 4')
+          setStep(4)
+        } else {
+          console.log('[Onboarding] status pendente — indo para step 3 (QR)')
+          setStep(3)
+        }
+      } catch (err) {
+        console.error('[Onboarding] erro no check inicial:', err)
+      }
+    })()
+  }, [])
+
+  // 2) countdown timer
   useEffect(() => {
     if (countdown <= 0) return
     countdownInterval.current = window.setInterval(() => {
-      setCountdown((c) => {
-        if (c <= 1) {
-          clearInterval(countdownInterval.current)
-          return 0
-        }
-        return c - 1
-      })
+      setCountdown((c) => (c > 1 ? c - 1 : 0))
     }, 1000)
     return () => clearInterval(countdownInterval.current)
   }, [countdown])
 
-  // polling connectionState with dynamic delays
+  // 3) polling on step 3
   useEffect(() => {
     if (step !== 3) return
-
+    const tenant = localStorage.getItem('tenantId') || ''
     const poll = async () => {
-      // attempt connectionState
-      attempts.current += 1
+      attempts.current++
       try {
         const res = await fetch(
           '/api/chats/whatsapp/instance/connectionState',
           {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              'x-tenant-id': tenant,
+            },
             body: JSON.stringify({ instanceName, apiKey }),
           },
         )
         if (res.ok) {
-          const state: StateResponse = await res.json()
-          if (state.status === 'connected') {
+          const raw = (await res.json()) as RawStateResponse
+          const state = raw.instance?.state || raw.state
+          if (state === 'open') {
             clearTimeout(timeoutRef.current)
             setStep(4)
             return
           }
+          if (state === 'close') {
+            clearTimeout(timeoutRef.current)
+            setError('Sessão fechada – gere novo QR.')
+            return
+          }
         }
-      } catch {
-        // ignore
-      }
-
-      // determine next delay:
-      let delay: number
-      if (attempts.current === 1) delay = 10
-      else if (attempts.current === 2) delay = 20
-      else delay = 30
-
+      } catch {}
+      const delay =
+        attempts.current === 1 ? 10 : attempts.current === 2 ? 20 : 30
       setCountdown(delay)
       timeoutRef.current = window.setTimeout(poll, delay * 1000)
     }
-
-    // start first poll after 10s
+    attempts.current = 0
     setCountdown(10)
     timeoutRef.current = window.setTimeout(poll, 10 * 1000)
     return () => clearTimeout(timeoutRef.current)
   }, [step, instanceName, apiKey])
 
-  // send test message
+  // 4) create or regenerate QR
+  const doGenerate = async (connectOnly = false) => {
+    setError(undefined)
+    const tenant = localStorage.getItem('tenantId') || ''
+    if (!connectOnly) {
+      const raw = telefoneLocal.replace(/\D/g, '')
+      if (!/^\d{10,11}$/.test(raw)) {
+        setError('Informe DDD + número válido.')
+        return setStep(1)
+      }
+      setStep(2)
+      setLoading(true)
+      try {
+        const res = await fetch('/api/chats/whatsapp/instance', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-tenant-id': tenant,
+          },
+          body: JSON.stringify({ telefone: `55${raw}` }),
+        })
+        if (!res.ok) throw new Error((await res.json()).error || 'Erro')
+        const d = (await res.json()) as RegisterResponse
+        setInstanceName(d.instance.instanceName)
+        setApiKey(d.apiKey)
+        setQrCodeUrl(d.qrCodeUrl)
+        setQrBase64(d.qrBase64) // ⚠️ usa d.qrBase64
+        setStep(3)
+      } catch (e: any) {
+        setError(e.message)
+        setStep(1)
+      } finally {
+        setLoading(false)
+      }
+    } else {
+      setLoading(true)
+      try {
+        const res = await fetch('/api/chats/whatsapp/instance/connect', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-tenant-id': tenant,
+          },
+          body: JSON.stringify({ instanceName, apiKey }),
+        })
+        if (res.status === 404) {
+          setError('Instância não encontrada; recrie.')
+          return setStep(1)
+        }
+        if (!res.ok) throw new Error((await res.json()).error || 'Erro')
+        const d = (await res.json()) as ConnectResponse
+        setQrCodeUrl(d.qrCodeUrl)
+        setQrBase64(d.qrBase64) // ⚠️ usa d.qrBase64
+      } catch (e: any) {
+        setError(e.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+  }
+  const handleRegister = () => doGenerate(false)
+  const handleRegenerateQr = () => doGenerate(true)
+
+  // 5) send test message
   const handleSend = async () => {
-    // ... same as previous version ...
+    const raw = destLocal.replace(/\D/g, '')
+    if (!/^\d{10,11}$/.test(raw)) {
+      setError('Destino inválido')
+      return
+    }
+    setLoading(true)
+    setError(undefined)
+    try {
+      const res = await fetch(
+        `/api/chats/message/sendText/${instanceName}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-tenant-id': localStorage.getItem('tenantId') || '',
+          },
+          body: JSON.stringify({
+            to: `55${raw}`,
+            message: 'Olá! QR autenticado com sucesso!',
+          }),
+        },
+      )
+      if (!res.ok) throw new Error((await res.json()).error || 'Erro ao enviar')
+      setSentOk(true)
+      setStep(5)
+    } catch (e: any) {
+      setError(e.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <div className="wizard-container max-w-sm mx-auto">
-      {step === 1 &&
-        // ... phone input UI ...
-        null}
-      {step === 2 &&
-        // ... spinner UI ...
-        null}
+      {step === 1 && (
+        <div className="p-4 flex flex-col gap-2">
+          <label className="font-medium">Telefone (DDD + número)</label>
+          <input
+            className="input"
+            placeholder="(11) 99999-9999"
+            value={maskPhone(telefoneLocal)}
+            onChange={handleTelefoneChange}
+          />
+          {error && <p className="text-red-600 text-sm">{error}</p>}
+          <button
+            className="btn btn-primary mt-2"
+            onClick={handleRegister}
+            disabled={loading}
+          >
+            {loading ? 'Registrando...' : 'Cadastrar'}
+          </button>
+        </div>
+      )}
+      {step === 2 && (
+        <div className="flex flex-col items-center p-8">
+          <span>Configurando sua instância...</span>
+          <div className="animate-spin h-12 w-12 border-4 border-t-green-600 rounded-full" />
+        </div>
+      )}
       {step === 3 && (
         <div className="p-4 text-center flex flex-col gap-4">
           <p>Escaneie o QR Code abaixo para autenticar:</p>
@@ -193,7 +336,6 @@ export default function OnboardingWizard() {
           </button>
         </div>
       )}
-
       {step === 5 && sentOk && (
         <div className="p-4 text-center">
           <p>Mensagem padrão enviada com sucesso!</p>

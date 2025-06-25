@@ -72,7 +72,7 @@ A aplicação Next.js expõe rotas que consomem a Evolution Chats API:
 ```json
 { "telefone": "5511999999999", "instanceName": "WHATSAPP-BAILEYS" }
 ```  |
-| POST   | `/api/chats/message/send`            | Envia mensagem de texto pelo WhatsApp                                | **HTTP POST**<br/>
+| POST   | `/api/chats/message/sendText`            | Envia mensagem de texto pelo WhatsApp                                | **HTTP POST**<br/>
 ```json
 { "to": "5511999999999", "message": "Mensagem de teste" }
 ```  |
@@ -89,7 +89,7 @@ Fluxo em 4 etapas:
    - Exibe spinner “Configurando sua instância...” por 2 segundos.
 3. **Exibição de QR Code**
    - QR exibido no painel, atualizado pelo webhook.
-4. **Envio de Mensagem de Teste** (`/api/chats/message/send`)
+4. **Envio de Mensagem de Teste** (`/api/chats/message/sendText`)
 
 ```tsx
 'use client';
@@ -147,12 +147,12 @@ flowchart TB
 - **Variáveis de Ambiente**:
 
   ```env
-  CHATS_API_URL=https://apievolution-evolution.r8dlf0.easypanel.host
+  EVOLUTION_API_URL=https://apievolution-evolution.r8dlf0.easypanel.host
   PB_URL=https://<seu-pb-domain>
   ```
 
 - **Serviço** (`lib/server/chats.ts`): funções `getClient`, `saveClient`, `generateQr`, `sendMessage`.
-- **Rotas**: `/api/chats/webhook`, `/api/chats/whatsapp/cadastrar`, `/api/chats/message/send`.
+- **Rotas**: `/api/chats/webhook`, `/api/chats/whatsapp/cadastrar`, `/api/chats/message/sendText`.
 
 ---
 
