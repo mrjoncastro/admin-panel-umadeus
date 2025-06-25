@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
+import { Button } from '@/components/atoms/Button'
 import { useOnboarding } from '@/lib/context/OnboardingContext'
 import {
   connectInstance,
@@ -93,7 +94,7 @@ export default function StepPairing({
   }
 
   return (
-    <div className="p-4 text-center flex flex-col gap-4">
+    <div className="card p-4 text-center flex flex-col gap-4">
       <p>Escaneie o QR Code abaixo para autenticar:</p>
       <img
         src={codeBase ? `data:image/png;base64,${codeBase}` : codeUrl}
@@ -102,13 +103,13 @@ export default function StepPairing({
       />
       {error && <p className="text-red-600">{error}</p>}
       <div className="flex gap-2 justify-center">
-        <button
-          className="btn btn-secondary"
+        <Button
+          variant="secondary"
           onClick={handleRegenerateQr}
           disabled={loading}
         >
           {loading ? 'Gerando...' : 'Regerar QR Code'}
-        </button>
+        </Button>
       </div>
       {countdown > 0 && (
         <p className="text-sm mt-2">

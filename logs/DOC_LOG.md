@@ -423,3 +423,6 @@
 ## [2025-06-25] Variavel PB_URL padronizada no guia de Evolution e .env.example.
 
 ## [2025-06-25] Onboarding de WhatsApp adicionado ao admin e link no header.
+## [2025-06-25] OnboardingWizard adaptado ao design system: TextField, Button e
+classes card/progress aplicados. TenantId lido do AuthContext. Lint e build
+executados.

@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { useAuthContext } from '@/lib/context/AuthContext'
 import StepSelectClient from '../onboarding/StepSelectClient'
 import StepCreateInstance from '../onboarding/StepCreateInstance'
 import StepPairing from '../onboarding/StepPairing'
@@ -18,15 +19,16 @@ type CheckResponse = {
 function WizardSteps() {
   const { step, setStep, setInstanceName, setApiKey, setConnection } =
     useOnboarding()
+  const { tenantId } = useAuthContext()
   const [qrUrl, setQrUrl] = useState('')
   const [qrBase, setQrBase] = useState('')
 
   useEffect(() => {
-    const tenant = localStorage.getItem('tenantId') || ''
+    if (!tenantId) return
     ;(async () => {
       try {
         const res = await fetch('/api/chats/whatsapp/instance/check', {
-          headers: { 'x-tenant-id': tenant },
+          headers: { 'x-tenant-id': tenantId },
         })
         const check = (await res.json()) as CheckResponse
         if (!check) return
@@ -43,7 +45,7 @@ function WizardSteps() {
         /* ignore */
       }
     })()
-  }, [setStep, setInstanceName, setApiKey, setConnection])
+  }, [tenantId, setStep, setInstanceName, setApiKey, setConnection])
 
   const handleRegistered = (url: string, base: string) => {
     setQrUrl(url)
