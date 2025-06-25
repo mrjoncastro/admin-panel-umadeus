@@ -4,8 +4,8 @@ import { Button } from '@/components/atoms/Button'
 import { useOnboarding } from '@/lib/context/OnboardingContext'
 import {
   connectInstance,
-  fetchInstanceStatus,
-} from '@/hooks/useEvolutionApi'
+  fetchConnectionState,
+} from '@/hooks/useWhatsappApi'
 
 interface StepPairingProps {
   qrCodeUrl: string
@@ -50,7 +50,7 @@ export default function StepPairing({
     const poll = async () => {
       attempts.current++
       try {
-        const raw = (await fetchInstanceStatus(
+        const raw = (await fetchConnectionState(
           instanceName,
           apiKey,
         )) as RawStateResponse
