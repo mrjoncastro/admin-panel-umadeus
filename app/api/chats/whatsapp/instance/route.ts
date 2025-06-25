@@ -49,11 +49,10 @@ export async function POST(req: NextRequest) {
           number: telefone,
           integration: 'WHATSAPP-BAILEYS',
           webhook: {
-            url: `https://8c48-187-72-147-17.ngrok-free.app/api/chats/webhook`,
+            url: `https://56fa-187-72-147-17.ngrok-free.app/api/chats/webhook`,
             byEvents: true,
             base64: true,
             headers: {
-              authorization: `Bearer ${process.env.EVOLUTION_API_KEY!}`,
               'Content-Type': 'application/json',
             },
             events: ['APPLICATION_STARTUP'],
