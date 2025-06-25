@@ -4,11 +4,11 @@ import { createContext, useContext, useState } from 'react'
 export type ConnectionStatus = 'idle' | 'pending' | 'connected' | 'disconnected'
 
 interface OnboardingContextType {
-  step: 1 | 2 | 3 | 4
+  step: 1 | 2 | 3 | 4 | 5
   instanceName: string
   apiKey: string
   connection: ConnectionStatus
-  setStep: (s: 1 | 2 | 3 | 4) => void
+  setStep: (s: 1 | 2 | 3 | 4 | 5) => void
   setInstanceName: (v: string) => void
   setApiKey: (v: string) => void
   setConnection: (v: ConnectionStatus) => void
@@ -30,7 +30,7 @@ export function OnboardingProvider({
 }: {
   children: React.ReactNode
 }) {
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1)
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1)
   const [instanceName, setInstanceName] = useState('')
   const [apiKey, setApiKey] = useState('')
   const [connection, setConnection] = useState<ConnectionStatus>('idle')

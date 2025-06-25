@@ -65,8 +65,8 @@ export default function StepSelectClient({
       setApiKey(d.apiKey)
       onRegistered(d.qrCodeUrl, d.qrBase64)
       setStep(3)
-    } catch (e: any) {
-      setError(e.message)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
       setStep(1)
     } finally {
       setLoading(false)

@@ -106,8 +106,8 @@ export default function StepPairing({
       const d = (await res.json()) as ConnectResponse
       setCodeUrl(d.qrCodeUrl)
       setCodeBase(d.qrBase64)
-    } catch (e: any) {
-      setError(e.message)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
     } finally {
       setLoading(false)
     }

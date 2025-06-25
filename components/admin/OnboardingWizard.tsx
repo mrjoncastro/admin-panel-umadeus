@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import StepSelectClient from '../onboarding/StepSelectClient'
 import StepCreateInstance from '../onboarding/StepCreateInstance'
 import StepPairing from '../onboarding/StepPairing'
+import StepSendTest from '../onboarding/StepSendTest'
 import StepComplete from '../onboarding/StepComplete'
 import {
   OnboardingProvider,
@@ -65,7 +66,8 @@ function WizardSteps() {
           onConnected={handleConnected}
         />
       )}
-      {step === 4 && <StepComplete />}
+      {step === 4 && <StepSendTest />}
+      {step === 5 && <StepComplete />}
     </div>
   )
 }

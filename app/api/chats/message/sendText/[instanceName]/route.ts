@@ -21,13 +21,13 @@ export async function POST(
     return NextResponse.json({ error: 'Tenant ausente' }, { status: 400 })
   }
 
-  let body: any
+  let body: unknown
   try {
     body = await req.json()
   } catch {
     return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
   }
-  const { to, message } = body
+  const { to, message } = body as { to?: string; message?: string }
   if (!to || !message) {
     return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
   }
@@ -61,8 +61,9 @@ export async function POST(
       message,
     })
     return NextResponse.json(result, { status: 200 })
-  } catch (err: any) {
+  } catch (err) {
     console.error('[sendText] sendTextMessage error:', err)
-    return NextResponse.json({ error: err.message }, { status: 500 })
+    const msg = err instanceof Error ? err.message : 'Erro desconhecido'
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }

@@ -73,8 +73,9 @@ export async function POST(
       .update(rec.id, { config_finished: true })
 
     return NextResponse.json({ ok: true, result }, { status: 200 })
-  } catch (err: any) {
+  } catch (err) {
     console.error('[sendTest] erro ao enviar teste:', err)
-    return NextResponse.json({ error: err.message }, { status: 500 })
+    const msg = err instanceof Error ? err.message : 'Erro desconhecido'
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }
