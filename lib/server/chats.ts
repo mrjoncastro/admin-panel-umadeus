@@ -43,7 +43,7 @@ export async function saveClient(data: {
 
 export async function generateQr(instanceName: string, apiKey: string) {
   if (!CHATS_API_URL) throw new Error('CHATS_API_URL not set')
-  const url = `${CHATS_API_URL}/instances/${instanceName}/generate-qr`
+  const url = `${CHATS_API_URL}/instances/${instanceName}`
   const res = await fetch(url, {
     method: 'POST',
     headers: {
