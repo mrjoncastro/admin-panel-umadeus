@@ -419,3 +419,7 @@
 ## [2025-06-23] Reenvio de pagamento usa link_pagamento existente e nao chama /api/asaas. Testes atualizados. Lint e build executados.
 
 ## [2025-06-23] Reenvio de pagamento verifica responsavel antes de enviar e-mail. Testes atualizados. Lint e build executados.
+
+## [2025-06-25] Variavel PB_URL padronizada no guia de Evolution e .env.example.
+
+## [2025-06-25] Onboarding de WhatsApp adicionado ao admin e link no header.

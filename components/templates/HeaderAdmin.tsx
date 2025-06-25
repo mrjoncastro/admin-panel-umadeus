@@ -68,6 +68,7 @@ export default function Header() {
           { href: '/admin/usuarios', label: 'Usuários' },
           { href: '/admin/posts', label: 'Posts' },
           { href: '/admin/campos', label: 'Campos' },
+          { href: '/admin/whatsapp', label: 'WhatsApp' },
         ]
 
   const handleLogout = () => {

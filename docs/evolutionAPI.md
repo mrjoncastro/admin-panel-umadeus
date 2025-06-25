@@ -148,7 +148,7 @@ flowchart TB
 
   ```env
   CHATS_API_URL=https://apievolution-evolution.r8dlf0.easypanel.host
-  POCKETBASE_URL=https://<seu-pb-domain>
+  PB_URL=https://<seu-pb-domain>
   ```
 
 - **Serviço** (`lib/server/chats.ts`): funções `getClient`, `saveClient`, `generateQr`, `sendMessage`.

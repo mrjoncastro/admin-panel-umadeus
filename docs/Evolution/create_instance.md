@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'invalid_phone', message: 'Formato de telefone inválido' }, { status: 400 });
     }
 
-    const pb = new PocketBase(process.env.POCKETBASE_URL!);
+    const pb = new PocketBase(process.env.PB_URL!);
     await pb.authStore.loadFromCookie(request.cookies.get('pb_auth')?.value || '');
     const authModel = pb.authStore.model;
     if (!authModel) {
