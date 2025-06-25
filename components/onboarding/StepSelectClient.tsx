@@ -3,9 +3,7 @@ import { useState } from 'react'
 import { TextField } from '@/components/atoms/TextField'
 import { Button } from '@/components/atoms/Button'
 import { useOnboarding } from '@/lib/context/OnboardingContext'
-import {
-  createInstance,
-} from '@/hooks/useEvolutionApi'
+import { useAuthContext } from '@/lib/context/AuthContext'
 
 interface StepSelectClientProps {
   onRegistered: (qrUrl: string, qrBase64: string) => void
@@ -16,6 +14,7 @@ export default function StepSelectClient({
 }: StepSelectClientProps) {
   const { setStep, setInstanceName, setApiKey, loading, setLoading } =
     useOnboarding()
+  const { tenantId } = useAuthContext()
   const [telefoneLocal, setTelefoneLocal] = useState('')
   const [error, setError] = useState<string>()
 
@@ -51,8 +50,18 @@ export default function StepSelectClient({
     setLoading(true)
     setError(undefined)
     try {
-      const d = (await createInstance(`55${raw}`)) as {
+      const res = await fetch('/api/chats/whatsapp/instance', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-tenant-id': tenantId!,
+        },
+        body: JSON.stringify({ telefone: `55${raw}` }),
+      })
+      if (!res.ok) throw new Error(await res.text())
+      const d = (await res.json()) as {
         instance: { instanceId: string; instanceName: string }
+        instanceName?: string
         apiKey: string
         qrCodeUrl: string
         qrBase64: string
