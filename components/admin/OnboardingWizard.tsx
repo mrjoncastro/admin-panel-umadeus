@@ -76,9 +76,12 @@ export default function OnboardingWizard() {
     console.log('[Onboarding] Iniciando check inicial, tenant:', tenant)
     ;(async () => {
       try {
-        const res = await fetch('/api/chats/whatsapp/instance/check', {
-          headers: { 'x-tenant-id': tenant },
-        })
+        const res = await fetch(
+          `/api/chats/whatsapp/message/sendTest/${instanceName}`,
+          {
+            headers: { 'x-tenant-id': tenant },
+          },
+        )
         console.log('[Onboarding] /instance/check status:', res.status)
 
         const chk = (await res.json()) as CheckResponse
@@ -238,20 +241,17 @@ export default function OnboardingWizard() {
     setLoading(true)
     setError(undefined)
     try {
-      const res = await fetch(
-        `/api/chats/message/sendText/${instanceName}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-tenant-id': localStorage.getItem('tenantId') || '',
-          },
-          body: JSON.stringify({
-            to: `55${raw}`,
-            message: 'Olá! QR autenticado com sucesso!',
-          }),
+      const res = await fetch(`/api/chats/message/sendText/${instanceName}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-tenant-id': localStorage.getItem('tenantId') || '',
         },
-      )
+        body: JSON.stringify({
+          to: `55${raw}`,
+          message: 'Olá! QR autenticado com sucesso!',
+        }),
+      })
       if (!res.ok) throw new Error((await res.json()).error || 'Erro ao enviar')
       setSentOk(true)
       setStep(5)
