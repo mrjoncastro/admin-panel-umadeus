@@ -1,5 +1,7 @@
 'use client'
 import { useState } from 'react'
+import { TextField } from '@/components/atoms/TextField'
+import { Button } from '@/components/atoms/Button'
 import { useOnboarding } from '@/lib/context/OnboardingContext'
 import {
   createInstance,
@@ -68,22 +70,18 @@ export default function StepSelectClient({
   }
 
   return (
-    <div className="p-4 flex flex-col gap-2">
+    <div className="card p-4 flex flex-col gap-2">
       <label className="font-medium">Telefone (DDD + número)</label>
-      <input
-        className="input"
+      <TextField
+        className="input-base"
         placeholder="(11) 99999-9999"
         value={maskPhone(telefoneLocal)}
         onChange={handleTelefoneChange}
       />
       {error && <p className="text-red-600 text-sm">{error}</p>}
-      <button
-        className="btn btn-primary mt-2"
-        onClick={handleRegister}
-        disabled={loading}
-      >
+      <Button className="mt-2" onClick={handleRegister} disabled={loading}>
         {loading ? 'Registrando...' : 'Cadastrar'}
-      </button>
+      </Button>
     </div>
   )
 }
