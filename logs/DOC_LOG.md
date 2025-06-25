@@ -426,3 +426,4 @@
 ## [2025-06-25] OnboardingWizard adaptado ao design system: TextField, Button e
 classes card/progress aplicados. TenantId lido do AuthContext. Lint e build
 executados.
+## [2025-06-25] Documentada estrutura do OnboardingWizard em docs/Evolution/whatsapp_onboarding.md com referência aos endpoints. Lint e build executados.

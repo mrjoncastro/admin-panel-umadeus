@@ -14,6 +14,7 @@
 5. [Envio de Mensagem (Produção)](#5-envio-de-mensagem-produção)
 6. [Fluxo Front-end (React)](#6-fluxo-front-end-react)
 7. [Boas Práticas](#7-boas-práticas)
+8. [OnboardingWizard](#8-onboardingwizard)
 
 ---
 
@@ -189,3 +190,24 @@ Trate erros com try/catch e retorne códigos HTTP adequados.
 Separe rotas de teste (sendTest) e produção (sendText).
 
 Escreva testes automatizados de integração para cada endpoint.
+
+## 8. OnboardingWizard
+
+O componente `OnboardingWizard` no admin organiza o processo de
+onboarding em quatro etapas usando o `OnboardingContext`:
+
+1. **StepSelectClient** – solicita o telefone e chama
+   **POST `/api/chats/whatsapp/cadastrar`** para criar a instância.
+2. **StepCreateInstance** – exibe uma tela de progresso enquanto a
+   criação é concluída.
+3. **StepPairing** – mostra o QR Code e realiza polling em
+   **POST `/api/chats/whatsapp/instance/connectionState`**. Caso
+   necessário, permite gerar novo código via
+   **GET `/api/chats/whatsapp/instance/connect`**.
+4. **StepComplete** – confirma a conexão e permite disparar a mensagem
+   de teste usando **POST**
+   `/api/chats/whatsapp/message/sendTest/{instanceName}`.
+
+Ao montar, o wizard consulta
+**GET `/api/chats/whatsapp/instance/check`** para retomar uma
+instância previamente criada e definir o passo inicial.
