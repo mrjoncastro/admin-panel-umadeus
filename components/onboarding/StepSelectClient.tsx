@@ -14,9 +14,9 @@ interface StepSelectClientProps {
 export default function StepSelectClient({
   onRegistered,
 }: StepSelectClientProps) {
-  const { setStep, setInstanceName, setApiKey } = useOnboarding()
+  const { setStep, setInstanceName, setApiKey, loading, setLoading } =
+    useOnboarding()
   const [telefoneLocal, setTelefoneLocal] = useState('')
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string>()
 
   const maskPhone = (digits: string) => {
