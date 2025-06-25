@@ -1,6 +1,10 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import { useOnboarding } from '@/lib/context/OnboardingContext'
+import {
+  connectInstance,
+  fetchInstanceStatus,
+} from '@/hooks/useEvolutionApi'
 
 interface StepPairingProps {
   qrCodeUrl: string
@@ -23,7 +27,7 @@ export default function StepPairing({
   qrBase64,
   onConnected,
 }: StepPairingProps) {
-  const { instanceName, apiKey, setStep, setConnection } = useOnboarding()
+  const { instanceName, apiKey, setConnection } = useOnboarding()
   const [codeUrl, setCodeUrl] = useState(qrCodeUrl)
   const [codeBase, setCodeBase] = useState(qrBase64)
   const [loading, setLoading] = useState(false)
@@ -45,32 +49,22 @@ export default function StepPairing({
     const poll = async () => {
       attempts.current++
       try {
-        const res = await fetch(
-          '/api/chats/whatsapp/instance/connectionState',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-tenant-id': localStorage.getItem('tenantId') || '',
-            },
-            body: JSON.stringify({ instanceName, apiKey }),
-          },
-        )
-        if (res.ok) {
-          const raw = (await res.json()) as RawStateResponse
-          const state = raw.instance?.state || raw.state
-          if (state === 'open') {
-            clearTimeout(timeoutRef.current)
-            setConnection('connected')
-            onConnected()
-            return
-          }
-          if (state === 'close') {
-            clearTimeout(timeoutRef.current)
-            setError('Sessão fechada – gere novo QR.')
-            setConnection('disconnected')
-            return
-          }
+        const raw = (await fetchInstanceStatus(
+          instanceName,
+          apiKey,
+        )) as RawStateResponse
+        const state = raw.instance?.state || raw.state
+        if (state === 'open') {
+          clearTimeout(timeoutRef.current)
+          setConnection('connected')
+          onConnected()
+          return
+        }
+        if (state === 'close') {
+          clearTimeout(timeoutRef.current)
+          setError('Sessão fechada – gere novo QR.')
+          setConnection('disconnected')
+          return
         }
       } catch {}
       const delay =
@@ -88,26 +82,11 @@ export default function StepPairing({
     setLoading(true)
     setError(undefined)
     try {
-      const res = await fetch('/api/chats/whatsapp/instance/connect', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-tenant-id': localStorage.getItem('tenantId') || '',
-        },
-        body: JSON.stringify({ instanceName, apiKey }),
-      })
-      if (res.status === 404) {
-        setError('Instância não encontrada; recrie.')
-        setStep(1)
-        setConnection('disconnected')
-        return
-      }
-      if (!res.ok) throw new Error((await res.json()).error || 'Erro')
-      const d = (await res.json()) as ConnectResponse
+      const d = (await connectInstance(instanceName, apiKey)) as ConnectResponse
       setCodeUrl(d.qrCodeUrl)
       setCodeBase(d.qrBase64)
-    } catch (e: any) {
-      setError(e.message)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err))
     } finally {
       setLoading(false)
     }

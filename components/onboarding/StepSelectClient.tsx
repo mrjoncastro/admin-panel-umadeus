@@ -1,6 +1,9 @@
 'use client'
 import { useState } from 'react'
 import { useOnboarding } from '@/lib/context/OnboardingContext'
+import {
+  createInstance,
+} from '@/hooks/useEvolutionApi'
 
 interface StepSelectClientProps {
   onRegistered: (qrUrl: string, qrBase64: string) => void
@@ -46,16 +49,7 @@ export default function StepSelectClient({
     setLoading(true)
     setError(undefined)
     try {
-      const res = await fetch('/api/chats/whatsapp/instance', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-tenant-id': localStorage.getItem('tenantId') || '',
-        },
-        body: JSON.stringify({ telefone: `55${raw}` }),
-      })
-      if (!res.ok) throw new Error((await res.json()).error || 'Erro')
-      const d = (await res.json()) as {
+      const d = (await createInstance(`55${raw}`)) as {
         instance: { instanceId: string; instanceName: string }
         apiKey: string
         qrCodeUrl: string
@@ -65,8 +59,8 @@ export default function StepSelectClient({
       setApiKey(d.apiKey)
       onRegistered(d.qrCodeUrl, d.qrBase64)
       setStep(3)
-    } catch (e: any) {
-      setError(e.message)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err))
       setStep(1)
     } finally {
       setLoading(false)
