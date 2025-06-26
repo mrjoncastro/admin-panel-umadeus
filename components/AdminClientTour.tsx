@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation'
 import { Button } from '@/components/atoms/Button'
 import { HelpCircle } from 'lucide-react'
 import { useAuthContext } from '@/lib/context/AuthContext'
-import { useTenant } from '@/lib/context/TenantContext'
 
 interface AdminClientTourProps {
   stepsByRoute: Record<string, Step[]>
@@ -14,7 +13,6 @@ interface AdminClientTourProps {
 export function AdminClientTour({ stepsByRoute }: AdminClientTourProps) {
   const pathname = usePathname()
   const { tenantId } = useAuthContext()
-  const { config } = useTenant()
   const tourRef = useRef<StoreHelpers | null>(null)
   const steps = useMemo(() => stepsByRoute[pathname] || [], [pathname, stepsByRoute])
   const storageKey = `${tenantId ?? 'public'}-${pathname}-tour-completed`
