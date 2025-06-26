@@ -98,7 +98,7 @@ export default function DashboardResumo({
   return (
     <>
       <div className="grid gap-4 md:grid-cols-3 mb-6">
-        <div className="card text-center">
+        <div className="card text-center stats-card">
           <div className="flex justify-center items-center gap-2 mb-1">
             <h2 className="text-sm font-bold dark:text-gray-100 ">
               Total de Inscrições
@@ -114,7 +114,7 @@ export default function DashboardResumo({
           </p>
         </div>
 
-        <div className="card text-center">
+        <div className="card text-center stats-card">
           <div className="flex justify-center items-center gap-2 mb-1">
             <h2 className="text-sm font-bold dark:text-gray-100">
               Total de Pedidos
@@ -130,7 +130,7 @@ export default function DashboardResumo({
           </p>
         </div>
 
-        <div className="card text-center">
+        <div className="card text-center stats-card">
           <div className="flex justify-center items-center gap-2 mb-1">
             <h2 className="text-sm font-bold dark:text-gray-100">
               Valor Total

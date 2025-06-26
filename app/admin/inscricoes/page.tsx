@@ -528,7 +528,7 @@ export default function ListaInscricoesPage() {
       )}
 
       {/* Filtros */}
-      <div className="flex flex-wrap gap-4 mb-6">
+      <div className="flex flex-wrap gap-4 mb-6 filtro-inscricoes">
         <input
           type="text"
           placeholder={placeholderBusca}
@@ -561,7 +561,7 @@ export default function ListaInscricoesPage() {
           Nenhuma inscrição encontrada.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+        <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm tabela-inscricoes">
           <table className="table-base">
             <thead>
               <tr>

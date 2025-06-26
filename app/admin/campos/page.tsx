@@ -219,7 +219,7 @@ export default function GerenciarCamposPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <h2 className="heading">Campos Cadastrados</h2>
 
-          <button onClick={handleNovoCampo} className="btn btn-primary">
+          <button onClick={handleNovoCampo} className="btn btn-primary btn-novo-campo">
             + Novo Campo
           </button>
         </div>
@@ -268,7 +268,7 @@ export default function GerenciarCamposPage() {
         )}
 
         <div className="w-full max-w-2xl mx-auto">
-          <table className="table-base">
+          <table className="table-base lista-campos">
             <thead>
               <tr>
                 <th className="w-2/3">Nome do Campo</th>

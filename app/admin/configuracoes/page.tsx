@@ -163,7 +163,7 @@ export default function ConfiguracoesPage() {
   const isLight = isColorLight(primaryColor)
 
   return (
-    <div className="max-w-lg mx-auto bg-white dark:bg-zinc-900 rounded-3xl shadow-xl p-8 space-y-10 mt-10">
+    <div className="max-w-lg mx-auto bg-white dark:bg-zinc-900 rounded-3xl shadow-xl p-8 space-y-10 mt-10 form-config">
       <div className="space-y-6">
         {/* Fonte */}
         <label className="block">
@@ -262,7 +262,7 @@ export default function ConfiguracoesPage() {
           checked={confirmaInscricoes}
           onChange={setConfirmaInscricoes}
           label="Confirmar inscrições manualmente?"
-          className="mt-4"
+          className="mt-4 toggle-confirmar-inscricoes"
         />
         {/* Preview botão */}
         <div>

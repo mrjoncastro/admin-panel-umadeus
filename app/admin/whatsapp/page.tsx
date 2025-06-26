@@ -7,7 +7,7 @@ export default function WhatsappPage() {
   const { authChecked } = useAuthGuard(['coordenador'])
   if (!authChecked) return null
   return (
-    <div className="max-w-md mx-auto p-6">
+    <div className="max-w-md mx-auto p-6 onboarding-wizard">
       <OnboardingWizard />
     </div>
   )
