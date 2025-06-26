@@ -206,18 +206,6 @@ return NextResponse.json({
   })
   ```
 
-- **Nova Cobrança**
-
-  ```ts
-  await fetch('/api/email', {
-    method: 'POST',
-    body: JSON.stringify({
-      eventType: 'confirmacao_inscricao',
-      userId: 'abc123',
-      paymentLink: 'https://pagamento.exemplo/link',
-    }),
-  })
-  ```
 
 Verifique logs no console do servidor e retornos HTTP (200 OK ou erros 4xx/5xx).
 
@@ -363,76 +351,3 @@ Os templates abaixo usam tokens do nosso Design System (cores, tipografia e espa
 </html>
 ```
 
-### 10.3 Template: Nova Cobrança
-
-```html
-<!DOCTYPE html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nova Cobrança Disponível</title>
-  </head>
-  <body
-    style="margin:0; padding:0; background:var(--background); font-family:var(--font-body);"
-  >
-    <span
-      style="display:none; font-size:1px; line-height:1px; max-height:0; max-width:0; opacity:0; overflow:hidden;"
-      >Uma nova cobrança foi gerada。</span
-    >
-    <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
-      <tr>
-        <td align="center" style="padding:var(--space-md);">
-          <table
-            width="600"
-            cellpadding="0"
-            cellspacing="0"
-            role="presentation"
-            class="card"
-          >
-            <tr>
-              <td align="center" style="padding:var(--space-lg);">
-                <img src="{{logoUrl}}" alt="Logo" width="120" />
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:var(--space-md); color:var(--text-primary);">
-                <h2 class="heading" style="color: {{cor_primary}};">
-                  Olá, {{userName}}
-                </h2>
-                <p>
-                  Uma nova cobrança de <strong>R$ {{amount}}</strong> foi
-                  gerada。
-                </p>
-                <p>Vencimento: {{dueDate}}</p>
-                <p>
-                  <a
-                    href="{{paymentLink}}"
-                    style="display:inline-block; padding:12px 24px; border-radius:4px; text-decoration:none; color:#ffffff; background-color: {{cor_primary}}; margin-top:var(--space-md);"
-                    >Pagar Agora</a
-                  >
-                </p>
-              </td>
-            </tr>
-            <tr>
-              <td
-                style="padding:var(--space-md); font-size:0.875rem; color:var(--text-secondary); text-align:center;"
-              >
-                <p>Se não solicitou este e‑mail, ignore-o。</p>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
-</html>
-```
-
-> Aprimoramentos\*\*:
->
-> - Tipografia via `var(--font-body)` e classes `.heading`.
-> - Espaçamentos com `var(--space-*)`.
-> - Cores de texto e fundo referenciadas por tokens CSS e pelo campo `cor_primary`.
-> - Botões estilizados com classes `btn btn-primary` do design system, utilizando `cor_primary` para `background-color` inline.
-> - Estrutura responsiva e compatível com Gmail/Outlook (tabelas e inline CSS).
