@@ -355,7 +355,7 @@ A coleção **whatsapp_clientes** possui o seguinte esquema de campos no PocketB
 | `apiKey`          | Text                                           | Single                                         | Sim         | Chave de API associada à instância                                 |
 | `telefone`        | Text                                           | Single                                         |
 | Sim               | Número E.164 utilizado na criação da instância |
-|  |
+|                   |
 | `pairingCode`     | Text                                           | Single                                         | Não         | Código de pareamento (apenas enquanto `sessionStatus` = `pending`) |
 | `sessionStatus`   | Select                                         | opções: `pending`, `connected`, `disconnected` | Sim         | Status da sessão                                                   |
 | `qrCode`          | Text                                           | Single                                         | Não         | URL ou Base64 do QR Code para autenticação inicial                 |

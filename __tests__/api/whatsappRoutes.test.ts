@@ -12,8 +12,7 @@ import { requireRole } from '../../lib/apiAuth'
 const pb = createPocketBaseMock()
 vi.mock('../../lib/pocketbase', () => ({
   default: vi.fn(() => pb),
-}))
-(
+}))(
   requireRole as unknown as { mockReturnValue: (v: any) => void },
 ).mockReturnValue({ pb, user: {} })
 
