@@ -5,7 +5,6 @@ import { vi, describe, it, expect } from 'vitest'
 import CarrinhoPage from '@/app/loja/carrinho/page'
 import CartPreview from '@/components/molecules/CartPreview'
 import { CartProvider } from '@/lib/context/CartContext'
-import { calculateGross } from '@/lib/asaasFees'
 
 vi.mock('next/image', () => ({
   __esModule: true,
@@ -26,18 +25,20 @@ vi.mock('@/lib/context/AuthContext', () => ({
 }))
 
 function renderWithItem() {
+  const preco_bruto = 50
   const preco = 50
   const item = {
     id: '1',
     nome: 'Prod',
     preco,
+    preco_bruto,
     imagens: ['/img.jpg'],
     slug: 'prod',
     quantidade: 1,
     variationId: '1',
   }
   window.localStorage.setItem('carrinho', JSON.stringify([item]))
-  return { preco }
+  return { preco_bruto }
 }
 
 function renderWithItems() {
@@ -45,6 +46,7 @@ function renderWithItems() {
     id: '1',
     nome: 'Prod1',
     preco: 10,
+    preco_bruto: 10,
     imagens: ['/img1.jpg'],
     slug: 'prod1',
     quantidade: 1,
@@ -54,6 +56,7 @@ function renderWithItems() {
     id: '2',
     nome: 'Prod2',
     preco: 20,
+    preco_bruto: 20,
     imagens: ['/img2.jpg'],
     slug: 'prod2',
     quantidade: 2,
@@ -65,8 +68,8 @@ function renderWithItems() {
 
 describe('CarrinhoPage', () => {
   it('mostra valor bruto do item', async () => {
-    const { preco } = renderWithItem()
-    const gross = calculateGross(preco, 'pix', 1).gross
+    const { preco_bruto } = renderWithItem()
+    const gross = preco_bruto
     render(
       <CartProvider>
         <CarrinhoPage />
@@ -81,8 +84,8 @@ describe('CarrinhoPage', () => {
 
 describe('CartPreview', () => {
   it('mostra total bruto calculado', () => {
-    const { preco } = renderWithItem()
-    const gross = calculateGross(preco, 'pix', 1).gross
+    const { preco_bruto } = renderWithItem()
+    const gross = preco_bruto
     render(
       <CartProvider>
         <CartPreview />
@@ -95,10 +98,8 @@ describe('CartPreview', () => {
 
   it('mostra valor bruto de cada item', () => {
     const { item1, item2 } = renderWithItems()
-    const gross1 =
-      calculateGross(item1.preco, 'pix', 1).gross * item1.quantidade
-    const gross2 =
-      calculateGross(item2.preco, 'pix', 1).gross * item2.quantidade
+    const gross1 = item1.preco_bruto * item1.quantidade
+    const gross2 = item2.preco_bruto * item2.quantidade
     render(
       <CartProvider>
         <CartPreview />

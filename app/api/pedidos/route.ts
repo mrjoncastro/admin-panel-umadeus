@@ -307,7 +307,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const valor = produtoRecord?.preco ?? 0
+    const valor = produtoRecord?.preco_bruto ?? 0
     console.log('[PEDIDOS][POST] Valor final do pedido:', valor)
 
     const payload = {

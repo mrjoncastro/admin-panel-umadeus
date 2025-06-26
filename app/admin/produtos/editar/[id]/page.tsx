@@ -3,11 +3,11 @@
 import { useEffect, useState, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
-import { calculateGross } from '@/lib/asaasFees'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import { useToast } from '@/lib/context/ToastContext'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import ToggleSwitch from '@/components/atoms/ToggleSwitch'
+import { calculateGross } from '@/lib/asaasFees'
 
 interface Categoria {
   id: string
@@ -51,12 +51,12 @@ export default function EditarProdutoPage() {
   const [exclusivo, setExclusivo] = useState(false)
   const inputHex = useRef<HTMLInputElement | null>(null)
   const [valorCliente, setValorCliente] = useState(
-    calculateGross(Number(initial?.preco ?? 0), 'pix', 1).gross,
+    Number(initial?.preco_bruto ?? 0),
   )
 
   useEffect(() => {
-    setValorCliente(calculateGross(Number(initial?.preco ?? 0), 'pix', 1).gross)
-  }, [initial?.preco])
+    setValorCliente(Number(initial?.preco_bruto ?? 0))
+  }, [initial?.preco_bruto])
 
   useEffect(() => {
     if (!authChecked) return

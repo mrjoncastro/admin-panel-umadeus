@@ -2,7 +2,6 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
 import Image from 'next/image'
 import type { Produto } from '@/types'
-import { calculateGross } from '@/lib/asaasFees'
 
 import AddToCartButton from '@/components/molecules/AddToCartButton'
 
@@ -101,7 +100,6 @@ export default function ProdutoInterativo({
   generos,
   tamanhos,
   nome,
-  preco,
   descricao,
   produto,
 }: {
@@ -109,7 +107,6 @@ export default function ProdutoInterativo({
   generos: string[]
   tamanhos: string[]
   nome: string
-  preco: number
   descricao?: string
   produto: Produto
 }) {
@@ -136,10 +133,7 @@ export default function ProdutoInterativo({
   const [indexImg, setIndexImg] = useState(0)
   const pauseRef = useRef(false)
 
-  const precoBruto = useMemo(
-    () => calculateGross(preco, 'pix', 1).gross,
-    [preco],
-  )
+  const precoBruto = produto.preco_bruto
 
   const firstImgKey = Object.keys(imagens)[0]
   const imgs = imagens[genero] || imagens['default'] || imagens[firstImgKey]
