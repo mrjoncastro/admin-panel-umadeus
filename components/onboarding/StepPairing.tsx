@@ -104,6 +104,8 @@ export default function StepPairing({
       <Image
         src={codeBase ? `data:image/png;base64,${codeBase}` : codeUrl}
         alt="QR Code"
+        width={200}
+        height={200}
         className="mx-auto"
       />
       {error && <p className="text-red-600 text-sm">{error}</p>}
