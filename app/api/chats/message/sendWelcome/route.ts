@@ -4,7 +4,11 @@ import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
 export type Body = {
-  eventType: 'nova_inscricao' | 'confirmacao_inscricao'
+  eventType:
+    | 'nova_inscricao'
+    | 'confirmacao_inscricao'
+    | 'novo_usuario'
+    | 'confirmacao_pagamento'
   userId: string
   paymentLink?: string
 }
@@ -57,13 +61,24 @@ export async function POST(req: NextRequest) {
     }
 
     let message: string
-    if (eventType === 'nova_inscricao') {
-      message = `Olá ${nome}! Recebemos sua inscrição. Em breve entraremos em contato.`
-    } else {
-      message = `Parabéns, ${nome}! Sua inscrição foi confirmada.`
-      if (paymentLink) {
-        message += ` Realize o pagamento em: ${paymentLink}`
-      }
+    switch (eventType) {
+      case 'nova_inscricao':
+        message = `Olá ${nome}! Recebemos sua inscrição. Em breve entraremos em contato.`
+        break
+      case 'confirmacao_inscricao':
+        message = `Parabéns, ${nome}! Sua inscrição foi confirmada.`
+        if (paymentLink) {
+          message += ` Realize o pagamento em: ${paymentLink}`
+        }
+        break
+      case 'novo_usuario':
+        message = `Olá ${nome}! Seu cadastro foi realizado com sucesso.`
+        break
+      case 'confirmacao_pagamento':
+        message = `Pagamento confirmado! Nos vemos em breve.`
+        break
+      default:
+        message = ''
     }
 
     const result = await sendTextMessage({
