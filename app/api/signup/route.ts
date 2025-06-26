@@ -23,8 +23,14 @@ export async function POST(req: NextRequest) {
       ...(tenantId ? { cliente: tenantId } : {}),
     })
 
+    const base = req.nextUrl?.origin || req.headers.get('origin')
+    if (!base) {
+      console.error('Base URL não encontrada para envio de notificações')
+      return NextResponse.json({ error: 'Base URL não encontrada' }, { status: 500 })
+    }
+
     try {
-      await fetch('/api/email', {
+      await fetch(`${base}/api/email`, {
         method: 'POST',
         body: JSON.stringify({
           eventType: 'novo_usuario',
@@ -36,7 +42,7 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-      await fetch('/api/chats/message/sendWelcome', {
+      await fetch(`${base}/api/chats/message/sendWelcome`, {
         method: 'POST',
         body: JSON.stringify({
           eventType: 'novo_usuario',
