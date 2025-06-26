@@ -426,3 +426,5 @@
 ## [2025-06-25] OnboardingWizard adaptado ao design system: TextField, Button e
 classes card/progress aplicados. TenantId lido do AuthContext. Lint e build
 executados.
+
+## [2025-06-26] Check de instância inclui telefone e criado endpoint DELETE /instance/delete. Documentação atualizada e StepComplete mostra número conectado com opção de desconectar. Lint e build executados.

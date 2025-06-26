@@ -51,6 +51,7 @@ export async function GET(req: NextRequest) {
     {
       instanceName: rec.instanceName,
       apiKey: rec.apiKey,
+      telefone: rec.telefone,
       sessionStatus: rec.sessionStatus,
     },
     { status: 200 },

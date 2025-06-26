@@ -11,9 +11,10 @@
 2. [Check de Existência](#2-check-de-existência)
 3. [Polling de Conexão](#3-polling-de-conexão)
 4. [Envio de Mensagem de Teste](#4-envio-de-mensagem-de-teste)
-5. [Envio de Mensagem (Produção)](#5-envio-de-mensagem-produção)
-6. [Fluxo Front-end (React)](#6-fluxo-front-end-react)
-7. [Boas Práticas](#7-boas-práticas)
+5. [Exclusão de Instância](#5-exclusao-de-instancia)
+6. [Envio de Mensagem (Produção)](#6-envio-de-mensagem-produção)
+7. [Fluxo Front-end (React)](#7-fluxo-front-end-react)
+8. [Boas Práticas](#8-boas-práticas)
 
 ---
 
@@ -80,6 +81,7 @@ Editar
 {
 "instanceName": "nome-do-cliente",
 "apiKey": "…",
+"telefone": "5511999999999",
 "sessionStatus": "pending" | "connected" | "disconnected"
 } 3. Polling de Conexão
 POST /api/chats/whatsapp/instance/connectionState
@@ -147,7 +149,24 @@ Erros
 
 500 se falha na API externa
 
-5. Envio de Mensagem (Produção)
+5. Exclusão de Instância
+   DELETE /api/chats/whatsapp/instance/delete
+
+Headers
+
+x-tenant-id: <tenantId>
+
+Resposta 200
+
+json
+Copiar
+Editar
+{
+"ok": true
+}
+
+---
+6. Envio de Mensagem (Produção)
    POST /api/chats/whatsapp/message/sendText/{instanceName}
 
 Headers
@@ -170,7 +189,7 @@ Resposta 200
 
 Erros: 400 / 404 / 500 conforme validações
 
-6. Fluxo Front-end (React)
+7. Fluxo Front-end (React)
    Step 1: usuário insere DDD+número → chama /cadastrar.
 
 Step 2: mostra spinner até resposta.
@@ -181,7 +200,7 @@ Step 4: ao detectar state === open, exibe campo de destino e chama /sendTest/{in
 
 Step 5: exibe mensagem de sucesso e bloqueia reenvio (config_finished = true).
 
-7. Boas Práticas
+8. Boas Práticas
    Utilize middleware para validar pb_auth e x-tenant-id.
 
 Trate erros com try/catch e retorne códigos HTTP adequados.
