@@ -5,6 +5,7 @@ import StepSelectClient from '../onboarding/StepSelectClient'
 import StepCreateInstance from '../onboarding/StepCreateInstance'
 import StepPairing from '../onboarding/StepPairing'
 import StepComplete from '../onboarding/StepComplete'
+import StepSendTest from '../onboarding/StepSendTest'
 import OnboardingProgress from '../onboarding/OnboardingProgress'
 import {
   OnboardingProvider,
@@ -37,7 +38,7 @@ function WizardSteps() {
         setApiKey(check.apiKey)
         if (check.sessionStatus === 'connected') {
           setConnection('connected')
-          setStep(4)
+          setStep(5)
         } else {
           setConnection('pending')
           setStep(3)
@@ -69,7 +70,8 @@ function WizardSteps() {
           onConnected={handleConnected}
         />
       )}
-      {step === 4 && <StepComplete />}
+      {step === 4 && <StepSendTest />}
+      {step === 5 && <StepComplete />}
     </div>
   )
 }
