@@ -53,6 +53,10 @@ export default function StepSendTest() {
           body: JSON.stringify({ to: `55${raw}` }),
         },
       )
+      if (res.status === 409) {
+        setError('Teste já executado')
+        return
+      }
       if (!res.ok) throw new Error(await res.text())
       setStep(5)
     } catch (err: unknown) {
