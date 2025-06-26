@@ -167,3 +167,5 @@
 ## [2025-06-25] Logout era abortado antes do fetch finalizar; headers agora aguardam logout() antes de redirecionar - dev - b4e0600
 
 ## [2025-06-25] Botão Sair no perfil de usuário não encerrava sessão. Logout agora aguarda fetch e fecha menus antes de redirecionar - dev - 3fec475
+
+## [2025-07-31] Erro ao criar inscrição com usuário logado: API retornava "validation_not_unique" para o email. Rota /loja/api/inscricoes agora reutiliza o usuário autenticado quando disponível - dev
