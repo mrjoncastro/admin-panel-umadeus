@@ -277,7 +277,8 @@ export async function POST(req: NextRequest) {
     const campoId = inscricao.expand?.campo?.id
     const responsavelId = inscricao.expand?.criado_por
     let produtoRecord: Produto | undefined
-    const produtoIdInscricao = inscricao.produto
+    const rawProd = inscricao.produto
+    const produtoIdInscricao = Array.isArray(rawProd) ? rawProd[0] : rawProd
 
     try {
       if (produtoIdInscricao) {

@@ -248,4 +248,37 @@ describe('POST /api/pedidos', () => {
       expect.objectContaining({ canal: 'inscricao', id_inscricao: 'ins1' }),
     )
   })
+
+  it('usa primeiro produto quando inscricao.produto é array', async () => {
+    ;(
+      getUserFromHeaders as unknown as { mockReturnValue: (v: any) => void }
+    ).mockReturnValue({ user: { id: 'u1' }, pbSafe: pb })
+    const inscricao = {
+      id: 'ins1',
+      email: 'e@test.com',
+      cliente: 'cli1',
+      produto: ['p1', 'p2'],
+      expand: { campo: { id: 'c1' }, criado_por: 'u2' },
+    }
+    const prodMock = vi.fn().mockResolvedValue({ id: 'p1', preco_bruto: 10 })
+    pb.collection.mockImplementation((name: string) => {
+      if (name === 'pedidos') return { create: createMock }
+      if (name === 'inscricoes') return { getOne: getOneMock }
+      if (name === 'produtos') return { getOne: prodMock }
+      return {} as any
+    })
+    getOneMock.mockResolvedValueOnce(inscricao)
+
+    const req = new Request('http://test/api/pedidos', {
+      method: 'POST',
+      body: JSON.stringify({ id_inscricao: 'ins1' }),
+    })
+
+    const res = await POST(req as unknown as NextRequest)
+    expect(res.status).toBe(200)
+    expect(prodMock).toHaveBeenCalledWith('p1')
+    expect(createMock).toHaveBeenCalledWith(
+      expect.objectContaining({ produto: ['p1'] }),
+    )
+  })
 })
