@@ -427,4 +427,6 @@
 classes card/progress aplicados. TenantId lido do AuthContext. Lint e build
 executados.
 
+## [2025-06-26] function-index atualizado: rota /api/n8n removida e adicionada rota Evolution /api/chats/message/sendText. Lint e build executados.
+
 ## [2025-06-26] Variavel NEXT_PUBLIC_N8N_WEBHOOK_URL removida do README e .env.example. Integracao n8n depreciada.
