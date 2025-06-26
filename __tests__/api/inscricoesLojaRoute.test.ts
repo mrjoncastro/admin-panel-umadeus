@@ -46,6 +46,7 @@ describe('POST /loja/api/inscricoes', () => {
         evento: 'e1',
       }),
     })
+    ;(req as any).nextUrl = new URL('http://test/loja/api/inscricoes')
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(201)
     expect(createUserMock).toHaveBeenCalledWith(
@@ -86,6 +87,7 @@ describe('POST /loja/api/inscricoes', () => {
         evento: 'e1',
       }),
     })
+    ;(req as any).nextUrl = new URL('http://test/loja/api/inscricoes')
     createUserMock.mockClear()
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(201)
@@ -119,6 +121,7 @@ describe('POST /loja/api/inscricoes', () => {
         evento: 'e1',
       }),
     })
+    ;(req as any).nextUrl = new URL('http://test/loja/api/inscricoes')
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(201)
     expect(fetchMock).toHaveBeenCalledWith(
