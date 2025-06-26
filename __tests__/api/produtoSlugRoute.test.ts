@@ -36,7 +36,7 @@ describe('GET /api/produtos/[slug]', () => {
   })
 
   it('retorna produto quando visitante', async () => {
-    const produto = { id: 'p1', imagens: ['img1.jpg'], ativo: true }
+    const produto = { id: 'p1', imagens: ['img1.jpg'], ativo: true, cliente: 't1', exclusivo_user: false }
     getFirstListItemMock.mockResolvedValueOnce(produto)
     pb.files.getURL.mockImplementation((_p, img) => `url/${img}`)
     const req = new Request('http://test/produtos/p1')

@@ -44,7 +44,7 @@ describe('TransferenciasPage', () => {
     const fetchMock = vi.fn().mockResolvedValue({ ok: true })
     global.fetch = fetchMock as unknown as typeof fetch
     render(<TransferenciasPage />)
-    fireEvent.click(screen.getByRole('button'))
+    fireEvent.click(screen.getByRole('button', { name: /enviar/i }))
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/asaas/transferencia',
       expect.objectContaining({
