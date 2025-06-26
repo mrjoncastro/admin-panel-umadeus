@@ -449,3 +449,4 @@ executados.
 
 ## [2025-06-26] Template novaCobranca removido e guia de email ajustado para refletir a exclusão. Lint e build executados.
 ## [2025-06-26] Implementado tour in-app com React Joyride e passos dinâmicos. Lint e build executados.
+## [2025-08-10] Expandido steps do tour para cada rota do Admin, importação dinâmica do AdminClientTour no layout e registro de cor primária via TenantProvider. Lint e build falharam (next not found).
