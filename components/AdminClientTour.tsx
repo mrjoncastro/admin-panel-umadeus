@@ -56,7 +56,7 @@ export function AdminClientTour({ stepsByRoute }: AdminClientTourProps) {
           next: 'Próximo',
           skip: 'Pular',
         }}
-        styles={{ options: { primaryColor: config.primaryColor, zIndex: 10000 } }}
+        styles={{ options: { primaryColor: 'var(--accent)', zIndex: 10000 } }}
         callback={handleJoyrideCallback}
       />
       <div className="fixed bottom-4 right-4 z-50">
