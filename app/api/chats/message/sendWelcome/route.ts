@@ -66,9 +66,9 @@ export async function POST(req: NextRequest) {
         message = `Olá ${nome}! Recebemos sua inscrição. Em breve entraremos em contato.`
         break
       case 'confirmacao_inscricao':
-        message = `Parabéns, ${nome}! Sua inscrição foi confirmada.`
+        message = `Parabéns, ${nome}!\nSua inscrição foi confirmada com sucesso.\nEstamos empolgados em tê-lo conosco!`
         if (paymentLink) {
-          message += ` Realize o pagamento em: ${paymentLink}`
+          message += `\nClique no botão abaixo para concluir o pagamento:\n${paymentLink}`
         }
         break
       case 'novo_usuario':

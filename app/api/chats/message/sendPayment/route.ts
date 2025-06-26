@@ -46,11 +46,13 @@ export async function POST(req: NextRequest) {
   const rec = list[0]
 
   try {
+    const finalMessage = message ??
+      `Para concluir seu pagamento, acesse: ${link}`
     const result = await sendTextMessage({
       instanceName: rec.instanceName,
       apiKey: rec.apiKey,
       to: telefone,
-      message: message ?? link,
+      message: finalMessage,
     })
     return NextResponse.json(result, { status: 200 })
   } catch (err: unknown) {
