@@ -95,6 +95,7 @@ export async function POST(req: NextRequest) {
       apiKey: apiKeyFromHash,
       pairingCode,
       sessionStatus: 'pending' as const,
+      telefone: telefone.startsWith('+') ? telefone.slice(1) : telefone,
     }
 
     // 8) converte base64 em Blob (Node18+)

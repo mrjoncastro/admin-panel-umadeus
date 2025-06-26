@@ -15,16 +15,22 @@ import {
 type CheckResponse = {
   instanceName: string
   apiKey: string
+  telefone: string
   sessionStatus: 'pending' | 'connected' | 'disconnected'
 } | null
 
 function WizardSteps() {
-  const { step, setStep, setInstanceName, setApiKey, setConnection } =
-    useOnboarding()
+  const {
+    step,
+    setStep,
+    setInstanceName,
+    setApiKey,
+    setConnection,
+    setTelefone,
+  } = useOnboarding()
   const { tenantId } = useAuthContext()
   const [qrUrl, setQrUrl] = useState('')
   const [qrBase, setQrBase] = useState('')
-  const [phone, setPhone] = useState('')
 
   useEffect(() => {
     if (!tenantId) return
@@ -37,6 +43,7 @@ function WizardSteps() {
         if (!check) return
         setInstanceName(check.instanceName)
         setApiKey(check.apiKey)
+        setTelefone(check.telefone)
         if (check.sessionStatus === 'connected') {
           setConnection('connected')
           setStep(5)
@@ -48,16 +55,13 @@ function WizardSteps() {
         /* ignore */
       }
     })()
-  }, [tenantId, setStep, setInstanceName, setApiKey, setConnection])
+  }, [tenantId, setStep, setInstanceName, setApiKey, setConnection, setTelefone])
 
   const handleRegistered = (url: string, base: string) => {
     setQrUrl(url)
     setQrBase(base)
   }
 
-  const handlePhoneSelected = (tel: string) => {
-    setPhone(tel)
-  }
 
   const handleConnected = () => {
     setStep(4)
@@ -66,11 +70,9 @@ function WizardSteps() {
   return (
     <div className="wizard-container max-w-sm mx-auto">
       <OnboardingProgress />
-      {step === 1 && (
-        <StepSelectClient onSelected={handlePhoneSelected} />
-      )}
+      {step === 1 && <StepSelectClient />}
       {step === 2 && (
-        <StepCreateInstance phone={phone} onRegistered={handleRegistered} />
+        <StepCreateInstance onRegistered={handleRegistered} />
       )}
       {step === 3 && (
         <StepPairing

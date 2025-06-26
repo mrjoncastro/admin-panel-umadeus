@@ -4,15 +4,11 @@ import { useOnboarding } from '@/lib/context/OnboardingContext'
 import { useAuthContext } from '@/lib/context/AuthContext'
 
 interface StepCreateInstanceProps {
-  phone: string
   onRegistered: (url: string, base: string) => void
 }
 
-export default function StepCreateInstance({
-  phone,
-  onRegistered,
-}: StepCreateInstanceProps) {
-  const { setStep, setInstanceName, setApiKey, setLoading } = useOnboarding()
+export default function StepCreateInstance({ onRegistered }: StepCreateInstanceProps) {
+  const { telefone, setStep, setInstanceName, setApiKey, setLoading } = useOnboarding()
   const { tenantId } = useAuthContext()
   const [error, setError] = useState<string>()
 
@@ -27,7 +23,7 @@ export default function StepCreateInstance({
             'Content-Type': 'application/json',
             'x-tenant-id': tenantId!,
           },
-          body: JSON.stringify({ telefone: `55${phone}` }),
+          body: JSON.stringify({ telefone: `55${telefone}` }),
         })
         if (!res.ok) throw new Error(await res.text())
         const d = (await res.json()) as {
@@ -48,8 +44,8 @@ export default function StepCreateInstance({
         setLoading(false)
       }
     }
-    if (phone) register()
-  }, [phone, tenantId, onRegistered, setApiKey, setInstanceName, setLoading, setStep])
+    if (telefone) register()
+  }, [telefone, tenantId, onRegistered, setApiKey, setInstanceName, setLoading, setStep])
 
   return (
     <div className="card flex flex-col items-center p-8">

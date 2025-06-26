@@ -4,6 +4,7 @@ import { TextField } from '@/components/atoms/TextField'
 import { Button } from '@/components/atoms/Button'
 import { useOnboarding } from '@/lib/context/OnboardingContext'
 import { useAuthContext } from '@/lib/context/AuthContext'
+import { maskPhone } from '@/utils/formatPhone'
 
 export default function StepSendTest() {
   const { instanceName, setStep, loading, setLoading } = useOnboarding()
@@ -11,21 +12,6 @@ export default function StepSendTest() {
   const [telefoneLocal, setTelefoneLocal] = useState('')
   const [error, setError] = useState<string>()
 
-  const maskPhone = (digits: string) => {
-    const d = digits.slice(0, 2)
-    const n = digits.slice(2)
-    let p1 = ''
-    let p2 = ''
-    if (n.length <= 4) p1 = n
-    else if (n.length <= 8) {
-      p1 = n.slice(0, 4)
-      p2 = n.slice(4)
-    } else {
-      p1 = n.slice(0, 5)
-      p2 = n.slice(5)
-    }
-    return `(${d}) ${p1}${p2 ? '-' + p2 : ''}`
-  }
 
   const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let r = e.target.value.replace(/\D/g, '')
