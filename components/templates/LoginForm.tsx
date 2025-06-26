@@ -8,6 +8,7 @@ import Image from 'next/image'
 import RedefinirSenhaModal from '@/app/admin/components/RedefinirSenhaModal'
 import { useToast } from '@/lib/context/ToastContext'
 import '@/app/globals.css' // Certifique-se de que o CSS global está importado
+import { PasswordField } from '@/components'
 
 export default function LoginForm({
   redirectTo,
@@ -112,8 +113,7 @@ export default function LoginForm({
             className="input-base w-full rounded-md px-4 py-2"
             required
           />
-          <input
-            type="password"
+          <PasswordField
             placeholder="Senha"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}

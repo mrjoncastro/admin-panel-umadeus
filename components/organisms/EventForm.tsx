@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import FormWizard from './FormWizard'
 import LoadingOverlay from './LoadingOverlay'
-import { FormField, InputWithMask, TextField } from '@/components'
+import { FormField, InputWithMask, TextField, PasswordField } from '@/components'
 
 interface Produto {
   id: string
@@ -501,20 +501,18 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
       content: (
         <div className="space-y-4">
           <FormField label="Senha" htmlFor="password">
-            <TextField
+            <PasswordField
               id="password"
               name="password"
-              type="password"
               value={form.password}
               onChange={handleChange}
               required
             />
           </FormField>
           <FormField label="Confirme a Senha" htmlFor="passwordConfirm">
-            <TextField
+            <PasswordField
               id="passwordConfirm"
               name="passwordConfirm"
-              type="password"
               value={form.passwordConfirm}
               onChange={handleChange}
               required

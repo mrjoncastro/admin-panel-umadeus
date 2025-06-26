@@ -14,6 +14,9 @@ components:
   - name: InputWithMask
     path: components/molecules/InputWithMask.tsx
     category: Molecule
+  - name: PasswordField
+    path: components/molecules/PasswordField.tsx
+    category: Molecule
   - name: SaldoCard
     path: components/molecules/SaldoCard.tsx
     category: Molecule

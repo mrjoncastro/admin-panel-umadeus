@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useToast } from '@/lib/context/ToastContext'
+import { PasswordField } from '@/components'
 
 export default function RedefinirSenhaClient() {
   const searchParams = useSearchParams()
@@ -46,15 +47,13 @@ export default function RedefinirSenhaClient() {
       <div className="bg-white dark:bg-zinc-900 text-black dark:text-white p-6 rounded-2xl shadow-2xl w-full max-w-md space-y-6 border border-[var(--background)]">
         <h1 className="text-2xl font-bold text-center">Redefinir sua senha</h1>
 
-        <input
-          type="password"
+        <PasswordField
           placeholder="Nova senha"
           className="w-full border p-2 rounded"
           value={novaSenha}
           onChange={(e) => setNovaSenha(e.target.value)}
         />
-        <input
-          type="password"
+        <PasswordField
           placeholder="Confirmar nova senha"
           className="w-full border p-2 rounded"
           value={confirmacao}

@@ -382,6 +382,8 @@
   - FormField
 - **components/molecules/InputWithMask.tsx**
   - InputWithMask
+- **components/molecules/PasswordField.tsx**
+  - PasswordField
 - **components/molecules/MdxRenderer.tsx**
   - MdxRenderer
 - **components/molecules/NextPostButton.tsx**
@@ -393,6 +395,7 @@
 - **components/molecules/index.ts**
   - FormField
   - InputWithMask
+  - PasswordField
   - SmoothTabs
   - SaldoCard
   - NextPostButton

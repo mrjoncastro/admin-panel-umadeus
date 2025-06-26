@@ -6,7 +6,7 @@ import { useAuthContext } from '@/lib/context/AuthContext'
 import { useToast } from '@/lib/context/ToastContext'
 import type { ClientResponseError } from 'pocketbase'
 import Spinner from '@/components/atoms/Spinner'
-import { FormField, TextField, InputWithMask } from '@/components'
+import { FormField, TextField, InputWithMask, PasswordField } from '@/components'
 
 export default function SignUpForm({
   onSuccess,
@@ -280,9 +280,8 @@ export default function SignUpForm({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField label="Senha" htmlFor="signup-senha">
-              <TextField
+              <PasswordField
                 id="signup-senha"
-                type="password"
                 placeholder="Senha"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
@@ -291,9 +290,8 @@ export default function SignUpForm({
               />
             </FormField>
             <FormField label="Confirme a senha" htmlFor="signup-confirm">
-              <TextField
+              <PasswordField
                 id="signup-confirm"
-                type="password"
                 placeholder="Confirme a senha"
                 value={senhaConfirm}
                 onChange={(e) => setSenhaConfirm(e.target.value)}

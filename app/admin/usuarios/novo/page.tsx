@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useToast } from '@/lib/context/ToastContext'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
+import { PasswordField } from '@/components'
 
 interface Campo {
   id: string
@@ -137,8 +138,7 @@ export default function NovoUsuarioPage() {
           required
         />
 
-        <input
-          type="password"
+        <PasswordField
           placeholder="Senha"
           value={senha}
           onChange={(e) => setSenha(e.target.value)}

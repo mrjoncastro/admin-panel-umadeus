@@ -8,6 +8,7 @@ import {
   TextField,
   InputWithMask,
   FormField,
+  PasswordField,
   Button,
   Spinner,
 } from '@/components'
@@ -101,18 +102,16 @@ export default function SignUpPage() {
             />
           </FormField>
           <FormField label="Senha" htmlFor="signup-senha">
-            <TextField
+            <PasswordField
               id="signup-senha"
-              type="password"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               required
             />
           </FormField>
           <FormField label="Confirme a senha" htmlFor="signup-confirm">
-            <TextField
+            <PasswordField
               id="signup-confirm"
-              type="password"
               value={senhaConfirm}
               onChange={(e) => setSenhaConfirm(e.target.value)}
               required
