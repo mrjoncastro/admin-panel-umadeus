@@ -63,7 +63,7 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 ├── layout.tsx             # Layout raiz compartilhado
 ├── page.tsx               # Loja do cliente
 ├── globals.css            # CSS global compartilhado
-/posts/                    # Conteúdo do blog em arquivos .mdx
+posts/                    # (legado) posts agora carregados da coleção `posts` do PocketBase
 /scripts/                  # Scripts auxiliares
 /stories/                  # Storybook de componentes
 components/                # Componentes reutilizáveis compartilhados
@@ -78,6 +78,10 @@ logs/                    # Registros de documentação e erros
 ```
 
 ---
+## 🔌 Middleware de Tenant
+
+O arquivo `middleware.ts` intercepta cada requisição, consulta a coleção `clientes_config` do PocketBase para descobrir o tenant associado ao domínio e injeta o cabeçalho `x-tenant-id`. Também grava o cookie `tenantId` para que páginas e APIs identifiquem o cliente ativo sem depender de parâmetros na URL.
+
 
 ## 🌐 Site – Boas Práticas
 
@@ -97,9 +101,9 @@ logs/                    # Registros de documentação e erros
 
 ## ✍️ Blog – Boas Práticas
 
-- Conteúdo em `/posts` no formato MDX
-- Componentes em `app/blog/components`
-- Utilize `BlogClient.tsx` para carregar posts no cliente
+ - Postagens carregadas da coleção `posts` do PocketBase
+ - Componentes em `app/blog/components`
+ - Utilize `BlogClient.tsx` para exibir os posts no cliente
 
 ---
 
