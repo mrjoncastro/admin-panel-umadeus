@@ -16,6 +16,9 @@ export type Body = {
     | 'confirmacao_pagamento'
   userId: string
   paymentLink?: string
+  loginLink?: string
+  amount?: number
+  dueDate?: string
 }
 
 async function loadTemplate(name: string) {
@@ -34,7 +37,8 @@ export async function POST(req: NextRequest) {
 
   try {
     // 1) parse + validação
-    const { eventType, userId, paymentLink } = (await req.json()) as Body
+    const { eventType, userId, paymentLink, loginLink, amount, dueDate } =
+      (await req.json()) as Body
     if (!eventType || !userId) {
       return NextResponse.json(
         { error: 'Parâmetros faltando' },
@@ -100,6 +104,9 @@ export async function POST(req: NextRequest) {
       .replace(/{{logoUrl}}/g, logo)
       .replace(/{{cor_primary}}/g, cor)
       .replace(/{{tenantNome}}/g, cfg.nome || '')
+      .replace(/{{loginLink}}/g, loginLink ?? `${req.nextUrl?.origin}/login`)
+      .replace(/{{amount}}/g, amount ? String(amount) : '')
+      .replace(/{{dueDate}}/g, dueDate ?? '')
 
     // 6) configura o Nodemailer
     const transporter = nodemailer.createTransport({
