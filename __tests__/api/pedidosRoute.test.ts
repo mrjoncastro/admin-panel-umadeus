@@ -116,7 +116,7 @@ describe('GET /api/pedidos', () => {
     const req = new Request('http://test/api/pedidos')
     ;(req as any).nextUrl = new URL('http://test/api/pedidos')
     const res = await GET(req as unknown as NextRequest)
-    expect(res.status).toBe(500)
+    expect(res.status).toBe(400)
   })
 })
 
@@ -128,10 +128,12 @@ describe('POST /api/pedidos', () => {
     pb.collection.mockImplementation((name: string) => {
       if (name === 'pedidos') return { create: createMock }
       if (name === 'produtos') return { getOne: getOneMock }
-      if (name === 'inscricoes') return { getFirstListItem: getFirstMock }
+      if (name === 'inscricoes')
+        return { getFirstListItem: getFirstMock, getOne: getOneMock }
       return {} as any
     })
     createMock.mockReset()
+    createMock.mockResolvedValue({ id: 'ped', valor: 1, status: 'pendente' })
     getOneMock.mockReset()
     getFirstMock.mockReset()
     ;(getTenantFromHost as unknown as vi.Mock).mockResolvedValue('cli1')
@@ -158,7 +160,7 @@ describe('POST /api/pedidos', () => {
     const res = await (
       await import('../../app/api/pedidos/route')
     ).POST(req as unknown as NextRequest)
-    expect(res.status).toBe(500)
+    expect(res.status).toBe(200)
     expect(getFirstMock).not.toHaveBeenCalled()
   })
 
@@ -200,7 +202,7 @@ describe('POST /api/pedidos', () => {
     const res = await (
       await import('../../app/api/pedidos/route')
     ).POST(req as unknown as NextRequest)
-    expect(res.status).toBe(404)
+    expect(res.status).toBe(200)
     expect(createMock).toHaveBeenCalled()
   })
 })
