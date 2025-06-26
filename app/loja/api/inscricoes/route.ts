@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    const base: InscricaoTemplate = {
+    const baseInscricao: InscricaoTemplate = {
       nome,
       email: data.user_email,
       telefone: String(data.user_phone).replace(/\D/g, ''),
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
       : 'pix'
     const installments = Number(data.installments) || 1
 
-    const { id: _inscricaoId, ...inscricaoSemId } = criarInscricao(base)
+    const { id: _inscricaoId, ...inscricaoSemId } = criarInscricao(baseInscricao)
     void _inscricaoId
 
     const registroParaCriar = {
@@ -110,8 +110,14 @@ export async function POST(req: NextRequest) {
       userId: usuario.id,
     }
 
+    const base = req.nextUrl?.origin || req.headers.get('origin')
+    if (!base) {
+      console.error('Base URL não encontrada para envio de notificações')
+      return
+    }
+
     try {
-      await fetch(`${req.nextUrl.origin}/api/email`, {
+      await fetch(`${base}/api/email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -121,7 +127,7 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-      await fetch(`${req.nextUrl.origin}/api/chats/message/sendWelcome`, {
+      await fetch(`${base}/api/chats/message/sendWelcome`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

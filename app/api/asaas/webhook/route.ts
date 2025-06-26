@@ -225,7 +225,11 @@ export async function POST(req: NextRequest) {
     }
 
     if (responsavelId) {
-      const base = req.nextUrl.origin
+      const base = req.nextUrl?.origin || req.headers.get('origin')
+      if (!base) {
+        console.error('Base URL não encontrada para envio de notificações')
+        return NextResponse.json({ error: 'Base URL não encontrada' }, { status: 500 })
+      }
 
       try {
         await fetch(`${base}/api/email`, {
