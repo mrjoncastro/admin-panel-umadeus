@@ -251,6 +251,48 @@ export async function POST(req: NextRequest) {
       responseData.link_pagamento = link_pagamento
     }
 
+    let eventType: 'nova_inscricao' | 'confirmacao_inscricao' =
+      'confirmacao_inscricao'
+
+    try {
+      const cfgConfirm = await pb
+        .collection('clientes_config')
+        .getFirstListItem(`cliente='${lider.cliente}'`)
+      if (cfgConfirm?.confirma_inscricoes === true) {
+        eventType = 'nova_inscricao'
+      }
+    } catch (e) {
+      console.error('Erro ao verificar confirma_inscricoes:', e)
+    }
+
+    const payload: Record<string, unknown> = {
+      eventType,
+      userId: usuario.id,
+    }
+    if (eventType === 'confirmacao_inscricao' && link_pagamento) {
+      payload.paymentLink = link_pagamento
+    }
+
+    try {
+      await fetch(`${req.nextUrl.origin}/api/email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+    } catch (e) {
+      console.error('Erro ao enviar e-mail de inscrição:', e)
+    }
+
+    try {
+      await fetch(`${req.nextUrl.origin}/api/chats/message/sendWelcome`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+    } catch (e) {
+      console.error('Erro ao enviar WhatsApp de inscrição:', e)
+    }
+
     return NextResponse.json(responseData)
   } catch (err: unknown) {
     await logConciliacaoErro(`Erro ao criar inscrição: ${String(err)}`)
