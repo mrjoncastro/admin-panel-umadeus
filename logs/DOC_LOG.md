@@ -426,3 +426,5 @@
 ## [2025-06-25] OnboardingWizard adaptado ao design system: TextField, Button e
 classes card/progress aplicados. TenantId lido do AuthContext. Lint e build
 executados.
+
+## [2025-06-26] Variavel NEXT_PUBLIC_N8N_WEBHOOK_URL removida do README e .env.example. Integracao n8n depreciada.
