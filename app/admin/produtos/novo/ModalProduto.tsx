@@ -36,6 +36,8 @@ export interface ModalProdutoProps<T extends Record<string, unknown>> {
     evento_id?: string | null
     /** Se verdadeiro, exige aprovação de inscrição */
     requer_inscricao_aprovada?: boolean
+    /** Valor bruto final salvo */
+    preco_bruto?: string
   }
 }
 
@@ -88,7 +90,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
   const [cores, setCores] = useState<string[]>([])
   const inputHex = useRef<HTMLInputElement | null>(null)
   const [valorCliente, setValorCliente] = useState(
-    calculateGross(Number(initial.preco ?? 0), 'pix', 1).gross,
+    Number(initial.preco_bruto ?? 0),
   )
 
   useEffect(() => {

@@ -14,12 +14,13 @@ export function criarPedido(
     id: string
     nome?: string
     preco: number
+    preco_bruto: number
     tamanhos?: string[] | string
     generos?: string[] | string
   },
 ): Pedido {
   const first = (v?: string[] | string) => (Array.isArray(v) ? v[0] : v)
-  const valor = produto.preco
+  const valor = produto.preco_bruto
 
   return {
     id: `ped_${inscricao.id}`,
