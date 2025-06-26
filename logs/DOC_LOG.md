@@ -448,3 +448,4 @@ executados.
 ## [2025-06-26] Componente PasswordField criado e formulários atualizados. Lint e build executados.
 
 ## [2025-06-26] Template novaCobranca removido e guia de email ajustado para refletir a exclusão. Lint e build executados.
+## [2025-06-26] Implementado tour in-app com React Joyride e passos dinâmicos. Lint e build executados.

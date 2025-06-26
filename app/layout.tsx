@@ -8,6 +8,9 @@ import { TenantProvider } from '@/lib/context/TenantContext'
 import { generatePrimaryShades } from '@/utils/primaryShades'
 import { fetchTenantConfig } from '@/lib/fetchTenantConfig'
 import { CartProvider } from '@/lib/context/CartContext'
+import dynamic from 'next/dynamic'
+
+const AdminClientTour = dynamic(() => import('@/components/AdminClientTourLoader'))
 
 export const metadata = {
   icons: {
@@ -52,7 +55,10 @@ export default async function RootLayout({
           <ThemeProvider>
             <AuthProvider>
               <CartProvider>
-                <ToastProvider>{children}</ToastProvider>
+                <ToastProvider>
+                  <AdminClientTour />
+                  {children}
+                </ToastProvider>
               </CartProvider>
             </AuthProvider>
           </ThemeProvider>
