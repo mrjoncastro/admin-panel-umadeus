@@ -97,4 +97,39 @@ describe('POST /loja/api/inscricoes', () => {
       }),
     )
   })
+
+  it('envia notificacoes apos inscricao', async () => {
+    getFirstMock.mockRejectedValueOnce(new Error('not found'))
+    createUserMock.mockResolvedValueOnce({ id: 'u3' })
+    createInscricaoMock.mockResolvedValueOnce({ id: 'i3' })
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true })
+    global.fetch = fetchMock as unknown as typeof fetch
+
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({
+        user_first_name: 'J',
+        user_last_name: 'D',
+        user_email: 'n@test.com',
+        user_phone: '11999999999',
+        user_cpf: '11111111111',
+        user_birth_date: '2000-01-01',
+        user_gender: 'masculino',
+        campo: 'c1',
+        evento: 'e1',
+      }),
+    })
+    const res = await POST(req as unknown as NextRequest)
+    expect(res.status).toBe(201)
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://test/api/email',
+      expect.any(Object),
+    )
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://test/api/chats/message/sendWelcome',
+      expect.any(Object),
+    )
+    const body = JSON.parse((fetchMock.mock.calls[0][1] as any).body as string)
+    expect(body.userId).toBe('u3')
+  })
 })
