@@ -212,8 +212,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Identifica o usuário responsável
-    let responsavelId: string | undefined =
-      (pedidoRecord as { responsavel?: string }).responsavel
+    let responsavelId: string | undefined = (
+      pedidoRecord as { responsavel?: string }
+    ).responsavel
     if (!responsavelId && inscricaoId) {
       try {
         const inscricao = await pb.collection('inscricoes').getOne(inscricaoId)
