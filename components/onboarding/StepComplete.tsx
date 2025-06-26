@@ -4,27 +4,13 @@ import { Button } from '@/components/atoms/Button'
 import { useOnboarding } from '@/lib/context/OnboardingContext'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useState } from 'react'
+import { maskPhone } from '@/utils/formatPhone'
 
 export default function StepComplete() {
   const { telefone, setStep, setConnection } = useOnboarding()
   const { tenantId } = useAuthContext()
   const [loading, setLoading] = useState(false)
 
-  const maskPhone = (digits: string) => {
-    const d = digits.slice(0, 2)
-    const n = digits.slice(2)
-    let p1 = ''
-    let p2 = ''
-    if (n.length <= 4) p1 = n
-    else if (n.length <= 8) {
-      p1 = n.slice(0, 4)
-      p2 = n.slice(4)
-    } else {
-      p1 = n.slice(0, 5)
-      p2 = n.slice(5)
-    }
-    return `(${d}) ${p1}${p2 ? '-' + p2 : ''}`
-  }
 
   const handleDisconnect = async () => {
     setLoading(true)
@@ -44,7 +30,7 @@ export default function StepComplete() {
     <div className="card p-4 text-center flex flex-col items-center gap-2">
       <CheckCircle className="text-green-600 w-8 h-8" />
       <p className="font-medium">Número conectado:</p>
-      <p>{maskPhone(telefone)}</p>
+      <p>{maskPhone(telefone || '')}</p>
       <Button variant="secondary" onClick={handleDisconnect} disabled={loading}>
         {loading ? 'Desconectando...' : 'Desconectar'}
       </Button>
