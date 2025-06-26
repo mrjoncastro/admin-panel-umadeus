@@ -398,22 +398,18 @@ export default function ListaInscricoesPage() {
         ),
       )
 
-      // 🔹 6. Notificar via n8n webhook de forma assíncrona
-      fetch('/api/n8n', {
+      // 🔹 6. Enviar link de pagamento via WhatsApp
+      const waRes = await fetch('/api/chats/message/sendPayment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          nome: inscricao.nome,
           telefone: inscricao.telefone,
-          cpf: inscricao.cpf,
-          evento: inscricao.evento,
-          liderId: campo?.responsavel,
-          pedidoId: pedido.pedidoId,
-          cliente: tenantId,
-          valor: gross,
-          url_pagamento: checkout.url,
+          link: checkout.url,
         }),
-      }).catch(() => {})
+      })
+      if (!waRes.ok) {
+        console.warn('Falha ao enviar WhatsApp', await waRes.text())
+      }
 
       // 🔹 7. Mostrar sucesso visual
       showSuccess('Link de pagamento enviado com sucesso!')

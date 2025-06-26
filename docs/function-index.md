@@ -196,7 +196,9 @@
   - POST
 - **app/api/lider/[id]/route.ts**
   - GET
-- **app/api/chats/message/sendText/[instanceName]/route.ts**
+- **app/api/chats/message/sendPayment/route.ts**
+  - POST
+- **app/api/chats/message/sendWelcome/route.ts**
   - POST
 - **app/api/pedidos/[id]/route.ts**
   - GET

@@ -84,20 +84,17 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
         })
       }
 
-      fetch('/api/n8n', {
+      const res = await fetch('/api/chats/message/sendPayment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          nome: pedido.expand.id_inscricao.nome,
           telefone: pedido.expand.id_inscricao.telefone,
-          cpf: pedido.expand.id_inscricao.cpf,
-          evento: pedido.expand.id_inscricao.evento,
-          liderId: pedido.expand?.responsavel?.id,
-          pedidoId: pedido.id,
-          valor: pedido.valor,
-          url_pagamento: url,
+          link: url,
         }),
-      }).catch((err) => logInfo('⚠️ Falha ao notificar o n8n', err))
+      })
+      if (!res.ok) {
+        logInfo('⚠️ Falha ao enviar WhatsApp', await res.text())
+      }
 
       const userId = pedido.expand.id_inscricao.expand?.criado_por?.id
       if (userId) {
