@@ -231,12 +231,9 @@ export default function ListaInscricoesPage() {
         }
       }
 
-      // Checar campo correto: produto ou produto
+      // Identificar o produto associado à inscrição
       type InscricaoWithProduto = InscricaoRecord & { produto?: string }
-      const produtoId =
-        inscricao.produto ||
-        inscricao.produto ||
-        (inscricao as InscricaoWithProduto).produto
+      const produtoId = inscricao.produto || (inscricao as InscricaoWithProduto).produto
       console.log('[confirmarInscricao] produtoId:', produtoId)
 
       // Extrair produto do expand (array ou objeto)

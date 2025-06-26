@@ -277,7 +277,7 @@ export async function POST(req: NextRequest) {
     const campoId = inscricao.expand?.campo?.id
     const responsavelId = inscricao.expand?.criado_por
     let produtoRecord: Produto | undefined
-    const produtoIdInscricao = inscricao.produto || inscricao.produto
+    const produtoIdInscricao = inscricao.produto
 
     try {
       if (produtoIdInscricao) {
