@@ -24,6 +24,7 @@ function WizardSteps() {
   const { tenantId } = useAuthContext()
   const [qrUrl, setQrUrl] = useState('')
   const [qrBase, setQrBase] = useState('')
+  const [phone, setPhone] = useState('')
 
   useEffect(() => {
     if (!tenantId) return
@@ -54,6 +55,10 @@ function WizardSteps() {
     setQrBase(base)
   }
 
+  const handlePhoneSelected = (tel: string) => {
+    setPhone(tel)
+  }
+
   const handleConnected = () => {
     setStep(4)
   }
@@ -61,8 +66,12 @@ function WizardSteps() {
   return (
     <div className="wizard-container max-w-sm mx-auto">
       <OnboardingProgress />
-      {step === 1 && <StepSelectClient onRegistered={handleRegistered} />}
-      {step === 2 && <StepCreateInstance />}
+      {step === 1 && (
+        <StepSelectClient onSelected={handlePhoneSelected} />
+      )}
+      {step === 2 && (
+        <StepCreateInstance phone={phone} onRegistered={handleRegistered} />
+      )}
       {step === 3 && (
         <StepPairing
           qrCodeUrl={qrUrl}
