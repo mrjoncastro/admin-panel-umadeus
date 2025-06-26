@@ -70,8 +70,8 @@ export default function Header() {
           { href: '/admin/campos', label: 'Campos' },
         ]
 
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await logout()
     window.location.href = '/login'
   }
 

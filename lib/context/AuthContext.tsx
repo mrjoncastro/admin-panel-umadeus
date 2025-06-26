@@ -28,7 +28,7 @@ type AuthContextType = {
     cidade: string,
     password: string,
   ) => Promise<void>
-  logout: () => void
+  logout: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -38,7 +38,7 @@ const AuthContext = createContext<AuthContextType>({
   isLoading: true,
   login: async () => {},
   signUp: async () => {},
-  logout: () => {},
+  logout: async () => {},
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -160,8 +160,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await login(email, password)
   }
 
-  const logout = () => {
-    fetch('/api/auth/logout', { method: 'POST' })
+  const logout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' })
     pb.authStore.clear()
     clearBaseAuth()
     if (typeof window !== 'undefined') {

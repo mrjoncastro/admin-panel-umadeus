@@ -163,3 +163,6 @@
 ## [2025-06-23] Pagamento de inscrição redirecionava ao checkout em vez de usar o link existente. Botão corrigido para reutilizar link_pagamento do pedido. - dev - f095415
 
 ## [2025-06-23] Erro ao gerar link de pagamento Asaas: TypeError: ranges is not iterable - development
+## [2025-06-25] Logout era abortado antes do fetch finalizar; headers agora aguardam logout() antes de redirecionar - dev - b4e0600
+
+## [2025-06-25] Botão Sair no perfil de usuário não encerrava sessão. Logout agora aguarda fetch e fecha menus antes de redirecionar - dev - 3fec475

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import createPocketBase from '@/lib/pocketbase'
 import ModalEditarPerfil from '@/app/admin/perfil/components/ModalEditarPerfil'
+import { useAuthContext } from '@/lib/context/AuthContext'
 
 interface UsuarioAuthModel {
   id: string
@@ -28,6 +29,7 @@ interface UsuarioAuthModel {
 
 export default function PerfilPage() {
   const { authChecked } = useAuthGuard(['usuario'])
+  const { logout } = useAuthContext()
   const pb = useMemo(() => createPocketBase(), [])
   const [usuario, setUsuario] = useState<UsuarioAuthModel | null>(null)
   const [mostrarModal, setMostrarModal] = useState(false)
@@ -66,12 +68,18 @@ export default function PerfilPage() {
         </p>
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-between gap-4">
         <button
           onClick={() => setMostrarModal(true)}
           className="bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded-lg hover:opacity-90"
         >
           Editar Perfil
+        </button>
+        <button
+          onClick={logout}
+          className="text-red-600 dark:text-red-400 underline"
+        >
+          Sair
         </button>
       </div>
 
