@@ -280,15 +280,66 @@
 
 ## [2025-06-22] README menciona sincronizacao do tenantId via /api/tenant e wrappers chamam a rota.
 
+## [2025-06-22] Atualizado docs/function-index.md listando métodos GET e PATCH para inscricoes/[id].
+
+## [2025-06-22] Documentado fluxo manual de inscrições e campo produto múltiplo em pedidos.
+
+## [2025-06-22] Padronizado envio do campo produto como array de IDs e exemplos atualizados no manual de aprovação.
+
+## [2025-06-22] Corrigido envio do ID do produto na confirmação de inscrições.
+
+## [2025-06-22] Padronizado envio do campo produto como array de IDs e exemplos atualizados no manual de aprovação.
+
+## [2025-06-22] /api/produtos/[slug] passa a retornar objeto de inscrição do usuário (inscricao, inscricaoId e inscricaoAprovada) quando o produto possui evento. Lint e build executados.
+
+## [2025-06-23] Botão de compra ajustado para inscrições: redireciona para pagamento quando aprovado e bloqueia se já pago.
+
+## [2025-06-23] Tabela de inscrições agora exibe nome do produto e tamanho. Rotas de inscrições incluem expand de produto. Lint e build falharam (next not found).
+
+## [2025-06-23] Interface de produtos permite excluir itens pela lista. Lint e build executados.
+
+## [2025-06-23] Adicionado filtro de datas ao extrato Asaas com componente DateRangePicker. Lint e build executados.
+
+## [2025-06-23] Rota /api/email criada com envio SMTP e templates. Lint e build executados.
+
+## [2025-06-23] README e .env.example atualizados com orientações sobre variáveis SMTP. Lint e build executados.
+
+## [2025-06-23] Evento `nova_cobranca` removido. Reenvio de pagamento agora usa `confirmacao_inscricao` com link via e-mail. Templates e testes atualizados; lint e build executados.
+
+## [2025-06-23] Reenvio de pagamento usa link_pagamento existente e nao chama /api/asaas. Testes atualizados. Lint e build executados.
+
+## [2025-06-23] Reenvio de pagamento verifica responsavel antes de enviar e-mail. Testes atualizados. Lint e build executados.
+
 ## [2025-06-25] Links de administração ajustados por papel no Header. Teste criado para validar comportamentos. Lint e build executados.
 
 ## [2025-06-25] Registrado erro 404 ao ler clientes_config e correção documentada. - Lint: falhou (next not found) - Build: falhou (next not found)
+
+## [2025-06-25] Variavel PB_URL padronizada no guia de Evolution e .env.example.
+
+## [2025-06-25] Onboarding de WhatsApp adicionado ao admin e link no header.
+
+## [2025-06-25] OnboardingWizard adaptado ao design system: TextField, Button e
+
+classes card/progress aplicados. TenantId lido do AuthContext. Lint e build
+executados.
+
+## [2025-06-25] Headers e página de perfil atualizados para aguardar o logout antes de redirecionar. Lint e build executados.
 
 ## [2025-06-26] Atualizada seção Personalização em docs/design-system.md com nova sequência de carregamento e busca pelo campo cliente.
 
 ## [2025-06-26] Documentada sequência de carregamento de personalização no design system. Lint e build executados.
 
 ## [2025-06-26] Guia design-system revisado explicando busca por cliente. - Lint: falhou (next not found) - Build: falhou (next not found).
+
+## [2025-06-26] Check de instância inclui telefone e criado endpoint DELETE /instance/delete. Documentação atualizada e StepComplete mostra número conectado com opção de desconectar. Lint e build executados.
+
+## [2025-06-26] Extraido maskPhone para util e prevenido erro quando telefone ausente. Lint e build executados.
+
+## [2025-06-26] Telefone agora salvo em whatsapp_clientes e exibido sem prefixo 55 em StepComplete. Documentação e schema atualizados.
+
+## [2025-06-26] OnboardingWizard passa a exibir LoadingOverlay enquanto verifica instancia.
+
+## [2025-06-26] Correção de ordenação do DOC_LOG. Impacto: histórico organizado.
 
 ## [2025-06-27] InscricaoForm agora carrega dados do usuario, consulta CEP pela URL configurada e envia para o webhook mesmo em caso de erro. Lint e build executados com sucesso.
 
@@ -388,57 +439,8 @@
 
 ## [2025-08-07] Cadastro passa a enviar endereco completo e role do usuario pela loja.
 
-## [2025-06-22] Atualizado docs/function-index.md listando métodos GET e PATCH para inscricoes/[id].
-
-## [2025-06-22] Documentado fluxo manual de inscrições e campo produto múltiplo em pedidos.
-
-## [2025-06-22] Padronizado envio do campo produto como array de IDs e exemplos atualizados no manual de aprovação.
-
-## [2025-06-22] Corrigido envio do ID do produto na confirmação de inscrições.
-
-## [2025-06-22] Padronizado envio do campo produto como array de IDs e exemplos atualizados no manual de aprovação.
-
-## [2025-06-22] /api/produtos/[slug] passa a retornar objeto de inscrição do usuário (inscricao, inscricaoId e inscricaoAprovada) quando o produto possui evento. Lint e build executados.
-
-## [2025-06-23] Botão de compra ajustado para inscrições: redireciona para pagamento quando aprovado e bloqueia se já pago.
-
-## [2025-06-23] Tabela de inscrições agora exibe nome do produto e tamanho. Rotas de inscrições incluem expand de produto. Lint e build falharam (next not found).
-
 ## [2025-08-08] Endpoints para atualizar e excluir contas bancárias e PIX adicionados. README e function-index atualizados.
 
-## [2025-06-23] Interface de produtos permite excluir itens pela lista. Lint e build executados.
-
-## [2025-06-23] Adicionado filtro de datas ao extrato Asaas com componente DateRangePicker. Lint e build executados.
-
-## [2025-06-23] Rota /api/email criada com envio SMTP e templates. Lint e build executados.
-
-## [2025-06-23] README e .env.example atualizados com orientações sobre variáveis SMTP. Lint e build executados.
-
-## [2025-06-23] Evento `nova_cobranca` removido. Reenvio de pagamento agora usa `confirmacao_inscricao` com link via e-mail. Templates e testes atualizados; lint e build executados.
-
-## [2025-06-23] Reenvio de pagamento usa link_pagamento existente e nao chama /api/asaas. Testes atualizados. Lint e build executados.
-
-## [2025-06-23] Reenvio de pagamento verifica responsavel antes de enviar e-mail. Testes atualizados. Lint e build executados.
-
-## [2025-06-25] Variavel PB_URL padronizada no guia de Evolution e .env.example.
-
-## [2025-06-25] Onboarding de WhatsApp adicionado ao admin e link no header.
-
-## [2025-06-25] OnboardingWizard adaptado ao design system: TextField, Button e
-
-classes card/progress aplicados. TenantId lido do AuthContext. Lint e build
-executados.
-
-## [2025-06-26] Check de instância inclui telefone e criado endpoint DELETE /instance/delete. Documentação atualizada e StepComplete mostra número conectado com opção de desconectar. Lint e build executados.
-
-## [2025-06-26] Extraido maskPhone para util e prevenido erro quando telefone ausente. Lint e build executados.
-
-## [2025-06-26] Telefone agora salvo em whatsapp_clientes e exibido sem prefixo 55 em StepComplete. Documentação e schema atualizados.
-
-## [2025-06-26] OnboardingWizard passa a exibir LoadingOverlay enquanto verifica instancia.
-
 ## [2025-08-09] Botão de logout adicionado à página de perfil do usuário. Lint e build executados.
-
-## [2025-06-25] Headers e página de perfil atualizados para aguardar o logout antes de redirecionar. Lint e build executados.
 
 ## [2025-06-26] Atualizado arquitetura.md removendo referencia a /posts, descrevendo carregamento via PocketBase e adicionada secao do middleware. Impacto: documentacao alinhada ao README e entendimento claro sobre tenant.
