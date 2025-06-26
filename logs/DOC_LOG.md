@@ -453,3 +453,4 @@ executados.
 ## [2025-06-26] Atualizado Joyride.md com uso de `var(--accent)` e tour adaptado ao Tenant. Lint e build executados.
 ## [2025-06-26] Import useTenant removido do AdminClientTour. Lint executado com sucesso; build não finalizou por limitações do ambiente.
 ## [2025-08-11] Removido passo '/app/home' do Joyride.md. Lint e build executados.
+## [2025-08-12] MetadataBase dinamico no layout com generateMetadata. Impacto: corrige aviso "metadataBase" em cada tenant. Lint e build executados.
