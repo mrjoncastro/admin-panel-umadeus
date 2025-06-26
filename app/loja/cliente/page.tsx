@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import createPocketBase from '@/lib/pocketbase'
 import type { Inscricao, Pedido } from '@/types'
+import { formatDate } from '@/utils/formatDate'
 
 export default function AreaCliente() {
   const { user, authChecked } = useAuthGuard(['usuario'])
@@ -80,11 +81,7 @@ export default function AreaCliente() {
               <tr key={i.id}>
                 <td className="capitalize">{i.status}</td>
                 <td>{i.expand?.evento?.titulo || '-'}</td>
-                <td>
-                  {i.created
-                    ? new Date(i.created).toLocaleDateString('pt-BR')
-                    : '-'}
-                </td>
+                <td>{i.created ? formatDate(i.created) : '-'}</td>
               </tr>
             ))}
           </tbody>

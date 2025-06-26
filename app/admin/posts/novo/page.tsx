@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import PostContentEditor from '../components/PostContentEditor'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
+import { formatDate } from '@/utils/formatDate'
 
 export default function NovoPostPage() {
   const { isLoggedIn } = useAuthContext()
@@ -70,7 +71,7 @@ export default function NovoPostPage() {
         {/* Campo de data APENAS visualização, não enviado */}
         <input
           type="text"
-          value={new Date().toLocaleDateString('pt-BR')}
+          value={formatDate(new Date())}
           readOnly
           disabled
           className="input-base"

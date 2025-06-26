@@ -3,6 +3,7 @@ import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import { useEffect, useMemo, useState } from 'react'
 import createPocketBase from '@/lib/pocketbase'
 import type { Inscricao } from '@/types'
+import { formatDate } from '@/utils/formatDate'
 
 export default function InscricoesTable({ limit }: { limit?: number }) {
   const { user, authChecked } = useAuthGuard(['usuario'])
@@ -44,11 +45,7 @@ export default function InscricoesTable({ limit }: { limit?: number }) {
             <tr key={i.id}>
               <td className="capitalize">{i.status}</td>
               <td>{i.expand?.evento?.titulo || '-'}</td>
-              <td>
-                {i.created
-                  ? new Date(i.created).toLocaleDateString('pt-BR')
-                  : '-'}
-              </td>
+              <td>{i.created ? formatDate(i.created) : '-'}</td>
             </tr>
           ))}
         </tbody>

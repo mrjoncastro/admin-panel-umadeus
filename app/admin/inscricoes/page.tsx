@@ -12,6 +12,7 @@ import { useToast } from '@/lib/context/ToastContext'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import { type PaymentMethod } from '@/lib/asaasFees'
 import type { Evento, Inscricao as InscricaoRecord, Produto } from '@/types'
+import { formatDate } from '@/utils/formatDate'
 
 const statusBadge = {
   pendente: 'bg-yellow-100 text-yellow-800',
@@ -440,7 +441,7 @@ export default function ListaInscricoesPage() {
       i.evento,
       i.status,
       i.campo || '',
-      new Date(i.created).toLocaleDateString('pt-BR'),
+      formatDate(i.created),
     ])
 
     const csvContent = [header, ...linhas]
@@ -582,7 +583,7 @@ export default function ListaInscricoesPage() {
                     {i.produtoNome || '—'}
                     {i.tamanho ? ` - ${i.tamanho}` : ''}
                   </td>
-                  <td>{new Date(i.created).toLocaleDateString('pt-BR')}</td>
+                  <td>{formatDate(i.created)}</td>
                   <td className="text-left text-xs">
                     <div className="flex items-center gap-3">
                       {(role === 'lider' || role === 'coordenador') &&
