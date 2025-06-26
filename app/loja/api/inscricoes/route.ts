@@ -55,6 +55,9 @@ export async function POST(req: NextRequest) {
         })
       }
     }
+    if (!usuario) {
+      throw new Error('Não foi possível identificar o usuário')
+    }
 
     const baseInscricao: InscricaoTemplate = {
       nome,
