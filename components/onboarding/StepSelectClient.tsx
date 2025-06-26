@@ -4,14 +4,8 @@ import { TextField } from '@/components/atoms/TextField'
 import { Button } from '@/components/atoms/Button'
 import { useOnboarding } from '@/lib/context/OnboardingContext'
 
-interface StepSelectClientProps {
-  onSelected: (telefone: string) => void
-}
-
-export default function StepSelectClient({
-  onSelected,
-}: StepSelectClientProps) {
-  const { setStep } = useOnboarding()
+export default function StepSelectClient() {
+  const { setStep, setTelefone } = useOnboarding()
   const [telefoneLocal, setTelefoneLocal] = useState('')
   const [error, setError] = useState<string>()
 
@@ -44,7 +38,7 @@ export default function StepSelectClient({
       return
     }
     setError(undefined)
-    onSelected(raw)
+    setTelefone(raw)
     setStep(2)
   }
 
