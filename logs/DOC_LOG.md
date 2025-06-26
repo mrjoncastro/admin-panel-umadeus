@@ -444,6 +444,7 @@ executados.
 ## [2025-08-09] Botão de logout adicionado à página de perfil do usuário. Lint e build executados.
 
 ## [2025-06-26] Atualizado arquitetura.md removendo referencia a /posts, descrevendo carregamento via PocketBase e adicionada secao do middleware. Impacto: documentacao alinhada ao README e entendimento claro sobre tenant.
+## [2025-06-26] Campo preco_bruto adicionado na colecao produtos e documentacao atualizada.
 
 ## [2025-06-26] Componente PasswordField criado e formulários atualizados. Lint e build executados.
 ## [2025-06-26] Template novaCobranca removido e guia de email ajustado para refletir a exclusão. Lint e build executados.

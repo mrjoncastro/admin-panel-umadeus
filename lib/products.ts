@@ -2,6 +2,7 @@ export interface ProdutoRecord {
   id: string
   nome: string
   preco: number
+  preco_bruto: number
   imagens?: string[]
   checkout_url?: string
   categoria?: string

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { logInfo } from '@/lib/logger'
 import { logConciliacaoErro } from '@/lib/server/logger'
+import { calculateGross } from '@/lib/asaasFees'
 
 export async function GET(req: NextRequest) {
   const auth = requireRole(req, 'coordenador')
@@ -33,6 +34,9 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData()
     formData.set('user_org', user.id)
     formData.set('cliente', user.cliente as string)
+    const preco = Number(formData.get('preco') || 0)
+    const bruto = calculateGross(preco, 'pix', 1).gross
+    formData.set('preco_bruto', String(bruto))
     const keys = Array.from(formData.keys())
     logInfo('Criando produto', {
       pbHost: pb.baseUrl,

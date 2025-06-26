@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useState } from 'react'
 import { hexToPtName } from '@/utils/colorNamePt'
-import { calculateGross } from '@/lib/asaasFees'
 
 function formatCurrency(n: number) {
   return `R$ ${n.toFixed(2).replace('.', ',')}`
@@ -18,7 +17,7 @@ export default function CarrinhoPage() {
   const router = useRouter()
   const [showPrompt, setShowPrompt] = useState(false)
   const totalBruto = itens.reduce(
-    (sum, i) => sum + calculateGross(i.preco, 'pix', 1).gross * i.quantidade,
+    (sum, i) => sum + (i.preco_bruto || 0) * i.quantidade,
     0,
   )
 
@@ -84,9 +83,7 @@ export default function CarrinhoPage() {
                 <p className="text-xs text-gray-400">Qtd: {item.quantidade}</p>
               </div>
               <div className="font-semibold text-accent">
-                {formatCurrency(
-                  calculateGross(item.preco, 'pix', 1).gross * item.quantidade,
-                )}
+                {formatCurrency(item.preco_bruto * item.quantidade)}
               </div>
               <button
                 onClick={() => removeItem(item.variationId)}
