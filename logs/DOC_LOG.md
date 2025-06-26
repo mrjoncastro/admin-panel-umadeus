@@ -429,11 +429,4 @@ executados.
 
 ## [2025-06-26] Check de instância inclui telefone e criado endpoint DELETE /instance/delete. Documentação atualizada e StepComplete mostra número conectado com opção de desconectar. Lint e build executados.
 ## [2025-06-26] Extraido maskPhone para util e prevenido erro quando telefone ausente. Lint e build executados.
-
-## [2025-06-26] Rota sendPayment criada substituindo /api/n8n. Documentação atualizada e build/lint executados.
-
-## [2025-06-26] Mensagem de boas-vindas via WhatsApp criada seguindo fluxo do email. Documentação atualizada.
-
-## [2025-06-26] function-index atualizado: rota /api/n8n removida e adicionada rota Evolution /api/chats/message/sendText. Lint e build executados.
-
-## [2025-06-26] Variavel NEXT_PUBLIC_N8N_WEBHOOK_URL removida do README e .env.example. Integracao n8n depreciada.
+## [2025-06-26] Telefone agora salvo em whatsapp_clientes e exibido sem prefixo 55 em StepComplete. Documentação e schema atualizados.

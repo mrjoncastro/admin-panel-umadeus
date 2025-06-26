@@ -30,7 +30,7 @@ export default function StepComplete() {
     <div className="card p-4 text-center flex flex-col items-center gap-2">
       <CheckCircle className="text-green-600 w-8 h-8" />
       <p className="font-medium">Número conectado:</p>
-      <p>{maskPhone(telefone || '')}</p>
+      <p>{maskPhone(telefone?.replace(/^55/, '') || '')}</p>
       <Button variant="secondary" onClick={handleDisconnect} disabled={loading}>
         {loading ? 'Desconectando...' : 'Desconectar'}
       </Button>
