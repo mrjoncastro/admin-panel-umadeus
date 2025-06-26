@@ -22,6 +22,31 @@ export async function POST(req: NextRequest) {
       role: 'usuario',
       ...(tenantId ? { cliente: tenantId } : {}),
     })
+
+    try {
+      await fetch('/api/email', {
+        method: 'POST',
+        body: JSON.stringify({
+          eventType: 'novo_usuario',
+          userId: usuario.id,
+        }),
+      })
+    } catch (err) {
+      console.error('Falha ao enviar email de boas-vindas', err)
+    }
+
+    try {
+      await fetch('/api/chats/message/sendWelcome', {
+        method: 'POST',
+        body: JSON.stringify({
+          eventType: 'novo_usuario',
+          userId: usuario.id,
+        }),
+      })
+    } catch (err) {
+      console.error('Falha ao enviar mensagem de boas-vindas', err)
+    }
+
     return NextResponse.json(usuario, { status: 201 })
   } catch (err: unknown) {
     const e = err as { response?: { data?: unknown } }
