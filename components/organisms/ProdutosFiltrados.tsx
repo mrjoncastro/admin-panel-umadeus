@@ -15,6 +15,7 @@ interface Produto {
   id: string
   nome: string
   preco: number
+  preco_bruto: number
   imagens: string[]
   slug: string
   requer_inscricao_aprovada?: boolean

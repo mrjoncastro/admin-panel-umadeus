@@ -448,3 +448,4 @@ executados.
 
 ## [2025-06-26] Componente PasswordField criado e formulários atualizados. Lint e build executados.
 ## [2025-06-26] Template novaCobranca removido e guia de email ajustado para refletir a exclusão. Lint e build executados.
+## [2025-06-26] Campo preco_bruto adicionado na colecao produtos e documentacao atualizada.
