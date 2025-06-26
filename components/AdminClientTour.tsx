@@ -60,7 +60,12 @@ export function AdminClientTour({ stepsByRoute }: AdminClientTourProps) {
         callback={handleJoyrideCallback}
       />
       <div className="fixed bottom-4 right-4 z-50">
-        <Button variant="secondary" className="p-2 rounded-full" onClick={() => tourRef.current?.reset(true)}>
+        <Button
+          variant="secondary"
+          className="p-2 rounded-full"
+          aria-label="Ajuda"
+          onClick={() => tourRef.current?.reset(true)}
+        >
           <HelpCircle size={24} />
         </Button>
       </div>
