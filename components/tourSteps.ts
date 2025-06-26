@@ -51,8 +51,4 @@ export const stepsByRoute: Record<string, Step[]> = {
   '/admin/whatsapp': [
     { target: '.onboarding-wizard', content: 'Configure a integração com o WhatsApp.', placement: 'top' },
   ],
-  '/app/home': [
-    { target: '.welcome-banner', content: 'Bem‑vindo ao seu painel pessoal!', placement: 'bottom' },
-    { target: '.menu-pedidos', content: 'Confira seus pedidos e status aqui.', placement: 'right' },
-  ],
 }
