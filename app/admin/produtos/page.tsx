@@ -210,7 +210,7 @@ export default function AdminProdutosPage() {
                 <tr key={produto.id}>
                   <td className="font-medium">{produto.nome}</td>
                   <td>
-                    {Number(produto.preco).toLocaleString('pt-BR', {
+                    {Number(produto.preco_bruto).toLocaleString('pt-BR', {
                       style: 'currency',
                       currency: 'BRL',
                     })}
