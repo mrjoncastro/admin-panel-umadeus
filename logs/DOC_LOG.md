@@ -430,3 +430,4 @@ executados.
 ## [2025-06-26] Check de instância inclui telefone e criado endpoint DELETE /instance/delete. Documentação atualizada e StepComplete mostra número conectado com opção de desconectar. Lint e build executados.
 ## [2025-06-26] Extraido maskPhone para util e prevenido erro quando telefone ausente. Lint e build executados.
 ## [2025-06-26] Telefone agora salvo em whatsapp_clientes e exibido sem prefixo 55 em StepComplete. Documentação e schema atualizados.
+## [2025-06-26] OnboardingWizard passa a exibir LoadingOverlay enquanto verifica instancia.

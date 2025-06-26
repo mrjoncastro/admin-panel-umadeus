@@ -7,6 +7,7 @@ import StepPairing from '../onboarding/StepPairing'
 import StepComplete from '../onboarding/StepComplete'
 import StepSendTest from '../onboarding/StepSendTest'
 import OnboardingProgress from '../onboarding/OnboardingProgress'
+import { LoadingOverlay } from '@/components/organisms'
 import {
   OnboardingProvider,
   useOnboarding,
@@ -27,6 +28,8 @@ function WizardSteps() {
     setApiKey,
     setConnection,
     setTelefone,
+    loading,
+    setLoading,
   } = useOnboarding()
   const { tenantId } = useAuthContext()
   const [qrUrl, setQrUrl] = useState('')
@@ -35,6 +38,7 @@ function WizardSteps() {
   useEffect(() => {
     if (!tenantId) return
     ;(async () => {
+      setLoading(true)
       try {
         const res = await fetch('/api/chats/whatsapp/instance/check', {
           headers: { 'x-tenant-id': tenantId },
@@ -53,9 +57,19 @@ function WizardSteps() {
         }
       } catch {
         /* ignore */
+      } finally {
+        setLoading(false)
       }
     })()
-  }, [tenantId, setStep, setInstanceName, setApiKey, setConnection, setTelefone])
+  }, [
+    tenantId,
+    setStep,
+    setInstanceName,
+    setApiKey,
+    setConnection,
+    setTelefone,
+    setLoading,
+  ])
 
   const handleRegistered = (url: string, base: string) => {
     setQrUrl(url)
@@ -69,6 +83,7 @@ function WizardSteps() {
 
   return (
     <div className="wizard-container max-w-sm mx-auto">
+      <LoadingOverlay show={loading} text="Carregando..." />
       <OnboardingProgress />
       {step === 1 && <StepSelectClient />}
       {step === 2 && (

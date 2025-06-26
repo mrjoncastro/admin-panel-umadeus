@@ -1,6 +1,6 @@
 /* @vitest-environment jsdom */
 import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { vi } from 'vitest'
 import OnboardingWizard from '@/components/admin/OnboardingWizard'
 import { useOnboarding } from '@/lib/context/OnboardingContext'
@@ -94,5 +94,23 @@ describe('OnboardingWizard', () => {
     expect(screen.getByText('Step4')).toBeInTheDocument()
     fireEvent.click(screen.getByText('next4'))
     expect(screen.getByText('Step5')).toBeInTheDocument()
+  })
+
+  it('exibe overlay enquanto check pendente', async () => {
+    let resolveFetch: (v: any) => void
+    const fetchPromise = new Promise((resolve) => {
+      resolveFetch = resolve
+    })
+    ;(global.fetch as vi.Mock).mockReturnValueOnce(fetchPromise as any)
+
+    render(<OnboardingWizard />)
+
+    expect(screen.getByText('Carregando...')).toBeInTheDocument()
+
+    resolveFetch({ ok: true, json: () => Promise.resolve(null) })
+
+    await waitFor(() =>
+      expect(screen.queryByText('Carregando...')).not.toBeInTheDocument(),
+    )
   })
 })
