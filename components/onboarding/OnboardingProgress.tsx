@@ -3,7 +3,7 @@ import { useOnboarding } from '@/lib/context/OnboardingContext'
 
 export default function OnboardingProgress() {
   const { step } = useOnboarding()
-  const total = 4
+  const total = 5
   return (
     <div className="mb-4">
       <div className="w-full bg-neutral-200 rounded-full h-2">
