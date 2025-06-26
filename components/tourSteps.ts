@@ -18,7 +18,6 @@ export const stepsByRoute: Record<string, Step[]> = {
     { target: '.tabela-produtos', content: 'Gerencie os itens disponíveis para venda.', placement: 'top' },
   ],
   '/admin/clientes': [
-    { target: '.filtro-clientes', content: 'Busque clientes por nome ou telefone.', placement: 'bottom' },
     { target: '.tabela-clientes', content: 'Visualize o histórico de cada cliente.', placement: 'top' },
   ],
   '/admin/campos': [
@@ -27,7 +26,7 @@ export const stepsByRoute: Record<string, Step[]> = {
   ],
   '/admin/configuracoes': [
     { target: '.form-config', content: 'Personalize cores, logo e opções do sistema.', placement: 'top' },
-    { target: '.toggle-modo-demonstracao', content: 'Ative o modo de demonstração para ocultar dados reais.', placement: 'right' },
+    { target: '.toggle-confirmar-inscricoes', content: 'Defina se as inscrições devem ser confirmadas manualmente.', placement: 'right' },
   ],
   '/admin/eventos': [
     { target: '.btn-novo-evento', content: 'Crie eventos para receber inscrições.', placement: 'left' },

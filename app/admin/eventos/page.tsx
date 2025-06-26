@@ -65,11 +65,11 @@ export default function AdminEventosPage() {
         >
           Eventos
         </h2>
-        <Link href="/admin/eventos/novo" className="btn btn-primary">
+        <Link href="/admin/eventos/novo" className="btn btn-primary btn-novo-evento">
           + Novo Evento
         </Link>
       </div>
-      <div className="overflow-x-auto rounded border shadow-sm bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700">
+      <div className="overflow-x-auto rounded border shadow-sm bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700 tabela-eventos">
         <table className="table-base">
           <thead>
             <tr>

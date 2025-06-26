@@ -141,7 +141,7 @@ export default function PedidosPage() {
       <h2 className="heading">Pedidos Recebidos</h2>
 
       {/* Filtros */}
-      <div className="flex flex-wrap gap-4 mb-6">
+      <div className="flex flex-wrap gap-4 mb-6 filtro-pedidos">
         <input
           type="text"
           placeholder={placeholderBusca}
@@ -183,7 +183,7 @@ export default function PedidosPage() {
       {pedidosFiltrados.length === 0 ? (
         <p className="text-center text-gray-500">Nenhum pedido encontrado.</p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+        <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm tabela-pedidos">
           <table className="table-base">
             <thead>
               <tr>
