@@ -17,6 +17,9 @@ vi.mock('../../lib/getTenantFromHost', () => ({
 
 describe('POST /api/signup', () => {
   it('remove caracteres nao numericos de telefone e cpf', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true })
+    global.fetch = fetchMock as unknown as typeof fetch
+
     const req = new Request('http://test', {
       method: 'POST',
       body: JSON.stringify({
@@ -27,6 +30,7 @@ describe('POST /api/signup', () => {
         senha: '123',
       }),
     })
+    ;(req as any).nextUrl = new URL('http://test')
 
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(201)
@@ -35,6 +39,14 @@ describe('POST /api/signup', () => {
         telefone: '11999999999',
         cpf: '52998224725',
       }),
+    )
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://test/api/email',
+      expect.any(Object),
+    )
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://test/api/chats/message/sendWelcome',
+      expect.any(Object),
     )
   })
 })
