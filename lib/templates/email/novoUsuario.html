@@ -1,68 +1,109 @@
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Novo Usuário</title>
-  </head>
-  <body
-    style="
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Novo Usuário</title>
+  <style>
+    :root {
+      --bg: #f9f9f9;
+      --card-bg: #ffffff;
+
+      --primary: {
+          {
+          cor_primary
+        }
+      }
+
+      ;
+      --text-primary: var(--text-primary);
+      --text-secondary: var(--text-secondary);
+      --font-body: var(--font-body);
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+    }
+
+    body {
       margin: 0;
       padding: 0;
-      background: var(--background);
+      background: var(--bg);
       font-family: var(--font-body);
-    "
-  >
-    <span
-      style="
-        display: none;
-        font-size: 1px;
-        line-height: 1px;
-        max-height: 0;
-        max-width: 0;
-        opacity: 0;
-        overflow: hidden;
-      "
-      >Conta criada com sucesso</span
-    >
-    <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
-      <tr>
-        <td align="center" style="padding: var(--space-md)">
-          <table
-            width="600"
-            cellpadding="0"
-            cellspacing="0"
-            role="presentation"
-            class="card"
-          >
-            <tr>
-              <td align="center" style="padding: var(--space-lg)">
-                <img src="{{logoUrl}}" alt="Logo" width="120" />
-              </td>
-            </tr>
-            <tr>
-              <td style="padding: var(--space-md); color: var(--text-primary)">
-                <h2 class="heading" style="color: {{cor_primary}};">
-                  Olá, {{userName}}!
-                </h2>
-                <p>Sua conta foi criada com sucesso em {{tenantNome}}.</p>
-              </td>
-            </tr>
-            <tr>
-              <td
-                style="
-                  padding: var(--space-md);
-                  font-size: 0.875rem;
-                  color: var(--text-secondary);
-                  text-align: center;
-                "
-              >
-                <p>Se não solicitou este e‑mail, ignore-o.</p>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
+      color: var(--text-primary);
+    }
+
+    .wrapper {
+      width: 100%;
+      table-layout: fixed;
+      background: var(--bg);
+      padding: var(--space-md);
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .header {
+      padding: var(--space-lg);
+      text-align: center;
+    }
+
+    .content {
+      padding: var(--space-md) var(--space-lg);
+    }
+
+    .footer {
+      padding: var(--space-md);
+      font-size: 0.875rem;
+      text-align: center;
+      color: var(--text-secondary);
+    }
+
+    .preheader {
+      display: none;
+      font-size: 1px;
+      line-height: 1px;
+      max-height: 0;
+      max-width: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    @media screen and (max-width: 500px) {
+      .container {
+        width: 100% !important;
+        border-radius: 0;
+      }
+
+      .header img {
+        width: 100px;
+        height: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <span class="preheader">Conta criada com sucesso!</span>
+  <div class="wrapper">
+    <div class="container" role="article">
+      <div class="header">
+        <img src="{{logoUrl}}" alt="Logo" width="120" style="height:auto;" />
+      </div>
+      <div class="content">
+        <h2 style="color: var(--primary);">Olá, {{userName}}!</h2>
+        <p>Sua conta foi criada com sucesso em <strong>{{tenantNome}}</strong>.</p>
+      </div>
+      <div class="footer">
+        <p>Se você não solicitou este e-mail, apenas ignore-o.</p>
+      </div>
+    </div>
+  </div>
+</body>
+
 </html>
