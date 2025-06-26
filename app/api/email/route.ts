@@ -4,6 +4,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 import { promises as fs } from 'fs'
+import path from 'path'
 import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
@@ -18,7 +19,14 @@ export type Body = {
 }
 
 async function loadTemplate(name: string) {
-  return fs.readFile(`lib/templates/email/${name}.html`, 'utf8')
+  const file = path.join(
+    process.cwd(),
+    'lib',
+    'templates',
+    'email',
+    `${name}.html`,
+  )
+  return fs.readFile(file, 'utf8')
 }
 
 export async function POST(req: NextRequest) {
