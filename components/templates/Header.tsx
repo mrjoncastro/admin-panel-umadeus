@@ -92,8 +92,8 @@ export default function Header() {
   }, [clientOpen])
 
   // Função de logout (contexto)
-  function handleLogout() {
-    logout?.() // pode ser logout(), useAuthLogout(), etc.
+  async function handleLogout() {
+    await logout?.() // pode ser logout(), useAuthLogout(), etc.
     setAdminOpen(false)
     setClientOpen(false)
     setOpen(false)
@@ -161,10 +161,7 @@ export default function Header() {
                     ))}
                     <li>
                       <button
-                        onClick={() => {
-                          logout?.()
-                          setAdminOpen(false)
-                        }}
+                        onClick={handleLogout}
                         className="block w-full text-left px-4 py-2 text-red-600 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                       >
                         <span className="inline-flex items-center gap-2">
