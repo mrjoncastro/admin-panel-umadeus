@@ -6,7 +6,12 @@ import { useAuthContext } from '@/lib/context/AuthContext'
 import { useToast } from '@/lib/context/ToastContext'
 import type { ClientResponseError } from 'pocketbase'
 import Spinner from '@/components/atoms/Spinner'
-import { FormField, TextField, InputWithMask, PasswordField } from '@/components'
+import {
+  FormField,
+  TextField,
+  InputWithMask,
+  PasswordField,
+} from '@/components'
 
 export default function SignUpForm({
   onSuccess,

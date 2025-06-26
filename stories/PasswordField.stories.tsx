@@ -17,7 +17,11 @@ export const Default: Story = {
   render: (args) => {
     const [value, setValue] = useState('')
     return (
-      <PasswordField {...args} value={value} onChange={(e) => setValue(e.target.value)} />
+      <PasswordField
+        {...args}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
     )
   },
 }

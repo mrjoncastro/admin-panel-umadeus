@@ -7,7 +7,12 @@ import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import FormWizard from './FormWizard'
 import LoadingOverlay from './LoadingOverlay'
-import { FormField, InputWithMask, TextField, PasswordField } from '@/components'
+import {
+  FormField,
+  InputWithMask,
+  TextField,
+  PasswordField,
+} from '@/components'
 
 interface Produto {
   id: string

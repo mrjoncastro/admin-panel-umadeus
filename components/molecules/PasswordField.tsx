@@ -2,11 +2,15 @@ import React, { useState } from 'react'
 import { TextField } from '../atoms/TextField'
 import { Eye, EyeOff } from 'lucide-react'
 
-export interface PasswordFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface PasswordFieldProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string
 }
 
-export default function PasswordField({ className = '', ...props }: PasswordFieldProps) {
+export default function PasswordField({
+  className = '',
+  ...props
+}: PasswordFieldProps) {
   const [visible, setVisible] = useState(false)
 
   return (

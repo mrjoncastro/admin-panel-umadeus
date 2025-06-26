@@ -76,7 +76,8 @@ export async function POST(req: NextRequest) {
       : 'pix'
     const installments = Number(data.installments) || 1
 
-    const { id: _inscricaoId, ...inscricaoSemId } = criarInscricao(baseInscricao)
+    const { id: _inscricaoId, ...inscricaoSemId } =
+      criarInscricao(baseInscricao)
     void _inscricaoId
 
     const registroParaCriar = {
