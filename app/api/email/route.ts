@@ -8,7 +8,11 @@ import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
 export type Body = {
-  eventType: 'nova_inscricao' | 'confirmacao_inscricao'
+  eventType:
+    | 'nova_inscricao'
+    | 'confirmacao_inscricao'
+    | 'novo_usuario'
+    | 'confirmacao_pagamento'
   userId: string
   paymentLink?: string
 }
@@ -61,19 +65,33 @@ export async function POST(req: NextRequest) {
     const logo = cfg.logo_url || ''
     let subject: string, html: string
 
-    if (eventType === 'nova_inscricao') {
-      subject = '📝 Recebemos sua inscrição!'
-      html = await loadTemplate('novaInscricao')
-    } else {
-      subject = '✅ Inscrição Confirmada'
-      html = await loadTemplate('confirmacaoInscricao')
-      html = html.replace(/{{paymentLink}}/g, paymentLink || '')
+    switch (eventType) {
+      case 'nova_inscricao':
+        subject = '📝 Recebemos sua inscrição!'
+        html = await loadTemplate('novaInscricao')
+        break
+      case 'confirmacao_inscricao':
+        subject = '✅ Inscrição Confirmada'
+        html = await loadTemplate('confirmacaoInscricao')
+        html = html.replace(/{{paymentLink}}/g, paymentLink || '')
+        break
+      case 'novo_usuario':
+        subject = '🎉 Conta criada com sucesso'
+        html = await loadTemplate('novoUsuario')
+        break
+      case 'confirmacao_pagamento':
+        subject = '💰 Pagamento Confirmado'
+        html = await loadTemplate('confirmacaoPagamento')
+        break
+      default:
+        return NextResponse.json({ error: 'Evento inválido' }, { status: 400 })
     }
 
     html = html
       .replace(/{{userName}}/g, user.nome || user.name || '')
       .replace(/{{logoUrl}}/g, logo)
       .replace(/{{cor_primary}}/g, cor)
+      .replace(/{{tenantNome}}/g, cfg.nome || '')
 
     // 6) configura o Nodemailer
     const transporter = nodemailer.createTransport({
