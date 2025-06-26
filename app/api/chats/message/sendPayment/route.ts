@@ -10,7 +10,11 @@ export async function POST(req: NextRequest) {
 
   let body: { telefone?: string; link?: string; message?: string }
   try {
-    body = (await req.json()) as { telefone?: string; link?: string; message?: string }
+    body = (await req.json()) as {
+      telefone?: string
+      link?: string
+      message?: string
+    }
   } catch {
     return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
   }
@@ -33,7 +37,10 @@ export async function POST(req: NextRequest) {
     .getFullList({ filter: `cliente="${tenant}"`, limit: 1 })
 
   if (list.length === 0) {
-    return NextResponse.json({ error: 'registro não encontrado' }, { status: 404 })
+    return NextResponse.json(
+      { error: 'registro não encontrado' },
+      { status: 404 },
+    )
   }
 
   const rec = list[0]

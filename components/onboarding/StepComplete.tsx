@@ -11,7 +11,6 @@ export default function StepComplete() {
   const { tenantId } = useAuthContext()
   const [loading, setLoading] = useState(false)
 
-
   const handleDisconnect = async () => {
     setLoading(true)
     try {

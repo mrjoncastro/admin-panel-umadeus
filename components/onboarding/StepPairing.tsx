@@ -2,11 +2,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/atoms/Button'
 import { useOnboarding } from '@/lib/context/OnboardingContext'
-import {
-  connectInstance,
-  fetchConnectionState,
-} from '@/hooks/useWhatsappApi'
+import { connectInstance, fetchConnectionState } from '@/hooks/useWhatsappApi'
 import { useAuthContext } from '@/lib/context/AuthContext'
+import Image from 'next/image'
 
 interface StepPairingProps {
   qrCodeUrl: string
@@ -103,7 +101,7 @@ export default function StepPairing({
   return (
     <div className="card p-4 text-center flex flex-col gap-4">
       <p>Escaneie o QR Code abaixo para autenticar:</p>
-      <img
+      <Image
         src={codeBase ? `data:image/png;base64,${codeBase}` : codeUrl}
         alt="QR Code"
         className="mx-auto"

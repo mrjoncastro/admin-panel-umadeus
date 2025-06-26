@@ -15,7 +15,10 @@ export async function POST(req: NextRequest) {
   try {
     const { eventType, userId, paymentLink } = (await req.json()) as Body
     if (!eventType || !userId) {
-      return NextResponse.json({ error: 'Parâmetros faltando' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Parâmetros faltando' },
+        { status: 400 },
+      )
     }
 
     const tenantId = await getTenantFromHost()
@@ -42,11 +45,15 @@ export async function POST(req: NextRequest) {
 
     const user = await pb.collection('usuarios').getOne(userId)
     const telefone = (user as { telefone?: string }).telefone
-    const nome = (user as { nome?: string; name?: string }).nome ||
+    const nome =
+      (user as { nome?: string; name?: string }).nome ||
       (user as { name?: string }).name ||
       ''
     if (!telefone) {
-      return NextResponse.json({ error: 'Usuário sem telefone' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Usuário sem telefone' },
+        { status: 400 },
+      )
     }
 
     let message: string

@@ -346,22 +346,22 @@ const pb = new PocketBase(process.env.POCKETBASE_URL)
 
 A coleção **whatsapp_clientes** possui o seguinte esquema de campos no PocketBase:
 
-| Campo             | Tipo PB  | Detalhes                                       | Obrigatório | Descrição                                                          |
-| ----------------- | -------- | ---------------------------------------------- | ----------- | ------------------------------------------------------------------ |
-| `id`              | Id       | -                                              | Sim         | Identificador único do registro                                    |
-| `cliente`         | Relation | Single m24_clientes                            | Sim         | Referência ao cliente no sistema                                   |
-| `instanceName`    | Text     | Single                                         | Sim         | Nome da instância configurada na Evolution API                     |
-| `instanceId`      | Text     | Single                                         | Sim         | ID interno gerado pela Evolution API                               |
-| `apiKey`          | Text     | Single                                         | Sim         | Chave de API associada à instância                                 |
-| `telefone`        | Text     | Single
-| Sim         | Número E.164 utilizado na criação da instância
-   |
-| `pairingCode`     | Text     | Single                                         | Não         | Código de pareamento (apenas enquanto `sessionStatus` = `pending`) |
-| `sessionStatus`   | Select   | opções: `pending`, `connected`, `disconnected` | Sim         | Status da sessão                                                   |
-| `qrCode`          | Text     | Single                                         | Não         | URL ou Base64 do QR Code para autenticação inicial                 |
-| `config_finished` | Boolean  | -                                              | Não         | Indica se a configuração inicial foi completa                      |
-| `created`         | Created  | timestamp                                      | Sim         | Data de criação do registro                                        |
-| `updated`         | Updated  | timestamp                                      | Sim         | Data da última atualização do registro                             |
+| Campo             | Tipo PB                                        | Detalhes                                       | Obrigatório | Descrição                                                          |
+| ----------------- | ---------------------------------------------- | ---------------------------------------------- | ----------- | ------------------------------------------------------------------ |
+| `id`              | Id                                             | -                                              | Sim         | Identificador único do registro                                    |
+| `cliente`         | Relation                                       | Single m24_clientes                            | Sim         | Referência ao cliente no sistema                                   |
+| `instanceName`    | Text                                           | Single                                         | Sim         | Nome da instância configurada na Evolution API                     |
+| `instanceId`      | Text                                           | Single                                         | Sim         | ID interno gerado pela Evolution API                               |
+| `apiKey`          | Text                                           | Single                                         | Sim         | Chave de API associada à instância                                 |
+| `telefone`        | Text                                           | Single                                         |
+| Sim               | Número E.164 utilizado na criação da instância |
+|  |
+| `pairingCode`     | Text                                           | Single                                         | Não         | Código de pareamento (apenas enquanto `sessionStatus` = `pending`) |
+| `sessionStatus`   | Select                                         | opções: `pending`, `connected`, `disconnected` | Sim         | Status da sessão                                                   |
+| `qrCode`          | Text                                           | Single                                         | Não         | URL ou Base64 do QR Code para autenticação inicial                 |
+| `config_finished` | Boolean                                        | -                                              | Não         | Indica se a configuração inicial foi completa                      |
+| `created`         | Created                                        | timestamp                                      | Sim         | Data de criação do registro                                        |
+| `updated`         | Updated                                        | timestamp                                      | Sim         | Data da última atualização do registro                             |
 
 ### 3.1 Endpoints de CRUD (`/admin/api/collections/whatsapp_clientes/records`)
 

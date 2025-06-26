@@ -26,7 +26,10 @@ export async function DELETE(req: NextRequest) {
     .getFullList({ filter: `cliente="${tenant}"`, limit: 1 })
 
   if (list.length === 0) {
-    return NextResponse.json({ error: 'registro_nao_encontrado' }, { status: 404 })
+    return NextResponse.json(
+      { error: 'registro_nao_encontrado' },
+      { status: 404 },
+    )
   }
 
   const rec = list[0]
@@ -35,17 +38,23 @@ export async function DELETE(req: NextRequest) {
 
   // tenta deslogar e remover na Evolution (ignora erros)
   try {
-    await fetch(`${process.env.EVOLUTION_API_URL}/instance/logout/${instanceName}`, {
-      method: 'DELETE',
-      headers: { apikey: apiKey },
-    })
+    await fetch(
+      `${process.env.EVOLUTION_API_URL}/instance/logout/${instanceName}`,
+      {
+        method: 'DELETE',
+        headers: { apikey: apiKey },
+      },
+    )
   } catch {}
 
   try {
-    await fetch(`${process.env.EVOLUTION_API_URL}/instance/delete/${instanceName}`, {
-      method: 'DELETE',
-      headers: { apikey: apiKey },
-    })
+    await fetch(
+      `${process.env.EVOLUTION_API_URL}/instance/delete/${instanceName}`,
+      {
+        method: 'DELETE',
+        headers: { apikey: apiKey },
+      },
+    )
   } catch {}
 
   await pb.collection('whatsapp_clientes').delete(rec.id)

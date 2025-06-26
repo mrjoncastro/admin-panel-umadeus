@@ -166,6 +166,7 @@ Editar
 }
 
 ---
+
 6. Envio de Mensagem (Produção)
    POST /api/chats/whatsapp/message/sendText/{instanceName}
 

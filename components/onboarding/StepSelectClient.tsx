@@ -10,7 +10,6 @@ export default function StepSelectClient() {
   const [telefoneLocal, setTelefoneLocal] = useState('')
   const [error, setError] = useState<string>()
 
-
   const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let r = e.target.value.replace(/\D/g, '')
     if (r.length > 11) r = r.slice(0, 11)

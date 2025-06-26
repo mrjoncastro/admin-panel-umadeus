@@ -24,7 +24,9 @@ beforeEach(() => {
 
 describe('StepSendTest', () => {
   it('exibe erro quando recebe status 409', async () => {
-    global.fetch = vi.fn().mockResolvedValue({ status: 409, ok: false }) as unknown as typeof fetch
+    global.fetch = vi
+      .fn()
+      .mockResolvedValue({ status: 409, ok: false }) as unknown as typeof fetch
 
     render(<StepSendTest />)
     const input = screen.getByPlaceholderText('(11) 99999-9999')
@@ -35,5 +37,3 @@ describe('StepSendTest', () => {
     expect(setStep).not.toHaveBeenCalled()
   })
 })
-
-

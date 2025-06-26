@@ -13,8 +13,9 @@ const pb = createPocketBaseMock()
 vi.mock('../../lib/pocketbase', () => ({
   default: vi.fn(() => pb),
 }))
-
-(requireRole as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue({ pb, user: {} })
+(
+  requireRole as unknown as { mockReturnValue: (v: any) => void },
+).mockReturnValue({ pb, user: {} })
 
 describe('POST /api/chats/whatsapp/instance', () => {
   it('retorna 400 quando tenant ausente', async () => {
@@ -65,7 +66,9 @@ describe('POST /api/chats/whatsapp/message/sendTest/[instanceName]', () => {
       body: JSON.stringify({ to: '123' }),
     })
     ;(req as any).nextUrl = new URL('http://test')
-    const res = await POST_SEND(req as unknown as NextRequest, { params: Promise.resolve({}) })
+    const res = await POST_SEND(req as unknown as NextRequest, {
+      params: Promise.resolve({}),
+    })
     expect(res.status).toBe(400)
   })
 
@@ -75,7 +78,9 @@ describe('POST /api/chats/whatsapp/message/sendTest/[instanceName]', () => {
       body: JSON.stringify({ to: '123' }),
     })
     ;(req as any).nextUrl = new URL('http://test')
-    const res = await POST_SEND(req as unknown as NextRequest, { params: Promise.resolve({ instanceName: 'i' }) })
+    const res = await POST_SEND(req as unknown as NextRequest, {
+      params: Promise.resolve({ instanceName: 'i' }),
+    })
     expect(res.status).toBe(400)
     const body = await res.json()
     expect(body.error).toBe('Tenant ausente')
@@ -84,7 +89,9 @@ describe('POST /api/chats/whatsapp/message/sendTest/[instanceName]', () => {
 
 describe('POST /api/chats/whatsapp/instance/connect', () => {
   it('retorna 404 quando instancia inexistente', async () => {
-    pb.collection.mockReturnValueOnce({ getFullList: vi.fn().mockResolvedValue([]) })
+    pb.collection.mockReturnValueOnce({
+      getFullList: vi.fn().mockResolvedValue([]),
+    })
     const req = new Request('http://test', {
       method: 'POST',
       headers: { 'x-tenant-id': 't1' },
@@ -138,5 +145,3 @@ describe('POST /api/chats/whatsapp/instance/connectionState sucesso', () => {
     expect(update).toHaveBeenCalledWith('1', { sessionStatus: 'connected' })
   })
 })
-
-

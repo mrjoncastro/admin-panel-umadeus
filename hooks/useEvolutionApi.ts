@@ -1,4 +1,8 @@
-const API_URL = (process.env.NEXT_PUBLIC_EVOLUTION_API_URL || process.env.EVOLUTION_API_URL || '').replace(/\/$/, '')
+const API_URL = (
+  process.env.NEXT_PUBLIC_EVOLUTION_API_URL ||
+  process.env.EVOLUTION_API_URL ||
+  ''
+).replace(/\/$/, '')
 
 export async function createInstance(telefone: string) {
   const res = await fetch(`${API_URL}/instance/create`, {
@@ -36,10 +40,16 @@ export async function connectInstance(instanceName: string, apiKey: string) {
   return res.json()
 }
 
-export async function fetchInstanceStatus(instanceName: string, apiKey: string) {
-  const res = await fetch(`${API_URL}/instance/connectionState/${instanceName}`, {
-    headers: { apikey: apiKey },
-  })
+export async function fetchInstanceStatus(
+  instanceName: string,
+  apiKey: string,
+) {
+  const res = await fetch(
+    `${API_URL}/instance/connectionState/${instanceName}`,
+    {
+      headers: { apikey: apiKey },
+    },
+  )
 
   if (!res.ok) {
     const txt = await res.text()
@@ -53,7 +63,7 @@ export async function sendTestMessage(
   instanceName: string,
   apiKey: string,
   to: string,
-  message = 'Olá! QR autenticado com sucesso!'
+  message = 'Olá! QR autenticado com sucesso!',
 ) {
   const res = await fetch(`${API_URL}/message/sendTest/${instanceName}`, {
     method: 'POST',

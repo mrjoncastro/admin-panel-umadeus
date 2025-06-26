@@ -80,7 +80,12 @@ vi.mock('@/components/onboarding/OnboardingProgress', () => ({
   default: () => <div>Progress</div>,
 }))
 
-global.fetch = vi.fn().mockResolvedValue({ ok: true, json: () => Promise.resolve(null) }) as unknown as typeof fetch
+global.fetch = vi
+  .fn()
+  .mockResolvedValue({
+    ok: true,
+    json: () => Promise.resolve(null),
+  }) as unknown as typeof fetch
 
 describe('OnboardingWizard', () => {
   it('avanca pelas etapas ao clicar nos botoes', () => {

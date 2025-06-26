@@ -7,8 +7,11 @@ interface StepCreateInstanceProps {
   onRegistered: (url: string, base: string) => void
 }
 
-export default function StepCreateInstance({ onRegistered }: StepCreateInstanceProps) {
-  const { telefone, setStep, setInstanceName, setApiKey, setLoading } = useOnboarding()
+export default function StepCreateInstance({
+  onRegistered,
+}: StepCreateInstanceProps) {
+  const { telefone, setStep, setInstanceName, setApiKey, setLoading } =
+    useOnboarding()
   const { tenantId } = useAuthContext()
   const [error, setError] = useState<string>()
 
@@ -45,7 +48,15 @@ export default function StepCreateInstance({ onRegistered }: StepCreateInstanceP
       }
     }
     if (telefone) register()
-  }, [telefone, tenantId, onRegistered, setApiKey, setInstanceName, setLoading, setStep])
+  }, [
+    telefone,
+    tenantId,
+    onRegistered,
+    setApiKey,
+    setInstanceName,
+    setLoading,
+    setStep,
+  ])
 
   return (
     <div className="card flex flex-col items-center p-8">

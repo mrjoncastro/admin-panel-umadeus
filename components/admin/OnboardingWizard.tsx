@@ -76,7 +76,6 @@ function WizardSteps() {
     setQrBase(base)
   }
 
-
   const handleConnected = () => {
     setStep(4)
   }
@@ -86,9 +85,7 @@ function WizardSteps() {
       <LoadingOverlay show={loading} text="Carregando..." />
       <OnboardingProgress />
       {step === 1 && <StepSelectClient />}
-      {step === 2 && (
-        <StepCreateInstance onRegistered={handleRegistered} />
-      )}
+      {step === 2 && <StepCreateInstance onRegistered={handleRegistered} />}
       {step === 3 && (
         <StepPairing
           qrCodeUrl={qrUrl}

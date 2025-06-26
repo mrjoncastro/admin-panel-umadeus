@@ -27,7 +27,6 @@ vi.mock('@/lib/context/OnboardingContext', () => ({
   }),
 }))
 
-
 beforeEach(() => {
   vi.useFakeTimers()
   vi.clearAllMocks()
@@ -39,11 +38,13 @@ afterEach(() => {
 
 describe('StepPairing polling', () => {
   it('tenta novamente ate conectar', async () => {
-    ;(fetchConnectionState as unknown as vi.Mock).mockResolvedValueOnce({
-      instance: { state: 'connecting' },
-    }).mockResolvedValueOnce({
-      instance: { state: 'open' },
-    })
+    ;(fetchConnectionState as unknown as vi.Mock)
+      .mockResolvedValueOnce({
+        instance: { state: 'connecting' },
+      })
+      .mockResolvedValueOnce({
+        instance: { state: 'open' },
+      })
 
     const onConnected = vi.fn()
     render(<StepPairing qrCodeUrl="u" qrBase64="b" onConnected={onConnected} />)
@@ -58,5 +59,3 @@ describe('StepPairing polling', () => {
     expect(setConnection).toHaveBeenCalledWith('connected')
   })
 })
-
-
