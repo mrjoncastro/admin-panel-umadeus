@@ -6,6 +6,7 @@ import {
   connectInstance,
   fetchConnectionState,
 } from '@/hooks/useWhatsappApi'
+import { useAuthContext } from '@/lib/context/AuthContext'
 
 interface StepPairingProps {
   qrCodeUrl: string
@@ -30,6 +31,7 @@ export default function StepPairing({
 }: StepPairingProps) {
   const { instanceName, apiKey, setConnection, loading, setLoading } =
     useOnboarding()
+  const { tenantId } = useAuthContext()
   const [codeUrl, setCodeUrl] = useState(qrCodeUrl)
   const [codeBase, setCodeBase] = useState(qrBase64)
   const [error, setError] = useState<string>()
@@ -53,6 +55,7 @@ export default function StepPairing({
         const raw = (await fetchConnectionState(
           instanceName,
           apiKey,
+          tenantId || '',
         )) as RawStateResponse
         const state = raw.instance?.state || raw.state
         if (state === 'open') {
@@ -77,13 +80,17 @@ export default function StepPairing({
     setCountdown(10)
     timeoutRef.current = window.setTimeout(poll, 10 * 1000)
     return () => clearTimeout(timeoutRef.current)
-  }, [instanceName, apiKey, onConnected, setConnection])
+  }, [instanceName, apiKey, tenantId, onConnected, setConnection])
 
   const handleRegenerateQr = async () => {
     setLoading(true)
     setError(undefined)
     try {
-      const d = (await connectInstance(instanceName, apiKey)) as ConnectResponse
+      const d = (await connectInstance(
+        instanceName,
+        apiKey,
+        tenantId || '',
+      )) as ConnectResponse
       setCodeUrl(d.qrCodeUrl)
       setCodeBase(d.qrBase64)
     } catch (err: unknown) {
