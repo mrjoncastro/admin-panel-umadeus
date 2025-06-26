@@ -3,18 +3,15 @@ import { useState } from 'react'
 import { TextField } from '@/components/atoms/TextField'
 import { Button } from '@/components/atoms/Button'
 import { useOnboarding } from '@/lib/context/OnboardingContext'
-import { useAuthContext } from '@/lib/context/AuthContext'
 
 interface StepSelectClientProps {
-  onRegistered: (qrUrl: string, qrBase64: string) => void
+  onSelected: (telefone: string) => void
 }
 
 export default function StepSelectClient({
-  onRegistered,
+  onSelected,
 }: StepSelectClientProps) {
-  const { setStep, setInstanceName, setApiKey, loading, setLoading } =
-    useOnboarding()
-  const { tenantId } = useAuthContext()
+  const { setStep } = useOnboarding()
   const [telefoneLocal, setTelefoneLocal] = useState('')
   const [error, setError] = useState<string>()
 
@@ -40,42 +37,15 @@ export default function StepSelectClient({
     setTelefoneLocal(r)
   }
 
-  const handleRegister = async () => {
+  const handleRegister = () => {
     const raw = telefoneLocal.replace(/\D/g, '')
     if (!/^\d{10,11}$/.test(raw)) {
       setError('Informe DDD + número válido.')
       return
     }
-    setStep(2)
-    setLoading(true)
     setError(undefined)
-    try {
-      const res = await fetch('/api/chats/whatsapp/instance', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-tenant-id': tenantId!,
-        },
-        body: JSON.stringify({ telefone: `55${raw}` }),
-      })
-      if (!res.ok) throw new Error(await res.text())
-      const d = (await res.json()) as {
-        instance: { instanceId: string; instanceName: string }
-        instanceName?: string
-        apiKey: string
-        qrCodeUrl: string
-        qrBase64: string
-      }
-      setInstanceName(d.instance.instanceName)
-      setApiKey(d.apiKey)
-      onRegistered(d.qrCodeUrl, d.qrBase64)
-      setStep(3)
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err))
-      setStep(1)
-    } finally {
-      setLoading(false)
-    }
+    onSelected(raw)
+    setStep(2)
   }
 
   return (
@@ -88,8 +58,8 @@ export default function StepSelectClient({
         onChange={handleTelefoneChange}
       />
       {error && <p className="text-red-600 text-sm">{error}</p>}
-      <Button className="mt-2" onClick={handleRegister} disabled={loading}>
-        {loading ? 'Registrando...' : 'Cadastrar'}
+      <Button className="mt-2" onClick={handleRegister}>
+        Cadastrar
       </Button>
     </div>
   )
