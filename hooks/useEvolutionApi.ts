@@ -55,7 +55,7 @@ export async function sendTestMessage(
   to: string,
   message = 'Olá! QR autenticado com sucesso!'
 ) {
-  const res = await fetch(`${API_URL}/message/sendText/${instanceName}`, {
+  const res = await fetch(`${API_URL}/message/sendTest/${instanceName}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
