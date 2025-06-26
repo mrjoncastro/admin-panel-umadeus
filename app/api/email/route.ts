@@ -70,7 +70,9 @@ export async function POST(req: NextRequest) {
 
     // 5) monta subject + html
     const cor = cfg.cor_primary || '#7c3aed'
-    const logo = cfg.logo_url || ''
+    const logo = cfg.logo
+      ? pb.files.getUrl(cfg, cfg.logo)
+      : cfg.logo_url || ''
     let subject: string, html: string
 
     switch (eventType) {
