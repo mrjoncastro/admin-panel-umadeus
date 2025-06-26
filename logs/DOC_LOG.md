@@ -426,3 +426,7 @@
 ## [2025-06-25] OnboardingWizard adaptado ao design system: TextField, Button e
 classes card/progress aplicados. TenantId lido do AuthContext. Lint e build
 executados.
+
+## [2025-06-26] Rota sendPayment criada substituindo /api/n8n. Documentação atualizada e build/lint executados.
+
+## [2025-06-26] Mensagem de boas-vindas via WhatsApp criada seguindo fluxo do email. Documentação atualizada.
