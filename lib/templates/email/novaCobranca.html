@@ -2,126 +2,54 @@
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nova Cobrança Disponível</title>
-  <style>
-    :root {
-      --bg: #f9f9f9;
-      --card-bg: #ffffff;
-
-      --primary: {
-          {
-          cor_primary
-        }
-      }
-
-      ;
-      --text-primary: var(--text-primary);
-      --text-secondary: var(--text-secondary);
-      --font-body: var(--font-body);
-      --space-sm: 0.5rem;
-      --space-md: 1rem;
-      --space-lg: 1.5rem;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      background: var(--bg);
-      font-family: var(--font-body);
-      color: var(--text-primary);
-    }
-
-    .wrapper {
-      width: 100%;
-      table-layout: fixed;
-      background: var(--bg);
-      padding: var(--space-md);
-    }
-
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      background: var(--card-bg);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .header {
-      padding: var(--space-lg);
-      text-align: center;
-    }
-
-    .content {
-      padding: var(--space-md) var(--space-lg);
-    }
-
-    .cta {
-      text-align: center;
-      margin: var(--space-lg) 0;
-    }
-
-    .button {
-      display: inline-block;
-      padding: 12px 24px;
-      background: var(--primary);
-      color: #ffffff;
-      text-decoration: none;
-      border-radius: 4px;
-    }
-
-    .footer {
-      padding: var(--space-md);
-      font-size: 0.875rem;
-      text-align: center;
-      color: var(--text-secondary);
-    }
-
-    .preheader {
-      display: none;
-      font-size: 1px;
-      line-height: 1px;
-      max-height: 0;
-      max-width: 0;
-      opacity: 0;
-      overflow: hidden;
-    }
-
-    @media screen and (max-width: 500px) {
-      .container {
-        width: 100% !important;
-        border-radius: 0;
-      }
-
-      .header img {
-        width: 100px;
-        height: auto;
-      }
-    }
-  </style>
 </head>
 
-<body>
-  <span class="preheader">Uma nova cobrança foi gerada.</span>
-  <div class="wrapper">
-    <div class="container" role="article">
-      <div class="header">
-        <img src="{{logoUrl}}" alt="Logo" width="120" style="height:auto;" />
-      </div>
-      <div class="content">
-        <h2 style="color: var(--primary);">Olá, {{userName}}</h2>
-        <p>Uma nova cobrança de <strong>R$ {{amount}}</strong> foi gerada.</p>
-        <p>Vencimento: {{dueDate}}</p>
-      </div>
-      <div class="cta">
-        <a href="{{paymentLink}}" class="button">Pagar Agora</a>
-      </div>
-      <div class="footer">
-        <p>Se você não solicitou este e-mail, apenas ignore-o.</p>
-      </div>
-    </div>
-  </div>
+<body style="margin:0; padding:0; background-color:#f2f2f2; font-family:Helvetica, Arial, sans-serif; color:#333333;">
+  <!-- Container Geral -->
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f2f2f2; padding:20px;">
+    <tr>
+      <td align="center">
+        <!-- Card -->
+        <table width="600" cellpadding="0" cellspacing="0" border="0"
+          style="background-color:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <!-- Header -->
+          <tr>
+            <td align="center" style="padding:24px;">
+              <img src="{{logoUrl}}" alt="Logo" width="120"
+                style="display:block; border:0; outline:none; text-decoration:none;">
+            </td>
+          </tr>
+          <!-- Body -->
+          <tr>
+            <td style="padding:0 24px 24px;">
+              <h2 style="margin:0 0 16px; font-size:24px; color:{{cor_primary}};">Olá, {{userName}}</h2>
+              <p style="margin:0 0 12px; font-size:16px; line-height:24px;">Uma nova cobrança de <strong>R$
+                  {{amount}}</strong> foi gerada.</p>
+              <p style="margin:0 0 24px; font-size:16px; line-height:24px;">Vencimento: {{dueDate}}</p>
+              <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;">
+                <tr>
+                  <td align="center" style="border-radius:4px; background-color:{{cor_primary}};">
+                    <a href="{{paymentLink}}"
+                      style="display:inline-block; padding:12px 24px; font-size:16px; color:#ffffff; text-decoration:none; border-radius:4px;">Pagar
+                      Agora</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="padding:16px 24px; background-color:#f9f9f9; text-align:center; font-size:14px; color:#777777;">
+              <p style="margin:0;">Se você não solicitou esta cobrança, apenas ignore este e-mail.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>
 
 </html>
