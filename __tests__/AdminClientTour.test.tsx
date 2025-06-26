@@ -1,6 +1,6 @@
 /* @vitest-environment jsdom */
 import React from 'react'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
 import AdminClientTour from '@/components/AdminClientTour'
 
@@ -44,5 +44,6 @@ describe('AdminClientTour', () => {
     expect(resetMock).toHaveBeenCalledWith(true)
     joyrideCallback({ status: 'finished' })
     expect(localStorage.getItem('t1-/admin/dashboard-tour-completed')).toBe('true')
+    expect(screen.getByLabelText('Ajuda')).toBeInTheDocument()
   })
 })
