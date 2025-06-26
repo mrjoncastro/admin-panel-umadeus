@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify({
           eventType: 'novo_usuario',
           userId: usuario.id,
+          loginLink: base + '/login',
         }),
       })
     } catch (err) {

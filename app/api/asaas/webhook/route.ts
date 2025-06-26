@@ -241,6 +241,7 @@ export async function POST(req: NextRequest) {
           body: JSON.stringify({
             eventType: 'confirmacao_pagamento',
             userId: responsavelId,
+            amount: paymentData.value,
           }),
         })
       } catch (err) {
