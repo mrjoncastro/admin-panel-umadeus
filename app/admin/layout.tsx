@@ -1,9 +1,6 @@
 // app/layout.tsx
 import '@/app/globals.css'
 import LayoutWrapper from '@/components/templates/LayoutWrapperAdmin'
-import dynamic from 'next/dynamic'
-
-const AdminClientTour = dynamic(() => import('@/components/AdminClientTourLoader'))
 
 export const metadata = {
   icons: {
@@ -25,7 +22,6 @@ export default function RootLayout({
   return (
     <div className="antialiased font-sans">
       <LayoutWrapper>
-        <AdminClientTour />
         {children}
       </LayoutWrapper>
     </div>
