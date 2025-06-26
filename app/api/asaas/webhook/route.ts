@@ -210,6 +210,52 @@ export async function POST(req: NextRequest) {
         status: 'confirmado',
       })
     }
+
+    // Identifica o usuário responsável
+    let responsavelId: string | undefined =
+      (pedidoRecord as { responsavel?: string }).responsavel
+    if (!responsavelId && inscricaoId) {
+      try {
+        const inscricao = await pb.collection('inscricoes').getOne(inscricaoId)
+        responsavelId = (inscricao as { criado_por?: string }).criado_por
+      } catch {
+        /* ignore */
+      }
+    }
+
+    if (responsavelId) {
+      const base = req.nextUrl.origin
+
+      try {
+        await fetch(`${base}/api/email`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventType: 'confirmacao_pagamento',
+            userId: responsavelId,
+          }),
+        })
+      } catch (err) {
+        await logConciliacaoErro(
+          `Falha ao enviar e-mail de confirmacao: ${String(err)}`,
+        )
+      }
+
+      try {
+        await fetch(`${base}/api/chats/message/sendWelcome`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventType: 'confirmacao_pagamento',
+            userId: responsavelId,
+          }),
+        })
+      } catch (err) {
+        await logConciliacaoErro(
+          `Falha ao enviar WhatsApp de confirmacao: ${String(err)}`,
+        )
+      }
+    }
   } catch (err) {
     await logConciliacaoErro(
       `Falha ao atualizar pedido ${pedidoRecord.id}: ${String(err)}`,

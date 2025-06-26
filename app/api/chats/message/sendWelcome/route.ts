@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
         message = `Olá ${nome}! Seu cadastro foi realizado com sucesso.`
         break
       case 'confirmacao_pagamento':
-        message = `Pagamento confirmado! Nos vemos em breve.`
+        message = `Olá ${nome}, recebemos seu pagamento. Obrigado!`
         break
       default:
         message = ''
