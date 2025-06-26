@@ -193,7 +193,7 @@ export default function AdminProdutosPage() {
           <thead>
             <tr>
               <th>Nome</th>
-              <th>Preço</th>
+              <th>Preço Bruto</th>
               <th>Status</th>
               <th>Ações</th>
             </tr>

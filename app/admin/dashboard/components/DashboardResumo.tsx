@@ -142,7 +142,10 @@ export default function DashboardResumo({
             </Tippy>
           </div>
           <p className="text-3xl font-bold dark:text-gray-100">
-            R$ {valorTotalConfirmado.toFixed(2)}
+            {valorTotalConfirmado.toLocaleString('pt-BR', {
+              style: 'currency',
+              currency: 'BRL',
+            })}
           </p>
         </div>
       </div>
