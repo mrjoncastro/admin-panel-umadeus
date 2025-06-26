@@ -78,10 +78,10 @@ logs/                    # Registros de documentação e erros
 ```
 
 ---
+
 ## 🔌 Middleware de Tenant
 
 O arquivo `middleware.ts` intercepta cada requisição, consulta a coleção `clientes_config` do PocketBase para descobrir o tenant associado ao domínio e injeta o cabeçalho `x-tenant-id`. Também grava o cookie `tenantId` para que páginas e APIs identifiquem o cliente ativo sem depender de parâmetros na URL.
-
 
 ## 🌐 Site – Boas Práticas
 
@@ -101,9 +101,9 @@ O arquivo `middleware.ts` intercepta cada requisição, consulta a coleção `cl
 
 ## ✍️ Blog – Boas Práticas
 
- - Postagens carregadas da coleção `posts` do PocketBase
- - Componentes em `app/blog/components`
- - Utilize `BlogClient.tsx` para exibir os posts no cliente
+- Postagens carregadas da coleção `posts` do PocketBase
+- Componentes em `app/blog/components`
+- Utilize `BlogClient.tsx` para exibir os posts no cliente
 
 ---
 
