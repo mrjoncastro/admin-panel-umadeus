@@ -428,6 +428,7 @@ classes card/progress aplicados. TenantId lido do AuthContext. Lint e build
 executados.
 
 ## [2025-06-26] Check de instância inclui telefone e criado endpoint DELETE /instance/delete. Documentação atualizada e StepComplete mostra número conectado com opção de desconectar. Lint e build executados.
+## [2025-06-26] Extraido maskPhone para util e prevenido erro quando telefone ausente. Lint e build executados.
 
 ## [2025-06-26] Rota sendPayment criada substituindo /api/n8n. Documentação atualizada e build/lint executados.
 
