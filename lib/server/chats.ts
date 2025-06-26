@@ -83,7 +83,11 @@ export async function sendTextMessage(params: {
   if (!EVOLUTION_API_URL) throw new Error('EVOLUTION_API_URL not set')
 
   const url = `${EVOLUTION_API_URL}/message/sendText/${params.instanceName}`
-  const body = { number: params.to, text: params.message }
+
+  const digits = params.to.replace(/\D/g, '')
+  const phone = digits.startsWith('55') ? digits : `55${digits}`
+
+  const body = { number: phone, text: params.message }
 
   const res = await fetch(url, {
     method: 'POST',
