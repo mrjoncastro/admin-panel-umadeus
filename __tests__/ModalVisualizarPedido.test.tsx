@@ -112,7 +112,10 @@ describe('ModalVisualizarPedido', () => {
     )
 
     await vi.waitFor(() => {
-      expect(fetchMock).not.toHaveBeenCalledWith('/api/email', expect.any(Object))
+      expect(fetchMock).not.toHaveBeenCalledWith(
+        '/api/email',
+        expect.any(Object),
+      )
     })
   })
 })
