@@ -397,6 +397,21 @@ export default function ListaInscricoesPage() {
         ),
       )
 
+      if (inscricao.criado_por) {
+        const emailRes = await fetch('/api/email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventType: 'confirmacao_inscricao',
+            userId: inscricao.criado_por,
+            paymentLink: checkout.url,
+          }),
+        })
+        if (!emailRes.ok) {
+          console.warn('Falha ao enviar e-mail', await emailRes.text())
+        }
+      }
+
       // 🔹 6. Enviar link de pagamento via WhatsApp
       const waRes = await fetch('/api/chats/message/sendPayment', {
         method: 'POST',
