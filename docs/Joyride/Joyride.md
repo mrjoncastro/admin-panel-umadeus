@@ -79,7 +79,7 @@ export function AdminClientTour({ stepsByRoute }: AdminClientTourProps) {
           next: 'Próximo',
           skip: 'Pular',
         }}
-        styles={{ options: { primaryColor: 'var(--cor-primary)', zIndex: 10000 } }}
+        styles={{ options: { primaryColor: 'var(--accent)', zIndex: 10000 } }}
         callback={handleJoyrideCallback}
       />
 
@@ -102,7 +102,7 @@ export default AdminClientTour
 
 **Comentários importantes**:
 
-* Ajuste `primaryColor` no `styles.options` para usar a variável do tenant.
+* Ajuste `primaryColor` no `styles.options` para usar `var(--accent)` do tenant.
 * Extenda `stepsByRoute` sempre que adicionar novas páginas.
 * O botão “Ajuda” reinicia o tour em qualquer rota.
 
