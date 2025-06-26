@@ -13,6 +13,7 @@ import dynamic from 'next/dynamic'
 const AdminClientTour = dynamic(() => import('@/components/AdminClientTourLoader'))
 
 export const metadata = {
+  metadataBase: new URL('https://umadeus.com.br'),
   icons: {
     icon: [
       { url: '/favicon.ico' },
