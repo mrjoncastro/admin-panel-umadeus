@@ -33,7 +33,7 @@ export default function EscolherEventoPage() {
       }
     }
     fetchEventos()
-  }, [])
+  }, [pb])
 
   return (
     <main

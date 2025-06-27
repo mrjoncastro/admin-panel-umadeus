@@ -97,7 +97,7 @@ function CheckoutContent() {
     return () => {
       ignore = true
     }
-  }, [user?.id])
+  }, [user?.id, pb])
 
   useEffect(() => {}, [total, paymentMethod, installments])
 

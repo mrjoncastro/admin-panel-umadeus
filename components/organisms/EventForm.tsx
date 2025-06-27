@@ -135,7 +135,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
       }
     }
     fetchData()
-  }, [eventoId, liderId])
+  }, [eventoId, liderId, pb])
 
   useEffect(() => {
     if (isLoggedIn && user) {

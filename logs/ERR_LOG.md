@@ -174,3 +174,4 @@
 ## [2025-06-27] Diversos fetch('/api') não enviavam token de autenticação. Adicionada função getAuthHeaders em hooks e páginas - dev
 ## [2025-06-27] Erro "Token ou usuário ausente" ao atualizar perfil. Login agora retorna token e contexto salva credenciais.
 ## [2025-06-27] Corrigida tipagem de retorno em getAuthHeaders para HeadersInit evitando erro de build em app/admin/inscricoes/page.tsx - dev - 5b28761
+## [2025-06-27] Correção de dependências de pb em diversos useEffect - dev

@@ -76,7 +76,7 @@ export default function SignUpForm({
     }
 
     loadCampos()
-  }, [])
+  }, [pb])
 
   useEffect(() => {
     async function lookup() {

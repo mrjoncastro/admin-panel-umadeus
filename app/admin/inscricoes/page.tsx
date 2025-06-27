@@ -164,7 +164,7 @@ export default function ListaInscricoesPage() {
         credentials: 'include',
       }).catch(() => {})
     }
-  }, [authChecked, tenantId, user, showError])
+  }, [authChecked, tenantId, user, showError, pb])
 
   useEffect(() => {
     if (!user || !eventoId) {

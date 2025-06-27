@@ -129,7 +129,7 @@ export function TenantProvider({
       fetchInitialConfig()
     }
     refreshConfig()
-  }, [initialConfig])
+  }, [initialConfig, pb])
 
   useEffect(() => {
     if (typeof window === 'undefined') return

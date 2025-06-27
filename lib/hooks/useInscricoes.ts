@@ -30,7 +30,7 @@ export default function useInscricoes() {
     return () => {
       active = false
     }
-  }, [tenantId])
+  }, [tenantId, pb])
 
   return { inscricoes, loading }
 }

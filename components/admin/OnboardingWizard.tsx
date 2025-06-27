@@ -77,6 +77,7 @@ function WizardSteps() {
     setConnection,
     setTelefone,
     setLoading,
+    pb,
   ])
 
   const handleRegistered = (url: string, base: string) => {

@@ -30,7 +30,7 @@ export default function useProdutos() {
     return () => {
       active = false
     }
-  }, [tenantId])
+  }, [tenantId, pb])
 
   return { produtos, loading }
 }

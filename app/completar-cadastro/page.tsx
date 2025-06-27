@@ -40,7 +40,7 @@ export default function CompletarCadastroPage() {
         if (Array.isArray(d)) setCampos(d)
       })
       .catch(() => {})
-  }, [authChecked])
+  }, [authChecked, pb])
 
   useEffect(() => {
     async function lookup() {

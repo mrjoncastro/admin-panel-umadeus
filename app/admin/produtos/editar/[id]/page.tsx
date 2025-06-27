@@ -144,7 +144,7 @@ export default function EditarProdutoPage() {
         setRequerAprov(Boolean(data.requer_inscricao_aprovada))
       })
       .finally(() => setLoading(false))
-  }, [id, isLoggedIn, router, ctxUser?.role, authChecked])
+  }, [id, isLoggedIn, router, ctxUser?.role, authChecked, pb])
 
   useEffect(() => {
     if (!eventoId) {

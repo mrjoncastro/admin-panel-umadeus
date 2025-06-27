@@ -112,7 +112,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
         })
         .catch(() => setEventos([]))
     }
-  }, [open])
+  }, [open, pb])
 
   useEffect(() => {
     setSelectedCategoria(initial.categoria || '')

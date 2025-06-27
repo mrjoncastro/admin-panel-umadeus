@@ -61,7 +61,7 @@ export default function ModalProdutoForm({
         })
         .catch(() => setEventos([]))
     }
-  }, [open])
+  }, [open, pb])
 
   useEffect(() => {
     if (!eventoId) {
