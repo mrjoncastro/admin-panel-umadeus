@@ -139,13 +139,14 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
 
   useEffect(() => {
     if (isLoggedIn && user) {
+      const nasc = String(user.data_nascimento ?? '')
       setForm((prev) => ({
         ...prev,
         nome: user.nome || '',
         email: user.email || '',
         telefone: user.telefone || '',
         cpf: user.cpf || '',
-        data_nascimento: user.data_nascimento || '',
+        data_nascimento: nasc ? nasc.split(' ')[0] : '',
         genero: (user as Record<string, string>).genero || '',
         cep: user.cep || '',
         endereco: user.endereco || '',

@@ -176,3 +176,5 @@
 ## [2025-06-27] Corrigida tipagem de retorno em getAuthHeaders para HeadersInit evitando erro de build em app/admin/inscricoes/page.tsx - dev - 5b28761
 ## [2025-06-27] Correção de dependências de pb em diversos useEffect - dev
 ## [2025-06-27] Perfil do cliente não enviava gênero e data_nascimento retornava formato inválido. Rota de atualização agora ajusta cookie - dev
+
+## [2025-06-27] EventForm nao normalizava data_nascimento ao preencher usuario; campo ficava vazio. Valor agora cortado para YYYY-MM-DD - dev
