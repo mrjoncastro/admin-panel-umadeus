@@ -5,12 +5,14 @@ import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import createPocketBase from '@/lib/pocketbase'
 import type { Inscricao, Pedido } from '@/types'
 import { formatDate } from '@/utils/formatDate'
+import RedefinirSenhaModal from '@/app/admin/components/RedefinirSenhaModal'
 
 export default function AreaCliente() {
   const { user, authChecked } = useAuthGuard(['usuario'])
   const pb = useMemo(() => createPocketBase(), [])
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [pedidos, setPedidos] = useState<Pedido[]>([])
+  const [mostrarModalSenha, setMostrarModalSenha] = useState(false)
 
   useEffect(() => {
     if (!authChecked || !user) return
@@ -40,6 +42,7 @@ export default function AreaCliente() {
   if (!authChecked) return null
 
   return (
+    <>
     <main className="p-8 text-platinum font-sans space-y-10">
       <section className="card">
         <h2 className="text-xl font-bold">Resumo do Cliente</h2>
@@ -57,9 +60,13 @@ export default function AreaCliente() {
           <a href="/loja/perfil" className="btn btn-secondary">
             Alterar dados pessoais
           </a>
-          <a href="/admin/redefinir-senha" className="btn btn-secondary">
+          <button
+            type="button"
+            onClick={() => setMostrarModalSenha(true)}
+            className="btn btn-secondary"
+          >
             Alterar senha
-          </a>
+          </button>
           <button type="button" className="btn btn-secondary" disabled>
             Gerenciar endereços
           </button>
@@ -114,5 +121,9 @@ export default function AreaCliente() {
         </table>
       </section>
     </main>
+    {mostrarModalSenha && (
+      <RedefinirSenhaModal onClose={() => setMostrarModalSenha(false)} />
+    )}
+    </>
   )
 }
