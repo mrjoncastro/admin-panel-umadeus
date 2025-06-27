@@ -2,6 +2,7 @@
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import { useEffect, useMemo, useState } from 'react'
 import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 import type { Pedido } from '@/types'
 
 export default function PedidosTable({ limit }: { limit?: number }) {
@@ -11,11 +12,7 @@ export default function PedidosTable({ limit }: { limit?: number }) {
 
   useEffect(() => {
     if (!authChecked || !user) return
-    const token = pb.authStore.token
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      'X-PB-User': JSON.stringify(user),
-    }
+    const headers = getAuthHeaders(pb)
     fetch('/api/pedidos', { headers, credentials: 'include' })
       .then((res) => res.json())
       .then((data) =>

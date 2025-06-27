@@ -2,6 +2,7 @@
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import { useEffect, useMemo, useState } from 'react'
 import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 import { useToast } from '@/lib/context/ToastContext'
 import { FormField, TextField, InputWithMask } from '@/components'
 
@@ -40,11 +41,8 @@ export default function ProfileForm() {
     e.preventDefault()
     if (!user?.id) return
     try {
-      pb.authStore.loadFromCookie(document.cookie)
-      const token = pb.authStore.token
       const headers = {
-        Authorization: `Bearer ${token}`,
-        'X-PB-User': JSON.stringify(user),
+        ...getAuthHeaders(pb),
         'Content-Type': 'application/json',
       }
       const res = await fetch('/api/usuario/atualizar-dados', {
