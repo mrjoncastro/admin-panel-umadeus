@@ -4,6 +4,7 @@ Este guia detalha os passos para criar uma rota unificada no Next.js que dispare
 
 - **nova_inscricao**
 - **confirmacao_inscricao**
+- **promocao_lider**
 
 O fluxo abrange desde a configuração de SMTP por tenant no PocketBase até os testes das chamadas.
 
@@ -76,6 +77,7 @@ Para **multi-tenant**, adicione campos na coleção `clientes_config`:
 
    - `nova_inscricao`
    - `confirmacao_inscricao` (opcionalmente fornecendo `paymentLink`)
+   - `promocao_lider`
 
 4. **Conferência de Logs**: examine o console do servidor Next.js para confirmar a autenticação do Nodemailer e o envio dos e-mails, identificando possíveis erros.
 
@@ -118,7 +120,7 @@ import { getTenantFromHost } from '@/lib/server/tenancy'
 
 ```ts
 type Body = {
-  eventType: 'nova_inscricao' | 'confirmacao_inscricao'
+  eventType: 'nova_inscricao' | 'confirmacao_inscricao' | 'promocao_lider'
   userId: string
   paymentLink?: string
 }
@@ -202,6 +204,19 @@ return NextResponse.json({
     body: JSON.stringify({
       eventType: 'confirmacao_inscricao',
       userId: 'abc123',
+    }),
+  })
+  ```
+
+- **Promoção a Líder**
+
+  ```ts
+  await fetch('/api/email', {
+    method: 'POST',
+    body: JSON.stringify({
+      eventType: 'promocao_lider',
+      userId: 'abc123',
+      campoNome: 'Campo Norte',
     }),
   })
   ```

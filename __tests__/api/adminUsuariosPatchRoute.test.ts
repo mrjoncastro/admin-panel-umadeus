@@ -17,7 +17,7 @@ describe('PATCH /admin/api/usuarios/[id]', () => {
       pb: { collection: () => ({ update: updateMock }) } as any,
       user: { cliente: 't1' },
     })
-    ;(fetchUsuario as unknown as { mockResolvedValue: (v: any) => void }).mockResolvedValue({})
+    ;(fetchUsuario as unknown as { mockResolvedValue: (v: any) => void }).mockResolvedValue({ role: 'lider' })
 
     const req = new Request('http://test/admin/api/usuarios/u1', {
       method: 'PATCH',
@@ -59,5 +59,32 @@ describe('PATCH /admin/api/usuarios/[id]', () => {
 
     const res = await PATCH(req as unknown as NextRequest)
     expect(res.status).toBe(403)
+  })
+
+  it('envia notificacoes quando papel muda para lider', async () => {
+    const updateMock = vi.fn().mockResolvedValue({})
+    const getOneMock = vi.fn().mockResolvedValue({ expand: { campo: { nome: 'Campo 1' } } })
+    ;(requireRole as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue({
+      pb: { collection: () => ({ update: updateMock, getOne: getOneMock }) } as any,
+      user: { cliente: 't1' },
+    })
+    ;(fetchUsuario as unknown as { mockResolvedValue: (v: any) => void }).mockResolvedValue({ role: 'usuario' })
+
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true })
+    global.fetch = fetchMock as unknown as typeof fetch
+
+    const req = new Request('http://test/admin/api/usuarios/u1', {
+      method: 'PATCH',
+      body: JSON.stringify({ role: 'lider' }),
+    })
+    ;(req as any).nextUrl = new URL('http://test/admin/api/usuarios/u1')
+
+    const res = await PATCH(req as unknown as NextRequest)
+    expect(res.status).toBe(200)
+    expect(fetchMock).toHaveBeenCalledWith('http://test/api/email', expect.any(Object))
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://test/api/chats/message/sendWelcome',
+      expect.any(Object),
+    )
   })
 })
