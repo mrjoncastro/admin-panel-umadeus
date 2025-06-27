@@ -104,6 +104,43 @@ export const stepsByRoute: Record<string, Step[]> = {
       placement: 'left',
     },
   ],
+  '/admin/financeiro/saldo': [
+    {
+      target: '[data-tour="stats-card"]:nth-of-type(1)',
+      content: 'Saldo disponível detalhado.',
+      placement: 'right',
+    },
+    {
+      target: '[data-tour="stats-card"]:nth-of-type(2)',
+      content: 'Valor pendente a liberar.',
+      placement: 'right',
+    },
+    {
+      target: '[data-tour="range-start"]',
+      content: 'Selecione a data inicial do extrato.',
+      placement: 'bottom',
+    },
+    {
+      target: '[data-tour="range-end"]',
+      content: 'Selecione a data final do extrato.',
+      placement: 'bottom',
+    },
+    {
+      target: '[data-tour="btn-export-pdf"]',
+      content: 'Exporte o extrato em PDF.',
+      placement: 'bottom',
+    },
+    {
+      target: '[data-tour="btn-export-xlsm"]',
+      content: 'Exporte o extrato em XLSM.',
+      placement: 'bottom',
+    },
+    {
+      target: '[data-tour="tabela-extrato"] thead',
+      content: 'Cabeçalho do extrato.',
+      placement: 'top',
+    },
+  ],
   '/admin/usuarios': [
     {
       target: '[data-tour="btn-novo-usuario"]',
@@ -148,3 +185,5 @@ export const stepsByRoute: Record<string, Step[]> = {
     },
   ],
 }
+
+export default stepsByRoute

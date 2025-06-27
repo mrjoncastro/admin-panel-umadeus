@@ -103,8 +103,8 @@ export default function SaldoPage() {
         <LoadingOverlay show={true} text="Carregando..." />
       ) : (
         <>
-          <div className="grid gap-6 md:grid-cols-3 mb-8">
-            <div className="card p-6 text-center">
+          <div className="grid gap-6 md:grid-cols-3 mb-8 stats-overview">
+            <div className="card p-6 text-center stats-card" data-tour="stats-card">
               <h3 className="text-lg font-semibold mb-2">Saldo Disponível</h3>
               <p className="text-xl font-bold">
                 {typeof saldoDisponivel === 'number'
@@ -112,7 +112,7 @@ export default function SaldoPage() {
                   : '—'}
               </p>
             </div>
-            <div className="card p-6 text-center">
+            <div className="card p-6 text-center stats-card" data-tour="stats-card">
               <h3 className="text-lg font-semibold mb-2">A Liberar</h3>
               <p className="text-xl font-bold">
                 {typeof aLiberar === 'number'
@@ -128,8 +128,10 @@ export default function SaldoPage() {
               end={range.end}
               onChange={setRange}
               className="mb-4"
+              dataTourStart="range-start"
+              dataTourEnd="range-end"
             />
-            <div className="overflow-x-auto rounded border shadow-sm bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700">
+            <div className="overflow-x-auto rounded border shadow-sm bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700 tabela-extrato" data-tour="tabela-extrato">
               <table className="table-base">
                 <thead>
                   <tr className="text-left">
@@ -152,10 +154,10 @@ export default function SaldoPage() {
               </table>
             </div>
             <div className="flex gap-2 mt-4">
-              <button onClick={exportPDF} className="btn btn-secondary">
+              <button onClick={exportPDF} className="btn btn-secondary btn-export-pdf" data-tour="btn-export-pdf">
                 Exportar PDF
               </button>
-              <button onClick={exportXLSM} className="btn btn-secondary">
+              <button onClick={exportXLSM} className="btn btn-secondary btn-export-xlsm" data-tour="btn-export-xlsm">
                 Exportar XLSM
               </button>
             </div>

@@ -106,13 +106,13 @@ export const adminFinanceiroTour = [
 export const adminFinanceiroSaldoTour = [
 { target: 'body', content: 'Seção de Saldo: valores disponíveis e a liberar, além de extrato detalhado.', placement: 'top' },
 { target: 'h1', content: 'Título “Saldo”.', placement: 'bottom' },
-{ target: '.stats-overview .stats-card:nth-of-type(1)', content: 'Saldo Disponível.', placement: 'right' },
-{ target: '.stats-overview .stats-card:nth-of-type(2)', content: 'Valor a Liberar.', placement: 'right' },
-{ target: 'input[name="startDate"]', content: 'Data de início para filtrar o extrato.', placement: 'bottom' },
-{ target: 'input[name="endDate"]', content: 'Data de fim para filtrar o extrato.', placement: 'bottom' },
-{ target: '.btn-export-pdf', content: 'Exportar extrato em PDF.', placement: 'bottom' },
-{ target: '.btn-export-xlsm', content: 'Exportar extrato em XLSM.', placement: 'bottom' },
-{ target: '.tabela-extrato thead', content: 'Cabeçalho do extrato com colunas Data, Descrição e Valor.', placement: 'top' },
+{ target: '[data-tour="stats-card"]:nth-of-type(1)', content: 'Saldo Disponível.', placement: 'right' },
+{ target: '[data-tour="stats-card"]:nth-of-type(2)', content: 'Valor a Liberar.', placement: 'right' },
+{ target: '[data-tour="range-start"]', content: 'Data de início para filtrar o extrato.', placement: 'bottom' },
+{ target: '[data-tour="range-end"]', content: 'Data de fim para filtrar o extrato.', placement: 'bottom' },
+{ target: '[data-tour="btn-export-pdf"]', content: 'Exportar extrato em PDF.', placement: 'bottom' },
+{ target: '[data-tour="btn-export-xlsm"]', content: 'Exportar extrato em XLSM.', placement: 'bottom' },
+{ target: '[data-tour="tabela-extrato"] thead', content: 'Cabeçalho do extrato com colunas Data, Descrição e Valor.', placement: 'top' },
 ];
 
 // === Usuários do Sistema ===
