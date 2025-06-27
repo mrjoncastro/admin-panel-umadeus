@@ -465,3 +465,5 @@ executados.
 ## [2025-06-27] Padronizados data attributes `data-tour` nos componentes do admin e atualizado mapeamento em components/tourSteps. Impacto: seletores do tour mais estáveis.
 ## [2025-06-27] Adicionados data attributes na página de saldo, novo tour '/admin/financeiro/saldo' mapeado e componente DateRangePicker atualizado. Lint e build executados.
 ## [2025-06-27] Exportação do tour 'adminFinanceiroSaldoTour' adicionada em docs/Roteiro_admin.md. Impacto: importação simplificada dos roteiros. Lint e build falharam (next not found).
+## [2025-06-27] Atualizado Roteiro_admin.md para usar seletores `[data-tour]` e mapeados todos os passos em components/tourSteps.
+## [2025-06-27] Removido tour '/admin/produtos/novo' por nao existir rota dedicada. Documentacao e mapeamento ajustados.
