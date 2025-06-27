@@ -40,6 +40,7 @@ export default function ProfileForm() {
     e.preventDefault()
     if (!user?.id) return
     try {
+      pb.authStore.loadFromCookie(document.cookie)
       const token = pb.authStore.token
       const headers = {
         Authorization: `Bearer ${token}`,
