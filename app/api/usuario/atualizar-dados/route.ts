@@ -9,6 +9,9 @@ export async function PATCH(req: NextRequest) {
   const { pbSafe, user } = auth
   try {
     const {
+      nome,
+      telefone,
+      cpf,
       data_nascimento,
       cep,
       numero,
@@ -21,6 +24,9 @@ export async function PATCH(req: NextRequest) {
     } = await req.json()
 
     const data: Record<string, unknown> = {
+      nome: String(nome || '').trim(),
+      telefone: String(telefone || '').replace(/\D/g, ''),
+      cpf: String(cpf || '').replace(/\D/g, ''),
       data_nascimento: String(data_nascimento || ''),
       cep: String(cep || ''),
       numero: String(numero || ''),
