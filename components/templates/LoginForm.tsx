@@ -36,7 +36,7 @@ export default function LoginForm({
       } else if (user.role === 'lider') {
         router.replace('/admin/lider-painel')
       } else {
-        router.replace('/loja/cliente')
+        router.replace('/cliente/dashboard')
       }
     }
   }, [isLoading, isLoggedIn, user, router, redirectTo])

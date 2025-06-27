@@ -286,7 +286,7 @@ O sistema possui três níveis de usuário:
 
 - **Coordenador** – acesso total ao painel administrativo.
 - **Lider** – acesso restrito às inscrições e pedidos do seu campo.
-- **Usuário** – cliente final que realiza compras e visualiza a área do cliente em `/loja/cliente`.
+- **Usuário** – cliente final que realiza compras e visualiza a área do cliente em `/cliente/dashboard`.
 
 Coordenadores visualizam as métricas financeiras completas no painel.
 Líderes veem apenas a quantidade de inscrições e pedidos do seu campo.

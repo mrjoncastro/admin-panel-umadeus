@@ -14,6 +14,12 @@ export default function ProfileForm() {
   const [telefone, setTelefone] = useState('')
   const [cpf, setCpf] = useState('')
   const [dataNascimento, setDataNascimento] = useState('')
+  const [cep, setCep] = useState('')
+  const [endereco, setEndereco] = useState('')
+  const [bairro, setBairro] = useState('')
+  const [cidade, setCidade] = useState('')
+  const [numero, setNumero] = useState('')
+  const [estado, setEstado] = useState('')
 
   useEffect(() => {
     if (user) {
@@ -21,6 +27,12 @@ export default function ProfileForm() {
       setTelefone(String(user.telefone ?? ''))
       setCpf(String(user.cpf ?? ''))
       setDataNascimento(String(user.data_nascimento ?? ''))
+      setCep(String(user.cep ?? ''))
+      setEndereco(String(user.endereco ?? ''))
+      setBairro(String(user.bairro ?? ''))
+      setCidade(String(user.cidade ?? ''))
+      setNumero(String(user.numero ?? ''))
+      setEstado(String(user.estado ?? ''))
     }
   }, [user])
 
@@ -28,13 +40,14 @@ export default function ProfileForm() {
     e.preventDefault()
     if (!user?.id) return
     try {
+      pb.authStore.loadFromCookie(document.cookie)
       const token = pb.authStore.token
       const headers = {
         Authorization: `Bearer ${token}`,
         'X-PB-User': JSON.stringify(user),
         'Content-Type': 'application/json',
       }
-      const res = await fetch(`/api/usuarios/${user.id}`, {
+      const res = await fetch('/api/usuario/atualizar-dados', {
         method: 'PATCH',
         headers,
         credentials: 'include',
@@ -43,6 +56,12 @@ export default function ProfileForm() {
           telefone: telefone.trim(),
           cpf: cpf.trim(),
           data_nascimento: dataNascimento,
+          cep,
+          endereco,
+          bairro,
+          cidade,
+          numero,
+          estado,
         }),
       })
       if (res.ok) {
@@ -99,6 +118,60 @@ export default function ProfileForm() {
           className={inputStyle}
           value={dataNascimento}
           onChange={(e) => setDataNascimento(e.target.value)}
+        />
+      </FormField>
+      <FormField label="CEP" htmlFor="perfil-cep">
+        <TextField
+          id="perfil-cep"
+          type="text"
+          className={inputStyle}
+          value={cep}
+          onChange={(e) => setCep(e.target.value)}
+        />
+      </FormField>
+      <FormField label="Endereço" htmlFor="perfil-endereco">
+        <TextField
+          id="perfil-endereco"
+          type="text"
+          className={inputStyle}
+          value={endereco}
+          onChange={(e) => setEndereco(e.target.value)}
+        />
+      </FormField>
+      <FormField label="Bairro" htmlFor="perfil-bairro">
+        <TextField
+          id="perfil-bairro"
+          type="text"
+          className={inputStyle}
+          value={bairro}
+          onChange={(e) => setBairro(e.target.value)}
+        />
+      </FormField>
+      <FormField label="Cidade" htmlFor="perfil-cidade">
+        <TextField
+          id="perfil-cidade"
+          type="text"
+          className={inputStyle}
+          value={cidade}
+          onChange={(e) => setCidade(e.target.value)}
+        />
+      </FormField>
+      <FormField label="Número" htmlFor="perfil-numero">
+        <TextField
+          id="perfil-numero"
+          type="text"
+          className={inputStyle}
+          value={numero}
+          onChange={(e) => setNumero(e.target.value)}
+        />
+      </FormField>
+      <FormField label="Estado" htmlFor="perfil-estado">
+        <TextField
+          id="perfil-estado"
+          type="text"
+          className={inputStyle}
+          value={estado}
+          onChange={(e) => setEstado(e.target.value)}
         />
       </FormField>
       <div className="text-right">

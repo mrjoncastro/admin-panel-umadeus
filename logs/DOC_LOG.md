@@ -458,3 +458,5 @@ executados.
 ## [2025-06-27] Perfil agora atualiza endereco completo ao editar dados do usuario. Lint e build executados.
 
 ## [2025-06-27] Campo bairro adicionado na edicao de perfil. Lint e build executados.
+## [2025-06-27] Atualizacao de rotas para /cliente/dashboard e ajuste de docs.
+## [2025-06-27] ProfileForm atualizado com campos de endereco e rota correta. Lint e build executados.

@@ -2,7 +2,7 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { vi } from 'vitest'
-import AreaCliente from '@/app/loja/cliente/page'
+import DashboardPage from '@/app/cliente/dashboard/page'
 
 vi.mock('@/lib/hooks/useAuthGuard', () => ({
   useAuthGuard: () => ({
@@ -21,10 +21,7 @@ beforeEach(() => {
   global.fetch = vi.fn().mockResolvedValue({ json: () => Promise.resolve([]) }) as any
 })
 
-test('abre modal ao clicar em Alterar senha', async () => {
-  render(<AreaCliente />)
-  fireEvent.click(screen.getByRole('button', { name: /alterar senha/i }))
-  expect(
-    await screen.findByRole('heading', { name: /redefinir senha/i })
-  ).toBeInTheDocument()
+test('exibe sauda\u00e7\u00e3o ao carregar dashboard', async () => {
+  render(<DashboardPage />)
+  expect(await screen.findByText(/ol\u00e1, user/i)).toBeInTheDocument()
 })
