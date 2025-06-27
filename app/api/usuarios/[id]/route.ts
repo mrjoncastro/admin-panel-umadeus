@@ -47,6 +47,7 @@ export async function PATCH(req: NextRequest) {
       data_nascimento: String(data.data_nascimento || ''),
       endereco: String(data.endereco || '').trim(),
       numero: String(data.numero || '').trim(),
+      bairro: String(data.bairro || '').trim(),
       cidade: String(data.cidade || '').trim(),
       estado: String(data.estado || '').trim(),
       cep: String(data.cep || '').replace(/\D/g, ''),

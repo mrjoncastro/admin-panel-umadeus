@@ -21,6 +21,7 @@ export default function ModalEditarPerfil({
   )
   const [endereco, setEndereco] = useState(String(user?.endereco || ''))
   const [numero, setNumero] = useState(String(user?.numero || ''))
+  const [bairro, setBairro] = useState(String(user?.bairro || ''))
   const [estado, setEstado] = useState(String(user?.estado || ''))
   const [cep, setCep] = useState(String(user?.cep || ''))
   const [cidade, setCidade] = useState(String(user?.cidade || ''))
@@ -46,6 +47,7 @@ export default function ModalEditarPerfil({
           data_nascimento: String(dataNascimento),
           endereco: String(endereco).trim(),
           numero: String(numero).trim(),
+          bairro: String(bairro).trim(),
           cidade: String(cidade).trim(),
           estado: String(estado).trim(),
           cep: String(cep).trim(),
@@ -142,6 +144,17 @@ export default function ModalEditarPerfil({
                       className={inputStyle}
                       value={String(endereco)}
                       onChange={(e) => setEndereco(e.target.value)}
+                    />
+                  </FormField>
+
+                  <FormField label="Bairro" htmlFor="perfil-bairro">
+                    <TextField
+                      id="perfil-bairro"
+                      type="text"
+                      placeholder="Bairro"
+                      className={inputStyle}
+                      value={String(bairro)}
+                      onChange={(e) => setBairro(e.target.value)}
                     />
                   </FormField>
 
