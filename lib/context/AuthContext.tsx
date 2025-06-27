@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import createPocketBase, { clearBaseAuth } from '@/lib/pocketbase'
+import createPocketBase, { clearBaseAuth, updateBaseAuth } from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
 import type { UserModel } from '@/types/UserModel'
 
@@ -98,6 +98,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
     if (!res.ok) throw new Error('Login failed')
     const data = await res.json()
+    pb.authStore.save(data.token, data.user)
+    updateBaseAuth(data.token, data.user)
     setUser(data.user as UserModel)
     setIsLoggedIn(true)
     if (typeof window !== 'undefined') {
