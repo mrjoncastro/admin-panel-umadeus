@@ -15,6 +15,7 @@ export default function ProfileForm() {
   const [telefone, setTelefone] = useState('')
   const [cpf, setCpf] = useState('')
   const [dataNascimento, setDataNascimento] = useState('')
+  const [genero, setGenero] = useState('')
   const [cep, setCep] = useState('')
   const [endereco, setEndereco] = useState('')
   const [bairro, setBairro] = useState('')
@@ -27,9 +28,11 @@ export default function ProfileForm() {
       setNome(String(user.nome ?? ''))
       setTelefone(String(user.telefone ?? ''))
       setCpf(String(user.cpf ?? ''))
-      setDataNascimento(String(user.data_nascimento ?? ''))
+      const nasc = String(user.data_nascimento ?? '')
+      setDataNascimento(nasc ? nasc.split(' ')[0] : '')
       setCep(String(user.cep ?? ''))
       setEndereco(String(user.endereco ?? ''))
+      setGenero(String(user.genero ?? ''))
       setBairro(String(user.bairro ?? ''))
       setCidade(String(user.cidade ?? ''))
       setNumero(String(user.numero ?? ''))
@@ -54,6 +57,7 @@ export default function ProfileForm() {
           telefone: telefone.trim(),
           cpf: cpf.trim(),
           data_nascimento: dataNascimento,
+          genero,
           cep,
           endereco,
           bairro,
@@ -63,6 +67,8 @@ export default function ProfileForm() {
         }),
       })
       if (res.ok) {
+        const updated = await res.json()
+        pb.authStore.save(pb.authStore.token, updated)
         showSuccess('Dados atualizados!')
       } else {
         showError('Erro ao salvar.')
@@ -117,6 +123,18 @@ export default function ProfileForm() {
           value={dataNascimento}
           onChange={(e) => setDataNascimento(e.target.value)}
         />
+      </FormField>
+      <FormField label="Gênero" htmlFor="perfil-genero">
+        <select
+          id="perfil-genero"
+          className={inputStyle}
+          value={genero}
+          onChange={(e) => setGenero(e.target.value)}
+        >
+          <option value="">Selecione</option>
+          <option value="masculino">Masculino</option>
+          <option value="feminino">Feminino</option>
+        </select>
       </FormField>
       <FormField label="CEP" htmlFor="perfil-cep">
         <TextField

@@ -11,6 +11,7 @@ export type UserModel = {
   estado?: string
   cep?: string
   cidade?: string
+  genero?: string
   campo?: string
   role: 'coordenador' | 'lider' | 'usuario'
   cliente?: string

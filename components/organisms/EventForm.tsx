@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
+import { fetchCep } from '@/utils/cep'
 import FormWizard from './FormWizard'
 import LoadingOverlay from './LoadingOverlay'
 import {
@@ -139,13 +140,14 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
 
   useEffect(() => {
     if (isLoggedIn && user) {
+      const nasc = String(user.data_nascimento ?? '')
       setForm((prev) => ({
         ...prev,
         nome: user.nome || '',
         email: user.email || '',
         telefone: user.telefone || '',
         cpf: user.cpf || '',
-        data_nascimento: user.data_nascimento || '',
+        data_nascimento: nasc ? nasc.split(' ')[0] : '',
         genero: (user as Record<string, string>).genero || '',
         cep: user.cep || '',
         endereco: user.endereco || '',
@@ -157,6 +159,31 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
       }))
     }
   }, [isLoggedIn, user])
+
+  useEffect(() => {
+    async function lookup() {
+      const data = await fetchCep(form.cep).catch(() => null)
+      if (!data) {
+        showError('CEP n\u00e3o encontrado.')
+        setForm((prev) => ({
+          ...prev,
+          endereco: '',
+          bairro: '',
+          cidade: '',
+          estado: '',
+        }))
+        return
+      }
+      setForm((prev) => ({
+        ...prev,
+        endereco: data.street,
+        bairro: data.neighborhood,
+        cidade: data.city,
+        estado: data.state,
+      }))
+    }
+    if (form.cep.replace(/\D/g, '').length === 8) lookup()
+  }, [form.cep, showError])
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,

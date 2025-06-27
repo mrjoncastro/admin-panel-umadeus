@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import LoadingOverlay from './LoadingOverlay'
 
 export interface WizardStep {
@@ -22,6 +22,7 @@ export default function FormWizard({
 }: FormWizardProps) {
   const [current, setCurrent] = useState(0)
   const [message, setMessage] = useState('')
+  const containerRef = useRef<HTMLDivElement>(null)
   const isLast = current === steps.length - 1
 
   useEffect(() => {
@@ -32,6 +33,16 @@ export default function FormWizard({
   }, [current, steps.length])
 
   const next = () => {
+    if (containerRef.current) {
+      const inputs = containerRef.current.querySelectorAll<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >('input, select, textarea')
+      for (const input of Array.from(inputs)) {
+        if (typeof input.reportValidity === 'function' && !input.reportValidity()) {
+          return
+        }
+      }
+    }
     if (isLast) onFinish?.()
     else setCurrent((c) => Math.min(c + 1, steps.length - 1))
   }
@@ -55,7 +66,7 @@ export default function FormWizard({
           {message}
         </div>
       )}
-      <div>{steps[current]?.content}</div>
+      <div ref={containerRef}>{steps[current]?.content}</div>
       <div className="mt-4 flex justify-between">
         <button
           type="button"
