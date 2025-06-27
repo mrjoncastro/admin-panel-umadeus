@@ -40,20 +40,43 @@ export async function PATCH(req: NextRequest) {
   }
   try {
     const data = await req.json()
-    await pb.collection('usuarios').update(id, {
-      nome: String(data.nome || '').trim(),
-      telefone: String(data.telefone || '').replace(/\D/g, ''),
-      cpf: String(data.cpf || '').replace(/\D/g, ''),
-      data_nascimento: String(data.data_nascimento || ''),
-      endereco: String(data.endereco || '').trim(),
-      numero: String(data.numero || '').trim(),
-      bairro: String(data.bairro || '').trim(),
-      cidade: String(data.cidade || '').trim(),
-      estado: String(data.estado || '').trim(),
-      cep: String(data.cep || '').replace(/\D/g, ''),
-      ...(data.tour !== undefined ? { tour: Boolean(data.tour) } : {}),
-      role: user.role,
-    })
+    const payload: Record<string, unknown> = { role: user.role }
+
+    if (data.nome !== undefined) {
+      payload.nome = String(data.nome).trim()
+    }
+    if (data.telefone !== undefined) {
+      payload.telefone = String(data.telefone).replace(/\D/g, '')
+    }
+    if (data.cpf !== undefined) {
+      payload.cpf = String(data.cpf).replace(/\D/g, '')
+    }
+    if (data.data_nascimento !== undefined) {
+      payload.data_nascimento = String(data.data_nascimento)
+    }
+    if (data.endereco !== undefined) {
+      payload.endereco = String(data.endereco).trim()
+    }
+    if (data.numero !== undefined) {
+      payload.numero = String(data.numero).trim()
+    }
+    if (data.bairro !== undefined) {
+      payload.bairro = String(data.bairro).trim()
+    }
+    if (data.cidade !== undefined) {
+      payload.cidade = String(data.cidade).trim()
+    }
+    if (data.estado !== undefined) {
+      payload.estado = String(data.estado).trim()
+    }
+    if (data.cep !== undefined) {
+      payload.cep = String(data.cep).replace(/\D/g, '')
+    }
+    if (data.tour !== undefined) {
+      payload.tour = Boolean(data.tour)
+    }
+
+    await pb.collection('usuarios').update(id, payload)
     return NextResponse.json({ ok: true })
   } catch (err) {
     console.error('Erro ao atualizar perfil:', err)
