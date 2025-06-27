@@ -171,10 +171,17 @@
 ## [2025-07-31] Erro ao criar inscrição com usuário logado: API retornava "validation_not_unique" para o email. Rota /loja/api/inscricoes agora reutiliza o usuário autenticado quando disponível - dev
 
 ## [2025-07-31] Build falhava por "usuario" possivelmente nulo em /loja/api/inscricoes. Adicionada checagem final para garantir usuario antes de prosseguir - dev - 209f481
+
 ## [2025-06-27] Erro ao listar eventos: ClientResponseError 404: The requested resource wasn't found. - development
+
 ## [2025-06-27] Erro ao listar eventos: ClientResponseError 404: The requested resource wasn't found. - development
+
 ## [2025-06-27] Erro ao listar eventos: ClientResponseError 404: The requested resource wasn't found. - development
+
 ## [2025-06-27] Erro ao listar eventos: ClientResponseError 404: The requested resource wasn't found. - development
-## [2025-06-27] Erro ao consultar saldo Asaas:  - development
-## [2025-06-27] Erro ao consultar estatísticas:  - development
-## [2025-06-27] Erro ao consultar extrato:  - development
+
+## [2025-06-27] Erro ao consultar saldo Asaas: - development
+
+## [2025-06-27] Erro ao consultar estatísticas: - development
+
+## [2025-06-27] Erro ao consultar extrato: - development

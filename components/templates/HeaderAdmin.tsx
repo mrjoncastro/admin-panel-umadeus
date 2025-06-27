@@ -107,7 +107,8 @@ export default function Header() {
                 href === '/admin/produtos'
                   ? pathname.startsWith('/admin/produtos')
                   : pathname === href
-              const extraClass = href === '/admin/inscricoes' ? 'nav-inscricoes' : ''
+              const extraClass =
+                href === '/admin/inscricoes' ? 'nav-inscricoes' : ''
               return (
                 <Link
                   key={href}
@@ -390,7 +391,8 @@ export default function Header() {
                     href === '/admin/produtos'
                       ? pathname.startsWith('/admin/produtos')
                       : pathname === href
-                  const extraClass = href === '/admin/inscricoes' ? 'nav-inscricoes' : ''
+                  const extraClass =
+                    href === '/admin/inscricoes' ? 'nav-inscricoes' : ''
                   return (
                     <Link
                       key={href}

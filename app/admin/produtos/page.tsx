@@ -151,7 +151,10 @@ export default function AdminProdutosPage() {
         >
           Produtos
         </h2>
-        <button className="btn btn-primary btn-novo-produto" onClick={() => setModalOpen(true)}>
+        <button
+          className="btn btn-primary btn-novo-produto"
+          onClick={() => setModalOpen(true)}
+        >
           + Novo Produto
         </button>
       </div>

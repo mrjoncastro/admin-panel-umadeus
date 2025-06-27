@@ -6,7 +6,9 @@ import type { ComponentType } from 'react'
 
 export default function AdminClientTourLoader() {
   const pathname = usePathname()
-  const [Tour, setTour] = useState<ComponentType<{ stepsByRoute: typeof stepsByRoute }> | null>(null)
+  const [Tour, setTour] = useState<ComponentType<{
+    stepsByRoute: typeof stepsByRoute
+  }> | null>(null)
 
   useEffect(() => {
     const steps = stepsByRoute[pathname]

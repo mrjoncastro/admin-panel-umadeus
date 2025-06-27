@@ -6,11 +6,11 @@ Este documento descreve passo‑a‑passo a implementação de um tour in‑app 
 
 ## 1. Visão Geral
 
-* **Objetivo**: Orientar usuários em cada tela com dicas contextuais, reduzindo dúvidas e tornando o onboarding mais intuitivo.
-* **Áreas contempladas**:
+- **Objetivo**: Orientar usuários em cada tela com dicas contextuais, reduzindo dúvidas e tornando o onboarding mais intuitivo.
+- **Áreas contempladas**:
 
-  * **ADMIN**: `/admin/dashboard`, `/admin/inscricoes`, `/admin/pedidos`, `/admin/usuarios`, `/admin/configuracoes` e demais.
-  * **Cliente**: `/app/cliente/dashboard`, `/app/cliente/inscricoes`, `/app/cliente/pedidos`, `/app/cliente/perfil`.
+  - **ADMIN**: `/admin/dashboard`, `/admin/inscricoes`, `/admin/pedidos`, `/admin/usuarios`, `/admin/configuracoes` e demais.
+  - **Cliente**: `/app/cliente/dashboard`, `/app/cliente/inscricoes`, `/app/cliente/pedidos`, `/app/cliente/perfil`.
 
 ---
 
@@ -102,9 +102,9 @@ export default AdminClientTour
 
 **Comentários importantes**:
 
-* Ajuste `primaryColor` no `styles.options` para usar `var(--accent)` do tenant.
-* Extenda `stepsByRoute` sempre que adicionar novas páginas.
-* O botão “Ajuda” reinicia o tour em qualquer rota.
+- Ajuste `primaryColor` no `styles.options` para usar `var(--accent)` do tenant.
+- Extenda `stepsByRoute` sempre que adicionar novas páginas.
+- O botão “Ajuda” reinicia o tour em qualquer rota.
 
 ---
 
@@ -117,8 +117,16 @@ import { Step } from 'react-joyride'
 
 export const stepsByRoute: Record<string, Step[]> = {
   '/admin/dashboard': [
-    { target: '.stats-card', content: 'Aqui você vê as principais métricas do sistema.', placement: 'bottom' },
-    { target: '.nav-inscricoes', content: 'Acesse e gerencie as inscrições.', placement: 'right' },
+    {
+      target: '.stats-card',
+      content: 'Aqui você vê as principais métricas do sistema.',
+      placement: 'bottom',
+    },
+    {
+      target: '.nav-inscricoes',
+      content: 'Acesse e gerencie as inscrições.',
+      placement: 'right',
+    },
   ],
   // …adicione mais rotas conforme necessário
 }
@@ -155,9 +163,9 @@ export default function App({ Component, pageProps }) {
 
 ## 6. Personalizações e Extensões
 
-* **Novas rotas**: apenas adicione ao `stepsByRoute` com os seletores corretos.
-* **Analytics**: dentro de `handleJoyrideCallback`, dispare eventos para seu sistema de métricas.
-* **Design**: use classes Tailwind ou componentes shadcn/ui nos tooltips via `tooltipComponent` do Joyride.
+- **Novas rotas**: apenas adicione ao `stepsByRoute` com os seletores corretos.
+- **Analytics**: dentro de `handleJoyrideCallback`, dispare eventos para seu sistema de métricas.
+- **Design**: use classes Tailwind ou componentes shadcn/ui nos tooltips via `tooltipComponent` do Joyride.
 
 ---
 

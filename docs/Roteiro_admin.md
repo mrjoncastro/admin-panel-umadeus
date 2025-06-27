@@ -7,12 +7,11 @@ Este **Markdown** documenta os roteiros de tours via `react-joyride` para o **Pa
 
 ## Implementação
 
-- Utilize seletores estáveis (p.ex.: `data-attribute` ou classes específicas).  
-- Ajuste `placement`, `offset` e, se necessário, `delay` para garantir exibição responsiva.  
-- Importe e mapeie cada rota `admin/*` ao seu tour correspondente.  
-- Para rotas dinâmicas (ex.: `admin/financeiro/saldo`), registre lógica condicional.  
-- Teste cada step em homologação e produção para validar seletores.  
-
+- Utilize seletores estáveis (p.ex.: `data-attribute` ou classes específicas).
+- Ajuste `placement`, `offset` e, se necessário, `delay` para garantir exibição responsiva.
+- Importe e mapeie cada rota `admin/*` ao seu tour correspondente.
+- Para rotas dinâmicas (ex.: `admin/financeiro/saldo`), registre lógica condicional.
+- Teste cada step em homologação e produção para validar seletores.
 
 export const adminDashboardTour = [
 { target: 'body', content: 'Visão geral do Painel de Coordenação: métricas, filtros, exportações e gráficos.', placement: 'top' },

@@ -448,10 +448,17 @@ executados.
 ## [2025-06-26] Componente PasswordField criado e formulários atualizados. Lint e build executados.
 
 ## [2025-06-26] Template novaCobranca removido e guia de email ajustado para refletir a exclusão. Lint e build executados.
+
 ## [2025-06-26] Implementado tour in-app com React Joyride e passos dinâmicos. Lint e build executados.
+
 ## [2025-08-10] Expandido steps do tour para cada rota do Admin, importação dinâmica do AdminClientTour no layout e registro de cor primária via TenantProvider. Lint e build falharam (next not found).
+
 ## [2025-06-26] Atualizado Joyride.md com uso de `var(--accent)` e tour adaptado ao Tenant. Lint e build executados.
+
 ## [2025-06-26] Import useTenant removido do AdminClientTour. Lint executado com sucesso; build não finalizou por limitações do ambiente.
+
 ## [2025-08-11] Removido passo '/app/home' do Joyride.md. Lint e build executados.
+
 ## [2025-08-12] MetadataBase dinamico no layout com generateMetadata. Impacto: corrige aviso "metadataBase" em cada tenant. Lint e build executados.
+
 ## [2025-06-27] Criado docs/roteiro-completo.md listando todas as páginas e passos do tour

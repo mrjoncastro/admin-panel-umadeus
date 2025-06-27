@@ -65,7 +65,10 @@ export default function AdminEventosPage() {
         >
           Eventos
         </h2>
-        <Link href="/admin/eventos/novo" className="btn btn-primary btn-novo-evento">
+        <Link
+          href="/admin/eventos/novo"
+          className="btn btn-primary btn-novo-evento"
+        >
           + Novo Evento
         </Link>
       </div>

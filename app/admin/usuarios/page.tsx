@@ -94,7 +94,10 @@ export default function UsuariosPage() {
           ) : (
             <span className="text-sm text-gray-500">Nenhum evento ativo</span>
           )}
-          <Link href="/admin/usuarios/novo" className="btn btn-primary btn-novo-usuario">
+          <Link
+            href="/admin/usuarios/novo"
+            className="btn btn-primary btn-novo-usuario"
+          >
             + Adicionar Novo Usuário
           </Link>
         </div>

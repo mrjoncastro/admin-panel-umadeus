@@ -11,7 +11,9 @@ import { CartProvider } from '@/lib/context/CartContext'
 import dynamic from 'next/dynamic'
 import { headers } from 'next/headers'
 
-const AdminClientTour = dynamic(() => import('@/components/AdminClientTourLoader'))
+const AdminClientTour = dynamic(
+  () => import('@/components/AdminClientTourLoader'),
+)
 
 export async function generateMetadata() {
   const headersList = await headers()

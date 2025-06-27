@@ -44,7 +44,9 @@ describe('AdminClientTour', () => {
     render(<AdminClientTour stepsByRoute={steps} />)
     expect(resetMock).toHaveBeenCalledWith(true)
     joyrideCallback({ status: 'finished' })
-    expect(localStorage.getItem('t1-/admin/dashboard-tour-completed')).toBe('true')
+    expect(localStorage.getItem('t1-/admin/dashboard-tour-completed')).toBe(
+      'true',
+    )
     expect(screen.getByLabelText('Ajuda')).toBeInTheDocument()
   })
 

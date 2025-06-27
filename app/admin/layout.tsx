@@ -21,9 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <div className="antialiased font-sans">
-      <LayoutWrapper>
-        {children}
-      </LayoutWrapper>
+      <LayoutWrapper>{children}</LayoutWrapper>
     </div>
   )
 }

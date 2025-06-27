@@ -22,18 +22,27 @@ describe('TourIcon', () => {
   })
 
   it('só aparece quando user.tour é falso', () => {
-    mockedAuth.mockReturnValue({ isLoggedIn: true, user: { id: 'u1', tour: false } })
+    mockedAuth.mockReturnValue({
+      isLoggedIn: true,
+      user: { id: 'u1', tour: false },
+    })
     const { unmount } = render(<TourIcon />)
     expect(screen.getByLabelText('Iniciar tour')).toBeInTheDocument()
     unmount()
 
-    mockedAuth.mockReturnValue({ isLoggedIn: true, user: { id: 'u1', tour: true } })
+    mockedAuth.mockReturnValue({
+      isLoggedIn: true,
+      user: { id: 'u1', tour: true },
+    })
     render(<TourIcon />)
     expect(screen.queryByLabelText('Iniciar tour')).toBeNull()
   })
 
   it('envia PATCH e redireciona após confirmar', async () => {
-    mockedAuth.mockReturnValue({ isLoggedIn: true, user: { id: 'u1', tour: false } })
+    mockedAuth.mockReturnValue({
+      isLoggedIn: true,
+      user: { id: 'u1', tour: false },
+    })
     vi.spyOn(window, 'confirm').mockReturnValue(true)
     const fetchMock = vi.fn().mockResolvedValue({ ok: true })
     global.fetch = fetchMock as unknown as typeof fetch
@@ -41,7 +50,10 @@ describe('TourIcon', () => {
     render(<TourIcon />)
     fireEvent.click(screen.getByLabelText('Iniciar tour'))
 
-    expect(fetchMock).toHaveBeenCalledWith('/api/usuarios/u1', expect.objectContaining({ method: 'PATCH' }))
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/usuarios/u1',
+      expect.objectContaining({ method: 'PATCH' }),
+    )
     expect(pushMock).toHaveBeenCalledWith('/iniciar-tour')
   })
 })

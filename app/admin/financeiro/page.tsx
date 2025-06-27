@@ -77,7 +77,9 @@ export default function FinanceiroPage() {
             </div>
           </div>
           <div className="flex justify-end">
-            <button className="btn btn-primary btn-transferir-saldo">Transferir Saldo</button>
+            <button className="btn btn-primary btn-transferir-saldo">
+              Transferir Saldo
+            </button>
           </div>
         </>
       )}

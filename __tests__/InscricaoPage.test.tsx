@@ -57,6 +57,8 @@ describe('InscricaoPage', () => {
       })
 
     render(<InscricaoPage />)
-    expect(await screen.findByRole('button', { name: /avançar/i })).toBeInTheDocument()
+    expect(
+      await screen.findByRole('button', { name: /avançar/i }),
+    ).toBeInTheDocument()
   })
 })
