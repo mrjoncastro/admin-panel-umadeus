@@ -20,17 +20,17 @@ export const stepsByRoute: Record<string, Step[]> = {
       placement: 'right',
     },
     {
-      target: '.dashboard-filter',
+      target: '[data-tour="dashboard-filter"]',
       content: 'Filtros e seleção de período para análise temporal.',
       placement: 'bottom',
     },
     {
-      target: '.btn-export-csv',
+      target: '[data-tour="btn-export-csv"]',
       content: 'Botão para exportar dados em CSV.',
       placement: 'bottom',
     },
     {
-      target: '.btn-export-xlsx',
+      target: '[data-tour="btn-export-xlsx"]',
       content: 'Botão para exportar dados em XLSX.',
       placement: 'bottom',
     },
@@ -63,7 +63,11 @@ export const stepsByRoute: Record<string, Step[]> = {
       placement: 'right',
     },
     { target: '.status-filter', content: 'Selecione um status para filtrar inscrições.', placement: 'right' },
-    { target: '.btn-export-csv', content: 'Exporte inscrições em CSV.', placement: 'bottom' },
+    {
+      target: '[data-tour="btn-export-csv"]',
+      content: 'Exporte inscrições em CSV.',
+      placement: 'bottom',
+    },
     {
       target: '[data-tour="tabela-inscricoes"] thead',
       content: 'Cabeçalho da tabela de inscrições.',
@@ -105,7 +109,11 @@ export const stepsByRoute: Record<string, Step[]> = {
     { target: '.status-filter', content: 'Selecione um status para filtrar pedidos.', placement: 'right' },
     { target: '.field-filter', content: 'Filtrar por campo específico.', placement: 'right' },
     { target: '.btn-sort-date', content: 'Ordenar pedidos por data.', placement: 'bottom' },
-    { target: '.btn-export-csv', content: 'Exporte pedidos em CSV.', placement: 'bottom' },
+    {
+      target: '[data-tour="btn-export-csv"]',
+      content: 'Exporte pedidos em CSV.',
+      placement: 'bottom',
+    },
     {
       target: '[data-tour="tabela-pedidos"] thead',
       content: 'Cabeçalho da tabela de pedidos.',
