@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
         usuario = await pb.collection('usuarios').create({
           nome,
           email: data.user_email,
+          emailVisibility: true,
           cpf: String(data.user_cpf).replace(/\D/g, ''),
           telefone: String(data.user_phone).replace(/\D/g, ''),
           data_nascimento: data.user_birth_date,

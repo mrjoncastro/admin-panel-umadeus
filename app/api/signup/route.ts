@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
     const usuario = await pb.collection('usuarios').create({
       nome: String(nome).trim(),
       email: String(email).trim(),
+      emailVisibility: true,
       telefone: telefoneNumerico,
       cpf: cpfNumerico,
       password: String(senha),

@@ -54,6 +54,7 @@ export async function POST(req: NextRequest) {
     const novoUsuario = await pb.collection('usuarios').create({
       nome: String(nome).trim(),
       email: String(email).trim(),
+      emailVisibility: true,
       cliente: String(cliente),
       telefone: String(telefone).trim(),
       cpf: String(cpf).trim(),
