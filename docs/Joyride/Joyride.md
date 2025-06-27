@@ -120,6 +120,28 @@ export const stepsByRoute: Record<string, Step[]> = {
     { target: '.stats-card', content: 'Aqui você vê as principais métricas do sistema.', placement: 'bottom' },
     { target: '.nav-inscricoes', content: 'Acesse e gerencie as inscrições.', placement: 'right' },
   ],
+  '/admin/eventos': [
+    { target: '.btn-novo-evento', content: 'Crie eventos para receber inscrições.', placement: 'left' },
+    { target: '.tabela-eventos', content: 'Acompanhe todos os eventos cadastrados.', placement: 'top' },
+  ],
+  '/admin/financeiro': [
+    { target: '.saldo-atual', content: 'Veja o saldo disponível para saque.', placement: 'bottom' },
+    { target: '.btn-transferir-saldo', content: 'Transfira valores para sua conta.', placement: 'left' },
+  ],
+  '/admin/usuarios': [
+    { target: '.btn-novo-usuario', content: 'Adicione colaboradores ao sistema.', placement: 'left' },
+    { target: '.tabela-usuarios', content: 'Controle o nível de acesso de cada usuário.', placement: 'top' },
+  ],
+  '/admin/posts': [
+    { target: '.btn-novo-post', content: 'Publique novidades no blog.', placement: 'left' },
+    { target: '.tabela-posts', content: 'Gerencie suas publicações.', placement: 'top' },
+  ],
+  '/admin/perfil': [
+    { target: '.perfil-dados', content: 'Consulte e edite suas informações pessoais.', placement: 'top' },
+  ],
+  '/admin/whatsapp': [
+    { target: '.onboarding-wizard', content: 'Siga o passo a passo de integração.', placement: 'top' },
+  ],
   // …adicione mais rotas conforme necessário
 }
 ```
