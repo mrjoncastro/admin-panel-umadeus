@@ -1,6 +1,7 @@
 /* @vitest-environment jsdom */
 import React from 'react'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
 import AdminClientTour from '@/components/AdminClientTour'
 
@@ -45,5 +46,15 @@ describe('AdminClientTour', () => {
     joyrideCallback({ status: 'finished' })
     expect(localStorage.getItem('t1-/admin/dashboard-tour-completed')).toBe('true')
     expect(screen.getByLabelText('Ajuda')).toBeInTheDocument()
+  })
+
+  it('reinicia tour ao clicar em \u201cAjuda\u201d', async () => {
+    localStorage.setItem('t1-/admin/dashboard-tour-completed', 'true')
+    render(<AdminClientTour stepsByRoute={steps} />)
+    expect(resetMock).not.toHaveBeenCalled()
+
+    await userEvent.click(screen.getByLabelText('Ajuda'))
+
+    expect(resetMock).toHaveBeenCalledWith(true)
   })
 })
