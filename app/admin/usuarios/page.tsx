@@ -21,11 +21,14 @@ interface Usuario {
 
 export default function UsuariosPage() {
   const { showError } = useToast()
-  const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
+  const { user, authChecked } = useAuthGuard(['coordenador'])
   const [usuarios, setUsuarios] = useState<Usuario[]>([])
   const [loading, setLoading] = useState(true)
   const [eventos, setEventos] = useState<Evento[]>([])
   const [eventoId, setEventoId] = useState('')
+  const [busca, setBusca] = useState('')
+  const [filtroRole, setFiltroRole] = useState('')
+  const [filtroCampo, setFiltroCampo] = useState('')
 
   useEffect(() => {
     if (!authChecked) return
@@ -72,6 +75,21 @@ export default function UsuariosPage() {
     fetchEventos()
   }, [authChecked])
 
+  const usuariosFiltrados = usuarios.filter((u) => {
+    const buscaLower = busca.toLowerCase()
+    const matchBusca =
+      busca === '' ||
+      u.nome.toLowerCase().includes(buscaLower) ||
+      u.email.toLowerCase().includes(buscaLower)
+    const matchRole = filtroRole === '' || u.role === filtroRole
+    const matchCampo =
+      filtroCampo === '' ||
+      u.expand?.campo?.nome
+        ?.toLowerCase()
+        .includes(filtroCampo.toLowerCase())
+    return matchBusca && matchRole && matchCampo
+  })
+
   if (!authChecked) return null
 
   return (
@@ -100,6 +118,33 @@ export default function UsuariosPage() {
         </div>
       </div>
 
+      <div className="flex flex-wrap gap-4 mb-6">
+        <input
+          type="text"
+          placeholder="Buscar por nome ou e-mail"
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+          className="border rounded px-4 py-2 text-sm w-full md:w-64 shadow-sm"
+        />
+        <select
+          value={filtroRole}
+          onChange={(e) => setFiltroRole(e.target.value)}
+          className="border rounded px-4 py-2 text-sm bg-white shadow-sm"
+        >
+          <option value="">Todas as Funções</option>
+          <option value="coordenador">Coordenador</option>
+          <option value="lider">Líder</option>
+          <option value="usuario">Usuário</option>
+        </select>
+        <input
+          type="text"
+          placeholder="Filtrar por campo"
+          value={filtroCampo}
+          onChange={(e) => setFiltroCampo(e.target.value)}
+          className="border rounded px-4 py-2 text-sm w-full md:w-60 shadow-sm"
+        />
+      </div>
+
       {loading ? (
         <LoadingOverlay show={true} text="Carregando usuários..." />
       ) : (
@@ -116,7 +161,7 @@ export default function UsuariosPage() {
               </tr>
             </thead>
             <tbody>
-              {usuarios.map((usuario) => (
+              {usuariosFiltrados.map((usuario) => (
                 <tr key={usuario.id}>
                   <td className="font-medium">{usuario.nome}</td>
                   <td>{usuario.email}</td>
