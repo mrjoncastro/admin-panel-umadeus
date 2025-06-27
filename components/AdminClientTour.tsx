@@ -24,13 +24,15 @@ export function AdminClientTour({ stepsByRoute }: AdminClientTourProps) {
     () => stepsByRoute[pathname] || [],
     [pathname, stepsByRoute],
   )
-  const validSteps = steps.filter((step) => {
-    try {
-      return Boolean(document.querySelector(step.target as string))
-    } catch {
-      return false
-    }
-  })
+  const validSteps = useMemo(() => {
+    return steps.filter((step) => {
+      try {
+        return Boolean(document.querySelector(step.target as string))
+      } catch {
+        return false
+      }
+    })
+  }, [steps])
   const storageKey = `${tenantId ?? 'public'}-${pathname}-tour-completed`
 
   useEffect(() => {

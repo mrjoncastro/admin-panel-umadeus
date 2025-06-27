@@ -80,9 +80,6 @@ components:
   - name: TooltipIcon
     path: app/admin/components/TooltipIcon.tsx
     category: Molecule
-  - name: TourIcon
-    path: app/admin/components/TourIcon.tsx
-    category: Molecule
   - name: ListaClientes
     path: app/admin/clientes/components/ListaClientes.tsx
     category: Organism

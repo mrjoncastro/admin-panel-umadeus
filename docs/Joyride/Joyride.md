@@ -123,7 +123,7 @@ export const stepsByRoute: Record<string, Step[]> = {
       placement: 'bottom',
     },
     {
-      target: '.nav-inscricoes',
+      target: '[data-tour="nav-inscricoes"]',
       content: 'Acesse e gerencie as inscrições.',
       placement: 'right',
     },
