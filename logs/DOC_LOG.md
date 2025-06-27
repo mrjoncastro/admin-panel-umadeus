@@ -462,3 +462,4 @@ executados.
 ## [2025-06-27] ProfileForm atualizado com campos de endereco e rota correta. Lint e build executados.
 ## [2025-06-27] Aplicado getAuthHeaders em múltiplas chamadas API e atualizado useAuth para carregar cookie
 ## [2025-06-27] Login retorna token para salvar no contexto e reutilizar em chamadas API. Lint e build executados.
+## [2025-06-27] Atualizado update de usuario para ignorar campos ausentes e preservar dados. Lint e build executados.

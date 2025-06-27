@@ -23,22 +23,45 @@ export async function PATCH(req: NextRequest) {
       genero,
     } = await req.json()
 
-    const data: Record<string, unknown> = {
-      nome: String(nome || '').trim(),
-      telefone: String(telefone || '').replace(/\D/g, ''),
-      cpf: String(cpf || '').replace(/\D/g, ''),
-      data_nascimento: String(data_nascimento || ''),
-      cep: String(cep || ''),
-      numero: String(numero || ''),
-      cidade: String(cidade || ''),
-      estado: String(estado || ''),
-      endereco: String(endereco || ''),
-      bairro: String(bairro || ''),
-      genero: String(genero || ''),
-    }
-    if (campo_id) data.campo = String(campo_id)
+    const payload: Record<string, unknown> = {}
 
-    const updated = await pbSafe.collection('usuarios').update(user.id, data)
+    if (nome !== undefined) {
+      payload.nome = String(nome).trim()
+    }
+    if (telefone !== undefined) {
+      payload.telefone = String(telefone).replace(/\D/g, '')
+    }
+    if (cpf !== undefined) {
+      payload.cpf = String(cpf).replace(/\D/g, '')
+    }
+    if (data_nascimento !== undefined) {
+      payload.data_nascimento = String(data_nascimento)
+    }
+    if (cep !== undefined) {
+      payload.cep = String(cep)
+    }
+    if (numero !== undefined) {
+      payload.numero = String(numero)
+    }
+    if (cidade !== undefined) {
+      payload.cidade = String(cidade)
+    }
+    if (estado !== undefined) {
+      payload.estado = String(estado)
+    }
+    if (endereco !== undefined) {
+      payload.endereco = String(endereco)
+    }
+    if (bairro !== undefined) {
+      payload.bairro = String(bairro)
+    }
+    if (genero !== undefined) {
+      payload.genero = String(genero)
+    }
+    if (campo_id !== undefined) {
+      payload.campo = String(campo_id)
+    }
+    const updated = await pbSafe.collection('usuarios').update(user.id, payload)
     pbSafe.authStore.save(pbSafe.authStore.token, updated)
     const cookie = pbSafe.authStore.exportToCookie({
       httpOnly: true,
