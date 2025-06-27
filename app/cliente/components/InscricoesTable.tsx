@@ -2,6 +2,7 @@
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import { useEffect, useMemo, useState } from 'react'
 import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 import type { Inscricao } from '@/types'
 import { formatDate } from '@/utils/formatDate'
 
@@ -12,11 +13,7 @@ export default function InscricoesTable({ limit }: { limit?: number }) {
 
   useEffect(() => {
     if (!authChecked || !user) return
-    const token = pb.authStore.token
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      'X-PB-User': JSON.stringify(user),
-    }
+    const headers = getAuthHeaders(pb)
     fetch('/api/inscricoes', { headers, credentials: 'include' })
       .then((res) => res.json())
       .then((data) =>

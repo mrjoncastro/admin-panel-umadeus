@@ -2,6 +2,7 @@
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import { useEffect, useMemo, useState } from 'react'
 import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 import type { Pedido, Inscricao } from '@/types'
 
 export default function DashboardHeader() {
@@ -12,11 +13,7 @@ export default function DashboardHeader() {
 
   useEffect(() => {
     if (!authChecked || !user) return
-    const token = pb.authStore.token
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      'X-PB-User': JSON.stringify(user),
-    }
+    const headers = getAuthHeaders(pb)
     fetch('/api/inscricoes', { headers, credentials: 'include' })
       .then((res) => res.json())
       .then((data) => setInscricoes(Array.isArray(data) ? data : []))
