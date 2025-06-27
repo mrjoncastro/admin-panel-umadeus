@@ -21,7 +21,7 @@ interface Usuario {
 
 export default function UsuariosPage() {
   const { showError } = useToast()
-  const { authChecked } = useAuthGuard(['coordenador'])
+  const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
   const [usuarios, setUsuarios] = useState<Usuario[]>([])
   const [loading, setLoading] = useState(true)
   const [eventos, setEventos] = useState<Evento[]>([])
@@ -112,6 +112,7 @@ export default function UsuariosPage() {
                 <th>Função</th>
                 <th>Campo</th>
                 <th>Link de Inscrição</th>
+                {user?.role === 'coordenador' && <th>Ações</th>}
               </tr>
             </thead>
             <tbody>
@@ -140,6 +141,16 @@ export default function UsuariosPage() {
                       <span className="text-gray-400">—</span>
                     )}
                   </td>
+                  {user?.role === 'coordenador' && (
+                    <td>
+                      <Link
+                        href={`/admin/usuarios/${usuario.id}/editar`}
+                        className="text-blue-600 hover:underline"
+                      >
+                        Editar
+                      </Link>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
