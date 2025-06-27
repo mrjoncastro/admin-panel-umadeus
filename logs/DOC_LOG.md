@@ -453,3 +453,4 @@ executados.
 ## [2025-06-26] Campo preco_bruto adicionado na colecao produtos e documentacao atualizada.
 
 ## [2025-06-26] InscricaoForm preenche campo via searchParams e valor do usuario. Campo permanece selecionado ao navegar entre etapas. Lint e build executados apos instalar dependencias.
+## [2025-08-09] Area do cliente usa modal para redefinir senha ao clicar em "Alterar senha". Lint e build falharam (next not found).
