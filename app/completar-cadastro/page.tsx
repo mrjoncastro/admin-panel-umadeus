@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 import { fetchCep } from '@/utils/cep'
 import { useRouter } from 'next/navigation'
 import { TextField, FormField, Button, Spinner } from '@/components'
@@ -16,6 +18,7 @@ export default function CompletarCadastroPage() {
   const { authChecked } = useAuthGuard(['usuario'])
   const { showError, showSuccess } = useToast()
   const router = useRouter()
+  const pb = createPocketBase()
 
   const [dataNasc, setDataNasc] = useState('')
   const [genero, setGenero] = useState('')
@@ -31,7 +34,7 @@ export default function CompletarCadastroPage() {
 
   useEffect(() => {
     if (!authChecked) return
-    fetch('/api/campos')
+    fetch('/api/campos', { headers: getAuthHeaders(pb), credentials: 'include' })
       .then((r) => (r.ok ? r.json() : []))
       .then((d) => {
         if (Array.isArray(d)) setCampos(d)
@@ -61,7 +64,8 @@ export default function CompletarCadastroPage() {
     try {
       const res = await fetch('/api/usuario/atualizar-dados', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           data_nascimento: dataNasc,
           genero,

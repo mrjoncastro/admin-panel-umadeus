@@ -1,4 +1,5 @@
 import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 
 export interface PostClientRecord {
   id: string
@@ -15,7 +16,8 @@ export interface PostClientRecord {
 
 export async function getPostsClientPB(): Promise<PostClientRecord[]> {
   const pb = createPocketBase()
-  const res = await fetch('/api/tenant')
+  const headers = getAuthHeaders(pb)
+  const res = await fetch('/api/tenant', { headers, credentials: 'include' })
   const data = (await res.json()) as { tenantId: string | null }
   const tenantId = data.tenantId
 

@@ -4,6 +4,8 @@ import { Button } from '@/components/atoms/Button'
 import { useOnboarding } from '@/lib/context/OnboardingContext'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useState } from 'react'
+import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 import { maskPhone } from '@/utils/formatPhone'
 
 export default function StepComplete() {
@@ -14,9 +16,15 @@ export default function StepComplete() {
   const handleDisconnect = async () => {
     setLoading(true)
     try {
+      const pb = createPocketBase()
+      const headers = {
+        ...getAuthHeaders(pb),
+        'x-tenant-id': tenantId!,
+      }
       await fetch('/api/chats/whatsapp/instance/delete', {
         method: 'DELETE',
-        headers: { 'x-tenant-id': tenantId! },
+        headers,
+        credentials: 'include',
       })
       setConnection('idle')
       setStep(1)

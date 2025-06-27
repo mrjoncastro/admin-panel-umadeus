@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 import { useParams, useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
@@ -34,6 +36,7 @@ function slugify(str: string) {
 export default function EditarProdutoPage() {
   const { id } = useParams<{ id: string }>()
   const { user: ctxUser, isLoggedIn } = useAuthContext()
+  const pb = createPocketBase()
   const router = useRouter()
   const { showSuccess, showError } = useToast()
   const { authChecked } = useAuthGuard(['coordenador'])
@@ -68,7 +71,8 @@ export default function EditarProdutoPage() {
   useEffect(() => {
     if (!authChecked) return
     if (!isLoggedIn || ctxUser?.role !== 'coordenador') return
-    fetch('/admin/api/categorias')
+    const headers = getAuthHeaders(pb)
+    fetch('/admin/api/categorias', { headers, credentials: 'include' })
       .then((r) => r.json())
       .then((data) => {
         setCategorias(Array.isArray(data) ? data : [])
@@ -76,13 +80,13 @@ export default function EditarProdutoPage() {
       .catch(() => {
         setCategorias([])
       })
-    fetch('/api/eventos')
+    fetch('/api/eventos', { headers, credentials: 'include' })
       .then((r) => r.json())
       .then((data) => {
         setEventos(Array.isArray(data) ? data : [])
       })
       .catch(() => setEventos([]))
-    fetch(`/admin/api/produtos/${id}`)
+    fetch(`/admin/api/produtos/${id}`, { headers, credentials: 'include' })
       .then(async (r) => {
         if (r.status === 401) {
           router.replace('/login')
@@ -254,7 +258,8 @@ export default function EditarProdutoPage() {
       const res = await fetch(`/admin/api/produtos/${id}`, {
         method: 'PUT',
         body: formData,
-        headers: {},
+        headers: getAuthHeaders(pb),
+        credentials: 'include',
       })
       if (res.ok) {
         showSuccess('Produto atualizado')

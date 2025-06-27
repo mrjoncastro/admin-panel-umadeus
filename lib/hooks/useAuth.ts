@@ -14,6 +14,7 @@ export function useAuth() {
 
   useEffect(() => {
     const update = () => {
+      pb.authStore.loadFromCookie(document.cookie)
       const isValid = pb.authStore.isValid
       const model = pb.authStore.model as unknown as UserModel | null
       const tokenAtual = pb.authStore.token

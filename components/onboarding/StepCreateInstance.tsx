@@ -1,5 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
+import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 import { useOnboarding } from '@/lib/context/OnboardingContext'
 import { useAuthContext } from '@/lib/context/AuthContext'
 
@@ -20,12 +22,16 @@ export default function StepCreateInstance({
       setLoading(true)
       setError(undefined)
       try {
+        const pb = createPocketBase()
+        const headers = {
+          ...getAuthHeaders(pb),
+          'Content-Type': 'application/json',
+          'x-tenant-id': tenantId!,
+        }
         const res = await fetch('/api/chats/whatsapp/instance', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-tenant-id': tenantId!,
-          },
+          headers,
+          credentials: 'include',
           body: JSON.stringify({ telefone: `55${telefone}` }),
         })
         if (!res.ok) throw new Error(await res.text())

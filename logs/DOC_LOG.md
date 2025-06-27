@@ -460,3 +460,4 @@ executados.
 ## [2025-06-27] Campo bairro adicionado na edicao de perfil. Lint e build executados.
 ## [2025-06-27] Atualizacao de rotas para /cliente/dashboard e ajuste de docs.
 ## [2025-06-27] ProfileForm atualizado com campos de endereco e rota correta. Lint e build executados.
+## [2025-06-27] Aplicado getAuthHeaders em múltiplas chamadas API e atualizado useAuth para carregar cookie

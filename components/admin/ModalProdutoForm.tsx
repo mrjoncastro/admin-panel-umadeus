@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 import Image from 'next/image'
 import * as Dialog from '@radix-ui/react-dialog'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -35,6 +37,7 @@ export default function ModalProdutoForm({
   initial = {},
 }: ModalProdutoFormProps) {
   const { showError } = useToast()
+  const pb = createPocketBase()
   const firstFieldRef = useRef<HTMLInputElement>(null)
   const [eventos, setEventos] = useState<Evento[]>([])
   const [preview, setPreview] = useState<string | null>(initial.imagem || null)
@@ -49,7 +52,8 @@ export default function ModalProdutoForm({
   useEffect(() => {
     if (open) {
       firstFieldRef.current?.focus()
-      fetch('/api/eventos')
+      const headers = getAuthHeaders(pb)
+      fetch('/api/eventos', { headers, credentials: 'include' })
         .then((r) => r.json())
         .then((data) => {
           if (Array.isArray(data)) setEventos(data)

@@ -1,14 +1,21 @@
+import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
+
 export async function connectInstance(
   instanceName: string,
   apiKey: string,
   tenantId: string,
 ) {
+  const pb = createPocketBase()
+  const headers = {
+    ...getAuthHeaders(pb),
+    'Content-Type': 'application/json',
+    'x-tenant-id': tenantId,
+  }
   const res = await fetch('/api/chats/whatsapp/instance/connect', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-tenant-id': tenantId,
-    },
+    headers,
+    credentials: 'include',
     body: JSON.stringify({ instanceName, apiKey }),
   })
 
@@ -25,12 +32,16 @@ export async function fetchConnectionState(
   apiKey: string,
   tenantId: string,
 ) {
+  const pb = createPocketBase()
+  const headers = {
+    ...getAuthHeaders(pb),
+    'Content-Type': 'application/json',
+    'x-tenant-id': tenantId,
+  }
   const res = await fetch('/api/chats/whatsapp/instance/connectionState', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-tenant-id': tenantId,
-    },
+    headers,
+    credentials: 'include',
     body: JSON.stringify({ instanceName, apiKey }),
   })
 

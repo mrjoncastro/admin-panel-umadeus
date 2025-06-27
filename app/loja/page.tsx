@@ -3,6 +3,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 import { calculateGross } from '@/lib/asaasFees'
 
 interface Produto {
@@ -15,11 +17,15 @@ interface Produto {
 
 export default function Home() {
   const [produtosDestaque, setProdutosDestaque] = useState<Produto[]>([])
+  const pb = createPocketBase()
 
   useEffect(() => {
     async function fetchProdutos() {
       try {
-        const res = await fetch('/api/produtos', { credentials: 'include' })
+        const res = await fetch('/api/produtos', {
+          headers: getAuthHeaders(pb),
+          credentials: 'include',
+        })
         if (res.ok) {
           const list = (await res.json()) as Produto[]
           const prods = list.map((p) => ({

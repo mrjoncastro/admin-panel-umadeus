@@ -7,6 +7,8 @@
  */
 
 import { useEffect, useRef, useState } from 'react'
+import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { calculateGross } from '@/lib/asaasFees'
 import ModalCategoria from '../categorias/ModalCategoria'
@@ -81,6 +83,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
     initial.requer_inscricao_aprovada ?? false,
   )
   const { isLoggedIn, user: ctxUser } = useAuthContext()
+  const pb = createPocketBase()
   const { showSuccess, showError } = useToast()
   const [exclusivo, setExclusivo] = useState<boolean>(
     initial.exclusivo_user ?? false,
@@ -100,7 +103,8 @@ export function ModalProduto<T extends Record<string, unknown>>({
 
   useEffect(() => {
     if (open) {
-      fetch('/api/eventos')
+      const headers = getAuthHeaders(pb)
+      fetch('/api/eventos', { headers, credentials: 'include' })
         .then((r) => r.json())
         .then((data) => {
           if (Array.isArray(data)) setEventos(data)

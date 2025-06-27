@@ -171,3 +171,4 @@
 ## [2025-07-31] Erro ao criar inscrição com usuário logado: API retornava "validation_not_unique" para o email. Rota /loja/api/inscricoes agora reutiliza o usuário autenticado quando disponível - dev
 
 ## [2025-07-31] Build falhava por "usuario" possivelmente nulo em /loja/api/inscricoes. Adicionada checagem final para garantir usuario antes de prosseguir - dev - 209f481
+## [2025-06-27] Diversos fetch('/api') não enviavam token de autenticação. Adicionada função getAuthHeaders em hooks e páginas - dev

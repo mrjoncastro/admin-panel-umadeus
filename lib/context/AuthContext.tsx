@@ -5,6 +5,7 @@ import createPocketBase, {
   clearBaseAuth,
   updateBaseAuth,
 } from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 import type { UserModel } from '@/types/UserModel'
 
 type AuthContextType = {
@@ -52,7 +53,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let unsubscribe = () => {}
     async function loadAuth() {
       try {
-        const meRes = await fetch('/api/auth/me', { credentials: 'include' })
+        const meRes = await fetch('/api/auth/me', {
+          headers: getAuthHeaders(pb),
+          credentials: 'include',
+        })
         if (meRes.ok) {
           const data = await meRes.json()
           pb.authStore.loadFromCookie(document.cookie)
@@ -60,7 +64,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(data.user as UserModel)
           setIsLoggedIn(true)
         }
-        const tenantRes = await fetch('/api/tenant')
+        const tenantRes = await fetch('/api/tenant', {
+          headers: getAuthHeaders(pb),
+          credentials: 'include',
+        })
         if (tenantRes.ok) {
           const { tenantId } = await tenantRes.json()
           setTenantId(tenantId)
@@ -87,9 +94,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [pb])
 
   const login = async (email: string, password: string) => {
+    const headers = { ...getAuthHeaders(pb), 'Content-Type': 'application/json' }
     const res = await fetch('/api/auth/login', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
+      credentials: 'include',
       body: JSON.stringify({ email, password }),
     })
     if (!res.ok) throw new Error('Login failed')
@@ -101,7 +110,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (typeof window !== 'undefined') {
       localStorage.setItem('pb_user', JSON.stringify(data.user))
     }
-    const tenantRes = await fetch('/api/tenant')
+    const tenantRes = await fetch('/api/tenant', {
+      headers: getAuthHeaders(pb),
+      credentials: 'include',
+    })
     if (tenantRes.ok) {
       const { tenantId } = await tenantRes.json()
       setTenantId(tenantId)
@@ -126,7 +138,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   ) => {
     let clienteId: string | null = null
     try {
-      const tenantRes = await fetch('/api/tenant')
+      const tenantRes = await fetch('/api/tenant', {
+        headers: getAuthHeaders(pb),
+        credentials: 'include',
+      })
       if (tenantRes.ok) {
         const data = await tenantRes.json()
         clienteId = data.tenantId
@@ -140,7 +155,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     await fetch('/api/register', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({
         nome,
         email,
@@ -161,7 +177,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const logout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' })
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+      headers: getAuthHeaders(pb),
+      credentials: 'include',
+    })
     pb.authStore.clear()
     clearBaseAuth()
     if (typeof window !== 'undefined') {

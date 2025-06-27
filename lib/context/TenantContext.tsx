@@ -1,7 +1,9 @@
 'use client'
 import * as React from 'react'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useMemo } from 'react'
 import { generatePrimaryShades } from '@/utils/primaryShades'
+import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 
 const STALE_TIME = 1000 * 60 * 60 // 1 hour
 
@@ -39,6 +41,7 @@ export function TenantProvider({
   const [config, setConfig] = useState<TenantConfig>(
     initialConfig ?? defaultConfig,
   )
+  const pb = useMemo(() => createPocketBase(), [])
   const [configId, setConfigId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -51,8 +54,10 @@ export function TenantProvider({
 
     async function fetchInitialConfig() {
       try {
+        const headers = getAuthHeaders(pb)
         const res = await fetch('/api/tenant-config', {
           credentials: 'include',
+          headers,
         })
         if (res.ok) {
           const data = await res.json()
@@ -93,8 +98,10 @@ export function TenantProvider({
 
       if (!cached || isStale) {
         try {
+          const headers = getAuthHeaders(pb)
           const res = await fetch('/api/tenant-config', {
             credentials: 'include',
+            headers,
           })
           if (res.ok) {
             const data = await res.json()
@@ -145,12 +152,14 @@ export function TenantProvider({
     setConfig(newCfg)
 
     if (typeof window !== 'undefined' && configId) {
+      const headers = {
+        ...getAuthHeaders(pb),
+        'Content-Type': 'application/json',
+      }
       fetch('/api/tenant-config', {
         method: 'PUT',
         credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({
           id: configId,
           cor_primary: newCfg.primaryColor,

@@ -3,6 +3,8 @@
 import { useCart } from '@/lib/context/CartContext'
 import { useRouter } from 'next/navigation'
 import { Suspense, useState, useEffect } from 'react'
+import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useToast } from '@/lib/context/ToastContext'
@@ -26,6 +28,7 @@ function CheckoutContent() {
 
   const router = useRouter()
   const { isLoggedIn, user, tenantId } = useAuthContext()
+  const pb = createPocketBase()
   useSyncTenant()
   const { showSuccess, showError } = useToast()
 
@@ -77,7 +80,10 @@ function CheckoutContent() {
   useEffect(() => {
     if (!user?.id) return
     let ignore = false
-    fetch(`/api/usuarios/${user.id}`, { credentials: 'include' })
+    fetch(`/api/usuarios/${user.id}`, {
+      headers: getAuthHeaders(pb),
+      credentials: 'include',
+    })
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((u) => {
         if (ignore) return
@@ -182,7 +188,7 @@ function CheckoutContent() {
       const pedidoRes = await fetch('/api/pedidos', {
         method: 'POST',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },
         body: JSON.stringify({
           produto: [firstItem?.id || firstItem?.nome || 'Produto'],
           tamanho: Array.isArray(firstItem?.tamanhos)
@@ -233,7 +239,8 @@ function CheckoutContent() {
 
       const res = await fetch('/api/asaas/checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(payload),
       })
       const data = await res.json()

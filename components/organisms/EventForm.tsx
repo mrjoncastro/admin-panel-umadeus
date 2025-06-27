@@ -1,10 +1,12 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useTenant } from '@/lib/context/TenantContext'
 import { useToast } from '@/lib/context/ToastContext'
 import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
+import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 import FormWizard from './FormWizard'
 import LoadingOverlay from './LoadingOverlay'
 import {
@@ -41,6 +43,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
   const { showSuccess, showError } = useToast()
   const router = useRouter()
   const { isLoggedIn, user } = useAuthContext()
+  const pb = useMemo(() => createPocketBase(), [])
   const [campoNome, setCampoNome] = useState('')
   const [campos, setCampos] = useState<Campo[]>([])
   const [produtos, setProdutos] = useState<Produto[]>([])
@@ -73,13 +76,14 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
     async function fetchData() {
       setFetching(true)
       try {
+        const headers = getAuthHeaders(pb)
         const promises: Promise<Response>[] = [
-          fetch(`/api/eventos/${eventoId}`),
+          fetch(`/api/eventos/${eventoId}`, { headers, credentials: 'include' }),
         ]
         if (liderId) {
-          promises.unshift(fetch(`/api/lider/${liderId}`))
+          promises.unshift(fetch(`/api/lider/${liderId}`, { headers, credentials: 'include' }))
         } else {
-          promises.unshift(fetch('/api/campos'))
+          promises.unshift(fetch('/api/campos', { headers, credentials: 'include' }))
         }
         const [campoRes, eventoRes] = await Promise.all(promises)
         if (liderId) {
@@ -221,7 +225,8 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
           }
       const res = await fetch(url, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(payload),
       })
       if (!res.ok) {

@@ -1,5 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
+import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import StepSelectClient from '../onboarding/StepSelectClient'
 import StepCreateInstance from '../onboarding/StepCreateInstance'
@@ -32,6 +34,7 @@ function WizardSteps() {
     setLoading,
   } = useOnboarding()
   const { tenantId } = useAuthContext()
+  const pb = createPocketBase()
   const [qrUrl, setQrUrl] = useState('')
   const [qrBase, setQrBase] = useState('')
 
@@ -40,8 +43,13 @@ function WizardSteps() {
     ;(async () => {
       setLoading(true)
       try {
+        const headers = {
+          ...getAuthHeaders(pb),
+          'x-tenant-id': tenantId,
+        }
         const res = await fetch('/api/chats/whatsapp/instance/check', {
-          headers: { 'x-tenant-id': tenantId },
+          headers,
+          credentials: 'include',
         })
         const check = (await res.json()) as CheckResponse
         if (!check) return

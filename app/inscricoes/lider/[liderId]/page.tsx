@@ -3,6 +3,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 import { useParams } from 'next/navigation'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import { formatDate } from '@/utils/formatDate'
@@ -11,13 +13,17 @@ import type { Evento } from '@/types'
 export default function EscolherEventoPage() {
   const params = useParams()
   const liderId = params.liderId as string
+  const pb = createPocketBase()
   const [eventos, setEventos] = useState<Evento[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function fetchEventos() {
       try {
-        const res = await fetch('/api/eventos')
+        const res = await fetch('/api/eventos', {
+          headers: getAuthHeaders(pb),
+          credentials: 'include',
+        })
         const data: Evento[] = await res.json()
         setEventos(Array.isArray(data) ? data : [])
       } catch {

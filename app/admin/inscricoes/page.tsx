@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 import { Copy } from 'lucide-react'
 import { saveAs } from 'file-saver'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
@@ -48,6 +50,7 @@ type Inscricao = {
 
 export default function ListaInscricoesPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
+  const pb = createPocketBase()
   const tenantId = user?.cliente || ''
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [role, setRole] = useState('')
@@ -78,7 +81,10 @@ export default function ListaInscricoesPage() {
 
     setRole(user.role)
 
-    fetch('/api/eventos', { credentials: 'include' })
+    fetch('/api/eventos', {
+      headers: getAuthHeaders(pb),
+      credentials: 'include',
+    })
       .then((r: Response): Promise<Evento[]> => r.json())
       .then((evs: Evento[]) => {
         setEventos(evs)
@@ -107,6 +113,7 @@ export default function ListaInscricoesPage() {
       }).toString()}`,
       {
         credentials: 'include',
+        headers: getAuthHeaders(pb),
       },
     )
       .then(
@@ -152,7 +159,10 @@ export default function ListaInscricoesPage() {
       .finally(() => setLoading(false))
 
     if (user.role === 'coordenador') {
-      fetch('/api/campos', { credentials: 'include' }).catch(() => {})
+      fetch('/api/campos', {
+        headers: getAuthHeaders(pb),
+        credentials: 'include',
+      }).catch(() => {})
     }
   }, [authChecked, tenantId, user, showError])
 
@@ -319,7 +329,7 @@ export default function ListaInscricoesPage() {
       const pedidoRes = await fetch('/api/pedidos', {
         method: 'POST',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id_inscricao: id,
           valor: precoProduto,
@@ -352,7 +362,7 @@ export default function ListaInscricoesPage() {
       // 3. Gerar link de pagamento via Asaas
       const asaasRes = await fetch('/api/asaas', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },
         body: JSON.stringify({
           pedidoId: pedido.pedidoId,
           valorBruto: precoProduto,
@@ -374,7 +384,7 @@ export default function ListaInscricoesPage() {
       await fetch(`/api/inscricoes/${id}`, {
         method: 'PATCH',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },
         body: JSON.stringify({
           pedido: pedido.pedidoId,
           status: 'aguardando_pagamento',
@@ -400,7 +410,7 @@ export default function ListaInscricoesPage() {
       if (inscricao.criado_por) {
         const emailRes = await fetch('/api/email', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },
           body: JSON.stringify({
             eventType: 'confirmacao_inscricao',
             userId: inscricao.criado_por,
@@ -415,7 +425,7 @@ export default function ListaInscricoesPage() {
       // 🔹 6. Enviar link de pagamento via WhatsApp
       const waRes = await fetch('/api/chats/message/sendPayment', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },
         body: JSON.stringify({
           telefone: inscricao.telefone,
           link: checkout.url,

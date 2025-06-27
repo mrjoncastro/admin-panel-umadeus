@@ -1,11 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { fetchCep } from '@/utils/cep'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useToast } from '@/lib/context/ToastContext'
 import type { ClientResponseError } from 'pocketbase'
 import Spinner from '@/components/atoms/Spinner'
+import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 import {
   FormField,
   TextField,
@@ -21,6 +23,7 @@ export default function SignUpForm({
   children?: React.ReactNode
 }) {
   const { signUp } = useAuthContext()
+  const pb = useMemo(() => createPocketBase(), [])
 
   const [campos, setCampos] = useState<{ id: string; nome: string }[]>([])
   const [campo, setCampo] = useState('')
@@ -44,13 +47,19 @@ export default function SignUpForm({
   useEffect(() => {
     async function loadCampos() {
       try {
-        const resTenant = await fetch('/api/tenant')
+        const resTenant = await fetch('/api/tenant', {
+          headers: getAuthHeaders(pb),
+          credentials: 'include',
+        })
         const data = resTenant.ok ? await resTenant.json() : { tenantId: null }
         const tenantId = data.tenantId
 
         if (!tenantId) return
 
-        const res = await fetch('/api/campos')
+        const res = await fetch('/api/campos', {
+          headers: getAuthHeaders(pb),
+          credentials: 'include',
+        })
         if (res.ok) {
           const data = await res.json()
           const lista = Array.isArray(data)
