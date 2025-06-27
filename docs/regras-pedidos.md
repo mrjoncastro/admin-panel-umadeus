@@ -6,7 +6,7 @@ Este documento explica quem pode criar e consultar pedidos e como eles são gera
 
 - **Coordenador** – visualiza todos os pedidos de todos os campos.
 - **Líder** – visualiza apenas os pedidos do seu campo.
-- **Usuário** – visualiza somente seus próprios pedidos na página `/loja/cliente`.
+- **Usuário** – visualiza somente seus próprios pedidos na página `/cliente/dashboard`.
 
 ## Criação de Pedidos
 

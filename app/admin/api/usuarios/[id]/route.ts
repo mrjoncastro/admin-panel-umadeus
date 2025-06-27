@@ -78,6 +78,21 @@ export async function PATCH(req: NextRequest) {
     if (data.data_nascimento !== undefined) {
       payload.data_nascimento = String(data.data_nascimento)
     }
+    if (data.endereco !== undefined) {
+      payload.endereco = String(data.endereco).trim()
+    }
+    if (data.cidade !== undefined) {
+      payload.cidade = String(data.cidade).trim()
+    }
+    if (data.bairro !== undefined) {
+      payload.bairro = String(data.bairro).trim()
+    }
+    if (data.numero !== undefined) {
+      payload.numero = String(data.numero).trim()
+    }
+    if (data.estado !== undefined) {
+      payload.estado = String(data.estado).trim()
+    }
     if (data.role !== undefined) {
       payload.role = data.role
     }

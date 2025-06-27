@@ -12,7 +12,7 @@ Este documento descreve como cada perfil acessa as inscri\u00e7\u00f5es, o proce
 
 - **Coordenador** – visualiza todas as inscri\u00e7\u00f5es de todos os campos e pode aprovar ou cancelar cada uma.
 - **L\u00edder** – visualiza somente as inscri\u00e7\u00f5es vinculadas ao seu campo.
-- **Usu\u00e1rio** – visualiza apenas as inscri\u00e7\u00f5es feitas por ele na p\u00e1gina `/loja/cliente`.
+- **Usuário** – visualiza apenas as inscrições feitas por ele na página `/cliente/dashboard`.
 
 ## Cria\u00e7\u00e3o de Inscri\u00e7\u00e3o
 

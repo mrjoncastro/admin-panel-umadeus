@@ -304,10 +304,8 @@
   - generateMetadata
 - **app/loja/checkout/page.tsx**
   - CheckoutPage
-- **app/loja/cliente/metadata.ts**
-  - generateMetadata
-- **app/loja/cliente/page.tsx**
-  - AreaCliente
+- **app/cliente/dashboard/page.tsx**
+  - DashboardPage
 - **app/loja/eventos/[id]/metadata.ts**
   - generateMetadata
 - **app/loja/eventos/[id]/page.tsx**
