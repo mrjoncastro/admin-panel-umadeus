@@ -83,8 +83,6 @@
   - RedefinirSenhaModal
 - **app/admin/components/TooltipIcon.tsx**
   - TooltipIcon
-- **app/admin/components/TourIcon.tsx**
-  - TourIcon
 - **app/admin/configuracoes/page.tsx**
   - ConfiguracoesPage
 - **app/admin/dashboard/components/DashboardResumo.tsx**

@@ -468,3 +468,4 @@ executados.
 ## [2025-06-27] Atualizado Roteiro_admin.md para usar seletores `[data-tour]` e mapeados todos os passos em components/tourSteps.
 ## [2025-06-27] Removido tour '/admin/produtos/novo' por nao existir rota dedicada. Documentacao e mapeamento ajustados.
 ## [2025-06-27] Inclusão de data-tour em DashboardAnalytics para filtros e botões de exportação. Lint e build falharam (next not found).
+## [2025-08-13] Botão "Iniciar Tour" removido do layout admin. README e inventários atualizados para refletir apenas o tour do Joyride. Lint e build falharam (next not found).

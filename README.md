@@ -5,7 +5,7 @@ O diretório `components/` na raiz concentra elementos reutilizáveis entre Loja
 Para personalizar a interface utilize as orientações de [docs/design-system.md](docs/design-system.md).
 As preferências de fonte, cor, logotipo e confirmação de inscrições ficam nos campos `font`, `cor_primary`, `logo_url` e `confirma_inscricoes` da coleção `clientes_config`.
 Para um passo a passo inicial do sistema consulte [docs/iniciar-tour.md](docs/iniciar-tour.md).
-Coordenadores podem iniciar o tour clicando no ícone de mapa ao lado do sino de notificações no painel admin ou acessando `/iniciar-tour` diretamente.
+O tour pode ser iniciado pelo ícone de ajuda no canto inferior direito ou acessando `/iniciar-tour` diretamente.
 
 ## Diretórios Principais
 
