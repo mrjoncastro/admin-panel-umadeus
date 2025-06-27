@@ -14,11 +14,13 @@ export type Body = {
     | 'confirmacao_inscricao'
     | 'novo_usuario'
     | 'confirmacao_pagamento'
+    | 'promocao_lider'
   userId: string
   paymentLink?: string
   loginLink?: string
   amount?: number
   dueDate?: string
+  campoNome?: string
 }
 
 async function loadTemplate(name: string) {
@@ -37,7 +39,7 @@ export async function POST(req: NextRequest) {
 
   try {
     // 1) parse + validação
-    const { eventType, userId, paymentLink, loginLink, amount, dueDate } =
+    const { eventType, userId, paymentLink, loginLink, amount, dueDate, campoNome } =
       (await req.json()) as Body
     if (!eventType || !userId) {
       return NextResponse.json(
@@ -67,7 +69,8 @@ export async function POST(req: NextRequest) {
     }
 
     // 4) busca usuário
-    const user = await pb.collection('usuarios').getOne(userId)
+    const user = await pb.collection('usuarios').getOne(userId, { expand: 'campo' })
+    const campoNomeFinal = campoNome ?? (user.expand?.campo?.nome as string | undefined)
     if (!user.email) {
       return NextResponse.json({ error: 'Usuário sem e-mail' }, { status: 400 })
     }
@@ -95,6 +98,10 @@ export async function POST(req: NextRequest) {
         subject = '💰 Pagamento Confirmado'
         html = await loadTemplate('confirmacaoPagamento')
         break
+      case 'promocao_lider':
+        subject = '🎉 Você agora é Líder!'
+        html = await loadTemplate('promocaoLider')
+        break
       default:
         return NextResponse.json({ error: 'Evento inválido' }, { status: 400 })
     }
@@ -105,6 +112,7 @@ export async function POST(req: NextRequest) {
       .replace(/{{cor_primary}}/g, cor)
       .replace(/{{tenantNome}}/g, cfg.nome || '')
       .replace(/{{loginLink}}/g, loginLink ?? `${req.nextUrl?.origin}/login`)
+      .replace(/{{campoNome}}/g, campoNomeFinal ?? '')
       .replace(/{{amount}}/g, amount ? String(amount) : '')
       .replace(/{{dueDate}}/g, dueDate ?? '')
 

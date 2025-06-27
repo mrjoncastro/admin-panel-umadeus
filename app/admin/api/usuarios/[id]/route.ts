@@ -62,7 +62,7 @@ export async function PATCH(req: NextRequest) {
   const { pb, user } = auth
 
   try {
-    await fetchUsuario(pb, id, user.cliente as string)
+    const usuarioAtual = await fetchUsuario(pb, id, user.cliente as string)
     const data = await req.json()
     const payload: Record<string, unknown> = {}
 
@@ -101,6 +101,43 @@ export async function PATCH(req: NextRequest) {
     }
 
     const usuario = await pb.collection('usuarios').update(id, payload)
+
+    if (usuarioAtual.role !== 'lider' && payload.role === 'lider') {
+      const base = req.nextUrl?.origin || req.headers.get('origin')
+      if (base) {
+        const atualizado = await pb
+          .collection('usuarios')
+          .getOne(id, { expand: 'campo' })
+        const campoNome = (atualizado.expand?.campo as { nome?: string })?.nome
+        try {
+          await fetch(`${base}/api/email`, {
+            method: 'POST',
+            body: JSON.stringify({
+              eventType: 'promocao_lider',
+              userId: id,
+              campoNome,
+            }),
+          })
+        } catch (err) {
+          console.error('Falha ao enviar email de promoção', err)
+        }
+        try {
+          await fetch(`${base}/api/chats/message/sendWelcome`, {
+            method: 'POST',
+            body: JSON.stringify({
+              eventType: 'promocao_lider',
+              userId: id,
+              campoNome,
+            }),
+          })
+        } catch (err) {
+          console.error('Falha ao enviar mensagem de promoção', err)
+        }
+      } else {
+        console.error('Base URL não encontrada para envio de notificações')
+      }
+    }
+
     return NextResponse.json(usuario, { status: 200 })
   } catch (err: unknown) {
     if ((err as Error).message === 'TENANT_MISMATCH') {
