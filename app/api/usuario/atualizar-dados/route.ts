@@ -39,7 +39,15 @@ export async function PATCH(req: NextRequest) {
     if (campo_id) data.campo = String(campo_id)
 
     const updated = await pbSafe.collection('usuarios').update(user.id, data)
-    return NextResponse.json(updated, { status: 200 })
+    pbSafe.authStore.save(pbSafe.authStore.token, updated)
+    const cookie = pbSafe.authStore.exportToCookie({
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+    })
+    const res = NextResponse.json(updated, { status: 200 })
+    res.headers.append('Set-Cookie', cookie)
+    return res
   } catch (err) {
     console.error('Erro ao atualizar dados:', err)
     return NextResponse.json(
