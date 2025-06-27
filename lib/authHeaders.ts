@@ -1,6 +1,6 @@
 import type PocketBase from 'pocketbase'
 
-export function getAuthHeaders(pb: PocketBase) {
+export function getAuthHeaders(pb: PocketBase): HeadersInit {
   if (pb.authStore.isValid && pb.authStore.token && pb.authStore.model) {
     return {
       Authorization: `Bearer ${pb.authStore.token}`,
