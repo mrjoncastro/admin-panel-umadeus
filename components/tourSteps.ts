@@ -3,146 +3,146 @@ import { Step } from 'react-joyride'
 export const stepsByRoute: Record<string, Step[]> = {
   '/admin/dashboard': [
     {
-      target: '.stats-card',
+      target: '[data-tour="stats-card"]',
       content: 'Aqui você vê as principais métricas do sistema.',
       placement: 'bottom',
     },
     {
-      target: '.nav-inscricoes',
+      target: '[data-tour="nav-inscricoes"]',
       content: 'Acesse e gerencie as inscrições.',
       placement: 'right',
     },
   ],
   '/admin/inscricoes': [
     {
-      target: '.filtro-inscricoes',
+      target: '[data-tour="filtro-inscricoes"]',
       content: 'Use os filtros para encontrar inscrições específicas.',
       placement: 'bottom',
     },
     {
-      target: '.tabela-inscricoes',
+      target: '[data-tour="tabela-inscricoes"]',
       content: 'Lista completa das inscrições realizadas.',
       placement: 'top',
     },
   ],
   '/admin/pedidos': [
     {
-      target: '.filtro-pedidos',
+      target: '[data-tour="filtro-pedidos"]',
       content: 'Filtre por status ou data para localizar pedidos.',
       placement: 'bottom',
     },
     {
-      target: '.tabela-pedidos',
+      target: '[data-tour="tabela-pedidos"]',
       content: 'Acompanhe todos os pagamentos gerados.',
       placement: 'top',
     },
   ],
   '/admin/produtos': [
     {
-      target: '.btn-novo-produto',
+      target: '[data-tour="btn-novo-produto"]',
       content: 'Clique para cadastrar um novo produto.',
       placement: 'left',
     },
     {
-      target: '.tabela-produtos',
+      target: '[data-tour="tabela-produtos"]',
       content: 'Gerencie os itens disponíveis para venda.',
       placement: 'top',
     },
   ],
   '/admin/clientes': [
     {
-      target: '.tabela-clientes',
+      target: '[data-tour="tabela-clientes"]',
       content: 'Visualize o histórico de cada cliente.',
       placement: 'top',
     },
   ],
   '/admin/campos': [
     {
-      target: '.lista-campos',
+      target: '[data-tour="lista-campos"]',
       content: 'Campos de atuação cadastrados.',
       placement: 'top',
     },
     {
-      target: '.btn-novo-campo',
+      target: '[data-tour="btn-novo-campo"]',
       content: 'Adicione um novo campo à lista.',
       placement: 'left',
     },
   ],
   '/admin/configuracoes': [
     {
-      target: '.form-config',
+      target: '[data-tour="form-config"]',
       content: 'Personalize cores, logo e opções do sistema.',
       placement: 'top',
     },
     {
-      target: '.toggle-confirmar-inscricoes',
+      target: '[data-tour="toggle-confirmar-inscricoes"]',
       content: 'Defina se as inscrições devem ser confirmadas manualmente.',
       placement: 'right',
     },
   ],
   '/admin/eventos': [
     {
-      target: '.btn-novo-evento',
+      target: '[data-tour="btn-novo-evento"]',
       content: 'Crie eventos para receber inscrições.',
       placement: 'left',
     },
     {
-      target: '.tabela-eventos',
+      target: '[data-tour="tabela-eventos"]',
       content: 'Lista de eventos cadastrados.',
       placement: 'top',
     },
   ],
   '/admin/financeiro': [
     {
-      target: '.saldo-atual',
+      target: '[data-tour="saldo-atual"]',
       content: 'Veja o saldo disponível para saque.',
       placement: 'bottom',
     },
     {
-      target: '.btn-transferir-saldo',
+      target: '[data-tour="btn-transferir-saldo"]',
       content: 'Inicie a transferência do valor para sua conta.',
       placement: 'left',
     },
   ],
   '/admin/usuarios': [
     {
-      target: '.btn-novo-usuario',
+      target: '[data-tour="btn-novo-usuario"]',
       content: 'Adicione colaboradores ao sistema.',
       placement: 'left',
     },
     {
-      target: '.tabela-usuarios',
+      target: '[data-tour="tabela-usuarios"]',
       content: 'Controle o nível de acesso de cada usuário.',
       placement: 'top',
     },
   ],
   '/admin/posts': [
     {
-      target: '.btn-novo-post',
+      target: '[data-tour="btn-novo-post"]',
       content: 'Publique novidades no blog.',
       placement: 'left',
     },
     {
-      target: '.tabela-posts',
+      target: '[data-tour="tabela-posts"]',
       content: 'Gerencie seus artigos publicados.',
       placement: 'top',
     },
   ],
   '/admin/perfil': [
     {
-      target: '.perfil-dados',
+      target: '[data-tour="perfil-dados"]',
       content: 'Consulte seus dados pessoais e de acesso.',
       placement: 'top',
     },
     {
-      target: '.btn-editar-perfil',
+      target: '[data-tour="btn-editar-perfil"]',
       content: 'Atualize suas informações de usuário.',
       placement: 'left',
     },
   ],
   '/admin/whatsapp': [
     {
-      target: '.onboarding-wizard',
+      target: '[data-tour="onboarding-wizard"]',
       content: 'Configure a integração com o WhatsApp.',
       placement: 'top',
     },

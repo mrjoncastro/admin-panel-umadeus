@@ -8,6 +8,7 @@ Este **Markdown** documenta os roteiros de tours via `react-joyride` para o **Pa
 ## Implementação
 
 - Utilize seletores estáveis (p.ex.: `data-attribute` ou classes específicas).
+- **Padrão atual:** todos os elementos têm `data-tour="..."` para facilitar a localização.
 - Ajuste `placement`, `offset` e, se necessário, `delay` para garantir exibição responsiva.
 - Importe e mapeie cada rota `admin/*` ao seu tour correspondente.
 - Para rotas dinâmicas (ex.: `admin/financeiro/saldo`), registre lógica condicional.

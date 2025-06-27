@@ -97,6 +97,7 @@ export default function UsuariosPage() {
           <Link
             href="/admin/usuarios/novo"
             className="btn btn-primary btn-novo-usuario"
+            data-tour="btn-novo-usuario"
           >
             + Adicionar Novo Usuário
           </Link>
@@ -106,7 +107,7 @@ export default function UsuariosPage() {
       {loading ? (
         <LoadingOverlay show={true} text="Carregando usuários..." />
       ) : (
-        <div className="overflow-auto rounded-lg border bg-white border-gray-300 dark:bg-neutral-950 dark:border-gray-700 shadow-sm tabela-usuarios">
+        <div className="overflow-auto rounded-lg border bg-white border-gray-300 dark:bg-neutral-950 dark:border-gray-700 shadow-sm tabela-usuarios" data-tour="tabela-usuarios">
           <table className="table-base">
             <thead>
               <tr>

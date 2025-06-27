@@ -59,7 +59,7 @@ export default function FinanceiroPage() {
       ) : (
         <>
           <div className="grid gap-6 md:grid-cols-3 mb-8">
-            <div className="card p-6 text-center saldo-atual">
+            <div className="card p-6 text-center saldo-atual" data-tour="saldo-atual">
               <h3 className="text-lg font-semibold mb-2">Saldo Disponível</h3>
               <p className="text-xl font-bold">
                 {typeof saldoDisponivel === 'number'
@@ -77,7 +77,7 @@ export default function FinanceiroPage() {
             </div>
           </div>
           <div className="flex justify-end">
-            <button className="btn btn-primary btn-transferir-saldo">
+            <button className="btn btn-primary btn-transferir-saldo" data-tour="btn-transferir-saldo">
               Transferir Saldo
             </button>
           </div>

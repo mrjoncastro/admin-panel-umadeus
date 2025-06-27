@@ -12,7 +12,7 @@ export default function ListaClientes({
   onEdit,
 }: ListaClientesProps) {
   return (
-    <div className="overflow-auto rounded-lg border bg-white border-gray-300 dark:bg-neutral-950 dark:border-gray-700 shadow-sm tabela-clientes">
+    <div className="overflow-auto rounded-lg border bg-white border-gray-300 dark:bg-neutral-950 dark:border-gray-700 shadow-sm tabela-clientes" data-tour="tabela-clientes">
       <table className="table-base">
         <thead>
           <tr>

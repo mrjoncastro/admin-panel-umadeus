@@ -222,6 +222,7 @@ export default function GerenciarCamposPage() {
           <button
             onClick={handleNovoCampo}
             className="btn btn-primary btn-novo-campo"
+            data-tour="btn-novo-campo"
           >
             + Novo Campo
           </button>
@@ -271,7 +272,7 @@ export default function GerenciarCamposPage() {
         )}
 
         <div className="w-full max-w-2xl mx-auto">
-          <table className="table-base lista-campos">
+          <table className="table-base lista-campos" data-tour="lista-campos">
             <thead>
               <tr>
                 <th className="w-2/3">Nome do Campo</th>

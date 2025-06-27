@@ -153,6 +153,7 @@ export default function AdminProdutosPage() {
         </h2>
         <button
           className="btn btn-primary btn-novo-produto"
+          data-tour="btn-novo-produto"
           onClick={() => setModalOpen(true)}
         >
           + Novo Produto
@@ -191,7 +192,7 @@ export default function AdminProdutosPage() {
         />
       )}
 
-      <div className="overflow-x-auto rounded border shadow-sm bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700 tabela-produtos">
+      <div className="overflow-x-auto rounded border shadow-sm bg-neutral-50 dark:bg-neutral-900 border-neutral-200 dark:border-neutral-700 tabela-produtos" data-tour="tabela-produtos">
         <table className="table-base">
           <thead>
             <tr>

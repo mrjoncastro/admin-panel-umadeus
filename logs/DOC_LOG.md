@@ -462,3 +462,4 @@ executados.
 ## [2025-08-12] MetadataBase dinamico no layout com generateMetadata. Impacto: corrige aviso "metadataBase" em cada tenant. Lint e build executados.
 
 ## [2025-06-27] Criado docs/roteiro-completo.md listando todas as páginas e passos do tour
+## [2025-06-27] Padronizados data attributes `data-tour` nos componentes do admin e atualizado mapeamento em components/tourSteps. Impacto: seletores do tour mais estáveis.

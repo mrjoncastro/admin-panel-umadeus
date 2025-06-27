@@ -65,7 +65,7 @@ export default function PerfilPage() {
         Seu Perfil
       </h2>
 
-      <div className="space-y-2 text-zinc-700 dark:text-zinc-200 perfil-dados">
+      <div className="space-y-2 text-zinc-700 dark:text-zinc-200 perfil-dados" data-tour="perfil-dados">
         <p>
           <span className="font-semibold">Nome:</span> {usuario.nome}
         </p>
@@ -82,6 +82,7 @@ export default function PerfilPage() {
         <button
           onClick={() => setMostrarModal(true)}
           className="bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded-lg hover:opacity-90 btn-editar-perfil"
+          data-tour="btn-editar-perfil"
         >
           Editar Perfil
         </button>
