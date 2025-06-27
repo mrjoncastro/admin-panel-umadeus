@@ -192,6 +192,7 @@ export default function PedidosPage() {
                 <th>Email</th>
                 <th>Tamanho</th>
                 <th>Cor</th>
+                <th>Valor</th>
                 <th>Status</th>
                 <th>Campo</th>
                 <th>Canal</th>
@@ -215,6 +216,12 @@ export default function PedidosPage() {
                   <td>{pedido.email}</td>
                   <td>{pedido.tamanho || '—'}</td>
                   <td>{pedido.cor || '—'}</td>
+                  <td>
+                    {Number(pedido.valor).toLocaleString('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    })}
+                  </td>
                   <td className="capitalize">
                     <span
                       className={`px-2 py-1 rounded text-xs font-semibold ${

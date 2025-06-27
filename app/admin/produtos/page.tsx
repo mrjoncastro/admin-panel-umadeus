@@ -193,7 +193,7 @@ export default function AdminProdutosPage() {
           <thead>
             <tr>
               <th>Nome</th>
-              <th>Preço</th>
+              <th>Preço Bruto</th>
               <th>Status</th>
               <th>Ações</th>
             </tr>
@@ -210,7 +210,7 @@ export default function AdminProdutosPage() {
                 <tr key={produto.id}>
                   <td className="font-medium">{produto.nome}</td>
                   <td>
-                    {Number(produto.preco).toLocaleString('pt-BR', {
+                    {Number(produto.preco_bruto).toLocaleString('pt-BR', {
                       style: 'currency',
                       currency: 'BRL',
                     })}
