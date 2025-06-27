@@ -469,3 +469,4 @@ executados.
 ## [2025-06-27] Removido tour '/admin/produtos/novo' por nao existir rota dedicada. Documentacao e mapeamento ajustados.
 ## [2025-06-27] Inclusão de data-tour em DashboardAnalytics para filtros e botões de exportação. Lint e build falharam (next not found).
 ## [2025-06-27] Seletores do tour atualizados para data-tour em dashboard, exportações CSV/XLSX. Lint e build executados.
+## [2025-06-27] Atualizado Roteiro_admin.md esclarecendo que o cadastro de produtos ocorre por modal sem rota propria.

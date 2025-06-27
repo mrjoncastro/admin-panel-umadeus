@@ -70,6 +70,9 @@ export const adminProdutosTour = [
 { target: '[data-tour="tabela-produtos"]', content: 'Tabela com produtos cadastrados.', placement: 'top' },
 ];
 
+// Observação: o formulário de criação é exibido em um modal na mesma rota
+// `/admin/produtos`, portanto não há tour separado para `/admin/produtos/novo`.
+
 
 // === Clientes ===
 export const adminClientesTour = [
