@@ -20,17 +20,17 @@ export const stepsByRoute: Record<string, Step[]> = {
       placement: 'right',
     },
     {
-      target: '.dashboard-filter',
+      target: '[data-tour="dashboard-filter"]',
       content: 'Filtros e seleção de período para análise temporal.',
       placement: 'bottom',
     },
     {
-      target: '.btn-export-csv',
+      target: '[data-tour="btn-export-csv"]',
       content: 'Botão para exportar dados em CSV.',
       placement: 'bottom',
     },
     {
-      target: '.btn-export-xlsx',
+      target: '[data-tour="btn-export-xlsx"]',
       content: 'Botão para exportar dados em XLSX.',
       placement: 'bottom',
     },

@@ -24,6 +24,15 @@ export function AdminClientTour({ stepsByRoute }: AdminClientTourProps) {
     () => stepsByRoute[pathname] || [],
     [pathname, stepsByRoute],
   )
+  const validSteps = useMemo(() => {
+    return steps.filter((step) => {
+      try {
+        return Boolean(document.querySelector(step.target as string))
+      } catch {
+        return false
+      }
+    })
+  }, [steps])
   const storageKey = `${tenantId ?? 'public'}-${pathname}-tour-completed`
 
   useEffect(() => {
@@ -44,7 +53,7 @@ export function AdminClientTour({ stepsByRoute }: AdminClientTourProps) {
     }
   }
 
-  if (!steps.length) return null
+  if (!validSteps.length) return null
 
   return (
     <>
@@ -52,7 +61,7 @@ export function AdminClientTour({ stepsByRoute }: AdminClientTourProps) {
         getHelpers={(h) => {
           tourRef.current = h
         }}
-        steps={steps}
+        steps={validSteps}
         continuous
         showSkipButton
         scrollToFirstStep
