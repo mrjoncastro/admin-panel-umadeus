@@ -178,3 +178,8 @@
 ## [2025-06-27] Perfil do cliente não enviava gênero e data_nascimento retornava formato inválido. Rota de atualização agora ajusta cookie - dev
 
 ## [2025-06-27] EventForm nao normalizava data_nascimento ao preencher usuario; campo ficava vazio. Valor agora cortado para YYYY-MM-DD - dev
+
+## [2025-06-27] EventForm nao preenchia endereco via CEP; adicionado lookup usando fetchCep - dev
+## [2025-06-27] Perfil do cliente não enviava gênero e data_nascimento retornava formato inválido. Rota de atualização agora ajusta cookie - dev
+
+## [2025-06-27] EventForm nao normalizava data_nascimento ao preencher usuario; campo ficava vazio. Valor agora cortado para YYYY-MM-DD - dev
