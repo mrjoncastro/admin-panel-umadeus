@@ -45,6 +45,11 @@ export async function PATCH(req: NextRequest) {
       telefone: String(data.telefone || '').replace(/\D/g, ''),
       cpf: String(data.cpf || '').replace(/\D/g, ''),
       data_nascimento: String(data.data_nascimento || ''),
+      endereco: String(data.endereco || '').trim(),
+      numero: String(data.numero || '').trim(),
+      cidade: String(data.cidade || '').trim(),
+      estado: String(data.estado || '').trim(),
+      cep: String(data.cep || '').replace(/\D/g, ''),
       ...(data.tour !== undefined ? { tour: Boolean(data.tour) } : {}),
       role: user.role,
     })

@@ -44,6 +44,11 @@ export default function ModalEditarPerfil({
           telefone: String(telefone).trim(),
           cpf: String(cpf).trim(),
           data_nascimento: String(dataNascimento),
+          endereco: String(endereco).trim(),
+          numero: String(numero).trim(),
+          cidade: String(cidade).trim(),
+          estado: String(estado).trim(),
+          cep: String(cep).trim(),
         }),
       })
 

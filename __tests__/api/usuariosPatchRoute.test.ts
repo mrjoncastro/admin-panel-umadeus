@@ -6,7 +6,7 @@ vi.mock('../../lib/apiAuth', () => ({ requireRole: vi.fn() }))
 import { requireRole } from '../../lib/apiAuth'
 
 describe('PATCH /api/usuarios/[id]', () => {
-  it('remove caracteres nao numericos de telefone e cpf', async () => {
+  it('remove caracteres nao numericos e envia endereco completo', async () => {
     const updateMock = vi.fn().mockResolvedValue({})
     ;(
       requireRole as unknown as { mockReturnValue: (v: any) => void }
@@ -21,6 +21,11 @@ describe('PATCH /api/usuarios/[id]', () => {
         nome: 'Nome',
         telefone: '(11) 99999-9999',
         cpf: '529.982.247-25',
+        endereco: ' Rua A ',
+        numero: '123',
+        cidade: 'Sao Paulo',
+        estado: 'SP',
+        cep: '12345-678',
       }),
     })
     ;(req as any).nextUrl = new URL('http://test/api/usuarios/u1')
@@ -32,6 +37,11 @@ describe('PATCH /api/usuarios/[id]', () => {
       telefone: '11999999999',
       cpf: '52998224725',
       data_nascimento: '',
+      endereco: 'Rua A',
+      numero: '123',
+      cidade: 'Sao Paulo',
+      estado: 'SP',
+      cep: '12345678',
       role: 'usuario',
     })
   })

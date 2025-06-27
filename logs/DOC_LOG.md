@@ -453,3 +453,5 @@ executados.
 ## [2025-06-26] Campo preco_bruto adicionado na colecao produtos e documentacao atualizada.
 
 ## [2025-06-26] InscricaoForm preenche campo via searchParams e valor do usuario. Campo permanece selecionado ao navegar entre etapas. Lint e build executados apos instalar dependencias.
+
+## [2025-06-27] Perfil agora atualiza endereco completo ao editar dados do usuario. Lint e build executados.
