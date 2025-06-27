@@ -24,6 +24,12 @@ Este guia apresenta um passo a passo para novos clientes conhecerem as principai
    - **Clientes** – dados de cada tenant e domínio.
    - **Campos** – gerenciamento das áreas de atuação.
    - **Configurações** – logo, cores e opções do sistema.
+   - **Eventos** – criação e acompanhamento de eventos para inscrições.
+   - **Financeiro** – controle de saldo e transferências.
+   - **Usuários** – cadastro de colaboradores e permissões.
+   - **Posts** – gestão de publicações no blog.
+   - **Perfil** – atualização de dados pessoais e senha.
+   - **WhatsApp** – integração guiada para envio de mensagens.
 
 ### Modo de Demonstração
 
