@@ -5,7 +5,14 @@ import createPocketBaseMock from '../mocks/pocketbase'
 
 const getListMock = vi.fn().mockResolvedValue({ items: [] })
 const pb = createPocketBaseMock()
-pb.collection.mockReturnValue({ getList: getListMock })
+pb.collection.mockReturnValue({ 
+  getList: getListMock,
+  create: vi.fn(),
+  update: vi.fn(),
+  getFullList: vi.fn(),
+  getOne: vi.fn(),
+  getFirstListItem: vi.fn(),
+})
 
 vi.mock('../../lib/apiAuth', () => ({ requireRole: vi.fn() }))
 import { requireRole } from '../../lib/apiAuth'
@@ -34,7 +41,7 @@ describe('GET /api/inscricoes', () => {
       5,
       expect.objectContaining({
         filter: 'criado_por = "u1" && status=\'pendente\'',
-        expand: 'evento,campo,pedido',
+        expand: 'evento,campo,pedido,produto',
         sort: '-created',
       }),
     )
@@ -56,7 +63,7 @@ describe('GET /api/inscricoes', () => {
       20,
       expect.objectContaining({
         filter: 'campo = "c1"',
-        expand: 'evento,campo,pedido',
+        expand: 'evento,campo,pedido,produto',
         sort: '-created',
       }),
     )
@@ -82,7 +89,7 @@ describe('GET /api/inscricoes', () => {
       50,
       expect.objectContaining({
         filter: 'cliente = "t1" && status=\'ativo\'',
-        expand: 'evento,campo,pedido',
+        expand: 'evento,campo,pedido,produto',
         sort: '-created',
       }),
     )

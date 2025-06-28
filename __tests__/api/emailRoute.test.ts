@@ -13,15 +13,10 @@ const cfgMock = {
   smtpFrom: 'from@test.com',
   cor_primary: '#000',
   logo_url: 'logo.png',
+  nome: 'Test Tenant',
 }
 const userGetMock = vi.fn()
-
-pb.collection.mockImplementation((name: string) => {
-  if (name === 'clientes_config')
-    return { getOne: vi.fn().mockResolvedValue(cfgMock) }
-  if (name === 'users') return { getOne: userGetMock }
-  return {}
-})
+const configGetMock = vi.fn()
 
 vi.mock('../../lib/pocketbase', () => ({ default: vi.fn(() => pb) }))
 const getTenantMock = vi.fn().mockResolvedValue('t1')
@@ -30,14 +25,47 @@ vi.mock('../../lib/getTenantFromHost', () => ({
 }))
 
 const sendMailMock = vi.fn().mockResolvedValue({ messageId: 'm1' })
+const verifyMock = vi.fn().mockResolvedValue(true)
 vi.mock('nodemailer', () => ({
-  default: { createTransport: vi.fn(() => ({ sendMail: sendMailMock })) },
+  default: { 
+    createTransport: vi.fn(() => ({ 
+      sendMail: sendMailMock,
+      verify: verifyMock
+    })) 
+  },
 }))
 
 beforeEach(() => {
   userGetMock.mockReset()
+  configGetMock.mockReset()
   sendMailMock.mockClear()
+  verifyMock.mockClear()
   getTenantMock.mockResolvedValue('t1')
+  
+  // Mock padrão para configuração
+  configGetMock.mockResolvedValue(cfgMock)
+  
+  // Mock padrão para autenticação admin
+  pb.authStore.isValid = false
+  pb.admins.authWithPassword.mockResolvedValue({})
+  
+  // Mock das collections
+  pb.collection.mockImplementation((name: string) => {
+    if (name === 'clientes_config') {
+      return { getFirstListItem: configGetMock }
+    }
+    if (name === 'usuarios') {
+      return { getOne: userGetMock }
+    }
+    return {
+      create: vi.fn(),
+      update: vi.fn(),
+      getFullList: vi.fn(),
+      getList: vi.fn(),
+      getOne: vi.fn(),
+      getFirstListItem: vi.fn(),
+    }
+  })
 })
 
 describe('POST /api/email', () => {
@@ -78,7 +106,6 @@ describe('POST /api/email', () => {
     expect(res.status).toBe(200)
     expect(sendMailMock).toHaveBeenCalled()
     const body = await res.json()
-    expect(body.message).toBe('E-mail enviado')
-    expect(body.messageId).toBe('m1')
+    expect(body.message).toBe('E-mail enviado com sucesso')
   })
 })

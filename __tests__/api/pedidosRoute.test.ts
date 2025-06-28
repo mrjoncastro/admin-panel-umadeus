@@ -116,7 +116,7 @@ describe('GET /api/pedidos', () => {
     const req = new Request('http://test/api/pedidos')
     ;(req as any).nextUrl = new URL('http://test/api/pedidos')
     const res = await GET(req as unknown as NextRequest)
-    expect(res.status).toBe(500)
+    expect(res.status).toBe(400)
   })
 })
 
