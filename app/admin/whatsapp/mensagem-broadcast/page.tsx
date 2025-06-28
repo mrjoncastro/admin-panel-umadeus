@@ -2,12 +2,11 @@
 
 import React, { useState, useEffect } from 'react'
 import { ArrowLeft, CheckCircle, X } from 'lucide-react'
-import { useAuthGuard } from '../lib/hooks/useAuthGuard'
-import { useToast } from '../lib/context/ToastContext'
-import { Card } from './components/ui/card'
-import { Button } from './components/ui/button'
-import { Input } from './components/ui/input'
-import { Textarea } from './components/ui/textarea'
+import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
+import { useToast } from '@/lib/context/ToastContext'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/atoms/Button'
+import { Textarea } from '@/components/ui/textarea'
 
 type Role = 'lider' | 'usuario' | 'todos'
 interface Contact {
@@ -40,7 +39,11 @@ export default function MensagemBroadcastPage() {
   const toggle = (id: string) => {
     setSelected((prev) => {
       const s = new Set(prev)
-      s.has(id) ? s.delete(id) : s.add(id)
+      if (s.has(id)) {
+        s.delete(id)
+      } else {
+        s.add(id)
+      }
       return s
     })
   }
@@ -65,8 +68,9 @@ export default function MensagemBroadcastPage() {
       showSuccess(`✅ ${data.success} enviados • ❌ ${data.failed} falharam`)
       setMessage('')
       setSelected(new Set())
-    } catch (err: any) {
-      showError(err.message || 'Erro inesperado')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Erro inesperado'
+      showError(message)
     } finally {
       setLoading(false)
     }
@@ -79,8 +83,8 @@ export default function MensagemBroadcastPage() {
       {/* Lista de contatos */}
       <aside className="w-80 bg-card border-r border-border overflow-auto">
         <div className="p-4">
-          <Input
-            as="select"
+          <select
+            className="input-base"
             value={role}
             onChange={(e) => setRole(e.target.value as Role)}
             disabled={loading}
@@ -88,7 +92,7 @@ export default function MensagemBroadcastPage() {
             <option value="todos">Todos</option>
             <option value="lider">Líderes</option>
             <option value="usuario">Usuários</option>
-          </Input>
+          </select>
         </div>
         <ul>
           {contacts.map((c) => {
@@ -121,7 +125,7 @@ export default function MensagemBroadcastPage() {
       {/* Área de envio */}
       <main className="flex-1 flex flex-col">
         <header className="flex items-center justify-between bg-primary p-4 text-white">
-          <Button variant="ghost" size="icon" onClick={() => history.back()}>
+          <Button variant="secondary" className="p-2" onClick={() => history.back()}>
             <ArrowLeft />
           </Button>
           <h1 className="text-lg font-semibold">Enviar Broadcast</h1>
@@ -157,8 +161,8 @@ export default function MensagemBroadcastPage() {
                   >
                     {c.name}
                     <Button
-                      variant="ghost"
-                      size="icon"
+                      variant="secondary"
+                      className="p-1"
                       onClick={() => toggle(id)}
                     >
                       <X className="w-4 h-4" />
