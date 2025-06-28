@@ -16,8 +16,18 @@ const dadosValidos = {
   tamanho: 'M',
 }
 
-const pulseira = { id: 'p1', nome: 'Somente Pulseira', preco: 10, preco_bruto: 10 }
-const kit = { id: 'p2', nome: 'Kit Camisa + Pulseira', preco: 50, preco_bruto: 50 }
+const pulseira = {
+  id: 'p1',
+  nome: 'Somente Pulseira',
+  preco: 10,
+  preco_bruto: 10,
+}
+const kit = {
+  id: 'p2',
+  nome: 'Kit Camisa + Pulseira',
+  preco: 50,
+  preco_bruto: 50,
+}
 
 describe('Fluxo de inscrição e pedido', () => {
   it('cria inscrição válida com status pendente', () => {

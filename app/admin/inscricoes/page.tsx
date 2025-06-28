@@ -232,8 +232,11 @@ export default function ListaInscricoesPage() {
       }
 
       // Identificar o produto associado à inscrição
-      type InscricaoWithProduto = InscricaoRecord & { produto?: string | string[] }
-      const rawProd = inscricao.produto || (inscricao as InscricaoWithProduto).produto
+      type InscricaoWithProduto = InscricaoRecord & {
+        produto?: string | string[]
+      }
+      const rawProd =
+        inscricao.produto || (inscricao as InscricaoWithProduto).produto
       const produtoId = Array.isArray(rawProd) ? rawProd[0] : rawProd
       console.log('[confirmarInscricao] produtoId:', produtoId)
 
