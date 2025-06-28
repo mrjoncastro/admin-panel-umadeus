@@ -72,7 +72,6 @@ export default function ProdutoDetalhe() {
       ? produto.tamanhos.split(',').map((t) => t.trim())
       : ['P', 'M', 'G', 'GG']
 
-
   return (
     <main className="text-platinum font-sans px-4 md:px-16 py-10">
       <Link
