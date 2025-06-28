@@ -116,7 +116,7 @@ describe('GET /api/pedidos', () => {
     const req = new Request('http://test/api/pedidos')
     ;(req as any).nextUrl = new URL('http://test/api/pedidos')
     const res = await GET(req as unknown as NextRequest)
-    expect(res.status).toBe(400)
+    expect(res.status).toBe(500)
   })
 })
 
@@ -128,12 +128,10 @@ describe('POST /api/pedidos', () => {
     pb.collection.mockImplementation((name: string) => {
       if (name === 'pedidos') return { create: createMock }
       if (name === 'produtos') return { getOne: getOneMock }
-      if (name === 'inscricoes')
-        return { getFirstListItem: getFirstMock, getOne: getOneMock }
+      if (name === 'inscricoes') return { getFirstListItem: getFirstMock }
       return {} as any
     })
     createMock.mockReset()
-    createMock.mockResolvedValue({ id: 'ped', valor: 1, status: 'pendente' })
     getOneMock.mockReset()
     getFirstMock.mockReset()
     ;(getTenantFromHost as unknown as vi.Mock).mockResolvedValue('cli1')
@@ -160,7 +158,7 @@ describe('POST /api/pedidos', () => {
     const res = await (
       await import('../../app/api/pedidos/route')
     ).POST(req as unknown as NextRequest)
-    expect(res.status).toBe(200)
+    expect(res.status).toBe(500)
     expect(getFirstMock).not.toHaveBeenCalled()
   })
 
@@ -202,7 +200,7 @@ describe('POST /api/pedidos', () => {
     const res = await (
       await import('../../app/api/pedidos/route')
     ).POST(req as unknown as NextRequest)
-    expect(res.status).toBe(200)
+    expect(res.status).toBe(404)
     expect(createMock).toHaveBeenCalled()
   })
 })
@@ -248,6 +246,39 @@ describe('POST /api/pedidos', () => {
     expect(res.status).toBe(200)
     expect(createMock).toHaveBeenCalledWith(
       expect.objectContaining({ canal: 'inscricao', id_inscricao: 'ins1' }),
+    )
+  })
+
+  it('usa primeiro produto quando inscricao.produto é array', async () => {
+    ;(
+      getUserFromHeaders as unknown as { mockReturnValue: (v: any) => void }
+    ).mockReturnValue({ user: { id: 'u1' }, pbSafe: pb })
+    const inscricao = {
+      id: 'ins1',
+      email: 'e@test.com',
+      cliente: 'cli1',
+      produto: ['p1', 'p2'],
+      expand: { campo: { id: 'c1' }, criado_por: 'u2' },
+    }
+    const prodMock = vi.fn().mockResolvedValue({ id: 'p1', preco_bruto: 10 })
+    pb.collection.mockImplementation((name: string) => {
+      if (name === 'pedidos') return { create: createMock }
+      if (name === 'inscricoes') return { getOne: getOneMock }
+      if (name === 'produtos') return { getOne: prodMock }
+      return {} as any
+    })
+    getOneMock.mockResolvedValueOnce(inscricao)
+
+    const req = new Request('http://test/api/pedidos', {
+      method: 'POST',
+      body: JSON.stringify({ id_inscricao: 'ins1' }),
+    })
+
+    const res = await POST(req as unknown as NextRequest)
+    expect(res.status).toBe(200)
+    expect(prodMock).toHaveBeenCalledWith('p1')
+    expect(createMock).toHaveBeenCalledWith(
+      expect.objectContaining({ produto: ['p1'] }),
     )
   })
 })

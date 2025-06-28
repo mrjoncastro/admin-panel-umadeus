@@ -40,7 +40,7 @@ describe('InscricaoPage', () => {
     expect(heading.textContent).toContain('Evento X')
   })
 
-  it('renderiza formulario de inscricao', async () => {
+  it('exibe total calculado', async () => {
     global.fetch = vi
       .fn()
       .mockResolvedValueOnce({
@@ -57,8 +57,9 @@ describe('InscricaoPage', () => {
       })
 
     render(<InscricaoPage />)
+    const gross = calculateGross(50, 'pix', 1).gross
     expect(
-      await screen.findByRole('button', { name: /avançar/i }),
+      await screen.findByText(`R$ ${gross.toFixed(2).replace('.', ',')}`),
     ).toBeInTheDocument()
   })
 })

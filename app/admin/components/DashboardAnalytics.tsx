@@ -154,10 +154,7 @@ export default function DashboardAnalytics({
       <h3 className="text-lg font-semibold mb-4 dark:text-gray-100">
         Análises Temporais{mostrarFinanceiro ? ' e Financeiras' : ''}
       </h3>
-      <div
-        className="flex flex-wrap gap-4 items-center mb-6"
-        data-tour="dashboard-filter"
-      >
+      <div className="flex flex-wrap gap-4 items-center mb-6">
         <div className="flex items-center gap-2">
           <label className="text-sm dark:text-gray-100" htmlFor="inicio">
             Início:
@@ -182,16 +179,11 @@ export default function DashboardAnalytics({
             className="border rounded px-2 py-1"
           />
         </div>
-        <button
-          onClick={handleExportCSV}
-          data-tour="btn-export-csv"
-          className="btn btn-primary px-3 py-1"
-        >
+        <button onClick={handleExportCSV} className="btn btn-primary px-3 py-1">
           Exportar CSV
         </button>
         <button
           onClick={handleExportXLSX}
-          data-tour="btn-export-xlsx"
           className="btn btn-primary px-3 py-1"
         >
           Exportar XLSX

@@ -8,30 +8,17 @@ import { TenantProvider } from '@/lib/context/TenantContext'
 import { generatePrimaryShades } from '@/utils/primaryShades'
 import { fetchTenantConfig } from '@/lib/fetchTenantConfig'
 import { CartProvider } from '@/lib/context/CartContext'
-import dynamic from 'next/dynamic'
-import { headers } from 'next/headers'
 
-const AdminClientTour = dynamic(
-  () => import('@/components/AdminClientTourLoader'),
-)
-
-export async function generateMetadata() {
-  const headersList = await headers()
-  const host = headersList.get('host') || ''
-  const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https'
-
-  return {
-    metadataBase: new URL(`${protocol}://${host}`),
-    icons: {
-      icon: [
-        { url: '/favicon.ico' },
-        { url: '/icon0.png', sizes: '32x32', type: 'image/png' },
-        { url: '/icon1.png', sizes: '16x16', type: 'image/png' },
-      ],
-      apple: '/apple-icon.png',
-    },
-    manifest: '/manifest.json',
-  }
+export const metadata = {
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/icon0.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icon1.png', sizes: '16x16', type: 'image/png' },
+    ],
+    apple: '/apple-icon.png',
+  },
+  manifest: '/manifest.json',
 }
 
 export default async function RootLayout({
@@ -65,10 +52,7 @@ export default async function RootLayout({
           <ThemeProvider>
             <AuthProvider>
               <CartProvider>
-                <ToastProvider>
-                  <AdminClientTour />
-                  {children}
-                </ToastProvider>
+                <ToastProvider>{children}</ToastProvider>
               </CartProvider>
             </AuthProvider>
           </ThemeProvider>

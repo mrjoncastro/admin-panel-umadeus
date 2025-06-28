@@ -8,7 +8,7 @@ import { useAuthContext } from '@/lib/context/AuthContext'
 import { useToast } from '@/lib/context/ToastContext'
 import { CheckCircle } from 'lucide-react'
 import { hexToPtName } from '@/utils/colorNamePt'
-import { calculateGross, calculateNet, PaymentMethod } from '@/lib/asaasFees'
+import { calculateNet, PaymentMethod } from '@/lib/asaasFees'
 import {
   MAX_ITEM_DESCRIPTION_LENGTH,
   MAX_ITEM_NAME_LENGTH,
@@ -53,20 +53,12 @@ function CheckoutContent() {
 
   // 2. calcula total bruto
   const totalGross = useMemo(
-    () => calculateGross(total, paymentMethod, installments).gross,
-    [total, paymentMethod, installments],
+    () => itens.reduce((sum, i) => sum + i.preco_bruto * i.quantidade, 0),
+    [itens],
   )
 
-  // 3️⃣ calcula o subtotal bruto somando o bruto de cada item
-  const displayTotalGross = useMemo(() => {
-    return itens.reduce(
-      (sum, i) =>
-        sum +
-        calculateGross(i.preco, paymentMethod, installments).gross *
-          i.quantidade,
-      0,
-    )
-  }, [itens, paymentMethod, installments])
+  // 3️⃣ subtotal bruto (igual ao total para este fluxo)
+  const displayTotalGross = totalGross
 
   useEffect(() => {
     if (user) {
@@ -152,11 +144,7 @@ function CheckoutContent() {
               /* ignore */
             }
           }
-          const grossUnit = calculateGross(
-            i.preco,
-            paymentMethod,
-            installments,
-          ).gross
+          const grossUnit = i.preco_bruto
           return {
             name: i.nome.slice(0, MAX_ITEM_NAME_LENGTH),
             description: i.descricao?.slice(0, MAX_ITEM_DESCRIPTION_LENGTH),
@@ -433,10 +421,7 @@ function CheckoutContent() {
                     </div>
                   </div>
                   <div className="font-semibold">
-                    {formatCurrency(
-                      calculateGross(item.preco, paymentMethod, installments)
-                        .gross * item.quantidade,
-                    )}
+                    {formatCurrency(item.preco_bruto * item.quantidade)}
                   </div>
                 </li>
               ))}

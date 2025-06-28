@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useToast } from '@/lib/context/ToastContext'
 import Spinner from '@/components/atoms/Spinner'
@@ -25,6 +25,8 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
   const [status, setStatus] = useState<
     'idle' | 'sending' | 'success' | 'error'
   >('idle')
+  const searchParams = useSearchParams()
+  const [campo, setCampo] = useState(() => searchParams.get('campo') || '')
   const [campos, setCampos] = useState<Campo[]>([])
   const [cep, setCep] = useState(String(user?.cep ?? ''))
   const [endereco, setEndereco] = useState(String(user?.endereco ?? ''))
@@ -66,6 +68,8 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
     setVal('user_number', String(user.numero ?? ''))
     setVal('user_complement', String(user.complemento ?? ''))
     setVal('user_neighborhood', String(user.bairro ?? ''))
+    setVal('campo', String(user.campo ?? ''))
+    setCampo((prev) => (prev ? prev : String(user.campo ?? '')))
   }, [user, firstName, lastName])
 
   useEffect(() => {
@@ -214,7 +218,13 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
 
               <div>
                 <label className="block mb-1 text-sm font-medium">Campo*</label>
-                <select name="campo" required className="input-base">
+                <select
+                  name="campo"
+                  required
+                  className="input-base"
+                  value={campo}
+                  onChange={(e) => setCampo(e.target.value)}
+                >
                   <option value="">Selecione</option>
                   {campos.map((campo) => (
                     <option key={campo.id} value={campo.id}>

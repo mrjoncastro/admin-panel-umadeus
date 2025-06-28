@@ -444,29 +444,12 @@ executados.
 ## [2025-08-09] Botão de logout adicionado à página de perfil do usuário. Lint e build executados.
 
 ## [2025-06-26] Atualizado arquitetura.md removendo referencia a /posts, descrevendo carregamento via PocketBase e adicionada secao do middleware. Impacto: documentacao alinhada ao README e entendimento claro sobre tenant.
+## [2025-06-26] Campo preco_bruto adicionado na colecao produtos e documentacao atualizada.
+
+## [2025-06-26] Campo bairro adicionado em completar cadastro e rota de atualização de usuário. Lint e build executados.
 
 ## [2025-06-26] Componente PasswordField criado e formulários atualizados. Lint e build executados.
-
 ## [2025-06-26] Template novaCobranca removido e guia de email ajustado para refletir a exclusão. Lint e build executados.
+## [2025-06-26] Campo preco_bruto adicionado na colecao produtos e documentacao atualizada.
 
-## [2025-06-26] Implementado tour in-app com React Joyride e passos dinâmicos. Lint e build executados.
-
-## [2025-08-10] Expandido steps do tour para cada rota do Admin, importação dinâmica do AdminClientTour no layout e registro de cor primária via TenantProvider. Lint e build falharam (next not found).
-
-## [2025-06-26] Atualizado Joyride.md com uso de `var(--accent)` e tour adaptado ao Tenant. Lint e build executados.
-
-## [2025-06-26] Import useTenant removido do AdminClientTour. Lint executado com sucesso; build não finalizou por limitações do ambiente.
-
-## [2025-08-11] Removido passo '/app/home' do Joyride.md. Lint e build executados.
-
-## [2025-08-12] MetadataBase dinamico no layout com generateMetadata. Impacto: corrige aviso "metadataBase" em cada tenant. Lint e build executados.
-
-## [2025-06-27] Criado docs/roteiro-completo.md listando todas as páginas e passos do tour
-## [2025-06-27] Padronizados data attributes `data-tour` nos componentes do admin e atualizado mapeamento em components/tourSteps. Impacto: seletores do tour mais estáveis.
-## [2025-06-27] Adicionados data attributes na página de saldo, novo tour '/admin/financeiro/saldo' mapeado e componente DateRangePicker atualizado. Lint e build executados.
-## [2025-06-27] Exportação do tour 'adminFinanceiroSaldoTour' adicionada em docs/Roteiro_admin.md. Impacto: importação simplificada dos roteiros. Lint e build falharam (next not found).
-## [2025-06-27] Atualizado Roteiro_admin.md para usar seletores `[data-tour]` e mapeados todos os passos em components/tourSteps.
-## [2025-06-27] Removido tour '/admin/produtos/novo' por nao existir rota dedicada. Documentacao e mapeamento ajustados.
-## [2025-06-27] Inclusão de data-tour em DashboardAnalytics para filtros e botões de exportação. Lint e build falharam (next not found).
-## [2025-08-13] Botão "Iniciar Tour" removido do layout admin. README e inventários atualizados para refletir apenas o tour do Joyride. Lint e build falharam (next not found).
-## [2025-06-27] Ajustados seletores de tour no dashboard para `[data-tour]` e filtrados passos inválidos no AdminClientTour. Lint e build executados.
+## [2025-06-26] InscricaoForm preenche campo via searchParams e valor do usuario. Campo permanece selecionado ao navegar entre etapas. Lint e build executados apos instalar dependencias.

@@ -50,14 +50,13 @@ export default function AdminPostsPage() {
         <h2 className="text-2xl font-bold">Posts</h2>
         <Link
           href="/admin/posts/novo"
-          className="btn btn-primary bg-red-600 hover:bg-primary-900 btn-novo-post"
-          data-tour="btn-novo-post"
+          className="btn btn-primary bg-red-600 hover:bg-primary-900"
         >
           + Novo Post
         </Link>
       </div>
 
-      <div className="overflow-x-auto rounded border border-gray-200 shadow-sm tabela-posts" data-tour="tabela-posts">
+      <div className="overflow-x-auto rounded border border-gray-200 shadow-sm">
         <table className="table-base">
           <thead>
             <tr>
@@ -87,7 +86,7 @@ export default function AdminPostsPage() {
         </table>
       </div>
 
-      <div className="flex justify-center items-center gap-4 mt-6 pagination" data-tour="pagination">
+      <div className="flex justify-center items-center gap-4 mt-6">
         <button
           className="btn btn-secondary"
           disabled={page === 1}

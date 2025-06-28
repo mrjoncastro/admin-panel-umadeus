@@ -3,12 +3,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useCart } from '@/lib/context/CartContext'
-import { calculateGross } from '@/lib/asaasFees'
 
 export default function CartPreview() {
   const { itens } = useCart()
   const total = itens.reduce(
-    (sum, i) => sum + calculateGross(i.preco, 'pix', 1).gross * i.quantidade,
+    (sum, i) => sum + (i.preco_bruto || 0) * i.quantidade,
     0,
   )
 
@@ -42,7 +41,7 @@ export default function CartPreview() {
             </div>
             <span className="text-xs text-neutral-900 font-semibold">
               R$
-              {(calculateGross(item.preco, 'pix', 1).gross * item.quantidade)
+              {(item.preco_bruto * item.quantidade)
                 .toFixed(2)
                 .replace('.', ',')}
             </span>

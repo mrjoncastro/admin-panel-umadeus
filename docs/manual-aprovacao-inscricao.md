@@ -32,7 +32,7 @@ const pedidoPayload = {
     inscricao.genero ??
     (Array.isArray(produto.generos) ? produto.generos[0] : 'feminino'),
   email: inscricao.email,
-  valor: produto.preco,
+  valor: produto.preco_bruto,
   status: 'pendente',
   campo: campo?.id,
   responsavel: inscricao.criado_por,

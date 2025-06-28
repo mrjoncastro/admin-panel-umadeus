@@ -24,6 +24,7 @@ export default function CompletarCadastroPage() {
   const [cidade, setCidade] = useState('')
   const [estado, setEstado] = useState('')
   const [endereco, setEndereco] = useState('')
+  const [bairro, setBairro] = useState('')
   const [campoId, setCampoId] = useState('')
   const [campos, setCampos] = useState<Campo[]>([])
   const [loading, setLoading] = useState(false)
@@ -46,6 +47,7 @@ export default function CompletarCadastroPage() {
         return
       }
       setEndereco(data.street)
+      setBairro(data.neighborhood)
       setCidade(data.city)
       setEstado(data.state)
     }
@@ -68,6 +70,7 @@ export default function CompletarCadastroPage() {
           cidade,
           estado,
           endereco,
+          bairro,
           campo_id: campoId,
         }),
       })
@@ -157,6 +160,14 @@ export default function CompletarCadastroPage() {
                 id="cadastro-endereco"
                 value={endereco}
                 onChange={(e) => setEndereco(e.target.value)}
+                required
+              />
+            </FormField>
+            <FormField label="Bairro" htmlFor="cadastro-bairro">
+              <TextField
+                id="cadastro-bairro"
+                value={bairro}
+                onChange={(e) => setBairro(e.target.value)}
                 required
               />
             </FormField>

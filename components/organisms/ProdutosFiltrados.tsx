@@ -4,7 +4,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import useInscricoes from '@/lib/hooks/useInscricoes'
-import { calculateGross } from '@/lib/asaasFees'
 
 const faixasPreco = [
   { label: 'Até R$ 50', min: 0, max: 50 },
@@ -16,6 +15,7 @@ interface Produto {
   id: string
   nome: string
   preco: number
+  preco_bruto: number
   imagens: string[]
   slug: string
   requer_inscricao_aprovada?: boolean
@@ -118,7 +118,7 @@ export default function ProdutosFiltrados({
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
           {filtrados.map((p) => {
-            const precoBruto = calculateGross(p.preco, 'pix', 1).gross
+            const precoBruto = p.preco_bruto
             const precisaAprov =
               p.requer_inscricao_aprovada && !possuiAprovacao(p)
             return (

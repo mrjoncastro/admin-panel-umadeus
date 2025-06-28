@@ -106,7 +106,8 @@ Para cada coleção, utilize a seguinte estrutura:
 | `nome`                      | String                    | Sim         | Nome do produto                                  |
 | `user_org`                  | Relation → `usuarios`     | Sim         | Organizador ou dono do produto                   |
 | `quantidade`                | Number                    | Sim         | Estoque disponível (unidades)                    |
-| `preco`                     | Number                    | Sim         | Preço unitário (em centavos ou decimal)          |
+| `preco`                     | Number                    | Sim         | Preço líquido (base)                             |
+| `preco_bruto`               | Number                    | Sim         | Valor final ao cliente (Pix à vista)            |
 | `ativo`                     | Boolean                   | Sim         | Se o produto está ativo/visível no front         |
 | `tamanhos`                  | Array                     | Não         | Tamanhos disponíveis: `PP`, `P`, `M`, `G`, `GG`  |
 | `imagens`                   | Array                     | Não         | Galeria de imagens                               |
@@ -159,6 +160,7 @@ Para cada coleção, utilize a seguinte estrutura:
   "user_org": "abc123usuario",
   "quantidade": 50,
   "preco": 4990,
+  "preco_bruto": 5350,
   "ativo": true,
   "tamanhos": ["P", "M", "G"],
   "slug": "camiseta-basica-preta",

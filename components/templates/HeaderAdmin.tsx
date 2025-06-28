@@ -107,10 +107,6 @@ export default function Header() {
                 href === '/admin/produtos'
                   ? pathname.startsWith('/admin/produtos')
                   : pathname === href
-              const extraTourAttr =
-                href === '/admin/inscricoes'
-                  ? { 'data-tour': 'nav-inscricoes' }
-                  : {}
               return (
                 <Link
                   key={href}
@@ -120,7 +116,6 @@ export default function Header() {
                       ? 'bg-[var(--background)] text-[var(--foreground)]'
                       : ''
                   }`}
-                  {...extraTourAttr}
                 >
                   {label}
                 </Link>
@@ -394,10 +389,6 @@ export default function Header() {
                     href === '/admin/produtos'
                       ? pathname.startsWith('/admin/produtos')
                       : pathname === href
-                  const extraTourAttr =
-                    href === '/admin/inscricoes'
-                      ? { 'data-tour': 'nav-inscricoes' }
-                      : {}
                   return (
                     <Link
                       key={href}
@@ -408,7 +399,6 @@ export default function Header() {
                           ? 'bg-[var(--background)] text-[var(--foreground)]'
                           : ''
                       }`}
-                      {...extraTourAttr}
                     >
                       {label}
                     </Link>

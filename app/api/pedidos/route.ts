@@ -277,7 +277,8 @@ export async function POST(req: NextRequest) {
     const campoId = inscricao.expand?.campo?.id
     const responsavelId = inscricao.expand?.criado_por
     let produtoRecord: Produto | undefined
-    const produtoIdInscricao = inscricao.produto
+    const rawProd = inscricao.produto
+    const produtoIdInscricao = Array.isArray(rawProd) ? rawProd[0] : rawProd
 
     try {
       if (produtoIdInscricao) {
@@ -307,7 +308,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const valor = produtoRecord?.preco ?? 0
+    const valor = produtoRecord?.preco_bruto ?? 0
     console.log('[PEDIDOS][POST] Valor final do pedido:', valor)
 
     const payload = {

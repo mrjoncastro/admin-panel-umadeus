@@ -15,6 +15,7 @@ export async function PATCH(req: NextRequest) {
       cidade,
       estado,
       endereco,
+      bairro,
       campo_id,
       genero,
     } = await req.json()
@@ -26,6 +27,7 @@ export async function PATCH(req: NextRequest) {
       cidade: String(cidade || ''),
       estado: String(estado || ''),
       endereco: String(endereco || ''),
+      bairro: String(bairro || ''),
       genero: String(genero || ''),
     }
     if (campo_id) data.campo = String(campo_id)

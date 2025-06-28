@@ -90,6 +90,7 @@ export type Produto = {
   id: string
   nome: string
   preco: number
+  preco_bruto: number
   imagem?: string
   imagens?: string[]
   tamanhos?: string[] | string

@@ -18,8 +18,8 @@ const userGetMock = vi.fn()
 
 pb.collection.mockImplementation((name: string) => {
   if (name === 'clientes_config')
-    return { getFirstListItem: vi.fn().mockResolvedValue(cfgMock) }
-  if (name === 'usuarios') return { getOne: userGetMock }
+    return { getOne: vi.fn().mockResolvedValue(cfgMock) }
+  if (name === 'users') return { getOne: userGetMock }
   return {}
 })
 
@@ -31,12 +31,7 @@ vi.mock('../../lib/getTenantFromHost', () => ({
 
 const sendMailMock = vi.fn().mockResolvedValue({ messageId: 'm1' })
 vi.mock('nodemailer', () => ({
-  default: {
-    createTransport: vi.fn(() => ({
-      sendMail: sendMailMock,
-      verify: vi.fn().mockResolvedValue(true),
-    })),
-  },
+  default: { createTransport: vi.fn(() => ({ sendMail: sendMailMock })) },
 }))
 
 beforeEach(() => {

@@ -232,9 +232,9 @@ export default function ListaInscricoesPage() {
       }
 
       // Identificar o produto associado à inscrição
-      type InscricaoWithProduto = InscricaoRecord & { produto?: string }
-      const produtoId =
-        inscricao.produto || (inscricao as InscricaoWithProduto).produto
+      type InscricaoWithProduto = InscricaoRecord & { produto?: string | string[] }
+      const rawProd = inscricao.produto || (inscricao as InscricaoWithProduto).produto
+      const produtoId = Array.isArray(rawProd) ? rawProd[0] : rawProd
       console.log('[confirmarInscricao] produtoId:', produtoId)
 
       // Extrair produto do expand (array ou objeto)
@@ -528,7 +528,7 @@ export default function ListaInscricoesPage() {
       )}
 
       {/* Filtros */}
-      <div className="flex flex-wrap gap-4 mb-6 filtro-inscricoes" data-tour="filtro-inscricoes">
+      <div className="flex flex-wrap gap-4 mb-6">
         <input
           type="text"
           placeholder={placeholderBusca}
@@ -561,7 +561,7 @@ export default function ListaInscricoesPage() {
           Nenhuma inscrição encontrada.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm tabela-inscricoes" data-tour="tabela-inscricoes">
+        <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
           <table className="table-base">
             <thead>
               <tr>

@@ -7,8 +7,6 @@ export interface DateRangePickerProps {
   end: string
   onChange: (range: { start: string; end: string }) => void
   className?: string
-  dataTourStart?: string
-  dataTourEnd?: string
 }
 
 export default function DateRangePicker({
@@ -16,8 +14,6 @@ export default function DateRangePicker({
   end,
   onChange,
   className = '',
-  dataTourStart,
-  dataTourEnd,
 }: DateRangePickerProps) {
   const handleStart = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange({ start: e.target.value, end })
@@ -33,17 +29,10 @@ export default function DateRangePicker({
           type="date"
           value={start}
           onChange={handleStart}
-          data-tour={dataTourStart}
         />
       </FormField>
       <FormField label="Fim" htmlFor="end" className="flex-1">
-        <TextField
-          id="end"
-          type="date"
-          value={end}
-          onChange={handleEnd}
-          data-tour={dataTourEnd}
-        />
+        <TextField id="end" type="date" value={end} onChange={handleEnd} />
       </FormField>
     </div>
   )

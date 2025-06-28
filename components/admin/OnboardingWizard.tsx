@@ -81,7 +81,7 @@ function WizardSteps() {
   }
 
   return (
-    <div className="wizard-container max-w-sm mx-auto onboarding-wizard" data-tour="onboarding-wizard">
+    <div className="wizard-container max-w-sm mx-auto">
       <LoadingOverlay show={loading} text="Carregando..." />
       <OnboardingProgress />
       {step === 1 && <StepSelectClient />}
