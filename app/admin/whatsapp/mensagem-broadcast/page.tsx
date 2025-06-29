@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { ArrowLeft, CheckCircle, X, Clock, StopCircle } from 'lucide-react'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import { useToast } from '@/lib/context/ToastContext'
@@ -72,8 +73,8 @@ export default function MensagemBroadcastPage() {
             clearInterval(interval)
             setProgressInterval(null)
           }
-        } catch (error) {
-          console.error('Erro ao buscar progresso:', error)
+        } catch (err) {
+          console.error('Erro ao buscar progresso:', err)
         }
       }, 2000) // Atualiza a cada 2 segundos
       
@@ -85,7 +86,7 @@ export default function MensagemBroadcastPage() {
         clearInterval(progressInterval)
       }
     }
-  }, [broadcastProgress?.isProcessing, showSuccess])
+  }, [broadcastProgress?.isProcessing, showSuccess, progressInterval])
 
   const toggle = (id: string) => {
     setSelected((prev) => {
@@ -159,7 +160,7 @@ export default function MensagemBroadcastPage() {
       } else {
         showError(data.errors?.join(', ') || 'Erro ao parar broadcast')
       }
-    } catch (error) {
+    } catch {
       showError('Erro ao parar broadcast')
     }
   }
@@ -306,7 +307,6 @@ export default function MensagemBroadcastPage() {
 
               <Button
                 variant="secondary"
-                size="sm"
                 onClick={stopBroadcast}
                 className="text-red-600 hover:text-red-700"
               >
@@ -328,7 +328,7 @@ export default function MensagemBroadcastPage() {
           <ul className="mt-2 list-disc list-inside text-sm text-muted">
             <li>Clique nos contatos para selecioná-los.</li>
             <li>Escreva sua mensagem abaixo.</li>
-            <li>Clique em "Enviar" para iniciar o broadcast.</li>
+            <li>Clique em &quot;Enviar&quot; para iniciar o broadcast.</li>
             <li>As mensagens serão enviadas de forma natural (com delays).</li>
             <li>Você pode acompanhar o progresso em tempo real.</li>
           </ul>
