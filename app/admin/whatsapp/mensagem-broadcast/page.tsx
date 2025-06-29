@@ -1,12 +1,12 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { ArrowLeft, CheckCircle, X, Clock, Send, StopCircle } from 'lucide-react'
+import { ArrowLeft, CheckCircle, X, Clock, StopCircle } from 'lucide-react'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
-import { useToast } from '@/lib/hooks/useToast'
+import { useToast } from '@/lib/context/ToastContext'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/atoms/Button'
-import { Textarea } from '@/components/atoms/Textarea'
+import { Textarea } from '@/components/ui/textarea'
 
 type Role = 'todos' | 'lider' | 'usuario'
 interface Contact {
