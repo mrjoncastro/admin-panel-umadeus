@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { ArrowLeft, CheckCircle, X, Clock, Send, StopCircle } from 'lucide-react'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import { useToast } from '@/lib/hooks/useToast'
@@ -249,10 +250,11 @@ export default function MensagemBroadcastPage() {
                   ${broadcastProgress?.isProcessing ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <div className="flex items-center gap-3">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={c.avatarUrl || '/avatar-placeholder.png'}
                     alt={c.name}
+                    width={32}
+                    height={32}
                     className="w-8 h-8 rounded-full"
                   />
                   <div>
