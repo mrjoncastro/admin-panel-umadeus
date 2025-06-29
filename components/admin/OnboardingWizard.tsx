@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { useAuthContext } from '@/lib/context/AuthContext'
@@ -34,7 +34,7 @@ function WizardSteps() {
     setLoading,
   } = useOnboarding()
   const { tenantId } = useAuthContext()
-  const pb = createPocketBase()
+  const pb = useMemo(() => createPocketBase(), [])
   const [qrUrl, setQrUrl] = useState('')
   const [qrBase, setQrBase] = useState('')
 

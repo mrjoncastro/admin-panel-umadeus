@@ -99,8 +99,9 @@ export default function Header() {
         const check = (await res.json()) as {
           instanceName: string
           apiKey: string
+          sessionStatus: string
         } | null
-        if (check) {
+        if (check && check.sessionStatus === 'connected') {
           await fetch('/api/chats/whatsapp/instance/connectionState', {
             method: 'POST',
             headers: { ...headers, 'Content-Type': 'application/json' },
