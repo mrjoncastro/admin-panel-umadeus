@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       )
     )
     const validos = usuarios.filter(
-      (u): u is UserModel => !!u && u.cliente === user.cliente && u.telefone
+      (u): u is UserModel => !!u && u.cliente === user.cliente && !!u.telefone
     )
 
     const waCfg = await pb
@@ -63,8 +63,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ errors: [result.message] }, { status: 400 })
     }
 
-    const queue: any = (broadcastManager as any)['queues'].get(user.cliente)
-    const cfg = queue ? queue['config'] : { delayBetweenMessages: 3000, delayBetweenBatches: 15000, batchSize: 3 }
+    const manager = broadcastManager as unknown as {
+      queues: Map<string, { config: { delayBetweenMessages?: number; delayBetweenBatches?: number; batchSize?: number } }>
+    }
+    const queue = manager.queues.get(user.cliente)
+    const cfg = queue?.config ?? {
+      delayBetweenMessages: 3000,
+      delayBetweenBatches: 15000,
+      batchSize: 3
+    }
     const estimatedSeconds =
       messages.length *
       ((cfg.delayBetweenMessages ?? 3000) + (cfg.delayBetweenBatches ?? 15000) / (cfg.batchSize ?? 3)) /

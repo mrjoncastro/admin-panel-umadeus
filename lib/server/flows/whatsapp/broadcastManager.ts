@@ -1,4 +1,4 @@
-import { BroadcastQueue, type BroadcastConfig, type BroadcastMessage } from './broadcastQueue'
+import { BroadcastQueue, type BroadcastMessage } from './broadcastQueue'
 import createPocketBase from '@/lib/pocketbase'
 
 interface TenantBroadcastConfig {
@@ -195,7 +195,7 @@ class BroadcastManager {
    * Obtém estatísticas de todos os tenants
    */
   getAllStats() {
-    const stats: Record<string, any> = {}
+    const stats: Record<string, ReturnType<BroadcastQueue['getStats']> & { config: TenantBroadcastConfig }> = {}
     
     for (const [tenantId, queue] of this.queues) {
       stats[tenantId] = {
