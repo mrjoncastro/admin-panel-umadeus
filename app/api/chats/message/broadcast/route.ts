@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { sendTextMessage } from '@/lib/server/chats'
 import { requireRole } from '@/lib/apiAuth'
 import type { UserModel } from '@/types/UserModel'
+import { broadcastManager } from '@/lib/server/flows/whatsapp/broadcastManager'
 
 export async function POST(req: NextRequest) {
-  // Permissão: apenas coordenador
   const auth = requireRole(req, 'coordenador')
   if ('error' in auth) {
     return NextResponse.json({ errors: [auth.error] }, { status: auth.status })
@@ -16,63 +15,99 @@ export async function POST(req: NextRequest) {
       message: string
       recipients: string[]
     }
+
     if (!message || !Array.isArray(recipients) || recipients.length === 0) {
       return NextResponse.json({ errors: ['Parâmetros faltando'] }, { status: 400 })
     }
 
-    // Busca dados dos destinatários
     const usuarios = await Promise.all(
       recipients.map((id) =>
         pb
           .collection('usuarios')
           .getOne<UserModel>(id)
-          .catch(() => null),
-      ),
+          .catch(() => null)
+      )
     )
     const validos = usuarios.filter(
-      (u): u is UserModel => !!u && u.cliente === user.cliente && u.telefone,
+      (u): u is UserModel => !!u && u.cliente === user.cliente && u.telefone
     )
 
-    // Busca instanceId/apiKey do cliente
     const waCfg = await pb
       .collection('whatsapp_clientes')
       .getFirstListItem(`cliente='${user.cliente}' && sessionStatus='connected'`)
       .catch(() => null)
     if (!waCfg) {
-      return NextResponse.json({ errors: ['Configuração WhatsApp não encontrada ou não conectada'] }, { status: 400 })
+      return NextResponse.json(
+        { errors: ['Configuração WhatsApp não encontrada ou não conectada'] },
+        { status: 400 }
+      )
     }
 
-    let success = 0
-    let failed = 0
-    const errors: string[] = []
+    if (validos.length === 0) {
+      return NextResponse.json(
+        { errors: ['Nenhum destinatário válido'] },
+        { status: 400 }
+      )
+    }
 
-    // Envia mensagem para cada usuário
-    await Promise.all(
-        validos.map(async (u) => {
-        try {
-          const telefone = u.telefone?.replace(/\D/g, '')
-          if (!telefone || telefone.length < 10) {
-            failed++
-            errors.push(`Telefone inválido: ${u.nome}`)
-            return
-          }
-          await sendTextMessage({
-            instanceName: waCfg.instanceName,
-            apiKey: waCfg.apiKey,
-            to: telefone,
-            message,
-          })
-          success++
-        } catch (err: unknown) {
-          failed++
-          errors.push(`${u.nome}: ${(err as Error).message}`)
-        }
-      })
-    )
+    const messages = validos.map((u) => ({
+      to: u.telefone!.replace(/\D/g, ''),
+      message,
+      instanceName: waCfg.instanceName,
+      apiKey: waCfg.apiKey
+    }))
 
-    return NextResponse.json({ success, failed, errors }, { status: 200 })
+    const result = await broadcastManager.addMessages(user.cliente, messages)
+
+    if (!result.success) {
+      return NextResponse.json({ errors: [result.message] }, { status: 400 })
+    }
+
+    const queue: any = (broadcastManager as any)['queues'].get(user.cliente)
+    const cfg = queue ? queue['config'] : { delayBetweenMessages: 3000, delayBetweenBatches: 15000, batchSize: 3 }
+    const estimatedSeconds =
+      messages.length *
+      ((cfg.delayBetweenMessages ?? 3000) + (cfg.delayBetweenBatches ?? 15000) / (cfg.batchSize ?? 3)) /
+      1000
+    const estimatedTime = Math.ceil(estimatedSeconds / 60)
+
+    return NextResponse.json({
+      success: true,
+      message: result.message,
+      queueId: result.queueId,
+      totalMessages: messages.length,
+      estimatedTime
+    })
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Erro desconhecido'
     return NextResponse.json({ errors: [msg] }, { status: 500 })
   }
-} 
+}
+
+export async function GET(req: NextRequest) {
+  const auth = requireRole(req, 'coordenador')
+  if ('error' in auth) {
+    return NextResponse.json({ errors: [auth.error] }, { status: auth.status })
+  }
+  const { user } = auth
+  const stats = broadcastManager.getProgress(user.cliente)
+  if (!stats) {
+    return NextResponse.json({ message: 'Nenhum broadcast em andamento' })
+  }
+
+  const progress = { ...stats.progress, isProcessing: stats.isProcessing }
+  return NextResponse.json({ message: 'Progresso do broadcast', progress })
+}
+
+export async function DELETE(req: NextRequest) {
+  const auth = requireRole(req, 'coordenador')
+  if ('error' in auth) {
+    return NextResponse.json({ errors: [auth.error] }, { status: auth.status })
+  }
+  const { user } = auth
+  const stopped = broadcastManager.stopQueue(user.cliente)
+  if (stopped) {
+    return NextResponse.json({ message: 'Broadcast parado com sucesso' })
+  }
+  return NextResponse.json({ errors: ['Nenhum broadcast em andamento'] }, { status: 400 })
+}

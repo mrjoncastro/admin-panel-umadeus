@@ -459,3 +459,5 @@ executados.
 ## [2025-06-28] Atualizada documentação da rota de broadcast para aceitar lista de recipients.
 
 ## [2025-08-10] Rota /api/chats/contacts criada e documentada. Lint e build executados.
+
+## [2025-06-29] Documentada nova resposta da rota de broadcast e API atualizada para usar filas. Testes ajustados.
