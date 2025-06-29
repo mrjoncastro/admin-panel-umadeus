@@ -40,7 +40,11 @@ export default function MensagemBroadcastPage() {
   const toggle = (id: string) => {
     setSelected((prev) => {
       const s = new Set(prev)
-      s.has(id) ? s.delete(id) : s.add(id)
+      if (s.has(id)) {
+        s.delete(id)
+      } else {
+        s.add(id)
+      }
       return s
     })
   }
@@ -65,8 +69,9 @@ export default function MensagemBroadcastPage() {
       showSuccess(`✅ ${data.success} enviados • ❌ ${data.failed} falharam`)
       setMessage('')
       setSelected(new Set())
-    } catch (err: any) {
-      showError(err.message || 'Erro inesperado')
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Erro inesperado'
+      showError(msg)
     } finally {
       setLoading(false)
     }
@@ -101,6 +106,7 @@ export default function MensagemBroadcastPage() {
                   hover:bg-hover ${sel ? 'bg-primary/10' : ''}`}
               >
                 <div className="flex items-center gap-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={c.avatarUrl || '/avatar-placeholder.png'}
                     alt={c.name}

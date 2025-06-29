@@ -1,15 +1,15 @@
 ## [POST] /api/chats/message/broadcast
 
-Permite envio de mensagens manuais via WhatsApp para líderes, usuários ou todos.
+Permite envio de mensagens manuais via WhatsApp para contatos selecionados.
 
-- Campo `role`: define o público-alvo (`lider`, `usuario` ou `todos`)
 - Campo `message`: texto a ser enviado
+- Campo `recipients`: array com os IDs dos destinatários
 
 ### Exemplo de payload
 ```json
 {
   "message": "Olá, esta é uma mensagem de teste!",
-  "role": "lider"
+  "recipients": ["id1", "id2"]
 }
 ```
 
@@ -23,5 +23,5 @@ Permite envio de mensagens manuais via WhatsApp para líderes, usuários ou todo
 ```
 
 - Apenas coordenadores podem acessar esta rota.
-- O envio é feito para todos os usuários do público selecionado com telefone válido.
+- O envio é feito apenas para os usuários selecionados com telefone válido.
 - O campo `errors` lista falhas individuais de envio. 

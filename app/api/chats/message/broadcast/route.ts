@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
 import { sendTextMessage } from '@/lib/server/chats'
 import { requireRole } from '@/lib/apiAuth'
+import type { UserModel } from '@/types/UserModel'
 
 export async function POST(req: NextRequest) {
   // Permissão: apenas coordenador
@@ -12,26 +12,26 @@ export async function POST(req: NextRequest) {
   const { pb, user } = auth
 
   try {
-    const { message, role } = (await req.json()) as {
+    const { message, recipients } = (await req.json()) as {
       message: string
-      role: 'lider' | 'usuario' | 'todos'
+      recipients: string[]
     }
-    if (!message || !role) {
+    if (!message || !Array.isArray(recipients) || recipients.length === 0) {
       return NextResponse.json({ errors: ['Parâmetros faltando'] }, { status: 400 })
     }
 
-    // Busca usuários conforme role
-    let filter = `cliente='${user.cliente}' && telefone != '' && telefone != null`
-    if (role === 'lider' || role === 'usuario') {
-      filter += ` && role='${role}'`
-    } else if (role === 'todos') {
-      filter += ` && (role='lider' || role='usuario')`
-    }
-
-    const usuarios = await pb.collection('usuarios').getFullList({
-      filter,
-      sort: 'nome',
-    })
+    // Busca dados dos destinatários
+    const usuarios = await Promise.all(
+      recipients.map((id) =>
+        pb
+          .collection('usuarios')
+          .getOne<UserModel>(id)
+          .catch(() => null),
+      ),
+    )
+    const validos = usuarios.filter(
+      (u): u is UserModel => !!u && u.cliente === user.cliente && u.telefone,
+    )
 
     // Busca instanceId/apiKey do cliente
     const waCfg = await pb
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
 
     // Envia mensagem para cada usuário
     await Promise.all(
-      usuarios.map(async (u: any) => {
+      validos.map(async (u) => {
         try {
           const telefone = u.telefone?.replace(/\D/g, '')
           if (!telefone || telefone.length < 10) {

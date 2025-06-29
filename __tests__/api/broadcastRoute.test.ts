@@ -31,7 +31,7 @@ describe('POST /api/chats/message/broadcast', () => {
     
     pbMock = {
       collection: vi.fn().mockReturnThis(),
-      getFullList: vi.fn(),
+      getOne: vi.fn(),
       getFirstListItem: vi.fn(),
     }
     mockRequireRole.mockImplementation(() => ({ pb: pbMock, user: { cliente: 'tenant1' } }))
@@ -55,11 +55,16 @@ describe('POST /api/chats/message/broadcast', () => {
   })
 
   it('deve retornar erro se não houver configuração WhatsApp', async () => {
-    pbMock.getFullList.mockResolvedValueOnce([{ id: '1', nome: 'Fulano', telefone: '11999999999', role: 'lider' }])
+    pbMock.getOne.mockResolvedValueOnce({
+      id: '1',
+      nome: 'Fulano',
+      telefone: '11999999999',
+      cliente: 'tenant1',
+    })
     pbMock.getFirstListItem.mockRejectedValueOnce(new Error('not found'))
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({ message: 'Oi', role: 'lider' }),
+      body: JSON.stringify({ message: 'Oi', recipients: ['1'] }),
     })
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(400)
@@ -67,16 +72,15 @@ describe('POST /api/chats/message/broadcast', () => {
     expect(data.errors[0]).toMatch(/Configuração WhatsApp/)
   })
 
-  it('deve enviar mensagem para todos os usuários do público', async () => {
-    pbMock.getFullList.mockResolvedValueOnce([
-      { id: '1', nome: 'Fulano', telefone: '11999999999', role: 'lider' },
-      { id: '2', nome: 'Beltrano', telefone: '11988888888', role: 'lider' },
-    ])
+  it('deve enviar mensagem para os destinatários informados', async () => {
+    pbMock.getOne
+      .mockResolvedValueOnce({ id: '1', nome: 'Fulano', telefone: '11999999999', cliente: 'tenant1' })
+      .mockResolvedValueOnce({ id: '2', nome: 'Beltrano', telefone: '11988888888', cliente: 'tenant1' })
     pbMock.getFirstListItem.mockResolvedValueOnce({ instanceName: 'inst1', apiKey: 'key1' })
     mockSendTextMessage.mockResolvedValue({ ok: true })
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({ message: 'Oi', role: 'lider' }),
+      body: JSON.stringify({ message: 'Oi', recipients: ['1', '2'] }),
     })
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(200)
@@ -88,17 +92,16 @@ describe('POST /api/chats/message/broadcast', () => {
   })
 
   it('deve contabilizar falhas individuais', async () => {
-    pbMock.getFullList.mockResolvedValueOnce([
-      { id: '1', nome: 'Fulano', telefone: '11999999999', role: 'lider' },
-      { id: '2', nome: 'Beltrano', telefone: '11988888888', role: 'lider' },
-    ])
+    pbMock.getOne
+      .mockResolvedValueOnce({ id: '1', nome: 'Fulano', telefone: '11999999999', cliente: 'tenant1' })
+      .mockResolvedValueOnce({ id: '2', nome: 'Beltrano', telefone: '11988888888', cliente: 'tenant1' })
     pbMock.getFirstListItem.mockResolvedValueOnce({ instanceName: 'inst1', apiKey: 'key1' })
     mockSendTextMessage
       .mockResolvedValueOnce({ ok: true })
       .mockRejectedValueOnce(new Error('Falha ao enviar'))
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({ message: 'Oi', role: 'lider' }),
+      body: JSON.stringify({ message: 'Oi', recipients: ['1', '2'] }),
     })
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(200)
@@ -109,35 +112,17 @@ describe('POST /api/chats/message/broadcast', () => {
     expect(data.errors[0]).toMatch(/Beltrano/)
   })
 
-  it('deve filtrar usuários por role corretamente', async () => {
-    pbMock.getFullList.mockResolvedValueOnce([
-      { id: '1', nome: 'Fulano', telefone: '11999999999', role: 'lider' },
-      { id: '2', nome: 'Beltrano', telefone: '11988888888', role: 'usuario' },
-    ])
-    pbMock.getFirstListItem.mockResolvedValueOnce({ instanceName: 'inst1', apiKey: 'key1' })
-    mockSendTextMessage.mockResolvedValue({ ok: true })
-    const req = new Request('http://test', {
-      method: 'POST',
-      body: JSON.stringify({ message: 'Oi', role: 'todos' }),
-    })
-    const res = await POST(req as unknown as NextRequest)
-    expect(res.status).toBe(200)
-    const data = await res.json()
-    expect(data.success).toBe(2)
-    expect(mockSendTextMessage).toHaveBeenCalledTimes(2)
-  })
 
   it('deve ignorar usuários sem telefone válido', async () => {
-    pbMock.getFullList.mockResolvedValueOnce([
-      { id: '1', nome: 'Fulano', telefone: '11999999999', role: 'lider' },
-      { id: '2', nome: 'Beltrano', telefone: '', role: 'lider' },
-      { id: '3', nome: 'Ciclano', telefone: null, role: 'lider' },
-    ])
+    pbMock.getOne
+      .mockResolvedValueOnce({ id: '1', nome: 'Fulano', telefone: '11999999999', cliente: 'tenant1' })
+      .mockResolvedValueOnce({ id: '2', nome: 'Beltrano', telefone: '', cliente: 'tenant1' })
+      .mockResolvedValueOnce({ id: '3', nome: 'Ciclano', telefone: null, cliente: 'tenant1' })
     pbMock.getFirstListItem.mockResolvedValueOnce({ instanceName: 'inst1', apiKey: 'key1' })
     mockSendTextMessage.mockResolvedValue({ ok: true })
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({ message: 'Oi', role: 'lider' }),
+      body: JSON.stringify({ message: 'Oi', recipients: ['1', '2', '3'] }),
     })
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(200)
