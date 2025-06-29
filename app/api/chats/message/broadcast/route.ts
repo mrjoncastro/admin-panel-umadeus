@@ -49,93 +49,36 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ errors: ['Configuração WhatsApp não encontrada ou não conectada'] }, { status: 400 })
     }
 
-    // Prepara mensagens para a fila
-    const messages = validos.map(u => {
-      const telefone = u.telefone?.replace(/\D/g, '')
-      if (!telefone || telefone.length < 10) {
-        throw new Error(`Telefone inválido: ${u.nome}`)
-      }
-      
-      return {
-        to: telefone,
-        message,
-        instanceName: waCfg.instanceName,
-        apiKey: waCfg.apiKey
-      }
-    })
+    let success = 0
+    let failed = 0
+    const errors: string[] = []
 
-    // Adiciona mensagens à fila do tenant
-    const result = await broadcastManager.addMessages(user.cliente, messages)
+    // Envia mensagem para cada usuário
+    await Promise.all(
+        validos.map(async (u) => {
+        try {
+          const telefone = u.telefone?.replace(/\D/g, '')
+          if (!telefone || telefone.length < 10) {
+            failed++
+            errors.push(`Telefone inválido: ${u.nome}`)
+            return
+          }
+          await sendTextMessage({
+            instanceName: waCfg.instanceName,
+            apiKey: waCfg.apiKey,
+            to: telefone,
+            message,
+          })
+          success++
+        } catch (err: unknown) {
+          failed++
+          errors.push(`${u.nome}: ${(err as Error).message}`)
+        }
+      })
+    )
 
-    if (!result.success) {
-      return NextResponse.json({ errors: [result.message] }, { status: 400 })
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: result.message,
-      queueId: result.queueId,
-      totalMessages: messages.length,
-      estimatedTime: Math.ceil(messages.length * 3 / 60) // Estimativa em minutos
-    }, { status: 200 })
-
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : 'Erro desconhecido'
-    return NextResponse.json({ errors: [msg] }, { status: 500 })
-  }
-}
-
-// Nova rota para obter progresso do broadcast
-export async function GET(req: NextRequest) {
-  const auth = requireRole(req, 'coordenador')
-  if ('error' in auth) {
-    return NextResponse.json({ errors: [auth.error] }, { status: auth.status })
-  }
-  const { user } = auth
-
-  try {
-    const progress = broadcastManager.getProgress(user.cliente)
-    
-    if (!progress) {
-      return NextResponse.json({ 
-        message: 'Nenhum broadcast em andamento',
-        progress: null 
-      }, { status: 200 })
-    }
-
-    return NextResponse.json({
-      message: 'Progresso do broadcast',
-      progress
-    }, { status: 200 })
-
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : 'Erro desconhecido'
-    return NextResponse.json({ errors: [msg] }, { status: 500 })
-  }
-}
-
-// Rota para parar broadcast
-export async function DELETE(req: NextRequest) {
-  const auth = requireRole(req, 'coordenador')
-  if ('error' in auth) {
-    return NextResponse.json({ errors: [auth.error] }, { status: auth.status })
-  }
-  const { user } = auth
-
-  try {
-    const stopped = broadcastManager.stopQueue(user.cliente)
-    
-    if (stopped) {
-      return NextResponse.json({
-        message: 'Broadcast parado com sucesso'
-      }, { status: 200 })
-    } else {
-      return NextResponse.json({
-        message: 'Nenhum broadcast em andamento para parar'
-      }, { status: 200 })
-    }
-
-  } catch (err) {
+    return NextResponse.json({ success, failed, errors }, { status: 200 })
+  } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Erro desconhecido'
     return NextResponse.json({ errors: [msg] }, { status: 500 })
   }
