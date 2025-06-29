@@ -31,7 +31,8 @@ export async function POST(req: NextRequest) {
       ),
     )
     const validos = usuarios.filter(
-      (u): u is UserModel => !!u && u.cliente === user.cliente && !!u.telefone,
+      (u): u is UserModel =>
+        !!u && u.cliente === user.cliente && !!u.telefone,
     )
 
     if (validos.length === 0) {
