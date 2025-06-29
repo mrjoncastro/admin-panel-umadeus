@@ -457,3 +457,5 @@ executados.
 
 ## [2025-06-26] InscricaoForm preenche campo via searchParams e valor do usuario. Campo permanece selecionado ao navegar entre etapas. Lint e build executados apos instalar dependencias.
 ## [2025-06-28] Atualizada documentação da rota de broadcast para aceitar lista de recipients.
+
+## [2025-08-10] Rota /api/chats/contacts criada e documentada. Lint e build executados.
