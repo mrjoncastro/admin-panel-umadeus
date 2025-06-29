@@ -173,3 +173,4 @@
 ## [2025-07-31] Build falhava por "usuario" possivelmente nulo em /loja/api/inscricoes. Adicionada checagem final para garantir usuario antes de prosseguir - dev - 209f481
 ## [2025-06-28] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
 ## [2025-06-28] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
+## [2025-06-29] Erro ao listar eventos: ClientResponseError 404: The requested resource wasn't found. - development

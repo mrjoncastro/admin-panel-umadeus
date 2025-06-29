@@ -7,6 +7,7 @@ import { useToast } from '@/lib/context/ToastContext'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/atoms/Button'
 import { Textarea } from '@/components/ui/textarea'
+import Image from 'next/image'
 
 type Role = 'todos' | 'lider' | 'usuario'
 interface Contact {
