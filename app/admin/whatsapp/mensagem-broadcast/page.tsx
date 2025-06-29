@@ -78,6 +78,61 @@ export default function MensagemBroadcastPage() {
 
   if (!authChecked) return null
 
+  let bodyContent: React.ReactNode
+  if (!selected.size) {
+    bodyContent = (
+      <div className="flex-1 flex items-center justify-center text-muted">
+        Selecione ao menos um contato
+      </div>
+    )
+  } else {
+    bodyContent = (
+      <form
+        onSubmit={submit}
+        className="mt-auto bg-card border-t border-border"
+      >
+        <div className="flex flex-wrap gap-2 p-4">
+          {Array.from(selected).map((id) => {
+            const c = contacts.find((x) => x.id === id)!
+            return (
+              <span
+                key={id}
+                className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full"
+              >
+                {c.name}
+                <Button
+                  variant="secondary"
+                  className="p-1"
+                  onClick={() => toggle(id)}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </span>
+            )
+          })}
+        </div>
+
+        <div className="flex items-center p-4">
+          <Textarea
+            placeholder="Digite sua mensagem..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            disabled={loading}
+            rows={1}
+            className="flex-1"
+          />
+          <Button
+            type="submit"
+            disabled={loading || !message.trim()}
+            className="ml-2"
+          >
+            {loading ? 'Enviando...' : 'Enviar'}
+          </Button>
+        </div>
+      </form>
+    )
+  }
+
   return (
     <div className="flex h-screen bg-background">
       {/* Lista de contatos */}
@@ -143,55 +198,7 @@ export default function MensagemBroadcastPage() {
           </ul>
         </Card>
 
-        {!selected.size ? (
-          <div className="flex-1 flex items-center justify-center text-muted">
-            Selecione ao menos um contato
-          </div>
-        ) : (
-          <form
-            onSubmit={submit}
-            className="mt-auto bg-card border-t border-border"
-          >
-            <div className="flex flex-wrap gap-2 p-4">
-              {Array.from(selected).map((id) => {
-                const c = contacts.find((x) => x.id === id)!
-                return (
-                  <span
-                    key={id}
-                    className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full"
-                  >
-                    {c.name}
-                    <Button
-                      variant="secondary"
-                      className="p-1"
-                      onClick={() => toggle(id)}
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </span>
-                )
-              })}
-            </div>
-
-            <div className="flex items-center p-4">
-              <Textarea
-                placeholder="Digite sua mensagem..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                disabled={loading}
-                rows={1}
-                className="flex-1"
-              />
-              <Button
-                type="submit"
-                disabled={loading || !message.trim()}
-                className="ml-2"
-              >
-                {loading ? 'Enviando...' : 'Enviar'}
-              </Button>
-            </div>
-          </form>
-        )}
+        {bodyContent}
       </main>
     </div>
   )

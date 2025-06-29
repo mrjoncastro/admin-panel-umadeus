@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
 
     // Envia mensagem para cada usuário
     await Promise.all(
-      validos.map(async (u) => {
+        validos.map(async (u) => {
         try {
           const telefone = u.telefone?.replace(/\D/g, '')
           if (!telefone || telefone.length < 10) {
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
             message,
           })
           success++
-        } catch (err) {
+        } catch (err: unknown) {
           failed++
           errors.push(`${u.nome}: ${(err as Error).message}`)
         }
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
     )
 
     return NextResponse.json({ success, failed, errors }, { status: 200 })
-  } catch (err) {
+  } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Erro desconhecido'
     return NextResponse.json({ errors: [msg] }, { status: 500 })
   }
