@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { sendTextMessage } from '@/lib/server/chats'
 import { requireRole } from '@/lib/apiAuth'
-import { broadcastManager } from '@/lib/server/flows/whatsapp/broadcastManager'
 import type { UserModel } from '@/types/UserModel'
 
 export async function POST(req: NextRequest) {
@@ -16,7 +16,6 @@ export async function POST(req: NextRequest) {
       message: string
       recipients: string[]
     }
-    
     if (!message || !Array.isArray(recipients) || recipients.length === 0) {
       return NextResponse.json({ errors: ['Parâmetros faltando'] }, { status: 400 })
     }
@@ -31,20 +30,14 @@ export async function POST(req: NextRequest) {
       ),
     )
     const validos = usuarios.filter(
-      (u): u is UserModel =>
-        !!u && u.cliente === user.cliente && !!u.telefone,
+      (u): u is UserModel => !!u && u.cliente === user.cliente && u.telefone,
     )
-
-    if (validos.length === 0) {
-      return NextResponse.json({ errors: ['Nenhum destinatário válido encontrado'] }, { status: 400 })
-    }
 
     // Busca instanceId/apiKey do cliente
     const waCfg = await pb
       .collection('whatsapp_clientes')
       .getFirstListItem(`cliente='${user.cliente}' && sessionStatus='connected'`)
       .catch(() => null)
-    
     if (!waCfg) {
       return NextResponse.json({ errors: ['Configuração WhatsApp não encontrada ou não conectada'] }, { status: 400 })
     }
