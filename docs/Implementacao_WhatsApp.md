@@ -16,15 +16,17 @@ Permite envio de mensagens manuais via WhatsApp para contatos selecionados.
 ### Resposta
 ```json
 {
-  "success": 12,
-  "failed": 3,
-  "errors": ["Telefone inválido: Fulano", "Ciclano: Erro ao enviar texto: ..."]
+  "success": true,
+  "message": "3 mensagens adicionadas à fila",
+  "queueId": "tenant123",
+  "totalMessages": 3,
+  "estimatedTime": 2
 }
 ```
 
 - Apenas coordenadores podem acessar esta rota.
-- O envio é feito apenas para os usuários selecionados com telefone válido.
-- O campo `errors` lista falhas individuais de envio. 
+- As mensagens são adicionadas a uma fila com envio controlado por lotes.
+- O campo `estimatedTime` indica a duração aproximada (minutos) para concluir o broadcast.
 
 ## [GET] /api/chats/contacts?role=lider|usuario|todos
 

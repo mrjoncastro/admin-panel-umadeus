@@ -1,21 +1,25 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NextRequest } from 'next/server'
 
-// Mock das dependências
-const mockSendTextMessage = vi.fn()
 const mockRequireRole = vi.fn()
+const mockAddMessages = vi.fn()
+const mockGetProgress = vi.fn()
 
 vi.mock('@/lib/pocketbase', () => ({
   __esModule: true,
-  default: vi.fn(() => ({})),
-}))
-
-vi.mock('@/lib/server/chats', () => ({
-  sendTextMessage: mockSendTextMessage,
+  default: vi.fn(() => ({}))
 }))
 
 vi.mock('@/lib/apiAuth', () => ({
-  requireRole: mockRequireRole,
+  requireRole: mockRequireRole
+}))
+
+vi.mock('@/lib/server/flows/whatsapp/broadcastManager', () => ({
+  broadcastManager: {
+    addMessages: mockAddMessages,
+    getProgress: mockGetProgress,
+    stopQueue: vi.fn()
+  }
 }))
 
 describe('POST /api/chats/message/broadcast', () => {
@@ -24,112 +28,59 @@ describe('POST /api/chats/message/broadcast', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks()
-    
-    // Importa a função POST dinamicamente
     const module = await import('../../app/api/chats/message/broadcast/route')
     POST = module.POST
-    
+
     pbMock = {
       collection: vi.fn().mockReturnThis(),
       getOne: vi.fn(),
-      getFirstListItem: vi.fn(),
+      getFirstListItem: vi.fn()
     }
-    mockRequireRole.mockImplementation(() => ({ pb: pbMock, user: { cliente: 'tenant1' } }))
+
+    mockRequireRole.mockReturnValue({ pb: pbMock, user: { cliente: 'tenant1' } })
+    mockGetProgress.mockReturnValue(null)
   })
 
-  it('deve negar acesso se não for coordenador', async () => {
+  it('nega acesso quando usuario nao eh coordenador', async () => {
     mockRequireRole.mockReturnValueOnce({ error: 'Acesso negado', status: 403 })
     const req = new Request('http://test', { method: 'POST', body: '{}' })
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(403)
-    const data = await res.json()
-    expect(data.errors[0]).toMatch(/Acesso negado/)
   })
 
-  it('deve retornar erro se payload faltar campos', async () => {
+  it('retorna erro quando payload invalido', async () => {
     const req = new Request('http://test', { method: 'POST', body: '{}' })
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(400)
-    const data = await res.json()
-    expect(data.errors[0]).toMatch(/Parâmetros faltando/)
   })
 
-  it('deve retornar erro se não houver configuração WhatsApp', async () => {
-    pbMock.getOne.mockResolvedValueOnce({
-      id: '1',
-      nome: 'Fulano',
-      telefone: '11999999999',
-      cliente: 'tenant1',
-    })
+  it('retorna erro quando config whatsapp ausente', async () => {
+    pbMock.getOne.mockResolvedValueOnce({ id: '1', telefone: '1199', cliente: 'tenant1' })
     pbMock.getFirstListItem.mockRejectedValueOnce(new Error('not found'))
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({ message: 'Oi', recipients: ['1'] }),
+      body: JSON.stringify({ message: 'Oi', recipients: ['1'] })
     })
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(400)
-    const data = await res.json()
-    expect(data.errors[0]).toMatch(/Configuração WhatsApp/)
   })
 
-  it('deve enviar mensagem para os destinatários informados', async () => {
+  it('adiciona mensagens na fila', async () => {
     pbMock.getOne
-      .mockResolvedValueOnce({ id: '1', nome: 'Fulano', telefone: '11999999999', cliente: 'tenant1' })
-      .mockResolvedValueOnce({ id: '2', nome: 'Beltrano', telefone: '11988888888', cliente: 'tenant1' })
-    pbMock.getFirstListItem.mockResolvedValueOnce({ instanceName: 'inst1', apiKey: 'key1' })
-    mockSendTextMessage.mockResolvedValue({ ok: true })
+      .mockResolvedValueOnce({ id: '1', nome: 'A', telefone: '11999999999', cliente: 'tenant1' })
+      .mockResolvedValueOnce({ id: '2', nome: 'B', telefone: '11988888888', cliente: 'tenant1' })
+    pbMock.getFirstListItem.mockResolvedValueOnce({ instanceName: 'inst', apiKey: 'k' })
+    mockAddMessages.mockResolvedValue({ success: true, message: 'ok', queueId: 'tenant1' })
+
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({ message: 'Oi', recipients: ['1', '2'] }),
+      body: JSON.stringify({ message: 'Oi', recipients: ['1', '2'] })
     })
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(200)
-    const data = await res.json()
-    expect(data.success).toBe(2)
-    expect(data.failed).toBe(0)
-    expect(data.errors.length).toBe(0)
-    expect(mockSendTextMessage).toHaveBeenCalledTimes(2)
+    const body = await res.json()
+    expect(body.success).toBe(true)
+    expect(body.queueId).toBe('tenant1')
+    expect(mockAddMessages).toHaveBeenCalled()
   })
-
-  it('deve contabilizar falhas individuais', async () => {
-    pbMock.getOne
-      .mockResolvedValueOnce({ id: '1', nome: 'Fulano', telefone: '11999999999', cliente: 'tenant1' })
-      .mockResolvedValueOnce({ id: '2', nome: 'Beltrano', telefone: '11988888888', cliente: 'tenant1' })
-    pbMock.getFirstListItem.mockResolvedValueOnce({ instanceName: 'inst1', apiKey: 'key1' })
-    mockSendTextMessage
-      .mockResolvedValueOnce({ ok: true })
-      .mockRejectedValueOnce(new Error('Falha ao enviar'))
-    const req = new Request('http://test', {
-      method: 'POST',
-      body: JSON.stringify({ message: 'Oi', recipients: ['1', '2'] }),
-    })
-    const res = await POST(req as unknown as NextRequest)
-    expect(res.status).toBe(200)
-    const data = await res.json()
-    expect(data.success).toBe(1)
-    expect(data.failed).toBe(1)
-    expect(data.errors.length).toBe(1)
-    expect(data.errors[0]).toMatch(/Beltrano/)
-  })
-
-
-  it('deve ignorar usuários sem telefone válido', async () => {
-    pbMock.getOne
-      .mockResolvedValueOnce({ id: '1', nome: 'Fulano', telefone: '11999999999', cliente: 'tenant1' })
-      .mockResolvedValueOnce({ id: '2', nome: 'Beltrano', telefone: '', cliente: 'tenant1' })
-      .mockResolvedValueOnce({ id: '3', nome: 'Ciclano', telefone: null, cliente: 'tenant1' })
-    pbMock.getFirstListItem.mockResolvedValueOnce({ instanceName: 'inst1', apiKey: 'key1' })
-    mockSendTextMessage.mockResolvedValue({ ok: true })
-    const req = new Request('http://test', {
-      method: 'POST',
-      body: JSON.stringify({ message: 'Oi', recipients: ['1', '2', '3'] }),
-    })
-    const res = await POST(req as unknown as NextRequest)
-    expect(res.status).toBe(200)
-    const data = await res.json()
-    expect(data.success).toBe(1)
-    expect(data.failed).toBe(2)
-    expect(data.errors.length).toBe(2)
-    expect(mockSendTextMessage).toHaveBeenCalledTimes(1)
-  })
-}) 
+})
