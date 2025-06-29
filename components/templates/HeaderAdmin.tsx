@@ -1,9 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useState } from 'react'
+import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 import Image from 'next/image'
 import {
   Menu,
@@ -37,7 +39,7 @@ const getNavLinks = (role?: string) => {
 
 export default function Header() {
   const pathname = usePathname()
-  const { isLoggedIn, user, logout } = useAuthContext()
+  const { isLoggedIn, user, tenantId, logout } = useAuthContext()
   const [menuAberto, setMenuAberto] = useState(false)
   const [perfilAberto, setPerfilAberto] = useState(false)
   const [financeiroAberto, setFinanceiroAberto] = useState(false)
@@ -70,6 +72,52 @@ export default function Header() {
           { href: '/admin/campos', label: 'Campos' },
           { href: '/admin/whatsapp', label: 'WhatsApp' },
         ]
+
+  const router = useRouter()
+
+  const handleWhatsappClick = async (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+  ) => {
+    e.preventDefault()
+    setGerenciamentoAberto(false)
+    setMenuAberto(false)
+    if (!tenantId) {
+      router.push('/admin/whatsapp')
+      return
+    }
+    try {
+      const pb = createPocketBase()
+      const headers = {
+        ...getAuthHeaders(pb),
+        'x-tenant-id': tenantId,
+      }
+      const res = await fetch('/api/chats/whatsapp/instance/check', {
+        headers,
+        credentials: 'include',
+      })
+      if (res.ok) {
+        const check = (await res.json()) as {
+          instanceName: string
+          apiKey: string
+        } | null
+        if (check) {
+          await fetch('/api/chats/whatsapp/instance/connectionState', {
+            method: 'POST',
+            headers: { ...headers, 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              instanceName: check.instanceName,
+              apiKey: check.apiKey,
+            }),
+          })
+        }
+      }
+    } catch {
+      /* ignore */
+    } finally {
+      router.push('/admin/whatsapp')
+    }
+  }
 
   const handleLogout = async () => {
     await logout()
@@ -225,13 +273,23 @@ export default function Header() {
                       >
                         {gerenciamentoLinks.map(({ href, label }) => (
                           <li key={href}>
-                            <Link
-                              href={href}
-                              onClick={() => setGerenciamentoAberto(false)}
-                              className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
-                            >
-                              {label}
-                            </Link>
+                            {href === '/admin/whatsapp' ? (
+                              <Link
+                                href={href}
+                                onClick={handleWhatsappClick}
+                                className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                              >
+                                {label}
+                              </Link>
+                            ) : (
+                              <Link
+                                href={href}
+                                onClick={() => setGerenciamentoAberto(false)}
+                                className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                              >
+                                {label}
+                              </Link>
+                            )}
                           </li>
                         ))}
                       </motion.ul>
@@ -441,14 +499,25 @@ export default function Header() {
                   Administração
                 </span>
                 {gerenciamentoLinks.map(({ href, label }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    onClick={() => setMenuAberto(false)}
-                    className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] rounded-md"
-                  >
-                    {label}
-                  </Link>
+                  href === '/admin/whatsapp' ? (
+                    <Link
+                      key={href}
+                      href={href}
+                      onClick={handleWhatsappClick}
+                      className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] rounded-md"
+                    >
+                      {label}
+                    </Link>
+                  ) : (
+                    <Link
+                      key={href}
+                      href={href}
+                      onClick={() => setMenuAberto(false)}
+                      className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] rounded-md"
+                    >
+                      {label}
+                    </Link>
+                  )
                 ))}
               </>
             )}
