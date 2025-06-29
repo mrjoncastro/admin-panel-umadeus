@@ -69,8 +69,8 @@ export default function MensagemBroadcastPage() {
       setMessage('')
       setSelected(new Set())
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Erro inesperado'
-      showError(message)
+      const msg = err instanceof Error ? err.message : 'Erro inesperado'
+      showError(msg)
     } finally {
       setLoading(false)
     }
@@ -105,6 +105,7 @@ export default function MensagemBroadcastPage() {
                   hover:bg-hover ${sel ? 'bg-primary/10' : ''}`}
               >
                 <div className="flex items-center gap-3">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={c.avatarUrl || '/avatar-placeholder.png'}
                     alt={c.name}
