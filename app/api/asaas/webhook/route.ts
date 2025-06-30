@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
   if (accountId) {
     try {
       const c = await pb
-        .collection('clientes_config')
+        .collection('m24_clientes')
         .getFirstListItem(`asaas_account_id = "${accountId}"`)
       clienteApiKey = c?.asaas_api_key ?? null
       clienteId = c?.id ?? null
