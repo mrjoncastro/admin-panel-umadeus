@@ -36,6 +36,7 @@ interface ClienteRecord extends RecordModel {
 interface PedidoRecord extends RecordModel {
   id_pagamento?: string
   responsavel?: string
+  id_inscricao?: string
 }
 
 interface InscricaoRecord extends RecordModel {
@@ -67,14 +68,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const eventType = body.event
 
   // Ignora se não for evento de pagamento
-  if (!paymentId) {
-    return NextResponse.json({ status: 'Ignorado' })
-  }
+  if (!paymentId) return NextResponse.json({ status: 'Ignorado' })
   if (eventType !== 'PAYMENT_RECEIVED' && eventType !== 'PAYMENT_CONFIRMED') {
     return NextResponse.json({ status: 'Ignorado' })
   }
 
-  // Busca credenciais do cliente na coleção "m24_clientes"
+  // Busca credenciais do cliente
   let clienteApiKey: string | null = null
   let clienteNome: string | undefined
   let usuarioId: string | undefined
@@ -89,11 +88,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       clienteApiKey = cliente.asaas_api_key ?? null
       clienteNome = cliente.nome
     } catch {
-      // não encontrado por accountId
+      /* não encontrado */
     }
   }
 
-  // Extrai informações de referência externa
+  // Extrai referencia externa
   if (payment.externalReference) {
     const match = /cliente_([^_]+)_usuario_([^_]+)(?:_inscricao_([^_]+))?/.exec(
       payment.externalReference,
@@ -101,9 +100,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (match) {
       usuarioId = match[2]
       inscricaoId = match[3]
-      // Se ainda não temos apiKey, tentamos buscar pelo clienteId extraído
       const clienteId = match[1]
-      if (!clienteApiKey && clienteId) {
+      if (!clienteApiKey) {
         try {
           const fallback = await pb
             .collection('m24_clientes')
@@ -111,7 +109,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           clienteApiKey = fallback.asaas_api_key ?? null
           clienteNome = fallback.nome
         } catch {
-          // ignore
+          /* ignore */
         }
       }
     }
@@ -127,12 +125,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     )
   }
 
-  // Prepara cabeçalho de autenticação para Asaas
   const keyHeader = clienteApiKey.startsWith('$')
     ? clienteApiKey
     : `$${clienteApiKey}`
 
-  // Puxa dados do pagamento na API do Asaas
+  // Puxa dados do pagamento
   const paymentRes = await fetch(`${baseUrl}/payments/${paymentId}`, {
     headers: {
       Accept: 'application/json',
@@ -140,7 +137,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       'User-Agent': clienteNome ?? 'qg3',
     },
   })
-
   if (!paymentRes.ok) {
     const details = await paymentRes.text()
     return NextResponse.json(
@@ -156,18 +152,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     customer: asaasCustomerId,
     value,
   } = paymentData
-
-  // Ignora se não confirmado ou recebido
   if (status !== 'RECEIVED' && status !== 'CONFIRMED') {
     return NextResponse.json({ status: 'Aguardando pagamento' })
   }
 
-  // Extrai inscricaoId se não obtido antes
   if (externalReference && !inscricaoId) {
-    const match = /cliente_[^_]+_usuario_[^_]+_inscricao_([^_]+)/.exec(
+    const m = /cliente_[^_]+_usuario_[^_]+_inscricao_([^_]+)/.exec(
       externalReference,
     )
-    inscricaoId = match?.[1]
+    inscricaoId = m?.[1]
   }
 
   // Busca registro de pedido no PocketBase
@@ -184,10 +177,25 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       .collection('pedidos')
       .getFirstListItem<PedidoRecord>(filtro)
   } catch {
-    // ainda sem registro
+    /* nenhum registro inicial */
   }
 
-  // Se não encontrou, tenta via CPF do customer no Asaas
+  // Fallback: buscar pelo ID de inscrição quando não encontrado
+  if (!pedidoRecord && inscricaoId) {
+    try {
+      const lista = await pb
+        .collection('pedidos')
+        .getList<PedidoRecord>(1, 1, {
+          filter: `id_inscricao = "${inscricaoId}"`,
+          sort: '-created',
+        })
+      if (lista.items.length > 0) pedidoRecord = lista.items[0]
+    } catch {
+      /* ignore */
+    }
+  }
+
+  // Fallback CPF
   if (!pedidoRecord && asaasCustomerId) {
     try {
       const clienteRes = await fetch(
@@ -204,13 +212,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
               filter: `cpf = "${cpf}"`,
               sort: '-created',
             })
-          if (pedidos.items.length > 0) {
-            pedidoRecord = pedidos.items[0]
-          }
+          if (pedidos.items.length > 0) pedidoRecord = pedidos.items[0]
         }
       }
     } catch {
-      // ignore
+      /* ignore */
     }
   }
 
@@ -226,18 +232,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   // Atualiza status do pedido e inscrição
   try {
-    await pb.collection('pedidos').update(pedidoRecord.id, {
-      status: 'pago',
-      id_pagamento: paymentId,
-    })
+    await pb
+      .collection('pedidos')
+      .update(pedidoRecord.id, { status: 'pago', id_pagamento: paymentId })
+    if (inscricaoId)
+      await pb
+        .collection('inscricoes')
+        .update<InscricaoRecord>(inscricaoId, { status: 'confirmado' })
 
-    if (inscricaoId) {
-      await pb.collection('inscricoes').update<InscricaoRecord>(inscricaoId, {
-        status: 'confirmado',
-      })
-    }
-
-    // Identifica responsável para notificações
     let responsavelId = pedidoRecord.responsavel
     if (!responsavelId && inscricaoId) {
       try {
@@ -246,17 +248,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           .getOne<InscricaoRecord>(inscricaoId)
         responsavelId = inscricao.criado_por
       } catch {
-        // ignore
+        /* ignore */
       }
     }
 
     if (responsavelId) {
       const base = req.nextUrl.origin || req.headers.get('origin')
-      if (!base) {
-        throw new Error('Base URL não encontrada para notificações')
-      }
-
-      // Envia e-mail de confirmação
+      if (!base) throw new Error('Base URL não encontrada')
       await fetch(`${base}/api/email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -266,8 +264,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           amount: value,
         }),
       })
-
-      // Envia WhatsApp de confirmação
       await fetch(`${base}/api/chats/message/sendWelcome`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
