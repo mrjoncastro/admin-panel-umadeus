@@ -21,6 +21,7 @@ import {
 interface Produto {
   id: string
   nome: string
+  preco?: number
   preco_bruto?: number
   imagemUrl?: string
   tamanhos?: string[]
@@ -29,6 +30,7 @@ interface Produto {
 interface ProdutoApi {
   id: string
   nome: string
+  preco?: number
   preco_bruto?: number
   imagemUrl?: string
   imagem_url?: string
@@ -108,7 +110,8 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
           lista = (eventoData.expand.produtos as ProdutoApi[]).map((p) => ({
             id: p.id,
             nome: p.nome,
-            preco: p.preco_bruto,
+            preco: p.preco,
+            preco_bruto: p.preco_bruto,
             imagemUrl: p.imagemUrl || p.imagem_url,
             tamanhos: Array.isArray(p.tamanhos)
               ? p.tamanhos
@@ -122,6 +125,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
             {
               id: p.id,
               nome: p.nome,
+              preco: p.preco,
               preco_bruto: p.preco_bruto,
               imagemUrl: p.imagemUrl || p.imagem_url,
               tamanhos: Array.isArray(p.tamanhos)
