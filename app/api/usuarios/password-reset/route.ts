@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Host não configurado' }, { status: 500 })
     }
 
-    const redirectUrl = `${host}/_/auth/confirm-password-reset`
+    const redirectUrl = `${host}/auth/confirm-password-reset`
     console.log('REDIRECT_URL:', redirectUrl)
 
     await pb
