@@ -444,25 +444,37 @@ executados.
 ## [2025-08-09] Botão de logout adicionado à página de perfil do usuário. Lint e build executados.
 
 ## [2025-06-26] Atualizado arquitetura.md removendo referencia a /posts, descrevendo carregamento via PocketBase e adicionada secao do middleware. Impacto: documentacao alinhada ao README e entendimento claro sobre tenant.
+
 ## [2025-06-26] Campo preco_bruto adicionado na colecao produtos e documentacao atualizada.
 
 ## [2025-06-26] Campo bairro adicionado em completar cadastro e rota de atualização de usuário. Lint e build executados.
 
 ## [2025-06-26] Componente PasswordField criado e formulários atualizados. Lint e build executados.
+
 ## [2025-06-26] Template novaCobranca removido e guia de email ajustado para refletir a exclusão. Lint e build executados.
+
 ## [2025-06-26] Campo preco_bruto adicionado na colecao produtos e documentacao atualizada.
 
 ## [2025-06-26] InscricaoForm preenche campo via searchParams e valor do usuario. Campo permanece selecionado ao navegar entre etapas. Lint e build executados apos instalar dependencias.
+
 ## [2025-08-09] Area do cliente usa modal para redefinir senha ao clicar em "Alterar senha". Lint e build falharam (next not found).
 
 ## [2025-06-27] Perfil agora atualiza endereco completo ao editar dados do usuario. Lint e build executados.
 
 ## [2025-06-27] Campo bairro adicionado na edicao de perfil. Lint e build executados.
+
 ## [2025-06-27] Atualizacao de rotas para /cliente/dashboard e ajuste de docs.
+
 ## [2025-06-27] ProfileForm atualizado com campos de endereco e rota correta. Lint e build executados.
+
 ## [2025-06-27] Aplicado getAuthHeaders em múltiplas chamadas API e atualizado useAuth para carregar cookie
+
 ## [2025-06-27] Login retorna token para salvar no contexto e reutilizar em chamadas API. Lint e build executados.
+
 ## [2025-06-27] Atualizado update de usuario para ignorar campos ausentes e preservar dados. Lint e build executados.
+
 ## [2025-06-27] Evento 'promocao_lider' adicionado e rota PATCH envia notificacoes
+
 ## [2025-08-10] Seção 'Webhooks Asaas' adicionada ao README explicando prerequisitos e exemplo de cadastro.
+
 ## [2025-06-30] Evento 'confirmacao_pendente_lider' notifica lider via WhatsApp. Lint e build executados.

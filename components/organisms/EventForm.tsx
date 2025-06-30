@@ -86,12 +86,19 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
       try {
         const headers = getAuthHeaders(pb)
         const promises: Promise<Response>[] = [
-          fetch(`/api/eventos/${eventoId}`, { headers, credentials: 'include' }),
+          fetch(`/api/eventos/${eventoId}`, {
+            headers,
+            credentials: 'include',
+          }),
         ]
         if (liderId) {
-          promises.unshift(fetch(`/api/lider/${liderId}`, { headers, credentials: 'include' }))
+          promises.unshift(
+            fetch(`/api/lider/${liderId}`, { headers, credentials: 'include' }),
+          )
         } else {
-          promises.unshift(fetch('/api/campos', { headers, credentials: 'include' }))
+          promises.unshift(
+            fetch('/api/campos', { headers, credentials: 'include' }),
+          )
         }
         const [campoRes, eventoRes] = await Promise.all(promises)
         if (liderId) {
@@ -113,8 +120,8 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
             tamanhos: Array.isArray(p.tamanhos)
               ? p.tamanhos
               : p.tamanhos
-              ? [p.tamanhos]
-              : undefined,
+                ? [p.tamanhos]
+                : undefined,
           }))
         } else if (eventoData?.expand?.produto_inscricao) {
           const p = eventoData.expand.produto_inscricao as ProdutoApi
@@ -127,8 +134,8 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
               tamanhos: Array.isArray(p.tamanhos)
                 ? p.tamanhos
                 : p.tamanhos
-                ? [p.tamanhos]
-                : undefined,
+                  ? [p.tamanhos]
+                  : undefined,
             },
           ]
         } else if (eventoData?.produto_inscricao) {
@@ -517,7 +524,10 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
               id="tamanho"
               name="tamanho"
               value={form.tamanho}
-              required={(produtos.find((p) => p.id === form.produtoId)?.tamanhos?.length ?? 0) > 0}
+              required={
+                (produtos.find((p) => p.id === form.produtoId)?.tamanhos
+                  ?.length ?? 0) > 0
+              }
             />
             <div className="flex flex-wrap gap-2 mt-1">
               {produtos

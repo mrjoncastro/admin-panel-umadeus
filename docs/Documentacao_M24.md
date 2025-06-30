@@ -107,7 +107,7 @@ Para cada coleção, utilize a seguinte estrutura:
 | `user_org`                  | Relation → `usuarios`     | Sim         | Organizador ou dono do produto                   |
 | `quantidade`                | Number                    | Sim         | Estoque disponível (unidades)                    |
 | `preco`                     | Number                    | Sim         | Preço líquido (base)                             |
-| `preco_bruto`               | Number                    | Sim         | Valor final ao cliente (Pix à vista)            |
+| `preco_bruto`               | Number                    | Sim         | Valor final ao cliente (Pix à vista)             |
 | `ativo`                     | Boolean                   | Sim         | Se o produto está ativo/visível no front         |
 | `tamanhos`                  | Array                     | Não         | Tamanhos disponíveis: `PP`, `P`, `M`, `G`, `GG`  |
 | `imagens`                   | Array                     | Não         | Galeria de imagens                               |

@@ -221,7 +221,6 @@ return NextResponse.json({
   })
   ```
 
-
 Verifique logs no console do servidor e retornos HTTP (200 OK ou erros 4xx/5xx).
 
 ## 7. Boas Práticas
@@ -365,4 +364,3 @@ Os templates abaixo usam tokens do nosso Design System (cores, tipografia e espa
   </body>
 </html>
 ```
-

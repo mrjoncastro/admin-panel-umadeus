@@ -171,16 +171,23 @@
 ## [2025-07-31] Erro ao criar inscrição com usuário logado: API retornava "validation_not_unique" para o email. Rota /loja/api/inscricoes agora reutiliza o usuário autenticado quando disponível - dev
 
 ## [2025-07-31] Build falhava por "usuario" possivelmente nulo em /loja/api/inscricoes. Adicionada checagem final para garantir usuario antes de prosseguir - dev - 209f481
+
 ## [2025-06-27] Diversos fetch('/api') não enviavam token de autenticação. Adicionada função getAuthHeaders em hooks e páginas - dev
+
 ## [2025-06-27] Erro "Token ou usuário ausente" ao atualizar perfil. Login agora retorna token e contexto salva credenciais.
+
 ## [2025-06-27] Corrigida tipagem de retorno em getAuthHeaders para HeadersInit evitando erro de build em app/admin/inscricoes/page.tsx - dev - 5b28761
+
 ## [2025-06-27] Correção de dependências de pb em diversos useEffect - dev
+
 ## [2025-06-27] Perfil do cliente não enviava gênero e data_nascimento retornava formato inválido. Rota de atualização agora ajusta cookie - dev
 
 ## [2025-06-27] EventForm nao normalizava data_nascimento ao preencher usuario; campo ficava vazio. Valor agora cortado para YYYY-MM-DD - dev
 
 ## [2025-06-27] EventForm nao preenchia endereco via CEP; adicionado lookup usando fetchCep - dev
+
 ## [2025-06-27] Perfil do cliente não enviava gênero e data_nascimento retornava formato inválido. Rota de atualização agora ajusta cookie - dev
 
 ## [2025-06-27] EventForm nao normalizava data_nascimento ao preencher usuario; campo ficava vazio. Valor agora cortado para YYYY-MM-DD - dev
+
 ## [2025-08-10] Webhook agora registra accountId e externalReference quando cliente ausente - dev - dbfc979

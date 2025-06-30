@@ -22,8 +22,14 @@ export async function POST(req: NextRequest) {
   const pb = createPocketBase()
 
   try {
-    const { eventType, userId, paymentLink, campoNome, inscritoNome, eventoTitulo } =
-      (await req.json()) as Body
+    const {
+      eventType,
+      userId,
+      paymentLink,
+      campoNome,
+      inscritoNome,
+      eventoTitulo,
+    } = (await req.json()) as Body
     if (!eventType || !userId) {
       return NextResponse.json(
         { error: 'Parâmetros faltando' },
@@ -53,8 +59,11 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const user = await pb.collection('usuarios').getOne(userId, { expand: 'campo' })
-    const campoNomeFinal = campoNome ?? (user.expand?.campo?.nome as string | undefined)
+    const user = await pb
+      .collection('usuarios')
+      .getOne(userId, { expand: 'campo' })
+    const campoNomeFinal =
+      campoNome ?? (user.expand?.campo?.nome as string | undefined)
     const telefone = (user as { telefone?: string }).telefone
     const nome =
       (user as { nome?: string; name?: string }).nome ||

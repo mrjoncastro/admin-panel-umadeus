@@ -61,11 +61,14 @@ export default function DashboardResumo({
     return acc
   }, {})
 
-  const contagemInscricoes = inscricoes.reduce<Record<string, number>>((acc, i) => {
-    const campo = i.expand?.campo?.nome || 'Sem campo'
-    acc[campo] = (acc[campo] || 0) + 1
-    return acc
-  }, {})
+  const contagemInscricoes = inscricoes.reduce<Record<string, number>>(
+    (acc, i) => {
+      const campo = i.expand?.campo?.nome || 'Sem campo'
+      acc[campo] = (acc[campo] || 0) + 1
+      return acc
+    },
+    {},
+  )
 
   const inscricoesChart = {
     labels: Object.keys(contagemInscricoes),

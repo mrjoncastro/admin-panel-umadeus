@@ -183,12 +183,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // Fallback: buscar pelo ID de inscrição quando não encontrado
   if (!pedidoRecord && inscricaoId) {
     try {
-      const lista = await pb
-        .collection('pedidos')
-        .getList<PedidoRecord>(1, 1, {
-          filter: `id_inscricao = "${inscricaoId}"`,
-          sort: '-created',
-        })
+      const lista = await pb.collection('pedidos').getList<PedidoRecord>(1, 1, {
+        filter: `id_inscricao = "${inscricaoId}"`,
+        sort: '-created',
+      })
       if (lista.items.length > 0) pedidoRecord = lista.items[0]
     } catch {
       /* ignore */

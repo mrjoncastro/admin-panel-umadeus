@@ -34,7 +34,10 @@ export default function CompletarCadastroPage() {
 
   useEffect(() => {
     if (!authChecked) return
-    fetch('/api/campos', { headers: getAuthHeaders(pb), credentials: 'include' })
+    fetch('/api/campos', {
+      headers: getAuthHeaders(pb),
+      credentials: 'include',
+    })
       .then((r) => (r.ok ? r.json() : []))
       .then((d) => {
         if (Array.isArray(d)) setCampos(d)

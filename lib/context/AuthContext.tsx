@@ -1,7 +1,10 @@
 'use client'
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import createPocketBase, { clearBaseAuth, updateBaseAuth } from '@/lib/pocketbase'
+import createPocketBase, {
+  clearBaseAuth,
+  updateBaseAuth,
+} from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
 import type { UserModel } from '@/types/UserModel'
 
@@ -89,7 +92,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [pb])
 
   const login = async (email: string, password: string) => {
-    const headers = { ...getAuthHeaders(pb), 'Content-Type': 'application/json' }
+    const headers = {
+      ...getAuthHeaders(pb),
+      'Content-Type': 'application/json',
+    }
     const res = await fetch('/api/auth/login', {
       method: 'POST',
       headers,
