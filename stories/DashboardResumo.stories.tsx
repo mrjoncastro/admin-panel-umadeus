@@ -99,6 +99,8 @@ export const Default: Story = {
     ],
     filtroStatus: 'pago',
     setFiltroStatus: () => {},
+    totalInscricoes: 2,
+    totalPedidos: 2,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
