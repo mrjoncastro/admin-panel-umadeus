@@ -41,6 +41,12 @@ export async function POST(req: NextRequest) {
         { status: 400 },
       )
     }
+    if (String(password).length < 8) {
+      return NextResponse.json(
+        { error: 'A senha deve ter ao menos 8 caracteres.' },
+        { status: 400 },
+      )
+    }
     try {
       await pb
         .collection('clientes_config')

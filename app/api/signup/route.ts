@@ -9,6 +9,12 @@ export async function POST(req: NextRequest) {
     if (!nome || !email || !telefone || !cpf || !senha) {
       return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
     }
+    if (String(senha).length < 8) {
+      return NextResponse.json(
+        { error: 'A senha deve ter ao menos 8 caracteres.' },
+        { status: 400 },
+      )
+    }
     const tenantId = await getTenantFromHost()
     const telefoneNumerico = String(telefone).replace(/\D/g, '')
     const cpfNumerico = String(cpf).replace(/\D/g, '')
