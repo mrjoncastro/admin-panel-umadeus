@@ -30,6 +30,11 @@ export default function SignUpPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
+    if (senha.length < 8) {
+      showError('A senha deve ter ao menos 8 caracteres.')
+      return
+    }
+
     if (senha !== senhaConfirm) {
       showError('As senhas não coincidem.')
       return
