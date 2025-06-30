@@ -6,8 +6,17 @@ export async function POST(req: NextRequest) {
   const pb = createPocketBase()
   try {
     const { nome, email, telefone, cpf, senha } = await req.json()
-    if (!nome || !email || !telefone || !cpf || !senha) {
-      return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
+    const missing: Record<string, string> = {}
+    if (!nome) missing.nome = 'O nome é obrigatório'
+    if (!email) missing.email = 'O e-mail é obrigatório'
+    if (!telefone) missing.telefone = 'O telefone é obrigatório'
+    if (!cpf) missing.cpf = 'O CPF é obrigatório'
+    if (!senha) missing.senha = 'A senha é obrigatória'
+    if (Object.keys(missing).length > 0) {
+      return NextResponse.json(
+        { error: 'validation_failed', fields: missing },
+        { status: 422 },
+      )
     }
     const tenantId = await getTenantFromHost()
     const telefoneNumerico = String(telefone).replace(/\D/g, '')

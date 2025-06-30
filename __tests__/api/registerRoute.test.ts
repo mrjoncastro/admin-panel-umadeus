@@ -15,6 +15,17 @@ vi.mock('../../lib/pocketbase', () => ({
 }))
 
 describe('POST /api/register', () => {
+  it('retorna 422 quando campo obrigatório ausente', async () => {
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({ nome: 'n' }),
+    })
+    const res = await POST(req as unknown as NextRequest)
+    expect(res.status).toBe(422)
+    const body = await res.json()
+    expect(body.error).toBe('validation_failed')
+    expect(body.fields.email).toBeDefined()
+  })
   it('retorna 404 se cliente nao encontrado', async () => {
     const req = new Request('http://test', {
       method: 'POST',

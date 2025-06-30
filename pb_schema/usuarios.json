@@ -1,0 +1,21 @@
+{
+  "name": "usuarios",
+  "type": "auth",
+  "schema": [
+    { "name": "nome", "type": "text", "required": true },
+    { "name": "email", "type": "email", "required": true },
+    { "name": "telefone", "type": "text", "required": true },
+    { "name": "cpf", "type": "text", "required": true },
+    { "name": "data_nascimento", "type": "date", "required": true },
+    { "name": "campo", "type": "relation", "required": true, "options": {"collectionId": "campos"} },
+    { "name": "cep", "type": "text", "required": true },
+    { "name": "endereco", "type": "text", "required": true },
+    { "name": "numero", "type": "text", "required": true },
+    { "name": "bairro", "type": "text", "required": true },
+    { "name": "cidade", "type": "text", "required": true },
+    { "name": "estado", "type": "text", "required": true },
+    { "name": "senha", "type": "password", "required": true }
+  ],
+  "indexes": [],
+  "options": {}
+}

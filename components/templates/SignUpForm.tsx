@@ -1,6 +1,9 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import * as yup from 'yup'
 import { fetchCep } from '@/utils/cep'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useToast } from '@/lib/context/ToastContext'
@@ -15,6 +18,29 @@ import {
   PasswordField,
 } from '@/components'
 
+const schema = yup.object({
+  nome: yup.string().required('O nome é obrigatório'),
+  email: yup
+    .string()
+    .email('E-mail inválido')
+    .required('O e-mail é obrigatório'),
+  telefone: yup.string().required('O telefone é obrigatório'),
+  cpf: yup.string().required('O CPF é obrigatório'),
+  data_nascimento: yup
+    .string()
+    .required('A data de nascimento é obrigatória'),
+  campo: yup.string().required('O campo é obrigatório'),
+  cep: yup.string().required('O CEP é obrigatório'),
+  endereco: yup.string().required('O endereço é obrigatório'),
+  numero: yup.string().required('O número é obrigatório'),
+  bairro: yup.string().required('O bairro é obrigatório'),
+  cidade: yup.string().required('A cidade é obrigatória'),
+  estado: yup.string().required('O estado é obrigatório'),
+  senha: yup.string().required('A senha é obrigatória'),
+})
+
+type FormData = yup.InferType<typeof schema>
+
 export default function SignUpForm({
   onSuccess,
   children,
@@ -26,20 +52,17 @@ export default function SignUpForm({
   const pb = useMemo(() => createPocketBase(), [])
 
   const [campos, setCampos] = useState<{ id: string; nome: string }[]>([])
-  const [campo, setCampo] = useState('')
-  const [nome, setNome] = useState('')
-  const [email, setEmail] = useState('')
-  const [telefone, setTelefone] = useState('')
-  const [cpf, setCpf] = useState('')
-  const [dataNascimento, setDataNascimento] = useState('')
-  const [cep, setCep] = useState('')
-  const [endereco, setEndereco] = useState('')
-  const [numero, setNumero] = useState('')
-  const [bairro, setBairro] = useState('')
-  const [estado, setEstado] = useState('')
-  const [cidade, setCidade] = useState('')
-  const [senha, setSenha] = useState('')
   const [senhaConfirm, setSenhaConfirm] = useState('')
+
+  const {
+    register,
+    handleSubmit: submitForm,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<FormData>({ resolver: yupResolver(schema) })
+
+  const cep = watch('cep')
   const { showError, showSuccess } = useToast()
   const [loading, setLoading] = useState(false)
 
@@ -83,28 +106,27 @@ export default function SignUpForm({
       const data = await fetchCep(cep).catch(() => null)
       if (!data) {
         showError('CEP n\u00e3o encontrado.')
-        setEndereco('')
-        setCidade('')
-        setEstado('')
-        setBairro('')
+        setValue('endereco', '')
+        setValue('cidade', '')
+        setValue('estado', '')
+        setValue('bairro', '')
         return
       }
-      setEndereco(data.street)
-      setCidade(data.city)
-      setEstado(data.state)
-      setBairro(data.neighborhood)
+      setValue('endereco', data.street)
+      setValue('cidade', data.city)
+      setValue('estado', data.state)
+      setValue('bairro', data.neighborhood)
     }
-    if (cep.replace(/\D/g, '').length === 8) lookup()
-  }, [cep, showError])
+    if (cep && cep.replace(/\D/g, '').length === 8) lookup()
+  }, [cep, setValue, showError])
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (senha !== senhaConfirm) {
+  const onSubmit = submitForm(async (data) => {
+    if (data.senha !== senhaConfirm) {
       showError('As senhas não coincidem.')
       return
     }
 
-    if (!campo) {
+    if (!data.campo) {
       showError('Selecione um campo.')
       return
     }
@@ -112,18 +134,18 @@ export default function SignUpForm({
     setLoading(true)
     try {
       await signUp(
-        nome,
-        email,
-        telefone,
-        cpf,
-        dataNascimento,
-        endereco,
-        numero,
-        bairro,
-        estado,
-        cep,
-        cidade,
-        senha,
+        data.nome,
+        data.email,
+        data.telefone,
+        data.cpf,
+        data.data_nascimento,
+        data.endereco,
+        data.numero,
+        data.bairro,
+        data.estado,
+        data.cep,
+        data.cidade,
+        data.senha,
       )
       showSuccess('Conta criada com sucesso!')
       setTimeout(() => {
@@ -144,78 +166,86 @@ export default function SignUpForm({
     } finally {
       setLoading(false)
     }
-  }
+  })
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 py-8 sm:px-6">
       <div className="relative z-10 w-full max-w-lg p-6 sm:p-8 bg-animated rounded-2xl backdrop-blur-md text-gray-200 shadow-lg">
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={onSubmit} className="space-y-6">
           <h2 className="text-2xl font-semibold text-center text-white">
             Criar Conta
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField label="Nome completo" htmlFor="signup-nome">
+            <FormField
+              label="Nome completo"
+              htmlFor="signup-nome"
+              error={errors.nome?.message}
+            >
               <TextField
                 id="signup-nome"
                 type="text"
                 placeholder="Nome completo"
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
                 className="w-full rounded-md px-4 py-2"
-                required
+                {...register('nome')}
               />
             </FormField>
-            <FormField label="E-mail" htmlFor="signup-email">
+            <FormField
+              label="E-mail"
+              htmlFor="signup-email"
+              error={errors.email?.message}
+            >
               <TextField
                 id="signup-email"
                 type="email"
                 placeholder="E-mail"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 className="w-full rounded-md px-4 py-2"
-                required
+                {...register('email')}
               />
             </FormField>
-            <FormField label="Telefone" htmlFor="signup-telefone">
+            <FormField
+              label="Telefone"
+              htmlFor="signup-telefone"
+              error={errors.telefone?.message}
+            >
               <InputWithMask
                 id="signup-telefone"
                 type="text"
                 mask="telefone"
                 placeholder="Telefone"
-                value={telefone}
-                onChange={(e) => setTelefone(e.target.value)}
                 className="w-full rounded-md px-4 py-2"
-                required
+                {...register('telefone')}
               />
             </FormField>
-            <FormField label="CPF" htmlFor="signup-cpf">
+            <FormField
+              label="CPF"
+              htmlFor="signup-cpf"
+              error={errors.cpf?.message}
+            >
               <InputWithMask
                 id="signup-cpf"
                 type="text"
                 mask="cpf"
                 placeholder="CPF"
-                value={cpf}
-                onChange={(e) => setCpf(e.target.value)}
                 className="w-full rounded-md px-4 py-2"
-                required
+                {...register('cpf')}
               />
             </FormField>
-            <FormField label="Data de nascimento" htmlFor="signup-data">
+            <FormField
+              label="Data de nascimento"
+              htmlFor="signup-data"
+              error={errors.data_nascimento?.message}
+            >
               <TextField
                 id="signup-data"
                 type="date"
-                value={dataNascimento}
-                onChange={(e) => setDataNascimento(e.target.value)}
                 className="w-full rounded-md px-4 py-2"
-                required
+                {...register('data_nascimento')}
               />
             </FormField>
             <select
-              value={campo}
-              onChange={(e) => setCampo(e.target.value)}
               className="input-base w-full rounded-md px-4 py-2"
-              required
+              {...register('campo')}
             >
               <option value="">Selecione o campo</option>
               {campos.map((c) => (
@@ -224,83 +254,102 @@ export default function SignUpForm({
                 </option>
               ))}
             </select>
-            <FormField label="CEP" htmlFor="signup-cep">
+            {errors.campo && (
+              <span role="alert" className="text-sm text-error-600">
+                {errors.campo.message}
+              </span>
+            )}
+            <FormField
+              label="CEP"
+              htmlFor="signup-cep"
+              error={errors.cep?.message}
+            >
               <TextField
                 id="signup-cep"
                 type="text"
                 placeholder="CEP"
-                value={cep}
-                onChange={(e) => setCep(e.target.value)}
                 className="w-full rounded-md px-4 py-2"
-                required
+                {...register('cep')}
               />
             </FormField>
-            <FormField label="Endereço" htmlFor="signup-endereco">
+            <FormField
+              label="Endereço"
+              htmlFor="signup-endereco"
+              error={errors.endereco?.message}
+            >
               <TextField
                 id="signup-endereco"
                 type="text"
                 placeholder="Endereço"
-                value={endereco}
-                onChange={(e) => setEndereco(e.target.value)}
                 className="w-full rounded-md px-4 py-2"
-                required
+                {...register('endereco')}
               />
             </FormField>
-            <FormField label="Número" htmlFor="signup-numero">
+            <FormField
+              label="Número"
+              htmlFor="signup-numero"
+              error={errors.numero?.message}
+            >
               <TextField
                 id="signup-numero"
                 type="text"
                 placeholder="Número"
-                value={numero}
-                onChange={(e) => setNumero(e.target.value)}
                 className="w-full rounded-md px-4 py-2"
-                required
+                {...register('numero')}
               />
             </FormField>
-            <FormField label="Bairro" htmlFor="signup-bairro">
+            <FormField
+              label="Bairro"
+              htmlFor="signup-bairro"
+              error={errors.bairro?.message}
+            >
               <TextField
                 id="signup-bairro"
                 type="text"
                 placeholder="Bairro"
-                value={bairro}
-                onChange={(e) => setBairro(e.target.value)}
                 className="w-full rounded-md px-4 py-2"
-                required
+                {...register('bairro')}
               />
             </FormField>
-            <FormField label="Cidade" htmlFor="signup-cidade">
+            <FormField
+              label="Cidade"
+              htmlFor="signup-cidade"
+              error={errors.cidade?.message}
+            >
               <TextField
                 id="signup-cidade"
                 type="text"
                 placeholder="Cidade"
-                value={cidade}
-                onChange={(e) => setCidade(e.target.value)}
                 className="w-full rounded-md px-4 py-2"
-                required
+                {...register('cidade')}
               />
             </FormField>
-            <FormField label="Estado" htmlFor="signup-estado">
+            <FormField
+              label="Estado"
+              htmlFor="signup-estado"
+              error={errors.estado?.message}
+            >
               <TextField
                 id="signup-estado"
                 type="text"
                 placeholder="Estado"
-                value={estado}
-                onChange={(e) => setEstado(e.target.value)}
                 className="w-full rounded-md px-4 py-2"
-                required
+                {...register('estado')}
               />
             </FormField>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField label="Senha" htmlFor="signup-senha">
+            <FormField
+              label="Senha"
+              htmlFor="signup-senha"
+              error={errors.senha?.message}
+            >
               <PasswordField
                 id="signup-senha"
                 placeholder="Senha"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
                 className="w-full rounded-md px-4 py-2"
-                required
+                {...register('senha')}
               />
             </FormField>
             <FormField label="Confirme a senha" htmlFor="signup-confirm">

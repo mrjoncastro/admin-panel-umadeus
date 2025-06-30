@@ -19,26 +19,28 @@ export async function POST(req: NextRequest) {
       cep,
       cidade,
       password,
+      campo,
       cliente,
     } = await req.json()
-    if (
-      !nome ||
-      !email ||
-      !telefone ||
-      !cpf ||
-      !data_nascimento ||
-      !endereco ||
-      !numero ||
-      !bairro ||
-      !estado ||
-      !cep ||
-      !cidade ||
-      !password ||
-      !cliente
-    ) {
+    const missing: Record<string, string> = {}
+    if (!nome) missing.nome = 'O nome é obrigatório'
+    if (!email) missing.email = 'O e-mail é obrigatório'
+    if (!telefone) missing.telefone = 'O telefone é obrigatório'
+    if (!cpf) missing.cpf = 'O CPF é obrigatório'
+    if (!data_nascimento) missing.data_nascimento = 'A data de nascimento é obrigatória'
+    if (!campo) missing.campo = 'O campo é obrigatório'
+    if (!endereco) missing.endereco = 'O endereço é obrigatório'
+    if (!numero) missing.numero = 'O número é obrigatório'
+    if (!bairro) missing.bairro = 'O bairro é obrigatório'
+    if (!estado) missing.estado = 'O estado é obrigatório'
+    if (!cep) missing.cep = 'O CEP é obrigatório'
+    if (!cidade) missing.cidade = 'A cidade é obrigatória'
+    if (!password) missing.password = 'A senha é obrigatória'
+    if (!cliente) missing.cliente = 'Cliente não informado'
+    if (Object.keys(missing).length > 0) {
       return NextResponse.json(
-        { error: 'Dados inv\u00E1lidos' },
-        { status: 400 },
+        { error: 'validation_failed', fields: missing },
+        { status: 422 },
       )
     }
     try {
@@ -58,6 +60,7 @@ export async function POST(req: NextRequest) {
       cliente: String(cliente),
       telefone: String(telefone).trim(),
       cpf: String(cpf).trim(),
+      campo: String(campo),
       data_nascimento: String(data_nascimento),
       endereco: String(endereco).trim(),
       numero: String(numero).trim(),
