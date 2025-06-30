@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useMemo } from 'react'
+import Image from 'next/image'
 import { useTenant } from '@/lib/context/TenantContext'
 import { useToast } from '@/lib/context/ToastContext'
 import { useRouter } from 'next/navigation'
@@ -20,12 +21,17 @@ import {
 interface Produto {
   id: string
   nome: string
+  preco?: number
+  imagemUrl?: string
   tamanhos?: string[]
 }
 
 interface ProdutoApi {
   id: string
   nome: string
+  preco?: number
+  imagemUrl?: string
+  imagem_url?: string
   tamanhos?: string[] | string
 }
 
@@ -101,11 +107,13 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
           lista = (eventoData.expand.produtos as ProdutoApi[]).map((p) => ({
             id: p.id,
             nome: p.nome,
+            preco: p.preco,
+            imagemUrl: p.imagemUrl || p.imagem_url,
             tamanhos: Array.isArray(p.tamanhos)
               ? p.tamanhos
               : p.tamanhos
-                ? [p.tamanhos]
-                : undefined,
+              ? [p.tamanhos]
+              : undefined,
           }))
         } else if (eventoData?.expand?.produto_inscricao) {
           const p = eventoData.expand.produto_inscricao as ProdutoApi
@@ -113,11 +121,13 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
             {
               id: p.id,
               nome: p.nome,
+              preco: p.preco,
+              imagemUrl: p.imagemUrl || p.imagem_url,
               tamanhos: Array.isArray(p.tamanhos)
                 ? p.tamanhos
                 : p.tamanhos
-                  ? [p.tamanhos]
-                  : undefined,
+                ? [p.tamanhos]
+                : undefined,
             },
           ]
         } else if (eventoData?.produto_inscricao) {
@@ -190,6 +200,10 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
   ) => {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSelectProduto = (id: string) => {
+    setForm((prev) => ({ ...prev, produtoId: id, tamanho: '' }))
   }
 
   const handleSubmit = async () => {
@@ -451,46 +465,71 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
     content: (
       <div className="space-y-4">
         <FormField label="Produto" htmlFor="produtoId">
-          <select
+          <input
+            type="hidden"
             id="produtoId"
             name="produtoId"
             value={form.produtoId}
-            onChange={handleChange}
-            className="input-base"
             required={produtos.length > 0}
-          >
+          />
+          <div className="flex flex-wrap gap-3">
             {produtos.length === 0 ? (
-              <option value="">Nenhum produto disponível</option>
+              <p className="text-sm">Nenhum produto disponível</p>
             ) : (
               produtos.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.nome}
-                </option>
+                <button
+                  type="button"
+                  key={p.id}
+                  onClick={() => handleSelectProduto(p.id)}
+                  aria-pressed={form.produtoId === p.id}
+                  className={`border rounded-md p-2 text-left flex flex-col items-center w-32 focus:outline-none ${form.produtoId === p.id ? 'ring-2 ring-[var(--accent)]' : ''}`}
+                >
+                  {p.imagemUrl && (
+                    <Image
+                      src={p.imagemUrl}
+                      alt={p.nome}
+                      width={80}
+                      height={80}
+                      className="mb-1 rounded object-cover"
+                    />
+                  )}
+                  <span className="text-xs font-medium text-center line-clamp-2">
+                    {p.nome}
+                  </span>
+                  {typeof p.preco === 'number' && (
+                    <span className="text-xs font-semibold">
+                      R$ {p.preco.toFixed(2).replace('.', ',')}
+                    </span>
+                  )}
+                </button>
               ))
             )}
-          </select>
+          </div>
         </FormField>
         {produtos.find((p) => p.id === form.produtoId)?.tamanhos && (
           <FormField label="Tamanho" htmlFor="tamanho">
-            <select
+            <input
+              type="hidden"
               id="tamanho"
               name="tamanho"
               value={form.tamanho}
-              onChange={handleChange}
-              className="input-base"
-              required={
-                (produtos.find((p) => p.id === form.produtoId)?.tamanhos?.length ?? 0) > 0
-              }
-            >
-              <option value="">Selecione</option>
+              required={(produtos.find((p) => p.id === form.produtoId)?.tamanhos?.length ?? 0) > 0}
+            />
+            <div className="flex flex-wrap gap-2 mt-1">
               {produtos
                 .find((p) => p.id === form.produtoId)
                 ?.tamanhos?.map((t) => (
-                  <option key={t} value={t}>
+                  <button
+                    type="button"
+                    key={t}
+                    onClick={() => setForm((prev) => ({ ...prev, tamanho: t }))}
+                    aria-pressed={form.tamanho === t}
+                    className={`px-3 py-1 border rounded text-sm focus:outline-none ${form.tamanho === t ? 'bg-[var(--accent)] text-white' : 'bg-white'}`}
+                  >
                     {t}
-                  </option>
+                  </button>
                 ))}
-            </select>
+            </div>
           </FormField>
         )}
       </div>
