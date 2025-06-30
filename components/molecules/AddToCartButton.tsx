@@ -5,11 +5,16 @@ import type { Produto, Pedido } from '@/types'
 import { ShoppingCart } from 'lucide-react'
 import useInscricoes from '@/lib/hooks/useInscricoes'
 import Link from 'next/link'
+import { useAuthContext } from '@/lib/context/AuthContext'
+import { useState } from 'react'
+import AuthModal from '@/components/organisms/AuthModal'
 
 export default function AddToCartButton({ produto }: { produto: Produto }) {
   const { addItem } = useCart()
   const { showSuccess, showError } = useToast()
   const { inscricoes } = useInscricoes()
+  const { isLoggedIn } = useAuthContext()
+  const [authOpen, setAuthOpen] = useState(false)
 
   const inscricao = inscricoes.find((i) => i.evento === produto.evento_id)
   const pago = inscricao?.status === 'confirmado'
@@ -63,13 +68,20 @@ export default function AddToCartButton({ produto }: { produto: Produto }) {
 
   // Fluxo padrão de carrinho
   const handleClick = () => {
+    if (!isLoggedIn) {
+      setAuthOpen(true)
+      return
+    }
     addItem(produto)
     showSuccess('Item adicionado ao carrinho!')
   }
 
   return (
-    <button onClick={handleClick} className="block w-full btn btn-primary">
-      <ShoppingCart size={20} /> Adicionar ao Carrinho
-    </button>
+    <>
+      <button onClick={handleClick} className="block w-full btn btn-primary">
+        <ShoppingCart size={20} /> Adicionar ao Carrinho
+      </button>
+      {authOpen && <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />}
+    </>
   )
 }
