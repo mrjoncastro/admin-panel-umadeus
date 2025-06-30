@@ -19,6 +19,8 @@ const meta = {
     pedidos: { control: 'object' },
     filtroStatus: { control: 'text' },
     setFiltroStatus: { action: 'setFiltroStatus' },
+    totalInscricoes: { control: 'number' },
+    totalPedidos: { control: 'number' },
   },
   args: {
     inscricoes: [
@@ -56,6 +58,8 @@ const meta = {
       } as unknown as Pedido,
     ],
     filtroStatus: 'pago',
+    totalInscricoes: 2,
+    totalPedidos: 2,
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof DashboardResumo>
@@ -99,6 +103,8 @@ export const Default: Story = {
     ],
     filtroStatus: 'pago',
     setFiltroStatus: () => {},
+    totalInscricoes: 2,
+    totalPedidos: 2,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
