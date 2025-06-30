@@ -1,0 +1,17 @@
+{
+  "name": "webhook_tasks",
+  "type": "base",
+  "schema": [
+    {"name": "event", "type": "text", "required": true, "options": {"min": null, "max": null, "pattern": ""}},
+    {"name": "payload", "type": "json", "required": true, "options": {}},
+    {"name": "status", "type": "select", "required": true, "options": {"maxSelect": 1, "values": ["pending", "processing", "done", "failed"]}},
+    {"name": "attempts", "type": "number", "required": true, "options": {"min": 0}},
+    {"name": "max_attempts", "type": "number", "required": true, "options": {"min": 1}},
+    {"name": "error", "type": "text", "required": false, "options": {"min": null, "max": null, "pattern": ""}},
+    {"name": "next_retry", "type": "date", "required": false, "options": {"min": null, "max": null}}
+  ],
+  "indexes": [
+    "CREATE INDEX `idx_status` ON `webhook_tasks` (`status`)",
+    "CREATE INDEX `idx_next_retry` ON `webhook_tasks` (`next_retry`)"
+  ]
+}
