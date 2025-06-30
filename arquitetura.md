@@ -112,7 +112,8 @@ O arquivo `middleware.ts` intercepta cada requisição, consulta a coleção `cl
 - Rotas protegidas com `useAuthGuard` e validação de `role`
 - Algumas rotas de confirmação de inscrição são públicas:
   `/admin/obrigado`, `/admin/pendente`, `/admin/erro`,
-  `/admin/redefinir-senha` e `/admin/inscricoes/recuperar`
+  `/_/auth/password-reset` e `/_/auth/confirm-password-reset/[token]`,
+  além de `/admin/inscricoes/recuperar`
 - Layout persistente com navegação clara entre seções (dashboard, pedidos, etc)
 - Paginação, filtros e expand para consultas PocketBase
 - Armazenamento de token com `pb.authStore` e persistência no localStorage
