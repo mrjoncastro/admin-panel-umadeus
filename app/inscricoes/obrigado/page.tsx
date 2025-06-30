@@ -9,9 +9,9 @@ export default function ObrigadoPage() {
         </h1>
 
         <p className="text-gray-700 text-base leading-relaxed">
-          Sua inscrição foi salva com sucesso e estamos aguardando a confirmação
-          do seu pagamento. Assim que o pagamento for aprovado, você receberá a
-          confirmação final da sua participação.
+          Sua inscrição foi enviada com sucesso e será analisada pela liderança.
+          Após a aprovação, você receberá em seu e-mail as instruções para
+          realizar o pagamento e confirmar sua participação.
         </p>
 
         <div className="text-sm text-gray-500">
