@@ -1,6 +1,6 @@
 import ConfirmResetForm from '@/components/ConfirmResetForm'
 
-export default async function Page({
+export default function Page({
   params,
 }: {
   params: { token: string }
