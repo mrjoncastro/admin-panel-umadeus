@@ -64,8 +64,6 @@ export default function ListaInscricoesPage() {
   const [inscricaoEmEdicao, setInscricaoEmEdicao] = useState<Inscricao | null>(
     null,
   )
-  const [pagina, setPagina] = useState(1)
-  const [totalPaginas] = useState(1)
   const { showError, showSuccess } = useToast()
   const placeholderBusca =
     role === 'coordenador'
@@ -811,26 +809,7 @@ export default function ListaInscricoesPage() {
         />
       )}
 
-      {/* Paginação */}
-      <div className="flex justify-between items-center mt-6 text-sm">
-        <button
-          disabled={pagina === 1}
-          onClick={() => setPagina((p) => Math.max(1, p - 1))}
-          className="btn btn-secondary disabled:opacity-50"
-        >
-          Anterior
-        </button>
-        <span>
-          Página {pagina} de {totalPaginas}
-        </span>
-        <button
-          disabled={pagina === totalPaginas}
-          onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
-          className="btn btn-secondary disabled:opacity-50"
-        >
-          Próxima
-        </button>
-      </div>
+      {/* Paginação removida */}
     </main>
   )
 }
