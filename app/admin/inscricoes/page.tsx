@@ -65,7 +65,7 @@ export default function ListaInscricoesPage() {
     null,
   )
   const [pagina, setPagina] = useState(1)
-  const [totalPaginas, setTotalPaginas] = useState(1)
+  const [totalPaginas] = useState(1)
   const { showError, showSuccess } = useToast()
   const placeholderBusca =
     role === 'coordenador'
