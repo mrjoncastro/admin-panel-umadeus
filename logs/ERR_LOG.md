@@ -190,3 +190,4 @@
 
 ## [2025-06-30] Correção paginação em /api/inscricoes - dev - 237edb0
 ## [2025-06-30] Lista de pedidos duplicada ao carregar admin/pedidos. Adicionada deduplicação no fetch - dev - c29e2ce4
+## [2025-06-30] Cadastro da loja não salvava endereço e role ao criar novo usuário. Rota /loja/api/inscricoes agora utiliza data.role e campos completos - dev
