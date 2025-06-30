@@ -3,7 +3,13 @@ import { GET } from '../../app/api/inscricoes/route'
 import { NextRequest } from 'next/server'
 import createPocketBaseMock from '../mocks/pocketbase'
 
-const getListMock = vi.fn().mockResolvedValue({ items: [] })
+const getListMock = vi.fn().mockResolvedValue({
+  items: [],
+  page: 1,
+  perPage: 1,
+  totalPages: 1,
+  totalItems: 0,
+})
 const pb = createPocketBaseMock()
 pb.collection.mockReturnValue({ getList: getListMock })
 
@@ -29,15 +35,17 @@ describe('GET /api/inscricoes', () => {
     )
     const res = await GET(req as unknown as NextRequest)
     expect(res.status).toBe(200)
-    expect(getListMock).toHaveBeenCalledWith(
-      1,
-      5,
-      expect.objectContaining({
-        filter: 'criado_por = "u1" && status=\'pendente\'',
-        expand: 'evento,campo,pedido',
-        sort: '-created',
-      }),
-    )
+    const body = await res.json()
+    expect(body).toHaveProperty('totalItems')
+      expect(getListMock).toHaveBeenCalledWith(
+        1,
+        5,
+        expect.objectContaining({
+          filter: 'criado_por = "u1" && status=\'pendente\'',
+          expand: 'evento,campo,pedido,produto',
+          sort: '-created',
+        }),
+      )
   })
 
   it('filtra por campo quando lider', async () => {
@@ -51,15 +59,17 @@ describe('GET /api/inscricoes', () => {
     ;(req as any).nextUrl = new URL('http://test/api/inscricoes?perPage=20')
     const res = await GET(req as unknown as NextRequest)
     expect(res.status).toBe(200)
-    expect(getListMock).toHaveBeenLastCalledWith(
-      1,
-      20,
-      expect.objectContaining({
-        filter: 'campo = "c1"',
-        expand: 'evento,campo,pedido',
-        sort: '-created',
-      }),
-    )
+    const body = await res.json()
+    expect(body).toHaveProperty('totalItems')
+      expect(getListMock).toHaveBeenLastCalledWith(
+        1,
+        20,
+        expect.objectContaining({
+          filter: 'campo = "c1"',
+          expand: 'evento,campo,pedido,produto',
+          sort: '-created',
+        }),
+      )
   })
 
   it('filtra por cliente quando coordenador', async () => {
@@ -76,16 +86,18 @@ describe('GET /api/inscricoes', () => {
     ;(req as any).nextUrl = new URL('http://test/api/inscricoes?status=ativo')
     const res = await GET(req as unknown as NextRequest)
     expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body).toHaveProperty('totalItems')
     expect(getTenantFromHost).toHaveBeenCalled()
-    expect(getListMock).toHaveBeenLastCalledWith(
-      1,
-      50,
-      expect.objectContaining({
-        filter: 'cliente = "t1" && status=\'ativo\'',
-        expand: 'evento,campo,pedido',
-        sort: '-created',
-      }),
-    )
+      expect(getListMock).toHaveBeenLastCalledWith(
+        1,
+        50,
+        expect.objectContaining({
+          filter: 'cliente = "t1" && status=\'ativo\'',
+          expand: 'evento,campo,pedido,produto',
+          sort: '-created',
+        }),
+      )
   })
 
   it('retorna 400 quando coordenador sem tenant', async () => {

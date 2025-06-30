@@ -11,6 +11,8 @@ export default function DashboardPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [pedidos, setPedidos] = useState<Pedido[]>([])
+  const [totalInscricoes, setTotalInscricoes] = useState(0)
+  const [totalPedidos, setTotalPedidos] = useState(0)
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
@@ -62,6 +64,12 @@ export default function DashboardPage() {
         const rawPedidos = Array.isArray(pedRes.items) ? pedRes.items : pedRes
         if (insRes.totalPages && pedRes.totalPages) {
           setTotalPages(Math.max(insRes.totalPages, pedRes.totalPages))
+        }
+        if (typeof insRes.totalItems === 'number') {
+          setTotalInscricoes(insRes.totalItems)
+        }
+        if (typeof pedRes.totalItems === 'number') {
+          setTotalPedidos(pedRes.totalItems)
         }
 
         if (!isMounted.current) return
@@ -162,6 +170,8 @@ export default function DashboardPage() {
             pedidos={pedidos}
             filtroStatus={filtroStatus}
             setFiltroStatus={setFiltroStatus}
+            totalInscricoes={totalInscricoes}
+            totalPedidos={totalPedidos}
           />
           <DashboardAnalytics inscricoes={inscricoes} pedidos={pedidos} />
           <div className="flex justify-center items-center gap-4 mt-4">

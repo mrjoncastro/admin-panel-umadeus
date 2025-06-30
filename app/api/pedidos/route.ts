@@ -109,11 +109,12 @@ export async function GET(req: NextRequest) {
 
     const filtro = status ? `${baseFilter} && status='${status}'` : baseFilter
     console.log('[PEDIDOS][GET] Filtro final:', filtro)
-    const { items } = await pb.collection('pedidos').getList(page, perPage, {
+    const result = await pb.collection('pedidos').getList(page, perPage, {
       filter: filtro,
       sort: '-created',
       expand: 'campo,id_inscricao,produto',
     })
+    const { items } = result
 
     // Caso a expansão de produto falhe, buscar manualmente
     for (const item of items) {
@@ -136,7 +137,7 @@ export async function GET(req: NextRequest) {
     }
 
     console.log('[PEDIDOS][GET] Retornando pedidos:', items.length)
-    return NextResponse.json(items)
+    return NextResponse.json(result)
   } catch (err) {
     console.error('[PEDIDOS][GET] Erro ao listar:', err)
     return NextResponse.json({ error: 'Erro ao listar' }, { status: 500 })
