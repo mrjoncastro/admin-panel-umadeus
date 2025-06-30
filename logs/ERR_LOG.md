@@ -192,3 +192,4 @@
 ## [2025-06-30] Lista de pedidos duplicada ao carregar admin/pedidos. Adicionada deduplicação no fetch - dev - c29e2ce4
 ## [2025-06-30] Cadastro da loja não salvava endereço e role ao criar novo usuário. Rota /loja/api/inscricoes agora utiliza data.role e campos completos - dev
 ## [2025-06-30] Consulta de produto ja filtra por cliente na API, evitando verificacao redundante do tenant - dev
+## [2025-06-30] Produtos exclusivos retornavam erro 403 na loja. Página agora exibe detalhes e exige login apenas na compra - dev - c18ad74d

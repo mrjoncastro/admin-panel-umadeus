@@ -1,27 +1,18 @@
-'use client'
-import { useState, useEffect } from 'react'
-import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Suspense } from 'react'
+import { getProductBySlug } from '@/lib/products/getProductBySlug'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import ProdutoInterativo from '@/components/organisms/ProdutoInterativo'
-import type { Produto as ProdutoBase } from '@/types'
-export default function ProdutoDetalhe() {
-  const { slug } = useParams<{ slug: string }>()
-  const [produto, setProduto] = useState<ProdutoBase | null>(null)
-  const [erro, setErro] = useState(false)
 
-  useEffect(() => {
-    if (!slug) return
-    fetch(`/api/produtos/${slug}`)
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((p: ProdutoBase) => {
-        setProduto(p)
-      })
-      .catch(() => setErro(true))
-  }, [slug])
+export default async function ProdutoDetalhe({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
+  const { slug } = await params
+  const produto = await getProductBySlug(slug)
 
-  if (erro) {
+  if (!produto) {
     return (
       <main className="font-sans px-4 md:px-16 py-10">
         <Link
@@ -37,19 +28,9 @@ export default function ProdutoDetalhe() {
     )
   }
 
-  if (!produto) {
-    return (
-      <main className="font-sans px-4 md:px-16 py-10">
-        <LoadingOverlay show={true} text="Carregando..." />
-      </main>
-    )
-  }
-
-  // Normaliza imagens e gêneros
   let generos: string[] = []
   let imagens: Record<string, string[]> = {}
 
-  // Tenta extrair lista de gêneros armazenada no produto
   if (produto.generos) {
     generos = Array.isArray(produto.generos)
       ? produto.generos.map((g) => g.trim())
@@ -57,11 +38,9 @@ export default function ProdutoDetalhe() {
   }
 
   if (typeof produto.imagens === 'object' && !Array.isArray(produto.imagens)) {
-    // formato: { masculino: [...], feminino: [...] }
     imagens = produto.imagens as Record<string, string[]>
     if (generos.length === 0) generos = Object.keys(imagens)
   } else {
-    // formato: array
     imagens = { default: (produto.imagens as string[]) || [] }
     if (generos.length === 0) generos = ['default']
   }
@@ -71,7 +50,6 @@ export default function ProdutoDetalhe() {
     : typeof produto.tamanhos === 'string'
       ? produto.tamanhos.split(',').map((t) => t.trim())
       : ['P', 'M', 'G', 'GG']
-
 
   return (
     <main className="text-platinum font-sans px-4 md:px-16 py-10">
