@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
           cliente: tenantId,
           campo: data.campo,
           perfil: 'usuario',
-          role: 'usuario',
+          role: data.role || 'usuario',
           password: senha || tempPass,
           passwordConfirm: senha || tempPass,
         })
