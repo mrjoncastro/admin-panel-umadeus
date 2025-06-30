@@ -3,6 +3,7 @@ import createPocketBase from '@/lib/pocketbase'
 import { logConciliacaoErro } from '@/lib/server/logger'
 import type { RecordModel } from 'pocketbase'
 
+// Tipos específicos para respostas da API Asaas
 type AsaasWebhookPayload = {
   payment?: {
     id?: string
@@ -14,15 +15,41 @@ type AsaasWebhookPayload = {
   accountId?: string
 }
 
-export async function POST(req: NextRequest) {
+interface AsaasPaymentResponse {
+  id: string
+  accountId: string
+  externalReference?: string
+  customer?: string
+  status: string
+  value: number
+}
+
+interface AsaasCustomerResponse {
+  cpfCnpj?: string
+}
+
+interface ClienteRecord extends RecordModel {
+  asaas_api_key?: string
+  nome?: string
+}
+
+interface PedidoRecord extends RecordModel {
+  id_pagamento?: string
+  responsavel?: string
+}
+
+interface InscricaoRecord extends RecordModel {
+  criado_por?: string
+}
+
+export async function POST(req: NextRequest): Promise<NextResponse> {
   const pb = createPocketBase()
   const baseUrl = process.env.ASAAS_API_URL
 
   // Lê e valida corpo da requisição
-  const rawBody = await req.text()
   let body: AsaasWebhookPayload
   try {
-    body = JSON.parse(rawBody)
+    body = await req.json()
   } catch {
     return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
   }
@@ -35,36 +62,34 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  const { payment } = body
+  const payment = body.payment
   const paymentId = payment?.id
-  const event = body.event
+  const eventType = body.event
 
-  // Ignora se não for evento de pagamento válido
+  // Ignora se não for evento de pagamento
   if (!paymentId) {
     return NextResponse.json({ status: 'Ignorado' })
   }
-  if (event !== 'PAYMENT_RECEIVED' && event !== 'PAYMENT_CONFIRMED') {
+  if (eventType !== 'PAYMENT_RECEIVED' && eventType !== 'PAYMENT_CONFIRMED') {
     return NextResponse.json({ status: 'Ignorado' })
   }
 
   // Busca credenciais do cliente na coleção "m24_clientes"
   let clienteApiKey: string | null = null
-  let clienteId: string | null = null
-  let clienteNome: string | null = null
-  let usuarioId: string | null = null
-  let inscricaoId: string | null = null
+  let clienteNome: string | undefined
+  let usuarioId: string | undefined
+  let inscricaoId: string | undefined
 
   const accountId = payment.accountId || body.accountId
   if (accountId) {
     try {
       const cliente = await pb
         .collection('m24_clientes')
-        .getFirstListItem(`asaas_account_id = "${accountId}"`)
-      clienteApiKey = (cliente as any).asaas_api_key ?? null
-      clienteId = cliente.id
-      clienteNome = (cliente as any).nome ?? null
+        .getFirstListItem<ClienteRecord>(`asaas_account_id = "${accountId}"`)
+      clienteApiKey = cliente.asaas_api_key ?? null
+      clienteNome = cliente.nome
     } catch {
-      // não encontrado
+      // não encontrado por accountId
     }
   }
 
@@ -74,23 +99,33 @@ export async function POST(req: NextRequest) {
       payment.externalReference,
     )
     if (match) {
-      clienteId = clienteId || match[1]
       usuarioId = match[2]
-      inscricaoId = match[3] ?? null
+      inscricaoId = match[3]
+      // Se ainda não temos apiKey, tentamos buscar pelo clienteId extraído
+      const clienteId = match[1]
+      if (!clienteApiKey && clienteId) {
+        try {
+          const fallback = await pb
+            .collection('m24_clientes')
+            .getOne<ClienteRecord>(clienteId)
+          clienteApiKey = fallback.asaas_api_key ?? null
+          clienteNome = fallback.nome
+        } catch {
+          // ignore
+        }
+      }
     }
   }
 
   if (!clienteApiKey) {
     await logConciliacaoErro(
-      `Cliente não encontrado (accountId: ${accountId ?? 'indefinido'}, externalReference: ${payment?.externalReference ?? 'indefinido'})`,
+      `Cliente não encontrado (accountId: ${accountId ?? 'indefinido'}, externalReference: ${payment.externalReference ?? 'indefinido'})`,
     )
     return NextResponse.json(
       { error: 'Cliente não encontrado' },
       { status: 404 },
     )
   }
-
-  logConciliacaoErro(`Webhook recebido com API Key: ${clienteApiKey}`)
 
   // Prepara cabeçalho de autenticação para Asaas
   const keyHeader = clienteApiKey.startsWith('$')
@@ -100,78 +135,75 @@ export async function POST(req: NextRequest) {
   // Puxa dados do pagamento na API do Asaas
   const paymentRes = await fetch(`${baseUrl}/payments/${paymentId}`, {
     headers: {
-      accept: 'application/json',
+      Accept: 'application/json',
       'access-token': keyHeader,
       'User-Agent': clienteNome ?? 'qg3',
     },
   })
 
   if (!paymentRes.ok) {
-    const errorBody = await paymentRes.text()
+    const details = await paymentRes.text()
     return NextResponse.json(
-      { error: 'Falha ao obter pagamento', details: errorBody },
+      { error: 'Falha ao obter pagamento', details },
       { status: 500 },
     )
   }
 
-  const paymentData = (await paymentRes.json()) as any
-  const status = paymentData.status as string
-  const externalRef = paymentData.externalReference as string | undefined
-  const asaasCustomerId = paymentData.customer as string | undefined
+  const paymentData = (await paymentRes.json()) as AsaasPaymentResponse
+  const {
+    status,
+    externalReference,
+    customer: asaasCustomerId,
+    value,
+  } = paymentData
 
   // Ignora se não confirmado ou recebido
   if (status !== 'RECEIVED' && status !== 'CONFIRMED') {
     return NextResponse.json({ status: 'Aguardando pagamento' })
   }
 
-  // Extrai inscricaoId de externalReference, se não obtido antes
-  if (externalRef && !inscricaoId) {
-    const m = /cliente_([^_]+)_usuario_([^_]+)(?:_inscricao_([^_]+))?/.exec(
-      externalRef,
+  // Extrai inscricaoId se não obtido antes
+  if (externalReference && !inscricaoId) {
+    const match = /cliente_[^_]+_usuario_[^_]+_inscricao_([^_]+)/.exec(
+      externalReference,
     )
-    if (m) {
-      inscricaoId = m[3] ?? null
-    }
+    inscricaoId = match?.[1]
   }
 
   // Busca registro de pedido no PocketBase
-  let pedidoRecord: RecordModel | null = null
+  let pedidoRecord: PedidoRecord | null = null
   try {
-    if (inscricaoId) {
-      const filtro = usuarioId
+    const filtro = inscricaoId
+      ? usuarioId
         ? `id_inscricao = "${inscricaoId}" && responsavel = "${usuarioId}"`
         : `id_inscricao = "${inscricaoId}"`
-      pedidoRecord = await pb.collection('pedidos').getFirstListItem(filtro)
-    } else {
-      const filtro = usuarioId
+      : usuarioId
         ? `id_pagamento = "${paymentId}" && responsavel = "${usuarioId}"`
         : `id_pagamento = "${paymentId}"`
-      pedidoRecord = await pb.collection('pedidos').getFirstListItem(filtro)
-    }
+    pedidoRecord = await pb
+      .collection('pedidos')
+      .getFirstListItem<PedidoRecord>(filtro)
   } catch {
     // ainda sem registro
   }
 
-  // Se não encontrou, tenta via cpf do customer no Asaas
+  // Se não encontrou, tenta via CPF do customer no Asaas
   if (!pedidoRecord && asaasCustomerId) {
     try {
       const clienteRes = await fetch(
         `${baseUrl}/customers/${asaasCustomerId}`,
-        {
-          headers: {
-            accept: 'application/json',
-            'access-token': keyHeader,
-            'User-Agent': clienteNome ?? 'qg3',
-          },
-        },
+        { headers: { Accept: 'application/json', 'access-token': keyHeader } },
       )
       if (clienteRes.ok) {
-        const clienteData = (await clienteRes.json()) as any
+        const clienteData = (await clienteRes.json()) as AsaasCustomerResponse
         const cpf = clienteData.cpfCnpj?.replace(/\D/g, '')
         if (cpf) {
           const pedidos = await pb
             .collection('pedidos')
-            .getList(1, 1, { filter: `cpf = "${cpf}"`, sort: '-created' })
+            .getList<PedidoRecord>(1, 1, {
+              filter: `cpf = "${cpf}"`,
+              sort: '-created',
+            })
           if (pedidos.items.length > 0) {
             pedidoRecord = pedidos.items[0]
           }
@@ -184,7 +216,7 @@ export async function POST(req: NextRequest) {
 
   if (!pedidoRecord) {
     await logConciliacaoErro(
-      `Pedido nao encontrado para pagamento ${paymentId}`,
+      `Pedido não encontrado para pagamento ${paymentId}`,
     )
     return NextResponse.json(
       { error: 'Pedido não encontrado' },
@@ -200,70 +232,54 @@ export async function POST(req: NextRequest) {
     })
 
     if (inscricaoId) {
-      await pb.collection('inscricoes').update(inscricaoId, {
+      await pb.collection('inscricoes').update<InscricaoRecord>(inscricaoId, {
         status: 'confirmado',
       })
     }
 
     // Identifica responsável para notificações
-    let responsavelId = (pedidoRecord as any).responsavel as string | undefined
+    let responsavelId = pedidoRecord.responsavel
     if (!responsavelId && inscricaoId) {
       try {
-        const inscricao = (await pb
+        const inscricao = await pb
           .collection('inscricoes')
-          .getOne(inscricaoId)) as any
-        responsavelId = inscricao.criado_por as string
+          .getOne<InscricaoRecord>(inscricaoId)
+        responsavelId = inscricao.criado_por
       } catch {
         // ignore
       }
     }
 
     if (responsavelId) {
-      const base = req.nextUrl?.origin || req.headers.get('origin')
+      const base = req.nextUrl.origin || req.headers.get('origin')
       if (!base) {
-        console.error('Base URL não encontrada para envio de notificações')
-        return NextResponse.json(
-          { error: 'Base URL não encontrada' },
-          { status: 500 },
-        )
+        throw new Error('Base URL não encontrada para notificações')
       }
 
       // Envia e-mail de confirmação
-      try {
-        await fetch(`${base}/api/email`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            eventType: 'confirmacao_pagamento',
-            userId: responsavelId,
-            amount: paymentData.value,
-          }),
-        })
-      } catch (err: any) {
-        await logConciliacaoErro(
-          `Falha ao enviar e-mail de confirmacao: ${String(err)}`,
-        )
-      }
+      await fetch(`${base}/api/email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventType: 'confirmacao_pagamento',
+          userId: responsavelId,
+          amount: value,
+        }),
+      })
 
       // Envia WhatsApp de confirmação
-      try {
-        await fetch(`${base}/api/chats/message/sendWelcome`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            eventType: 'confirmacao_pagamento',
-            userId: responsavelId,
-          }),
-        })
-      } catch (err: any) {
-        await logConciliacaoErro(
-          `Falha ao enviar WhatsApp de confirmacao: ${String(err)}`,
-        )
-      }
+      await fetch(`${base}/api/chats/message/sendWelcome`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventType: 'confirmacao_pagamento',
+          userId: responsavelId,
+        }),
+      })
     }
-  } catch (err: any) {
+  } catch (error) {
     await logConciliacaoErro(
-      `Falha ao atualizar pedido ${pedidoRecord.id}: ${String(err)}`,
+      `Falha ao atualizar pedido ${pedidoRecord.id}: ${String(error)}`,
     )
     return NextResponse.json(
       { error: 'Erro ao atualizar pedido' },
