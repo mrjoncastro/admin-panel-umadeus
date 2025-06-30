@@ -465,3 +465,4 @@ executados.
 ## [2025-06-27] Atualizado update de usuario para ignorar campos ausentes e preservar dados. Lint e build executados.
 ## [2025-06-27] Evento 'promocao_lider' adicionado e rota PATCH envia notificacoes
 ## [2025-08-10] Seção 'Webhooks Asaas' adicionada ao README explicando prerequisitos e exemplo de cadastro.
+## [2025-08-10] Corrigida referência da coleção para 'm24_clientes' na seção Webhooks Asaas. Lint e build executados.
