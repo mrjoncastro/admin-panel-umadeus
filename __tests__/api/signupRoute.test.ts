@@ -16,6 +16,18 @@ vi.mock('../../lib/getTenantFromHost', () => ({
 }))
 
 describe('POST /api/signup', () => {
+  it('retorna 422 quando email ausente', async () => {
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({ nome: 'Nome' }),
+    })
+    ;(req as any).nextUrl = new URL('http://test')
+    const res = await POST(req as unknown as NextRequest)
+    expect(res.status).toBe(422)
+    const body = await res.json()
+    expect(body.error).toBe('validation_failed')
+    expect(body.fields.email).toBeDefined()
+  })
   it('remove caracteres nao numericos de telefone e cpf', async () => {
     const fetchMock = vi.fn().mockResolvedValue({ ok: true })
     global.fetch = fetchMock as unknown as typeof fetch
