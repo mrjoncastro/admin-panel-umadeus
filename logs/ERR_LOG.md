@@ -185,3 +185,5 @@
 ## [2025-06-27] EventForm nao normalizava data_nascimento ao preencher usuario; campo ficava vazio. Valor agora cortado para YYYY-MM-DD - dev
 ## [2025-08-10] Webhook agora registra accountId e externalReference quando cliente ausente - dev - dbfc979
 ## [2025-06-30] Correção de loop infinito ao memoizar PocketBase nas páginas de inscrições e loja - dev - b51998f1
+## [2025-06-30] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
+## [2025-06-30] Rota /api/pedidos retornava apenas items, ocultando totalPages; resposta atualizada para incluir o resultado completo - dev - de10e3d

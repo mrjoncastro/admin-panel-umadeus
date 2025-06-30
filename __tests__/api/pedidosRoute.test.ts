@@ -53,6 +53,7 @@ describe('GET /api/pedidos', () => {
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(body).toHaveProperty('totalItems')
+    expect(body).toHaveProperty('totalPages')
     expect(getListMock).toHaveBeenCalledWith(
       2,
       5,
@@ -76,6 +77,7 @@ describe('GET /api/pedidos', () => {
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(body).toHaveProperty('totalItems')
+    expect(body).toHaveProperty('totalPages')
     expect(getListMock).toHaveBeenLastCalledWith(
       1,
       20,
@@ -104,6 +106,7 @@ describe('GET /api/pedidos', () => {
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(body).toHaveProperty('totalItems')
+    expect(body).toHaveProperty('totalPages')
     expect(getTenantFromHost).toHaveBeenCalled()
     expect(getListMock).toHaveBeenLastCalledWith(
       3,
