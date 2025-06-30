@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: auth.error }, { status: auth.status })
   }
   const { pb, user } = auth
+  const page = Number(req.nextUrl.searchParams.get('page') || '1')
   const perPage = Number(req.nextUrl.searchParams.get('perPage') || '50')
   const status = req.nextUrl.searchParams.get('status') || ''
   try {
@@ -32,12 +33,12 @@ export async function GET(req: NextRequest) {
       baseFilter = `cliente = "${tenantId}"`
     }
     const filtro = status ? `${baseFilter} && status='${status}'` : baseFilter
-    const { items } = await pb.collection('inscricoes').getList(1, perPage, {
+    const result = await pb.collection('inscricoes').getList(page, perPage, {
       filter: filtro,
       expand: 'evento,campo,pedido,produto',
       sort: '-created',
     })
-    return NextResponse.json(items, { status: 200 })
+    return NextResponse.json(result, { status: 200 })
   } catch (err) {
     console.error('Erro ao listar inscricoes:', err)
     return NextResponse.json({ error: 'Erro ao listar' }, { status: 500 })

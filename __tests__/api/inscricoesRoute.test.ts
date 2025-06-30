@@ -3,7 +3,13 @@ import { GET } from '../../app/api/inscricoes/route'
 import { NextRequest } from 'next/server'
 import createPocketBaseMock from '../mocks/pocketbase'
 
-const getListMock = vi.fn().mockResolvedValue({ items: [] })
+const getListMock = vi.fn().mockResolvedValue({
+  items: [],
+  page: 1,
+  perPage: 1,
+  totalPages: 1,
+  totalItems: 0,
+})
 const pb = createPocketBaseMock()
 pb.collection.mockReturnValue({ getList: getListMock })
 
@@ -29,6 +35,8 @@ describe('GET /api/inscricoes', () => {
     )
     const res = await GET(req as unknown as NextRequest)
     expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body).toHaveProperty('totalItems')
     expect(getListMock).toHaveBeenCalledWith(
       1,
       5,
@@ -51,6 +59,8 @@ describe('GET /api/inscricoes', () => {
     ;(req as any).nextUrl = new URL('http://test/api/inscricoes?perPage=20')
     const res = await GET(req as unknown as NextRequest)
     expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body).toHaveProperty('totalItems')
     expect(getListMock).toHaveBeenLastCalledWith(
       1,
       20,
@@ -76,6 +86,8 @@ describe('GET /api/inscricoes', () => {
     ;(req as any).nextUrl = new URL('http://test/api/inscricoes?status=ativo')
     const res = await GET(req as unknown as NextRequest)
     expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body).toHaveProperty('totalItems')
     expect(getTenantFromHost).toHaveBeenCalled()
     expect(getListMock).toHaveBeenLastCalledWith(
       1,
