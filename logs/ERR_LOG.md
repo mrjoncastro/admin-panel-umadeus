@@ -189,3 +189,4 @@
 ## [2025-06-30] Rota /api/pedidos retornava apenas items, ocultando totalPages; resposta atualizada para incluir o resultado completo - dev - de10e3d
 
 ## [2025-06-30] Correção paginação em /api/inscricoes - dev - 237edb0
+## [2025-06-30] Lista de pedidos duplicada ao carregar admin/pedidos. Adicionada deduplicação no fetch - dev - c29e2ce4

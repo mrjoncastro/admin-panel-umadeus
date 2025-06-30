@@ -8,6 +8,8 @@ import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import ModalEditarPedido from './componentes/ModalEditarPedido'
 import { useToast } from '@/lib/context/ToastContext'
 
+const PER_PAGE = 50
+
 export default function PedidosPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
 
@@ -42,7 +44,7 @@ export default function PedidosPage() {
 
         const params = new URLSearchParams({
           page: String(pagina),
-          perPage: '10',
+          perPage: String(PER_PAGE),
           filter: filtro,
           sort: `${ordem === 'desc' ? '-' : ''}created`,
         })
@@ -50,8 +52,11 @@ export default function PedidosPage() {
           credentials: 'include',
         })
         const data = await res.json()
-        const items = Array.isArray(data.items) ? data.items : data
-        setPedidos(items)
+        const rawItems: Pedido[] = Array.isArray(data.items) ? data.items : data
+        const unique = Array.from(
+          new Map(rawItems.map((p) => [p.id, p])).values(),
+        )
+        setPedidos(unique)
         if (data.totalPages) setTotalPaginas(data.totalPages)
       } catch (err) {
         console.error('Erro ao carregar pedidos', err)
