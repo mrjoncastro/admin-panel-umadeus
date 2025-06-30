@@ -64,6 +64,8 @@ export default function ListaInscricoesPage() {
   const [inscricaoEmEdicao, setInscricaoEmEdicao] = useState<Inscricao | null>(
     null,
   )
+  const [pagina, setPagina] = useState(1)
+  const [totalPaginas, setTotalPaginas] = useState(1)
   const { showError, showSuccess } = useToast()
   const placeholderBusca =
     role === 'coordenador'
@@ -106,16 +108,17 @@ export default function ListaInscricoesPage() {
         ? baseFiltro
         : `campo='${user.campo}' && ${baseFiltro}`
 
-    fetch(
-      `/api/inscricoes?${new URLSearchParams({
-        filter: filtro,
-        expand: 'evento,campo,produto,pedido',
-      }).toString()}`,
-      {
-        credentials: 'include',
-        headers: getAuthHeaders(pb),
-      },
-    )
+    const params = new URLSearchParams({
+      page: String(pagina),
+      perPage: '10',
+      filter: filtro,
+      expand: 'evento,campo,produto,pedido',
+    })
+
+    fetch(`/api/inscricoes?${params.toString()}`, {
+      credentials: 'include',
+      headers: getAuthHeaders(pb),
+    })
       .then(
         (
           r: Response,
@@ -123,7 +126,11 @@ export default function ListaInscricoesPage() {
           r.json(),
       )
       .then((res) => {
-        const lista = (Array.isArray(res) ? res : res.items).map((r) => {
+        const paginated = res as { items: InscricaoRecord[]; totalPages?: number }
+        if (!Array.isArray(res) && typeof paginated.totalPages === 'number') {
+          setTotalPaginas(paginated.totalPages)
+        }
+        const lista = (Array.isArray(res) ? res : paginated.items).map((r) => {
           const produtoExpand = (
             r.expand as { produto?: Produto | Produto[] } | undefined
           )?.produto
@@ -164,7 +171,7 @@ export default function ListaInscricoesPage() {
         credentials: 'include',
       }).catch(() => {})
     }
-  }, [authChecked, tenantId, user, showError, pb])
+  }, [pagina, authChecked, tenantId, user, showError, pb])
 
   useEffect(() => {
     if (!user || !eventoId) {
@@ -793,6 +800,27 @@ export default function ListaInscricoesPage() {
           onClose={() => setPedidoSelecionado(null)}
         />
       )}
+
+      {/* Paginação */}
+      <div className="flex justify-between items-center mt-6 text-sm">
+        <button
+          disabled={pagina === 1}
+          onClick={() => setPagina((p) => Math.max(1, p - 1))}
+          className="btn btn-secondary disabled:opacity-50"
+        >
+          Anterior
+        </button>
+        <span>
+          Página {pagina} de {totalPaginas}
+        </span>
+        <button
+          disabled={pagina === totalPaginas}
+          onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
+          className="btn btn-secondary disabled:opacity-50"
+        >
+          Próxima
+        </button>
+      </div>
     </main>
   )
 }
