@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { fetchCep } from '@/utils/cep'
@@ -18,7 +18,7 @@ export default function CompletarCadastroPage() {
   const { authChecked } = useAuthGuard(['usuario'])
   const { showError, showSuccess } = useToast()
   const router = useRouter()
-  const pb = createPocketBase()
+  const pb = useMemo(() => createPocketBase(), [])
 
   const [dataNasc, setDataNasc] = useState('')
   const [genero, setGenero] = useState('')

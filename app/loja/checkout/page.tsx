@@ -2,7 +2,7 @@
 
 import { useCart } from '@/lib/context/CartContext'
 import { useRouter } from 'next/navigation'
-import { Suspense, useState, useEffect } from 'react'
+import { Suspense, useState, useEffect, useMemo } from 'react'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
@@ -15,7 +15,6 @@ import {
   MAX_ITEM_DESCRIPTION_LENGTH,
   MAX_ITEM_NAME_LENGTH,
 } from '@/lib/constants'
-import { useMemo } from 'react'
 import type { Produto } from '@/types'
 import { useSyncTenant } from '@/lib/hooks/useSyncTenant'
 
@@ -28,7 +27,7 @@ function CheckoutContent() {
 
   const router = useRouter()
   const { isLoggedIn, user, tenantId } = useAuthContext()
-  const pb = createPocketBase()
+  const pb = useMemo(() => createPocketBase(), [])
   useSyncTenant()
   const { showSuccess, showError } = useToast()
 

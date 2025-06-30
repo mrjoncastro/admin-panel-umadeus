@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { Copy } from 'lucide-react'
@@ -50,7 +50,7 @@ type Inscricao = {
 
 export default function ListaInscricoesPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
-  const pb = createPocketBase()
+  const pb = useMemo(() => createPocketBase(), [])
   const tenantId = user?.cliente || ''
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [role, setRole] = useState('')

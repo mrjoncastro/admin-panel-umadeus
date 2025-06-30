@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { useParams } from 'next/navigation'
@@ -13,7 +13,7 @@ import type { Evento } from '@/types'
 export default function EscolherEventoPage() {
   const params = useParams()
   const liderId = params.liderId as string
-  const pb = createPocketBase()
+  const pb = useMemo(() => createPocketBase(), [])
   const [eventos, setEventos] = useState<Evento[]>([])
   const [loading, setLoading] = useState(true)
 

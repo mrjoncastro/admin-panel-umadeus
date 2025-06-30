@@ -6,7 +6,7 @@
  * "Requer inscrição aprovada" e o botão de compra permanece desativado.
  */
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useMemo } from 'react'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { useAuthContext } from '@/lib/context/AuthContext'
@@ -83,7 +83,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
     initial.requer_inscricao_aprovada ?? false,
   )
   const { isLoggedIn, user: ctxUser } = useAuthContext()
-  const pb = createPocketBase()
+  const pb = useMemo(() => createPocketBase(), [])
   const { showSuccess, showError } = useToast()
   const [exclusivo, setExclusivo] = useState<boolean>(
     initial.exclusivo_user ?? false,
