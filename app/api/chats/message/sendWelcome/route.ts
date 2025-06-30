@@ -10,16 +10,20 @@ export type Body = {
     | 'novo_usuario'
     | 'confirmacao_pagamento'
     | 'promocao_lider'
+    | 'confirmacao_pendente_lider'
   userId: string
   paymentLink?: string
   campoNome?: string
+  inscritoNome?: string
+  eventoTitulo?: string
 }
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase()
 
   try {
-    const { eventType, userId, paymentLink, campoNome } = (await req.json()) as Body
+    const { eventType, userId, paymentLink, campoNome, inscritoNome, eventoTitulo } =
+      (await req.json()) as Body
     if (!eventType || !userId) {
       return NextResponse.json(
         { error: 'Parâmetros faltando' },
@@ -82,6 +86,9 @@ export async function POST(req: NextRequest) {
         break
       case 'promocao_lider':
         message = `Parabéns, ${nome}! Agora você lidera o campo ${campoNomeFinal}.`
+        break
+      case 'confirmacao_pendente_lider':
+        message = `Olá ${nome}! Recebemos a inscrição de ${inscritoNome} para o evento ${eventoTitulo}. Por favor, confirme no painel administrativo se está tudo certo ou entre em contato caso haja alguma dúvida.`
         break
       default:
         message = ''

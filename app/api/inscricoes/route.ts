@@ -294,6 +294,21 @@ export async function POST(req: NextRequest) {
       console.error('Erro ao enviar WhatsApp de inscrição:', e)
     }
 
+    try {
+      await fetch(`${req.nextUrl.origin}/api/chats/message/sendWelcome`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventType: 'confirmacao_pendente_lider',
+          userId: liderId,
+          inscritoNome: nome,
+          eventoTitulo: evento.titulo,
+        }),
+      })
+    } catch (e) {
+      console.error('Erro ao enviar WhatsApp para o líder:', e)
+    }
+
     return NextResponse.json(responseData)
   } catch (err: unknown) {
     await logConciliacaoErro(`Erro ao criar inscrição: ${String(err)}`)
