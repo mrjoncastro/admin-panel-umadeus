@@ -52,8 +52,11 @@ export default function PedidosPage() {
           credentials: 'include',
         })
         const data = await res.json()
-        const items = Array.isArray(data.items) ? data.items : data
-        setPedidos(items)
+        const rawItems: Pedido[] = Array.isArray(data.items) ? data.items : data
+        const unique = Array.from(
+          new Map(rawItems.map((p) => [p.id, p])).values(),
+        )
+        setPedidos(unique)
         if (data.totalPages) setTotalPaginas(data.totalPages)
       } catch (err) {
         console.error('Erro ao carregar pedidos', err)
