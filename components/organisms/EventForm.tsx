@@ -71,6 +71,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
     campoId: '',
     produtoId: '',
     tamanho: '',
+    role: 'usuario',
     password: '',
     passwordConfirm: '',
     paymentMethod: 'pix',
@@ -165,6 +166,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
         estado: user.estado || '',
         cidade: user.cidade || '',
         numero: user.numero || '',
+        role: 'usuario',
         campoId: (user.campo as string) || prev.campoId,
       }))
     }
@@ -230,6 +232,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
             estado: form.estado,
             cidade: form.cidade,
             numero: form.numero,
+            role: form.role,
             produtoId: form.produtoId,
             tamanho: form.tamanho,
             liderId,
@@ -260,6 +263,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
               : {
                   password: form.password,
                   passwordConfirm: form.passwordConfirm,
+                  role: form.role,
                 }),
             paymentMethod: form.paymentMethod,
             installments: form.installments,
@@ -548,6 +552,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
               value={form.paymentMethod}
               onChange={handleChange}
               className="input-base"
+              required
             >
               <option value="pix">Pix</option>
               <option value="boleto">Boleto</option>
@@ -562,6 +567,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
               onChange={handleChange}
               disabled={form.paymentMethod !== 'credito'}
               className="input-base"
+              required
             >
               {Array.from({ length: 6 }).map((_, i) => (
                 <option key={i + 1} value={i + 1}>
