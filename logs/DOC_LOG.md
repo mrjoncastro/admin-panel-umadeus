@@ -466,3 +466,4 @@ executados.
 ## [2025-06-27] Evento 'promocao_lider' adicionado e rota PATCH envia notificacoes
 ## [2025-08-10] Seção 'Webhooks Asaas' adicionada ao README explicando prerequisitos e exemplo de cadastro.
 ## [2025-06-30] Evento 'confirmacao_pendente_lider' notifica lider via WhatsApp. Lint e build executados.
+## [2025-06-30] Rota publica de recuperacao de senha movida para `/_/auth/password-reset` e login atualizado para usar esse caminho. Documentacao revisada.
