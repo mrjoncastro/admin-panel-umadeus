@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
     const { email } = await req.json()
     const pb = createPocketBase()
     const origin = req.nextUrl.origin
-    const confirmUrl = `${origin}/_/auth/confirm-password-reset`
+    const confirmUrl = `${origin}/auth/confirm-password-reset`
     await pb.collection('usuarios').requestPasswordReset(String(email), confirmUrl)
     return NextResponse.json({ ok: true })
   } catch (err) {

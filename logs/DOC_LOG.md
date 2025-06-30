@@ -469,3 +469,4 @@ executados.
 ## [2025-06-30] Rota publica de recuperacao de senha movida para `/_/auth/password-reset` e login atualizado para usar esse caminho. Documentacao revisada.
 ## [2025-06-30] Rota /auth/password-reset redireciona para o novo caminho publico e evita erro 404.
 ## [2025-06-30] Rota publica de recuperacao de senha movida para `/_/auth/password-reset` e login atualizado para usar esse caminho. Documentacao revisada.
+## [2025-06-30] Rota de redefinição de senha movida para /auth e confirmUrl atualizado. Lint e build executados.

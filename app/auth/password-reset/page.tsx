@@ -1,5 +1,9 @@
-import { redirect } from 'next/navigation'
+import RequestResetForm from '@/components/RequestResetForm'
 
 export default function Page() {
-  redirect('/_/auth/password-reset')
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <RequestResetForm />
+    </div>
+  )
 }

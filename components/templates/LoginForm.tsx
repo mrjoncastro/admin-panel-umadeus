@@ -122,7 +122,7 @@ export default function LoginForm({
 
           <div className="text-right text-sm">
             <Link
-              href="/_/auth/password-reset"
+              href="/auth/password-reset"
               className="underline text-gray-300 hover:text-white transition"
             >
               Esqueci minha senha
