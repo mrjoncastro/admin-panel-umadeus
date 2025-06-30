@@ -44,33 +44,49 @@ export default function DashboardPage() {
         const perPage = 50
         const filtroCliente = `cliente='${user.cliente}'`
         const params = new URLSearchParams({
-          page: String(page),
+          page: '1',
           perPage: String(perPage),
           filter: filtroCliente,
         })
-        const [insRes, pedRes] = await Promise.all([
-          fetch(`/api/inscricoes?${params.toString()}`, {
+
+        const insRes = await fetch(`/api/inscricoes?${params.toString()}`, {
+          credentials: 'include',
+          signal,
+        }).then((r) => r.json())
+        let rawInscricoes = Array.isArray(insRes.items) ? insRes.items : insRes
+        for (let p = 2; p <= (insRes.totalPages ?? 1); p++) {
+          params.set('page', String(p))
+          const more = await fetch(`/api/inscricoes?${params.toString()}`, {
             credentials: 'include',
             signal,
-          }).then((r) => r.json()),
-          fetch(`/api/pedidos?${params.toString()}`, {
+          }).then((r) => r.json())
+          rawInscricoes = rawInscricoes.concat(
+            Array.isArray(more.items) ? more.items : more,
+          )
+        }
+
+        params.set('page', '1')
+        const pedRes = await fetch(`/api/pedidos?${params.toString()}`, {
+          credentials: 'include',
+          signal,
+        }).then((r) => r.json())
+        let rawPedidos = Array.isArray(pedRes.items) ? pedRes.items : pedRes
+        for (let p = 2; p <= (pedRes.totalPages ?? 1); p++) {
+          params.set('page', String(p))
+          const more = await fetch(`/api/pedidos?${params.toString()}`, {
             credentials: 'include',
             signal,
-          }).then((r) => r.json()),
-        ])
-        const rawInscricoes = Array.isArray(insRes.items)
-          ? insRes.items
-          : insRes
-        const rawPedidos = Array.isArray(pedRes.items) ? pedRes.items : pedRes
+          }).then((r) => r.json())
+          rawPedidos = rawPedidos.concat(
+            Array.isArray(more.items) ? more.items : more,
+          )
+        }
+
         if (insRes.totalPages && pedRes.totalPages) {
           setTotalPages(Math.max(insRes.totalPages, pedRes.totalPages))
         }
-        if (typeof insRes.totalItems === 'number') {
-          setTotalInscricoes(insRes.totalItems)
-        }
-        if (typeof pedRes.totalItems === 'number') {
-          setTotalPedidos(pedRes.totalItems)
-        }
+        setTotalInscricoes(rawInscricoes.length)
+        setTotalPedidos(rawPedidos.length)
 
         if (!isMounted.current) return
 
