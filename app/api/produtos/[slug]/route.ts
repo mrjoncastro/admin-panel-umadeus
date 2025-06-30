@@ -23,14 +23,9 @@ export async function GET(req: NextRequest) {
   try {
     const p = await pb
       .collection('produtos')
-      .getFirstListItem<Produto>(`slug="${slug}"`)
-
-    if (p.cliente !== tenantId) {
-      return NextResponse.json(
-        { error: 'Produto não pertence ao tenant' },
-        { status: 403 },
+      .getFirstListItem<Produto>(
+        `slug='${slug}' && cliente='${tenantId}'`,
       )
-    }
     if (!role && p.exclusivo_user) {
       return NextResponse.json(
         { error: 'Produto exclusivo para usuários logados' },
