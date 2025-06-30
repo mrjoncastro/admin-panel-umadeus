@@ -28,10 +28,10 @@ describe('GET /api/inscricoes', () => {
       user: { id: 'u1', role: 'usuario' },
     })
     const req = new Request(
-      'http://test/api/inscricoes?perPage=5&status=pendente',
+      'http://test/api/inscricoes?page=1&perPage=5&status=pendente',
     )
     ;(req as any).nextUrl = new URL(
-      'http://test/api/inscricoes?perPage=5&status=pendente',
+      'http://test/api/inscricoes?page=1&perPage=5&status=pendente',
     )
     const res = await GET(req as unknown as NextRequest)
     expect(res.status).toBe(200)
@@ -48,6 +48,31 @@ describe('GET /api/inscricoes', () => {
       )
   })
 
+  it('usa page da URL quando informado', async () => {
+    ;(
+      requireRole as unknown as { mockReturnValue: (v: any) => void }
+    ).mockReturnValue({
+      pb,
+      user: { id: 'u1', role: 'usuario' },
+    })
+    const req = new Request('http://test/api/inscricoes?page=2&perPage=5')
+    ;(req as any).nextUrl = new URL(
+      'http://test/api/inscricoes?page=2&perPage=5',
+    )
+    const res = await GET(req as unknown as NextRequest)
+    expect(res.status).toBe(200)
+    await res.json()
+    expect(getListMock).toHaveBeenLastCalledWith(
+      2,
+      5,
+      expect.objectContaining({
+        filter: 'criado_por = "u1"',
+        expand: 'evento,campo,pedido,produto',
+        sort: '-created',
+      }),
+    )
+  })
+
   it('filtra por campo quando lider', async () => {
     ;(
       requireRole as unknown as { mockReturnValue: (v: any) => void }
@@ -55,8 +80,10 @@ describe('GET /api/inscricoes', () => {
       pb,
       user: { id: 'u1', role: 'lider', campo: 'c1' },
     })
-    const req = new Request('http://test/api/inscricoes?perPage=20')
-    ;(req as any).nextUrl = new URL('http://test/api/inscricoes?perPage=20')
+    const req = new Request('http://test/api/inscricoes?page=1&perPage=20')
+    ;(req as any).nextUrl = new URL(
+      'http://test/api/inscricoes?page=1&perPage=20',
+    )
     const res = await GET(req as unknown as NextRequest)
     expect(res.status).toBe(200)
     const body = await res.json()
@@ -82,8 +109,12 @@ describe('GET /api/inscricoes', () => {
     ;(
       getTenantFromHost as unknown as { mockResolvedValue: (v: any) => void }
     ).mockResolvedValue('t1')
-    const req = new Request('http://test/api/inscricoes?status=ativo')
-    ;(req as any).nextUrl = new URL('http://test/api/inscricoes?status=ativo')
+    const req = new Request(
+      'http://test/api/inscricoes?page=1&status=ativo',
+    )
+    ;(req as any).nextUrl = new URL(
+      'http://test/api/inscricoes?page=1&status=ativo',
+    )
     const res = await GET(req as unknown as NextRequest)
     expect(res.status).toBe(200)
     const body = await res.json()
@@ -110,8 +141,8 @@ describe('GET /api/inscricoes', () => {
     ;(
       getTenantFromHost as unknown as { mockResolvedValue: (v: any) => void }
     ).mockResolvedValue(null)
-    const req = new Request('http://test/api/inscricoes')
-    ;(req as any).nextUrl = new URL('http://test/api/inscricoes')
+    const req = new Request('http://test/api/inscricoes?page=1')
+    ;(req as any).nextUrl = new URL('http://test/api/inscricoes?page=1')
     const res = await GET(req as unknown as NextRequest)
     expect(res.status).toBe(400)
   })
