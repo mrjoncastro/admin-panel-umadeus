@@ -21,6 +21,8 @@ interface DashboardResumoProps {
   pedidos: Pedido[]
   filtroStatus: string
   setFiltroStatus: (status: string) => void
+  totalInscricoes: number
+  totalPedidos: number
 }
 
 export default function DashboardResumo({
@@ -28,6 +30,8 @@ export default function DashboardResumo({
   pedidos,
   filtroStatus,
   setFiltroStatus,
+  totalInscricoes,
+  totalPedidos,
 }: DashboardResumoProps) {
   useEffect(() => {
     setupCharts()
@@ -116,7 +120,7 @@ export default function DashboardResumo({
             </Tippy>
           </div>
           <p className="text-3xl font-bold dark:text-gray-100">
-            {inscricoes.length}
+            {totalInscricoes}
           </p>
         </div>
 
@@ -132,7 +136,7 @@ export default function DashboardResumo({
             </Tippy>
           </div>
           <p className="text-3xl font-bold dark:text-gray-100">
-            {pedidos.length}
+            {totalPedidos}
           </p>
         </div>
 

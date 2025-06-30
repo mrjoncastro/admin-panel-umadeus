@@ -3,7 +3,13 @@ import { GET, POST } from '../../app/api/pedidos/route'
 import { NextRequest } from 'next/server'
 import createPocketBaseMock from '../mocks/pocketbase'
 
-const getListMock = vi.fn().mockResolvedValue({ items: [] })
+const getListMock = vi.fn().mockResolvedValue({
+  items: [],
+  page: 1,
+  perPage: 1,
+  totalPages: 1,
+  totalItems: 0,
+})
 const createMock = vi
   .fn()
   .mockResolvedValue({ id: 'p1', valor: 10, status: 'pendente' })
@@ -45,6 +51,8 @@ describe('GET /api/pedidos', () => {
     )
     const res = await GET(req as unknown as NextRequest)
     expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body).toHaveProperty('totalItems')
     expect(getListMock).toHaveBeenCalledWith(
       2,
       5,
@@ -66,6 +74,8 @@ describe('GET /api/pedidos', () => {
     ;(req as any).nextUrl = new URL('http://test/api/pedidos?page=1&perPage=20')
     const res = await GET(req as unknown as NextRequest)
     expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body).toHaveProperty('totalItems')
     expect(getListMock).toHaveBeenLastCalledWith(
       1,
       20,
@@ -92,6 +102,8 @@ describe('GET /api/pedidos', () => {
     )
     const res = await GET(req as unknown as NextRequest)
     expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body).toHaveProperty('totalItems')
     expect(getTenantFromHost).toHaveBeenCalled()
     expect(getListMock).toHaveBeenLastCalledWith(
       3,
