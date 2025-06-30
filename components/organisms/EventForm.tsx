@@ -215,6 +215,11 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
   const handleSubmit = async () => {
     setLoading(true)
     try {
+      if (!liderId && !isLoggedIn && form.password.length < 8) {
+        showError('A senha deve ter ao menos 8 caracteres.')
+        setLoading(false)
+        return
+      }
       if (!liderId && !isLoggedIn && form.password !== form.passwordConfirm) {
         showError('As senhas não coincidem.')
         setLoading(false)
