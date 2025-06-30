@@ -120,7 +120,7 @@ export default function ListaInscricoesPage() {
         })
         const res: { items: InscricaoRecord[]; totalPages: number } =
           await primeiro.json()
-        setTotalPaginas(res.totalPages)
+        // setTotalPaginas(res.totalPages)
         let todos = res.items
 
         for (let p = 2; p <= res.totalPages; p++) {
@@ -257,8 +257,11 @@ export default function ListaInscricoesPage() {
       }
 
       // Identificar o produto associado à inscrição
-      type InscricaoWithProduto = InscricaoRecord & { produto?: string | string[] }
-      const rawProd = inscricao.produto || (inscricao as InscricaoWithProduto).produto
+      type InscricaoWithProduto = InscricaoRecord & {
+        produto?: string | string[]
+      }
+      const rawProd =
+        inscricao.produto || (inscricao as InscricaoWithProduto).produto
       const produtoId = Array.isArray(rawProd) ? rawProd[0] : rawProd
       console.log('[confirmarInscricao] produtoId:', produtoId)
 
@@ -425,7 +428,10 @@ export default function ListaInscricoesPage() {
       if (inscricao.criado_por) {
         const emailRes = await fetch('/api/email', {
           method: 'POST',
-          headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },
+          headers: {
+            ...getAuthHeaders(pb),
+            'Content-Type': 'application/json',
+          },
           body: JSON.stringify({
             eventType: 'confirmacao_inscricao',
             userId: inscricao.criado_por,
