@@ -122,6 +122,7 @@ export default function ListaInscricoesPage() {
         })
         const res: { items: InscricaoRecord[]; totalPages: number } =
           await primeiro.json()
+        setTotalPaginas(res.totalPages)
         let todos = res.items
 
         for (let p = 2; p <= res.totalPages; p++) {
