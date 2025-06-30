@@ -8,6 +8,8 @@ import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import ModalEditarPedido from './componentes/ModalEditarPedido'
 import { useToast } from '@/lib/context/ToastContext'
 
+const PER_PAGE = 50
+
 export default function PedidosPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
 
@@ -42,7 +44,7 @@ export default function PedidosPage() {
 
         const params = new URLSearchParams({
           page: String(pagina),
-          perPage: '10',
+          perPage: String(PER_PAGE),
           filter: filtro,
           sort: `${ordem === 'desc' ? '-' : ''}created`,
         })
