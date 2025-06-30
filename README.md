@@ -264,7 +264,7 @@ em `/api/asaas/saldo`.
 
 Para que notificações de pagamento funcionem, cada cliente precisa ter
 `asaas_api_key` **e** `asaas_account_id` registrados na coleção
-`clientes_config`. O endpoint `/api/asaas/webhook` usa esses dados para
+`m24_clientes`. O endpoint `/api/asaas/webhook` usa esses dados para
 confirmar o cliente através de `accountId` ou `externalReference`.
 
 Se nenhum registro corresponder, o webhook retorna **404** com `{"error": "Cliente não encontrado"}`.

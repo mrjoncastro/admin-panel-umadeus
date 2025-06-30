@@ -1,4 +1,3 @@
-// ./app/api/asaas/webhook/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { logConciliacaoErro } from '@/lib/server/logger'
@@ -19,6 +18,7 @@ export async function POST(req: NextRequest) {
   const pb = createPocketBase()
   const baseUrl = process.env.ASAAS_API_URL
 
+  // Lê e valida corpo da requisição
   const rawBody = await req.text()
   let body: AsaasWebhookPayload
   try {
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
   }
 
-  // Garantir autenticação antes de tudo
+  // Autenticação no PocketBase
   if (!pb.authStore.isValid) {
     await pb.admins.authWithPassword(
       process.env.PB_ADMIN_EMAIL!,
@@ -35,63 +35,54 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  // --- Apenas eventos de pagamento ---
-  const payment = body.payment
-  const paymentId: string | undefined = payment?.id
-  const event: string | undefined = body.event
+  const { payment } = body
+  const paymentId = payment?.id
+  const event = body.event
 
+  // Ignora se não for evento de pagamento válido
   if (!paymentId) {
     return NextResponse.json({ status: 'Ignorado' })
   }
-
   if (event !== 'PAYMENT_RECEIVED' && event !== 'PAYMENT_CONFIRMED') {
     return NextResponse.json({ status: 'Ignorado' })
   }
 
-  // Buscar configs do cliente pelo accountId, se disponível
+  // Busca credenciais do cliente na coleção "m24_clientes"
   let clienteApiKey: string | null = null
   let clienteId: string | null = null
   let clienteNome: string | null = null
   let usuarioId: string | null = null
   let inscricaoId: string | null = null
-  const accountId = payment?.accountId || body.accountId
+
+  const accountId = payment.accountId || body.accountId
   if (accountId) {
     try {
-      const c = await pb
+      const cliente = await pb
         .collection('m24_clientes')
         .getFirstListItem(`asaas_account_id = "${accountId}"`)
-      clienteApiKey = c?.asaas_api_key ?? null
-      clienteId = c?.id ?? null
-      clienteNome = c?.nome ?? null
+      clienteApiKey = (cliente as any).asaas_api_key ?? null
+      clienteId = cliente.id
+      clienteNome = (cliente as any).nome ?? null
     } catch {
-      /* ignore */
+      // não encontrado
     }
   }
 
-  if (payment?.externalReference) {
+  // Extrai informações de referência externa
+  if (payment.externalReference) {
     const match = /cliente_([^_]+)_usuario_([^_]+)(?:_inscricao_([^_]+))?/.exec(
       payment.externalReference,
     )
     if (match) {
       clienteId = clienteId || match[1]
       usuarioId = match[2]
-      inscricaoId = match[3] || null
-    }
-  }
-
-  if (!clienteApiKey && clienteId) {
-    try {
-      const c = await pb.collection('clientes_config').getOne(clienteId)
-      clienteApiKey = c?.asaas_api_key ?? null
-      clienteNome = c?.nome ?? null
-    } catch {
-      /* ignore */
+      inscricaoId = match[3] ?? null
     }
   }
 
   if (!clienteApiKey) {
     await logConciliacaoErro(
-      `Cliente nao encontrado (accountId: ${accountId || 'indefinido'}, externalReference: ${payment?.externalReference || 'indefinido'})`,
+      `Cliente não encontrado (accountId: ${accountId ?? 'indefinido'}, externalReference: ${payment?.externalReference ?? 'indefinido'})`,
     )
     return NextResponse.json(
       { error: 'Cliente não encontrado' },
@@ -101,6 +92,7 @@ export async function POST(req: NextRequest) {
 
   logConciliacaoErro(`Webhook recebido com API Key: ${clienteApiKey}`)
 
+  // Prepara cabeçalho de autenticação para Asaas
   const keyHeader = clienteApiKey.startsWith('$')
     ? clienteApiKey
     : `$${clienteApiKey}`
@@ -122,27 +114,28 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  const paymentData = await paymentRes.json()
-  const status = paymentData.status as string | undefined
-  const externalRef: string | undefined = paymentData.externalReference
-  const asaasCustomerId: string | undefined = paymentData.customer
+  const paymentData = (await paymentRes.json()) as any
+  const status = paymentData.status as string
+  const externalRef = paymentData.externalReference as string | undefined
+  const asaasCustomerId = paymentData.customer as string | undefined
 
+  // Ignora se não confirmado ou recebido
   if (status !== 'RECEIVED' && status !== 'CONFIRMED') {
     return NextResponse.json({ status: 'Aguardando pagamento' })
   }
 
-  // Busca pelo pedido
+  // Extrai inscricaoId de externalReference, se não obtido antes
   if (externalRef && !inscricaoId) {
     const m = /cliente_([^_]+)_usuario_([^_]+)(?:_inscricao_([^_]+))?/.exec(
       externalRef,
     )
     if (m) {
-      inscricaoId = m[3] || null
+      inscricaoId = m[3] ?? null
     }
   }
 
+  // Busca registro de pedido no PocketBase
   let pedidoRecord: RecordModel | null = null
-
   try {
     if (inscricaoId) {
       const filtro = usuarioId
@@ -156,13 +149,12 @@ export async function POST(req: NextRequest) {
       pedidoRecord = await pb.collection('pedidos').getFirstListItem(filtro)
     }
   } catch {
-    // ignore
+    // ainda sem registro
   }
 
-  // 2. Busca pelo customer do Asaas (API Asaas -> CPF -> Pedido)
+  // Se não encontrou, tenta via cpf do customer no Asaas
   if (!pedidoRecord && asaasCustomerId) {
     try {
-      // Busca cliente no Asaas para obter CPF
       const clienteRes = await fetch(
         `${baseUrl}/customers/${asaasCustomerId}`,
         {
@@ -174,20 +166,19 @@ export async function POST(req: NextRequest) {
         },
       )
       if (clienteRes.ok) {
-        const clienteData = await clienteRes.json()
+        const clienteData = (await clienteRes.json()) as any
         const cpf = clienteData.cpfCnpj?.replace(/\D/g, '')
         if (cpf) {
-          // Busca pedido mais recente pelo CPF
           const pedidos = await pb
             .collection('pedidos')
             .getList(1, 1, { filter: `cpf = "${cpf}"`, sort: '-created' })
-          if (pedidos?.items?.length > 0) {
+          if (pedidos.items.length > 0) {
             pedidoRecord = pedidos.items[0]
           }
         }
       }
     } catch {
-      // Cliente não encontrado no Asaas ou erro, segue fluxo
+      // ignore
     }
   }
 
@@ -201,29 +192,29 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  // Atualiza status do pedido e inscrição
   try {
     await pb.collection('pedidos').update(pedidoRecord.id, {
       status: 'pago',
       id_pagamento: paymentId,
     })
 
-    // Atualiza inscrição, se aplicável
     if (inscricaoId) {
       await pb.collection('inscricoes').update(inscricaoId, {
         status: 'confirmado',
       })
     }
 
-    // Identifica o usuário responsável
-    let responsavelId: string | undefined = (
-      pedidoRecord as { responsavel?: string }
-    ).responsavel
+    // Identifica responsável para notificações
+    let responsavelId = (pedidoRecord as any).responsavel as string | undefined
     if (!responsavelId && inscricaoId) {
       try {
-        const inscricao = await pb.collection('inscricoes').getOne(inscricaoId)
-        responsavelId = (inscricao as { criado_por?: string }).criado_por
+        const inscricao = (await pb
+          .collection('inscricoes')
+          .getOne(inscricaoId)) as any
+        responsavelId = inscricao.criado_por as string
       } catch {
-        /* ignore */
+        // ignore
       }
     }
 
@@ -237,6 +228,7 @@ export async function POST(req: NextRequest) {
         )
       }
 
+      // Envia e-mail de confirmação
       try {
         await fetch(`${base}/api/email`, {
           method: 'POST',
@@ -247,12 +239,13 @@ export async function POST(req: NextRequest) {
             amount: paymentData.value,
           }),
         })
-      } catch (err) {
+      } catch (err: any) {
         await logConciliacaoErro(
           `Falha ao enviar e-mail de confirmacao: ${String(err)}`,
         )
       }
 
+      // Envia WhatsApp de confirmação
       try {
         await fetch(`${base}/api/chats/message/sendWelcome`, {
           method: 'POST',
@@ -262,13 +255,13 @@ export async function POST(req: NextRequest) {
             userId: responsavelId,
           }),
         })
-      } catch (err) {
+      } catch (err: any) {
         await logConciliacaoErro(
           `Falha ao enviar WhatsApp de confirmacao: ${String(err)}`,
         )
       }
     }
-  } catch (err) {
+  } catch (err: any) {
     await logConciliacaoErro(
       `Falha ao atualizar pedido ${pedidoRecord.id}: ${String(err)}`,
     )
