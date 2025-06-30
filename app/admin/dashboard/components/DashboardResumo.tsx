@@ -61,12 +61,18 @@ export default function DashboardResumo({
     return acc
   }, {})
 
+  const contagemInscricoes = inscricoes.reduce<Record<string, number>>((acc, i) => {
+    const campo = i.expand?.campo?.nome || 'Sem campo'
+    acc[campo] = (acc[campo] || 0) + 1
+    return acc
+  }, {})
+
   const inscricoesChart = {
-    labels: inscricoes.map((i) => i.expand?.campo?.nome || 'Sem campo'),
+    labels: Object.keys(contagemInscricoes),
     datasets: [
       {
         label: 'Inscrições',
-        data: inscricoes.map(() => 1),
+        data: Object.values(contagemInscricoes),
         backgroundColor: twColors.primary600,
       },
     ],
