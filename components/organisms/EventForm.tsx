@@ -22,6 +22,7 @@ interface Produto {
   id: string
   nome: string
   preco?: number
+  preco_bruto?: number
   imagemUrl?: string
   tamanhos?: string[]
 }
@@ -30,6 +31,7 @@ interface ProdutoApi {
   id: string
   nome: string
   preco?: number
+  preco_bruto?: number
   imagemUrl?: string
   imagem_url?: string
   tamanhos?: string[] | string
@@ -109,6 +111,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
             id: p.id,
             nome: p.nome,
             preco: p.preco,
+            preco_bruto: p.preco_bruto,
             imagemUrl: p.imagemUrl || p.imagem_url,
             tamanhos: Array.isArray(p.tamanhos)
               ? p.tamanhos
@@ -123,6 +126,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
               id: p.id,
               nome: p.nome,
               preco: p.preco,
+              preco_bruto: p.preco_bruto,
               imagemUrl: p.imagemUrl || p.imagem_url,
               tamanhos: Array.isArray(p.tamanhos)
                 ? p.tamanhos
@@ -500,9 +504,9 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
                   <span className="text-xs font-medium text-center line-clamp-2">
                     {p.nome}
                   </span>
-                  {typeof p.preco === 'number' && (
+                  {typeof p.preco_bruto === 'number' && (
                     <span className="text-xs font-semibold">
-                      R$ {p.preco.toFixed(2).replace('.', ',')}
+                      R$ {p.preco_bruto.toFixed(2).replace('.', ',')}
                     </span>
                   )}
                 </button>
