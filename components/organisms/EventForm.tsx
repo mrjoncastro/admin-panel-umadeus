@@ -457,6 +457,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
             value={form.produtoId}
             onChange={handleChange}
             className="input-base"
+            required={produtos.length > 0}
           >
             {produtos.length === 0 ? (
               <option value="">Nenhum produto disponível</option>
@@ -477,6 +478,9 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
               value={form.tamanho}
               onChange={handleChange}
               className="input-base"
+              required={
+                (produtos.find((p) => p.id === form.produtoId)?.tamanhos?.length ?? 0) > 0
+              }
             >
               <option value="">Selecione</option>
               {produtos
