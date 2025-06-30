@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import Image from 'next/image'
-import RedefinirSenhaModal from '@/app/admin/components/RedefinirSenhaModal'
+import Link from 'next/link'
 import { useToast } from '@/lib/context/ToastContext'
 import '@/app/globals.css' // Certifique-se de que o CSS global está importado
 import { PasswordField } from '@/components'
@@ -23,7 +23,6 @@ export default function LoginForm({
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [mostrarModal, setMostrarModal] = useState(false)
   const { showError } = useToast()
 
   // Redirecionamento pós-login
@@ -122,13 +121,12 @@ export default function LoginForm({
           />
 
           <div className="text-right text-sm">
-            <button
-              type="button"
-              onClick={() => setMostrarModal(true)}
+            <Link
+              href="/_/auth/password-reset"
               className="underline text-gray-300 hover:text-white transition"
             >
               Esqueci minha senha
-            </button>
+            </Link>
           </div>
 
           {children && (
@@ -147,10 +145,6 @@ export default function LoginForm({
             {isSubmitting ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
-
-        {mostrarModal && (
-          <RedefinirSenhaModal onClose={() => setMostrarModal(false)} />
-        )}
       </div>
     </div>
   )
