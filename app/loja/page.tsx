@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { calculateGross } from '@/lib/asaasFees'
@@ -17,7 +17,7 @@ interface Produto {
 
 export default function Home() {
   const [produtosDestaque, setProdutosDestaque] = useState<Produto[]>([])
-  const pb = createPocketBase()
+  const pb = useMemo(() => createPocketBase(), [])
 
   useEffect(() => {
     async function fetchProdutos() {

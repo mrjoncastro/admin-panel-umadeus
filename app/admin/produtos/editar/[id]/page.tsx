@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo } from 'react'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { useParams, useRouter } from 'next/navigation'
@@ -36,7 +36,7 @@ function slugify(str: string) {
 export default function EditarProdutoPage() {
   const { id } = useParams<{ id: string }>()
   const { user: ctxUser, isLoggedIn } = useAuthContext()
-  const pb = createPocketBase()
+  const pb = useMemo(() => createPocketBase(), [])
   const router = useRouter()
   const { showSuccess, showError } = useToast()
   const { authChecked } = useAuthGuard(['coordenador'])
