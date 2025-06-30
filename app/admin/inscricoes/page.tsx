@@ -73,20 +73,21 @@ export default function ListaInscricoesPage() {
   useEffect(() => {
     if (!authChecked) return
 
-    if (!user) {
-      showError('Sessão expirada ou inválida.')
-      setLoading(false)
-      return
-    }
+    const carregarInscricoes = async () => {
+      if (!user) {
+        showError('Sessão expirada ou inválida.')
+        setLoading(false)
+        return
+      }
 
-    setRole(user.role)
+      setRole(user.role)
 
-    fetch('/api/eventos', {
-      headers: getAuthHeaders(pb),
-      credentials: 'include',
-    })
-      .then((r: Response): Promise<Evento[]> => r.json())
-      .then((evs: Evento[]) => {
+      try {
+        const eventosRes = await fetch('/api/eventos', {
+          headers: getAuthHeaders(pb),
+          credentials: 'include',
+        })
+        const evs: Evento[] = await eventosRes.json()
         setEventos(evs)
         if (evs.length > 0) {
           setEventoId(evs[0].id)
@@ -94,36 +95,44 @@ export default function ListaInscricoesPage() {
           setEventoId('')
           setLinkPublico('')
         }
-      })
-      .catch(() => {
+      } catch {
         showError('Erro ao carregar eventos.')
         setLinkPublico('')
-      })
+      }
 
-    const baseFiltro = `cliente='${tenantId}'`
-    const filtro =
-      user.role === 'coordenador'
-        ? baseFiltro
-        : `campo='${user.campo}' && ${baseFiltro}`
+      const baseFiltro = `cliente='${tenantId}'`
+      const filtro =
+        user.role === 'coordenador'
+          ? baseFiltro
+          : `campo='${user.campo}' && ${baseFiltro}`
 
-    fetch(
-      `/api/inscricoes?${new URLSearchParams({
+      const params = new URLSearchParams({
         filter: filtro,
         expand: 'evento,campo,produto,pedido',
-      }).toString()}`,
-      {
-        credentials: 'include',
-        headers: getAuthHeaders(pb),
-      },
-    )
-      .then(
-        (
-          r: Response,
-        ): Promise<InscricaoRecord[] | { items: InscricaoRecord[] }> =>
-          r.json(),
-      )
-      .then((res) => {
-        const lista = (Array.isArray(res) ? res : res.items).map((r) => {
+        page: '1',
+        perPage: '50',
+      })
+
+      try {
+        const primeiro = await fetch(`/api/inscricoes?${params.toString()}`, {
+          credentials: 'include',
+          headers: getAuthHeaders(pb),
+        })
+        const res: { items: InscricaoRecord[]; totalPages: number } =
+          await primeiro.json()
+        let todos = res.items
+
+        for (let p = 2; p <= res.totalPages; p++) {
+          params.set('page', String(p))
+          const r = await fetch(`/api/inscricoes?${params.toString()}`, {
+            credentials: 'include',
+            headers: getAuthHeaders(pb),
+          })
+          const pj: { items: InscricaoRecord[] } = await r.json()
+          todos = todos.concat(pj.items)
+        }
+
+        const lista = todos.map((r) => {
           const produtoExpand = (
             r.expand as { produto?: Produto | Produto[] } | undefined
           )?.produto
@@ -154,16 +163,21 @@ export default function ListaInscricoesPage() {
         })
 
         setInscricoes(lista)
-      })
-      .catch(() => showError('Erro ao carregar inscrições.'))
-      .finally(() => setLoading(false))
+      } catch {
+        showError('Erro ao carregar inscrições.')
+      } finally {
+        setLoading(false)
+      }
 
-    if (user.role === 'coordenador') {
-      fetch('/api/campos', {
-        headers: getAuthHeaders(pb),
-        credentials: 'include',
-      }).catch(() => {})
+      if (user.role === 'coordenador') {
+        fetch('/api/campos', {
+          headers: getAuthHeaders(pb),
+          credentials: 'include',
+        }).catch(() => {})
+      }
     }
+
+    carregarInscricoes()
   }, [authChecked, tenantId, user, showError, pb])
 
   useEffect(() => {
