@@ -183,3 +183,4 @@
 ## [2025-06-27] Perfil do cliente não enviava gênero e data_nascimento retornava formato inválido. Rota de atualização agora ajusta cookie - dev
 
 ## [2025-06-27] EventForm nao normalizava data_nascimento ao preencher usuario; campo ficava vazio. Valor agora cortado para YYYY-MM-DD - dev
+## [2025-08-10] Webhook agora registra accountId e externalReference quando cliente ausente - dev - dbfc979

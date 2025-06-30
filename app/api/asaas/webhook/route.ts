@@ -90,6 +90,9 @@ export async function POST(req: NextRequest) {
   }
 
   if (!clienteApiKey) {
+    await logConciliacaoErro(
+      `Cliente nao encontrado (accountId: ${accountId || 'indefinido'}, externalReference: ${payment?.externalReference || 'indefinido'})`,
+    )
     return NextResponse.json(
       { error: 'Cliente não encontrado' },
       { status: 404 },

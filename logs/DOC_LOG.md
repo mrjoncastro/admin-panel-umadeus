@@ -464,3 +464,4 @@ executados.
 ## [2025-06-27] Login retorna token para salvar no contexto e reutilizar em chamadas API. Lint e build executados.
 ## [2025-06-27] Atualizado update de usuario para ignorar campos ausentes e preservar dados. Lint e build executados.
 ## [2025-06-27] Evento 'promocao_lider' adicionado e rota PATCH envia notificacoes
+## [2025-08-10] Seção 'Webhooks Asaas' adicionada ao README explicando prerequisitos e exemplo de cadastro.
