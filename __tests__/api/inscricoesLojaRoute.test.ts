@@ -6,6 +6,7 @@ import createPocketBaseMock from '../mocks/pocketbase'
 const getFirstMock = vi.fn()
 const createUserMock = vi.fn()
 const createInscricaoMock = vi.fn()
+const getOneEventoMock = vi.fn().mockResolvedValue({ titulo: 'Evento X' })
 const pb = createPocketBaseMock()
 
 pb.collection.mockImplementation((name: string) => {
@@ -14,6 +15,9 @@ pb.collection.mockImplementation((name: string) => {
   }
   if (name === 'inscricoes') {
     return { create: createInscricaoMock }
+  }
+  if (name === 'eventos') {
+    return { getOne: getOneEventoMock }
   }
   return {} as any
 })
@@ -102,6 +106,7 @@ describe('POST /loja/api/inscricoes', () => {
 
   it('envia notificacoes apos inscricao', async () => {
     getFirstMock.mockRejectedValueOnce(new Error('not found'))
+    getFirstMock.mockResolvedValueOnce({ id: 'lid1' })
     createUserMock.mockResolvedValueOnce({ id: 'u3' })
     createInscricaoMock.mockResolvedValueOnce({ id: 'i3' })
     const fetchMock = vi.fn().mockResolvedValue({ ok: true })
@@ -132,7 +137,13 @@ describe('POST /loja/api/inscricoes', () => {
       'http://test/api/chats/message/sendWelcome',
       expect.any(Object),
     )
-    const body = JSON.parse((fetchMock.mock.calls[0][1] as any).body as string)
-    expect(body.userId).toBe('u3')
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://test/api/chats/message/sendWelcome',
+      expect.any(Object),
+    )
+    const firstBody = JSON.parse((fetchMock.mock.calls[1][1] as any).body as string)
+    expect(firstBody.userId).toBe('u3')
+    const secondBody = JSON.parse((fetchMock.mock.calls[2][1] as any).body as string)
+    expect(secondBody.userId).toBe('lid1')
   })
 })

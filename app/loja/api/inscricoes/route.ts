@@ -94,6 +94,8 @@ export async function POST(req: NextRequest) {
 
     const record = await pb.collection('inscricoes').create(registroParaCriar)
 
+    const evento = await pb.collection('eventos').getOne(data.evento)
+
     console.log('Registro criado com sucesso:', record)
 
     let eventType: 'nova_inscricao' | 'confirmacao_inscricao' =
@@ -123,6 +125,16 @@ export async function POST(req: NextRequest) {
       return
     }
 
+    let liderId: string | undefined
+    try {
+      const lider = await pb
+        .collection('usuarios')
+        .getFirstListItem(`campo='${data.campo}' && role='lider'`)
+      liderId = lider.id
+    } catch (e) {
+      console.error('Líder não encontrado para o campo', e)
+    }
+
     try {
       await fetch(`${base}/api/email`, {
         method: 'POST',
@@ -141,6 +153,23 @@ export async function POST(req: NextRequest) {
       })
     } catch (e) {
       console.error('Erro ao enviar WhatsApp de inscrição:', e)
+    }
+
+    if (liderId) {
+      try {
+        await fetch(`${base}/api/chats/message/sendWelcome`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            eventType: 'confirmacao_pendente_lider',
+            userId: liderId,
+            inscritoNome: nome,
+            eventoTitulo: evento.titulo,
+          }),
+        })
+      } catch (e) {
+        console.error('Erro ao enviar WhatsApp para o líder:', e)
+      }
     }
 
     return NextResponse.json(record, { status: 201 })
