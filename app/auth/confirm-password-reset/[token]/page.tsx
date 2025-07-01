@@ -1,12 +1,14 @@
-// path: app/auth/confirm-password-reset/[token]/page.tsx
-
+// File: app/auth/confirm-password-reset/[token]/page.tsx
 import ConfirmResetForm from '@/components/ConfirmResetForm'
+import { ReactNode } from 'react'
 
-type Props = {
-  params: { token: string }
+interface PageProps {
+  params: {
+    token: string
+  }
 }
 
-export default function Page({ params }: Props) {
+export default function Page({ params }: PageProps): ReactNode {
   const { token } = params
 
   return (
