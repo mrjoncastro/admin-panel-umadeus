@@ -109,10 +109,13 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
       setTimeout(() => {
         router.push('/loja/inscricoes/confirmacao')
       }, 500)
-    } catch (err) {
+    } catch (err: unknown) {
       console.warn('Erro ao enviar inscrição:', err)
       setStatus('error')
-      showError('Erro ao enviar a inscrição. Tente novamente.')
+      const msg =
+        (err as { response?: { error?: string } })?.response?.error ||
+        'Erro ao enviar a inscrição. Tente novamente.'
+      showError(msg)
     }
   }
 
