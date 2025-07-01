@@ -58,6 +58,8 @@ export type Pedido = {
   email: string
   canal: 'loja' | 'inscricao'
   created?: string
+  /** Data de vencimento do pagamento */
+  vencimento?: string
   valor: string
   /** URL gerada pelo Asaas */
   link_pagamento?: string
