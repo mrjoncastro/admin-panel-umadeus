@@ -16,10 +16,15 @@ export default function useInscricoes() {
     if (!tenantId) return
     let active = true
     const headers = getAuthHeaders(pb)
-    fetch('/api/inscricoes', { headers, credentials: 'include' })
+  fetch('/api/inscricoes', { headers, credentials: 'include' })
       .then((res) => (res.ok ? res.json() : Promise.reject()))
       .then((data) => {
-        if (active) setInscricoes(data as Inscricao[])
+        const items = Array.isArray(data)
+          ? data
+          : Array.isArray(data.items)
+            ? data.items
+            : []
+        if (active) setInscricoes(items as Inscricao[])
       })
       .catch(() => {
         if (active) setInscricoes([])

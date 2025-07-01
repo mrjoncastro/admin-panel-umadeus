@@ -1,5 +1,5 @@
 'use client'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import Image from 'next/image'
 import type { Produto } from '@/types'
 
@@ -135,8 +135,11 @@ export default function ProdutoInterativo({
 
   const precoBruto = produto.preco_bruto
 
-  const firstImgKey = Object.keys(imagens)[0]
-  const imgs = imagens[genero] || imagens['default'] || imagens[firstImgKey]
+  const firstImgKey = useMemo(() => Object.keys(imagens)[0], [imagens])
+  const imgs = useMemo(
+    () => imagens[genero] || imagens['default'] || imagens[firstImgKey] || [],
+    [imagens, genero, firstImgKey],
+  )
 
   useEffect(() => {
     setIndexImg(0)
