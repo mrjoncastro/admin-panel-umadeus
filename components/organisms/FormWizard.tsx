@@ -12,6 +12,7 @@ interface FormWizardProps {
   onFinish?: () => void
   className?: string
   loading?: boolean
+  onStepValidate?: (index: number) => Promise<boolean> | boolean
 }
 
 export default function FormWizard({
@@ -19,6 +20,7 @@ export default function FormWizard({
   onFinish,
   className = '',
   loading = false,
+  onStepValidate,
 }: FormWizardProps) {
   const [current, setCurrent] = useState(0)
   const [message, setMessage] = useState('')
@@ -32,7 +34,7 @@ export default function FormWizard({
     else setMessage('Ótimo! Continue preenchendo as próximas informações.')
   }, [current, steps.length])
 
-  const next = () => {
+  const next = async () => {
     if (containerRef.current) {
       const inputs = containerRef.current.querySelectorAll<
         HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -42,6 +44,10 @@ export default function FormWizard({
           return
         }
       }
+    }
+    if (onStepValidate) {
+      const ok = await onStepValidate(current)
+      if (!ok) return
     }
     if (isLast) onFinish?.()
     else setCurrent((c) => Math.min(c + 1, steps.length - 1))

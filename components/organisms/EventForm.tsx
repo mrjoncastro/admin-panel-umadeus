@@ -9,6 +9,7 @@ import { useAuthContext } from '@/lib/context/AuthContext'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { fetchCep } from '@/utils/cep'
+import { isValidCPF } from '@/utils/validators'
 import FormWizard from './FormWizard'
 import LoadingOverlay from './LoadingOverlay'
 import {
@@ -210,6 +211,35 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
 
   const handleSelectProduto = (id: string) => {
     setForm((prev) => ({ ...prev, produtoId: id, tamanho: '' }))
+  }
+
+  const handleStepValidate = async (index: number) => {
+    if (index === 0) {
+      const cpfNumerico = form.cpf.replace(/\D/g, '')
+      if (!isValidCPF(cpfNumerico)) {
+        showError('CPF inválido.')
+        return false
+      }
+      try {
+        const res = await fetch(
+          `/api/usuarios/exists?cpf=${cpfNumerico}&email=${encodeURIComponent(form.email)}`,
+        )
+        if (res.ok) {
+          const data = await res.json()
+          if (data.cpf) {
+            showError('CPF já cadastrado.')
+            return false
+          }
+          if (data.email) {
+            showError('E-mail já cadastrado.')
+            return false
+          }
+        }
+      } catch {
+        /* ignore */
+      }
+    }
+    return true
   }
 
   const handleSubmit = async () => {
@@ -642,6 +672,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
     <FormWizard
       steps={steps}
       onFinish={handleSubmit}
+      onStepValidate={handleStepValidate}
       loading={loading}
       className="max-w-lg mx-auto bg-white p-6 rounded-xl shadow"
     />
