@@ -1,11 +1,11 @@
 import ConfirmResetForm from '@/components/ConfirmResetForm'
 
-export default function Page({
+export default async function Page({
   params,
 }: {
-  params: { token: string }
+  params: Promise<{ token: string }>
 }) {
-  const { token } = params
+  const { token } = await params
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <ConfirmResetForm token={token} />

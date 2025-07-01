@@ -193,3 +193,5 @@
 ## [2025-06-30] Cadastro da loja não salvava endereço e role ao criar novo usuário. Rota /loja/api/inscricoes agora utiliza data.role e campos completos - dev
 ## [2025-06-30] Consulta de produto ja filtra por cliente na API, evitando verificacao redundante do tenant - dev
 ## [2025-06-30] Produtos exclusivos retornavam erro 403 na loja. Página agora exibe detalhes e exige login apenas na compra - dev - c18ad74d
+
+## [2025-07-01] Corrigida tipagem de params na página de confirmação de senha; build falhava por incompatibilidade com PageProps - dev - 7d2b5981
