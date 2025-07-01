@@ -3,7 +3,7 @@ import createPocketBase from '@/lib/pocketbase'
 import { getUserFromHeaders } from '@/lib/getUserFromHeaders'
 import { requireRole } from '@/lib/apiAuth'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
-import { logConciliacaoErro } from '@/lib/server/logger'
+import { logConciliacaoErro, logRocketEvent } from '@/lib/server/logger'
 import type { Inscricao, Pedido, Produto } from '@/types'
 import colorName from 'color-namer'
 
@@ -242,6 +242,10 @@ export async function POST(req: NextRequest) {
       try {
         const pedido = await pb.collection('pedidos').create<Pedido>(payload)
         console.log('[PEDIDOS][POST] Pedido criado:', pedido)
+        logRocketEvent('pedido_criado', {
+          pedidoId: pedido.id,
+          responsavel: userId,
+        })
 
         return NextResponse.json({
           pedidoId: pedido.id,
@@ -344,6 +348,10 @@ export async function POST(req: NextRequest) {
     try {
       const pedido = await pb.collection('pedidos').create<Pedido>(payload)
       console.log('[PEDIDOS][POST] Pedido criado:', pedido)
+      logRocketEvent('pedido_criado', {
+        pedidoId: pedido.id,
+        responsavel: responsavelId,
+      })
 
       return NextResponse.json({
         pedidoId: pedido.id,

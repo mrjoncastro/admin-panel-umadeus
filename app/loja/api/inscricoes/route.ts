@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { ClientResponseError } from 'pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
-import { logConciliacaoErro } from '@/lib/server/logger'
+import { logConciliacaoErro, logRocketEvent } from '@/lib/server/logger'
 import type { PaymentMethod } from '@/lib/asaasFees'
 import { criarInscricao, InscricaoTemplate } from '@/lib/templates/inscricao'
 
@@ -110,6 +110,10 @@ export async function POST(req: NextRequest) {
     const evento = await pb.collection('eventos').getOne(data.evento)
 
     console.log('Registro criado com sucesso:', record)
+    logRocketEvent('inscricao_loja', {
+      inscricaoId: record.id,
+      userId: usuario?.id,
+    })
 
     let eventType: 'nova_inscricao' | 'confirmacao_inscricao' =
       'confirmacao_inscricao'

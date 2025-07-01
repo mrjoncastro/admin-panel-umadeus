@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
+import { logRocketEvent } from '@/lib/server/logger'
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase()
@@ -74,6 +75,8 @@ export async function POST(req: NextRequest) {
     } catch (err) {
       console.error('Falha ao enviar mensagem de boas-vindas', err)
     }
+
+    logRocketEvent('novo_usuario', { userId: usuario.id })
 
     return NextResponse.json(usuario, { status: 201 })
   } catch (err: unknown) {
