@@ -344,6 +344,32 @@ export default function ListaInscricoesPage() {
       const gross = precoProduto // ajuste aqui caso queira aplicar taxas/descontos
       console.log('[confirmarInscricao] gross:', gross)
 
+      // 3. Gerar link de pagamento via Asaas
+      const asaasRes = await fetch('/api/asaas', {
+        method: 'POST',
+        headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          valorBruto: precoProduto,
+          paymentMethod: metodo,
+          installments: parcelas,
+        }),
+      })
+      const checkout = await asaasRes.json()
+
+      if (!asaasRes.ok || !checkout?.url) {
+        const msg =
+          checkout?.message ||
+          (checkout?.errors && checkout.errors[0]?.description) ||
+          'Erro ao gerar link de pagamento.'
+        console.error(
+          '[confirmarInscricao] Erro ao gerar link de pagamento:',
+          checkout,
+        )
+        showError(msg)
+        setConfirmandoId(null)
+        return
+      }
+
       const pedidoRes = await fetch('/api/pedidos', {
         method: 'POST',
         credentials: 'include',
@@ -376,36 +402,6 @@ export default function ListaInscricoesPage() {
 
       // Agora sim, apenas aguardamos o JSON retornado
       const pedido: { pedidoId: string } = await pedidoRes.json()
-
-      // 3. Gerar link de pagamento via Asaas
-      const asaasRes = await fetch('/api/asaas', {
-        method: 'POST',
-        headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          pedidoId: pedido.pedidoId,
-          valorBruto: precoProduto,
-          paymentMethod: metodo,
-          installments: parcelas,
-        }),
-      })
-      const checkout = await asaasRes.json()
-
-      if (!asaasRes.ok || !checkout?.url) {
-        console.error(
-          '[confirmarInscricao] Erro ao gerar link de pagamento:',
-          checkout,
-        )
-        try {
-          await fetch(`/api/pedidos/${pedido.pedidoId}`, {
-            method: 'DELETE',
-            credentials: 'include',
-            headers: getAuthHeaders(pb),
-          })
-        } catch (e) {
-          console.error('[confirmarInscricao] Falha ao remover pedido:', e)
-        }
-        throw new Error('Erro ao gerar link de pagamento.')
-      }
 
       // 4. Atualizar inscrição com o ID do pedido
       await fetch(`/api/inscricoes/${id}`, {

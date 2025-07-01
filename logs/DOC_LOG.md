@@ -479,3 +479,4 @@ executados.
 ## [2025-06-30] Dashboard agora busca todas as páginas para manter contagens em sincronia com o PocketBase. Lint e build executados.
 ## [2025-07-01] Rota /auth/password-reset removida e redirecionada para /auth/confirm-password-reset. Documentacao atualizada.
 ## [2025-06-30] Corrigido tipo de params na rota /auth/confirm-password-reset/[token]. Lint e build executados.
+## [2025-08-11] Fluxo de confirmação de inscrição ajustado: chamada ao Asaas ocorre antes da criação do pedido. README e manual atualizados. - Lint: falhou (next not found) - Build: falhou (next not found)

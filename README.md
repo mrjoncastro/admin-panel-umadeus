@@ -122,9 +122,9 @@ Ao abrir páginas que utilizam informações do cliente (checkout, dashboard etc
 
 1. O usuário preenche o formulário e os dados são enviados para `criarInscricao`.
 2. A função valida os campos e retorna uma inscrição com status `pendente`.
-3. Em seguida `criarPedido` só é finalizado se a chamada ao Asaas retornar com
-   sucesso, salvando `link_pagamento`. O campo `canal` recebe `inscricao` para
-   indicar a origem do pedido.
+3. A confirmação do pagamento primeiro chama `/api/asaas`; somente se
+   `checkout.url` estiver presente o pedido é criado em seguida, salvando
+   `link_pagamento` e definindo o campo `canal` como `inscricao`.
 4. Compras feitas na loja chamam primeiro `/api/asaas/checkout`; o pedido
    é criado somente após receber o `link` do Asaas, garantindo registros
    válidos.
