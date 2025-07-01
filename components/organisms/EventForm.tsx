@@ -82,6 +82,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
   })
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(true)
+  const [fieldErrors, setFieldErrors] = useState<{ cpf?: string; email?: string }>({})
 
   useEffect(() => {
     async function fetchData() {
@@ -207,6 +208,9 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
   ) => {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
+    if (name === 'cpf' || name === 'email') {
+      setFieldErrors((prev) => ({ ...prev, [name]: undefined }))
+    }
   }
 
   const handleSelectProduto = (id: string) => {
@@ -215,9 +219,10 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
 
   const handleStepValidate = async (index: number) => {
     if (index === 0) {
+      setFieldErrors({})
       const cpfNumerico = form.cpf.replace(/\D/g, '')
       if (!isValidCPF(cpfNumerico)) {
-        showError('CPF inválido.')
+        setFieldErrors({ cpf: 'CPF inválido.' })
         return false
       }
       try {
@@ -227,11 +232,11 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
         if (res.ok) {
           const data = await res.json()
           if (data.cpf) {
-            showError('CPF já cadastrado.')
+            setFieldErrors((prev) => ({ ...prev, cpf: 'CPF já cadastrado.' }))
             return false
           }
           if (data.email) {
-            showError('E-mail já cadastrado.')
+            setFieldErrors((prev) => ({ ...prev, email: 'E-mail já cadastrado.' }))
             return false
           }
         }
@@ -343,7 +348,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
               required
             />
           </FormField>
-          <FormField label="E-mail" htmlFor="email">
+          <FormField label="E-mail" htmlFor="email" error={fieldErrors.email}>
             <TextField
               id="email"
               name="email"
@@ -363,7 +368,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
               required
             />
           </FormField>
-          <FormField label="CPF" htmlFor="cpf">
+          <FormField label="CPF" htmlFor="cpf" error={fieldErrors.cpf}>
             <InputWithMask
               id="cpf"
               name="cpf"
