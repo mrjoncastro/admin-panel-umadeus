@@ -1,5 +1,6 @@
 # Registro de Alterações Documentais
 
+## [2025-07-01] Registrados eventos de inscrição e pedidos no LogRocket
 ## [2025-07-01] Documentado caminho de logs em ambientes serverless no README e no cabeçalho do ERR_LOG
 ## [2025-07-01] Integrado LogRocket para coleta de erros e atualizada documentação
 

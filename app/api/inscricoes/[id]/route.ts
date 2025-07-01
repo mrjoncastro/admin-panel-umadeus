@@ -3,6 +3,7 @@ import { requireRole } from '@/lib/apiAuth'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import type { Inscricao } from '@/types'
 import type { RecordModel } from 'pocketbase'
+import { logRocketEvent } from '@/lib/server/logger'
 
 async function checkAccess(
   inscricao: Inscricao,
@@ -75,6 +76,10 @@ export async function PATCH(req: NextRequest) {
     }
     const data = await req.json()
     const updated = await pb.collection('inscricoes').update(id, data)
+    logRocketEvent('inscricao_atualizada', {
+      inscricaoId: id,
+      status: updated.status,
+    })
     return NextResponse.json(updated)
   } catch (err) {
     console.error('Erro ao atualizar inscricao:', err)
@@ -98,6 +103,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
     await pb.collection('inscricoes').update(id, { status: 'cancelado' })
+    logRocketEvent('inscricao_cancelada', { inscricaoId: id })
     return NextResponse.json({ ok: true })
   } catch (err) {
     console.error('Erro ao cancelar inscricao:', err)

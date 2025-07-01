@@ -1,5 +1,20 @@
 import { appendFile } from 'fs/promises'
 import path from 'path'
+import LogRocket from 'logrocket'
+
+let lrInitialized = false
+
+function ensureLogRocket() {
+  if (!lrInitialized) {
+    try {
+      LogRocket.init('4pjmeb/m24')
+      lrInitialized = true
+    } catch (err) {
+      console.error('Falha ao iniciar LogRocket', err)
+    }
+  }
+  return lrInitialized
+}
 
 export async function logConciliacaoErro(message: string) {
   const date = new Date().toISOString().split('T')[0]
@@ -17,5 +32,35 @@ export async function logConciliacaoErro(message: string) {
     // await sendLogToExternalService(line)
   } catch (err) {
     console.error('Falha ao registrar ERR_LOG', err)
+  }
+}
+
+export function logRocketEvent(
+  message: string,
+  data?: Record<string, unknown>,
+) {
+  if (process.env.NODE_ENV !== 'production') return
+  if (!ensureLogRocket()) return
+  try {
+    if (data) {
+      LogRocket.track(
+        message,
+        data as Record<
+          string,
+          | string
+          | number
+          | boolean
+          | string[]
+          | number[]
+          | boolean[]
+          | null
+          | undefined
+        >,
+      )
+    } else {
+      LogRocket.captureMessage(message)
+    }
+  } catch (err) {
+    console.error('Falha ao enviar log ao LogRocket', err)
   }
 }

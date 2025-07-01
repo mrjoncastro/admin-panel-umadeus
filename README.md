@@ -362,6 +362,8 @@ Os arquivos dentro do diretório `logs/` guardam o histórico do projeto.
 
 Em ambientes serverless (como a hospedagem na Vercel) o log de erros é gravado em `/tmp/ERR_LOG.md` ou encaminhado para o LogRocket (`4pjmeb/m24`), pois o diretório do projeto é efêmero. Para inspecionar, baixe esse arquivo ou consulte o painel do LogRocket.
 
+Além dos erros, o LogRocket registra eventos importantes como criação de usuários, inscrições confirmadas e pedidos gerados, facilitando a auditoria.
+
 Para adicionar uma nova entrada manualmente, abra o arquivo correspondente e inclua uma linha no formato:
 
 ```

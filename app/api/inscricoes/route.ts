@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { createPocketBase } from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
-import { logConciliacaoErro } from '@/lib/server/logger'
+import { logConciliacaoErro, logRocketEvent } from '@/lib/server/logger'
 import type { PaymentMethod } from '@/lib/asaasFees'
 import { criarInscricao, InscricaoTemplate } from '@/lib/templates/inscricao'
 import type { Inscricao } from '@/types'
@@ -193,6 +193,10 @@ export async function POST(req: NextRequest) {
     }
 
     const inscricao = await pb.collection('inscricoes').create(dadosInscricao)
+    logRocketEvent('nova_inscricao_admin', {
+      inscricaoId: inscricao.id,
+      userId: usuario.id,
+    })
 
     const evento = await pb.collection('eventos').getOne(eventoIdFinal!)
 
@@ -214,6 +218,10 @@ export async function POST(req: NextRequest) {
 
         if (pedidoRes.ok) {
           const { pedidoId, valor } = await pedidoRes.json()
+          logRocketEvent('pedido_criado_auto', {
+            pedidoId,
+            inscricaoId: inscricao.id,
+          })
 
           const asaasRes = await fetch(`${base}/api/asaas`, {
             method: 'POST',
@@ -309,6 +317,11 @@ export async function POST(req: NextRequest) {
     } catch (e) {
       console.error('Erro ao enviar WhatsApp para o líder:', e)
     }
+
+    logRocketEvent('inscricao_criada', {
+      inscricaoId: inscricao.id,
+      responsavel: liderId,
+    })
 
     return NextResponse.json(responseData)
   } catch (err: unknown) {
