@@ -204,3 +204,4 @@
 
 ## [2025-07-01] Corrigida tipagem de params na página de confirmação de senha; build falhava por incompatibilidade com PageProps - dev - 7d2b5981
 ## [2025-08-11] Mostrar erro detalhado ao enviar inscrição no InscricaoForm - dev - 99686afe
+## [2025-08-12] Página de produto travava quando não havia imagens. Galeria oculta quando array vazio - dev - cc4a5671
