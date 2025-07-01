@@ -26,6 +26,19 @@ export async function POST(req: NextRequest) {
           .collection('usuarios')
           .getFirstListItem(`email='${data.user_email}'`)
       } catch {
+        const cpf = String(data.user_cpf).replace(/\D/g, '')
+        const telefone = String(data.user_phone).replace(/\D/g, '')
+        try {
+          const dup = await pb.collection('usuarios').getList(1, 1, {
+            filter: `cpf='${cpf}' || email='${data.user_email}' || telefone='${telefone}'`,
+          })
+          if (dup.items.length > 0) {
+            return NextResponse.json(
+              { error: 'Já existe um usuário com este CPF ou e-mail.' },
+              { status: 409 },
+            )
+          }
+        } catch {}
         if (!tenantId) {
           return NextResponse.json(
             { error: 'Tenant não informado' },
@@ -37,8 +50,8 @@ export async function POST(req: NextRequest) {
           nome,
           email: data.user_email,
           emailVisibility: true,
-          cpf: String(data.user_cpf).replace(/\D/g, ''),
-          telefone: String(data.user_phone).replace(/\D/g, ''),
+          cpf,
+          telefone,
           data_nascimento: data.user_birth_date,
           genero: data.user_gender?.toLowerCase(),
           endereco: data.user_address,
