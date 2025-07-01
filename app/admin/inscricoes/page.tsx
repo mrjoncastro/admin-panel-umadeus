@@ -403,6 +403,42 @@ export default function ListaInscricoesPage() {
       // Agora sim, apenas aguardamos o JSON retornado
       const pedido: { pedidoId: string } = await pedidoRes.json()
 
+      // 3. Gerar link de pagamento via Asaas
+      const asaasRes = await fetch('/api/asaas', {
+        method: 'POST',
+        headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pedidoId: pedido.pedidoId,
+          valorBruto: precoProduto,
+          paymentMethod: metodo,
+          installments: parcelas,
+        }),
+      })
+      const checkout = await asaasRes.json()
+
+      if (!asaasRes.ok || !checkout?.url) {
+        const msg =
+          checkout?.message ||
+          (checkout?.errors && checkout.errors[0]?.description) ||
+          'Tivemos um problema ao gerar seu link de pagamento. Nenhum valor foi registrado. Por favor, tente novamente ou entre em contato com a equipe.'
+        console.error(
+          '[confirmarInscricao] Erro ao gerar link de pagamento:',
+          checkout,
+        )
+        try {
+          await fetch(`/api/pedidos/${pedido.pedidoId}`, {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: getAuthHeaders(pb),
+          })
+        } catch (e) {
+          console.error('[confirmarInscricao] Falha ao remover pedido:', e)
+        }
+        showError(msg)
+        setConfirmandoId(null)
+        return
+      }
+
       // 4. Atualizar inscrição com o ID do pedido
       await fetch(`/api/inscricoes/${id}`, {
         method: 'PATCH',

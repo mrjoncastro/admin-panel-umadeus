@@ -480,3 +480,4 @@ executados.
 ## [2025-07-01] Rota /auth/password-reset removida e redirecionada para /auth/confirm-password-reset. Documentacao atualizada.
 ## [2025-06-30] Corrigido tipo de params na rota /auth/confirm-password-reset/[token]. Lint e build executados.
 ## [2025-08-11] Fluxo de confirmação de inscrição ajustado: chamada ao Asaas ocorre antes da criação do pedido. README e manual atualizados. - Lint: falhou (next not found) - Build: falhou (next not found)
+## [2025-08-12] Correção do fluxo de inscrição: pedido é criado antes da chamada ao Asaas e removido se o link não for gerado. Documentação revisada. - Lint: falhou (next not found) - Build: falhou (next not found)
