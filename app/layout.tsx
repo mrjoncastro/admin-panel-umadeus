@@ -8,6 +8,7 @@ import { TenantProvider } from '@/lib/context/TenantContext'
 import { generatePrimaryShades } from '@/utils/primaryShades'
 import { fetchTenantConfig } from '@/lib/fetchTenantConfig'
 import { CartProvider } from '@/lib/context/CartContext'
+import LogRocketInit from '@/components/utils/LogRocketInit'
 
 export const metadata = {
   icons: {
@@ -48,6 +49,7 @@ export default async function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: preload }} />
       </head>
       <body className="font-sans antialiased">
+        <LogRocketInit />
         <TenantProvider initialConfig={cfg}>
           <ThemeProvider>
             <AuthProvider>
