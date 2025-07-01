@@ -1,5 +1,5 @@
 'use client'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import Image from 'next/image'
 import type { Produto } from '@/types'
 
@@ -135,14 +135,18 @@ export default function ProdutoInterativo({
 
   const precoBruto = produto.preco_bruto
 
-  const firstImgKey = Object.keys(imagens)[0]
-  const imgs = imagens[genero] || imagens['default'] || imagens[firstImgKey]
+  const firstImgKey = useMemo(() => Object.keys(imagens)[0], [imagens])
+  const imgs = useMemo(
+    () => imagens[genero] || imagens['default'] || imagens[firstImgKey] || [],
+    [imagens, genero, firstImgKey],
+  )
 
   useEffect(() => {
     setIndexImg(0)
   }, [genero])
 
   useEffect(() => {
+    if (imgs.length <= 1) return
     const interval = setInterval(() => {
       if (!pauseRef.current) {
         setIndexImg((prev) => (prev + 1) % imgs.length)
@@ -161,32 +165,40 @@ export default function ProdutoInterativo({
     <div className="grid md:grid-cols-2 gap-12 items-start">
       {/* Galeria de imagens */}
       <div>
-        <Image
-          src={imgs[indexImg]}
-          alt={nome}
-          width={480}
-          height={480}
-          className="w-full max-w-[480px] mx-auto rounded-xl border border-[var(--accent-900)] shadow-lg transition-all duration-300 bg-[var(--background)]"
-          priority
-        />
-        <div className="flex gap-3 mt-4">
-          {imgs.map((src, i) => (
+        {imgs.length > 0 ? (
+          <>
             <Image
-              key={i + 1}
-              src={src}
-              alt={`Miniatura ${i + 1}`}
-              width={64}
-              height={64}
-              onClick={() => handleMiniaturaClick(i)}
-              className={`w-16 h-16 object-cover rounded-lg border-2 cursor-pointer transition
-              ${
-                indexImg === i
-                  ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]'
-                  : 'border-[var(--accent-900)] hover:brightness-110'
-              }`}
+              src={imgs[indexImg]}
+              alt={nome}
+              width={480}
+              height={480}
+              className="w-full max-w-[480px] mx-auto rounded-xl border border-[var(--accent-900)] shadow-lg transition-all duration-300 bg-[var(--background)]"
+              priority
             />
-          ))}
-        </div>
+            <div className="flex gap-3 mt-4">
+              {imgs.map((src, i) => (
+                <Image
+                  key={i + 1}
+                  src={src}
+                  alt={`Miniatura ${i + 1}`}
+                  width={64}
+                  height={64}
+                  onClick={() => handleMiniaturaClick(i)}
+                  className={`w-16 h-16 object-cover rounded-lg border-2 cursor-pointer transition
+                  ${
+                    indexImg === i
+                      ? 'border-[var(--accent)] ring-2 ring-[var(--accent)]'
+                      : 'border-[var(--accent-900)] hover:brightness-110'
+                  }`}
+                />
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="w-full max-w-[480px] h-[480px] mx-auto flex items-center justify-center rounded-xl border border-[var(--accent-900)] bg-[var(--background)] shadow-lg">
+            <p className="text-sm text-[var(--text-primary)]/70">Sem imagens disponíveis</p>
+          </div>
+        )}
         {/* Tamanhos e gênero no mobile */}
         <div className="block md:hidden mt-6">
           <DetalhesSelecao

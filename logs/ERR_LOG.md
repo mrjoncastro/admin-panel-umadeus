@@ -204,3 +204,6 @@
 
 ## [2025-07-01] Corrigida tipagem de params na página de confirmação de senha; build falhava por incompatibilidade com PageProps - dev - 7d2b5981
 ## [2025-08-11] Mostrar erro detalhado ao enviar inscrição no InscricaoForm - dev - 99686afe
+## [2025-08-12] Página de produto travava quando não havia imagens. Galeria oculta quando array vazio - dev - cc4a5671
+## [2025-08-13] Erro persistia quando objeto de imagens estava vazio; fallback para array vazio e uso de useMemo - dev - 636db478
+## [2025-08-14] inscricoes.some is not a function quando API retorna objeto; parseado data.items em useInscricoes - dev - 09a133f7
