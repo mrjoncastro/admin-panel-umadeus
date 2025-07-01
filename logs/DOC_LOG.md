@@ -472,3 +472,4 @@ executados.
 ## [2025-06-30] Rota de redefinição de senha movida para /auth e confirmUrl atualizado. Lint e build executados.
 ## [2025-06-30] Dashboard agora busca todas as páginas para manter contagens em sincronia com o PocketBase. Lint e build executados.
 ## [2025-07-01] Rota /auth/password-reset removida e redirecionada para /auth/confirm-password-reset. Documentacao atualizada.
+## [2025-06-30] Corrigido tipo de params na rota /auth/confirm-password-reset/[token]. Lint e build executados.
