@@ -18,6 +18,17 @@ export async function POST(req: NextRequest) {
     const tenantId = await getTenantFromHost()
     const telefoneNumerico = String(telefone).replace(/\D/g, '')
     const cpfNumerico = String(cpf).replace(/\D/g, '')
+    try {
+      const dup = await pb.collection('usuarios').getList(1, 1, {
+        filter: `cpf='${cpfNumerico}' || email='${email}'`,
+      })
+      if (dup.items.length > 0) {
+        return NextResponse.json(
+          { error: 'Já existe um usuário com este CPF ou e-mail.' },
+          { status: 409 },
+        )
+      }
+    } catch {}
     const usuario = await pb.collection('usuarios').create({
       nome: String(nome).trim(),
       email: String(email).trim(),

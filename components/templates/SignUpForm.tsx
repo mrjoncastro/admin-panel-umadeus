@@ -4,7 +4,6 @@ import { useState, useEffect, useMemo } from 'react'
 import { fetchCep } from '@/utils/cep'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useToast } from '@/lib/context/ToastContext'
-import type { ClientResponseError } from 'pocketbase'
 import Spinner from '@/components/atoms/Spinner'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
@@ -135,16 +134,8 @@ export default function SignUpForm({
       }, 500)
     } catch (err: unknown) {
       console.error('Erro no cadastro:', err)
-      const e = err as ClientResponseError
-      const data = e.response?.data as
-        | { telefone?: { message: string }; cpf?: { message: string } }
-        | undefined
-      const dupMsg = data?.telefone?.message || data?.cpf?.message
-      if (dupMsg) {
-        showError(dupMsg)
-      } else {
-        showError('Não foi possível criar a conta.')
-      }
+      const message = err instanceof Error ? err.message : 'Não foi possível criar a conta.'
+      showError(message)
     } finally {
       setLoading(false)
     }

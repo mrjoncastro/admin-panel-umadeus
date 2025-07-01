@@ -148,7 +148,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setTenantId(null)
     }
 
-    await fetch('/api/register', {
+    const res = await fetch('/api/register', {
       method: 'POST',
       headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -168,6 +168,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         cliente: clienteId,
       }),
     })
+    if (!res.ok) {
+      const data = await res.json().catch(() => null)
+      const msg = data?.erro || data?.error || 'Falha no cadastro'
+      throw new Error(msg)
+    }
     await login(email, password)
   }
 

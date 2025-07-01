@@ -57,13 +57,26 @@ export async function POST(req: NextRequest) {
         { status: 404 },
       )
     }
+    const cpfNumerico = String(cpf).replace(/\D/g, '')
+    const telefoneNumerico = String(telefone).replace(/\D/g, '')
+    try {
+      const dup = await pb.collection('usuarios').getList(1, 1, {
+        filter: `cpf='${cpfNumerico}' || email='${email}'`,
+      })
+      if (dup.items.length > 0) {
+        return NextResponse.json(
+          { erro: 'Já existe um usuário com este CPF ou e-mail.' },
+          { status: 409 },
+        )
+      }
+    } catch {}
     const novoUsuario = await pb.collection('usuarios').create({
       nome: String(nome).trim(),
       email: String(email).trim(),
       emailVisibility: true,
       cliente: String(cliente),
-      telefone: String(telefone).trim(),
-      cpf: String(cpf).trim(),
+      telefone: telefoneNumerico,
+      cpf: cpfNumerico,
       data_nascimento: String(data_nascimento),
       endereco: String(endereco).trim(),
       numero: String(numero).trim(),
