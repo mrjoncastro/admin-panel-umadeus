@@ -1,3 +1,7 @@
+# Registro de Erros
+
+> Em ambiente local o log é gravado em `logs/ERR_LOG.md`. Em produção (por exemplo, na Vercel) o arquivo é salvo em `/tmp/ERR_LOG.md` ou enviado para o LogRocket (`4pjmeb/m24`). Baixe esse arquivo ou consulte o painel do LogRocket para visualizar os registros.
+
 ## [2025-06-07] Corrigida tipagem da página de categoria que quebrava build - dev - 450cce4
 
 ## [2025-06-07] Corrigido efeito em ListaInscricoes que não respondia a mudanças de autenticação - dev - 668eeb0
@@ -195,3 +199,6 @@
 ## [2025-06-30] Produtos exclusivos retornavam erro 403 na loja. Página agora exibe detalhes e exige login apenas na compra - dev - c18ad74d
 
 ## [2025-07-01] Corrigida tipagem de params na página de confirmação de senha; build falhava por incompatibilidade com PageProps - dev - 7d2b5981
+## [2025-07-01] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
+## [2025-07-01] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
+## [2025-07-01] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test

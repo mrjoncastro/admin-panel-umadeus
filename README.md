@@ -360,7 +360,9 @@ Os arquivos dentro do diretório `logs/` guardam o histórico do projeto.
 - `logs/DOC_LOG.md` registra alterações de documentação e processos.
 - `logs/ERR_LOG.md` armazena erros ocorridos e como foram corrigidos.
 
-Para adicionar uma nova entrada, abra o arquivo correspondente e inclua uma linha no formato:
+Em ambientes serverless (como a hospedagem na Vercel) o log de erros é gravado em `/tmp/ERR_LOG.md` ou encaminhado para o LogRocket (`4pjmeb/m24`), pois o diretório do projeto é efêmero. Para inspecionar, baixe esse arquivo ou consulte o painel do LogRocket.
+
+Para adicionar uma nova entrada manualmente, abra o arquivo correspondente e inclua uma linha no formato:
 
 ```
 ## [DATA] Descrição - ambiente - [link do commit]

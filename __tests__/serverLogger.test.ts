@@ -9,6 +9,7 @@ import * as fsPromises from 'fs/promises'
 describe('logConciliacaoErro', () => {
   afterEach(() => {
     vi.restoreAllMocks()
+    delete process.env.VERCEL
   })
 
   it('escreve mensagem no arquivo de log', async () => {
@@ -18,6 +19,17 @@ describe('logConciliacaoErro', () => {
     expect(appendFileSpy).toHaveBeenCalledWith(
       logPath,
       expect.stringContaining('teste'),
+    )
+  })
+
+  it('usa /tmp/ERR_LOG.md em ambiente serverless', async () => {
+    process.env.VERCEL = '1'
+    const appendFileSpy = vi.spyOn(fsPromises, 'appendFile')
+    await logConciliacaoErro('serverless')
+    const logPath = path.join('/tmp', 'ERR_LOG.md')
+    expect(appendFileSpy).toHaveBeenCalledWith(
+      logPath,
+      expect.stringContaining('serverless'),
     )
   })
 

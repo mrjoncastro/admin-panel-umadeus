@@ -1,5 +1,8 @@
 # Registro de Alterações Documentais
 
+## [2025-07-01] Documentado caminho de logs em ambientes serverless no README e no cabeçalho do ERR_LOG
+## [2025-07-01] Integrado LogRocket para coleta de erros e atualizada documentação
+
 ## [2025-06-06] Adicionada seção 'Registro de Logs' no README
 
 ## [2025-06-06] Adicionada variavel ASAAS_WEBHOOK_SECRET no README
