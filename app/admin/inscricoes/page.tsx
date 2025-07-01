@@ -344,31 +344,6 @@ export default function ListaInscricoesPage() {
       const gross = precoProduto // ajuste aqui caso queira aplicar taxas/descontos
       console.log('[confirmarInscricao] gross:', gross)
 
-      // 3. Gerar link de pagamento via Asaas
-      const asaasRes = await fetch('/api/asaas', {
-        method: 'POST',
-        headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          valorBruto: precoProduto,
-          paymentMethod: metodo,
-          installments: parcelas,
-        }),
-      })
-      const checkout = await asaasRes.json()
-
-      if (!asaasRes.ok || !checkout?.url) {
-        const msg =
-          checkout?.message ||
-          (checkout?.errors && checkout.errors[0]?.description) ||
-          'Erro ao gerar link de pagamento.'
-        console.error(
-          '[confirmarInscricao] Erro ao gerar link de pagamento:',
-          checkout,
-        )
-        showError(msg)
-        setConfirmandoId(null)
-        return
-      }
 
       const pedidoRes = await fetch('/api/pedidos', {
         method: 'POST',
