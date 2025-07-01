@@ -1,15 +1,12 @@
 // File: app/auth/confirm-password-reset/[token]/page.tsx
 import ConfirmResetForm from '@/components/ConfirmResetForm'
-import { ReactNode } from 'react'
 
-interface PageProps {
-  params: {
-    token: string
-  }
+interface Props {
+  params: Promise<{ token: string }>
 }
 
-export default function Page({ params }: PageProps): ReactNode {
-  const { token } = params
+export default async function Page({ params }: Props) {
+  const { token } = await params
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
