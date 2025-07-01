@@ -24,6 +24,7 @@ export default function FormWizard({
 }: FormWizardProps) {
   const [current, setCurrent] = useState(0)
   const [message, setMessage] = useState('')
+  const [stepLoading, setStepLoading] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const isLast = current === steps.length - 1
 
@@ -35,6 +36,7 @@ export default function FormWizard({
   }, [current, steps.length])
 
   const next = async () => {
+    if (loading || stepLoading) return
     if (containerRef.current) {
       const inputs = containerRef.current.querySelectorAll<
         HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -45,19 +47,24 @@ export default function FormWizard({
         }
       }
     }
-    if (onStepValidate) {
-      const ok = await onStepValidate(current)
-      if (!ok) return
+    setStepLoading(true)
+    try {
+      if (onStepValidate) {
+        const ok = await onStepValidate(current)
+        if (!ok) return
+      }
+      if (isLast) onFinish?.()
+      else setCurrent((c) => Math.min(c + 1, steps.length - 1))
+    } finally {
+      setStepLoading(false)
     }
-    if (isLast) onFinish?.()
-    else setCurrent((c) => Math.min(c + 1, steps.length - 1))
   }
 
   const prev = () => setCurrent((c) => Math.max(c - 1, 0))
 
   return (
     <div className={className}>
-      <LoadingOverlay show={loading} text="Processando..." />
+      <LoadingOverlay show={loading || stepLoading} text="Processando..." />
       <div className="w-full bg-neutral-200 rounded-full h-2 mb-4">
         <div
           className="bg-[var(--accent)] h-2 rounded-full transition-all duration-300"
@@ -77,7 +84,7 @@ export default function FormWizard({
         <button
           type="button"
           onClick={prev}
-          disabled={current === 0 || loading}
+          disabled={current === 0 || loading || stepLoading}
           className="btn"
         >
           Voltar
@@ -86,7 +93,7 @@ export default function FormWizard({
           type="button"
           onClick={next}
           className="btn btn-primary"
-          disabled={loading}
+          disabled={loading || stepLoading}
         >
           {isLast ? 'Concluir' : 'Avançar'}
         </button>
