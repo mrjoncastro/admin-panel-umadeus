@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
     const telefoneNumerico = String(telefone).replace(/\D/g, '')
     try {
       const dup = await pb.collection('usuarios').getList(1, 1, {
-        filter: `cpf='${cpfNumerico}' || email='${email}' || telefone='${telefoneNumerico}'`,
+        filter: `cpf='${cpfNumerico}' || email='${email}'`,
       })
       if (dup.items.length > 0) {
         return NextResponse.json(

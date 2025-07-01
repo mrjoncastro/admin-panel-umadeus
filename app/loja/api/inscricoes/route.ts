@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
         const telefone = String(data.user_phone).replace(/\D/g, '')
         try {
           const dup = await pb.collection('usuarios').getList(1, 1, {
-            filter: `cpf='${cpf}' || email='${data.user_email}' || telefone='${telefone}'`,
+            filter: `cpf='${cpf}' || email='${data.user_email}'`,
           })
           if (dup.items.length > 0) {
             return NextResponse.json(
