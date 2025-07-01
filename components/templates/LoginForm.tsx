@@ -50,9 +50,13 @@ export default function LoginForm({
     try {
       await login(email, senha)
       // Redirecionamento ocorre no useEffect
-    } catch (e) {
+    } catch (e: unknown) {
       console.error('❌ Erro no login:', e)
-      showError('Credenciais inválidas.')
+      if (e instanceof Error) {
+        showError(e.message || 'Credenciais inválidas.')
+      } else {
+        showError('Credenciais inválidas.')
+      }
     } finally {
       setIsSubmitting(false)
     }

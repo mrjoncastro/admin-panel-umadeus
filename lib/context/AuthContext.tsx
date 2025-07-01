@@ -96,7 +96,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       credentials: 'include',
       body: JSON.stringify({ email, password }),
     })
-    if (!res.ok) throw new Error('Login failed')
+    if (!res.ok) {
+      const data = await res.json().catch(() => null)
+      throw new Error(data?.error || 'Login failed')
+    }
     const data = await res.json()
     pb.authStore.save(data.token, data.user)
     updateBaseAuth(data.token, data.user)
