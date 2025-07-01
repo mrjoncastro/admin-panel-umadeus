@@ -40,12 +40,13 @@ const pedidoPayload = {
   canal: 'inscricao',
 }
 
-// Enviar para /api/pedidos com esse payload
+// 1. Envie o payload acima para `/api/pedidos` e obtenha `pedidoId`
+// 2. Chame `/api/asaas` passando `pedidoId`, `valorBruto`, `paymentMethod` e `installments`
+// 3. Se `checkout.url` existir, atualize o pedido com `link_pagamento` e prossiga
 ```
 
 - Atualizar campo `aprovada` → `true`
 - Atualizar campo `confirmado_por_lider` → `true`
-- Gerar link de pagamento via Asaas (`/api/asaas`)
 - Atualizar inscrição com:
 
 ```json

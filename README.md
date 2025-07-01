@@ -122,20 +122,18 @@ Ao abrir páginas que utilizam informações do cliente (checkout, dashboard etc
 
 1. O usuário preenche o formulário e os dados são enviados para `criarInscricao`.
 2. A função valida os campos e retorna uma inscrição com status `pendente`.
-3. Em seguida `criarPedido` só é finalizado se a chamada ao Asaas retornar com
-   sucesso, salvando `link_pagamento`. O campo `canal` recebe `inscricao` para
-   indicar a origem do pedido.
-4. Compras feitas na loja chamam primeiro `/api/asaas/checkout`; o pedido
-   é criado somente após receber o `link` do Asaas, garantindo registros
-   válidos.
-5. O usuário é redirecionado para essa URL para concluir o pagamento.
+3. A confirmação do pagamento cria primeiro um `pedido` via `/api/pedidos` e
+   utiliza o `pedidoId` para chamar `/api/asaas`. Se `checkout.url` for retornado
+   ele é salvo no pedido (campo `link_pagamento`) e a inscrição é atualizada com
+   `status` aguardando pagamento.
+4. Compras feitas na loja chamam `/api/asaas/checkout` e apenas em seguida
+   registram o pedido, garantindo que o link seja sempre válido.
+5. O usuário é redirecionado para a URL de pagamento para concluir a compra.
 
-### Inscrições x Compras na Loja
-
-- **Inscrições** – após um líder confirmar a inscrição pelo admin, o painel faz
-  uma chamada para `/api/asaas` informando `valorBruto`, `paymentMethod`
-  e `installments` para gerar o boleto e salvar o link de pagamento no pedido
-  correspondente.
+- **Inscrições** – após um líder confirmar a inscrição pelo admin, o painel cria
+  um pedido com os dados da inscrição e, em seguida, consulta `/api/asaas`
+  passando `pedidoId`, `valorBruto`, `paymentMethod` e `installments`.
+  Se o retorno contiver `checkout.url`, o link é salvo no pedido e enviado ao usuário.
 - Para o passo a passo completo do modo manual consulte
   [docs/manual-aprovacao-inscricao.md](docs/manual-aprovacao-inscricao.md).
 - **Compras de Loja** – os produtos adicionados ao carrinho são processados na

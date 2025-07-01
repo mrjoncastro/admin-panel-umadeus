@@ -391,6 +391,10 @@ export default function ListaInscricoesPage() {
       const checkout = await asaasRes.json()
 
       if (!asaasRes.ok || !checkout?.url) {
+        const msg =
+          checkout?.message ||
+          (checkout?.errors && checkout.errors[0]?.description) ||
+          'Tivemos um problema ao gerar seu link de pagamento. Nenhum valor foi registrado. Por favor, tente novamente ou entre em contato com a equipe.'
         console.error(
           '[confirmarInscricao] Erro ao gerar link de pagamento:',
           checkout,
@@ -404,7 +408,9 @@ export default function ListaInscricoesPage() {
         } catch (e) {
           console.error('[confirmarInscricao] Falha ao remover pedido:', e)
         }
-        throw new Error('Erro ao gerar link de pagamento.')
+        showError(msg)
+        setConfirmandoId(null)
+        return
       }
 
       // 4. Atualizar inscrição com o ID do pedido
