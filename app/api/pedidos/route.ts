@@ -279,6 +279,26 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // Verificar se já existe pedido vinculado à inscrição
+    try {
+      const existente = await pb
+        .collection('pedidos')
+        .getFirstListItem<Pedido>(
+          `id_inscricao="${inscricaoId}" && status!='cancelado'`,
+        )
+      if (existente) {
+        console.log('[PEDIDOS][POST] Pedido existente:', existente.id)
+        return NextResponse.json({
+          pedidoId: existente.id,
+          valor: existente.valor,
+          status: existente.status,
+        })
+      }
+    } catch (err) {
+      console.log('[PEDIDOS][POST] Nenhum pedido existente encontrado')
+      console.error(err)
+    }
+
     const campoId = inscricao.expand?.campo?.id
     const responsavelId = inscricao.expand?.criado_por
     let produtoRecord: Produto | undefined
