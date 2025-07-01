@@ -395,6 +395,15 @@ export default function ListaInscricoesPage() {
           '[confirmarInscricao] Erro ao gerar link de pagamento:',
           checkout,
         )
+        try {
+          await fetch(`/api/pedidos/${pedido.pedidoId}`, {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: getAuthHeaders(pb),
+          })
+        } catch (e) {
+          console.error('[confirmarInscricao] Falha ao remover pedido:', e)
+        }
         throw new Error('Erro ao gerar link de pagamento.')
       }
 
