@@ -53,7 +53,8 @@ export default function SignUpPage() {
       })
       const data = await res.json()
       if (!res.ok) {
-        const dupMsg = data?.telefone?.message || data?.cpf?.message
+        const dupMsg =
+          data?.telefone?.message || data?.cpf?.message || data?.email?.message
         showError(dupMsg || data?.error || 'Erro ao criar conta.')
         return
       }
@@ -62,7 +63,11 @@ export default function SignUpPage() {
       router.push('/completar-cadastro')
     } catch (err) {
       console.error('Erro no cadastro:', err)
-      showError('Erro ao criar conta.')
+      if (err instanceof Error) {
+        showError(err.message)
+      } else {
+        showError('Falha de conexão')
+      }
     } finally {
       setLoading(false)
     }
