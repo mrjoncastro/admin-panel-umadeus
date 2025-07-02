@@ -207,3 +207,4 @@
 ## [2025-08-12] Página de produto travava quando não havia imagens. Galeria oculta quando array vazio - dev - cc4a5671
 ## [2025-08-13] Erro persistia quando objeto de imagens estava vazio; fallback para array vazio e uso de useMemo - dev - 636db478
 ## [2025-08-14] inscricoes.some is not a function quando API retorna objeto; parseado data.items em useInscricoes - dev - 09a133f7
+## [2025-07-02] Erro de checkout retornava campo 'error' nao tratado; exibicao atualizada - prod - aaccd7eb
