@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logRocketEvent } from '@/lib/server/logger'
+import { pbRetry } from '@/lib/pbRetry'
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase()
@@ -20,9 +21,11 @@ export async function POST(req: NextRequest) {
     const telefoneNumerico = String(telefone).replace(/\D/g, '')
     const cpfNumerico = String(cpf).replace(/\D/g, '')
     try {
-      const dup = await pb.collection('usuarios').getList(1, 1, {
-        filter: `cpf='${cpfNumerico}' || email='${email}'`,
-      })
+      const dup = await pbRetry(() =>
+        pb.collection('usuarios').getList(1, 1, {
+          filter: `cpf='${cpfNumerico}' || email='${email}'`,
+        }),
+      )
       if (dup.items.length > 0) {
         return NextResponse.json(
           { error: 'Já existe um usuário com este CPF ou e-mail.' },
@@ -30,17 +33,19 @@ export async function POST(req: NextRequest) {
         )
       }
     } catch {}
-    const usuario = await pb.collection('usuarios').create({
-      nome: String(nome).trim(),
-      email: String(email).trim(),
-      emailVisibility: true,
-      telefone: telefoneNumerico,
-      cpf: cpfNumerico,
-      password: String(senha),
-      passwordConfirm: String(senha),
-      role: 'usuario',
-      ...(tenantId ? { cliente: tenantId } : {}),
-    })
+    const usuario = await pbRetry(() =>
+      pb.collection('usuarios').create({
+        nome: String(nome).trim(),
+        email: String(email).trim(),
+        emailVisibility: true,
+        telefone: telefoneNumerico,
+        cpf: cpfNumerico,
+        password: String(senha),
+        passwordConfirm: String(senha),
+        role: 'usuario',
+        ...(tenantId ? { cliente: tenantId } : {}),
+      }),
+    )
 
     const base = req.nextUrl?.origin || req.headers.get('origin')
     if (!base) {

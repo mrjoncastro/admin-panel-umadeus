@@ -517,3 +517,4 @@ executados.
 ## [2025-07-02] Página pública `/recuperar` criada e link exibido para líderes e clientes. Lint: falhou (next not found) - Build: falhou (next not found)
 ## [2025-07-02] Fluxo unificado gera nova cobrança e página simplificada para recuperar link. - Lint: falhou (next not found) - Build: falhou (next not found)
 >>>>>>> origin/codex/criar-fluxo-unificado-para-gerenciar-link-de-pagamento
+## [2025-07-02] Inclusao de pbRetry nas rotas principais e docs atualizadas. - Lint e Build executados.

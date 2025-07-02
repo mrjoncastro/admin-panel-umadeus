@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { logInfo } from '@/lib/logger'
 import { logConciliacaoErro } from '@/lib/server/logger'
+import { pbRetry } from '@/lib/pbRetry'
 
 export async function GET(req: NextRequest) {
   const auth = requireRole(req, 'coordenador')
@@ -11,11 +12,13 @@ export async function GET(req: NextRequest) {
   const { pb, user } = auth
   logInfo('PocketBase host:', pb.baseUrl)
   try {
-    const eventos = await pb.collection('eventos').getFullList({
-      sort: '-created',
-      filter: `cliente='${user.cliente}'`,
-      expand: 'produtos',
-    })
+    const eventos = await pbRetry(() =>
+      pb.collection('eventos').getFullList({
+        sort: '-created',
+        filter: `cliente='${user.cliente}'`,
+        expand: 'produtos',
+      }),
+    )
     return NextResponse.json(eventos, { status: 200 })
   } catch (err) {
     await logConciliacaoErro(`Erro ao listar eventos: ${String(err)}`)
@@ -35,7 +38,7 @@ export async function POST(req: NextRequest) {
     if (contentType.includes('application/json')) {
       const body = await req.json()
       body.cliente = user.cliente as string
-      const evento = await pb.collection('eventos').create(body)
+      const evento = await pbRetry(() => pb.collection('eventos').create(body))
       return NextResponse.json(evento, { status: 201 })
     }
     const formData = await req.formData()
@@ -50,7 +53,7 @@ export async function POST(req: NextRequest) {
         String(formData.get('produto_inscricao')),
       )
     }
-    const evento = await pb.collection('eventos').create(formData)
+    const evento = await pbRetry(() => pb.collection('eventos').create(formData))
     return NextResponse.json(evento, { status: 201 })
   } catch (err) {
     await logConciliacaoErro(`Erro ao criar evento: ${String(err)}`)

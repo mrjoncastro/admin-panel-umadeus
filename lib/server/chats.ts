@@ -1,6 +1,7 @@
 // ./lib/server/chats.ts
 
 import PocketBase from 'pocketbase'
+import { pbRetry } from '@/lib/pbRetry'
 
 const EVOLUTION_API_URL = process.env.EVOLUTION_API_URL?.replace(/\/$/, '')
 const PB_URL = process.env.PB_URL!
@@ -21,9 +22,11 @@ async function getAdminClient() {
 export async function getClient(instanceName: string) {
   const pb = await getAdminClient()
   try {
-    return await pb
-      .collection('whatsapp_clientes')
-      .getFirstListItem(`instanceName="${instanceName}"`)
+    return await pbRetry(() =>
+      pb
+        .collection('whatsapp_clientes')
+        .getFirstListItem(`instanceName="${instanceName}"`),
+    )
   } catch {
     return null
   }
@@ -46,9 +49,11 @@ export async function saveClient(data: {
   }
 
   if (existing) {
-    return pb.collection('whatsapp_clientes').update(existing.id, record)
+    return pbRetry(() =>
+      pb.collection('whatsapp_clientes').update(existing.id, record),
+    )
   } else {
-    return pb.collection('whatsapp_clientes').create(record)
+    return pbRetry(() => pb.collection('whatsapp_clientes').create(record))
   }
 }
 

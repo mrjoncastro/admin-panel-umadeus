@@ -1,5 +1,6 @@
 import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
+import { pbRetry } from '@/lib/pbRetry'
 
 export interface PostRecord {
   id: string
@@ -17,10 +18,12 @@ export interface PostRecord {
 export async function getPostsFromPB() {
   const pb = createPocketBase()
   const tenantId = await getTenantFromHost()
-  const list = await pb.collection('posts').getFullList<PostRecord>({
-    sort: '-date',
-    filter: tenantId ? `cliente='${tenantId}'` : '',
-  })
+  const list = await pbRetry(() =>
+    pb.collection('posts').getFullList<PostRecord>({
+      sort: '-date',
+      filter: tenantId ? `cliente='${tenantId}'` : '',
+    }),
+  )
 
   return list.map((p) => ({
     ...p,

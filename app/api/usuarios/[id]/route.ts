@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
+import { pbRetry } from '@/lib/pbRetry'
 
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.pathname.split('/').pop() || ''
@@ -15,9 +16,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
   }
   try {
-    const record = await pb
-      .collection('usuarios')
-      .getOne(id, { expand: 'campo' })
+    const record = await pbRetry(() =>
+      pb.collection('usuarios').getOne(id, { expand: 'campo' }),
+    )
     return NextResponse.json(record, { status: 200 })
   } catch (err) {
     console.error('Erro ao obter usuario:', err)
@@ -76,7 +77,7 @@ export async function PATCH(req: NextRequest) {
       payload.tour = Boolean(data.tour)
     }
 
-    await pb.collection('usuarios').update(id, payload)
+    await pbRetry(() => pb.collection('usuarios').update(id, payload))
     return NextResponse.json({ ok: true })
   } catch (err) {
     console.error('Erro ao atualizar perfil:', err)

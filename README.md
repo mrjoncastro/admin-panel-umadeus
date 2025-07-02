@@ -118,6 +118,7 @@ Ao abrir páginas que utilizam informações do cliente (checkout, dashboard etc
 3. **Sempre chame o PocketBase através das rotas internas (`/api/*` ou `/admin/api/*`).**
    Dessa forma todas as requisições ocorrem no mesmo domínio e os cookies de autenticação
    são enviados corretamente, eliminando erros de CORS.
+4. Todas as rotas utilizam `pbRetry` para garantir resiliência nas operações com o PocketBase.
 
 ## Fluxo de Cadastro e Checkout
 

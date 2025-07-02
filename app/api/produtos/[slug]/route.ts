@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { getUserFromHeaders } from '@/lib/getUserFromHeaders'
+import { pbRetry } from '@/lib/pbRetry'
 import type { Produto, Inscricao } from '@/types'
 
 export async function GET(req: NextRequest) {
@@ -21,11 +22,13 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const p = await pb
-      .collection('produtos')
-      .getFirstListItem<Produto>(
-        `slug='${slug}' && cliente='${tenantId}'`,
-      )
+    const p = await pbRetry(() =>
+      pb
+        .collection('produtos')
+        .getFirstListItem<Produto>(
+          `slug='${slug}' && cliente='${tenantId}'`,
+        ),
+    )
     if (!role && p.exclusivo_user) {
       return NextResponse.json(
         { error: 'Produto exclusivo para usuários logados' },
@@ -49,11 +52,13 @@ export async function GET(req: NextRequest) {
     let inscricaoId: string | null = null
     if (p.evento_id && !('error' in auth)) {
       try {
-        inscricao = await pb
-          .collection('inscricoes')
-          .getFirstListItem<Inscricao>(
-            `criado_por='${auth.user.id}' && evento='${p.evento_id}'`,
-          )
+        inscricao = await pbRetry(() =>
+          pb
+            .collection('inscricoes')
+            .getFirstListItem<Inscricao>(
+              `criado_por='${auth.user.id}' && evento='${p.evento_id}'`,
+            ),
+        )
         inscricaoAprovada = Boolean(inscricao.aprovada)
         inscricaoId = inscricao.id
       } catch {

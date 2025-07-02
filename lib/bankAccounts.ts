@@ -22,6 +22,7 @@ export async function searchBanks(
 }
 
 import type PocketBase from 'pocketbase'
+import { pbRetry } from '@/lib/pbRetry'
 
 export interface BankAccount {
   ownerName: string
@@ -55,7 +56,9 @@ export async function createBankAccount(
     usuario: userId,
     cliente: clienteId,
   }
-  return pb.collection('clientes_contas_bancarias').create(data)
+  return pbRetry(() =>
+    pb.collection('clientes_contas_bancarias').create(data),
+  )
 }
 
 export interface PixKey {
@@ -76,7 +79,7 @@ export async function createPixKey(
     usuario: userId,
     cliente: clienteId,
   }
-  return pb.collection('clientes_pix').create(data)
+  return pbRetry(() => pb.collection('clientes_pix').create(data))
 }
 
 export interface PixKeyRecord {
@@ -90,20 +93,24 @@ export async function getPixKeysByTenant(
   pb: PocketBase,
   tenantId: string,
 ): Promise<PixKeyRecord[]> {
-  return pb
-    .collection('clientes_pix')
-    .getFullList({ filter: `cliente='${tenantId}'` }) as Promise<PixKeyRecord[]>
+  return pbRetry(() =>
+    pb
+      .collection('clientes_pix')
+      .getFullList({ filter: `cliente='${tenantId}'` }) as Promise<PixKeyRecord[]>,
+  )
 }
 
 export async function getBankAccountsByTenant(
   pb: PocketBase,
   tenantId: string,
 ): Promise<ClienteContaBancariaRecord[]> {
-  return pb
-    .collection('clientes_contas_bancarias')
-    .getFullList({ filter: `cliente='${tenantId}'` }) as Promise<
-    ClienteContaBancariaRecord[]
-  >
+  return pbRetry(() =>
+    pb
+      .collection('clientes_contas_bancarias')
+      .getFullList({ filter: `cliente='${tenantId}'` }) as Promise<
+      ClienteContaBancariaRecord[]
+    >,
+  )
 }
 
 export async function fetchBankAccounts(

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { logConciliacaoErro } from '@/lib/server/logger'
 import type { EventoRecord } from '@/lib/events'
+import { pbRetry } from '@/lib/pbRetry'
 
 export async function GET(req: NextRequest) {
   const { pathname } = req.nextUrl
@@ -13,9 +14,11 @@ export async function GET(req: NextRequest) {
   }
   const { pb } = auth
   try {
-    const evento = await pb.collection('eventos').getOne<EventoRecord>(id, {
-      expand: 'produtos',
-    })
+    const evento = await pbRetry(() =>
+      pb.collection('eventos').getOne<EventoRecord>(id, {
+        expand: 'produtos',
+      }),
+    )
     const fileName = evento.imagem || evento.logo
     const imagemUrl = fileName ? pb.files.getURL(evento, fileName) : undefined
     return NextResponse.json({ ...evento, imagemUrl }, { status: 200 })
@@ -38,7 +41,7 @@ export async function PUT(req: NextRequest) {
     const contentType = req.headers.get('content-type') || ''
     if (contentType.includes('application/json')) {
       const body = await req.json()
-      const evento = await pb.collection('eventos').update(id, body)
+      const evento = await pbRetry(() => pb.collection('eventos').update(id, body))
       return NextResponse.json(evento, { status: 200 })
     }
     const formData = await req.formData()
@@ -52,7 +55,7 @@ export async function PUT(req: NextRequest) {
         String(formData.get('produto_inscricao')),
       )
     }
-    const evento = await pb.collection('eventos').update(id, formData)
+    const evento = await pbRetry(() => pb.collection('eventos').update(id, formData))
     return NextResponse.json(evento, { status: 200 })
   } catch (err) {
     await logConciliacaoErro(`Erro ao atualizar evento: ${String(err)}`)
@@ -70,7 +73,7 @@ export async function DELETE(req: NextRequest) {
   }
   const { pb } = auth
   try {
-    await pb.collection('eventos').delete(id)
+    await pbRetry(() => pb.collection('eventos').delete(id))
     return NextResponse.json({ sucesso: true }, { status: 200 })
   } catch (err) {
     await logConciliacaoErro(`Erro ao excluir evento: ${String(err)}`)
