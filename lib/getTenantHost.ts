@@ -16,8 +16,12 @@ export async function getTenantHost(tenantId: string): Promise<string | null> {
       .collection('clientes_config')
       .getFirstListItem<ClienteConfig>(`cliente='${tenantId}'`)
     const rawHost = cfg.host ?? cfg.dominio ?? ''
-    const host = String(rawHost).replace(/\/+$/, '')
-    return host || null
+    let host = String(rawHost).replace(/\/+$/, '')
+    if (!host) return null
+    if (!/^https?:\/\//.test(host)) {
+      host = `https://${host}`
+    }
+    return host
   } catch {
     return null
   }

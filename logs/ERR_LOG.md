@@ -237,3 +237,4 @@
 ## [2025-07-02] Webhook Asaas inclui detalhes no erro interno - dev - a1a2c3ba
 ## [2025-07-02] Webhook Asaas usa host do tenant no envio de notificacoes - dev - c3800972
 ## [2025-07-02] Webhook Asaas nao usa mais NEXT_PUBLIC_SITE_URL; host obtido do tenant - dev - fcee1eaf7bdf79c55c4c019c94e5c91d38117490
+## [2025-07-02] getTenantHost retornava dominio sem protocolo, causando erros de redirecionamento - dev - 3d2de08d
