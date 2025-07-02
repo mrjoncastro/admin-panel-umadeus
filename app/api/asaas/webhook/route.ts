@@ -17,33 +17,35 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   const pb = createPocketBase()
-  const data = payload as Partial<AsaasWebhookPayload>
 
   try {
+    // 2️⃣ Autenticação no PocketBase
     if (!pb.authStore.isValid) {
       await pb.admins.authWithPassword(
         process.env.PB_ADMIN_EMAIL!,
-        process.env.PB_ADMIN_PASSWORD!
+        process.env.PB_ADMIN_PASSWORD!,
       )
     }
 
+    // 3️⃣ Criação da task no PocketBase
     await pb.collection('webhook_tasks').create({
-      event: data.event ?? 'unknown',
-      payload: JSON.stringify(data),
-      status: 'pending',
-      attempts: 0,
-      max_attempts: 5,
+      event: data.event ?? 'unknown', // Nonempty
+      payload: JSON.stringify(data), // Nonempty
+      status: 'pending', // Nonempty
+      attempts: 0, // Single
+      max_attempts: 5, // Single
     })
 
+    // 4️⃣ ACK rápido para o Asaas
     return NextResponse.json({ status: 'ack' }, { status: 200 })
   } catch (error: unknown) {
-    // 3️⃣ Extrai message/stack sem usar any
+    // 5️⃣ Tratamento de erro sem usar any
     const msg = error instanceof Error ? error.message : String(error)
     const stk = error instanceof Error && error.stack ? `\n${error.stack}` : ''
     await logConciliacaoErro(`Erro ao enfileirar webhook: ${msg}${stk}`)
     return NextResponse.json(
       { error: 'Erro interno', details: msg },
-      { status: 500 }
+      { status: 500 },
     )
   }
 }
