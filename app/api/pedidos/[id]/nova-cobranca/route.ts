@@ -181,14 +181,16 @@ export async function POST(req: NextRequest) {
     }
     const cobranca = JSON.parse(cobrancaRaw)
     const link = cobranca.invoiceUrl || cobranca.bankSlipUrl
+    const asaasId: string | undefined = cobranca.id
     const dueDateStr = cobranca.dueDate
       ? new Date(cobranca.dueDate).toISOString()
       : new Date(defaultDue).toISOString()
     await pb.collection('pedidos').update(pedido.id, {
       link_pagamento: link,
       vencimento: dueDateStr,
+      ...(asaasId ? { id_asaas: asaasId } : {}),
     })
-    return NextResponse.json({ link_pagamento: link, vencimento: dueDateStr })
+    return NextResponse.json({ link_pagamento: link, vencimento: dueDateStr, id_asaas: asaasId })
   } catch (err: unknown) {
     await logConciliacaoErro(`Erro ao criar nova cobrança: ${String(err)}`)
     return NextResponse.json(

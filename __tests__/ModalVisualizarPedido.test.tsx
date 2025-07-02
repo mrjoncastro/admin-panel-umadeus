@@ -18,6 +18,7 @@ function mockPedido() {
     status: 'pendente',
     produto: [],
     id_pagamento: 'c1',
+    id_asaas: 'pay1',
     link_pagamento: 'pay',
     vencimento: new Date(Date.now() - 86400000).toISOString(),
     expand: {

@@ -16,6 +16,7 @@ type PedidoExpandido = {
   status: string
   produto: string[]
   id_pagamento?: string
+  id_asaas?: string
   link_pagamento?: string
   vencimento?: string
   cor?: string
@@ -137,7 +138,12 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
       if (!res.ok) throw new Error('fail')
       const data = await res.json()
       setUrlPagamento(data.link_pagamento)
-      setPedido({ ...pedido, link_pagamento: data.link_pagamento, vencimento: data.vencimento })
+      setPedido({
+        ...pedido,
+        link_pagamento: data.link_pagamento,
+        vencimento: data.vencimento,
+        ...(data.id_asaas ? { id_asaas: data.id_asaas } : {}),
+      })
       showSuccess('Nova cobrança gerada!')
     } catch {
       showError('Erro ao gerar nova cobrança')
