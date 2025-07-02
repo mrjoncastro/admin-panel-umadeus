@@ -392,17 +392,19 @@ export default function ListaInscricoesPage() {
           installments: parcelas,
         }),
       })
-      const checkout = await asaasRes.json()
+      const result = await asaasRes.json()
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { url, vencimento } = result
 
-      if (!asaasRes.ok || !checkout?.url) {
+      if (!asaasRes.ok || !url) {
         const msg =
-          checkout?.message ||
-          checkout?.error ||
-          checkout?.errors?.[0]?.description ||
+          result?.message ||
+          result?.error ||
+          result?.errors?.[0]?.description ||
           'Tivemos um problema ao gerar seu link de pagamento. Por favor, entre em contato com a equipe.'
         console.error(
           '[confirmarInscricao] Erro ao gerar link de pagamento:',
-          checkout,
+          result,
         )
         try {
           await fetch(`/api/pedidos/${pedido.pedidoId}`, {
@@ -455,7 +457,7 @@ export default function ListaInscricoesPage() {
           body: JSON.stringify({
             eventType: 'confirmacao_inscricao',
             userId: inscricao.criado_por,
-            paymentLink: checkout.url,
+            paymentLink: url,
           }),
         })
         if (!emailRes.ok) {
@@ -469,7 +471,7 @@ export default function ListaInscricoesPage() {
         headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },
         body: JSON.stringify({
           telefone: inscricao.telefone,
-          link: checkout.url,
+          link: url,
         }),
       })
       if (!waRes.ok) {
