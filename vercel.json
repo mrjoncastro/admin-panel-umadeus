@@ -1,0 +1,14 @@
+{
+  "functions": {
+    "api/tasks/worker/route.ts": {
+      "runtime": "nodejs",
+      "maxDuration": 900
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/tasks/worker",
+      "schedule": "*/2 * * * *"
+    }
+  ]
+}
