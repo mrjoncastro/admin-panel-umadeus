@@ -129,3 +129,9 @@ Parcelado em 3x (Cartão 2–6x):
 > - Todos os valores devem ser arredondados a dois dígitos (centavos).
 > - Esta lógica se aplica tanto a **inscrições** (cobrança avulsa) quanto a **compras** (checkout).
 > - O sistema deve atualizar dinamicamente o valor de `G` e os detalhes de split sempre que o usuário alterar forma de pagamento ou número de parcelas.
+> - O valor bruto calculado para qualquer forma de crédito (à vista ou parcelado) não pode ser inferior ao valor bruto calculado para Pix; se ocorrer, utilize o valor do Pix como valor mínimo.
+> - O sistema deve atualizar dinamicamente o valor de G e os detalhes de split sempre que o usuário alterar forma de pagamento ou número de parcelas.
+
+
+
+
