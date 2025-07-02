@@ -2,7 +2,7 @@
   "functions": {
     "api/tasks/worker/route.ts": {
       "runtime": "nodejs",
-      "maxDuration": 900
+      "maxDuration": 300
     }
   },
   "crons": [
