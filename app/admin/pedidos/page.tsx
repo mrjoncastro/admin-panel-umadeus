@@ -250,30 +250,34 @@ export default function PedidosPage() {
                     >
                       Editar
                     </button>
-                    <button
-                      onClick={async () => {
-                        if (
-                          confirm('Tem certeza que deseja excluir este pedido?')
-                        ) {
-                          try {
-                            await fetch(`/api/pedidos/${pedido.id}`, {
-                              method: 'DELETE',
-                              credentials: 'include',
-                            })
-                            setPedidos((prev) =>
-                              prev.filter((p) => p.id !== pedido.id),
+                    {user?.role === 'coordenador' && (
+                      <button
+                        onClick={async () => {
+                          if (
+                            confirm(
+                              'Tem certeza que deseja excluir este pedido?',
                             )
-                            showSuccess('Pedido excluído')
-                          } catch (e) {
-                            console.error('Erro ao excluir:', e)
-                            showError('Erro ao excluir pedido')
+                          ) {
+                            try {
+                              await fetch(`/api/pedidos/${pedido.id}`, {
+                                method: 'DELETE',
+                                credentials: 'include',
+                              })
+                              setPedidos((prev) =>
+                                prev.filter((p) => p.id !== pedido.id),
+                              )
+                              showSuccess('Pedido excluído')
+                            } catch (e) {
+                              console.error('Erro ao excluir:', e)
+                              showError('Erro ao excluir pedido')
+                            }
                           }
-                        }
-                      }}
-                      className="text-red-600 hover:underline text-xs"
-                    >
-                      Excluir
-                    </button>
+                        }}
+                        className="text-red-600 hover:underline text-xs"
+                      >
+                        Excluir
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
