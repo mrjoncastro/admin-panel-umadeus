@@ -25,5 +25,5 @@ export async function POST(req: NextRequest) {
     max_attempts: 5,
   })
 
-  return NextResponse.json({ status: 'ack' })
+  return NextResponse.json({ status: 'ack' }, { status: 200 })
 }
