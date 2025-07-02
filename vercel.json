@@ -2,13 +2,13 @@
   "functions": {
     "api/tasks/worker/route.ts": {
       "runtime": "nodejs",
-      "maxDuration": 30
+      "maxDuration": 900
     }
   },
   "crons": [
     {
       "path": "/api/tasks/worker",
-      "schedule": "*/2 * * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
