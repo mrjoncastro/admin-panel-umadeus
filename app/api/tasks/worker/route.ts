@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { processWebhook } from '@/lib/webhookProcessor'
 import { logConciliacaoErro } from '@/lib/server/logger'
@@ -16,7 +16,7 @@ export async function GET(): Promise<NextResponse> {
 
   const now = new Date().toISOString()
   const { items: tasks } = await pb.collection('webhook_tasks').getList(1, 20, {
-    filter: `status="pending" || (status="failed" && next_retry <= \"${now}\")`,
+    filter: `status="pending" || (status="failed" && next_retry <= "${now}")`,
     sort: 'created',
   })
 
