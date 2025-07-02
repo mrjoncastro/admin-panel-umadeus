@@ -233,3 +233,5 @@
 
 ## [2025-08-16] Inscricoes bloqueavam usuario logado por CPF existente. Rota /api/usuarios/exists aceita excludeId e EventForm ignora o proprio usuario - dev - cb2b0073
 ## [2025-07-02] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
+## [2025-07-02] Webhook Asaas retornava 500 sem tratamento de erro; rota atualizada com logConciliacaoErro - dev - ac00e3389c99092fa0fd57e563bacc899c65f109
+## [2025-07-02] Webhook Asaas inclui detalhes no erro interno - dev - a1a2c3ba
