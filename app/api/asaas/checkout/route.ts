@@ -11,7 +11,7 @@ import {
 
 const checkoutSchema = z.object({
   valorBruto: z.number(),
-  paymentMethod: z.enum(['pix', 'boleto', 'credito']),
+  paymentMethod: z.enum(['pix', 'boleto']),
   itens: z
     .array(
       z.object({
@@ -39,11 +39,11 @@ const checkoutSchema = z.object({
     cep: z.string(),
     cidade: z.string(),
   }),
-  installments: z.number().int().min(1).max(21),
+  installments: z.number().int().min(1).max(21).optional().default(1),
   paymentMethods: z
-    .array(z.enum(['PIX', 'CREDIT_CARD']))
+    .array(z.enum(['PIX', 'BOLETO']))
     .min(1)
-    .max(2)
+    .max(1)
     .optional(),
 })
 

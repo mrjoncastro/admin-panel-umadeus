@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    if (!['pix', 'boleto', 'credito'].includes(paymentMethod)) {
+    if (!['pix', 'boleto'].includes(paymentMethod)) {
       return NextResponse.json(
         { erro: 'Forma de pagamento inválida.' },
         { status: 400 },

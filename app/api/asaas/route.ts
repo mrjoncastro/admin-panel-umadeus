@@ -230,7 +230,7 @@ export async function POST(req: NextRequest) {
     console.log('💰 gross:', gross, 'margin:', margin)
 
     const billingType = toAsaasBilling(paymentMethod as PaymentMethod)
-    if (!['PIX', 'BOLETO', 'CREDIT_CARD'].includes(billingType)) {
+    if (!['PIX', 'BOLETO'].includes(billingType)) {
       console.log(
         '🔴 [POST /api/asaas] Forma de pagamento invalida:',
         billingType,
