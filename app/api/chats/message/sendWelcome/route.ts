@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { sendTextMessage } from '@/lib/server/chats'
+import { queueTextMessage } from '@/lib/server/chats'
 import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
@@ -94,7 +94,8 @@ export async function POST(req: NextRequest) {
         message = ''
     }
 
-    const result = await sendTextMessage({
+    const result = await queueTextMessage({
+      tenant: tenantId,
       instanceName: waCfg.instanceName,
       apiKey: waCfg.apiKey,
       to: telefone,

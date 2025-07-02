@@ -1,7 +1,7 @@
 // ./app/api/chats/message/sendText/[instanceName]/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
-import { sendTextMessage } from '@/lib/server/chats'
+import { queueTextMessage } from '@/lib/server/chats'
 import createPocketBase from '@/lib/pocketbase'
 
 export async function POST(
@@ -52,9 +52,10 @@ export async function POST(
     )
   }
 
-  // 3) envia mensagem
+  // 3) envia mensagem com controle
   try {
-    const result = await sendTextMessage({
+    const result = await queueTextMessage({
+      tenant,
       instanceName,
       apiKey: rec.apiKey,
       to,

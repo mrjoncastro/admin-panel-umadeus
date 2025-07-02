@@ -1,7 +1,7 @@
 // ./app/api/chats/whatsapp/message/sendTest/[instanceName]/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
-import { sendTextMessage } from '@/lib/server/chats'
+import { queueTextMessage } from '@/lib/server/chats'
 import createPocketBase from '@/lib/pocketbase'
 
 export async function POST(
@@ -58,9 +58,10 @@ export async function POST(
   const text =
     typeof message === 'string' ? message : 'Olá! QR autenticado com sucesso!'
 
-  // 6) envia
+  // 6) envia com controle
   try {
-    const result = await sendTextMessage({
+    const result = await queueTextMessage({
+      tenant,
       instanceName,
       apiKey: rec.apiKey,
       to,

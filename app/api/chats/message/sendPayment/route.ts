@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { sendTextMessage } from '@/lib/server/chats'
+import { queueTextMessage } from '@/lib/server/chats'
 import createPocketBase from '@/lib/pocketbase'
 
 export async function POST(req: NextRequest) {
@@ -46,9 +46,10 @@ export async function POST(req: NextRequest) {
   const rec = list[0]
 
   try {
-    const finalMessage = message ??
-      `Para concluir seu pagamento, acesse: ${link}`
-    const result = await sendTextMessage({
+    const finalMessage =
+      message ?? `Para concluir seu pagamento, acesse: ${link}`
+    const result = await queueTextMessage({
+      tenant,
       instanceName: rec.instanceName,
       apiKey: rec.apiKey,
       to: telefone,

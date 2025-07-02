@@ -2,6 +2,7 @@
 
 import PocketBase from 'pocketbase'
 import { pbRetry } from '@/lib/pbRetry'
+import { broadcastManager } from '@/lib/server/flows/whatsapp'
 
 const EVOLUTION_API_URL = process.env.EVOLUTION_API_URL?.replace(/\/$/, '')
 const PB_URL = process.env.PB_URL!
@@ -127,4 +128,22 @@ export async function sendMessage(params: {
     to: params.to,
     message: params.message,
   })
+}
+
+/** Enfileira o envio respeitando limites e horários */
+export async function queueTextMessage(params: {
+  tenant: string
+  instanceName: string
+  apiKey: string
+  to: string
+  message: string
+}) {
+  return broadcastManager.enqueue(params.tenant, () =>
+    sendTextMessage({
+      instanceName: params.instanceName,
+      apiKey: params.apiKey,
+      to: params.to,
+      message: params.message,
+    }),
+  )
 }
