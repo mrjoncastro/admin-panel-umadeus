@@ -1,102 +1,82 @@
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
-import { getTenantFromHost } from '@/lib/getTenantFromHost'
-import { logInfo } from '@/lib/logger'
+import { pbRetry } from '@/lib/pbRetry'
 
 export async function POST(req: NextRequest) {
-  const pb = createPocketBase()
   try {
-    const { cpf, telefone } = await req.json()
-    const cliente = await getTenantFromHost()
+    const { cpf } = await req.json()
+    const idempotencyKey = String(cpf ?? '').replace(/\D/g, '')
 
-    logInfo('📨 Dados recebidos:', { cpf, telefone })
-
-    if (!cpf && !telefone) {
-      logInfo('⚠️ CPF ou telefone não fornecido')
-      return NextResponse.json(
-        { error: 'Informe o CPF ou telefone.' },
-        { status: 400 },
-      )
+    if (idempotencyKey.length !== 11) {
+      return NextResponse.json({ error: 'CPF inválido' }, { status: 400 })
     }
 
-    if (!cliente) {
-      return NextResponse.json(
-        { error: 'Tenant n\u00e3o encontrado' },
-        { status: 400 },
-      )
-    }
-
+    const pb = createPocketBase()
     if (!pb.authStore.isValid) {
-      logInfo('🔐 Autenticando como admin...')
       await pb.admins.authWithPassword(
         process.env.PB_ADMIN_EMAIL!,
         process.env.PB_ADMIN_PASSWORD!,
       )
-      logInfo('✅ Autenticado com sucesso.')
     }
 
-    const filtroBase = cpf ? `cpf = "${cpf}"` : `telefone = "${telefone}"`
-    const filtro = `${filtroBase} && cliente='${cliente}'`
-    logInfo('🔎 Filtro usado:', filtro)
+    let cobranca: any = null
+    try {
+      cobranca = await pbRetry(() =>
+        pb
+          .collection('cobrancas')
+          .getFirstListItem(`idempotencyKey="${idempotencyKey}"`, {
+            sort: '-created',
+            expand: 'pedido',
+          }),
+      )
+    } catch (err) {
+      // quando não existe, PocketBase lança erro 404
+    }
 
-    const inscricoes = await pb.collection('inscricoes').getFullList({
-      filter: filtro,
-      expand: 'pedido',
-    })
-
-    logInfo(`📋 ${inscricoes.length} inscrição(ões) encontrada(s)`)
-
-    if (!inscricoes.length) {
-      logInfo('❌ Nenhuma inscrição encontrada.')
+    if (!cobranca) {
       return NextResponse.json(
-        { error: 'Inscrição não encontrada. Por favor faça a inscrição.' },
+        { error: 'Usuário não encontrado' },
         { status: 404 },
       )
     }
 
-    const inscricao = inscricoes[0]
-    const pedido = inscricao.expand?.pedido
+    const pedidoId = cobranca.pedido
+    const vencida =
+      (cobranca.status !== 'PENDING' && cobranca.status !== 'UNPAID') ||
+      new Date(cobranca.dueDate).getTime() < Date.now()
 
-    logInfo('🧾 Pedido expandido com sucesso')
+    let linkPagamento = cobranca.invoiceUrl
 
-    if (inscricao.status === 'cancelado') {
-      logInfo('❌ Inscrição recusada pela liderança.')
-      return NextResponse.json({ status: 'recusado' })
+    if (vencida) {
+      const base = req.nextUrl.origin
+      const resp = await fetch(
+        `${base}/api/pedidos/${pedidoId}/nova-cobranca`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idempotencyKey }),
+        },
+      )
+
+      if (!resp.ok) {
+        return NextResponse.json(
+          { error: 'Erro ao criar nova cobrança' },
+          { status: 500 },
+        )
+      }
+
+      const nova = await resp.json()
+      linkPagamento = nova.link_pagamento
     }
-
-    if (!inscricao.confirmado_por_lider || !pedido) {
-      logInfo('⏳ Inscrição aguardando confirmação da liderança.')
-      return NextResponse.json({ status: 'aguardando_confirmacao' })
-    }
-
-    if (pedido.status === 'pago') {
-      logInfo('✅ Pagamento já confirmado.')
-      return NextResponse.json({ status: 'pago' })
-    }
-
-    if (pedido.status === 'cancelado') {
-      logInfo('❌ Pedido cancelado.')
-      return NextResponse.json({ status: 'cancelado' })
-    }
-
-    logInfo('⏳ Pagamento pendente. Link:', pedido.link_pagamento)
 
     return NextResponse.json({
-      status: 'pendente',
-      link_pagamento: pedido.link_pagamento,
+      nomeUsuario: cobranca.nomeUsuario,
+      linkPagamento,
     })
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      logInfo('❌ Erro na recuperação: ' + error.message)
-      return NextResponse.json(
-        { error: 'Erro interno: ' + error.message },
-        { status: 500 },
-      )
-    }
-
-    logInfo('❌ Erro desconhecido: ' + String(error))
+  } catch (err) {
+    console.error('Erro ao recuperar link:', err)
     return NextResponse.json(
-      { error: 'Erro interno desconhecido' },
+      { error: 'Erro interno ao recuperar link' },
       { status: 500 },
     )
   }

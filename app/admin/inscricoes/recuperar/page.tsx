@@ -27,7 +27,18 @@ export default function RecuperarPagamentoPage() {
   const [cpfOuTelefone, setCpfOuTelefone] = useState('')
   const [link, setLink] = useState('')
   const [carregando, setCarregando] = useState(false)
+  const [copiado, setCopiado] = useState(false)
   const { showSuccess, showError } = useToast()
+
+  const linkPublico =
+    typeof window !== 'undefined' ? `${window.location.origin}/recuperar` : ''
+
+  const copiar = async () => {
+    if (!linkPublico) return
+    await navigator.clipboard.writeText(linkPublico)
+    setCopiado(true)
+    setTimeout(() => setCopiado(false), 2000)
+  }
 
   const aplicarMascara = (valor: string): string => {
     const numeros = valor.replace(/\D/g, '')
@@ -65,7 +76,7 @@ export default function RecuperarPagamentoPage() {
     const payload = isCPFValido ? { cpf: numeros } : { telefone: numeros }
 
     try {
-      const res = await fetch('/admin/api/recuperar-link', {
+      const res = await fetch('/api/recuperar-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -107,6 +118,23 @@ export default function RecuperarPagamentoPage() {
         Informe o <strong>CPF</strong> ou <strong>telefone</strong> utilizado na
         inscrição:
       </p>
+
+      <div className="text-center text-sm mb-4">
+        <p>Não recebeu o email de pagamento?</p>
+        <div className="flex items-center justify-center gap-2 mt-1">
+          <a
+            href="/recuperar"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-purple-600 hover:underline"
+          >
+            Recupere agora!
+          </a>
+          <button onClick={copiar} className="text-purple-600 hover:underline">
+            {copiado ? 'Copiado!' : 'Copiar link'}
+          </button>
+        </div>
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <input

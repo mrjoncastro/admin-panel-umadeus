@@ -510,4 +510,10 @@ executados.
 ## [2025-07-02] Ajustada rota /api/pedidos/[id]/nova-cobranca para usar dueDate do Asaas e documento atualizado.
 ## [2025-07-02] Atualizadas definições de status (incluindo `vencido`) em tipos e documentação. - Lint: falhou (next not found) - Build: falhou (next not found)
 ## [2025-07-02] Removido uso de `any` na nova rota de cobrança e em inscrições. Tipos atualizados. - Lint: ok - Build: ok
+<<<<<<< HEAD
 ## [2025-07-02] Página pública /recuperar criada e rota /api/recuperar-link adicionada. README e índice atualizados. Lint e build executados.
+=======
+## [2025-07-02] Rota de recuperação de link movida para `/api/recuperar-link` e documentação atualizada. Lint e build executados.
+## [2025-07-02] Página pública `/recuperar` criada e link exibido para líderes e clientes. Lint: falhou (next not found) - Build: falhou (next not found)
+## [2025-07-02] Fluxo unificado gera nova cobrança e página simplificada para recuperar link. - Lint: falhou (next not found) - Build: falhou (next not found)
+>>>>>>> origin/codex/criar-fluxo-unificado-para-gerenciar-link-de-pagamento

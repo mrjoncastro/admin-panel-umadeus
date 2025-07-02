@@ -60,7 +60,7 @@
 - **app/admin/api/produtos/route.ts**
   - GET
   - POST
-- **app/admin/api/recuperar-link/route.ts**
+  - **app/api/recuperar-link/route.ts**
   - POST
 - **app/admin/api/usuarios/[id]/route.ts**
   - GET
