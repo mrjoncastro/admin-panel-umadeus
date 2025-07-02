@@ -11,16 +11,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
   }
 
+  const pb = createPocketBase()
+  const data = payload as Partial<AsaasWebhookPayload>
+
   try {
-    const pb = createPocketBase()
     if (!pb.authStore.isValid) {
       await pb.admins.authWithPassword(
         process.env.PB_ADMIN_EMAIL!,
         process.env.PB_ADMIN_PASSWORD!,
       )
     }
-
-    const data = payload as Partial<AsaasWebhookPayload>
 
     await pb.collection('webhook_tasks').create({
       event: data.event ?? 'unknown',
