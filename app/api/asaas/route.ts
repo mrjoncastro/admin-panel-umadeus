@@ -289,6 +289,7 @@ export async function POST(req: NextRequest) {
 
     const cobranca = JSON.parse(cobrancaRaw)
     const link = cobranca.invoiceUrl || cobranca.bankSlipUrl
+    const asaasId: string | undefined = cobranca.id
     const dueDateISO = cobranca.dueDate
       ? new Date(cobranca.dueDate).toISOString()
       : new Date(dueDate).toISOString()
@@ -306,10 +307,11 @@ export async function POST(req: NextRequest) {
       formaPagamento: paymentMethod,
       parcelas: installments,
       vencimento: dueDateISO,
+      ...(asaasId ? { id_asaas: asaasId } : {}),
     })
     console.log('🟢 Pedido atualizado com link de pagamento')
 
-    return NextResponse.json({ url: link, vencimento: dueDateISO })
+    return NextResponse.json({ url: link, vencimento: dueDateISO, id_asaas: asaasId })
   } catch (err: unknown) {
     await logConciliacaoErro(
       `Erro ao gerar link de pagamento Asaas: ${String(err)}`,

@@ -225,6 +225,7 @@ export async function POST(req: NextRequest) {
       const payload = {
         id_inscricao: '',
         id_pagamento: '',
+        id_asaas: '',
         produto: produtoIds,
         tamanho,
         status: 'pendente',
@@ -340,6 +341,7 @@ export async function POST(req: NextRequest) {
       id_inscricao: inscricaoId,
       valor,
       status: 'pendente',
+      id_asaas: '',
       produto: produtoIdInscricao
         ? [produtoIdInscricao]
         : produtoRecord

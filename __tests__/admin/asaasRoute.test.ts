@@ -119,6 +119,7 @@ describe('POST /admin/api/asaas', () => {
     const body = await res.json()
     expect(body.url).toBe('pay')
     expect(body.vencimento).toBe('2025-01-01T00:00:00.000Z')
+    expect(body.id_asaas).toBe('c1')
     const sent = JSON.parse((global.fetch as any).mock.calls[2][1].body)
     expect(sent.billingType).toBe('PIX')
   })
