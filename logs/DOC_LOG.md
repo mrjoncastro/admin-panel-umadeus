@@ -518,3 +518,4 @@ executados.
 ## [2025-07-02] Fluxo unificado gera nova cobrança e página simplificada para recuperar link. - Lint: falhou (next not found) - Build: falhou (next not found)
 >>>>>>> origin/codex/criar-fluxo-unificado-para-gerenciar-link-de-pagamento
 ## [2025-07-02] Inclusao de pbRetry nas rotas principais e docs atualizadas. - Lint e Build executados.
+## [2025-08-16] Ajustada funcao calculateGross comparando valor de credito com Pix e testes atualizados. Lint e build executados.
