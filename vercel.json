@@ -1,8 +1,8 @@
 {
   "functions": {
     "api/tasks/worker/route.ts": {
-      "runtime": "nodejs",
-      "maxDuration": 300
+      "runtime": "vercel-node@2.20.0",
+      "maxDuration": 300   
     }
   },
   "crons": [
