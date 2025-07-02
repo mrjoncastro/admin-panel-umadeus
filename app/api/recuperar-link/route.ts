@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { pbRetry } from '@/lib/pbRetry'
+import type { RecordModel } from 'pocketbase'
+
+interface CobrancaRecord extends RecordModel {
+  status?: string
+  dueDate?: string
+  invoiceUrl?: string
+  pedido?: string
+  nomeUsuario?: string
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,7 +28,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    let cobranca: any = null
+    let cobranca: CobrancaRecord | null = null
     try {
       cobranca = await pbRetry(() =>
         pb
@@ -29,7 +38,7 @@ export async function POST(req: NextRequest) {
             expand: 'pedido',
           }),
       )
-    } catch (err) {
+    } catch {
       // quando não existe, PocketBase lança erro 404
     }
 
@@ -43,7 +52,9 @@ export async function POST(req: NextRequest) {
     const pedidoId = cobranca.pedido
     const vencida =
       (cobranca.status !== 'PENDING' && cobranca.status !== 'UNPAID') ||
-      new Date(cobranca.dueDate).getTime() < Date.now()
+      (cobranca.dueDate
+        ? new Date(cobranca.dueDate).getTime() < Date.now()
+        : true)
 
     let linkPagamento = cobranca.invoiceUrl
 
