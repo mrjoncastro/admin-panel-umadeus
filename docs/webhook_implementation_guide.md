@@ -177,20 +177,46 @@ No `vercel.json` na raiz do seu projeto, adicione:
 }
 ```
 
-- ``: configura o runtime Node.js e aumenta o tempo máximo (em segundos) para até 15 minutos.
-- ``: define o endpoint e o agendamento (neste exemplo, a cada 2 minutos).
+- \`\`: configura o runtime Node.js e aumenta o tempo máximo (em segundos) para até 15 minutos.
+- \`\`: define o endpoint e o agendamento (neste exemplo, a cada 2 minutos).
 
 > Após o commit, redeploy, o Vercel automaticamente registra o cron.
 
 #### 2. Configuração via Dashboard Vercel
 
-1. Na sua dashboard do Vercel, abra o projeto e acesse **Settings > Cron Jobs**.
-2. Clique em **Add Cron Job**.
-3. Preencha:
-   - **Endpoint**: `/api/tasks/worker`
-   - **Schedule**: use uma expressão cron (ex.: `*/2 * * * *` para cada 2 minutos).
-   - **Environment**: escolha `Production` para usar as variáveis de produção.
-4. Salve. O Vercel começará a invocar esse endpoint no horário definido.
+Para configurar o cron diretamente pela interface do Vercel:
+
+1. **Acesse o Dashboard**
+   - Entre no Vercel, selecione seu time e clique no projeto **umadeus-admin**.
+2. **Abra as configurações de Cron Jobs**
+   - Navegue em **Settings** → **Cron Jobs** no menu lateral.
+   - Verifique se o toggle **Enabled** está ativo (conforme a imagem abaixo).&#x20;
+3. **Adicione um novo Cron Job**
+   - Clique em **Add Cron Job**.
+   - No modal, preencha os campos:
+     - **Endpoint**: `/api/tasks/worker`
+     - **Schedule**: expressão cron (ex.: `*/2 * * * *` para rodar a cada 2 minutos).
+     - **Environment**: escolha `Production` (ou `Preview`, conforme sua necessidade).
+     - **Secret**: selecione um **Environment Variable** (ex.: `CRON_SECRET`) que você deve ter previamente configurado em **Settings** → **Environment Variables**.
+   - Exemplo de variável secreta:
+     ```
+     Key: CRON_SECRET
+     Value: your-super-secret-token
+     ```
+4. **Proteja o endpoint**
+   - No handler do worker, valide o header de autorização:
+     ```ts
+     export async function GET(req: NextRequest) {
+       const auth = req.headers.get('Authorization')
+       if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
+         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+       }
+       // ...restante do worker
+     }
+     ```
+5. **Salve e monitore**
+   - Clique em **Save Cron Job**. O Vercel exibirá logs de cada execução em **Functions** → **Invocations**.
+   - Verifique periodicamente a aba **Logs** para garantir que seu worker está rodando conforme o agendamento.
 
 ---
 
