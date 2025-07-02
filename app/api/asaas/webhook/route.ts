@@ -21,8 +21,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     )
   }
 
+  const payload = data as Partial<AsaasWebhookPayload>
+
   const pb = createPocketBase()
-  const data = payload as Partial<AsaasWebhookPayload>
+  const wasValid = pb.authStore.isValid
 
   try {
     if (!pb.authStore.isValid) {
@@ -33,16 +35,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     await pb.collection('webhook_tasks').create({
-      event: data.event ?? 'unknown',
+      event: payload.event ?? 'unknown',
       payload: JSON.stringify(payload),
       status: 'pending',
       attempts: 0,
       max_attempts: 5,
     })
-  } catch (err) {
-    await logConciliacaoErro('Erro webhook: ' + String(err))
-    return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
-  }
 
     // 4️⃣ ACK rápido
     return NextResponse.json({ status: 'ack' }, { status: 200 })
@@ -64,7 +62,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         `PB.authStore.isValid (antes): ${wasValid}\n` +
         `ENV PB_ADMIN_EMAIL definida: ${Boolean(process.env.PB_ADMIN_EMAIL)}\n` +
         `ENV PB_ADMIN_PASSWORD definida: ${Boolean(process.env.PB_ADMIN_PASSWORD)}\n` +
-        `Payload: ${JSON.stringify(data)}\n` +
+        `Payload: ${JSON.stringify(payload)}\n` +
         `ErrorName: ${errName}\n` +
         `ErrorMessage: ${errMsg}\n` +
         `ErrorStack: ${errStack}`,
