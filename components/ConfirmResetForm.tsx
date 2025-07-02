@@ -1,11 +1,10 @@
 'use client'
 import { useState, useMemo } from 'react'
-import { Eye, EyeOff } from 'lucide-react'
 import createPocketBase from '@/lib/pocketbase'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { PasswordField } from '@/components'
 
 interface Props {
   token: string
@@ -16,7 +15,6 @@ export default function ConfirmResetForm({ token }: Props) {
 
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
-  const [show, setShow] = useState(false)
   const [error, setError] = useState<string>()
   const [success, setSuccess] = useState(false)
 
@@ -70,29 +68,17 @@ export default function ConfirmResetForm({ token }: Props) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="password">Nova senha</Label>
-            <div className="relative">
-              <Input
-                id="password"
-                type={show ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShow(!show)}
-                className="absolute right-2 top-1/2 -translate-y-1/2"
-                aria-label="Mostrar senha"
-              >
-                {show ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
+            <PasswordField
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </div>
           <div>
             <Label htmlFor="confirm">Confirme a senha</Label>
-            <Input
+            <PasswordField
               id="confirm"
-              type={show ? 'text' : 'password'}
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
               required

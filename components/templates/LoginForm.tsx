@@ -121,6 +121,7 @@ export default function LoginForm({
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
             className="input-base w-full rounded-md px-4 py-2"
+            showValidation={false}
             required
           />
 
