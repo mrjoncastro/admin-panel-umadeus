@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
-import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logInfo } from '@/lib/logger'
+import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase()
   try {
     const { cpf, telefone } = await req.json()
-    const cliente = await getTenantFromHost()
 
     logInfo('📨 Dados recebidos:', { cpf, telefone })
 
@@ -19,8 +18,10 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    const cliente = await getTenantFromHost()
+
     if (!cliente) {
-      return NextResponse.json({ error: 'Cliente ausente.' }, { status: 400 })
+      return NextResponse.json({ error: 'Tenant não informado' }, { status: 400 })
     }
 
     if (!pb.authStore.isValid) {
@@ -46,10 +47,7 @@ export async function POST(req: NextRequest) {
     if (!inscricoes.length) {
       logInfo('❌ Nenhuma inscrição encontrada.')
       return NextResponse.json(
-        {
-          error:
-            'Inscrição não encontrada. Faça a inscrição ou entre em contato com o líder.',
-        },
+        { error: 'Inscrição não encontrada. Por favor faça a inscrição.' },
         { status: 404 },
       )
     }
