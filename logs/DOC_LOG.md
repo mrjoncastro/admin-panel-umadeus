@@ -510,3 +510,4 @@ executados.
 ## [2025-07-02] Ajustada rota /api/pedidos/[id]/nova-cobranca para usar dueDate do Asaas e documento atualizado.
 ## [2025-07-02] Atualizadas definições de status (incluindo `vencido`) em tipos e documentação. - Lint: falhou (next not found) - Build: falhou (next not found)
 ## [2025-07-02] Removido uso de `any` na nova rota de cobrança e em inscrições. Tipos atualizados. - Lint: ok - Build: ok
+## [2025-07-02] Página pública /recuperar criada e rota /api/recuperar-link adicionada. README e índice atualizados. Lint e build executados.

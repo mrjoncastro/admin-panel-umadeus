@@ -117,6 +117,8 @@
   - ListaInscricoesPage
 - **app/admin/inscricoes/recuperar/page.tsx**
   - RecuperarPagamentoPage
+- **app/recuperar/page.tsx**
+  - RecuperarPagamentoPage
 - **app/admin/layout.tsx**
   - metadata
   - RootLayout
@@ -218,6 +220,8 @@
 - **app/api/register/route.ts**
   - POST
 - **app/api/signup/route.ts**
+  - POST
+- **app/api/recuperar-link/route.ts**
   - POST
 - **app/api/tenant-config/route.ts**
   - GET

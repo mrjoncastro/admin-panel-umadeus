@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
-import { logInfo } from '@/lib/logger'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
+import { logInfo } from '@/lib/logger'
 
 export async function POST(req: NextRequest) {
   const pb = createPocketBase()
   try {
     const { cpf, telefone } = await req.json()
+    const cliente = await getTenantFromHost()
 
     logInfo('📨 Dados recebidos:', { cpf, telefone })
 
@@ -18,10 +19,11 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const cliente = await getTenantFromHost()
-
     if (!cliente) {
-      return NextResponse.json({ error: 'Tenant não informado' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Tenant n\u00e3o encontrado' },
+        { status: 400 },
+      )
     }
 
     if (!pb.authStore.isValid) {
