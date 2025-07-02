@@ -1,4 +1,4 @@
-export type PaymentMethod = 'pix' | 'boleto' | 'credito'
+export type PaymentMethod = 'pix' | 'boleto'
 
 interface FeeRange {
   min: number
@@ -10,12 +10,6 @@ interface FeeRange {
 const feeTable: Record<PaymentMethod, FeeRange[]> = {
   pix: [{ min: 1, max: 1, fixed: 1.99, percent: 0 }],
   boleto: [{ min: 1, max: 1, fixed: 1.99, percent: 0 }],
-  credito: [
-    { min: 1, max: 1, fixed: 0.49, percent: 0.0299 },
-    { min: 2, max: 6, fixed: 0.49, percent: 0.0349 },
-    { min: 7, max: 12, fixed: 0.49, percent: 0.0399 },
-    { min: 13, max: 21, fixed: 0.49, percent: 0.0429 },
-  ],
 }
 
 export function getAsaasFees(payment: PaymentMethod, installments = 1) {
@@ -37,14 +31,7 @@ export function calculateGross(
 ): { gross: number; margin: number } {
   const margin = Number((V * 0.07).toFixed(2))
   const { fixedFee: F, percentFee: P } = getAsaasFees(payment, installments)
-  let gross = Number(((V + margin + F) / (1 - P)).toFixed(2))
-
-  if (payment === 'credito') {
-    const pixGross = calculateGross(V, 'pix', 1).gross
-    if (gross < pixGross) {
-      gross = pixGross
-    }
-  }
+  const gross = Number(((V + margin + F) / (1 - P)).toFixed(2))
 
   return { gross, margin }
 }

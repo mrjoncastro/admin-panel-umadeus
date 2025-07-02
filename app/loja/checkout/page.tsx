@@ -43,7 +43,6 @@ function CheckoutContent() {
 
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle')
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('pix')
-  const [installments, setInstallments] = useState(1)
   const [redirecting, setRedirecting] = useState(false)
   const [campoId, setCampoId] = useState<string | null>(null)
 
@@ -98,19 +97,13 @@ function CheckoutContent() {
     }
   }, [user?.id, pb])
 
-  useEffect(() => {}, [total, paymentMethod, installments])
+  useEffect(() => {}, [total, paymentMethod])
 
   useEffect(() => {
     if (!isLoggedIn) {
       router.replace('/login?redirect=/loja/checkout')
     }
   }, [isLoggedIn, router])
-
-  useEffect(() => {
-    if (paymentMethod !== 'credito' && installments !== 1) {
-      setInstallments(1)
-    }
-  }, [paymentMethod, installments])
 
   function maskTelefone(valor: string) {
     // Remove tudo que não for número
@@ -167,13 +160,12 @@ function CheckoutContent() {
       const paymentMap = {
         pix: 'PIX',
         boleto: 'BOLETO',
-        credito: 'CREDIT_CARD',
       } as const
 
       const { net: valorBruto } = calculateNet(
         displayTotalGross,
         paymentMethod,
-        installments,
+        1,
       )
 
       type LegacyItem = Produto & {
@@ -226,14 +218,7 @@ function CheckoutContent() {
           cep,
           cidade,
         },
-        installments,
         paymentMethods: [paymentMap[paymentMethod]],
-        ...(paymentMethod === 'credito' && installments > 1
-          ? {
-              chargeTypes: ['INSTALLMENT'],
-              installment: { maxInstallmentCount: installments },
-            }
-          : {}),
       }
 
       const res = await fetch('/api/asaas/checkout', {
@@ -453,24 +438,6 @@ function CheckoutContent() {
                 >
                   <option value="pix">Pix</option>
                   <option value="boleto">Boleto</option>
-                  <option value="credito">Crédito</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">
-                  Parcelas
-                </label>
-                <select
-                  value={installments}
-                  onChange={(e) => setInstallments(Number(e.target.value))}
-                  disabled={paymentMethod !== 'credito'}
-                  className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-black focus:outline-none"
-                >
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <option key={i + 1} value={i + 1}>
-                      {i + 1}x
-                    </option>
-                  ))}
                 </select>
               </div>
             </div>
@@ -479,12 +446,6 @@ function CheckoutContent() {
                 <span>Total a pagar</span>
                 <span>{formatCurrency(totalGross)}</span>
               </div>
-              {paymentMethod === 'credito' && installments > 1 && (
-                <div className="flex justify-between text-sm text-gray-500">
-                  <span>Valor da parcela</span>
-                  <span>{formatCurrency(totalGross / installments)}</span>
-                </div>
-              )}
             </div>
             <button
               onClick={handleConfirm}

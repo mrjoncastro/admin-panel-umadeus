@@ -78,7 +78,6 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
     password: '',
     passwordConfirm: '',
     paymentMethod: 'pix',
-    installments: 1,
   })
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(true)
@@ -288,7 +287,6 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
             liderId,
             eventoId,
             paymentMethod: form.paymentMethod,
-            installments: form.installments,
           }
         : {
             user_first_name: firstName,
@@ -316,7 +314,6 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
                   role: form.role,
                 }),
             paymentMethod: form.paymentMethod,
-            installments: form.installments,
           }
       const res = await fetch(url, {
         method: 'POST',
@@ -606,26 +603,9 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
             >
               <option value="pix">Pix</option>
               <option value="boleto">Boleto</option>
-              <option value="credito">Crédito</option>
             </select>
           </FormField>
-          <FormField label="Parcelas" htmlFor="installments">
-            <select
-              id="installments"
-              name="installments"
-              value={form.installments}
-              onChange={handleChange}
-              disabled={form.paymentMethod !== 'credito'}
-              className="input-base"
-              required
-            >
-              {Array.from({ length: 6 }).map((_, i) => (
-                <option key={i + 1} value={i + 1}>
-                  {i + 1}x
-                </option>
-              ))}
-            </select>
-          </FormField>
+          
         </div>
       ),
     })

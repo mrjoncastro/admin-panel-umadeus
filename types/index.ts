@@ -173,7 +173,7 @@ export type Compra = {
   itens: Record<string, unknown>[]
   valor_total: number
   status: 'pendente' | 'pago' | 'cancelado'
-  metodo_pagamento: 'pix' | 'cartao' | 'boleto'
+  metodo_pagamento: 'pix' | 'boleto'
   checkout_url?: string
   asaas_payment_id?: string
   externalReference: string

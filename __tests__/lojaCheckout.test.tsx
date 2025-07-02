@@ -37,35 +37,8 @@ vi.mock('next/navigation', () => ({
 }))
 
 describe('CheckoutContent', () => {
-  it('não exibe valor da parcela quando há uma parcela', () => {
+  it('nao exibe campo de parcelas', () => {
     render(<CheckoutPage />)
-    expect(screen.queryByText('Valor da parcela')).toBeNull()
-  })
-
-  it('desabilita select de parcelas quando forma de pagamento não é crédito', () => {
-    render(<CheckoutPage />)
-    const selects = screen.getAllByRole('combobox')
-    expect(selects[1]).toBeDisabled()
-  })
-
-  it('mantém total a pagar calculado com pix ao mudar forma de pagamento', () => {
-    render(<CheckoutPage />)
-    const selects = screen.getAllByRole('combobox')
-    fireEvent.change(selects[0], { target: { value: 'credito' } })
-    fireEvent.change(selects[1], { target: { value: '2' } })
-    expect(
-      screen.getByText((content) => content.includes('R$ 11,59')),
-    ).toBeInTheDocument()
-  })
-
-  it('exibe valor da parcela apenas uma vez quando há mais de uma parcela', () => {
-    render(<CheckoutPage />)
-    const selects = screen.getAllByRole('combobox')
-    fireEvent.change(selects[0], { target: { value: 'credito' } })
-    fireEvent.change(selects[1], { target: { value: '2' } })
-    expect(screen.getAllByText('Valor da parcela')).toHaveLength(1)
-    expect(
-      screen.getByText((content) => content.includes('R$ 5,79')),
-    ).toBeInTheDocument()
+    expect(screen.queryByLabelText('Parcelas')).toBeNull()
   })
 })

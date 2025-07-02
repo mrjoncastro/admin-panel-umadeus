@@ -88,12 +88,12 @@ export async function POST(req: NextRequest) {
       ...(tenantId ? { cliente: tenantId } : {}),
     }
 
-    const paymentMethod: PaymentMethod = ['pix', 'boleto', 'credito'].includes(
+    const paymentMethod: PaymentMethod = ['pix', 'boleto'].includes(
       data.paymentMethod,
     )
       ? data.paymentMethod
       : 'pix'
-    const installments = Number(data.installments) || 1
+    const installments = 1
 
     const { id: _inscricaoId, ...inscricaoSemId } =
       criarInscricao(baseInscricao)

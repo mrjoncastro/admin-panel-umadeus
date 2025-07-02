@@ -410,8 +410,7 @@ Para cada coleção, utilize a seguinte estrutura:
 | `genero`               | Enum                      | Não         | `feminino`, `masculino`                                       |
 | `tamanho`              | Enum                      | Não         | `PP`, `P`, `M`, `G`, `GG`                                     |
 | `evento`               | Relation → `eventos`      | Não         | Evento associado                                              |
-| `paymentMethod`        | Enum                      | Não         | `pix`, `boleto`, `credito`                                    |
-| `installments`         | Number                    | Não         | Número de parcelas (quando `credito`)                         |
+| `paymentMethod`        | Enum                      | Não         | `pix`, `boleto`                                               |
 | `data_nascimento`      | Date                      | Não         | Data de nascimento do participante                            |
 | `confirmado_por_lider` | Boolean                   | Sim         | Marca aprovação feita pelo líder                              |
 | `cliente`              | Relation → `m24_clientes` | Não         | Tenant proprietário (multi-tenant)                            |
