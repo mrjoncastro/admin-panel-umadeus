@@ -3,8 +3,6 @@ import createPocketBase from '@/lib/pocketbase'
 import type { AsaasWebhookPayload } from '@/lib/webhookProcessor'
 import { logConciliacaoErro } from '@/lib/server/logger'
 
-export const config = { runtime: 'nodejs' }
-
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const timestamp = new Date().toISOString()
 
@@ -24,29 +22,27 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   const pb = createPocketBase()
-  let wasValid = false // <-- declara aqui
+  const data = payload as Partial<AsaasWebhookPayload>
 
   try {
-    // 2️⃣ Autenticação no PocketBase
-    wasValid = pb.authStore.isValid
-    if (!wasValid) {
+    if (!pb.authStore.isValid) {
       await pb.admins.authWithPassword(
         process.env.PB_ADMIN_EMAIL!,
         process.env.PB_ADMIN_PASSWORD!,
       )
     }
 
-    // 3️⃣ Cria a task com todos os campos obrigatórios
-    const now = new Date().toISOString()
     await pb.collection('webhook_tasks').create({
       event: data.event ?? 'unknown',
-      payload: JSON.stringify(data),
+      payload: JSON.stringify(payload),
       status: 'pending',
       attempts: 0,
       max_attempts: 5,
-      created: now,
-      updated: now,
     })
+  } catch (err) {
+    await logConciliacaoErro('Erro webhook: ' + String(err))
+    return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
+  }
 
     // 4️⃣ ACK rápido
     return NextResponse.json({ status: 'ack' }, { status: 200 })

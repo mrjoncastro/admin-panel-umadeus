@@ -1,6 +1,6 @@
 import createPocketBase from './pocketbase'
 import { logConciliacaoErro } from './server/logger'
-import { getTenantHost } from '@/lib/getTenantHost'
+import { getTenantHost } from './getTenantHost'
 
 export type AsaasWebhookPayload = {
   payment?: {
@@ -47,7 +47,7 @@ interface InscricaoRecord {
 export async function processWebhook(body: AsaasWebhookPayload) {
   const pb = createPocketBase()
   const baseUrl = process.env.ASAAS_API_URL
-  let site: string | null = null
+  let site: string | undefined
 
   if (!pb.authStore.isValid) {
     await pb.admins.authWithPassword(
@@ -115,7 +115,12 @@ export async function processWebhook(body: AsaasWebhookPayload) {
   }
 
   if (clienteId) {
-    site = await getTenantHost(clienteId)
+    try {
+      const tenantHost = await getTenantHost(clienteId)
+      if (tenantHost) site = tenantHost
+    } catch {
+      /* ignore */
+    }
   }
 
   const keyHeader = clienteApiKey.startsWith('$') ? clienteApiKey : `$${clienteApiKey}`
