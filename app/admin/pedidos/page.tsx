@@ -114,7 +114,6 @@ export default function PedidosPage() {
       p.expand?.id_inscricao?.nome || '',
       p.email,
       p.tamanho || '',
-      p.cor || '',
       p.status,
       p.expand?.campo?.nome || '',
       p.canal || '',
@@ -129,7 +128,6 @@ export default function PedidosPage() {
           'Nome',
           'Email',
           'Tamanho',
-          'Cor',
           'Status',
           'Campo',
           'Canal',
@@ -230,7 +228,6 @@ export default function PedidosPage() {
                 <th>Nome</th>
                 <th>Email</th>
                 <th>Tamanho</th>
-                <th>Cor</th>
                 <th>Status</th>
                 <th>Campo</th>
                 <th>Canal</th>
@@ -253,7 +250,6 @@ export default function PedidosPage() {
                   <td>{pedido.expand?.id_inscricao?.nome || '—'}</td>
                   <td>{pedido.email}</td>
                   <td>{pedido.tamanho || '—'}</td>
-                  <td>{pedido.cor || '—'}</td>
                   <td className="capitalize">
                     <span
                       className={`px-2 py-1 rounded text-xs font-semibold ${

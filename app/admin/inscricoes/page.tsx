@@ -642,6 +642,7 @@ export default function ListaInscricoesPage() {
           <table className="table-base">
             <thead>
               <tr>
+                <th>Confirmação</th>
                 <th>Nome</th>
                 <th>Telefone</th>
                 <th>Evento</th>
@@ -649,7 +650,6 @@ export default function ListaInscricoesPage() {
                 <th>Campo</th>
                 <th>Produto</th>
                 <th>Criado em</th>
-                <th>Confirmação</th>
                 {role === 'coordenador' && <th>Ação</th>}
               </tr>
             </thead>
@@ -665,29 +665,6 @@ export default function ListaInscricoesPage() {
                       : undefined
                   }
                 >
-                  <td className="font-medium">{i.nome}</td>
-                  <td>{i.telefone}</td>
-                  <td>{i.evento}</td>
-                  <td className="capitalize">
-                    <span
-                      className={`px-2 py-1 rounded text-xs font-semibold ${
-                        statusBadge[i.status]
-                      }`}
-                    >
-                      {i.status}
-                      {i.pedido_status === 'pendente' &&
-                      i.pedido_vencimento &&
-                      new Date(i.pedido_vencimento) < new Date() ? (
-                        <span className="ml-1 text-red-600">⚠️</span>
-                      ) : null}
-                    </span>
-                  </td>
-                  <td>{i.campo}</td>
-                  <td>
-                    {i.produtoNome || '—'}
-                    {i.tamanho ? ` - ${i.tamanho}` : ''}
-                  </td>
-                  <td>{formatDate(i.created)}</td>
                   <td className="text-left text-xs">
                     <div className="flex items-center gap-3">
                       {(role === 'lider' || role === 'coordenador') &&
@@ -746,6 +723,29 @@ export default function ListaInscricoesPage() {
                       )}
                     </div>
                   </td>
+                  <td className="font-medium">{i.nome}</td>
+                  <td>{i.telefone}</td>
+                  <td>{i.evento}</td>
+                  <td className="capitalize">
+                    <span
+                      className={`px-2 py-1 rounded text-xs font-semibold ${
+                        statusBadge[i.status]
+                      }`}
+                    >
+                      {i.status}
+                      {i.pedido_status === 'pendente' &&
+                      i.pedido_vencimento &&
+                      new Date(i.pedido_vencimento) < new Date() ? (
+                        <span className="ml-1 text-red-600">⚠️</span>
+                      ) : null}
+                    </span>
+                  </td>
+                  <td>{i.campo}</td>
+                  <td>
+                    {i.produtoNome || '—'}
+                    {i.tamanho ? ` - ${i.tamanho}` : ''}
+                  </td>
+                  <td>{formatDate(i.created)}</td>
 
                   <td className="p-3 text-left text-xs">
                     <div className="flex items-center gap-3">
