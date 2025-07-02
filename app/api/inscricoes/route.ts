@@ -237,6 +237,8 @@ export async function POST(req: NextRequest) {
           if (asaasRes.ok) {
             const data = await asaasRes.json()
             link_pagamento = data.url
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const _vencimento = data.vencimento
           } else {
             await pb.collection('pedidos').delete(pedidoId)
           }
