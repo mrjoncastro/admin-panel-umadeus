@@ -39,7 +39,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       payload: JSON.stringify(payload),
       status: 'pending',
       attempts: 0,
-      max_attempts: 5,
+      max_attempts: 3,
     })
 
     // 4️⃣ ACK rápido
