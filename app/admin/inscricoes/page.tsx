@@ -654,7 +654,7 @@ export default function ListaInscricoesPage() {
                             <button
                               onClick={() => confirmarInscricao(i.id)}
                               disabled={confirmandoId === i.id}
-                              className={`text-green-600 hover:text-green-700 cursor-pointer ${
+                              className={`p-2 rounded order-1 sm:order-none text-green-600 hover:text-green-700 cursor-pointer ${
                                 confirmandoId === i.id ? 'opacity-50' : ''
                               }`}
                             >
@@ -687,7 +687,7 @@ export default function ListaInscricoesPage() {
                           <TooltipIcon label="Recusar inscrição">
                             <button
                               onClick={() => setInscricaoParaRecusar(i)}
-                              className="text-red-600 hover:text-red-700 cursor-pointer"
+                              className="p-2 rounded order-2 sm:order-none text-red-600 hover:text-red-700 cursor-pointer"
                             >
                               <XCircle className="w-5 h-5" />
                             </button>
