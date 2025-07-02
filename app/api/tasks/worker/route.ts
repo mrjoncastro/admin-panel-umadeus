@@ -5,7 +5,7 @@ import { logConciliacaoErro } from '@/lib/server/logger'
 
 export const config = { runtime: 'nodejs' }
 
-export async function GET(req: NextRequest): Promise<NextResponse> {
+export async function GET(_req: NextRequest): Promise<NextResponse> {
   const pb = createPocketBase()
   if (!pb.authStore.isValid) {
     await pb.admins.authWithPassword(
