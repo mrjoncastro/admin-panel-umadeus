@@ -395,7 +395,7 @@ export default function ListaInscricoesPage() {
         const msg =
           checkout?.message ||
           (checkout?.errors && checkout.errors[0]?.description) ||
-          'Tivemos um problema ao gerar seu link de pagamento. Nenhum valor foi registrado. Por favor, tente novamente ou entre em contato com a equipe.'
+          'Tivemos um problema ao gerar seu link de pagamento. Por favor, entre em contato com a equipe.'
         console.error(
           '[confirmarInscricao] Erro ao gerar link de pagamento:',
           checkout,
