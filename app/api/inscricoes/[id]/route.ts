@@ -96,22 +96,26 @@ export async function DELETE(req: NextRequest) {
   if (!id) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
   }
-  const auth = requireRole(req, 'usuario')
+  const auth = requireRole(req, 'coordenador')
   if ('error' in auth) {
     return NextResponse.json({ error: auth.error }, { status: auth.status })
   }
   const { pb, user } = auth
   try {
-    const inscricao = await pb.collection('inscricoes').getOne(id)
-    if (inscricao.criado_por !== user.id) {
-      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
+    const inscricao = await pb.collection('inscricoes').getOne<Inscricao>(id)
+    const access = await checkAccess(inscricao, user)
+    if ('error' in access) {
+      return NextResponse.json(
+        { error: access.error },
+        { status: access.status },
+      )
     }
-    await pb.collection('inscricoes').update(id, { status: 'cancelado' })
+    await pb.collection('inscricoes').delete(id)
     logRocketEvent('inscricao_cancelada', { inscricaoId: id })
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error('Erro ao cancelar inscricao:', err)
-    await logConciliacaoErro('Erro ao atualizar inscricao: ' + String(err))
-    return NextResponse.json({ error: 'Erro ao cancelar' }, { status: 500 })
+    console.error('Erro ao excluir inscricao:', err)
+    await logConciliacaoErro('Erro ao excluir inscricao: ' + String(err))
+    return NextResponse.json({ error: 'Erro ao excluir' }, { status: 500 })
   }
 }

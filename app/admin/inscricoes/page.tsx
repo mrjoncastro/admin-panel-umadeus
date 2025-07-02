@@ -734,14 +734,16 @@ export default function ListaInscricoesPage() {
                         </button>
                       </TooltipIcon>
 
-                      <TooltipIcon label="Excluir">
-                        <button
-                          onClick={() => deletarInscricao(i.id)}
-                          className="text-red-600 hover:text-red-800 cursor-pointer"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </TooltipIcon>
+                      {role === 'coordenador' && (
+                        <TooltipIcon label="Excluir">
+                          <button
+                            onClick={() => deletarInscricao(i.id)}
+                            className="text-red-600 hover:text-red-800 cursor-pointer"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </TooltipIcon>
+                      )}
 
                       {i.pedido_id ? (
                         <TooltipIcon label="Visualizar pedido">
