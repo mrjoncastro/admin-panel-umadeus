@@ -22,6 +22,7 @@ export default function PedidosPage() {
   const [filtroCampo, setFiltroCampo] = useState('')
   const [buscaGlobal, setBuscaGlobal] = useState('')
   const [ordem, setOrdem] = useState<'asc' | 'desc'>('desc')
+  const [ordenarPor, setOrdenarPor] = useState<'data' | 'alfabetica'>('data')
   const [pedidoSelecionado, setPedidoSelecionado] = useState<Pedido | null>(
     null,
   )
@@ -97,6 +98,17 @@ export default function PedidosPage() {
     return matchStatus && matchCampo && matchBuscaGlobal
   })
 
+  const pedidosOrdenados = [...pedidosFiltrados].sort((a, b) => {
+    if (ordenarPor === 'alfabetica') {
+      const nomeA = a.expand?.id_inscricao?.nome?.toLowerCase() || ''
+      const nomeB = b.expand?.id_inscricao?.nome?.toLowerCase() || ''
+      return ordem === 'asc' ? nomeA.localeCompare(nomeB) : nomeB.localeCompare(nomeA)
+    }
+    const dataA = new Date(a.created || 0).getTime()
+    const dataB = new Date(b.created || 0).getTime()
+    return ordem === 'asc' ? dataA - dataB : dataB - dataA
+  })
+
   const exportarPDF = () => {
     const doc = new jsPDF({ unit: 'pt', format: 'a4' })
     doc.setFontSize(16)
@@ -107,7 +119,7 @@ export default function PedidosPage() {
     doc.setFontSize(11)
     doc.setFont('helvetica', 'normal')
 
-    const linhas = pedidosFiltrados.map((p) => [
+    const linhas = pedidosOrdenados.map((p) => [
       Array.isArray(p.expand?.produto)
         ? p.expand.produto.map((prod: Produto) => prod.nome).join(', ')
         : (p.expand?.produto as Produto | undefined)?.nome || p.produto,
@@ -207,11 +219,21 @@ export default function PedidosPage() {
             className="border rounded px-4 py-2 text-sm w-full md:w-60 shadow-sm"
           />
         )}
+        <select
+          value={ordenarPor}
+          onChange={(e) =>
+            setOrdenarPor(e.target.value as 'data' | 'alfabetica')
+          }
+          className="border rounded px-4 py-2 text-sm bg-white shadow-sm"
+        >
+          <option value="data">Data de criação</option>
+          <option value="alfabetica">Ordem alfabética</option>
+        </select>
         <button
           onClick={() => setOrdem(ordem === 'desc' ? 'asc' : 'desc')}
           className="btn btn-secondary"
         >
-          Ordenar por data ({ordem === 'desc' ? '↓' : '↑'})
+          {ordem === 'desc' ? '↓' : '↑'}
         </button>
         <button onClick={exportarPDF} className="btn btn-primary">
           Relat\u00F3rio PDF
@@ -238,7 +260,7 @@ export default function PedidosPage() {
               </tr>
             </thead>
             <tbody>
-              {pedidosFiltrados.map((pedido) => (
+              {pedidosOrdenados.map((pedido) => (
                 <tr key={pedido.id}>
                   <td className="font-medium">
                     {Array.isArray(pedido.expand?.produto)

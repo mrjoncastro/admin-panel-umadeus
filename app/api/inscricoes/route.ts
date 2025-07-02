@@ -33,10 +33,11 @@ export async function GET(req: NextRequest) {
       baseFilter = `cliente = "${tenantId}"`
     }
     const filtro = status ? `${baseFilter} && status='${status}'` : baseFilter
+    const sortParam = req.nextUrl.searchParams.get('sort') || '-created'
     const result = await pb.collection('inscricoes').getList(page, perPage, {
       filter: filtro,
       expand: 'evento,campo,pedido,produto',
-      sort: '-created',
+      sort: sortParam,
     })
     return NextResponse.json(result, { status: 200 })
   } catch (err) {
