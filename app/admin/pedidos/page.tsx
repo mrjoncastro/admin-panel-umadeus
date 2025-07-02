@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import type { Pedido, Produto } from '@/types'
-import { saveAs } from 'file-saver'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import ModalEditarPedido from './componentes/ModalEditarPedido'
 import { useToast } from '@/lib/context/ToastContext'
@@ -21,6 +22,7 @@ export default function PedidosPage() {
   const [filtroCampo, setFiltroCampo] = useState('')
   const [buscaGlobal, setBuscaGlobal] = useState('')
   const [ordem, setOrdem] = useState<'asc' | 'desc'>('desc')
+  const [ordenarPor, setOrdenarPor] = useState<'data' | 'alfabetica'>('data')
   const [pedidoSelecionado, setPedidoSelecionado] = useState<Pedido | null>(
     null,
   )
@@ -96,44 +98,85 @@ export default function PedidosPage() {
     return matchStatus && matchCampo && matchBuscaGlobal
   })
 
-  const exportarCSV = () => {
-    const header = [
-      'Produto',
-      'Nome',
-      'Email',
-      'Tamanho',
-      'Cor',
-      'Status',
-      'Campo',
-      'Canal',
-      'Data',
-    ]
+  const pedidosOrdenados = [...pedidosFiltrados].sort((a, b) => {
+    if (ordenarPor === 'alfabetica') {
+      const nomeA = a.expand?.id_inscricao?.nome?.toLowerCase() || ''
+      const nomeB = b.expand?.id_inscricao?.nome?.toLowerCase() || ''
+      return ordem === 'asc' ? nomeA.localeCompare(nomeB) : nomeB.localeCompare(nomeA)
+    }
+    const dataA = new Date(a.created || 0).getTime()
+    const dataB = new Date(b.created || 0).getTime()
+    return ordem === 'asc' ? dataA - dataB : dataB - dataA
+  })
 
-    const linhas = pedidosFiltrados.map((p) => [
+  const exportarPDF = () => {
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' })
+    doc.setFontSize(16)
+    doc.setFont('helvetica', 'bold')
+    doc.text('Relat\u00F3rio de Pedidos', doc.internal.pageSize.getWidth() / 2, 40, {
+      align: 'center',
+    })
+    doc.setFontSize(11)
+    doc.setFont('helvetica', 'normal')
+
+    const linhas = pedidosOrdenados.map((p) => [
       Array.isArray(p.expand?.produto)
         ? p.expand.produto.map((prod: Produto) => prod.nome).join(', ')
         : (p.expand?.produto as Produto | undefined)?.nome || p.produto,
       p.expand?.id_inscricao?.nome || '',
       p.email,
       p.tamanho || '',
-      p.cor || '',
       p.status,
       p.expand?.campo?.nome || '',
       p.canal || '',
       p.created?.split('T')[0] || '',
     ])
 
-    const csvContent = [header, ...linhas]
-      .map((linha) => linha.map((valor) => `"${valor}"`).join(','))
-      .join('\n')
+    autoTable(doc, {
+      startY: 60,
+      head: [
+        [
+          'Produto',
+          'Nome',
+          'Email',
+          'Tamanho',
+          'Status',
+          'Campo',
+          'Canal',
+          'Data',
+        ],
+      ],
+      body: linhas,
+      theme: 'striped',
+      headStyles: { fillColor: [217, 217, 217], halign: 'center' },
+      styles: { fontSize: 8 },
+      margin: { left: 20, right: 20 },
+    })
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-    const hoje = new Date().toISOString().split('T')[0]
-    saveAs(blob, `pedidos_exportados_${hoje}.csv`)
+    const pageCount = doc.getNumberOfPages()
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i)
+      const pageHeight = doc.internal.pageSize.getHeight()
+      doc.setFontSize(10)
+      doc.text(
+        'Desenvolvido por M24 Tecnologia <m24saude.com.br>',
+        40,
+        pageHeight - 20,
+      )
+      doc.text(
+        `P\u00E1gina ${i} de ${pageCount}`,
+        doc.internal.pageSize.getWidth() - 40,
+        pageHeight - 20,
+        { align: 'right' },
+      )
+    }
+
+    doc.save('pedidos.pdf')
   }
   const statusBadge = {
     pendente: 'bg-yellow-100 text-yellow-800',
     pago: 'bg-green-100 text-green-800',
+    vencido: 'bg-red-200 text-red-800',
     cancelado: 'bg-red-100 text-red-800',
   }
 
@@ -162,6 +205,7 @@ export default function PedidosPage() {
           <option value="">Todos os Status</option>
           <option value="pendente">Pendente</option>
           <option value="pago">Pago</option>
+          <option value="vencido">Vencido</option>
           <option value="cancelado">Cancelado</option>
         </select>
         {user?.role === 'coordenador' && (
@@ -173,14 +217,24 @@ export default function PedidosPage() {
             className="border rounded px-4 py-2 text-sm w-full md:w-60 shadow-sm"
           />
         )}
+        <select
+          value={ordenarPor}
+          onChange={(e) =>
+            setOrdenarPor(e.target.value as 'data' | 'alfabetica')
+          }
+          className="border rounded px-4 py-2 text-sm bg-white shadow-sm"
+        >
+          <option value="data">Data de criação</option>
+          <option value="alfabetica">Ordem alfabética</option>
+        </select>
         <button
           onClick={() => setOrdem(ordem === 'desc' ? 'asc' : 'desc')}
           className="btn btn-secondary"
         >
-          Ordenar por data ({ordem === 'desc' ? '↓' : '↑'})
+          {ordem === 'desc' ? '↓' : '↑'}
         </button>
-        <button onClick={exportarCSV} className="btn btn-primary">
-          Exportar CSV
+        <button onClick={exportarPDF} className="btn btn-primary">
+          PDF
         </button>
       </div>
 
@@ -196,7 +250,6 @@ export default function PedidosPage() {
                 <th>Nome</th>
                 <th>Email</th>
                 <th>Tamanho</th>
-                <th>Cor</th>
                 <th>Status</th>
                 <th>Campo</th>
                 <th>Canal</th>
@@ -204,7 +257,7 @@ export default function PedidosPage() {
               </tr>
             </thead>
             <tbody>
-              {pedidosFiltrados.map((pedido) => (
+              {pedidosOrdenados.map((pedido) => (
                 <tr key={pedido.id}>
                   <td className="font-medium">
                     {Array.isArray(pedido.expand?.produto)
@@ -219,7 +272,6 @@ export default function PedidosPage() {
                   <td>{pedido.expand?.id_inscricao?.nome || '—'}</td>
                   <td>{pedido.email}</td>
                   <td>{pedido.tamanho || '—'}</td>
-                  <td>{pedido.cor || '—'}</td>
                   <td className="capitalize">
                     <span
                       className={`px-2 py-1 rounded text-xs font-semibold ${
@@ -228,6 +280,11 @@ export default function PedidosPage() {
                     >
                       {pedido.status}
                     </span>
+                    {(pedido.status === 'pendente' || pedido.status === 'vencido') &&
+                    pedido.vencimento &&
+                    new Date(pedido.vencimento) < new Date() ? (
+                      <span className="ml-1 text-red-600">⚠️</span>
+                    ) : null}
                   </td>
                   <td>{pedido.expand?.campo?.nome || '—'}</td>
                   <td className="text-xs font-medium">
@@ -243,30 +300,34 @@ export default function PedidosPage() {
                     >
                       Editar
                     </button>
-                    <button
-                      onClick={async () => {
-                        if (
-                          confirm('Tem certeza que deseja excluir este pedido?')
-                        ) {
-                          try {
-                            await fetch(`/api/pedidos/${pedido.id}`, {
-                              method: 'DELETE',
-                              credentials: 'include',
-                            })
-                            setPedidos((prev) =>
-                              prev.filter((p) => p.id !== pedido.id),
+                    {user?.role === 'coordenador' && (
+                      <button
+                        onClick={async () => {
+                          if (
+                            confirm(
+                              'Tem certeza que deseja excluir este pedido?',
                             )
-                            showSuccess('Pedido excluído')
-                          } catch (e) {
-                            console.error('Erro ao excluir:', e)
-                            showError('Erro ao excluir pedido')
+                          ) {
+                            try {
+                              await fetch(`/api/pedidos/${pedido.id}`, {
+                                method: 'DELETE',
+                                credentials: 'include',
+                              })
+                              setPedidos((prev) =>
+                                prev.filter((p) => p.id !== pedido.id),
+                              )
+                              showSuccess('Pedido excluído')
+                            } catch (e) {
+                              console.error('Erro ao excluir:', e)
+                              showError('Erro ao excluir pedido')
+                            }
                           }
-                        }
-                      }}
-                      className="text-red-600 hover:underline text-xs"
-                    >
-                      Excluir
-                    </button>
+                        }}
+                        className="text-red-600 hover:underline text-xs"
+                      >
+                        Excluir
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

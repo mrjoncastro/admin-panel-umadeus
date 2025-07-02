@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
+import { pbRetry } from '@/lib/pbRetry'
 import { getUserFromHeaders } from '@/lib/getUserFromHeaders'
 import { logInfo } from '@/lib/logger'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
@@ -14,10 +15,12 @@ export async function GET() {
   }
 
   try {
-    const campos = await pb.collection('campos').getFullList({
-      sort: 'nome',
-      filter: `cliente='${tenantId}'`,
-    })
+    const campos = await pbRetry(() =>
+      pb.collection('campos').getFullList({
+        sort: 'nome',
+        filter: `cliente='${tenantId}'`,
+      }),
+    )
 
     return NextResponse.json(campos, { status: 200 })
   } catch (err: unknown) {
@@ -63,9 +66,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Nome inválido' }, { status: 400 })
     }
 
-    const campo = await pbSafe
-      .collection('campos')
-      .create({ nome, cliente: tenantId })
+    const campo = await pbRetry(() =>
+      pbSafe.collection('campos').create({ nome, cliente: tenantId }),
+    )
 
     logInfo('✅ Campo criado com sucesso')
 

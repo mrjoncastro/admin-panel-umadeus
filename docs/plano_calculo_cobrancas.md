@@ -13,11 +13,11 @@ Este documento descreve a lógica e as fórmulas que o sistema deve usar para ca
 
 | Forma de Pagamento  | Taxa Fixa (F) | Taxa Percentual (P) |
 | ------------------- | ------------- | ------------------- |
-| **Pix**             | R$ 1,99       | 0%                  |
-| **Boleto**          | R$ 1,99       | 0%                  |
-| **Crédito à Vista** | R$ 0,49       | 2,99% (0,0299)      |
-| **Crédito 2–6x**    | R$ 0,49       | 3,49% (0,0349)      |
-| **Crédito 7–12x**   | R$ 0,49       | 3,99% (0,0399)      |
+| **Pix**             | R\$ 1,99      | 0%                  |
+| **Boleto**          | R\$ 1,99      | 0%                  |
+| **Crédito à Vista** | R\$ 0,49      | 2,99% (0,0299)      |
+| **Crédito 2–6x**    | R\$ 0,49      | 3,49% (0,0349)      |
+| **Crédito 7–12x**   | R\$ 0,49      | 3,99% (0,0399)      |
 
 ---
 
@@ -33,11 +33,11 @@ Seja:
 
 Queremos que, após o Asaas descontar `F + P×G`, reste `(V × (1+M))` para dividir entre plataforma e coordenador. A equação é:
 
-\[
+```
 G × (1 - P) - F = V × (1 + M)
-\quad\Longrightarrow\quad
-G = rac{V(1+M) + F}{1 - P}
-\]
+⇒
+G = (V × (1 + M) + F) / (1 - P)
+```
 
 ---
 
@@ -77,6 +77,7 @@ G = rac{V(1+M) + F}{1 - P}
    ```
 
 5. **Envio e Registro**
+
    - Enviar payload ao Asaas.
    - No banco, salvar:
      - `valorBase = V`
@@ -89,11 +90,11 @@ G = rac{V(1+M) + F}{1 - P}
 
 ## 4. Exemplo Numérico
 
-Para **Pix**, com V = R$ 50,00:
+Para **Pix**, com V = R\$ 50,00:
 
 - F = 1,99
 - P = 0
-- \(G = 50×1,07 + 1,99 = 53,50 + 1,99 = 55,49\)
+- \(G = 50 × 1,07 + 1,99 = 53,50 + 1,99 = 55,49\)
 
 **Fluxo:**
 
@@ -102,13 +103,13 @@ Para **Pix**, com V = R$ 50,00:
 > - Todos os valores devem ser arredondados a dois dígitos (centavos).
 > - Esta lógica se aplica a **inscrições** (cobrança avulsa).
 > - O sistema deve atualizar dinamicamente o valor de `G` e os detalhes de split sempre que o usuário alterar forma de pagamento ou número de parcelas.
-> - Ao exibir o "Total a pagar", usar calculateGross(total, paymentMethod, installments), refletindo a forma de pagamento selecionada.O cálculo com "pix" pode ser usado como referência base ou subtotal comparativo.
+> - Ao exibir o "Total a pagar", usar calculateGross(total, paymentMethod, installments), refletindo a forma de pagamento selecionada. O cálculo com "pix" pode ser usado como referência base ou subtotal comparativo.
 
 Parcelado em 3x (Cartão 2–6x):
 
 - P = 0,0349, F = 0,49
 - \(G = (50×1,07 + 0,49) / (1 - 0,0349) ≈ 56,06\)
-- Valor da parcela ≈ R$ 18,69 (56,06 ÷ 3)
+- Valor da parcela ≈ R\$ 18,69 (56,06 ÷ 3)
 
 ---
 
@@ -116,11 +117,10 @@ Parcelado em 3x (Cartão 2–6x):
 
 | Pagamento         | Fórmula do Bruto G           | Exemplo G (V=50) |
 | ----------------- | ---------------------------- | ---------------- |
-| **Pix/Boleto**    | G = V·1,07 + 1,99            | R$ 55,49         |
-| **Débito**        | G = (V·1,07 + 0,35) / 0,9811 | R$ 55,44         |
-| **Crédito 1x**    | G = (V·1,07 + 0,49) / 0,9701 | R$ 56,15         |
-| **Crédito 2–6x**  | G = (V·1,07 + 0,49) / 0,9651 | R$ 56,06         |
-| **Crédito 7–12x** | G = (V·1,07 + 0,49) / 0,9601 | R$ 56,00         |
+| **Pix/Boleto**    | G = V·1,07 + 1,99            | R\$ 55,49        |
+| **Crédito 1x**    | G = (V·1,07 + 0,49) / 0,9701 | R\$ 56,15        |
+| **Crédito 2–6x**  | G = (V·1,07 + 0,49) / 0,9651 | R\$ 56,06        |
+| **Crédito 7–12x** | G = (V·1,07 + 0,49) / 0,9601 | R\$ 56,00        |
 
 ---
 
@@ -129,3 +129,9 @@ Parcelado em 3x (Cartão 2–6x):
 > - Todos os valores devem ser arredondados a dois dígitos (centavos).
 > - Esta lógica se aplica tanto a **inscrições** (cobrança avulsa) quanto a **compras** (checkout).
 > - O sistema deve atualizar dinamicamente o valor de `G` e os detalhes de split sempre que o usuário alterar forma de pagamento ou número de parcelas.
+> - O valor bruto calculado para qualquer forma de crédito (à vista ou parcelado) não pode ser inferior ao valor bruto calculado para Pix; se ocorrer, utilize o valor do Pix como valor mínimo.
+> - O sistema deve atualizar dinamicamente o valor de G e os detalhes de split sempre que o usuário alterar forma de pagamento ou número de parcelas.
+
+
+
+

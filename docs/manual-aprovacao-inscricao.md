@@ -104,7 +104,7 @@ Apenas os seguintes perfis podem executar essas ações:
 - Campo `confirmado_por_lider`: booleano, marca que houve análise manual
 - Campo `pedido`: referência à coleção `pedidos`
 - Campo `id_inscricao` em `pedidos`: relação direta com `id` da inscrição
-- Status possíveis: `pendente`, `aguardando_pagamento`, `confirmado`, `cancelado`
+- Status possíveis: `pendente`, `aguardando_pagamento`, `confirmado`, `vencido`, `cancelado`
 
 **Estrutura esperada da coleção `pedidos`:**
 
@@ -117,7 +117,7 @@ Apenas os seguintes perfis podem executar essas ações:
 | `cores`          | Array  | Sim         | Cores escolhidas                  |
 | `tamanho`        | Enum   | Sim         | `PP` • `P` • `M` • `G` • `GG`     |
 | `email`          | String | Sim         | E-mail do inscrito                |
-| `status`         | Enum   | Sim         | `pendente` • `pago` • `cancelado` |
+| `status`         | Enum   | Sim         | `pendente` • `pago` • `vencido` • `cancelado` |
 | `campo`          | Rel.   | Sim         | Campo da inscrição                |
 | `responsavel`    | Rel.   | Sim         | Usuário que aprovou               |
 | `genero`         | Enum   | Sim         | `feminino` • `masculino`          |

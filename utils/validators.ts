@@ -13,6 +13,10 @@ export function isValidCPF(value: string): boolean {
   return rest === parseInt(cpf.charAt(10))
 }
 
+export function isValidEmail(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+}
+
 export function isValidCNPJ(value: string): boolean {
   const cnpj = value.replace(/\D/g, '')
   if (cnpj.length !== 14 || /^([0-9])\1+$/.test(cnpj)) return false

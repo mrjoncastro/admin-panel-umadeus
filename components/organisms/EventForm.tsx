@@ -9,7 +9,7 @@ import { useAuthContext } from '@/lib/context/AuthContext'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { fetchCep } from '@/utils/cep'
-import { isValidCPF } from '@/utils/validators'
+import { isValidCPF, isValidEmail } from '@/utils/validators'
 import FormWizard from './FormWizard'
 import LoadingOverlay from './LoadingOverlay'
 import {
@@ -225,10 +225,16 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
         setFieldErrors({ cpf: 'CPF inválido.' })
         return false
       }
+      if (!isValidEmail(form.email)) {
+        setFieldErrors({ email: 'E-mail inválido.' })
+        return false
+      }
       try {
-        const res = await fetch(
-          `/api/usuarios/exists?cpf=${cpfNumerico}&email=${encodeURIComponent(form.email)}`,
-        )
+        const query =
+          `/api/usuarios/exists?cpf=${cpfNumerico}&email=${encodeURIComponent(form.email)}${
+            isLoggedIn && user ? `&excludeId=${user.id}` : ''
+          }`
+        const res = await fetch(query)
         if (res.ok) {
           const data = await res.json()
           if (data.cpf) {

@@ -4,7 +4,8 @@ import { useEffect, useState, useMemo } from 'react'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { Copy } from 'lucide-react'
-import { saveAs } from 'file-saver'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import ModalEditarInscricao from './componentes/ModalEdit'
 import ModalVisualizarPedido from './componentes/ModalVisualizarPedido'
@@ -44,6 +45,8 @@ type Inscricao = {
   data_nascimento?: string
   criado_por?: string
   pedido_id?: string | null
+  pedido_status?: 'pendente' | 'pago' | 'vencido' | 'cancelado' | null
+  pedido_vencimento?: string | null
   produto?: string
   produtoNome?: string
 }
@@ -61,6 +64,8 @@ export default function ListaInscricoesPage() {
   const [eventoId, setEventoId] = useState('')
   const [filtroStatus, setFiltroStatus] = useState('')
   const [filtroBusca, setFiltroBusca] = useState('')
+  const [ordenarPor, setOrdenarPor] = useState<'data' | 'alfabetica'>('data')
+  const [ordem, setOrdem] = useState<'asc' | 'desc'>('desc')
   const [inscricaoEmEdicao, setInscricaoEmEdicao] = useState<Inscricao | null>(
     null,
   )
@@ -160,6 +165,7 @@ export default function ListaInscricoesPage() {
             aprovada: r.aprovada ?? false,
             pedido_status: r.expand?.pedido?.status ?? null,
             pedido_id: r.expand?.pedido?.id ?? null,
+            pedido_vencimento: r.expand?.pedido?.vencimento ?? null,
           }
         })
 
@@ -389,16 +395,19 @@ export default function ListaInscricoesPage() {
           installments: parcelas,
         }),
       })
-      const checkout = await asaasRes.json()
+      const result = await asaasRes.json()
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { url, vencimento } = result
 
-      if (!asaasRes.ok || !checkout?.url) {
+      if (!asaasRes.ok || !url) {
         const msg =
-          checkout?.message ||
-          (checkout?.errors && checkout.errors[0]?.description) ||
-          'Tivemos um problema ao gerar seu link de pagamento. Nenhum valor foi registrado. Por favor, tente novamente ou entre em contato com a equipe.'
+          result?.message ||
+          result?.error ||
+          result?.errors?.[0]?.description ||
+          'Tivemos um problema ao gerar seu link de pagamento. Por favor, entre em contato com a equipe.'
         console.error(
           '[confirmarInscricao] Erro ao gerar link de pagamento:',
-          checkout,
+          result,
         )
         try {
           await fetch(`/api/pedidos/${pedido.pedidoId}`, {
@@ -451,7 +460,7 @@ export default function ListaInscricoesPage() {
           body: JSON.stringify({
             eventType: 'confirmacao_inscricao',
             userId: inscricao.criado_por,
-            paymentLink: checkout.url,
+            paymentLink: url,
           }),
         })
         if (!emailRes.ok) {
@@ -465,7 +474,7 @@ export default function ListaInscricoesPage() {
         headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },
         body: JSON.stringify({
           telefone: inscricao.telefone,
-          link: checkout.url,
+          link: url,
         }),
       })
       if (!waRes.ok) {
@@ -486,15 +495,16 @@ export default function ListaInscricoesPage() {
   const [inscricaoParaRecusar, setInscricaoParaRecusar] =
     useState<Inscricao | null>(null)
 
-  const exportarCSV = () => {
-    const header = [
-      'Nome',
-      'Telefone',
-      'Evento',
-      'Status',
-      'Campo',
-      'Criado em',
-    ]
+  const exportarPDF = () => {
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' })
+    doc.setFontSize(16)
+    doc.setFont('helvetica', 'bold')
+    doc.text('Relat\u00F3rio de Inscri\u00E7\u00F5es', doc.internal.pageSize.getWidth() / 2, 40, {
+      align: 'center',
+    })
+    doc.setFontSize(11)
+    doc.setFont('helvetica', 'normal')
+
     const linhas = inscricoes.map((i) => [
       i.nome,
       i.telefone,
@@ -504,13 +514,35 @@ export default function ListaInscricoesPage() {
       formatDate(i.created),
     ])
 
-    const csvContent = [header, ...linhas]
-      .map((linha) => linha.map((valor) => `"${valor}"`).join(','))
-      .join('\n')
+    autoTable(doc, {
+      startY: 60,
+      head: [['Nome', 'Telefone', 'Evento', 'Status', 'Campo', 'Criado em']],
+      body: linhas,
+      theme: 'striped',
+      headStyles: { fillColor: [217, 217, 217], halign: 'center' },
+      styles: { fontSize: 8 },
+      margin: { left: 20, right: 20 },
+    })
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-    const hoje = new Date().toISOString().split('T')[0]
-    saveAs(blob, `inscricoes_${hoje}.csv`)
+    const pageCount = doc.getNumberOfPages()
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i)
+      const pageHeight = doc.internal.pageSize.getHeight()
+      doc.setFontSize(10)
+      doc.text(
+        'Desenvolvido por M24 Tecnologia <m24saude.com.br>',
+        40,
+        pageHeight - 20,
+      )
+      doc.text(
+        `P\u00E1gina ${i} de ${pageCount}`,
+        doc.internal.pageSize.getWidth() - 40,
+        pageHeight - 20,
+        { align: 'right' },
+      )
+    }
+
+    doc.save('inscricoes.pdf')
   }
 
   const inscricoesFiltradas = inscricoes.filter((i) => {
@@ -525,7 +557,18 @@ export default function ListaInscricoesPage() {
       i.cpf?.toLowerCase().includes(busca) ||
       (role === 'coordenador' && i.campo?.toLowerCase().includes(busca))
 
-    return matchStatus && matchBusca
+  return matchStatus && matchBusca
+  })
+
+  const inscricoesOrdenadas = [...inscricoesFiltradas].sort((a, b) => {
+    if (ordenarPor === 'alfabetica') {
+      const nomeA = a.nome.toLowerCase()
+      const nomeB = b.nome.toLowerCase()
+      return ordem === 'asc' ? nomeA.localeCompare(nomeB) : nomeB.localeCompare(nomeA)
+    }
+    const dataA = new Date(a.created || 0).getTime()
+    const dataB = new Date(b.created || 0).getTime()
+    return ordem === 'asc' ? dataA - dataB : dataB - dataA
   })
 
   const [pedidoSelecionado, setPedidoSelecionado] = useState<string | null>(
@@ -594,11 +637,22 @@ export default function ListaInscricoesPage() {
           <option value="confirmado">Confirmado</option>
           <option value="cancelado">Cancelado</option>
         </select>
+        <select
+          value={ordenarPor}
+          onChange={(e) => setOrdenarPor(e.target.value as 'data' | 'alfabetica')}
+          className="border rounded px-4 py-2 text-sm bg-white shadow-sm"
+        >
+          <option value="data">Data de criação</option>
+          <option value="alfabetica">Ordem alfabética</option>
+        </select>
+        <button onClick={() => setOrdem(ordem === 'desc' ? 'asc' : 'desc')} className="btn btn-secondary">
+          {ordem === 'desc' ? '↓' : '↑'}
+        </button>
         <button
-          onClick={exportarCSV}
+          onClick={exportarPDF}
           className="text-sm px-4 py-2 rounded btn btn-primary text-white transition"
         >
-          Exportar CSV
+          PDF
         </button>
       </div>
 
@@ -612,6 +666,7 @@ export default function ListaInscricoesPage() {
           <table className="table-base">
             <thead>
               <tr>
+                <th>Confirmação</th>
                 <th>Nome</th>
                 <th>Telefone</th>
                 <th>Evento</th>
@@ -619,31 +674,21 @@ export default function ListaInscricoesPage() {
                 <th>Campo</th>
                 <th>Produto</th>
                 <th>Criado em</th>
-                <th>Confirmação</th>
                 {role === 'coordenador' && <th>Ação</th>}
               </tr>
             </thead>
             <tbody>
-              {inscricoesFiltradas.map((i) => (
-                <tr key={i.id}>
-                  <td className="font-medium">{i.nome}</td>
-                  <td>{i.telefone}</td>
-                  <td>{i.evento}</td>
-                  <td className="capitalize">
-                    <span
-                      className={`px-2 py-1 rounded text-xs font-semibold ${
-                        statusBadge[i.status]
-                      }`}
-                    >
-                      {i.status}
-                    </span>
-                  </td>
-                  <td>{i.campo}</td>
-                  <td>
-                    {i.produtoNome || '—'}
-                    {i.tamanho ? ` - ${i.tamanho}` : ''}
-                  </td>
-                  <td>{formatDate(i.created)}</td>
+              {inscricoesOrdenadas.map((i) => (
+                <tr
+                  key={i.id}
+                  className={
+                    i.pedido_status === 'pendente' &&
+                    i.pedido_vencimento &&
+                    new Date(i.pedido_vencimento) < new Date()
+                      ? 'bg-red-50'
+                      : undefined
+                  }
+                >
                   <td className="text-left text-xs">
                     <div className="flex items-center gap-3">
                       {(role === 'lider' || role === 'coordenador') &&
@@ -654,7 +699,7 @@ export default function ListaInscricoesPage() {
                             <button
                               onClick={() => confirmarInscricao(i.id)}
                               disabled={confirmandoId === i.id}
-                              className={`text-green-600 hover:text-green-700 cursor-pointer ${
+                              className={`p-2 rounded order-1 sm:order-none text-green-600 hover:text-green-700 cursor-pointer ${
                                 confirmandoId === i.id ? 'opacity-50' : ''
                               }`}
                             >
@@ -687,7 +732,7 @@ export default function ListaInscricoesPage() {
                           <TooltipIcon label="Recusar inscrição">
                             <button
                               onClick={() => setInscricaoParaRecusar(i)}
-                              className="text-red-600 hover:text-red-700 cursor-pointer"
+                              className="p-2 rounded order-2 sm:order-none text-red-600 hover:text-red-700 cursor-pointer"
                             >
                               <XCircle className="w-5 h-5" />
                             </button>
@@ -702,6 +747,29 @@ export default function ListaInscricoesPage() {
                       )}
                     </div>
                   </td>
+                  <td className="font-medium">{i.nome}</td>
+                  <td>{i.telefone}</td>
+                  <td>{i.evento}</td>
+                  <td className="capitalize">
+                    <span
+                      className={`px-2 py-1 rounded text-xs font-semibold ${
+                        statusBadge[i.status]
+                      }`}
+                    >
+                      {i.status}
+                      {i.pedido_status === 'pendente' &&
+                      i.pedido_vencimento &&
+                      new Date(i.pedido_vencimento) < new Date() ? (
+                        <span className="ml-1 text-red-600">⚠️</span>
+                      ) : null}
+                    </span>
+                  </td>
+                  <td>{i.campo}</td>
+                  <td>
+                    {i.produtoNome || '—'}
+                    {i.tamanho ? ` - ${i.tamanho}` : ''}
+                  </td>
+                  <td>{formatDate(i.created)}</td>
 
                   <td className="p-3 text-left text-xs">
                     <div className="flex items-center gap-3">
@@ -714,14 +782,16 @@ export default function ListaInscricoesPage() {
                         </button>
                       </TooltipIcon>
 
-                      <TooltipIcon label="Excluir">
-                        <button
-                          onClick={() => deletarInscricao(i.id)}
-                          className="text-red-600 hover:text-red-800 cursor-pointer"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </TooltipIcon>
+                      {role === 'coordenador' && (
+                        <TooltipIcon label="Excluir">
+                          <button
+                            onClick={() => deletarInscricao(i.id)}
+                            className="text-red-600 hover:text-red-800 cursor-pointer"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </TooltipIcon>
+                      )}
 
                       {i.pedido_id ? (
                         <TooltipIcon label="Visualizar pedido">

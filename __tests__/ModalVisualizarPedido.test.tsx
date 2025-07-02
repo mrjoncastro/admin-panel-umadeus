@@ -18,7 +18,9 @@ function mockPedido() {
     status: 'pendente',
     produto: [],
     id_pagamento: 'c1',
+    id_asaas: 'pay1',
     link_pagamento: 'pay',
+    vencimento: new Date(Date.now() - 86400000).toISOString(),
     expand: {
       id_inscricao: {
         nome: 'Fulano',
@@ -116,6 +118,43 @@ describe('ModalVisualizarPedido', () => {
         '/api/email',
         expect.any(Object),
       )
+    })
+  })
+
+  it('exibe botão para nova cobrança quando vencimento expirou', async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(mockPedido()),
+    })
+    global.fetch = fetchMock as unknown as typeof fetch
+
+    render(<ModalVisualizarPedido pedidoId="p1" onClose={() => {}} />)
+
+    expect(
+      await screen.findByRole('button', { name: /Gerar nova cobrança/i })
+    ).toBeInTheDocument()
+  })
+
+  it('chama endpoint ao gerar nova cobrança', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockPedido()) })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            link_pagamento: 'x',
+            vencimento: new Date().toISOString(),
+          }),
+      })
+    global.fetch = fetchMock as unknown as typeof fetch
+
+    render(<ModalVisualizarPedido pedidoId="p1" onClose={() => {}} />)
+    const btn = await screen.findByRole('button', { name: /Gerar nova cobrança/i })
+    fireEvent.click(btn)
+
+    await vi.waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith('/api/pedidos/p1/nova-cobranca', expect.any(Object))
     })
   })
 })

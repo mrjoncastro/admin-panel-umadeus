@@ -33,10 +33,11 @@ export async function GET(req: NextRequest) {
       baseFilter = `cliente = "${tenantId}"`
     }
     const filtro = status ? `${baseFilter} && status='${status}'` : baseFilter
+    const sortParam = req.nextUrl.searchParams.get('sort') || '-created'
     const result = await pb.collection('inscricoes').getList(page, perPage, {
       filter: filtro,
       expand: 'evento,campo,pedido,produto',
-      sort: '-created',
+      sort: sortParam,
     })
     return NextResponse.json(result, { status: 200 })
   } catch (err) {
@@ -237,6 +238,12 @@ export async function POST(req: NextRequest) {
           if (asaasRes.ok) {
             const data = await asaasRes.json()
             link_pagamento = data.url
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const _vencimento = data.vencimento
+            const _idAsaas = data.id_asaas
+            if (_idAsaas) {
+              await pb.collection('pedidos').update(pedidoId, { id_asaas: _idAsaas })
+            }
           } else {
             await pb.collection('pedidos').delete(pedidoId)
           }

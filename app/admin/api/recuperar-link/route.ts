@@ -44,7 +44,10 @@ export async function POST(req: NextRequest) {
     if (!inscricoes.length) {
       logInfo('❌ Nenhuma inscrição encontrada.')
       return NextResponse.json(
-        { error: 'Inscrição não encontrada. Por favor faça a inscrição.' },
+        {
+          error:
+            'Inscrição não encontrada. Faça a inscrição ou entre em contato com o líder.',
+        },
         { status: 404 },
       )
     }

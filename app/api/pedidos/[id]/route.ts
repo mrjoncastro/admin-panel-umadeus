@@ -109,7 +109,7 @@ export async function PATCH(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   const id = req.nextUrl.pathname.split('/').pop() || ''
   if (!id) return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
-  const auth = requireRole(req, ['usuario', 'lider', 'coordenador'])
+  const auth = requireRole(req, 'coordenador')
   if ('error' in auth) {
     return NextResponse.json({ error: auth.error }, { status: auth.status })
   }

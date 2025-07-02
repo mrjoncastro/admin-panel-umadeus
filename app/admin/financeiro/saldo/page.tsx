@@ -7,8 +7,10 @@ import { saveAs } from 'file-saver'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import * as XLSX from 'xlsx'
 import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import { DateRangePicker } from '@/components/molecules'
+import { useTenant } from '@/lib/context/TenantContext'
 
 interface Statistics {
   netValue: number
@@ -31,6 +33,7 @@ export default function SaldoPage() {
   const [extrato, setExtrato] = useState<ExtratoItem[]>([])
   const [loading, setLoading] = useState(false)
   const [range, setRange] = useState({ start: '', end: '' })
+  const { config } = useTenant()
 
   useEffect(() => {
     if (!authChecked) return
@@ -72,26 +75,169 @@ export default function SaldoPage() {
     fetchData()
   }, [isLoggedIn, router, authChecked, range.start, range.end])
 
-  const exportXLSM = () => {
-    const worksheet = XLSX.utils.json_to_sheet(extrato)
+  const arrayBufferToBase64 = (buffer: ArrayBuffer) =>
+    btoa(String.fromCharCode(...new Uint8Array(buffer)))
+
+  const exportXLSM = async () => {
+    const worksheet = XLSX.utils.aoa_to_sheet([])
+    worksheet['!cols'] = [
+      { wch: 12 },
+      { wch: 50 },
+      { wch: 12 },
+    ]
+
+    const header = ['Logo', 'Data', 'Descrição', 'Valor (R$)']
+    XLSX.utils.sheet_add_aoa(worksheet, [header], { origin: 'A1' })
+    header.forEach((_, idx) => {
+      const cell = worksheet[XLSX.utils.encode_cell({ c: idx, r: 0 })]
+      if (cell) {
+        cell.s = {
+          font: { bold: true },
+          alignment: { horizontal: 'center' },
+          fill: { patternType: 'solid', fgColor: { rgb: 'D9D9D9' } },
+        }
+      }
+    })
+
+    const startText = range.start
+      ? new Date(range.start).toLocaleDateString('pt-BR')
+      : ''
+    const endText = range.end
+      ? new Date(range.end).toLocaleDateString('pt-BR')
+      : ''
+    XLSX.utils.sheet_add_aoa(
+      worksheet,
+      [[`Período: ${startText} – ${endText}`]],
+      { origin: 'B2' },
+    )
+
+    const rows = extrato.map((item) => [
+      new Date(item.date).toLocaleDateString('pt-BR'),
+      item.description,
+      item.value.toFixed(2),
+    ])
+    XLSX.utils.sheet_add_aoa(worksheet, rows, { origin: 'B3' })
+
+    const footerRow = rows.length + 3
+    XLSX.utils.sheet_add_aoa(
+      worksheet,
+      [['Desenvolvido por M24 Tecnologia <m24saude.com.br>']],
+      { origin: `B${footerRow}` },
+    )
+
+    try {
+      if (config.logoUrl) {
+        let base64: string
+        if (config.logoUrl.startsWith('data:')) {
+          base64 = config.logoUrl.split(',')[1]
+        } else {
+          const resp = await fetch(config.logoUrl)
+          const buf = await resp.arrayBuffer()
+          base64 = arrayBufferToBase64(buf)
+        }
+
+        ;(
+          worksheet as XLSX.WorkSheet & { '!images'?: unknown[] }
+        )['!images'] = [
+          {
+            name: 'logo',
+            data: base64,
+            opts: { base64: true, origin: 'A1' },
+          },
+        ]
+      }
+    } catch (err) {
+      console.error('Erro ao carregar logo', err)
+    }
+
     const workbook = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Extrato')
     const wbout = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' })
     const blob = new Blob([wbout], { type: 'application/octet-stream' })
-    saveAs(blob, 'extrato.xlsm')
+    saveAs(blob, `extrato_${range.start}_${range.end}.xlsx`)
   }
 
-  const exportPDF = () => {
-    const doc = new jsPDF()
-    doc.text('Extrato', 10, 10)
-    extrato.forEach((t, i) => {
-      doc.text(
-        `${t.date} - ${t.description} - R$ ${t.value.toFixed(2)}`,
-        10,
-        20 + i * 10,
-      )
+  const exportPDF = async () => {
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' })
+
+    let imgData: string | undefined
+    try {
+      if (config.logoUrl) {
+        if (config.logoUrl.startsWith('data:')) {
+          imgData = config.logoUrl.split(',')[1]
+        } else {
+          const resp = await fetch(config.logoUrl)
+          const buf = await resp.arrayBuffer()
+          imgData = arrayBufferToBase64(buf)
+        }
+      }
+    } catch (err) {
+      console.error('Erro ao carregar logo', err)
+    }
+
+    if (imgData) {
+      doc.addImage(imgData, 'PNG', 40, 40, 60, 30)
+    }
+
+    doc.setFontSize(16)
+    doc.setFont('helvetica', 'bold')
+    doc.text('Extrato de Movimentações', doc.internal.pageSize.getWidth() / 2, 60, {
+      align: 'center',
     })
-    doc.save('extrato.pdf')
+    doc.setFontSize(11)
+    doc.setFont('helvetica', 'normal')
+
+    const startText = range.start
+      ? new Date(range.start).toLocaleDateString('pt-BR')
+      : ''
+    const endText = range.end
+      ? new Date(range.end).toLocaleDateString('pt-BR')
+      : ''
+    const period = `Período: ${startText} – ${endText}`
+    doc.text(period, doc.internal.pageSize.getWidth() - 40, 80, {
+      align: 'right',
+    })
+
+    const rows = extrato.map((item) => [
+      new Date(item.date).toLocaleDateString('pt-BR'),
+      item.description,
+      item.value.toFixed(2),
+    ])
+
+    autoTable(doc, {
+      startY: 100,
+      head: [['Data', 'Descrição', 'Valor (R$)']],
+      body: rows,
+      theme: 'striped',
+      headStyles: { fillColor: [217, 217, 217], halign: 'center' },
+      styles: { fontSize: 10 },
+      columnStyles: {
+        0: { cellWidth: 60 },
+        1: { cellWidth: 340 },
+        2: { cellWidth: 80, halign: 'right' },
+      },
+      margin: { left: 40, right: 40 },
+    })
+
+    const pageCount = doc.getNumberOfPages()
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i)
+      const pageHeight = doc.internal.pageSize.getHeight()
+      doc.setFontSize(10)
+      doc.text(
+        'Desenvolvido por M24 Tecnologia <m24saude.com.br>',
+        40,
+        pageHeight - 20,
+      )
+      doc.text(
+        `Página ${i} de ${pageCount}`,
+        doc.internal.pageSize.getWidth() - 40,
+        pageHeight - 20,
+        { align: 'right' },
+      )
+    }
+
+    doc.save(`extrato_${range.start}_${range.end}.pdf`)
   }
 
   if (!authChecked) return null

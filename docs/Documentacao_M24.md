@@ -257,7 +257,7 @@ Para cada coleção, utilize a seguinte estrutura:
 | `id_inscricao`   | Relation → `inscricoes`   | Não         | Referência à inscrição associada (quando `canal = inscricao`) |
 | `tamanho`        | Enum                      | Não         | Tamanho do produto: `PP`, `P`, `M`, `G`, `GG`                 |
 | `email`          | String                    | Sim         | Email de confirmação / contato                                |
-| `status`         | Enum                      | Sim         | Status do pedido: `pendente`, `pago`, `cancelado`             |
+| `status`         | Enum                      | Sim         | Status do pedido: `pendente`, `pago`, `vencido`, `cancelado`             |
 | `campo`          | Relation → `campos`       | Não         | Referência a campos adicionais definidos na coleção `campos`  |
 | `responsavel`    | Relation → `usuarios`     | Não         | Usuário responsável pela gestão do pedido                     |
 | `genero`         | Enum                      | Não         | Gênero do destinatário: `masculino`, `feminino`               |

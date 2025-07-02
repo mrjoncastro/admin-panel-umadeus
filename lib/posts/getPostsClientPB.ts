@@ -1,5 +1,6 @@
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
+import { pbRetry } from '@/lib/pbRetry'
 
 export interface PostClientRecord {
   id: string
@@ -21,10 +22,12 @@ export async function getPostsClientPB(): Promise<PostClientRecord[]> {
   const data = (await res.json()) as { tenantId: string | null }
   const tenantId = data.tenantId
 
-  const list = await pb.collection('posts').getFullList<PostClientRecord>({
-    sort: '-date',
-    filter: tenantId ? `cliente='${tenantId}'` : '',
-  })
+  const list = await pbRetry(() =>
+    pb.collection('posts').getFullList<PostClientRecord>({
+      sort: '-date',
+      filter: tenantId ? `cliente='${tenantId}'` : '',
+    }),
+  )
 
   return list.map((p) => ({
     ...p,

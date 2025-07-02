@@ -108,10 +108,11 @@ export async function GET(req: NextRequest) {
     }
 
     const filtro = status ? `${baseFilter} && status='${status}'` : baseFilter
-    console.log('[PEDIDOS][GET] Filtro final:', filtro)
+    const sortParam = req.nextUrl.searchParams.get('sort') || '-created'
+    console.log('[PEDIDOS][GET] Filtro final:', filtro, 'sort:', sortParam)
     const result = await pb.collection('pedidos').getList(page, perPage, {
       filter: filtro,
-      sort: '-created',
+      sort: sortParam,
       expand: 'campo,id_inscricao,produto',
     })
     const { items } = result
@@ -225,6 +226,7 @@ export async function POST(req: NextRequest) {
       const payload = {
         id_inscricao: '',
         id_pagamento: '',
+        id_asaas: '',
         produto: produtoIds,
         tamanho,
         status: 'pendente',
@@ -340,6 +342,7 @@ export async function POST(req: NextRequest) {
       id_inscricao: inscricaoId,
       valor,
       status: 'pendente',
+      id_asaas: '',
       produto: produtoIdInscricao
         ? [produtoIdInscricao]
         : produtoRecord

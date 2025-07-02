@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getUserFromHeaders } from '@/lib/getUserFromHeaders'
+import { pbRetry } from '@/lib/pbRetry'
 
 export async function PATCH(req: NextRequest) {
   const auth = getUserFromHeaders(req)
@@ -61,7 +62,9 @@ export async function PATCH(req: NextRequest) {
     if (campo_id !== undefined) {
       payload.campo = String(campo_id)
     }
-    const updated = await pbSafe.collection('usuarios').update(user.id, payload)
+    const updated = await pbRetry(() =>
+      pbSafe.collection('usuarios').update(user.id, payload),
+    )
     pbSafe.authStore.save(pbSafe.authStore.token, updated)
     const cookie = pbSafe.authStore.exportToCookie({
       httpOnly: true,

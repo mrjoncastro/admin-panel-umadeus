@@ -1,6 +1,8 @@
 import type { NextRequest } from 'next/server'
 import type { RecordModel } from 'pocketbase'
 import createPocketBase from '@/lib/pocketbase'
+import { pbRetry } from '@/lib/pbRetry'
+import { logConciliacaoErro } from '@/lib/server/logger'
 
 export type ClienteAuthOk = {
   pb: ReturnType<typeof createPocketBase>
@@ -30,15 +32,18 @@ export async function requireClienteFromHost(
   }
 
   try {
-    const cfg = await pb
-      .collection('clientes_config')
-      .getFirstListItem(`dominio = \"${host}\"`)
+    const cfg = await pbRetry(() =>
+      pb.collection('clientes_config').getFirstListItem(`dominio = \"${host}\"`),
+    )
     if (!cfg) {
       return { error: 'Cliente n\u00e3o encontrado', status: 404 }
     }
-    const cliente = await pb.collection('m24_clientes').getOne(cfg.cliente)
+    const cliente = await pbRetry(() =>
+      pb.collection('m24_clientes').getOne(cfg.cliente),
+    )
     return { pb, cliente }
-  } catch {
+  } catch (err) {
+    await logConciliacaoErro('Erro requireClienteFromHost: ' + String(err))
     return { error: 'Cliente n\u00e3o encontrado', status: 404 }
   }
 }

@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           error:
-            'Opa! Esse e-mail ainda não faz parte da nossa missão. Confere direitinho ou faz teu cadastro 🙏',
+            'Opa! Esse e-mail ainda não foi cadastrado. Verifique o email ou faça seu cadastro.',
         },
         { status: 401 },
       )

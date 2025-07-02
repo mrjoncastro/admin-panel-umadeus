@@ -5,6 +5,8 @@ import { setupCharts } from '@/lib/chartSetup'
 import dynamic from 'next/dynamic'
 import { saveAs } from 'file-saver'
 import * as XLSX from 'xlsx'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
 import type { Inscricao, Pedido } from '@/types'
 import twColors from '@/utils/twColors'
 
@@ -117,21 +119,55 @@ export default function DashboardAnalytics({
     ],
   }
 
-  const handleExportCSV = () => {
-    const rows = inscricoesData.labels.map((d, idx) => ({
-      Data: d,
-      Inscricoes: inscricoesData.data[idx] || 0,
-      Pedidos: pedidosData.data[idx] || 0,
-    }))
+  const handleExportPDF = () => {
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' })
+    doc.setFontSize(16)
+    doc.setFont('helvetica', 'bold')
+    doc.text(
+      'Relat\u00F3rio de Inscri\u00E7\u00F5es e Pedidos',
+      doc.internal.pageSize.getWidth() / 2,
+      40,
+      { align: 'center' },
+    )
+    doc.setFontSize(11)
+    doc.setFont('helvetica', 'normal')
 
-    const csvHeader = 'Data,Inscrições,Pedidos\n'
-    const csvRows = rows
-      .map((r) => `${r.Data},${r.Inscricoes},${r.Pedidos}`)
-      .join('\n')
-    const blob = new Blob([csvHeader + csvRows], {
-      type: 'text/csv;charset=utf-8;',
+    const rows = inscricoesData.labels.map((d, idx) => [
+      d,
+      inscricoesData.data[idx] || 0,
+      pedidosData.data[idx] || 0,
+    ])
+
+    autoTable(doc, {
+      startY: 60,
+      head: [['Data', 'Inscri\u00E7\u00F5es', 'Pedidos']],
+      body: rows,
+      theme: 'striped',
+      headStyles: { fillColor: [217, 217, 217], halign: 'center' },
+      styles: { fontSize: 10 },
+      columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } },
+      margin: { left: 40, right: 40 },
     })
-    saveAs(blob, 'dashboard.csv')
+
+    const pageCount = doc.getNumberOfPages()
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i)
+      const pageHeight = doc.internal.pageSize.getHeight()
+      doc.setFontSize(10)
+      doc.text(
+        'Desenvolvido por M24 Tecnologia <m24saude.com.br>',
+        40,
+        pageHeight - 20,
+      )
+      doc.text(
+        `P\u00E1gina ${i} de ${pageCount}`,
+        doc.internal.pageSize.getWidth() - 40,
+        pageHeight - 20,
+        { align: 'right' },
+      )
+    }
+
+    doc.save('dashboard.pdf')
   }
 
   const handleExportXLSX = () => {
@@ -179,8 +215,8 @@ export default function DashboardAnalytics({
             className="border rounded px-2 py-1"
           />
         </div>
-        <button onClick={handleExportCSV} className="btn btn-primary px-3 py-1">
-          Exportar CSV
+        <button onClick={handleExportPDF} className="btn btn-primary px-3 py-1">
+          PDF
         </button>
         <button
           onClick={handleExportXLSX}
