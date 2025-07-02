@@ -221,13 +221,13 @@ return NextResponse.json({
   })
   ```
 
-
 Verifique logs no console do servidor e retornos HTTP (200 OK ou erros 4xx/5xx).
 
 ## 7. Boas Práticas
 
 - **Templates**: utilize engines como EJS, Handlebars ou MJML para e-mails mais ricos.
 - **Retries**: implemente retentativas automáticas em falhas (ex.: `p-retry`).
+- **PocketBase Retry**: utilize `lib/pbRetry.ts` para repetir chamadas ao PocketBase até 3 vezes em erros de rede.
 - **Logs estruturados**: registre tentativas e falhas em `logs/ERR_LOG.md`.
 - **Monitoramento de entregabilidade**: use webhooks do provedor SMTP.
 
@@ -365,4 +365,3 @@ Os templates abaixo usam tokens do nosso Design System (cores, tipografia e espa
   </body>
 </html>
 ```
-

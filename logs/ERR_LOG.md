@@ -179,32 +179,53 @@
 ## [2025-07-31] Erro ao criar inscrição com usuário logado: API retornava "validation_not_unique" para o email. Rota /loja/api/inscricoes agora reutiliza o usuário autenticado quando disponível - dev
 
 ## [2025-07-31] Build falhava por "usuario" possivelmente nulo em /loja/api/inscricoes. Adicionada checagem final para garantir usuario antes de prosseguir - dev - 209f481
+
 ## [2025-06-27] Diversos fetch('/api') não enviavam token de autenticação. Adicionada função getAuthHeaders em hooks e páginas - dev
+
 ## [2025-06-27] Erro "Token ou usuário ausente" ao atualizar perfil. Login agora retorna token e contexto salva credenciais.
+
 ## [2025-06-27] Corrigida tipagem de retorno em getAuthHeaders para HeadersInit evitando erro de build em app/admin/inscricoes/page.tsx - dev - 5b28761
+
 ## [2025-06-27] Correção de dependências de pb em diversos useEffect - dev
+
 ## [2025-06-27] Perfil do cliente não enviava gênero e data_nascimento retornava formato inválido. Rota de atualização agora ajusta cookie - dev
 
 ## [2025-06-27] EventForm nao normalizava data_nascimento ao preencher usuario; campo ficava vazio. Valor agora cortado para YYYY-MM-DD - dev
 
 ## [2025-06-27] EventForm nao preenchia endereco via CEP; adicionado lookup usando fetchCep - dev
+
 ## [2025-06-27] Perfil do cliente não enviava gênero e data_nascimento retornava formato inválido. Rota de atualização agora ajusta cookie - dev
 
 ## [2025-06-27] EventForm nao normalizava data_nascimento ao preencher usuario; campo ficava vazio. Valor agora cortado para YYYY-MM-DD - dev
+
 ## [2025-08-10] Webhook agora registra accountId e externalReference quando cliente ausente - dev - dbfc979
+
 ## [2025-06-30] Correção de loop infinito ao memoizar PocketBase nas páginas de inscrições e loja - dev - b51998f1
+
 ## [2025-06-30] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
+
 ## [2025-06-30] Rota /api/pedidos retornava apenas items, ocultando totalPages; resposta atualizada para incluir o resultado completo - dev - de10e3d
 
 ## [2025-06-30] Correção paginação em /api/inscricoes - dev - 237edb0
+
 ## [2025-06-30] Lista de pedidos duplicada ao carregar admin/pedidos. Adicionada deduplicação no fetch - dev - c29e2ce4
+
 ## [2025-06-30] Cadastro da loja não salvava endereço e role ao criar novo usuário. Rota /loja/api/inscricoes agora utiliza data.role e campos completos - dev
+
 ## [2025-06-30] Consulta de produto ja filtra por cliente na API, evitando verificacao redundante do tenant - dev
+
 ## [2025-06-30] Produtos exclusivos retornavam erro 403 na loja. Página agora exibe detalhes e exige login apenas na compra - dev - c18ad74d
 
 ## [2025-07-01] Corrigida tipagem de params na página de confirmação de senha; build falhava por incompatibilidade com PageProps - dev - 7d2b5981
+
 ## [2025-08-11] Mostrar erro detalhado ao enviar inscrição no InscricaoForm - dev - 99686afe
+
 ## [2025-08-12] Página de produto travava quando não havia imagens. Galeria oculta quando array vazio - dev - cc4a5671
+
 ## [2025-08-13] Erro persistia quando objeto de imagens estava vazio; fallback para array vazio e uso de useMemo - dev - 636db478
+
 ## [2025-08-14] inscricoes.some is not a function quando API retorna objeto; parseado data.items em useInscricoes - dev - 09a133f7
+
+## [2025-08-15] PATCH /api/inscricoes/[id] excedeu tentativas de retry - dev - <commit-link>
+## [2025-07-02] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
 ## [2025-07-02] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
