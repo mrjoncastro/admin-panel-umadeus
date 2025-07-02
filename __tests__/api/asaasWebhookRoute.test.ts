@@ -90,4 +90,43 @@ describe('POST /api/asaas/webhook', () => {
     const body = JSON.parse((fetchMock.mock.calls[1][1] as any).body as string)
     expect(body.userId).toBe('u1')
   })
+
+  it('retorna 500 quando falha ao criar registro', async () => {
+    const createWebhookTask = vi
+      .fn()
+      .mockRejectedValue(new Error('Failed to create record.'))
+
+    pb.collection.mockImplementation((name: string) => {
+      if (name === 'clientes_config')
+        return { getFirstListItem: getFirstConfig, getOne: getOneConfig }
+      if (name === 'pedidos')
+        return {
+          getFirstListItem: getFirstPedido,
+          update: updatePedido,
+          getList: vi.fn(),
+        }
+      if (name === 'inscricoes')
+        return { update: updateInscricao, getOne: vi.fn() }
+      if (name === 'webhook_tasks') return { create: createWebhookTask }
+      return {} as any
+    })
+
+    const payload = {
+      payment: { id: 'pay1', accountId: 'acc1' },
+      event: 'PAYMENT_RECEIVED',
+    }
+    const req = new Request('http://test/api/asaas/webhook', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    })
+    ;(req as any).nextUrl = new URL('http://test/api/asaas/webhook')
+
+    const res = await POST(req as unknown as NextRequest)
+    expect(res.status).toBe(500)
+    const json = await res.json()
+    expect(json).toEqual({
+      error: 'Erro interno',
+      details: 'Failed to create record.',
+    })
+  })
 })
