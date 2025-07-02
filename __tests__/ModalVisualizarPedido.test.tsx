@@ -18,6 +18,7 @@ function mockPedido() {
     status: 'pendente',
     produto: [],
     id_pagamento: 'c1',
+    vencimento: '2024-01-01',
     link_pagamento: 'pay',
     expand: {
       id_inscricao: {

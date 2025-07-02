@@ -98,6 +98,9 @@ export async function PATCH(req: NextRequest) {
       ...(data.tamanho !== undefined ? { tamanho: String(data.tamanho) } : {}),
       ...(data.cor !== undefined ? { cor: String(data.cor) } : {}),
       ...(data.status !== undefined ? { status: String(data.status) } : {}),
+      ...(data.vencimento !== undefined
+        ? { vencimento: String(data.vencimento) }
+        : {}),
     })
     return NextResponse.json(updated)
   } catch (err) {

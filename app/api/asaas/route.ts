@@ -296,6 +296,7 @@ export async function POST(req: NextRequest) {
     const taxaAplicada = Number((gross - parsedValor - margin).toFixed(2))
     await pb.collection('pedidos').update(pedido.id, {
       link_pagamento: link,
+      vencimento: dueDateStr,
       valorBrutoDesejado: parsedValor,
       valorBruto: gross,
       taxaAplicada,
