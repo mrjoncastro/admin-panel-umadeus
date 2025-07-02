@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import type { Pedido, Produto } from '@/types'
-import { saveAs } from 'file-saver'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import ModalEditarPedido from './componentes/ModalEditarPedido'
 import { useToast } from '@/lib/context/ToastContext'
@@ -96,18 +97,15 @@ export default function PedidosPage() {
     return matchStatus && matchCampo && matchBuscaGlobal
   })
 
-  const exportarCSV = () => {
-    const header = [
-      'Produto',
-      'Nome',
-      'Email',
-      'Tamanho',
-      'Cor',
-      'Status',
-      'Campo',
-      'Canal',
-      'Data',
-    ]
+  const exportarPDF = () => {
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' })
+    doc.setFontSize(16)
+    doc.setFont('helvetica', 'bold')
+    doc.text('Relat\u00F3rio de Pedidos', doc.internal.pageSize.getWidth() / 2, 40, {
+      align: 'center',
+    })
+    doc.setFontSize(11)
+    doc.setFont('helvetica', 'normal')
 
     const linhas = pedidosFiltrados.map((p) => [
       Array.isArray(p.expand?.produto)
@@ -123,13 +121,47 @@ export default function PedidosPage() {
       p.created?.split('T')[0] || '',
     ])
 
-    const csvContent = [header, ...linhas]
-      .map((linha) => linha.map((valor) => `"${valor}"`).join(','))
-      .join('\n')
+    autoTable(doc, {
+      startY: 60,
+      head: [
+        [
+          'Produto',
+          'Nome',
+          'Email',
+          'Tamanho',
+          'Cor',
+          'Status',
+          'Campo',
+          'Canal',
+          'Data',
+        ],
+      ],
+      body: linhas,
+      theme: 'striped',
+      headStyles: { fillColor: [217, 217, 217], halign: 'center' },
+      styles: { fontSize: 8 },
+      margin: { left: 20, right: 20 },
+    })
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-    const hoje = new Date().toISOString().split('T')[0]
-    saveAs(blob, `pedidos_exportados_${hoje}.csv`)
+    const pageCount = doc.getNumberOfPages()
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i)
+      const pageHeight = doc.internal.pageSize.getHeight()
+      doc.setFontSize(10)
+      doc.text(
+        'Desenvolvido por M24 Tecnologia <m24saude.com.br>',
+        40,
+        pageHeight - 20,
+      )
+      doc.text(
+        `P\u00E1gina ${i} de ${pageCount}`,
+        doc.internal.pageSize.getWidth() - 40,
+        pageHeight - 20,
+        { align: 'right' },
+      )
+    }
+
+    doc.save('pedidos.pdf')
   }
   const statusBadge = {
     pendente: 'bg-yellow-100 text-yellow-800',
@@ -181,8 +213,8 @@ export default function PedidosPage() {
         >
           Ordenar por data ({ordem === 'desc' ? '↓' : '↑'})
         </button>
-        <button onClick={exportarCSV} className="btn btn-primary">
-          Exportar CSV
+        <button onClick={exportarPDF} className="btn btn-primary">
+          Relat\u00F3rio PDF
         </button>
       </div>
 
