@@ -225,6 +225,7 @@
 ## [2025-08-13] Erro persistia quando objeto de imagens estava vazio; fallback para array vazio e uso de useMemo - dev - 636db478
 
 ## [2025-08-14] inscricoes.some is not a function quando API retorna objeto; parseado data.items em useInscricoes - dev - 09a133f7
+## [2025-07-02] Erro de checkout retornava campo 'error' nao tratado; exibicao atualizada - prod - aaccd7eb
 
 ## [2025-08-15] PATCH /api/inscricoes/[id] excedeu tentativas de retry - dev - <commit-link>
 ## [2025-07-02] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test

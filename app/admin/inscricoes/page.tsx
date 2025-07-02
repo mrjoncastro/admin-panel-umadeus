@@ -397,7 +397,8 @@ export default function ListaInscricoesPage() {
       if (!asaasRes.ok || !checkout?.url) {
         const msg =
           checkout?.message ||
-          (checkout?.errors && checkout.errors[0]?.description) ||
+          checkout?.error ||
+          checkout?.errors?.[0]?.description ||
           'Tivemos um problema ao gerar seu link de pagamento. Por favor, entre em contato com a equipe.'
         console.error(
           '[confirmarInscricao] Erro ao gerar link de pagamento:',
