@@ -8,20 +8,21 @@ Este guia descreve passo a passo como implementar um **webhook leve** que enfile
 
 No PocketBase Admin UI, crie uma collection **Base** chamada `webhook_tasks` com os seguintes campos:
 
-| Campo          | Tipo     | Atributos                                                     | Observações                            |
-| -------------- | -------- | ------------------------------------------------------------- | -------------------------------------- |
-| `id`           | Auto     | Nonempty                                                      | Identificador único                    |
-| `event`        | Text     | Nonempty                                                      | Nome do evento recebido                |
-| `payload`      | Text     | Nonempty                                                      | JSON string do body do webhook         |
-| `status`       | Enum     | NonemptyValores: `pending` · `processing` · `done` · `failed` | Estado da task                         |
-| `attempts`     | Number   | —                                                             | Quantidade de tentativas já realizadas |
-| `max_attempts` | Number   | —                                                             | Número máximo de retries               |
-| `error`        | Text     | —                                                             | Mensagem de erro (caso falhe)          |
-| `next_retry`   | DateTime | —                                                             | Próxima data/hora para retry           |
-| `created`      | DateTime | Create                                                        | Timestamp de criação                   |
-| `updated`      | DateTime | Create/Update                                                 | Timestamp de última atualização        |
+| Campo          | Tipo     | Atributos                                                      | Observações                            |
+| -------------- | -------- | -------------------------------------------------------------- | -------------------------------------- |
+| `id`           | Auto     | Nonempty                                                       | Identificador único                    |
+| `event`        | Text     | Nonempty                                                       | Nome do evento recebido                |
+| `payload`      | Text     | Nonempty                                                       | JSON string do body do webhook         |
+| `status`       | Enum     | Nonempty Valores: `pending` · `processing` · `done` · `failed` | Estado da task                         |
+| `attempts`     | Number   | —                                                              | Quantidade de tentativas já realizadas |
+| `max_attempts` | Number   | —                                                              | Número máximo de retries               |
+| `cliente`      | Relation | Required → **m24_clientes.id**                                 | Vínculo ao registro de cliente         |
+| `error`        | Text     | —                                                              | Mensagem de erro (caso falhe)          |
+| `next_retry`   | DateTime | —                                                              | Próxima data/hora para retry           |
+| `created`      | DateTime | Create                                                         | Timestamp de criação                   |
+| `updated`      | DateTime | Create/Update                                                  | Timestamp de última atualização        |
 
-> **Dica:** ajuste `max_attempts` conforme sua política de retries.
+> **Dica:** o campo `cliente` deve referenciar o registro correto em `m24_clientes`; extraia o ID do `externalReference` ou do payload para popular essa relação.
 
 ---
 
@@ -95,7 +96,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   if (!pb.authStore.isValid) {
     await pb.admins.authWithPassword(
       process.env.PB_ADMIN_EMAIL!,
-      process.env.PB_ADMIN_PASSWORD!
+      process.env.PB_ADMIN_PASSWORD!,
     )
   }
 
@@ -135,7 +136,9 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
           : null,
         updated: new Date().toISOString(),
       })
-      await logConciliacaoErro(`Task ${task.id} falhou na tentativa ${task.attempts + 1}: ${error}`)
+      await logConciliacaoErro(
+        `Task ${task.id} falhou na tentativa ${task.attempts + 1}: ${error}`,
+      )
     }
   }
 
@@ -259,7 +262,7 @@ export async function processWebhook(body: AsaasWebhookPayload) {
    - No Vercel: crie uma entrada em `vercel.json`:
      ```json
      {
-       "crons": [ { "path": "/api/tasks/worker", "schedule": "*/1 * * * *" } ]
+       "crons": [{ "path": "/api/tasks/worker", "schedule": "*/1 * * * *" }]
      }
      ```
 
@@ -274,4 +277,3 @@ export async function processWebhook(body: AsaasWebhookPayload) {
 ---
 
 ✅ Com essa arquitetura, seu webhook responderá em <100 ms, não sofrerá timeouts, e você terá controle completo sobre retries e falhas. Bom implement!
-
