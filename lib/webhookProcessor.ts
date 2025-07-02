@@ -11,6 +11,8 @@ export type AsaasWebhookPayload = {
   }
   event?: string
   accountId?: string
+  /** Identificador do cliente (tenant) */
+  cliente?: string
 }
 
 interface AsaasPaymentResponse {
@@ -69,7 +71,7 @@ export async function processWebhook(body: AsaasWebhookPayload) {
   let clienteNome: string | undefined
   let usuarioId: string | undefined
   let inscricaoId: string | undefined
-  let clienteId: string | undefined
+  let clienteId: string | undefined = body.cliente
 
   const accountId = payment.accountId || body.accountId
   if (accountId) {
