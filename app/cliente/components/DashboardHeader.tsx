@@ -16,12 +16,26 @@ export default function DashboardHeader() {
     const headers = getAuthHeaders(pb)
     fetch('/api/inscricoes', { headers, credentials: 'include' })
       .then((res) => res.json())
-      .then((data) => setInscricoes(Array.isArray(data) ? data : []))
+      .then((data) => {
+        const items = Array.isArray(data)
+          ? data
+          : Array.isArray(data.items)
+            ? (data.items as Inscricao[])
+            : []
+        setInscricoes(items)
+      })
       .catch(() => setInscricoes([]))
 
     fetch('/api/pedidos', { headers, credentials: 'include' })
       .then((res) => res.json())
-      .then((data) => setPedidos(Array.isArray(data) ? data : []))
+      .then((data) => {
+        const items = Array.isArray(data)
+          ? data
+          : Array.isArray(data.items)
+            ? (data.items as Pedido[])
+            : []
+        setPedidos(items)
+      })
       .catch(() => setPedidos([]))
   }, [authChecked, user, pb])
 

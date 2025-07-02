@@ -16,11 +16,14 @@ export default function InscricoesTable({ limit }: { limit?: number }) {
     const headers = getAuthHeaders(pb)
     fetch('/api/inscricoes', { headers, credentials: 'include' })
       .then((res) => res.json())
-      .then((data) =>
-        setInscricoes(
-          Array.isArray(data) ? data.slice(0, limit ?? data.length) : [],
-        ),
-      )
+      .then((data) => {
+        const items = Array.isArray(data)
+          ? data
+          : Array.isArray(data.items)
+            ? (data.items as Inscricao[])
+            : []
+        setInscricoes(items.slice(0, limit ?? items.length))
+      })
       .catch(() => setInscricoes([]))
   }, [authChecked, user, pb, limit])
 

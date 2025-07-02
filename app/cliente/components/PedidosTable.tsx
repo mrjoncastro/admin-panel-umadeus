@@ -15,11 +15,14 @@ export default function PedidosTable({ limit }: { limit?: number }) {
     const headers = getAuthHeaders(pb)
     fetch('/api/pedidos', { headers, credentials: 'include' })
       .then((res) => res.json())
-      .then((data) =>
-        setPedidos(
-          Array.isArray(data) ? data.slice(0, limit ?? data.length) : [],
-        ),
-      )
+      .then((data) => {
+        const items = Array.isArray(data)
+          ? data
+          : Array.isArray(data.items)
+            ? (data.items as Pedido[])
+            : []
+        setPedidos(items.slice(0, limit ?? items.length))
+      })
       .catch(() => setPedidos([]))
   }, [authChecked, user, pb, limit])
 
