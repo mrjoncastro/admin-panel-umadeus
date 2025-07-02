@@ -10,6 +10,7 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import { DateRangePicker } from '@/components/molecules'
+import { useTenant } from '@/lib/context/TenantContext'
 
 interface Statistics {
   netValue: number
@@ -32,6 +33,7 @@ export default function SaldoPage() {
   const [extrato, setExtrato] = useState<ExtratoItem[]>([])
   const [loading, setLoading] = useState(false)
   const [range, setRange] = useState({ start: '', end: '' })
+  const { config } = useTenant()
 
   useEffect(() => {
     if (!authChecked) return
@@ -124,18 +126,26 @@ export default function SaldoPage() {
     )
 
     try {
-      const resp = await fetch('/logo-cliente.png')
-      const buf = await resp.arrayBuffer()
-      const base64 = arrayBufferToBase64(buf)
-      ;(
-        worksheet as XLSX.WorkSheet & { '!images'?: unknown[] }
-      )['!images'] = [
-        {
-          name: 'logo-cliente.png',
-          data: base64,
-          opts: { base64: true, origin: 'A1' },
-        },
-      ]
+      if (config.logoUrl) {
+        let base64: string
+        if (config.logoUrl.startsWith('data:')) {
+          base64 = config.logoUrl.split(',')[1]
+        } else {
+          const resp = await fetch(config.logoUrl)
+          const buf = await resp.arrayBuffer()
+          base64 = arrayBufferToBase64(buf)
+        }
+
+        ;(
+          worksheet as XLSX.WorkSheet & { '!images'?: unknown[] }
+        )['!images'] = [
+          {
+            name: 'logo',
+            data: base64,
+            opts: { base64: true, origin: 'A1' },
+          },
+        ]
+      }
     } catch (err) {
       console.error('Erro ao carregar logo', err)
     }
@@ -152,9 +162,15 @@ export default function SaldoPage() {
 
     let imgData: string | undefined
     try {
-      const resp = await fetch('/logo-cliente.png')
-      const buf = await resp.arrayBuffer()
-      imgData = arrayBufferToBase64(buf)
+      if (config.logoUrl) {
+        if (config.logoUrl.startsWith('data:')) {
+          imgData = config.logoUrl.split(',')[1]
+        } else {
+          const resp = await fetch(config.logoUrl)
+          const buf = await resp.arrayBuffer()
+          imgData = arrayBufferToBase64(buf)
+        }
+      }
     } catch (err) {
       console.error('Erro ao carregar logo', err)
     }
