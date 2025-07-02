@@ -230,9 +230,11 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
         return false
       }
       try {
-        const res = await fetch(
-          `/api/usuarios/exists?cpf=${cpfNumerico}&email=${encodeURIComponent(form.email)}`,
-        )
+        const query =
+          `/api/usuarios/exists?cpf=${cpfNumerico}&email=${encodeURIComponent(form.email)}${
+            isLoggedIn && user ? `&excludeId=${user.id}` : ''
+          }`
+        const res = await fetch(query)
         if (res.ok) {
           const data = await res.json()
           if (data.cpf) {

@@ -230,3 +230,6 @@
 ## [2025-08-15] PATCH /api/inscricoes/[id] excedeu tentativas de retry - dev - <commit-link>
 ## [2025-07-02] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
 ## [2025-07-02] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
+
+## [2025-08-16] Inscricoes bloqueavam usuario logado por CPF existente. Rota /api/usuarios/exists aceita excludeId e EventForm ignora o proprio usuario - dev - cb2b0073
+## [2025-07-02] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
