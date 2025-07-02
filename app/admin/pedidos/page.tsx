@@ -134,6 +134,7 @@ export default function PedidosPage() {
   const statusBadge = {
     pendente: 'bg-yellow-100 text-yellow-800',
     pago: 'bg-green-100 text-green-800',
+    vencido: 'bg-red-200 text-red-800',
     cancelado: 'bg-red-100 text-red-800',
   }
 
@@ -162,6 +163,7 @@ export default function PedidosPage() {
           <option value="">Todos os Status</option>
           <option value="pendente">Pendente</option>
           <option value="pago">Pago</option>
+          <option value="vencido">Vencido</option>
           <option value="cancelado">Cancelado</option>
         </select>
         {user?.role === 'coordenador' && (
@@ -228,6 +230,11 @@ export default function PedidosPage() {
                     >
                       {pedido.status}
                     </span>
+                    {(pedido.status === 'pendente' || pedido.status === 'vencido') &&
+                    pedido.vencimento &&
+                    new Date(pedido.vencimento) < new Date() ? (
+                      <span className="ml-1 text-red-600">⚠️</span>
+                    ) : null}
                   </td>
                   <td>{pedido.expand?.campo?.nome || '—'}</td>
                   <td className="text-xs font-medium">

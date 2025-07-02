@@ -29,8 +29,9 @@ export type Inscricao = {
     }
     pedido?: {
       id: string
-      status: 'pago' | 'pendente' | 'cancelado'
+      status: 'pago' | 'pendente' | 'vencido' | 'cancelado'
       valor: number | string
+      vencimento?: string
     }
     produto?: Produto
     id_inscricao?: {
@@ -48,7 +49,7 @@ export type Pedido = {
   id_inscricao: string
   produto: string[]
   tamanho?: string
-  status: 'pendente' | 'pago' | 'cancelado'
+  status: 'pendente' | 'pago' | 'vencido' | 'cancelado'
   cor: string
   genero?: string
   data_nascimento?: string
@@ -61,6 +62,8 @@ export type Pedido = {
   valor: string
   /** URL gerada pelo Asaas */
   link_pagamento?: string
+  /** Data de vencimento no formato ISO */
+  vencimento?: string
   expand?: {
     campo?: {
       id: string
@@ -72,7 +75,7 @@ export type Pedido = {
     }
     pedido?: {
       id: string
-      status: 'pago' | 'pendente' | 'cancelado'
+      status: 'pago' | 'pendente' | 'vencido' | 'cancelado'
       valor: number | string
     }
     id_inscricao?: {

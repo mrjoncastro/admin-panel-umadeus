@@ -44,6 +44,8 @@ type Inscricao = {
   data_nascimento?: string
   criado_por?: string
   pedido_id?: string | null
+  pedido_status?: 'pendente' | 'pago' | 'vencido' | 'cancelado' | null
+  pedido_vencimento?: string | null
   produto?: string
   produtoNome?: string
 }
@@ -160,6 +162,7 @@ export default function ListaInscricoesPage() {
             aprovada: r.aprovada ?? false,
             pedido_status: r.expand?.pedido?.status ?? null,
             pedido_id: r.expand?.pedido?.id ?? null,
+            pedido_vencimento: r.expand?.pedido?.vencimento ?? null,
           }
         })
 
@@ -625,7 +628,16 @@ export default function ListaInscricoesPage() {
             </thead>
             <tbody>
               {inscricoesFiltradas.map((i) => (
-                <tr key={i.id}>
+                <tr
+                  key={i.id}
+                  className={
+                    i.pedido_status === 'pendente' &&
+                    i.pedido_vencimento &&
+                    new Date(i.pedido_vencimento) < new Date()
+                      ? 'bg-red-50'
+                      : undefined
+                  }
+                >
                   <td className="font-medium">{i.nome}</td>
                   <td>{i.telefone}</td>
                   <td>{i.evento}</td>
@@ -636,6 +648,11 @@ export default function ListaInscricoesPage() {
                       }`}
                     >
                       {i.status}
+                      {i.pedido_status === 'pendente' &&
+                      i.pedido_vencimento &&
+                      new Date(i.pedido_vencimento) < new Date() ? (
+                        <span className="ml-1 text-red-600">⚠️</span>
+                      ) : null}
                     </span>
                   </td>
                   <td>{i.campo}</td>

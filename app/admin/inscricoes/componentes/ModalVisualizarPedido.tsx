@@ -17,6 +17,7 @@ type PedidoExpandido = {
   produto: string[]
   id_pagamento?: string
   link_pagamento?: string
+  vencimento?: string
   cor?: string
   tamanho?: string
   genero?: string
@@ -39,6 +40,7 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
   const [pedido, setPedido] = useState<PedidoExpandido | null>(null)
   const [loading, setLoading] = useState(true)
   const [reenviando, setReenviando] = useState(false)
+  const [gerando, setGerando] = useState(false)
   const [copiando, setCopiando] = useState(false)
   const [urlPagamento, setUrlPagamento] = useState('')
   const { showSuccess, showError } = useToast()
@@ -124,6 +126,26 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
     setTimeout(() => setCopiando(false), 2000)
   }
 
+  const gerarNovaCobranca = async () => {
+    if (!pedido) return
+    setGerando(true)
+    try {
+      const res = await fetch(`/api/pedidos/${pedido.id}/nova-cobranca`, {
+        method: 'POST',
+        credentials: 'include',
+      })
+      if (!res.ok) throw new Error('fail')
+      const data = await res.json()
+      setUrlPagamento(data.link_pagamento)
+      setPedido({ ...pedido, link_pagamento: data.link_pagamento, vencimento: data.vencimento })
+      showSuccess('Nova cobrança gerada!')
+    } catch {
+      showError('Erro ao gerar nova cobrança')
+    } finally {
+      setGerando(false)
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-30 flex items-center justify-center px-2">
       <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md relative">
@@ -152,6 +174,10 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
               <strong>Status:</strong> {pedido.status}
             </p>
             <p>
+              <strong>Vencimento:</strong>{' '}
+              {pedido.vencimento ? new Date(pedido.vencimento).toLocaleDateString('pt-BR') : '—'}
+            </p>
+            <p>
               <strong>Produto:</strong>{' '}
               {Array.isArray(pedido.expand?.produto)
                 ? pedido.expand.produto.map((p) => p.nome).join(', ')
@@ -176,6 +202,18 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
               <strong>Responsável:</strong>{' '}
               {pedido.expand?.responsavel?.nome || '—'}
             </p>
+
+            {pedido.status === 'pendente' &&
+              pedido.vencimento &&
+              new Date(pedido.vencimento) < new Date() && (
+                <button
+                  onClick={gerarNovaCobranca}
+                  disabled={gerando}
+                  className="w-full mt-2 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
+                >
+                  {gerando ? 'Gerando...' : '⚠️ Gerar nova cobrança'}
+                </button>
+              )}
 
             <button
               onClick={reenviarPagamento}
