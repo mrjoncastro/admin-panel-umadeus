@@ -216,7 +216,7 @@ export default function DashboardAnalytics({
           />
         </div>
         <button onClick={handleExportPDF} className="btn btn-primary px-3 py-1">
-          Relat\u00F3rio PDF
+          PDF
         </button>
         <button
           onClick={handleExportXLSX}

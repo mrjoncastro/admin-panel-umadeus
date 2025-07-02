@@ -652,7 +652,7 @@ export default function ListaInscricoesPage() {
           onClick={exportarPDF}
           className="text-sm px-4 py-2 rounded btn btn-primary text-white transition"
         >
-          Relat\u00F3rio PDF
+          PDF
         </button>
       </div>
 

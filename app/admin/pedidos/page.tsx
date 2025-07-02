@@ -234,7 +234,7 @@ export default function PedidosPage() {
           {ordem === 'desc' ? '↓' : '↑'}
         </button>
         <button onClick={exportarPDF} className="btn btn-primary">
-          Relat\u00F3rio PDF
+          PDF
         </button>
       </div>
 
