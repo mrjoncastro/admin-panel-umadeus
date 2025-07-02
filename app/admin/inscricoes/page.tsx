@@ -4,7 +4,8 @@ import { useEffect, useState, useMemo } from 'react'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { Copy } from 'lucide-react'
-import { saveAs } from 'file-saver'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import ModalEditarInscricao from './componentes/ModalEdit'
 import ModalVisualizarPedido from './componentes/ModalVisualizarPedido'
@@ -492,15 +493,16 @@ export default function ListaInscricoesPage() {
   const [inscricaoParaRecusar, setInscricaoParaRecusar] =
     useState<Inscricao | null>(null)
 
-  const exportarCSV = () => {
-    const header = [
-      'Nome',
-      'Telefone',
-      'Evento',
-      'Status',
-      'Campo',
-      'Criado em',
-    ]
+  const exportarPDF = () => {
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' })
+    doc.setFontSize(16)
+    doc.setFont('helvetica', 'bold')
+    doc.text('Relat\u00F3rio de Inscri\u00E7\u00F5es', doc.internal.pageSize.getWidth() / 2, 40, {
+      align: 'center',
+    })
+    doc.setFontSize(11)
+    doc.setFont('helvetica', 'normal')
+
     const linhas = inscricoes.map((i) => [
       i.nome,
       i.telefone,
@@ -510,13 +512,35 @@ export default function ListaInscricoesPage() {
       formatDate(i.created),
     ])
 
-    const csvContent = [header, ...linhas]
-      .map((linha) => linha.map((valor) => `"${valor}"`).join(','))
-      .join('\n')
+    autoTable(doc, {
+      startY: 60,
+      head: [['Nome', 'Telefone', 'Evento', 'Status', 'Campo', 'Criado em']],
+      body: linhas,
+      theme: 'striped',
+      headStyles: { fillColor: [217, 217, 217], halign: 'center' },
+      styles: { fontSize: 8 },
+      margin: { left: 20, right: 20 },
+    })
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-    const hoje = new Date().toISOString().split('T')[0]
-    saveAs(blob, `inscricoes_${hoje}.csv`)
+    const pageCount = doc.getNumberOfPages()
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i)
+      const pageHeight = doc.internal.pageSize.getHeight()
+      doc.setFontSize(10)
+      doc.text(
+        'Desenvolvido por M24 Tecnologia <m24saude.com.br>',
+        40,
+        pageHeight - 20,
+      )
+      doc.text(
+        `P\u00E1gina ${i} de ${pageCount}`,
+        doc.internal.pageSize.getWidth() - 40,
+        pageHeight - 20,
+        { align: 'right' },
+      )
+    }
+
+    doc.save('inscricoes.pdf')
   }
 
   const inscricoesFiltradas = inscricoes.filter((i) => {
@@ -601,10 +625,10 @@ export default function ListaInscricoesPage() {
           <option value="cancelado">Cancelado</option>
         </select>
         <button
-          onClick={exportarCSV}
+          onClick={exportarPDF}
           className="text-sm px-4 py-2 rounded btn btn-primary text-white transition"
         >
-          Exportar CSV
+          Relat\u00F3rio PDF
         </button>
       </div>
 
