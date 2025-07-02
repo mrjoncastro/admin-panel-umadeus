@@ -9,7 +9,7 @@ import { useAuthContext } from '@/lib/context/AuthContext'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { fetchCep } from '@/utils/cep'
-import { isValidCPF } from '@/utils/validators'
+import { isValidCPF, isValidEmail } from '@/utils/validators'
 import FormWizard from './FormWizard'
 import LoadingOverlay from './LoadingOverlay'
 import {
@@ -223,6 +223,10 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
       const cpfNumerico = form.cpf.replace(/\D/g, '')
       if (!isValidCPF(cpfNumerico)) {
         setFieldErrors({ cpf: 'CPF inválido.' })
+        return false
+      }
+      if (!isValidEmail(form.email)) {
+        setFieldErrors({ email: 'E-mail inválido.' })
         return false
       }
       try {
