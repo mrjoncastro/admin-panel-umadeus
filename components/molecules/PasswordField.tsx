@@ -5,17 +5,23 @@ import { Eye, EyeOff } from 'lucide-react'
 export interface PasswordFieldProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string
+  /**
+   * Exibe a mensagem de validação de tamanho mínimo.
+   * Por padrão, true para formularios de cadastro.
+   */
+  showValidation?: boolean
 }
 
 export default function PasswordField({
   className = '',
+  showValidation = true,
   ...props
 }: PasswordFieldProps) {
   const [visible, setVisible] = useState(false)
   const [touched, setTouched] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTouched(true)
+    if (showValidation) setTouched(true)
     props.onChange?.(e)
   }
 
@@ -40,7 +46,7 @@ export default function PasswordField({
           {visible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
         </button>
       </div>
-      {touched && (
+      {showValidation && touched && (
         <p className={`text-sm ${isValid ? 'text-green-600' : 'text-error-600'}`.trim()}>
           {isValid ? 'Senha válida ✅' : 'A senha precisa ter pelo menos 8 caracteres.'}
         </p>
