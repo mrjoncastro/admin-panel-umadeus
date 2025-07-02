@@ -16,9 +16,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
   }
 
-  // 2️⃣ Lógica principal em bloco try/catch
+  const pb = createPocketBase()
+  const data = payload as Partial<AsaasWebhookPayload>
+
   try {
-    const pb = createPocketBase()
     if (!pb.authStore.isValid) {
       await pb.admins.authWithPassword(
         process.env.PB_ADMIN_EMAIL!,
