@@ -5,26 +5,28 @@ Este guia descreve passo a passo como implementar um **webhook leve** que enfile
 ---
 
 ## 1. Configuração da Coleção `webhook_tasks`
+
 No PocketBase Admin UI, crie uma collection **Base** chamada `webhook_tasks` com os seguintes campos:
 
-| Campo        | Tipo      | Atributos                  | Observações                                   |
-|--------------|-----------|----------------------------|-----------------------------------------------|
-| `id`         | Auto      | Nonempty                   | Identificador único                           |
-| `event`      | Text      | Nonempty                   | Nome do evento recebido                       |
-| `payload`    | Text      | Nonempty                   | JSON string do body do webhook                |
-| `status`     | Enum      | Nonempty<br/>Valores: `pending` · `processing` · `done` · `failed` | Estado da task                                |
-| `attempts`   | Number    | —                          | Quantidade de tentativas já realizadas        |
-| `max_attempts` | Number  | —                          | Número máximo de retries                      |
-| `error`      | Text      | —                          | Mensagem de erro (caso falhe)                 |
-| `next_retry` | DateTime  | —                          | Próxima data/hora para retry                  |
-| `created`    | DateTime  | Create                     | Timestamp de criação                          |
-| `updated`    | DateTime  | Create/Update              | Timestamp de última atualização               |
+| Campo          | Tipo     | Atributos                                                     | Observações                            |
+| -------------- | -------- | ------------------------------------------------------------- | -------------------------------------- |
+| `id`           | Auto     | Nonempty                                                      | Identificador único                    |
+| `event`        | Text     | Nonempty                                                      | Nome do evento recebido                |
+| `payload`      | Text     | Nonempty                                                      | JSON string do body do webhook         |
+| `status`       | Enum     | NonemptyValores: `pending` · `processing` · `done` · `failed` | Estado da task                         |
+| `attempts`     | Number   | —                                                             | Quantidade de tentativas já realizadas |
+| `max_attempts` | Number   | —                                                             | Número máximo de retries               |
+| `error`        | Text     | —                                                             | Mensagem de erro (caso falhe)          |
+| `next_retry`   | DateTime | —                                                             | Próxima data/hora para retry           |
+| `created`      | DateTime | Create                                                        | Timestamp de criação                   |
+| `updated`      | DateTime | Create/Update                                                 | Timestamp de última atualização        |
 
 > **Dica:** ajuste `max_attempts` conforme sua política de retries.
 
 ---
 
 ## 2. Handler do Webhook (Receiver)
+
 Crie ou adapte a rota de webhook para **enfileirar** a task em vez de processar tudo de uma vez.
 
 **Arquivo**: `/app/api/asaas/webhook/route.ts`
@@ -66,73 +68,140 @@ export async function POST(req: NextRequest) {
 ```
 
 **Pontos-chave:**
+
 - **Sem lógica de negócios** nesta rota: apenas validação mínima + gravação da task.
 - **Resposta em milissegundos**: elimina 408/timeout.
 
 ---
 
 ## 3. Processador de Tasks (Worker)
-Implemente um worker que seja executado **periodicamente** (via cron ou agendador) para processar as tasks.
+
+A implementação do **worker** deve ser colocada em uma rota ou script que execute periodicamente (cron) para processar as tasks enfileiradas. Abaixo o passo a passo e um exemplo detalhado.
 
 **Arquivo**: `/app/api/tasks/worker/route.ts`
+
 ```ts
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { processWebhook } from '@/lib/webhookProcessor'
 import { logConciliacaoErro } from '@/lib/server/logger'
 
-// Garante nodejs runtime para maior timeout
+// Garante Node.js runtime para maior timeout
 export const config = { runtime: 'nodejs' }
 
-export async function GET() {
+export async function GET(req: NextRequest): Promise<NextResponse> {
+  // 1. Inicializa PocketBase e autentica se necessário
   const pb = createPocketBase()
-  // 1. Seleciona até N tasks pendentes ou com retry vencido
-  const tasks = await pb.collection('webhook_tasks').getList(1, 20, {
-    filter: `status="pending" || (status="failed" && next_retry <= \"${new Date().toISOString()}\")`,
+  if (!pb.authStore.isValid) {
+    await pb.admins.authWithPassword(
+      process.env.PB_ADMIN_EMAIL!,
+      process.env.PB_ADMIN_PASSWORD!
+    )
+  }
+
+  // 2. Seleciona até 20 tasks pendentes ou com retry vencido
+  const now = new Date().toISOString()
+  const { items: tasks } = await pb.collection('webhook_tasks').getList(1, 20, {
+    filter: `status="pending" || (status="failed" && next_retry <= \"${now}\")`,
     sort: 'created',
   })
 
-  for (const t of tasks.items) {
-    // 2. Marca como processing
-    await pb.collection('webhook_tasks').update(t.id, {
+  for (const task of tasks) {
+    // 3. Marca como processing e incrementa tentativas
+    await pb.collection('webhook_tasks').update(task.id, {
       status: 'processing',
-      attempts: t.attempts + 1,
+      attempts: task.attempts + 1,
+      updated: new Date().toISOString(),
     })
 
     try {
-      const data = JSON.parse(t.payload)
-      // 3. Processa (toda sua lógica de conciliação)
+      // 4. Parse e processamento
+      const data = JSON.parse(task.payload)
       await processWebhook(data)
-      // 4a. Conclui
-      await pb.collection('webhook_tasks').update(t.id, { status: 'done' })
-    } catch (err: any) {
-      // 4b. Marca failed ou schedule retry
-      const willRetry = t.attempts + 1 < t.max_attempts
-      await pb.collection('webhook_tasks').update(t.id, {
+
+      // 5a. Conclui com sucesso
+      await pb.collection('webhook_tasks').update(task.id, {
+        status: 'done',
+        updated: new Date().toISOString(),
+      })
+    } catch (error: any) {
+      // 5b. Trata falha e agenda retry se aplicável
+      const willRetry = task.attempts + 1 < task.max_attempts
+      await pb.collection('webhook_tasks').update(task.id, {
         status: willRetry ? 'failed' : 'done',
-        error: String(err).slice(0, 200),
+        error: String(error).substring(0, 200),
         next_retry: willRetry
           ? new Date(Date.now() + 5 * 60 * 1000).toISOString()
           : null,
+        updated: new Date().toISOString(),
       })
-      await logConciliacaoErro(`Task ${t.id} falhou: ${err}`)
+      await logConciliacaoErro(`Task ${task.id} falhou na tentativa ${task.attempts + 1}: ${error}`)
     }
   }
 
-  return NextResponse.json({ processed: tasks.items.length })
+  return NextResponse.json({ processed: tasks.length })
 }
 ```
 
-**Observações:**
-- Crie um agendamento (cron job) para chamar `GET /api/tasks/worker` a cada 1–5 minutos.
-- Ajuste `getList(…, pageSize)` ao volume de webhooks.
+### Passos detalhados
+
+1. **Autenticação**: garante `authStore.isValid` antes de operar no PB.
+2. **Leitura de tasks**: filtra `pending` e `failed` elegíveis para retry (campo `next_retry`).
+3. **Marcação de estado**: atualiza `status`, incrementa `attempts` e seta `updated`.
+4. **Processamento**: parse do payload e chamada ao `processWebhook`, isolando a lógica de negócio.
+5. **Finalização**: marca como `done` ou `failed`, define `next_retry` para re-tentativas e registra erro.
+6. **Log de erro**: centralizado via `logConciliacaoErro`, facilita monitoramento.
+
+### Agendamento (Cron)
+
+Para rodar o **worker** periodicamente no Vercel, você pode usar os Cron Jobs nativos ou a configuração em arquivo `vercel.json`.
+
+#### 1. Configuração via `vercel.json`
+
+No `vercel.json` na raiz do seu projeto, adicione:
+
+```json
+{
+  "functions": {
+    "api/tasks/worker/route.ts": {
+      "runtime": "nodejs",
+      "maxDuration": 900
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/tasks/worker",
+      "schedule": "*/2 * * * *"
+    }
+  ]
+}
+```
+
+- ``: configura o runtime Node.js e aumenta o tempo máximo (em segundos) para até 15 minutos.
+- ``: define o endpoint e o agendamento (neste exemplo, a cada 2 minutos).
+
+> Após o commit, redeploy, o Vercel automaticamente registra o cron.
+
+#### 2. Configuração via Dashboard Vercel
+
+1. Na sua dashboard do Vercel, abra o projeto e acesse **Settings > Cron Jobs**.
+2. Clique em **Add Cron Job**.
+3. Preencha:
+   - **Endpoint**: `/api/tasks/worker`
+   - **Schedule**: use uma expressão cron (ex.: `*/2 * * * *` para cada 2 minutos).
+   - **Environment**: escolha `Production` para usar as variáveis de produção.
+4. Salve. O Vercel começará a invocar esse endpoint no horário definido.
 
 ---
 
-## 4. Função `processWebhook`
+Com isso, seu **worker** será executado automaticamente pelo Vercel, sem necessidade de infraestrutura adicional.
+
+## 4. Função `processWebhook`## 4. Função `processWebhook`
+
 Extraia toda a lógica de fetch Asaas, atualização de `pedidos` e notificações para um módulo separado:
 
 **Arquivo**: `/lib/webhookProcessor.ts`
+
 ```ts
 import createPocketBase from './pocketbase'
 import { logConciliacaoErro } from './server/logger'
@@ -153,6 +222,7 @@ export async function processWebhook(body: AsaasWebhookPayload) {
 ---
 
 ## 5. Deploy e Configurações
+
 1. **Env vars**:
    - `PB_ADMIN_EMAIL`, `PB_ADMIN_PASSWORD`
    - `ASAAS_API_URL`
@@ -170,6 +240,7 @@ export async function processWebhook(body: AsaasWebhookPayload) {
 ---
 
 ## 6. Monitoramento e Logs
+
 - Consulte os registros no PocketBase (`error` e `next_retry`).
 - Centralize logs de erro via `logConciliacaoErro`.
 - Use métricas de sucesso/falha para ajustar `max_attempts` e `retry interval`.
