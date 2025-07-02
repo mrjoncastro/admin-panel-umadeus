@@ -1,5 +1,6 @@
 import createPocketBase from './pocketbase'
 import { logConciliacaoErro } from './server/logger'
+import { getTenantHost } from './getTenantHost'
 
 export type AsaasWebhookPayload = {
   payment?: {
@@ -46,7 +47,7 @@ interface InscricaoRecord {
 export async function processWebhook(body: AsaasWebhookPayload) {
   const pb = createPocketBase()
   const baseUrl = process.env.ASAAS_API_URL
-  const site = process.env.NEXT_PUBLIC_SITE_URL
+  let site: string | undefined
 
   if (!pb.authStore.isValid) {
     await pb.admins.authWithPassword(
@@ -68,6 +69,7 @@ export async function processWebhook(body: AsaasWebhookPayload) {
   let clienteNome: string | undefined
   let usuarioId: string | undefined
   let inscricaoId: string | undefined
+  let clienteId: string | undefined
 
   const accountId = payment.accountId || body.accountId
   if (accountId) {
@@ -77,6 +79,7 @@ export async function processWebhook(body: AsaasWebhookPayload) {
         .getFirstListItem<ClienteRecord>(`asaas_account_id = "${accountId}"`)
       clienteApiKey = cliente.asaas_api_key ?? null
       clienteNome = cliente.nome
+      clienteId = cliente.id
     } catch {
       /* não encontrado */
     }
@@ -89,7 +92,7 @@ export async function processWebhook(body: AsaasWebhookPayload) {
     if (match) {
       usuarioId = match[2]
       inscricaoId = match[3]
-      const clienteId = match[1]
+      clienteId = match[1]
       if (!clienteApiKey) {
         try {
           const fallback = await pb
@@ -109,6 +112,15 @@ export async function processWebhook(body: AsaasWebhookPayload) {
       `Cliente não encontrado (accountId: ${accountId ?? 'indefinido'}, externalReference: ${payment.externalReference ?? 'indefinido'})`,
     )
     throw new Error('Cliente não encontrado')
+  }
+
+  if (clienteId) {
+    try {
+      const tenantHost = await getTenantHost(clienteId)
+      if (tenantHost) site = tenantHost
+    } catch {
+      /* ignore */
+    }
   }
 
   const keyHeader = clienteApiKey.startsWith('$') ? clienteApiKey : `$${clienteApiKey}`
