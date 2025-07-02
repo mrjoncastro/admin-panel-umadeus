@@ -3,6 +3,8 @@ import Footer from '@/components/templates/Footer'
 import Image from 'next/image'
 import { Share2, Clock } from 'lucide-react'
 import { isExternalUrl } from '@/utils/isExternalUrl'
+import { getTenantFromHost } from '@/lib/getTenantFromHost'
+import { getTenantHost } from '@/lib/getTenantHost'
 import type { Metadata } from 'next'
 import { getRelatedPostsFromPB } from '@/lib/posts/getRelatedPostsFromPB'
 import { getPostBySlug } from '@/lib/posts/getPostBySlug'
@@ -71,7 +73,9 @@ export default async function BlogPostPage({
   const words = mdxContent.split(/\s+/).length
   const readingTime = Math.ceil(words / 200)
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://m24saude.com.br'
+  const tenantId = await getTenantFromHost()
+  const host = tenantId ? await getTenantHost(tenantId) : null
+  const siteUrl = host || 'https://m24saude.com.br'
 
   const schema = {
     '@context': 'https://schema.org',

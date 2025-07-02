@@ -2,8 +2,8 @@ const fs = require('fs')
 const path = require('path')
 const matter = require('gray-matter')
 
-// Usa a URL definida nas variáveis de ambiente ou mantém o domínio padrão
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://m24saude.com.br' // sem barra no final
+// Usa o host configurado para o tenant ou mantém o domínio padrão
+const BASE_URL = process.env.TENANT_HOST || process.env.NEXT_PUBLIC_SITE_URL || 'https://m24saude.com.br' // sem barra no final
 
 function getStaticRoutes() {
   const appDir = path.join(process.cwd(), 'app')

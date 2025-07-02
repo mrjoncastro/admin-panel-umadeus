@@ -4,6 +4,8 @@ import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import type { Metadata } from 'next'
 import { getPostsFromPB } from '@/lib/posts/getPostsFromPB'
 import { isExternalUrl } from '@/utils/isExternalUrl'
+import { getTenantFromHost } from '@/lib/getTenantFromHost'
+import { getTenantHost } from '@/lib/getTenantHost'
 
 export async function generateMetadata(): Promise<Metadata> {
   const posts = await getPostsFromPB()
@@ -14,7 +16,9 @@ export async function generateMetadata(): Promise<Metadata> {
     }
   }
   const first = posts[0]
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://m24saude.com.br'
+  const tenantId = await getTenantFromHost()
+  const host = tenantId ? await getTenantHost(tenantId) : null
+  const siteUrl = host || 'https://m24saude.com.br'
   const image = first.thumbnail
     ? isExternalUrl(first.thumbnail)
       ? first.thumbnail

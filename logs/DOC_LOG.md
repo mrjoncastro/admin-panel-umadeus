@@ -518,3 +518,4 @@ executados.
 ## [2025-08-16] Ajustada funcao calculateGross comparando valor de credito com Pix e testes atualizados. Lint e build executados.
 ## [2025-07-02] Implementado webhook assíncrono com fila e worker. Lint e build executados.
 ## [2025-07-02] Ajustado cron para 1 minuto em vercel.json. Lint e build executados.
+## [2025-08-17] NEXT_PUBLIC_SITE_URL substituido por host do tenant. Lint e build executados.
