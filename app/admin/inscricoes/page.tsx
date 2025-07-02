@@ -64,6 +64,8 @@ export default function ListaInscricoesPage() {
   const [eventoId, setEventoId] = useState('')
   const [filtroStatus, setFiltroStatus] = useState('')
   const [filtroBusca, setFiltroBusca] = useState('')
+  const [ordenarPor, setOrdenarPor] = useState<'data' | 'alfabetica'>('data')
+  const [ordem, setOrdem] = useState<'asc' | 'desc'>('desc')
   const [inscricaoEmEdicao, setInscricaoEmEdicao] = useState<Inscricao | null>(
     null,
   )
@@ -555,7 +557,18 @@ export default function ListaInscricoesPage() {
       i.cpf?.toLowerCase().includes(busca) ||
       (role === 'coordenador' && i.campo?.toLowerCase().includes(busca))
 
-    return matchStatus && matchBusca
+  return matchStatus && matchBusca
+  })
+
+  const inscricoesOrdenadas = [...inscricoesFiltradas].sort((a, b) => {
+    if (ordenarPor === 'alfabetica') {
+      const nomeA = a.nome.toLowerCase()
+      const nomeB = b.nome.toLowerCase()
+      return ordem === 'asc' ? nomeA.localeCompare(nomeB) : nomeB.localeCompare(nomeA)
+    }
+    const dataA = new Date(a.created || 0).getTime()
+    const dataB = new Date(b.created || 0).getTime()
+    return ordem === 'asc' ? dataA - dataB : dataB - dataA
   })
 
   const [pedidoSelecionado, setPedidoSelecionado] = useState<string | null>(
@@ -624,6 +637,17 @@ export default function ListaInscricoesPage() {
           <option value="confirmado">Confirmado</option>
           <option value="cancelado">Cancelado</option>
         </select>
+        <select
+          value={ordenarPor}
+          onChange={(e) => setOrdenarPor(e.target.value as 'data' | 'alfabetica')}
+          className="border rounded px-4 py-2 text-sm bg-white shadow-sm"
+        >
+          <option value="data">Data de criação</option>
+          <option value="alfabetica">Ordem alfabética</option>
+        </select>
+        <button onClick={() => setOrdem(ordem === 'desc' ? 'asc' : 'desc')} className="btn btn-secondary">
+          {ordem === 'desc' ? '↓' : '↑'}
+        </button>
         <button
           onClick={exportarPDF}
           className="text-sm px-4 py-2 rounded btn btn-primary text-white transition"
@@ -654,7 +678,7 @@ export default function ListaInscricoesPage() {
               </tr>
             </thead>
             <tbody>
-              {inscricoesFiltradas.map((i) => (
+              {inscricoesOrdenadas.map((i) => (
                 <tr
                   key={i.id}
                   className={

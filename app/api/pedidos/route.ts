@@ -108,10 +108,11 @@ export async function GET(req: NextRequest) {
     }
 
     const filtro = status ? `${baseFilter} && status='${status}'` : baseFilter
-    console.log('[PEDIDOS][GET] Filtro final:', filtro)
+    const sortParam = req.nextUrl.searchParams.get('sort') || '-created'
+    console.log('[PEDIDOS][GET] Filtro final:', filtro, 'sort:', sortParam)
     const result = await pb.collection('pedidos').getList(page, perPage, {
       filter: filtro,
-      sort: '-created',
+      sort: sortParam,
       expand: 'campo,id_inscricao,produto',
     })
     const { items } = result
