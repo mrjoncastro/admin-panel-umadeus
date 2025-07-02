@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
+import type { AsaasWebhookPayload } from '@/lib/webhookProcessor'
 
 export async function POST(req: NextRequest) {
   let payload: unknown
@@ -17,8 +18,10 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  const data = payload as Partial<AsaasWebhookPayload>
+
   await pb.collection('webhook_tasks').create({
-    event: (payload as any).event ?? 'unknown',
+    event: data.event ?? 'unknown',
     payload: JSON.stringify(payload),
     status: 'pending',
     attempts: 0,
