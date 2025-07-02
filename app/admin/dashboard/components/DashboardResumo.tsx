@@ -12,9 +12,6 @@ import type { Inscricao, Pedido } from '@/types'
 const Bar = dynamic(() => import('react-chartjs-2').then((m) => m.Bar), {
   ssr: false,
 })
-const Pie = dynamic(() => import('react-chartjs-2').then((m) => m.Pie), {
-  ssr: false,
-})
 
 interface DashboardResumoProps {
   inscricoes: Inscricao[]
@@ -237,9 +234,13 @@ export default function DashboardResumo({
               </Tippy>
             </div>
             <div className="aspect-video">
-              <Pie
+              <Bar
                 data={pedidosChart}
-                options={{ responsive: true, maintainAspectRatio: false }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  indexAxis: 'y',
+                }}
               />
             </div>
           </div>
