@@ -109,7 +109,75 @@ export default function PedidosPage() {
     return ordem === 'asc' ? dataA - dataB : dataB - dataA
   })
 
-  const exportarPDF = () => {
+  const exportarPDF = async () => {
+    if (!user) return
+
+    const baseFiltro = `cliente='${user.cliente}'`
+    const filtro =
+      user.role === 'coordenador'
+        ? baseFiltro
+        : `campo = "${user.campo}" && ${baseFiltro}`
+
+    const params = new URLSearchParams({
+      page: '1',
+      perPage: String(PER_PAGE),
+      filter: filtro,
+      sort: `${ordem === 'desc' ? '-' : ''}created`,
+    })
+
+    const primeiro = await fetch(`/api/pedidos?${params.toString()}`, {
+      credentials: 'include',
+    })
+    const res: { items: Pedido[]; totalPages?: number } = await primeiro.json()
+    let todos = Array.isArray(res.items) ? res.items : (res as unknown as Pedido[])
+
+    for (let p = 2; p <= (res.totalPages ?? 1); p++) {
+      params.set('page', String(p))
+      const r = await fetch(`/api/pedidos?${params.toString()}`, {
+        credentials: 'include',
+      })
+      const pj: { items: Pedido[] } = await r.json()
+      todos = todos.concat(pj.items)
+    }
+
+    const pedidosFiltradosPdf = todos.filter((p) => {
+      const matchStatus = filtroStatus === '' || p.status === filtroStatus
+      const matchCampo =
+        filtroCampo === '' ||
+        p.expand?.campo?.nome?.toLowerCase().includes(filtroCampo.toLowerCase())
+      const produtoStr = Array.isArray(p.expand?.produto)
+        ? p.expand.produto.map((prod: Produto) => prod.nome).join(', ')
+        : (p.expand?.produto as Produto | undefined)?.nome ||
+          (Array.isArray(p.produto) ? p.produto.join(', ') : p.produto ?? '')
+
+      const matchBuscaGlobal =
+        buscaGlobal === '' ||
+        produtoStr.toLowerCase().includes(buscaGlobal.toLowerCase()) ||
+        p.email.toLowerCase().includes(buscaGlobal.toLowerCase()) ||
+        p.expand?.campo?.nome
+          ?.toLowerCase()
+          .includes(buscaGlobal.toLowerCase()) ||
+        p.expand?.id_inscricao?.nome
+          ?.toLowerCase()
+          .includes(buscaGlobal.toLowerCase()) ||
+        p.expand?.id_inscricao?.cpf
+          ?.toLowerCase()
+          .includes(buscaGlobal.toLowerCase())
+
+      return matchStatus && matchCampo && matchBuscaGlobal
+    })
+
+    const pedidosOrdenadosPdf = [...pedidosFiltradosPdf].sort((a, b) => {
+      if (ordenarPor === 'alfabetica') {
+        const nomeA = a.expand?.id_inscricao?.nome?.toLowerCase() || ''
+        const nomeB = b.expand?.id_inscricao?.nome?.toLowerCase() || ''
+        return ordem === 'asc' ? nomeA.localeCompare(nomeB) : nomeB.localeCompare(nomeA)
+      }
+      const dataA = new Date(a.created || 0).getTime()
+      const dataB = new Date(b.created || 0).getTime()
+      return ordem === 'asc' ? dataA - dataB : dataB - dataA
+    })
+
     const doc = new jsPDF({ unit: 'pt', format: 'a4' })
     doc.setFontSize(16)
     doc.setFont('helvetica', 'bold')
@@ -119,7 +187,7 @@ export default function PedidosPage() {
     doc.setFontSize(11)
     doc.setFont('helvetica', 'normal')
 
-    const linhas = pedidosOrdenados.map((p) => [
+    const linhas = pedidosOrdenadosPdf.map((p) => [
       Array.isArray(p.expand?.produto)
         ? p.expand.produto.map((prod: Produto) => prod.nome).join(', ')
         : (p.expand?.produto as Produto | undefined)?.nome || p.produto,
