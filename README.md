@@ -257,7 +257,7 @@ Resposta de exemplo:
 Use `start` e `end` (AAAA-MM-DD) para filtrar o período. A rota usa
 `requireClienteFromHost` para obter a chave do cliente, define o `User-Agent`
 e consulta `${ASAAS_API_URL}/financialTransactions` com os parâmetros padrão
-`offset=0`, `limit=10` e `order=asc`, enviando os mesmos cabeçalhos utilizados
+`offset=0`, `limit=10` e `order=desc`, enviando os mesmos cabeçalhos utilizados
 em `/api/asaas/saldo`.
 
 ### Webhooks Asaas
