@@ -520,3 +520,4 @@ executados.
 ## [2025-07-02] Ajustado cron para 1 minuto em vercel.json. Lint e build executados.
 ## [2025-08-17] NEXT_PUBLIC_SITE_URL substituido por host do tenant. Lint e build executados.
 ## [2025-08-17] Removida opcao de pagamento 'credito' em inscricoes e produtos. Documentacao atualizada. Lint e build executados.
+## [2025-07-03] exportarPDF em Pedidos passa a buscar todas as paginas para gerar relatorio completo conforme filtros. Lint: ok - Build: falhou (erro de tipos)
