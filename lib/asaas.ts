@@ -45,7 +45,7 @@ export type CreateCheckoutParams = {
     cep: string
     cidade: string
   }
-  paymentMethods?: ('PIX' | 'CREDIT_CARD')[]
+  paymentMethods?: ('PIX' | 'BOLETO')[]
 }
 
 type AsaasError = {
@@ -139,17 +139,12 @@ export async function createCheckout(
     margin = Number((netAfterFees - 0.01).toFixed(2))
   }
 
-  const isInstallmentCredit =
-    params.paymentMethod === 'credito' && params.installments > 1
-
   function buildPayload(splitMargin: number) {
     return {
       billingTypes: params.paymentMethods ?? [
         toAsaasBilling(params.paymentMethod),
       ],
-      chargeTypes: isInstallmentCredit
-        ? ['DETACHED', 'INSTALLMENT']
-        : ['DETACHED'],
+      chargeTypes: ['DETACHED'],
       callback: {
         successUrl: params.successUrl,
         cancelUrl: params.errorUrl,
@@ -177,9 +172,7 @@ export async function createCheckout(
         city: params.cliente.cidade,
         cpfCnpj: params.cliente.cpf,
       },
-      ...(isInstallmentCredit
-        ? { installment: { maxInstallmentCount: params.installments } }
-        : {}),
+      // Parcelamento no crédito não é suportado atualmente
       customFields:
         (params.itens
           .map((item, idx) =>
