@@ -521,3 +521,5 @@ executados.
 ## [2025-08-17] NEXT_PUBLIC_SITE_URL substituido por host do tenant. Lint e build executados.
 ## [2025-08-17] Removida opcao de pagamento 'credito' em inscricoes e produtos. Documentacao atualizada. Lint e build executados.
 ## [2025-07-03] exportarPDF em Pedidos passa a buscar todas as paginas para gerar relatorio completo conforme filtros. Lint: ok - Build: falhou (erro de tipos)
+
+## [2025-07-04] Rota /api/recuperar-link consulta inscricoes quando cobranca nao encontrada. Lint e build executados.
