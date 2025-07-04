@@ -423,6 +423,7 @@ Para cada coleção, utilize a seguinte estrutura:
 
 - Leitura: Usuário geral vê apenas próprias inscrições (`email` ou `criado_por`); `admin` e `user_org` veem todas.
 - Gravação: Usuário cria inscrição; sistema interno e `admin` atualizam status e geram pedidos.
+- O status `confirmado` só pode ser definido manualmente por um `coordenador` ou automaticamente via API/automação.
 
 **Relacionamentos**
 
