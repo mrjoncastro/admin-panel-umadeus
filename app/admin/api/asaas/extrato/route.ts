@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
   url.searchParams.set('limit', '50')
   if (start) url.searchParams.set('startDate', start)
   if (end) url.searchParams.set('finishDate', end)
-  url.searchParams.set('order', 'asc')
+  url.searchParams.set('order', 'desc')
 
   try {
     const res = await fetch(url.toString(), {
