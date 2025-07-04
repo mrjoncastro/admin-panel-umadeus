@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { pbRetry } from '@/lib/pbRetry'
+import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import type { RecordModel } from 'pocketbase'
 
 interface CobrancaRecord extends RecordModel {
@@ -43,8 +44,36 @@ export async function POST(req: NextRequest) {
     }
 
     if (!cobranca) {
+      const tenantId = await getTenantFromHost()
+      let inscricao: { status?: string } | null = null
+      if (tenantId) {
+        try {
+          inscricao = await pbRetry(() =>
+            pb
+              .collection('inscricoes')
+              .getFirstListItem(
+                `cpf="${idempotencyKey}" && cliente="${tenantId}"`,
+              ),
+          )
+        } catch {
+          // ignore 404
+        }
+      }
+
+      if (inscricao) {
+        if (inscricao.status === 'pendente') {
+          return NextResponse.json({
+            status: 'pendente',
+            mensagem: 'Inscrição aguardando aprovação da liderança.',
+          })
+        }
+        return NextResponse.json({ status: inscricao.status })
+      }
+
       return NextResponse.json(
-        { error: 'Usuário não encontrado' },
+        {
+          error: 'Inscrição não encontrada. Crie a inscrição para receber o link.',
+        },
         { status: 404 },
       )
     }
