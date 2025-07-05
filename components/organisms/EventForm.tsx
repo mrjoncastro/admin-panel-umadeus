@@ -306,7 +306,7 @@ export default function EventForm({
     })
   } else {
     steps.push({
-      title: 'Campo de Atuação',
+      title: 'Campo',
       content: (
         <div className="space-y-4">
           <FormField label="Campo" htmlFor="campoId">
