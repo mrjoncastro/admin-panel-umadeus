@@ -526,3 +526,4 @@ executados.
 ## [2025-07-04] Documentadas rotas /recuperar e /api/recuperar-link, orientando criar inscricao quando nao houver cobranca. Lint: ok - Build: ok
 ## [2025-07-05] Aceita pagamento 'credito' mapeado para pix nas inscricoes e rota Asaas.
 ## [2025-07-05] Página /inscricoes/conclusao adicionada e EventForm passa a redirecionar para ela. Documentação e índice atualizados. Lint e build executados.
+## [2025-07-05] Documentado ajuste de rate limit da rota publica. Lint e build executados.

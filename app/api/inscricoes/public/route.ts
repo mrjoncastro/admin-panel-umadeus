@@ -2,12 +2,16 @@ import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro } from '@/lib/server/logger'
-import { rateLimit } from '@/lib/server/rateLimit'
+import { publicLimiter } from '@/lib/server/publicLimiter'
 
 export async function GET(req: NextRequest) {
-  const ip =
-    req.headers.get('x-forwarded-for')?.split(',')[0] || 'local'
-  if (rateLimit(ip)) {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0] || 'local'
+  try {
+    publicLimiter.checkNext(req, 5)
+  } catch {
+    await logConciliacaoErro(
+      `GET /inscricoes/public - rate limit exceeded - ${ip}`,
+    )
     return NextResponse.json(
       { error: 'Muitas requisições' },
       { status: 429 },
@@ -19,7 +23,9 @@ export async function GET(req: NextRequest) {
   const eventoId = req.nextUrl.searchParams.get('evento') || ''
 
   if (!email || !cpf) {
-    await logConciliacaoErro('GET /inscricoes/public - parametros ausentes')
+    await logConciliacaoErro(
+      `GET /inscricoes/public - parametros ausentes - ${ip}`,
+    )
     return NextResponse.json(
       { error: 'cpf e email são obrigatórios' },
       { status: 400 },
@@ -27,7 +33,9 @@ export async function GET(req: NextRequest) {
   }
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(email) || cpf.length !== 11) {
-    await logConciliacaoErro('GET /inscricoes/public - parametros invalidos')
+    await logConciliacaoErro(
+      `GET /inscricoes/public - parametros invalidos - ${ip}`,
+    )
     return NextResponse.json(
       { error: 'Parâmetros inválidos' },
       { status: 400 },
@@ -38,6 +46,9 @@ export async function GET(req: NextRequest) {
     const pb = createPocketBase()
     const tenantId = await getTenantFromHost()
     if (!tenantId) {
+      await logConciliacaoErro(
+        `GET /inscricoes/public - tenant não informado - ${ip}`,
+      )
       return NextResponse.json(
         { error: 'Tenant não informado' },
         { status: 400 },
@@ -56,6 +67,10 @@ export async function GET(req: NextRequest) {
       .collection('inscricoes')
       .getFirstListItem(filtro)
 
+    await logConciliacaoErro(
+      `GET /inscricoes/public - sucesso - ${ip}`,
+    )
+
     return NextResponse.json(
       {
         nome: record.nome,
@@ -67,7 +82,7 @@ export async function GET(req: NextRequest) {
     )
   } catch (err) {
     await logConciliacaoErro(
-      `GET /inscricoes/public - ${String(err)}`,
+      `GET /inscricoes/public - ${String(err)} - ${ip}`,
     )
     return NextResponse.json(
       { error: 'Erro interno' },
