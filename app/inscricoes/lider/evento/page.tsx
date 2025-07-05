@@ -15,8 +15,6 @@ function CadastroViaLider({
       </div>
     </main>
   )
-} 
+}
 
-export default CadastroViaLider as unknown as (
-  props: { searchParams?: Promise<unknown>; params?: Promise<unknown> }
-) => JSX.Element
+export default CadastroViaLider as unknown as (props: unknown) => JSX.Element

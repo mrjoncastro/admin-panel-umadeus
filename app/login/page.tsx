@@ -1,22 +1,13 @@
-'use client'
 
-import { Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
 import LoginForm from '@/components/templates/LoginForm'
 import LayoutWrapper from '@/components/templates/LayoutWrapper'
 
-export default function LoginPage() {
-  return (
-    <Suspense>
-      <LoginClient />
-    </Suspense>
-  )
+interface LoginPageProps {
+  searchParams?: { redirectTo?: string; redirect?: string }
 }
 
-function LoginClient() {
-  'use client'
-  const searchParams = useSearchParams()
-  const redirectTo = searchParams.get('redirectTo') || undefined
+function LoginPage({ searchParams }: LoginPageProps) {
+  const redirectTo = searchParams?.redirectTo || searchParams?.redirect
 
   return (
     <LayoutWrapper>
@@ -40,3 +31,5 @@ function LoginClient() {
     </LayoutWrapper>
   )
 }
+
+export default LoginPage as unknown as (props: unknown) => JSX.Element
