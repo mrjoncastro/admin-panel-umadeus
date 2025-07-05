@@ -31,11 +31,11 @@ export default function CarrinhoPage() {
 
   const goToSignup = () => {
     setShowPrompt(false)
-    router.push('/login?view=signup&redirect=/loja/checkout')
+    router.push('/login?view=signup&redirectTo=/loja/checkout')
   }
   const goToLogin = () => {
     setShowPrompt(false)
-    router.push('/login?redirect=/loja/checkout')
+    router.push('/login?redirectTo=/loja/checkout')
   }
 
   if (itens.length === 0) {
