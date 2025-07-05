@@ -24,8 +24,12 @@ export default function ConsultaInscricao({
   inscricoesEncerradas,
 }: ConsultaInscricaoProps) {
   const { user, isLoggedIn } = useAuthContext()
-  const [cpf, setCpf] = useState('')
-  const [email, setEmail] = useState('')
+  const [cpf, setCpf] = useState(() =>
+    isLoggedIn && user?.cpf ? user.cpf : '',
+  )
+  const [email, setEmail] = useState(() =>
+    isLoggedIn && user?.email ? user.email : '',
+  )
   const [errors, setErrors] = useState<{
     cpf?: string
     email?: string
@@ -37,6 +41,13 @@ export default function ConsultaInscricao({
   const [showLoginModal, setShowLoginModal] = useState(false)
   const searchParams = useSearchParams()
   const autoQueried = useRef(false)
+
+  useEffect(() => {
+    if (isLoggedIn && user) {
+      setCpf(user.cpf ?? '')
+      setEmail(user.email ?? '')
+    }
+  }, [isLoggedIn, user])
 
   const submitConsulta = useCallback(
     async (cpfVal: string, emailVal: string) => {
@@ -148,23 +159,25 @@ export default function ConsultaInscricao({
   return (
     <div className="space-y-4 mx-auto max-w-xs md:max-w-sm">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <FormField label="CPF" htmlFor="consulta-cpf" error={errors.cpf}>
-          <InputWithMask
-            id="consulta-cpf"
-            mask="cpf"
-            value={cpf}
-            onChange={(e) => setCpf(e.target.value)}
-            required
-          />
-        </FormField>
-        <FormField label="E-mail" htmlFor="consulta-email" error={errors.email}>
-          <TextField
-            id="consulta-email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          <FormField label="CPF" htmlFor="consulta-cpf" error={errors.cpf}>
+            <InputWithMask
+              id="consulta-cpf"
+              mask="cpf"
+              value={cpf}
+              onChange={(e) => setCpf(e.target.value)}
+              disabled={isLoggedIn}
+              required
+            />
+          </FormField>
+          <FormField label="E-mail" htmlFor="consulta-email" error={errors.email}>
+            <TextField
+              id="consulta-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={isLoggedIn}
+              required
+            />
         </FormField>
         {errors.geral && (
           <p role="alert" className="text-error-600">
