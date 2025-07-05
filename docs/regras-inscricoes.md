@@ -18,6 +18,7 @@ Este documento descreve como cada perfil acessa as inscri\u00e7\u00f5es, o proce
 
 1. O usu\u00e1rio acessa o formul\u00e1rio de inscri\u00e7\u00e3o e preenche seus dados pessoais.
 2. Seleciona o campo desejado e confirma os termos de participa\u00e7\u00e3o.
+   - Em rotas com `liderId` o campo é definido automaticamente conforme o líder e o valor não pode ser alterado.
 3. Escolhe o produto de inscri\u00e7\u00e3o (quando houver) e envia o formul\u00e1rio.
 4. A lideran\u00e7a aprova a inscri\u00e7\u00e3o caso o modo de confirma\u00e7\u00e3o manual esteja habilitado.
 5. A API verifica se já existe usuário com o e-mail informado.

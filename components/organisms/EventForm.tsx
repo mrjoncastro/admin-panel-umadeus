@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState, useMemo, useRef } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import Image from 'next/image'
 import { useTenant } from '@/lib/context/TenantContext'
 import { useToast } from '@/lib/context/ToastContext'
@@ -13,9 +13,7 @@ import LoadingOverlay from './LoadingOverlay'
 import InscricoesTable from '@/app/cliente/components/InscricoesTable'
 import type { Inscricao } from '@/types'
 import { FormField } from '@/components'
-import CreateUserForm, {
-  type CreateUserFormHandle,
-} from '../templates/CreateUserForm'
+import CreateUserForm from '../templates/CreateUserForm'
 
 interface Produto {
   id: string
@@ -74,7 +72,6 @@ export default function EventForm({
   const [pendentes, setPendentes] = useState<Inscricao[]>([])
   const [checouPendentes, setChecouPendentes] = useState(false)
   const [signupDone, setSignupDone] = useState(isLoggedIn)
-  const createUserRef = useRef<CreateUserFormHandle>(null)
 
   useEffect(() => {
     async function fetchData() {
@@ -85,7 +82,12 @@ export default function EventForm({
           fetch(`/api/eventos/${eventoId}`, { headers, credentials: 'include' }),
         ]
         if (liderId) {
-          promises.unshift(fetch(`/api/lider/${liderId}`, { headers, credentials: 'include' }))
+          promises.unshift(
+            fetch(`/api/lider/${liderId}`, {
+              headers,
+              credentials: 'include',
+            }),
+          )
         } else {
           promises.unshift(fetch('/api/campos', { headers, credentials: 'include' }))
         }
@@ -93,6 +95,7 @@ export default function EventForm({
         if (liderId) {
           const data = campoRes.ok ? await campoRes.json() : null
           setCampoNome(data?.campo || '')
+          setForm((prev) => ({ ...prev, campoId: data?.campoId || '' }))
         } else {
           const camposData = campoRes.ok ? await campoRes.json() : []
           setCampos(Array.isArray(camposData) ? camposData : [])
@@ -242,30 +245,23 @@ export default function EventForm({
       setLoading(false)
     }
   }
-  const handleStepValidate = async (index: number) => {
-    if (!signupDone && index === 0) {
-      const ok = await createUserRef.current?.submit()
-      return Boolean(ok)
-    }
-    return true
+
+  if (!signupDone) {
+    return (
+      <div className="max-w-lg mx-auto bg-white p-6 rounded-xl shadow">
+        <CreateUserForm
+          onSuccess={() => setSignupDone(true)}
+          initialCpf={initialCpf}
+          initialEmail={initialEmail}
+          initialCampo={form.campoId}
+        />
+      </div>
+    )
   }
 
   const steps: { title: string; content: React.ReactNode }[] = []
 
-  if (!signupDone) {
-    steps.push({
-      title: 'Criar Conta',
-      content: (
-        <CreateUserForm
-          ref={createUserRef}
-          onSuccess={() => setSignupDone(true)}
-          showButton={false}
-          initialCpf={initialCpf}
-          initialEmail={initialEmail}
-        />
-      ),
-    })
-  } else {
+  if (!user?.genero) {
     steps.push({
       title: "Informações Adicionais",
       content: (
@@ -461,7 +457,6 @@ export default function EventForm({
       steps={steps}
       onFinish={handleSubmit}
       loading={loading}
-      onStepValidate={handleStepValidate}
       className="max-w-lg mx-auto bg-white p-6 rounded-xl shadow"
     />
   )
