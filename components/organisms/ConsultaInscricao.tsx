@@ -156,7 +156,7 @@ export default function ConsultaInscricao({
       <ModalAnimated open={showLoginModal} onOpenChange={setShowLoginModal}>
         <div className="space-y-4 text-center w-72">
           <Dialog.Title asChild>
-            <h3 className="text-lg font-semibold">Conta localizada</h3>
+            <h3 className="text-lg font-semibold">Conta já existente</h3>
           </Dialog.Title>
           <Dialog.Description className="sr-only">
             Conta já cadastrada
