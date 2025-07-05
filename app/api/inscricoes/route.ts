@@ -65,6 +65,9 @@ export async function POST(req: NextRequest) {
       evento: eventoBody,
     } = body
 
+    const paymentMethodNormalized: PaymentMethod =
+      paymentMethod?.toLowerCase() === 'credito' ? 'pix' : paymentMethod
+
     const produtoIdFinal: string | undefined = produtoId || produtoId
 
     // Limpa CPF e telefone
@@ -99,7 +102,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    if (!['pix', 'boleto'].includes(paymentMethod)) {
+    if (!['pix', 'boleto'].includes(paymentMethodNormalized)) {
       return NextResponse.json(
         { erro: 'Forma de pagamento inválida.' },
         { status: 400 },
@@ -203,11 +206,11 @@ export async function POST(req: NextRequest) {
     const dadosInscricao: Omit<Inscricao, 'id'> & {
       paymentMethod: PaymentMethod
       installments: number
-    } = {
-      ...dadosBaseSemId,
-      paymentMethod,
-      installments,
-    }
+      } = {
+        ...dadosBaseSemId,
+        paymentMethod: paymentMethodNormalized,
+        installments,
+      }
 
     const inscricao = await pb.collection('inscricoes').create(dadosInscricao)
     logRocketEvent('nova_inscricao_admin', {
@@ -243,13 +246,13 @@ export async function POST(req: NextRequest) {
           const asaasRes = await fetch(`${base}/api/asaas`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              pedidoId,
-              valorBruto: valor,
-              paymentMethod,
-              installments,
-            }),
-          })
+              body: JSON.stringify({
+                pedidoId,
+                valorBruto: valor,
+                paymentMethod: paymentMethodNormalized,
+                installments,
+              }),
+            })
 
           if (asaasRes.ok) {
             const data = await asaasRes.json()
