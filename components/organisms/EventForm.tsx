@@ -4,7 +4,7 @@ import React, { useEffect, useState, useMemo, useRef } from 'react'
 import Image from 'next/image'
 import { useTenant } from '@/lib/context/TenantContext'
 import { useToast } from '@/lib/context/ToastContext'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
@@ -57,6 +57,7 @@ export default function EventForm({
   const { config } = useTenant()
   const { showSuccess, showError } = useToast()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { isLoggedIn, user } = useAuthContext()
   const pb = useMemo(() => createPocketBase(), [])
   const [campoNome, setCampoNome] = useState('')
@@ -76,6 +77,13 @@ export default function EventForm({
   const [checouPendentes, setChecouPendentes] = useState(false)
   const [signupDone, setSignupDone] = useState(isLoggedIn)
   const createUserRef = useRef<CreateUserFormHandle>(null)
+
+  useEffect(() => {
+    const campo = searchParams.get('campo') || user?.campo
+    if (campo && !form.campoId) {
+      setForm((prev) => ({ ...prev, campoId: campo }))
+    }
+  }, [searchParams, user, form.campoId])
 
   useEffect(() => {
     async function fetchData() {
