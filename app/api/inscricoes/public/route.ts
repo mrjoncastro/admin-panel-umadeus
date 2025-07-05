@@ -3,6 +3,7 @@ import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro } from '@/lib/server/logger'
 import { publicLimiter } from '@/lib/server/publicLimiter'
+import { ClientResponseError } from 'pocketbase'
 
 export async function GET(req: NextRequest) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0] || 'local'
@@ -80,7 +81,17 @@ export async function GET(req: NextRequest) {
       },
       { status: 200 },
     )
-  } catch (err) {
+  } catch (err: unknown) {
+    if (err instanceof ClientResponseError && err.status === 404) {
+      await logConciliacaoErro(
+        `GET /inscricoes/public - nao encontrado - ${ip}`,
+      )
+      return NextResponse.json(
+        { error: 'Inscrição não encontrada' },
+        { status: 404 },
+      )
+    }
+
     await logConciliacaoErro(
       `GET /inscricoes/public - ${String(err)} - ${ip}`,
     )
