@@ -18,27 +18,64 @@ export default function LoginForm({
   children?: React.ReactNode
 }) {
   const router = useRouter()
-  const { login, isLoggedIn, isLoading, user } = useAuthContext()
+  const { login, logout, isLoggedIn, isLoading, user } = useAuthContext()
 
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { showError } = useToast()
 
-  // Redirecionamento pós-login
+  // Redirecionamento pós-login com verificação de sucesso
   useEffect(() => {
     if (!isLoading && isLoggedIn && user) {
-      if (redirectTo) {
-        router.replace(redirectTo)
-      } else if (user.role === 'coordenador') {
-        router.replace('/admin/dashboard')
-      } else if (user.role === 'lider') {
-        router.replace('/admin/lider-painel')
-      } else {
-        router.replace('/cliente/dashboard')
+      const target = redirectTo
+        ? redirectTo
+        : user.role === 'coordenador'
+        ? '/admin/dashboard'
+        : user.role === 'lider'
+        ? '/admin/lider-painel'
+        : '/cliente/dashboard'
+
+      const prevUrl =
+        typeof window !== 'undefined'
+          ? window.location.pathname + window.location.search
+          : ''
+
+      const eventoIdMatch = redirectTo?.match(/evento=([^&]+)/)
+      const eventoId = eventoIdMatch ? eventoIdMatch[1] : null
+
+      const handleFail = () => {
+        if (eventoId) {
+          logout().catch(() => {})
+          showError(
+            'Não foi possível retomar a inscrição automaticamente.',
+          )
+          router.replace(`/inscricoes?evento=${eventoId}`)
+        }
+      }
+
+      try {
+        router.replace(target)
+      } catch {
+        handleFail()
+        return
+      }
+
+      const timer = setTimeout(() => {
+        const currentUrl =
+          typeof window !== 'undefined'
+            ? window.location.pathname + window.location.search
+            : ''
+        if (currentUrl === prevUrl) {
+          handleFail()
+        }
+      }, 1000)
+
+      return () => {
+        clearTimeout(timer)
       }
     }
-  }, [isLoading, isLoggedIn, user, router, redirectTo])
+  }, [isLoading, isLoggedIn, user, router, redirectTo, logout, showError])
 
   if (!isLoading && isLoggedIn) {
     return null // impede que o componente renderize novamente
