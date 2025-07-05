@@ -145,10 +145,12 @@ export async function POST(req: NextRequest) {
 
     // Busca usuário existente ou cria um novo
     let usuario
+    let usuarioExistente = false
     try {
       usuario = await pb
         .collection('usuarios')
         .getFirstListItem(`email='${email}' && cliente='${lider.cliente}'`)
+      usuarioExistente = true
     } catch {
       const tempPass = Math.random().toString(36).slice(2, 10)
       usuario = await pb.collection('usuarios').create({
@@ -164,6 +166,20 @@ export async function POST(req: NextRequest) {
         password: tempPass,
         passwordConfirm: tempPass,
       })
+    }
+
+    // Verifica se o usuário já possui inscrição neste evento
+    const filtroDuplicado = usuarioExistente
+      ? `evento="${eventoIdFinal}" && criado_por="${usuario.id}"`
+      : `evento="${eventoIdFinal}" && cpf="${cpfNumerico}"`
+    try {
+      await pb.collection('inscricoes').getFirstListItem(filtroDuplicado)
+      return NextResponse.json(
+        { erro: 'Usuário já inscrito neste evento' },
+        { status: 409 },
+      )
+    } catch {
+      // OK - não encontrado
     }
 
     // Cria inscrição SEM pedido
