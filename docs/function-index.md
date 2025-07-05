@@ -1,5 +1,7 @@
 # Índice de Funções e Componentes
 
+A página `/recuperar` usa a rota `/api/recuperar-link` para retornar o `link_pagamento`. Quando houver inscrição sem cobrança, a resposta contém somente o `status` atual. Caso nenhum registro seja encontrado, crie a inscrição para gerar o link.
+
 - **app/admin/api/asaas/estatisticas/route.ts**
   - GET
 - **app/admin/api/asaas/extrato/route.ts**
