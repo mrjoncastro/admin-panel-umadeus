@@ -46,6 +46,9 @@ describe('EventForm login', () => {
     render(<EventForm eventoId="ev1" initialCpf="52998224725" initialEmail="f@x.com" />)
 
     await screen.findByDisplayValue('529.982.247-25')
-    screen.getByDisplayValue('f@x.com')
+    const emailInput = screen.getByDisplayValue('f@x.com') as HTMLInputElement
+    const cpfInput = screen.getByDisplayValue('529.982.247-25') as HTMLInputElement
+    expect(emailInput).toHaveAttribute('readonly')
+    expect(cpfInput).toHaveAttribute('readonly')
   })
 })

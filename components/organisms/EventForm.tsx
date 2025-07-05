@@ -85,7 +85,12 @@ export default function EventForm({
           fetch(`/api/eventos/${eventoId}`, { headers, credentials: 'include' }),
         ]
         if (liderId) {
-          promises.unshift(fetch(`/api/lider/${liderId}`, { headers, credentials: 'include' }))
+          promises.unshift(
+            fetch(`/api/lider/${liderId}`, {
+              headers,
+              credentials: 'include',
+            }),
+          )
         } else {
           promises.unshift(fetch('/api/campos', { headers, credentials: 'include' }))
         }
@@ -93,6 +98,7 @@ export default function EventForm({
         if (liderId) {
           const data = campoRes.ok ? await campoRes.json() : null
           setCampoNome(data?.campo || '')
+          setForm((prev) => ({ ...prev, campoId: data?.campoId || '' }))
         } else {
           const camposData = campoRes.ok ? await campoRes.json() : []
           setCampos(Array.isArray(camposData) ? camposData : [])
@@ -262,10 +268,11 @@ export default function EventForm({
           showButton={false}
           initialCpf={initialCpf}
           initialEmail={initialEmail}
+          initialCampo={form.campoId}
         />
       ),
     })
-  } else {
+  } else if (!user?.genero) {
     steps.push({
       title: "Informações Adicionais",
       content: (

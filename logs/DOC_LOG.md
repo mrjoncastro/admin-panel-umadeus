@@ -530,3 +530,4 @@ executados.
 ## [2025-07-05] EventForm passa a logar automaticamente o novo usuário após POST
 na rota /loja/api/inscricoes e documentação atualizada. Lint e build executados.
 ## [2025-07-05] EventForm preenche CPF e email da etapa anterior
+## [2025-07-05] Signup aceita campo e gênero; valores pré-definidos são bloqueados. Lint e build executados.

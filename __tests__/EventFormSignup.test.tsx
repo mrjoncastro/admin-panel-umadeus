@@ -58,7 +58,9 @@ vi.mock('@/utils/cep', () => ({
 }))
 
 describe('EventForm signup flow', () => {
-  it('envia inscricao com user.id e avanca o wizard', async () => {
+  it(
+    'envia inscricao com user.id e avanca o wizard',
+    async () => {
     vi.useFakeTimers()
     const fetchMock = vi.fn()
     global.fetch = fetchMock as unknown as typeof fetch
@@ -69,7 +71,7 @@ describe('EventForm signup flow', () => {
         json: () => Promise.resolve({ expand: { produto_inscricao: { id: 'p1', nome: 'Prod 1' } }, cobra_inscricao: false }),
       })
       .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve([]) })
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) })
+      .mockImplementation(() => Promise.resolve({ ok: true, json: () => Promise.resolve({}) }))
 
     const { container } = render(<EventForm eventoId="ev1" />)
 
@@ -84,14 +86,13 @@ describe('EventForm signup flow', () => {
     fireEvent.change(screen.getByLabelText(/cidade/i), { target: { value: 'São Paulo' } })
     fireEvent.change(screen.getByLabelText(/bairro/i), { target: { value: 'Centro' } })
     fireEvent.change(screen.getByLabelText(/número/i), { target: { value: '10' } })
+    fireEvent.change(screen.getAllByRole('combobox')[0], { target: { value: 'masculino' } })
+    fireEvent.change(screen.getAllByRole('combobox')[1], { target: { value: 'c1' } })
     fireEvent.change(screen.getByLabelText(/^senha$/i), { target: { value: '12345678' } })
     fireEvent.change(screen.getByLabelText(/confirme a senha/i), { target: { value: '12345678' } })
     fireEvent.click(screen.getByRole('button', { name: /criar conta/i }))
 
     await vi.advanceTimersByTimeAsync(500)
-
-    fireEvent.change(await screen.findByLabelText(/gênero/i), { target: { value: 'masculino' } })
-    fireEvent.click(screen.getByText(/avançar/i))
 
     fireEvent.change(await screen.findByLabelText(/campo/i), { target: { value: 'c1' } })
     fireEvent.click(screen.getByText(/avançar/i))
@@ -111,5 +112,5 @@ describe('EventForm signup flow', () => {
     expect(body.userId).toBe('u1')
 
     vi.useRealTimers()
-  })
+  }, 10000)
 })

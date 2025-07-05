@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
       telefone,
       cpf,
       data_nascimento,
+      genero,
       endereco,
       numero,
       bairro,
@@ -19,6 +20,7 @@ export async function POST(req: NextRequest) {
       cep,
       cidade,
       password,
+      campo,
       cliente,
     } = await req.json()
     if (
@@ -27,6 +29,7 @@ export async function POST(req: NextRequest) {
       !telefone ||
       !cpf ||
       !data_nascimento ||
+      !genero ||
       !endereco ||
       !numero ||
       !bairro ||
@@ -34,6 +37,7 @@ export async function POST(req: NextRequest) {
       !cep ||
       !cidade ||
       !password ||
+      !campo ||
       !cliente
     ) {
       return NextResponse.json(
@@ -78,12 +82,14 @@ export async function POST(req: NextRequest) {
       telefone: telefoneNumerico,
       cpf: cpfNumerico,
       data_nascimento: String(data_nascimento),
+      genero: String(genero).trim(),
       endereco: String(endereco).trim(),
       numero: String(numero).trim(),
       bairro: String(bairro).trim(),
       estado: String(estado).trim(),
       cep: String(cep).trim(),
       cidade: String(cidade).trim(),
+      campo: String(campo).trim(),
       password: String(password),
       passwordConfirm: String(password),
       role: 'usuario',

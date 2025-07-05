@@ -23,6 +23,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       nome: lider.nome,
       campo: lider.expand?.campo?.nome ?? null,
+      campoId: lider.expand?.campo?.id ?? null,
     })
   } catch (err: unknown) {
     if (err instanceof Error) {

@@ -30,11 +30,12 @@ interface CreateUserFormProps {
   showButton?: boolean
   initialCpf?: string
   initialEmail?: string
+  initialCampo?: string
 }
 
 const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
   function CreateUserForm(
-    { onSuccess, children, showButton = true, initialCpf, initialEmail }: CreateUserFormProps,
+    { onSuccess, children, showButton = true, initialCpf, initialEmail, initialCampo }: CreateUserFormProps,
     ref,
   ) {
   const { signUp } = useAuthContext()
@@ -47,6 +48,7 @@ const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
   const [telefone, setTelefone] = useState('')
   const [cpf, setCpf] = useState('')
   const [dataNascimento, setDataNascimento] = useState('')
+  const [genero, setGenero] = useState('')
   const [cep, setCep] = useState('')
   const [endereco, setEndereco] = useState('')
   const [numero, setNumero] = useState('')
@@ -62,6 +64,10 @@ const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
     if (initialCpf) setCpf(initialCpf)
     if (initialEmail) setEmail(initialEmail)
   }, [initialCpf, initialEmail])
+
+  useEffect(() => {
+    if (initialCampo) setCampo(initialCampo)
+  }, [initialCampo])
 
   useEffect(() => {
     async function loadCampos() {
@@ -139,12 +145,14 @@ const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
         telefone,
         cpf,
         dataNascimento,
+        genero,
         endereco,
         numero,
         bairro,
         estado,
         cep,
         cidade,
+        campo,
         senha,
       )
       showSuccess('Conta criada com sucesso!')
@@ -195,6 +203,7 @@ const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
             onChange={(e) => setEmail(e.target.value)}
             className="w-full rounded-md px-4 py-2"
             required
+            readOnly={Boolean(initialEmail)}
           />
         </FormField>
         <FormField label="Telefone" htmlFor="signup-telefone">
@@ -219,6 +228,7 @@ const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
             onChange={(e) => setCpf(e.target.value)}
             className="w-full rounded-md px-4 py-2"
             required
+            readOnly={Boolean(initialCpf)}
           />
         </FormField>
         <FormField label="Data de nascimento" htmlFor="signup-data">
@@ -231,11 +241,25 @@ const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
             required
           />
         </FormField>
+        <FormField label="Gênero" htmlFor="signup-genero">
+          <select
+            id="signup-genero"
+            value={genero}
+            onChange={(e) => setGenero(e.target.value)}
+            className="input-base w-full rounded-md px-4 py-2"
+            required
+          >
+            <option value="">Selecione</option>
+            <option value="masculino">Masculino</option>
+            <option value="feminino">Feminino</option>
+          </select>
+        </FormField>
         <select
           value={campo}
           onChange={(e) => setCampo(e.target.value)}
           className="input-base w-full rounded-md px-4 py-2"
           required
+          disabled={Boolean(initialCampo)}
         >
           <option value="">Selecione o campo</option>
           {campos.map((c) => (
