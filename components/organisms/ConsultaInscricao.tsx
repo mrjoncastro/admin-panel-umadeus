@@ -26,7 +26,11 @@ export default function ConsultaInscricao({
   const { user, isLoggedIn } = useAuthContext()
   const [cpf, setCpf] = useState('')
   const [email, setEmail] = useState('')
-  const [errors, setErrors] = useState<{ cpf?: string; email?: string; geral?: string }>({})
+  const [errors, setErrors] = useState<{
+    cpf?: string
+    email?: string
+    geral?: string
+  }>({})
   const [inscricao, setInscricao] = useState<Inscricao | null>(null)
   const [loading, setLoading] = useState(false)
   const [showWizard, setShowWizard] = useState(false)
@@ -34,69 +38,83 @@ export default function ConsultaInscricao({
   const searchParams = useSearchParams()
   const autoQueried = useRef(false)
 
-  const submitConsulta = useCallback(async (cpfVal: string, emailVal: string) => {
-    const errs: { cpf?: string; email?: string } = {}
-    if (!isValidCPF(cpfVal)) errs.cpf = 'CPF inválido'
-    if (!isValidEmail(emailVal)) errs.email = 'E-mail inválido'
-    setErrors(errs)
-    if (Object.keys(errs).length > 0) return
+  const submitConsulta = useCallback(
+    async (cpfVal: string, emailVal: string) => {
+      const errs: { cpf?: string; email?: string } = {}
+      if (!isValidCPF(cpfVal)) errs.cpf = 'CPF inválido'
+      if (!isValidEmail(emailVal)) errs.email = 'E-mail inválido'
+      setErrors(errs)
+      if (Object.keys(errs).length > 0) return
 
-    setLoading(true)
-    try {
-      const cleanCpf = cpfVal.replace(/\D/g, '')
-      const existsParams = new URLSearchParams({ cpf: cleanCpf, email: emailVal })
-      if (isLoggedIn && user) {
-        existsParams.append('excludeId', user.id)
-      }
-      if (!isLoggedIn || (isLoggedIn && user)) {
-        const existsRes = await fetch(`/api/usuarios/exists?${existsParams.toString()}`)
-        if (existsRes.ok) {
-          const data = await existsRes.json()
-          if (!isLoggedIn && (data.cpf || data.email)) {
-            setShowLoginModal(true)
-            return
+      setLoading(true)
+      try {
+        const cleanCpf = cpfVal.replace(/\D/g, '')
+        const existsParams = new URLSearchParams({
+          cpf: cleanCpf,
+          email: emailVal,
+        })
+        if (isLoggedIn && user) {
+          existsParams.append('excludeId', user.id)
+        }
+        if (!isLoggedIn || (isLoggedIn && user)) {
+          const existsRes = await fetch(
+            `/api/usuarios/exists?${existsParams.toString()}`,
+          )
+          if (existsRes.ok) {
+            const data = await existsRes.json()
+            if (!isLoggedIn && (data.cpf || data.email)) {
+              setShowLoginModal(true)
+              return
+            }
           }
         }
-      }
 
-      const query = new URLSearchParams({
-        cpf: cleanCpf,
-        email: emailVal,
-        evento: eventoId,
-      })
-      const res = await fetch(`/api/inscricoes/public?${query.toString()}`)
-      if (res.status === 200) {
-        const data = await res.json()
-        const item = Array.isArray(data) ? data[0] : data
-        setInscricao(item)
-        setShowWizard(false)
-        setErrors({})
-      } else if (res.status === 404) {
-        if (isLoggedIn) {
-          setShowWizard(true)
-        } else if (inscricoesEncerradas) {
-          setErrors({
-            geral:
-              'O período de inscrições foi encerrado e não há cadastro para as credenciais informadas.',
-          })
+        const query = new URLSearchParams({
+          cpf: cleanCpf,
+          email: emailVal,
+          evento: eventoId,
+        })
+        const res = await fetch(`/api/inscricoes/public?${query.toString()}`)
+        if (res.status === 200) {
+          const data = await res.json()
+          const item = Array.isArray(data) ? data[0] : data
+          setInscricao(item)
+          setShowWizard(false)
+          setErrors({})
+        } else if (res.status === 404) {
+          if (isLoggedIn) {
+            setShowWizard(true)
+          } else if (inscricoesEncerradas) {
+            setErrors({
+              geral:
+                'O período de inscrições foi encerrado e não há cadastro para as credenciais informadas.',
+            })
+          } else {
+            setShowWizard(true)
+          }
+          setInscricao(null)
         } else {
-          setShowWizard(true)
+          setErrors({ geral: 'Erro ao consultar inscrição.' })
+          setInscricao(null)
         }
-        setInscricao(null)
-      } else {
+      } catch {
         setErrors({ geral: 'Erro ao consultar inscrição.' })
         setInscricao(null)
+      } finally {
+        setLoading(false)
       }
-    } catch {
-      setErrors({ geral: 'Erro ao consultar inscrição.' })
-      setInscricao(null)
-    } finally {
-      setLoading(false)
-    }
-  }, [eventoId, inscricoesEncerradas])
+    },
+    [eventoId, inscricoesEncerradas],
+  )
 
   useEffect(() => {
-    if (autoQueried.current || loading || inscricao || errors.cpf || errors.email) {
+    if (
+      autoQueried.current ||
+      loading ||
+      inscricao ||
+      errors.cpf ||
+      errors.email
+    ) {
       return
     }
 
@@ -121,7 +139,7 @@ export default function ConsultaInscricao({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 mx-auto max-w-xs md:max-w-sm">
       <form onSubmit={handleSubmit} className="space-y-4">
         <FormField label="CPF" htmlFor="consulta-cpf" error={errors.cpf}>
           <InputWithMask
@@ -151,7 +169,9 @@ export default function ConsultaInscricao({
         </Button>
       </form>
 
-      {inscricao && <InscricoesTable inscricoes={[inscricao]} variant="details" />}
+      {inscricao && (
+        <InscricoesTable inscricoes={[inscricao]} variant="details" />
+      )}
 
       <ModalAnimated open={showLoginModal} onOpenChange={setShowLoginModal}>
         <div className="space-y-4 text-center w-72">
@@ -161,7 +181,10 @@ export default function ConsultaInscricao({
           <Dialog.Description className="sr-only">
             Conta já cadastrada
           </Dialog.Description>
-          <p>Já existe uma conta com este CPF e/ou e-mail. Por favor, faça login para continuar.</p>
+          <p>
+            Já existe uma conta com este CPF e/ou e-mail. Por favor, faça login
+            para continuar.
+          </p>
           <Link
             href={`/login?redirectTo=/inscricoes?evento=${eventoId}&cpf=${cpf.replace(/\D/g, '')}&email=${encodeURIComponent(email)}`}
             className="btn btn-primary inline-block"
