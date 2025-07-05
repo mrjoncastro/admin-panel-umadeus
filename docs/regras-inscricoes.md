@@ -114,7 +114,10 @@ executa `router.replace` para voltar à página indicada. Assim, o fluxo de
 inscrição continua exatamente de onde parou.
 
 Quando o usuário já está logado, os campos de CPF e e‑mail ficam preenchidos com
-os dados da conta e permanecem desabilitados para edição.
+os dados da conta e permanecem desabilitados para edição. Caso a tela seja
+acessada com `cpf` e `email` na URL (após o redirecionamento de login, por
+exemplo), esses valores são ignorados e a consulta é feita diretamente com o CPF
+e o e‑mail do usuário autenticado.
 
 A seguir é feita uma requisição para `/api/inscricoes/public` passando `cpf`,
 `email` e `evento`. As respostas definem o que será exibido:

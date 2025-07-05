@@ -133,12 +133,25 @@ export default function ConsultaInscricao({
     const cpfParam = searchParams.get('cpf')
     const emailParam = searchParams.get('email')
     if (eventoParam === eventoId && cpfParam && emailParam) {
-      setCpf(cpfParam)
-      setEmail(emailParam)
       autoQueried.current = true
-      submitConsulta(cpfParam, emailParam)
+      if (isLoggedIn && user) {
+        submitConsulta(user.cpf ?? '', user.email ?? '')
+      } else {
+        setCpf(cpfParam)
+        setEmail(emailParam)
+        submitConsulta(cpfParam, emailParam)
+      }
     }
-  }, [eventoId, searchParams, loading, inscricao, errors, submitConsulta])
+  }, [
+    eventoId,
+    searchParams,
+    loading,
+    inscricao,
+    errors,
+    submitConsulta,
+    isLoggedIn,
+    user,
+  ])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
