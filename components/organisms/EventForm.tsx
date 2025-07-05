@@ -54,7 +54,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
   const { config } = useTenant()
   const { showSuccess, showError } = useToast()
   const router = useRouter()
-  const { isLoggedIn, user } = useAuthContext()
+  const { isLoggedIn, user, login } = useAuthContext()
   const pb = useMemo(() => createPocketBase(), [])
   const [campoNome, setCampoNome] = useState('')
   const [campos, setCampos] = useState<Campo[]>([])
@@ -363,6 +363,13 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
         return
       }
       showSuccess('Inscrição enviada com sucesso!')
+      if (!isLoggedIn && url === '/loja/api/inscricoes') {
+        try {
+          await login(form.email, form.password)
+        } catch {
+          /* ignore erro de login */
+        }
+      }
       setTimeout(() => {
         router.push('/inscricoes/conclusao')
       }, 500)
