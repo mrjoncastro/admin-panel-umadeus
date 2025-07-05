@@ -80,6 +80,17 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    if (paymentMethod !== 'pix' && paymentMethod !== 'boleto') {
+      console.log(
+        '🔴 [POST /api/asaas] Forma de pagamento inválida:',
+        paymentMethod,
+      )
+      return NextResponse.json(
+        { error: 'Forma de pagamento inválida' },
+        { status: 400 },
+      )
+    }
+
     if (!pb.authStore.isValid) {
       console.log('🟡 [POST /api/asaas] Autenticando admin PocketBase...')
       await pb.admins.authWithPassword(
@@ -232,11 +243,11 @@ export async function POST(req: NextRequest) {
     const billingType = toAsaasBilling(paymentMethod as PaymentMethod)
     if (!['PIX', 'BOLETO'].includes(billingType)) {
       console.log(
-        '🔴 [POST /api/asaas] Forma de pagamento invalida:',
+        '🔴 [POST /api/asaas] Forma de pagamento inválida:',
         billingType,
       )
       return NextResponse.json(
-        { error: 'Forma de pagamento invalida' },
+        { error: 'Forma de pagamento inválida' },
         { status: 400 },
       )
     }
