@@ -351,6 +351,7 @@ const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
       )}
     </form>
   )
+}
 )
 
 export default CreateUserForm
