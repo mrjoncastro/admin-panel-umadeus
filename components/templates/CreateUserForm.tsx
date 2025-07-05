@@ -28,11 +28,13 @@ interface CreateUserFormProps {
   onSuccess?: () => void
   children?: React.ReactNode
   showButton?: boolean
+  initialCpf?: string
+  initialEmail?: string
 }
 
 const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
   function CreateUserForm(
-    { onSuccess, children, showButton = true }: CreateUserFormProps,
+    { onSuccess, children, showButton = true, initialCpf, initialEmail }: CreateUserFormProps,
     ref,
   ) {
   const { signUp } = useAuthContext()
@@ -55,6 +57,11 @@ const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
   const [senhaConfirm, setSenhaConfirm] = useState('')
   const { showError, showSuccess } = useToast()
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (initialCpf) setCpf(initialCpf)
+    if (initialEmail) setEmail(initialEmail)
+  }, [initialCpf, initialEmail])
 
   useEffect(() => {
     async function loadCampos() {
@@ -349,8 +356,9 @@ const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
       {children && (
         <div className="text-sm text-gray-300 text-center mt-4">{children}</div>
       )}
+
     </form>
   )
+}
 )
-
 export default CreateUserForm

@@ -44,9 +44,15 @@ interface Campo {
 export interface EventFormProps {
   eventoId: string
   liderId?: string
+  initialCpf?: string
+  initialEmail?: string
 }
-
-export default function EventForm({ eventoId, liderId }: EventFormProps) {
+export default function EventForm({
+  eventoId,
+  liderId,
+  initialCpf,
+  initialEmail,
+}: EventFormProps) {
   const { config } = useTenant()
   const { showSuccess, showError } = useToast()
   const router = useRouter()
@@ -254,6 +260,8 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
           ref={createUserRef}
           onSuccess={() => setSignupDone(true)}
           showButton={false}
+          initialCpf={initialCpf}
+          initialEmail={initialEmail}
         />
       ),
     })
