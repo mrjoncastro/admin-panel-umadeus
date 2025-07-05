@@ -149,7 +149,7 @@ export default function ConsultaInscricao({
           </Dialog.Description>
           <p>Já existe uma conta com este CPF e/ou e-mail. Por favor, faça login para continuar.</p>
           <Link
-            href={`/login?redirectTo=/inscricoes?evento=${eventoId}&cpf=${cpf.replace(/\D/g, '')}&email=${encodeURIComponent(email)}`}
+            href={`/login?redirect=/inscricoes?evento=${eventoId}&cpf=${cpf.replace(/\D/g, '')}&email=${encodeURIComponent(email)}`}
             className="btn btn-primary inline-block"
             onClick={() => setShowLoginModal(false)}
           >
