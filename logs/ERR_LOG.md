@@ -240,3 +240,4 @@
 ## [2025-07-02] getTenantHost retornava dominio sem protocolo, causando erros de redirecionamento - dev - 3d2de08d
 ## [2025-07-05] Validação de paymentMethod na rota Asaas - dev - 83c8b653
 ## [2025-07-05] Forma de pagamento 'Credito' mapeada para pix nas rotas - dev - 10307d3
+## [2025-07-05] Consulta de inscrição pública retornava erro "Token ou usuário ausente" ao usar rota protegida. Componente ConsultaInscricao chama /api/inscricoes/public - dev
