@@ -51,4 +51,39 @@ describe('POST /api/inscricoes', () => {
     expect(body.erro).toBe('Usuário já inscrito neste evento')
     expect(createInscricaoMock).not.toHaveBeenCalled()
   })
+
+  it('cria inscricao quando dados validos', async () => {
+    getFirstInscricaoMock.mockReset()
+    getFirstInscricaoMock.mockRejectedValueOnce(new Error('not found'))
+    createInscricaoMock.mockResolvedValueOnce({ id: 'i2' })
+    const req = new Request('http://test/api/inscricoes', {
+      method: 'POST',
+      body: JSON.stringify({
+        nome: 'Fulano',
+        email: 'e@test.com',
+        telefone: '11999999999',
+        cpf: '11111111111',
+        data_nascimento: '2000-01-01',
+        genero: 'masculino',
+        liderId: 'lid1',
+        eventoId: 'ev1',
+        produtoId: 'p1',
+        tamanho: 'M',
+        paymentMethod: 'pix',
+      }),
+    })
+    ;(req as any).nextUrl = new URL('http://test/api/inscricoes')
+
+    const res = await POST(req as unknown as NextRequest)
+    expect(res.status).toBe(201)
+    expect(createInscricaoMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        evento: 'ev1',
+        campo: 'c1',
+        produto: 'p1',
+        tamanho: 'M',
+        paymentMethod: 'pix',
+      }),
+    )
+  })
 })

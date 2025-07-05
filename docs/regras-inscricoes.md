@@ -35,6 +35,13 @@ A rota `GET /api/inscricoes` aceita os seguintes filtros:
 - `status` – filtra por status da inscri\u00e7\u00e3o (ex.: `pendente`, `aprovado`, `cancelado`).
 - `perPage` – define a quantidade de registros retornados por p\u00e1gina.
 
+### Campos esperados nos endpoints
+
+- **POST /api/inscricoes**
+  - `nome`, `email`, `telefone`, `cpf`, `data_nascimento`, `genero`, `campo`, `eventoId`, `produtoId`, `tamanho`, `paymentMethod`, `liderId`
+- **POST /loja/api/inscricoes**
+  - `user_first_name`, `user_last_name`, `user_email`, `user_phone`, `user_cpf`, `user_birth_date`, `user_gender`, `user_cep`, `user_address`, `user_neighborhood`, `user_state`, `user_city`, `user_number`, `campo`, `evento`, `produtoId`, `tamanho`, `paymentMethod`
+
 ## Efeito de `confirma_inscricoes`
 
 Quando `confirma_inscricoes` está **ativado** em `clientes_config`, cada inscrição permanece `pendente` até que um líder ou coordenador a aprove na tela **Inscrições**. Somente após essa aprovação o pedido é criado e o link de pagamento é enviado.

@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
+import { buildInscricaoPayload } from '@/utils/buildInscricaoPayload'
 import FormWizard from './FormWizard'
 import LoadingOverlay from './LoadingOverlay'
 import InscricoesTable from '@/app/cliente/components/InscricoesTable'
@@ -205,28 +206,7 @@ export default function EventForm({
         return
       }
       const url = liderId ? '/api/inscricoes' : '/loja/api/inscricoes'
-      const [firstName, ...rest] = String(userData.nome || '').split(' ')
-      const base = {
-        user_first_name: firstName,
-        user_last_name: rest.join(' '),
-        user_email: userData.email,
-        user_phone: userData.telefone,
-        user_cpf: userData.cpf,
-        user_birth_date: String(userData.data_nascimento ?? '').split(' ')[0],
-        user_gender: form.genero || userData.genero,
-        user_cep: userData.cep,
-        user_address: userData.endereco,
-        user_neighborhood: userData.bairro,
-        user_state: userData.estado,
-        user_city: userData.cidade,
-        user_number: userData.numero,
-        campo: form.campoId,
-        evento: eventoId,
-        produtoId: form.produtoId,
-        tamanho: form.tamanho,
-        paymentMethod: form.paymentMethod,
-      }
-      const payload = liderId ? { ...base, liderId } : base
+      const payload = buildInscricaoPayload(userData, form, eventoId, liderId)
       const res = await fetch(url, {
         method: 'POST',
         headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },

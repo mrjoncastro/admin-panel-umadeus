@@ -110,7 +110,16 @@ describe('EventForm signup flow', () => {
     })
 
     const body = JSON.parse((fetchMock.mock.calls[3][1] as RequestInit).body as string)
-    expect(body.userId).toBe('u1')
+    expect(body).toEqual(
+      expect.objectContaining({
+        user_first_name: 'Fulano',
+        user_email: 'f@x.com',
+        campo: 'c1',
+        evento: 'ev1',
+        produtoId: 'p1',
+        paymentMethod: 'pix',
+      }),
+    )
 
     vi.useRealTimers()
   })
