@@ -9,7 +9,7 @@ export interface WizardStep {
 
 interface FormWizardProps {
   steps: WizardStep[]
-  onFinish?: () => void
+  onFinish?: () => void | Promise<void>
   className?: string
   loading?: boolean
   onStepValidate?: (index: number) => Promise<boolean> | boolean
@@ -53,7 +53,7 @@ export default function FormWizard({
         const ok = await onStepValidate(current)
         if (!ok) return
       }
-      if (isLast) onFinish?.()
+      if (isLast) await onFinish?.()
       else setCurrent((c) => Math.min(c + 1, steps.length - 1))
     } finally {
       setStepLoading(false)

@@ -239,9 +239,7 @@ export default function EventForm({
         return
       }
       showSuccess('Inscrição enviada com sucesso!')
-      setTimeout(() => {
-        router.push('/inscricoes/conclusao')
-      }, 500)
+      router.replace('/inscricoes/conclusao')
     } catch {
       showError('Erro ao enviar inscrição.')
     } finally {
