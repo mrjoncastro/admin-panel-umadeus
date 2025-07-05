@@ -1,7 +1,5 @@
-// Página pública - exibida após confirmação do formulário de inscrição
 import Link from 'next/link'
 
-// Página pública - exibida após concluir o formulário de inscrição
 export default function ConclusaoPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 via-white to-purple-200 px-6">
@@ -9,16 +7,14 @@ export default function ConclusaoPage() {
         <h1 className="text-3xl font-extrabold text-purple-700">
           🎉 Inscrição Concluída!
         </h1>
-
         <p className="text-gray-700 text-base leading-relaxed">
-          Sua inscrição foi realizada com sucesso. Em breve você receberá as
-          instruções de pagamento por e-mail.
+          Sua inscrição foi realizada com sucesso e está aguardando confirmação
+          da liderança. Assim que for aprovada, você receberá as instruções de
+          pagamento por e-mail.
         </p>
-
         <div className="text-sm text-gray-500">
-          Confira seu e-mail para mais detalhes.
+          Fique atento à sua caixa de entrada.
         </div>
-
         <div className="pt-4">
           <Link
             href="/login"
@@ -27,7 +23,6 @@ export default function ConclusaoPage() {
             Voltar para o início
           </Link>
         </div>
-
         <p className="text-xs text-gray-400 italic mt-6">
           #UMADEUS2025 — Juntos na missão 💜
         </p>
