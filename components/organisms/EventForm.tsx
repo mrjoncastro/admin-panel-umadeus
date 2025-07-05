@@ -12,6 +12,8 @@ import { fetchCep } from '@/utils/cep'
 import { isValidCPF, isValidEmail } from '@/utils/validators'
 import FormWizard from './FormWizard'
 import LoadingOverlay from './LoadingOverlay'
+import InscricoesTable from '@/app/cliente/components/InscricoesTable'
+import type { Inscricao } from '@/types'
 import {
   FormField,
   InputWithMask,
@@ -82,6 +84,8 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(true)
   const [fieldErrors, setFieldErrors] = useState<{ cpf?: string; email?: string }>({})
+  const [pendentes, setPendentes] = useState<Inscricao[]>([])
+  const [checouPendentes, setChecouPendentes] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -176,6 +180,38 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
       }))
     }
   }, [isLoggedIn, user])
+
+  useEffect(() => {
+    async function verificarPendentes() {
+      if (!isLoggedIn || !user) {
+        setChecouPendentes(true)
+        return
+      }
+      try {
+        const headers = getAuthHeaders(pb)
+        const res = await fetch(
+          `/api/inscricoes?status=pendente&evento=${eventoId}`,
+          { headers, credentials: 'include' },
+        )
+        if (res.ok) {
+          const data = await res.json()
+          const items = Array.isArray(data)
+            ? data
+            : Array.isArray(data.items)
+              ? (data.items as Inscricao[])
+              : []
+          setPendentes(items)
+        } else {
+          setPendentes([])
+        }
+      } catch {
+        setPendentes([])
+      } finally {
+        setChecouPendentes(true)
+      }
+    }
+    verificarPendentes()
+  }, [isLoggedIn, user, eventoId, pb])
 
   useEffect(() => {
     async function lookup() {
@@ -657,6 +693,12 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
 
   if (fetching) {
     return <LoadingOverlay show={true} text="Carregando..." />
+  }
+
+  if (checouPendentes && pendentes.length > 0) {
+    return (
+      <InscricoesTable inscricoes={pendentes} variant="details" />
+    )
   }
 
   return (
