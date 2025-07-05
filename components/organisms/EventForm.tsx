@@ -60,6 +60,8 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
     produtoId: '',
     tamanho: '',
     paymentMethod: 'pix',
+    email: '',
+    password: '',
   })
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(true)
@@ -198,6 +200,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
         user_phone: userData.telefone,
         user_cpf: userData.cpf,
         user_birth_date: String(userData.data_nascimento ?? '').split(' ')[0],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         user_gender: form.genero || (userData as any).genero,
         user_cep: userData.cep,
         user_address: userData.endereco,
