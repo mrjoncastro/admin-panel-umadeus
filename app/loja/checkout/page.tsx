@@ -101,7 +101,7 @@ function CheckoutContent() {
 
   useEffect(() => {
     if (!isLoggedIn) {
-      router.replace('/login?redirect=/loja/checkout')
+      router.replace('/login?redirectTo=/loja/checkout')
     }
   }, [isLoggedIn, router])
 
