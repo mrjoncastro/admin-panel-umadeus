@@ -523,3 +523,4 @@ executados.
 ## [2025-07-03] exportarPDF em Pedidos passa a buscar todas as paginas para gerar relatorio completo conforme filtros. Lint: ok - Build: falhou (erro de tipos)
 
 ## [2025-07-04] Rota /api/recuperar-link consulta inscricoes quando cobranca nao encontrada. Lint e build executados.
+## [2025-07-04] Documentadas rotas /recuperar e /api/recuperar-link, orientando criar inscricao quando nao houver cobranca. Lint: ok - Build: ok
