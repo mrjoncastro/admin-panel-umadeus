@@ -22,6 +22,7 @@ export default function InscricoesTable({
   const [inscricoes, setInscricoes] = useState<Inscricao[]>(
     inscricoesProp ?? [],
   )
+  const [erro, setErro] = useState(false)
 
   useEffect(() => {
     if (inscricoesProp) return
@@ -36,8 +37,12 @@ export default function InscricoesTable({
             ? (data.items as Inscricao[])
             : []
         setInscricoes(items.slice(0, limit ?? items.length))
+        setErro(false)
       })
-      .catch(() => setInscricoes([]))
+      .catch(() => {
+        setInscricoes([])
+        setErro(true)
+      })
   }, [authChecked, user, pb, limit, inscricoesProp])
 
   if (!authChecked) return null
@@ -45,6 +50,11 @@ export default function InscricoesTable({
   return (
     <div className="card">
       <h3 className="text-lg font-semibold mb-2">Inscrições</h3>
+      {erro && (
+        <p role="alert" className="mb-2 text-red-600">
+          Não foi possível carregar inscrições. Tente mais tarde.
+        </p>
+      )}
       <table className="table-base">
         <thead>
           {variant === 'details' ? (

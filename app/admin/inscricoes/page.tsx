@@ -171,7 +171,7 @@ export default function ListaInscricoesPage() {
 
         setInscricoes(lista)
       } catch {
-        showError('Erro ao carregar inscrições.')
+        showError('Não foi possível carregar inscrições. Tente mais tarde.')
       } finally {
         setLoading(false)
       }
