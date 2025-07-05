@@ -4,6 +4,8 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { vi } from 'vitest'
 import ListaInscricoesPage from '@/app/admin/inscricoes/page'
 
+const toast = { showError: vi.fn(), showSuccess: vi.fn() }
+
 vi.mock('@/lib/hooks/useAuthGuard', () => ({
   useAuthGuard: () => ({
     user: { id: 'u1', role: 'coordenador', cliente: 't1' },
@@ -12,7 +14,7 @@ vi.mock('@/lib/hooks/useAuthGuard', () => ({
 }))
 
 vi.mock('@/lib/context/ToastContext', () => ({
-  useToast: () => ({ showError: vi.fn(), showSuccess: vi.fn() }),
+  useToast: () => toast,
 }))
 
 vi.mock('@/app/admin/inscricoes/componentes/ModalEdit', () => ({
@@ -50,6 +52,21 @@ test('exibe titulo do evento na tabela', async () => {
 
   render(<ListaInscricoesPage />)
   expect(await screen.findByText('Congresso Teste')).toBeInTheDocument()
+})
+
+test('exibe erro quando falha carregamento', async () => {
+  global.fetch = vi
+    .fn()
+    .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve([]) })
+    .mockRejectedValueOnce(new Error('fail'))
+
+  render(<ListaInscricoesPage />)
+
+  await vi.waitFor(() => {
+    expect(toast.showError).toHaveBeenCalledWith(
+      'Não foi possível carregar inscrições. Tente mais tarde.',
+    )
+  })
 })
 
 test('envia paymentMethod e installments ao confirmar', async () => {
