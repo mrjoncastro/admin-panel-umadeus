@@ -533,3 +533,4 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 ## [2025-07-05] FormWizard aguarda onFinish assíncrono e EventForm redireciona após envio. Documentação atualizada. Lint e build executados.
 ## [2025-07-05] Signup aceita campo e gênero; valores pré-definidos são bloqueados. Lint e build executados.
 ## [2025-07-05] Payload de inscricao unificado e documentados campos de cada endpoint. Lint e build executados.
+## [2025-07-05] ConsultaInscricao preenche e bloqueia campos de CPF e email ao usuario logado. Lint e build executados.

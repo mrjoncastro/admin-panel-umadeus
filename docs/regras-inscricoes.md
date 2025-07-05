@@ -113,6 +113,9 @@ Ao concluir o login, o componente `LoginForm` lê o parâmetro `redirectTo` e
 executa `router.replace` para voltar à página indicada. Assim, o fluxo de
 inscrição continua exatamente de onde parou.
 
+Quando o usuário já está logado, os campos de CPF e e‑mail ficam preenchidos com
+os dados da conta e permanecem desabilitados para edição.
+
 A seguir é feita uma requisição para `/api/inscricoes/public` passando `cpf`,
 `email` e `evento`. As respostas definem o que será exibido:
 
