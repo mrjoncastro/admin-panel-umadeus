@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useAuthContext } from '@/lib/context/AuthContext'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import * as Dialog from '@radix-ui/react-dialog'
@@ -22,6 +23,7 @@ export default function ConsultaInscricao({
   liderId,
   inscricoesEncerradas,
 }: ConsultaInscricaoProps) {
+  const { user, isLoggedIn } = useAuthContext()
   const [cpf, setCpf] = useState('')
   const [email, setEmail] = useState('')
   const [errors, setErrors] = useState<{ cpf?: string; email?: string; geral?: string }>({})
@@ -54,12 +56,17 @@ export default function ConsultaInscricao({
     try {
       const cleanCpf = cpfVal.replace(/\D/g, '')
       const existsParams = new URLSearchParams({ cpf: cleanCpf, email: emailVal })
-      const existsRes = await fetch(`/api/usuarios/exists?${existsParams.toString()}`)
-      if (existsRes.ok) {
-        const data = await existsRes.json()
-        if (data.cpf || data.email) {
-          setShowLoginModal(true)
-          return
+      if (isLoggedIn && user) {
+        existsParams.append('excludeId', user.id)
+      }
+      if (!isLoggedIn || (isLoggedIn && user)) {
+        const existsRes = await fetch(`/api/usuarios/exists?${existsParams.toString()}`)
+        if (existsRes.ok) {
+          const data = await existsRes.json()
+          if (!isLoggedIn && (data.cpf || data.email)) {
+            setShowLoginModal(true)
+            return
+          }
         }
       }
 
@@ -76,7 +83,9 @@ export default function ConsultaInscricao({
         setShowWizard(false)
         setErrors({})
       } else if (res.status === 404) {
-        if (inscricoesEncerradas) {
+        if (isLoggedIn) {
+          setShowWizard(true)
+        } else if (inscricoesEncerradas) {
           setErrors({
             geral:
               'O período de inscrições foi encerrado e não há cadastro para as credenciais informadas.',
