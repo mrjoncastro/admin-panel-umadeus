@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { InscricaoWizard } from '@/components/organisms'
+import { ConsultaInscricao } from '@/components/organisms'
 
 export default function InscricaoPage() {
   // Extrai params apenas uma vez
@@ -18,6 +18,7 @@ export default function InscricaoPage() {
     titulo: string
     descricao: string
     imagem?: string
+    status?: string
   } | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -57,6 +58,8 @@ export default function InscricaoPage() {
     )
   }
 
+  const inscricoesEncerradas = evento.status === 'realizado'
+
   return (
     <main className="max-w-3xl mx-auto px-4 py-8">
       {evento.imagem && (
@@ -74,7 +77,11 @@ export default function InscricaoPage() {
       <p className="text-center text-gray-700 mb-10">{evento.descricao}</p>
 
       <section aria-label="Formulário de inscrição">
-        <InscricaoWizard liderId={liderId} eventoId={eventoId} />
+        <ConsultaInscricao
+          liderId={liderId}
+          eventoId={eventoId}
+          inscricoesEncerradas={inscricoesEncerradas}
+        />
       </section>
     </main>
   )

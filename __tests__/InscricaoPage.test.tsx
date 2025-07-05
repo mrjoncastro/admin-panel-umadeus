@@ -1,9 +1,8 @@
 /* @vitest-environment jsdom */
 import React from 'react'
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import InscricaoPage from '@/app/inscricoes/lider/[liderId]/evento/[eventoId]/page'
-import { calculateGross } from '@/lib/asaasFees'
 
 vi.mock('next/navigation', () => ({
   useParams: () => ({ liderId: 'lid1', eventoId: 'ev1' }),
@@ -20,46 +19,42 @@ vi.mock('@/lib/context/ToastContext', () => ({
 
 describe('InscricaoPage', () => {
   it('renderiza título do evento', async () => {
-    global.fetch = vi
-      .fn()
-      .mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve({ titulo: 'Evento X', descricao: 'Desc' }),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve({ campo: 'Campo' }),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve({ titulo: 'Evento X', descricao: 'Desc' }),
-      })
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ titulo: 'Evento X', descricao: 'Desc', status: 'em breve' }),
+    })
 
     render(<InscricaoPage />)
     const heading = await screen.findByRole('heading', { level: 1 })
     expect(heading.textContent).toContain('Evento X')
   })
 
-  it('exibe total calculado', async () => {
+  it('exibe wizard apos consulta sem resultado', async () => {
     global.fetch = vi
       .fn()
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ titulo: 'Evento', descricao: 'Desc' }),
+        json: () => Promise.resolve({ titulo: 'Evento', descricao: 'Desc', status: 'em breve' }),
+      })
+      .mockResolvedValueOnce({ status: 404 })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve([{ id: 'c1', nome: 'Campo 1' }]),
       })
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ campo: 'Campo' }),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve({ titulo: 'Evento', descricao: 'Desc' }),
+        json: () => Promise.resolve({ cobra_inscricao: false }),
       })
 
-    render(<InscricaoPage />)
-    const gross = calculateGross(50, 'pix', 1).gross
-    expect(
-      await screen.findByText(`R$ ${gross.toFixed(2).replace('.', ',')}`),
-    ).toBeInTheDocument()
+    const { container } = render(<InscricaoPage />)
+    fireEvent.change(await screen.findByLabelText(/cpf/i), {
+      target: { value: '52998224725' },
+    })
+    fireEvent.change(screen.getByLabelText(/e-mail/i), {
+      target: { value: 'x@y.com' },
+    })
+    fireEvent.submit(container.querySelector('form') as HTMLFormElement)
+
+    expect(await screen.findByLabelText(/nome/i)).toBeInTheDocument()
   })
 })
