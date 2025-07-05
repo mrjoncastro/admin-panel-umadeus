@@ -100,8 +100,16 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
         headers: { 'Content-Type': 'application/json' },
       })
 
+      const respData = await response.json()
+
       if (!response.ok) {
-        throw new Error('Falha ao salvar inscrição')
+        setStatus('error')
+        showError(
+          respData.error ||
+            respData.erro ||
+            'Erro ao enviar a inscrição. Tente novamente.',
+        )
+        return
       }
 
       setStatus('success')
@@ -112,10 +120,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
     } catch (err: unknown) {
       console.warn('Erro ao enviar inscrição:', err)
       setStatus('error')
-      const msg =
-        (err as { response?: { error?: string } })?.response?.error ||
-        'Erro ao enviar a inscrição. Tente novamente.'
-      showError(msg)
+      showError('Erro ao enviar a inscrição. Tente novamente.')
     }
   }
 
