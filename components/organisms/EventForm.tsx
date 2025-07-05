@@ -60,6 +60,8 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
     produtoId: '',
     tamanho: '',
     paymentMethod: 'pix',
+    email: '',
+    password: '',
   })
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(true)
