@@ -83,6 +83,32 @@ O pedido proveniente da inscrição traz o campo `canal` com valor `inscricao`, 
 [Gerar pedido + cobrança]       |             |
             |                 [Erro]   [Redirecionar para pagamento]
             v                               |
-  [Status do pedido: pendente → pago]       v
+[Status do pedido: pendente → pago]       v
                       [Fim]
 ```
+
+## Consulta e Redirecionamento
+
+Para evitar cadastros duplicados, a tela de consulta chama primeiro a rota
+`/api/usuarios/exists` enviando o **CPF** e o **e-mail** informados. Caso a API
+retorne que já existe usuário com esses dados e o visitante **não esteja logado**, um
+modal oferece o link de login:
+
+```
+/login?redirectTo=/inscricoes?evento=ID&cpf=CPF&email=EMAIL
+```
+
+Ao concluir o login, o componente `LoginForm` lê o parâmetro `redirectTo` e
+executa `router.replace` para voltar à página indicada. Assim, o fluxo de
+inscrição continua exatamente de onde parou.
+
+A seguir é feita uma requisição para `/api/inscricoes/public` passando `cpf`,
+`email` e `evento`. As respostas definem o que será exibido:
+
+1. **200 OK** – uma inscrição existente é retornada e seus dados aparecem na
+   tabela.
+2. **404 Not Found** – quando não há inscrição cadastrada. Se o usuário estiver
+   logado **ou** as inscrições ainda estiverem abertas, o componente `EventForm`
+   é mostrado para criar uma nova inscrição. Com o período encerrado, é exibida
+   uma mensagem informando que não é mais possível se inscrever.
+
