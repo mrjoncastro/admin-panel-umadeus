@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useRef } from 'react'
 import Image from 'next/image'
 import { useTenant } from '@/lib/context/TenantContext'
 import { useToast } from '@/lib/context/ToastContext'
@@ -13,7 +13,9 @@ import LoadingOverlay from './LoadingOverlay'
 import InscricoesTable from '@/app/cliente/components/InscricoesTable'
 import type { Inscricao } from '@/types'
 import { FormField } from '@/components'
-import CreateUserForm from '../templates/CreateUserForm'
+import CreateUserForm, {
+  type CreateUserFormHandle,
+} from '../templates/CreateUserForm'
 
 interface Produto {
   id: string
@@ -60,14 +62,13 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
     produtoId: '',
     tamanho: '',
     paymentMethod: 'pix',
-    email: '',
-    password: '',
   })
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(true)
   const [pendentes, setPendentes] = useState<Inscricao[]>([])
   const [checouPendentes, setChecouPendentes] = useState(false)
   const [signupDone, setSignupDone] = useState(isLoggedIn)
+  const createUserRef = useRef<CreateUserFormHandle>(null)
 
   useEffect(() => {
     async function fetchData() {
@@ -235,12 +236,26 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
       setLoading(false)
     }
   }
+  const handleStepValidate = async (index: number) => {
+    if (!signupDone && index === 0) {
+      const ok = await createUserRef.current?.submit()
+      return Boolean(ok)
+    }
+    return true
+  }
+
   const steps: { title: string; content: React.ReactNode }[] = []
 
   if (!signupDone) {
     steps.push({
-      title: "Criar Conta",
-      content: <CreateUserForm onSuccess={() => setSignupDone(true)} />,
+      title: 'Criar Conta',
+      content: (
+        <CreateUserForm
+          ref={createUserRef}
+          onSuccess={() => setSignupDone(true)}
+          showButton={false}
+        />
+      ),
     })
   } else {
     steps.push({
@@ -438,6 +453,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
       steps={steps}
       onFinish={handleSubmit}
       loading={loading}
+      onStepValidate={handleStepValidate}
       className="max-w-lg mx-auto bg-white p-6 rounded-xl shadow"
     />
   )

@@ -1,6 +1,12 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import {
+  useState,
+  useEffect,
+  useMemo,
+  forwardRef,
+  useImperativeHandle,
+} from 'react'
 import { fetchCep } from '@/utils/cep'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useToast } from '@/lib/context/ToastContext'
@@ -14,13 +20,21 @@ import {
   PasswordField,
 } from '@/components'
 
-export default function CreateUserForm({
-  onSuccess,
-  children,
-}: {
+export interface CreateUserFormHandle {
+  submit: () => Promise<boolean>
+}
+
+interface CreateUserFormProps {
   onSuccess?: () => void
   children?: React.ReactNode
-}) {
+  showButton?: boolean
+}
+
+const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
+  function CreateUserForm(
+    { onSuccess, children, showButton = true }: CreateUserFormProps,
+    ref,
+  ) {
   const { signUp } = useAuthContext()
   const pb = useMemo(() => createPocketBase(), [])
 
@@ -95,20 +109,19 @@ export default function CreateUserForm({
     if (cep.replace(/\D/g, '').length === 8) lookup()
   }, [cep, showError])
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
+  async function handleSubmit(): Promise<boolean> {
     if (senha.length < 8) {
       showError('A senha deve ter ao menos 8 caracteres.')
-      return
+      return false
     }
     if (senha !== senhaConfirm) {
       showError('As senhas não coincidem.')
-      return
+      return false
     }
 
     if (!campo) {
       showError('Selecione um campo.')
-      return
+      return false
     }
 
     setLoading(true)
@@ -131,17 +144,27 @@ export default function CreateUserForm({
       setTimeout(() => {
         onSuccess?.()
       }, 500)
+      return true
     } catch (err: unknown) {
       console.error('Erro no cadastro:', err)
       const message = err instanceof Error ? err.message : 'Não foi possível criar a conta.'
       showError(message)
+      return false
     } finally {
       setLoading(false)
     }
   }
 
+  useImperativeHandle(ref, () => ({ submit: handleSubmit }))
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        handleSubmit()
+      }}
+      className="space-y-6"
+    >
       <h2 className="text-2xl font-semibold text-center text-white">Criar Conta</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -305,25 +328,29 @@ export default function CreateUserForm({
         </FormField>
       </div>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className={`btn btn-primary w-full rounded-md py-2 text-white font-semibold ${
-          loading ? 'opacity-50' : ''
-        }`}
-      >
-        {loading ? (
-          <span className="flex items-center justify-center gap-2">
-            <Spinner className="w-4 h-4" /> Enviando...
-          </span>
-        ) : (
-          'Criar conta'
-        )}
-      </button>
+      {showButton && (
+        <button
+          type="submit"
+          disabled={loading}
+          className={`btn btn-primary w-full rounded-md py-2 text-white font-semibold ${
+            loading ? 'opacity-50' : ''
+          }`}
+        >
+          {loading ? (
+            <span className="flex items-center justify-center gap-2">
+              <Spinner className="w-4 h-4" /> Enviando...
+            </span>
+          ) : (
+            'Criar conta'
+          )}
+        </button>
+      )}
 
       {children && (
         <div className="text-sm text-gray-300 text-center mt-4">{children}</div>
       )}
     </form>
   )
-}
+)
+
+export default CreateUserForm
