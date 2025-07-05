@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { headers } from 'next/headers'
-import { InscricaoLojaWizard } from '@/components/organisms'
+import { ConsultaInscricao } from '@/components/organisms'
 import type { Evento } from '@/types'
 
 async function getEvento(id: string): Promise<Evento | null> {
@@ -36,6 +36,7 @@ export default async function EventoDetalhePage({
   }
 
   const inscricoesEncerradas = evento.status === 'realizado'
+  const eventoAberto = !inscricoesEncerradas
 
   return (
     <main className="px-4 py-10 md:px-16 space-y-6 font-sans">
@@ -53,7 +54,7 @@ export default async function EventoDetalhePage({
       {inscricoesEncerradas ? (
         <p className="text-center text-gray-500">Inscrições encerradas</p>
       ) : (
-        <InscricaoLojaWizard eventoId={id} />
+        <ConsultaInscricao eventoId={id} eventoAberto={eventoAberto} />
       )}
     </main>
   )
