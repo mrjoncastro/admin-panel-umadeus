@@ -1,11 +1,11 @@
 import { EventForm } from '@/components/organisms'
 
-export default async function CadastroViaLider({
+function CadastroViaLider({
   searchParams,
 }: {
-  searchParams: Promise<{ lider?: string; evento?: string }>
+  searchParams: { lider?: string; evento?: string }
 }) {
-  const { evento, lider } = await searchParams
+  const { evento, lider } = searchParams
 
   return (
     <main className="px-4 py-10 flex justify-center">
@@ -15,4 +15,8 @@ export default async function CadastroViaLider({
       </div>
     </main>
   )
-}
+} 
+
+export default CadastroViaLider as unknown as (
+  props: { searchParams?: Promise<unknown>; params?: Promise<unknown> }
+) => JSX.Element
