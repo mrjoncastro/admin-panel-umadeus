@@ -97,7 +97,7 @@ export default function ConsultaInscricao({
           </p>
         )}
         <Button type="submit" disabled={loading}>
-          Buscar
+          Avançar
         </Button>
       </form>
 
