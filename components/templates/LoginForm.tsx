@@ -28,13 +28,7 @@ export default function LoginForm({
   // Redirecionamento pós-login com verificação de sucesso
   useEffect(() => {
     if (!isLoading && isLoggedIn && user) {
-      const target = redirectTo
-        ? redirectTo
-        : user.role === 'coordenador'
-        ? '/admin/dashboard'
-        : user.role === 'lider'
-        ? '/admin/lider-painel'
-        : '/cliente/dashboard'
+      const target = redirectTo || '/'
 
       const prevUrl =
         typeof window !== 'undefined'
@@ -51,6 +45,8 @@ export default function LoginForm({
             'Não foi possível retomar a inscrição automaticamente.',
           )
           router.replace(`/inscricoes?evento=${eventoId}`)
+        } else {
+          router.replace('/')
         }
       }
 
