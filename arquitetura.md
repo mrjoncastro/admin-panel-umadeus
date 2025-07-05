@@ -31,6 +31,7 @@ Todas coexistem no mesmo projeto Next.js (App Router) hospedado na **Vercel**.
 │   ├── inscricoes/        # Listagem e gestão de inscrições
 │   ├── lider-painel/      # Painel exclusivo para lideranças locais
 │   ├── obrigado/          # Página de agradecimento
+│   ├── conclusao/         # Página exibida após concluir inscrição
 │   ├── pedidos/           # Gestão de pedidos vinculados à inscrição
 │   ├── pendente/          # Tela para inscrições pendentes
 │   ├── perfil/            # Tela de perfil do usuário logado
@@ -111,7 +112,7 @@ O arquivo `middleware.ts` intercepta cada requisição, consulta a coleção `cl
 
 - Rotas protegidas com `useAuthGuard` e validação de `role`
 - Algumas rotas de confirmação de inscrição são públicas:
-  `/admin/obrigado`, `/admin/pendente`, `/admin/erro`,
+  `/admin/obrigado`, `/admin/conclusao`, `/admin/pendente`, `/admin/erro`,
   `/auth/confirm-password-reset` e `/auth/confirm-password-reset/[token]`,
   além de `/admin/inscricoes/recuperar`
 - Layout persistente com navegação clara entre seções (dashboard, pedidos, etc)

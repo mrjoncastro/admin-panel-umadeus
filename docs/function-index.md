@@ -128,8 +128,8 @@ A página `/recuperar` usa a rota `/api/recuperar-link` para retornar o `link_pa
   - LiderDashboardPage
 - **app/admin/not-found.tsx**
   - NotFound
-- **app/admin/obrigado/page.tsx**
-  - ObrigadoPage
+  - **app/admin/conclusao/page.tsx**
+    - ConclusaoPage
 - **app/admin/page.tsx**
   - AdminIndex
 - **app/admin/pedidos/componentes/ModalEditarPedido.tsx**
@@ -280,8 +280,8 @@ A página `/recuperar` usa a rota `/api/recuperar-link` para retornar o `link_pa
   - InscricaoPage
 - **app/inscricoes/[liderId]/page.tsx**
   - EscolherEventoPage
-- **app/inscricoes/obrigado/page.tsx**
-  - ObrigadoPage
+  - **app/inscricoes/conclusao/page.tsx**
+    - ConclusaoPage
 - **app/layout.tsx**
   - metadata
   - RootLayout

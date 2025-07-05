@@ -364,7 +364,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
       }
       showSuccess('Inscrição enviada com sucesso!')
       setTimeout(() => {
-        router.push('/inscricoes/obrigado')
+        router.push('/inscricoes/conclusao')
       }, 500)
     } catch {
       showError('Erro ao enviar inscrição.')
