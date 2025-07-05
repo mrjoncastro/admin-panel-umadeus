@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import * as Dialog from '@radix-ui/react-dialog'
@@ -30,20 +30,9 @@ export default function ConsultaInscricao({
   const [showWizard, setShowWizard] = useState(false)
   const [showLoginModal, setShowLoginModal] = useState(false)
   const searchParams = useSearchParams()
+  const autoQueried = useRef(false)
 
-  useEffect(() => {
-    const eventoParam = searchParams.get('evento')
-    const cpfParam = searchParams.get('cpf')
-    const emailParam = searchParams.get('email')
-    if (eventoParam === eventoId && cpfParam && emailParam) {
-      setCpf(cpfParam)
-      setEmail(emailParam)
-      submitConsulta(cpfParam, emailParam)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eventoId, searchParams])
-
-  async function submitConsulta(cpfVal: string, emailVal: string) {
+  const submitConsulta = useCallback(async (cpfVal: string, emailVal: string) => {
     const errs: { cpf?: string; email?: string } = {}
     if (!isValidCPF(cpfVal)) errs.cpf = 'CPF inválido'
     if (!isValidEmail(emailVal)) errs.email = 'E-mail inválido'
@@ -95,7 +84,23 @@ export default function ConsultaInscricao({
     } finally {
       setLoading(false)
     }
-  }
+  }, [eventoId, inscricoesEncerradas])
+
+  useEffect(() => {
+    if (autoQueried.current || loading || inscricao || errors.cpf || errors.email) {
+      return
+    }
+
+    const eventoParam = searchParams.get('evento')
+    const cpfParam = searchParams.get('cpf')
+    const emailParam = searchParams.get('email')
+    if (eventoParam === eventoId && cpfParam && emailParam) {
+      setCpf(cpfParam)
+      setEmail(emailParam)
+      autoQueried.current = true
+      submitConsulta(cpfParam, emailParam)
+    }
+  }, [eventoId, searchParams, loading, inscricao, errors, submitConsulta])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
