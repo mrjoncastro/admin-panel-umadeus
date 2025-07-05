@@ -111,6 +111,8 @@ A seguir é feita uma requisição para `/api/inscricoes/public` passando `cpf`,
    tabela.
 2. **404 Not Found** – quando não há inscrição cadastrada. Se o usuário estiver
    logado **ou** as inscrições ainda estiverem abertas, o componente `EventForm`
-   é mostrado para criar uma nova inscrição. Com o período encerrado, é exibida
-   uma mensagem informando que não é mais possível se inscrever.
+   é mostrado para criar uma nova inscrição. Ao abrir, o CPF e o e‑mail
+   digitados na consulta são repassados ao formulário, poupando o usuário de
+   redigitar essas informações. Com o período encerrado, é exibida uma mensagem
+   informando que não é mais possível se inscrever.
 

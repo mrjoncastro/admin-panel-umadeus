@@ -529,3 +529,4 @@ executados.
 ## [2025-07-05] Documentado ajuste de rate limit da rota publica. Lint e build executados.
 ## [2025-07-05] EventForm passa a logar automaticamente o novo usuário após POST
 na rota /loja/api/inscricoes e documentação atualizada. Lint e build executados.
+## [2025-07-05] EventForm preenche CPF e email da etapa anterior

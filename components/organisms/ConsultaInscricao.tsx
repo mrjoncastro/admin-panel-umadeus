@@ -135,7 +135,14 @@ export default function ConsultaInscricao({
   }
 
   if (showWizard) {
-    return <EventForm eventoId={eventoId} liderId={liderId} />
+    return (
+      <EventForm
+        eventoId={eventoId}
+        liderId={liderId}
+        initialCpf={cpf}
+        initialEmail={email}
+      />
+    )
   }
 
   return (
