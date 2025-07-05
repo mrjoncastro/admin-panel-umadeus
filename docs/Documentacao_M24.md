@@ -455,6 +455,7 @@ Para cada coleção, utilize a seguinte estrutura:
 - **Índices**: único em `cpf`.
 - **Validações**: formatos de dados e valores obrigatórios.
 - **Webhooks**: cobrança, aprovação e cancelamento.
+- O valor `credito` no campo `paymentMethod` é aceito, mas tratado como `pix` para compatibilidade.
 
 ---
 

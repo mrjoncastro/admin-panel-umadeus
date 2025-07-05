@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const {
+  const {
       pedidoId,
       valorBruto,
       paymentMethod,
@@ -63,6 +63,9 @@ export async function POST(req: NextRequest) {
       installments,
     })
 
+    const normalizedPaymentMethod: PaymentMethod =
+      paymentMethod?.toLowerCase() === 'credito' ? 'pix' : paymentMethod
+
     if (!pedidoId || valorBruto === undefined || valorBruto === null) {
       console.log('🔴 [POST /api/asaas] pedidoId e valorBruto são obrigatórios')
       return NextResponse.json(
@@ -80,10 +83,10 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    if (paymentMethod !== 'pix' && paymentMethod !== 'boleto') {
+    if (normalizedPaymentMethod !== 'pix' && normalizedPaymentMethod !== 'boleto') {
       console.log(
         '🔴 [POST /api/asaas] Forma de pagamento inválida:',
-        paymentMethod,
+        normalizedPaymentMethod,
       )
       return NextResponse.json(
         { error: 'Forma de pagamento inválida' },
@@ -235,12 +238,12 @@ export async function POST(req: NextRequest) {
     // Payload de pagamento
     const { gross, margin } = calculateGross(
       parsedValor,
-      paymentMethod as PaymentMethod,
+      normalizedPaymentMethod as PaymentMethod,
       installments,
     )
     console.log('💰 gross:', gross, 'margin:', margin)
 
-    const billingType = toAsaasBilling(paymentMethod as PaymentMethod)
+    const billingType = toAsaasBilling(normalizedPaymentMethod as PaymentMethod)
     if (!['PIX', 'BOLETO'].includes(billingType)) {
       console.log(
         '🔴 [POST /api/asaas] Forma de pagamento inválida:',
@@ -315,7 +318,7 @@ export async function POST(req: NextRequest) {
       valorBruto: gross,
       taxaAplicada,
       margemPlataforma: margin,
-      formaPagamento: paymentMethod,
+      formaPagamento: normalizedPaymentMethod,
       parcelas: installments,
       vencimento: dueDateISO,
       ...(asaasId ? { id_asaas: asaasId } : {}),

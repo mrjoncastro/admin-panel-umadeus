@@ -239,3 +239,4 @@
 ## [2025-07-02] Webhook Asaas nao usa mais NEXT_PUBLIC_SITE_URL; host obtido do tenant - dev - fcee1eaf7bdf79c55c4c019c94e5c91d38117490
 ## [2025-07-02] getTenantHost retornava dominio sem protocolo, causando erros de redirecionamento - dev - 3d2de08d
 ## [2025-07-05] Validação de paymentMethod na rota Asaas - dev - 83c8b653
+## [2025-07-05] Forma de pagamento 'Credito' mapeada para pix nas rotas - dev - 10307d3
