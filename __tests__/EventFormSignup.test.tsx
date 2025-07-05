@@ -10,8 +10,9 @@ vi.mock('next/image', () => ({
 }))
 
 const push = vi.fn()
+const replace = vi.fn()
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ push }),
+  useRouter: () => ({ push, replace }),
 }))
 
 vi.mock('@/lib/context/TenantContext', () => ({
@@ -109,6 +110,57 @@ describe('EventForm signup flow', () => {
 
     const body = JSON.parse((fetchMock.mock.calls[3][1] as RequestInit).body as string)
     expect(body.userId).toBe('u1')
+
+    vi.useRealTimers()
+  })
+
+  it('redireciona para conclusao apos envio com sucesso', async () => {
+    vi.useFakeTimers()
+    const fetchMock = vi.fn()
+    global.fetch = fetchMock as unknown as typeof fetch
+    fetchMock
+      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve([{ id: 'c1', nome: 'Campo 1' }]) })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ expand: { produto_inscricao: { id: 'p1', nome: 'Prod 1' } }, cobra_inscricao: false }),
+      })
+      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve([]) })
+      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) })
+
+    currentUser = {
+      id: 'u1',
+      nome: 'Fulano',
+      email: 'f@x.com',
+      telefone: '11999999999',
+      cpf: '52998224725',
+      data_nascimento: '2000-01-01',
+      genero: 'masculino',
+      cep: '12345678',
+      endereco: 'Rua A',
+      numero: '10',
+      bairro: 'Centro',
+      estado: 'SP',
+      cidade: 'São Paulo',
+    }
+
+    const { container } = render(<EventForm eventoId="ev1" />)
+
+    fireEvent.change(await screen.findByLabelText(/gênero/i), { target: { value: 'masculino' } })
+    fireEvent.click(screen.getByText(/avançar/i))
+
+    fireEvent.change(await screen.findByLabelText(/campo/i), { target: { value: 'c1' } })
+    fireEvent.click(screen.getByText(/avançar/i))
+
+    fireEvent.click(await screen.findByRole('button', { name: /prod 1/i }))
+    fireEvent.click(screen.getByText(/avançar/i))
+
+    fireEvent.click(container.querySelector('input[type="checkbox"]') as HTMLInputElement)
+    fireEvent.click(screen.getByText(/concluir/i))
+
+    await vi.waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(4)
+    })
+    expect(replace).toHaveBeenCalledWith('/inscricoes/conclusao')
 
     vi.useRealTimers()
   })

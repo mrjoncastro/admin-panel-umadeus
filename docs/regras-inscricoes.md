@@ -25,6 +25,7 @@ Este documento descreve como cada perfil acessa as inscri\u00e7\u00f5es, o proce
    - Caso contrário, cria usuário e vincula o ID à inscrição.
 6. Quando a inscrição é enviada pela rota `/loja/api/inscricoes`, o sistema
    efetua o login automaticamente caso o usuário ainda não esteja autenticado.
+7. Após a confirmação bem-sucedida, o usuário é redirecionado para `/inscricoes/conclusao`.
 
 ## Par\u00e2metros da API
 
