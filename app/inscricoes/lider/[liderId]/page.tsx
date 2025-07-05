@@ -91,12 +91,18 @@ export default function EscolherEventoPage() {
                 </p>
                 <p className="text-sm text-gray-500 mt-2">{evento.cidade}</p>
 
-                <Link
-                  href={`/inscricoes/lider/${liderId}/evento/${evento.id}`}
-                  className="btn btn-primary mt-auto"
-                >
-                  Inscrever
-                </Link>
+                {evento.status === 'realizado' ? (
+                  <span className="mt-auto text-sm text-gray-500">
+                    Inscrições encerradas
+                  </span>
+                ) : (
+                  <Link
+                    href={`/inscricoes/lider/${liderId}/evento/${evento.id}`}
+                    className="btn btn-primary mt-auto"
+                  >
+                    Inscrever
+                  </Link>
+                )}
               </div>
             </article>
           ))}

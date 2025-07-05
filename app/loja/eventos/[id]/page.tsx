@@ -1,13 +1,7 @@
 import Image from 'next/image'
 import { headers } from 'next/headers'
 import { InscricaoLojaWizard } from '@/components/organisms'
-
-interface Evento {
-  id: string
-  titulo: string
-  descricao: string
-  imagem?: string
-}
+import type { Evento } from '@/types'
 
 async function getEvento(id: string): Promise<Evento | null> {
   try {
@@ -41,6 +35,8 @@ export default async function EventoDetalhePage({
     )
   }
 
+  const inscricoesEncerradas = evento.status === 'realizado'
+
   return (
     <main className="px-4 py-10 md:px-16 space-y-6 font-sans">
       {evento.imagem && (
@@ -54,7 +50,11 @@ export default async function EventoDetalhePage({
       )}
       <h1 className="text-2xl text-center font-bold">{evento.titulo}</h1>
       <p className="text-center">{evento.descricao}</p>
-      <InscricaoLojaWizard eventoId={id} />
+      {inscricoesEncerradas ? (
+        <p className="text-center text-gray-500">Inscrições encerradas</p>
+      ) : (
+        <InscricaoLojaWizard eventoId={id} />
+      )}
     </main>
   )
 }
