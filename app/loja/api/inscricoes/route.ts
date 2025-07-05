@@ -139,7 +139,10 @@ export async function POST(req: NextRequest) {
     const base = req.nextUrl?.origin || req.headers.get('origin')
     if (!base) {
       console.error('Base URL não encontrada para envio de notificações')
-      return
+      return NextResponse.json(
+        { error: 'Base URL não encontrada' },
+        { status: 500 },
+      )
     }
 
     let liderId: string | undefined
