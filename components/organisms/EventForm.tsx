@@ -198,7 +198,7 @@ export default function EventForm({ eventoId, liderId }: EventFormProps) {
         user_phone: userData.telefone,
         user_cpf: userData.cpf,
         user_birth_date: String(userData.data_nascimento ?? '').split(' ')[0],
-        user_gender: form.genero || (userData as any).genero,
+        user_gender: form.genero || userData.genero,
         user_cep: userData.cep,
         user_address: userData.endereco,
         user_neighborhood: userData.bairro,

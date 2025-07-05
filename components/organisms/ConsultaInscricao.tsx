@@ -104,7 +104,7 @@ export default function ConsultaInscricao({
         setLoading(false)
       }
     },
-    [eventoId, inscricoesEncerradas],
+    [eventoId, inscricoesEncerradas, isLoggedIn, user],
   )
 
   useEffect(() => {
