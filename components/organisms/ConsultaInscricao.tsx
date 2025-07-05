@@ -35,8 +35,12 @@ export default function ConsultaInscricao({
 
     setLoading(true)
     try {
-      const query = new URLSearchParams({ cpf: cpf.replace(/\D/g, ''), email })
-      const res = await fetch(`/api/inscricoes?${query.toString()}`)
+      const query = new URLSearchParams({
+        cpf: cpf.replace(/\D/g, ''),
+        email,
+        evento: eventoId,
+      })
+      const res = await fetch(`/api/inscricoes/public?${query.toString()}`)
       if (res.status === 200) {
         const data = await res.json()
         const item = Array.isArray(data) ? data[0] : data
