@@ -431,10 +431,21 @@ export default function EventForm({
           <span className="font-medium">Nome:</span> {user?.nome}
         </p>
         <p>
+          <span className="font-medium">Telefone:</span> {user?.telefone}
+        </p>
+        <p>
           <span className="font-medium">CPF:</span> {user?.cpf}
         </p>
         <p>
           <span className="font-medium">E-mail:</span> {user?.email}
+        </p>
+        <p>
+          <span className="font-medium">Data de Nascimento:</span>{' '}
+          {user?.data_nascimento}
+        </p>
+        <p>
+          <span className="font-medium">Gênero:</span>{' '}
+          {form.genero || user?.genero}
         </p>
         <p>
           <span className="font-medium">Campo:</span>{' '}
