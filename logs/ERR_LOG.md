@@ -245,3 +245,8 @@
 ## [2025-07-05] Login falhava sem redirectTo; fallback para '/' implementado - dev - 75187664
 
 ## [2025-07-05] Removida chamada de login com campos inexistentes apos refatoracao do CreateUserForm; erro de compilacao resolvido - dev - ea109718f369e58f51b00b3994a51ea16c9bee64
+## [2025-07-06] Erro "Todos os campos obrigatórios" ao enviar inscrição sem dados completos. Etapa de revisão agora exibe telefone, nascimento e gênero antes de concluir - dev - 3b2d91f4
+## [2025-07-06] Validação de dados ausentes na etapa de revisão impede erro de campos obrigatórios - dev - 8fd176cd
+## [2025-07-06] Revisão checa todos os campos obrigatórios para evitar erro de envio - dev - 66769d90
+## [2025-07-06] Etapa de revisão exibe ícone de edição para ajustar dados antes do envio - dev - 6d8ffadc
+## [2025-07-06] Revisão inclui endereço completo e valida ausência antes do envio - dev - 3968f02f

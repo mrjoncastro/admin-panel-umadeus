@@ -9,6 +9,9 @@ import { useAuthContext } from '@/lib/context/AuthContext'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { buildInscricaoPayload } from '@/utils/buildInscricaoPayload'
+import ModalEditarPerfil from '@/app/admin/perfil/components/ModalEditarPerfil'
+import { Pencil } from 'lucide-react'
+import type { UserModel } from '@/types/UserModel'
 import FormWizard from './FormWizard'
 import LoadingOverlay from './LoadingOverlay'
 import InscricoesTable from '@/app/cliente/components/InscricoesTable'
@@ -59,6 +62,8 @@ export default function EventForm({
   const router = useRouter()
   const searchParams = useSearchParams()
   const { isLoggedIn, user } = useAuthContext()
+  const [userData, setUserData] = useState<UserModel | null>(user)
+  const [showEditPerfil, setShowEditPerfil] = useState(false)
   const pb = useMemo(() => createPocketBase(), [])
   const [campoNome, setCampoNome] = useState('')
   const [campos, setCampos] = useState<Campo[]>([])
@@ -79,11 +84,15 @@ export default function EventForm({
   const createUserRef = useRef<CreateUserFormHandle>(null)
 
   useEffect(() => {
-    const campo = searchParams.get('campo') || user?.campo
+    setUserData(user)
+  }, [user])
+
+  useEffect(() => {
+    const campo = searchParams.get('campo') || userData?.campo
     if (campo && !form.campoId) {
       setForm((prev) => ({ ...prev, campoId: campo }))
     }
-  }, [searchParams, user, form.campoId])
+  }, [searchParams, userData, form.campoId])
 
   useEffect(() => {
     async function fetchData() {
@@ -207,14 +216,14 @@ export default function EventForm({
   const handleSubmit = async () => {
     setLoading(true)
     try {
-      const userData = user
-      if (!userData) {
+      const current = userData
+      if (!current) {
         showError('Usuário não autenticado.')
         setLoading(false)
         return
       }
       const url = liderId ? '/api/inscricoes' : '/loja/api/inscricoes'
-      const payload = buildInscricaoPayload(userData, form, eventoId, liderId)
+      const payload = buildInscricaoPayload(current, form, eventoId, liderId)
       const res = await fetch(url, {
         method: 'POST',
         headers: { ...getAuthHeaders(pb), 'Content-Type': 'application/json' },
@@ -239,6 +248,35 @@ export default function EventForm({
       const ok = await createUserRef.current?.submit()
       return Boolean(ok)
     }
+
+    const reviewStepIndex = steps.length - 2
+    if (index === reviewStepIndex) {
+      const missing: string[] = []
+      if (!userData?.nome) missing.push('nome')
+      if (!userData?.email) missing.push('email')
+      if (!userData?.telefone) missing.push('telefone')
+      if (!userData?.cpf) missing.push('cpf')
+      if (!userData?.data_nascimento) missing.push('data de nascimento')
+      if (!userData?.genero && !form.genero) missing.push('gênero')
+      if (!userData?.endereco) missing.push("endereço")
+      if (!userData?.numero) missing.push("numero")
+      if (!userData?.bairro) missing.push("bairro")
+      if (!userData?.cidade) missing.push("cidade")
+      if (!userData?.estado) missing.push("estado")
+      if (!userData?.cep) missing.push("CEP")
+      if (!form.campoId && !userData?.campo) missing.push('campo')
+      if (!form.produtoId) missing.push('produto')
+      const produto = produtos.find((p) => p.id === form.produtoId)
+      if (produto?.tamanhos?.length && !form.tamanho) missing.push('tamanho')
+      if (cobraInscricao && !form.paymentMethod) missing.push('forma de pagamento')
+      if (missing.length > 0) {
+        showError(
+          `Atualize seu perfil: faltam ${missing.join(', ')} antes de prosseguir.`,
+        )
+        return false
+      }
+    }
+
     return true
   }
 
@@ -258,7 +296,7 @@ export default function EventForm({
         />
       ),
     })
-  } else if (!user?.genero) {
+  } else if (!userData?.genero) {
     steps.push({
       title: "Informações Adicionais",
       content: (
@@ -427,20 +465,53 @@ export default function EventForm({
     title: 'Revisão',
     content: (
       <div className="space-y-2 text-sm">
+        <button
+          type="button"
+          onClick={() => setShowEditPerfil(true)}
+          className="flex items-center gap-1 text-blue-600 hover:underline mb-1"
+        >
+          <Pencil className="w-4 h-4" /> Editar dados
+        </button>
         <p>
-          <span className="font-medium">Nome:</span> {user?.nome}
+          <span className="font-medium">Nome:</span> {userData?.nome}
         </p>
         <p>
-          <span className="font-medium">CPF:</span> {user?.cpf}
+          <span className="font-medium">Telefone:</span> {userData?.telefone}
         </p>
         <p>
-          <span className="font-medium">E-mail:</span> {user?.email}
+          <span className="font-medium">CPF:</span> {userData?.cpf}
+        </p>
+        <p>
+          <span className="font-medium">E-mail:</span> {userData?.email}
+        </p>
+        <p>
+          <span className="font-medium">Data de Nascimento:</span>{' '}
+          {userData?.data_nascimento}
+        </p>
+        <p>
+          <span className="font-medium">Endereço:</span> {userData?.endereco}, {userData?.numero}
+        </p>
+        <p>
+          <span className="font-medium">Bairro:</span> {userData?.bairro}
+        </p>
+        <p>
+          <span className="font-medium">Cidade:</span> {userData?.cidade}
+        </p>
+        <p>
+          <span className="font-medium">Estado:</span> {userData?.estado}
+        </p>
+        <p>
+          <span className="font-medium">CEP:</span> {userData?.cep}
+        </p>
+        <p>
+          <span className="font-medium">Gênero:</span>{' '}
+          {form.genero || userData?.genero}
         </p>
         <p>
           <span className="font-medium">Campo:</span>{' '}
           {campoNome ||
             campos.find((c) => c.id === form.campoId)?.nome ||
-            user?.campo}
+            userData?.campo}
         </p>
         <p>
           <span className="font-medium">Produto/Tamanho:</span>{' '}
@@ -484,12 +555,23 @@ export default function EventForm({
   }
 
   return (
-    <FormWizard
-      steps={steps}
-      onFinish={handleSubmit}
-      loading={loading}
-      onStepValidate={handleStepValidate}
-      className="max-w-lg mx-auto bg-white p-6 rounded-xl shadow"
-    />
+    <>
+      <FormWizard
+        steps={steps}
+        onFinish={handleSubmit}
+        loading={loading}
+        onStepValidate={handleStepValidate}
+        className="max-w-lg mx-auto bg-white p-6 rounded-xl shadow"
+      />
+      {showEditPerfil && (
+        <ModalEditarPerfil
+          onClose={() => {
+            setShowEditPerfil(false)
+            const model = pb.authStore.model as unknown as UserModel
+            setUserData(model)
+          }}
+        />
+      )}
+    </>
   )
 }
