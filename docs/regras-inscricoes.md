@@ -57,8 +57,9 @@ As etapas são:
 2. Endereço
 3. Campo de Atuação
 4. Produto Vinculado
-5. Forma de Pagamento (exibida apenas quando `confirmaInscricoes` está desativado)
-6. Confirmação final do envio
+5. Revisão
+6. Forma de Pagamento (exibida apenas quando `confirmaInscricoes` está desativado)
+7. Confirmação final do envio
 
 ## Geração de Pedidos
 

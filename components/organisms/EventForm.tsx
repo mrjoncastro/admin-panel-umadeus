@@ -424,6 +424,40 @@ export default function EventForm({
   }
 
   steps.push({
+    title: 'Revisão',
+    content: (
+      <div className="space-y-2 text-sm">
+        <p>
+          <span className="font-medium">Nome:</span> {user?.nome}
+        </p>
+        <p>
+          <span className="font-medium">CPF:</span> {user?.cpf}
+        </p>
+        <p>
+          <span className="font-medium">E-mail:</span> {user?.email}
+        </p>
+        <p>
+          <span className="font-medium">Campo:</span>{' '}
+          {campoNome ||
+            campos.find((c) => c.id === form.campoId)?.nome ||
+            user?.campo}
+        </p>
+        <p>
+          <span className="font-medium">Produto/Tamanho:</span>{' '}
+          {produtos.find((p) => p.id === form.produtoId)?.nome}
+          {form.tamanho ? ` - ${form.tamanho}` : ''}
+        </p>
+        {cobraInscricao && (
+          <p>
+            <span className="font-medium">Forma de Pagamento:</span>{' '}
+            {form.paymentMethod === 'pix' ? 'Pix' : 'Boleto'}
+          </p>
+        )}
+      </div>
+    ),
+  })
+
+  steps.push({
     title: 'Confirmação',
     content: (
       <div className="space-y-4">
