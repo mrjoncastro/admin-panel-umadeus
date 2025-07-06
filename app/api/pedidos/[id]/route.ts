@@ -92,13 +92,16 @@ export async function PATCH(req: NextRequest) {
       )
     }
     const data = await req.json()
-    const updated = await pb.collection('pedidos').update(id, {
+    const updateData: Record<string, unknown> = {
       ...(data.produto !== undefined ? { produto: String(data.produto) } : {}),
       ...(data.email !== undefined ? { email: String(data.email) } : {}),
       ...(data.tamanho !== undefined ? { tamanho: String(data.tamanho) } : {}),
       ...(data.cor !== undefined ? { cor: String(data.cor) } : {}),
-      ...(data.status !== undefined ? { status: String(data.status) } : {}),
-    })
+    }
+    if (user.role !== 'lider' && data.status !== undefined) {
+      updateData.status = String(data.status)
+    }
+    const updated = await pb.collection('pedidos').update(id, updateData)
     return NextResponse.json(updated)
   } catch (err) {
     console.error('Erro ao atualizar pedido:', err)

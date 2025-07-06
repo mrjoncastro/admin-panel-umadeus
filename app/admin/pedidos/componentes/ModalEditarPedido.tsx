@@ -7,9 +7,16 @@ type Props = {
   pedido: Pedido
   onClose: () => void
   onSave: (dadosAtualizados: Partial<Pedido>) => void
+  /** Quando true, o campo status fica somente leitura */
+  disableStatus?: boolean
 }
 
-export default function ModalEditarPedido({ pedido, onClose, onSave }: Props) {
+export default function ModalEditarPedido({
+  pedido,
+  onClose,
+  onSave,
+  disableStatus,
+}: Props) {
   const [formState, setFormState] = useState<Partial<Pedido>>({
     produto: pedido.produto,
     email: pedido.email,
@@ -30,7 +37,8 @@ export default function ModalEditarPedido({ pedido, onClose, onSave }: Props) {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    onSave(formState)
+    const { status, ...rest } = formState
+    onSave(disableStatus ? rest : formState)
   }
 
   return (
@@ -71,6 +79,7 @@ export default function ModalEditarPedido({ pedido, onClose, onSave }: Props) {
             label="Status"
             value={formState.status || ''}
             onChange={handleChange}
+            disabled={disableStatus}
           >
             <option value="pendente">Pendente</option>
             <option value="pago">Pago</option>
@@ -128,9 +137,10 @@ type SelectProps = {
   value: string
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
   children: React.ReactNode
+  disabled?: boolean
 }
 
-function Select({ name, label, value, onChange, children }: SelectProps) {
+function Select({ name, label, value, onChange, children, disabled }: SelectProps) {
   return (
     <div>
       <label htmlFor={name} className="text-sm font-medium block mb-1">
@@ -142,6 +152,7 @@ function Select({ name, label, value, onChange, children }: SelectProps) {
         value={value}
         onChange={onChange}
         className="w-full p-2 border rounded"
+        disabled={disabled}
       >
         {children}
       </select>

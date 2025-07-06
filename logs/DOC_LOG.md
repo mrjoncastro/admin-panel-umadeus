@@ -537,3 +537,4 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 ## [2025-07-05] ConsultaInscricao prioriza dados do usuário autenticado ao ler parametros de consulta. Documentação atualizada. Lint e build executados.
 ## [2025-07-06] Adicionada etapa de Revisão no EventForm e documentação atualizada. Lint e build executados.
 ## [2025-07-06] Adicionada nota sobre necessidade de logout para cadastrar outra pessoa em docs/regras-inscricoes.md. Lint e build executados.
+## [2025-07-06] Líder não pode alterar status ao editar inscrição ou pedido. Documentação atualizada.
