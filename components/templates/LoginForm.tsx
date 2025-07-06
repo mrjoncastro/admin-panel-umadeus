@@ -41,9 +41,7 @@ export default function LoginForm({
       const handleFail = () => {
         if (eventoId) {
           logout().catch(() => {})
-          showError(
-            'Não foi possível retomar a inscrição automaticamente.',
-          )
+          showError('Não foi possível retomar a inscrição automaticamente.')
           router.replace(`/inscricoes?evento=${eventoId}`)
         } else {
           router.replace('/')

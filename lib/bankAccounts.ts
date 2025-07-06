@@ -56,9 +56,7 @@ export async function createBankAccount(
     usuario: userId,
     cliente: clienteId,
   }
-  return pbRetry(() =>
-    pb.collection('clientes_contas_bancarias').create(data),
-  )
+  return pbRetry(() => pb.collection('clientes_contas_bancarias').create(data))
 }
 
 export interface PixKey {
@@ -93,10 +91,13 @@ export async function getPixKeysByTenant(
   pb: PocketBase,
   tenantId: string,
 ): Promise<PixKeyRecord[]> {
-  return pbRetry(() =>
-    pb
-      .collection('clientes_pix')
-      .getFullList({ filter: `cliente='${tenantId}'` }) as Promise<PixKeyRecord[]>,
+  return pbRetry(
+    () =>
+      pb
+        .collection('clientes_pix')
+        .getFullList({ filter: `cliente='${tenantId}'` }) as Promise<
+        PixKeyRecord[]
+      >,
   )
 }
 
@@ -104,12 +105,13 @@ export async function getBankAccountsByTenant(
   pb: PocketBase,
   tenantId: string,
 ): Promise<ClienteContaBancariaRecord[]> {
-  return pbRetry(() =>
-    pb
-      .collection('clientes_contas_bancarias')
-      .getFullList({ filter: `cliente='${tenantId}'` }) as Promise<
-      ClienteContaBancariaRecord[]
-    >,
+  return pbRetry(
+    () =>
+      pb
+        .collection('clientes_contas_bancarias')
+        .getFullList({ filter: `cliente='${tenantId}'` }) as Promise<
+        ClienteContaBancariaRecord[]
+      >,
   )
 }
 

@@ -72,7 +72,8 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json(
         {
-          error: 'Inscrição não encontrada. Crie a inscrição para receber o link.',
+          error:
+            'Inscrição não encontrada. Crie a inscrição para receber o link.',
         },
         { status: 404 },
       )

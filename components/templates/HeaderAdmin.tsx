@@ -499,7 +499,7 @@ export default function Header() {
                 <span className="mt-2 text-xs uppercase font-semibold opacity-70">
                   Administração
                 </span>
-                {gerenciamentoLinks.map(({ href, label }) => (
+                {gerenciamentoLinks.map(({ href, label }) =>
                   href === '/admin/whatsapp' ? (
                     <Link
                       key={href}
@@ -518,8 +518,8 @@ export default function Header() {
                     >
                       {label}
                     </Link>
-                  )
-                ))}
+                  ),
+                )}
               </>
             )}
 

@@ -141,9 +141,13 @@ describe('POST /loja/api/inscricoes', () => {
       'http://test/api/chats/message/sendWelcome',
       expect.any(Object),
     )
-    const firstBody = JSON.parse((fetchMock.mock.calls[1][1] as any).body as string)
+    const firstBody = JSON.parse(
+      (fetchMock.mock.calls[1][1] as any).body as string,
+    )
     expect(firstBody.userId).toBe('u3')
-    const secondBody = JSON.parse((fetchMock.mock.calls[2][1] as any).body as string)
+    const secondBody = JSON.parse(
+      (fetchMock.mock.calls[2][1] as any).body as string,
+    )
     expect(secondBody.userId).toBe('lid1')
   })
 })

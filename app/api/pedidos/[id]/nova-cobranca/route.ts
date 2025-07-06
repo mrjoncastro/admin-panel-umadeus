@@ -42,7 +42,10 @@ export async function POST(req: NextRequest) {
     const pedido = await pb.collection('pedidos').getOne<Pedido>(id)
     const access = await checkAccess(pedido, user)
     if ('error' in access) {
-      return NextResponse.json({ error: access.error }, { status: access.status })
+      return NextResponse.json(
+        { error: access.error },
+        { status: access.status },
+      )
     }
 
     if (
@@ -63,7 +66,8 @@ export async function POST(req: NextRequest) {
     const cpfCnpj = inscricao.cpf.replace(/\D/g, '')
     const baseUrl = process.env.ASAAS_API_URL
     const apiKey = inscricao.cliente
-      ? (await pb.collection('clientes').getOne(inscricao.cliente)).asaas_api_key
+      ? (await pb.collection('clientes').getOne(inscricao.cliente))
+          .asaas_api_key
       : process.env.ASAAS_API_KEY
     const userAgent = inscricao.nome || 'umadeus'
     if (!apiKey || !baseUrl) {
@@ -81,14 +85,17 @@ export async function POST(req: NextRequest) {
     }
 
     let clienteId: string | null = null
-    const buscaCliente = await fetch(`${baseUrl}/customers?cpfCnpj=${cpfCnpj}`, {
-      method: 'GET',
-      headers: {
-        accept: 'application/json',
-        'access-token': apiKey.startsWith('$') ? apiKey : `$${apiKey}`,
-        'User-Agent': userAgent,
+    const buscaCliente = await fetch(
+      `${baseUrl}/customers?cpfCnpj=${cpfCnpj}`,
+      {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          'access-token': apiKey.startsWith('$') ? apiKey : `$${apiKey}`,
+          'User-Agent': userAgent,
+        },
       },
-    })
+    )
     if (buscaCliente.ok) {
       const data = await buscaCliente.json()
       if (Array.isArray(data.data) && data.data.length > 0) {
@@ -154,9 +161,7 @@ export async function POST(req: NextRequest) {
       description: Array.isArray(pedido.produto)
         ? pedido.produto.join(', ')
         : pedido.produto[0] || 'Produto',
-      split: [
-        { walletId: process.env.WALLETID_M24, fixedValue: margin },
-      ],
+      split: [{ walletId: process.env.WALLETID_M24, fixedValue: margin }],
       externalReference,
     }
 
@@ -190,7 +195,11 @@ export async function POST(req: NextRequest) {
       vencimento: dueDateStr,
       ...(asaasId ? { id_asaas: asaasId } : {}),
     })
-    return NextResponse.json({ link_pagamento: link, vencimento: dueDateStr, id_asaas: asaasId })
+    return NextResponse.json({
+      link_pagamento: link,
+      vencimento: dueDateStr,
+      id_asaas: asaasId,
+    })
   } catch (err: unknown) {
     await logConciliacaoErro(`Erro ao criar nova cobrança: ${String(err)}`)
     return NextResponse.json(

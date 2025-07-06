@@ -25,9 +25,7 @@ export async function GET(req: NextRequest) {
     const p = await pbRetry(() =>
       pb
         .collection('produtos')
-        .getFirstListItem<Produto>(
-          `slug='${slug}' && cliente='${tenantId}'`,
-        ),
+        .getFirstListItem<Produto>(`slug='${slug}' && cliente='${tenantId}'`),
     )
     if (!role && p.exclusivo_user) {
       return NextResponse.json(

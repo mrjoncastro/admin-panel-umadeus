@@ -34,6 +34,8 @@ describe('EscolherEventoPage', () => {
 
     await screen.findByText('Ev')
     expect(screen.getByText(/inscrições encerradas/i)).toBeInTheDocument()
-    expect(screen.queryByRole('link', { name: /inscrever/i })).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('link', { name: /inscrever/i }),
+    ).not.toBeInTheDocument()
   })
 })

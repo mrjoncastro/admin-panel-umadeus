@@ -23,7 +23,7 @@ export const DEFAULT_CONFIG: BroadcastConfig = {
 }
 
 function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms))
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 interface QueueItem<T> {
@@ -49,7 +49,7 @@ export class BroadcastQueue {
         resolve: resolve as (value: unknown) => void,
         reject,
       })
-      this.process().catch(err =>
+      this.process().catch((err) =>
         console.error('Erro no processamento da fila:', err),
       )
     })
@@ -64,7 +64,10 @@ export class BroadcastQueue {
       const batch = this.queue.splice(0, this.config.batchSize)
       for (const item of batch) {
         try {
-          const res = await this.executeWithRetry(item.task, this.config.maxRetries)
+          const res = await this.executeWithRetry(
+            item.task,
+            this.config.maxRetries,
+          )
           item.resolve(res)
         } catch (err) {
           item.reject(err)
@@ -80,7 +83,10 @@ export class BroadcastQueue {
     this.processing = false
   }
 
-  private async executeWithRetry<T>(task: () => Promise<T>, retries: number): Promise<T> {
+  private async executeWithRetry<T>(
+    task: () => Promise<T>,
+    retries: number,
+  ): Promise<T> {
     try {
       return await task()
     } catch (err) {
@@ -107,8 +113,8 @@ export class BroadcastQueue {
 
   private async ensureRateLimit() {
     const now = Date.now()
-    this.timestamps = this.timestamps.filter(t => now - t < 3600_000)
-    const lastMinute = this.timestamps.filter(t => now - t < 60_000)
+    this.timestamps = this.timestamps.filter((t) => now - t < 3600_000)
+    const lastMinute = this.timestamps.filter((t) => now - t < 60_000)
     if (lastMinute.length >= this.config.maxMessagesPerMinute) {
       const wait = 60_000 - (now - lastMinute[0])
       await sleep(wait)

@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-  const {
+    const {
       pedidoId,
       valorBruto,
       paymentMethod,
@@ -83,7 +83,10 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    if (normalizedPaymentMethod !== 'pix' && normalizedPaymentMethod !== 'boleto') {
+    if (
+      normalizedPaymentMethod !== 'pix' &&
+      normalizedPaymentMethod !== 'boleto'
+    ) {
       console.log(
         '🔴 [POST /api/asaas] Forma de pagamento inválida:',
         normalizedPaymentMethod,
@@ -325,7 +328,11 @@ export async function POST(req: NextRequest) {
     })
     console.log('🟢 Pedido atualizado com link de pagamento')
 
-    return NextResponse.json({ url: link, vencimento: dueDateISO, id_asaas: asaasId })
+    return NextResponse.json({
+      url: link,
+      vencimento: dueDateISO,
+      id_asaas: asaasId,
+    })
   } catch (err: unknown) {
     await logConciliacaoErro(
       `Erro ao gerar link de pagamento Asaas: ${String(err)}`,

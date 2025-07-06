@@ -506,35 +506,65 @@ executados.
 ## [2025-08-12] Correção do fluxo de inscrição: pedido é criado antes da chamada ao Asaas e removido se o link não for gerado. Documentação revisada. - Lint: falhou (next not found) - Build: falhou (next not found)
 
 ## [2025-08-15] Documentado utilitario pbRetry e registradas retentativas no PocketBase. Lint e build executados.
+
 ## [2025-07-02] Documentada renovação manual de cobrança e novo endpoint. Lint e build executados.
+
 ## [2025-07-02] Ajustada rota /api/pedidos/[id]/nova-cobranca para usar dueDate do Asaas e documento atualizado.
+
 ## [2025-07-02] Atualizadas definições de status (incluindo `vencido`) em tipos e documentação. - Lint: falhou (next not found) - Build: falhou (next not found)
+
 ## [2025-07-02] Removido uso de `any` na nova rota de cobrança e em inscrições. Tipos atualizados. - Lint: ok - Build: ok
+
 ## [2025-07-02] Página pública /recuperar criada e rota /api/recuperar-link adicionada. README e índice atualizados. Lint e build executados.
+
 ## [2025-07-02] Rota de recuperação de link movida para `/api/recuperar-link` e documentação atualizada. Lint e build executados.
+
 ## [2025-07-02] Página pública `/recuperar` criada e link exibido para líderes e clientes. Lint: falhou (next not found) - Build: falhou (next not found)
+
 ## [2025-07-02] Fluxo unificado gera nova cobrança e página simplificada para recuperar link. - Lint: falhou (next not found) - Build: falhou (next not found)
+
 ## [2025-07-02] Inclusao de pbRetry nas rotas principais e docs atualizadas. - Lint e Build executados.
+
 ## [2025-08-16] Ajustada funcao calculateGross comparando valor de credito com Pix e testes atualizados. Lint e build executados.
+
 ## [2025-07-02] Implementado webhook assíncrono com fila e worker. Lint e build executados.
+
 ## [2025-07-02] Ajustado cron para 1 minuto em vercel.json. Lint e build executados.
+
 ## [2025-08-17] NEXT_PUBLIC_SITE_URL substituido por host do tenant. Lint e build executados.
+
 ## [2025-08-17] Removida opcao de pagamento 'credito' em inscricoes e produtos. Documentacao atualizada. Lint e build executados.
+
 ## [2025-07-03] exportarPDF em Pedidos passa a buscar todas as paginas para gerar relatorio completo conforme filtros. Lint: ok - Build: falhou (erro de tipos)
 
 ## [2025-07-04] Rota /api/recuperar-link consulta inscricoes quando cobranca nao encontrada. Lint e build executados.
+
 ## [2025-07-04] Documentadas rotas /recuperar e /api/recuperar-link, orientando criar inscricao quando nao houver cobranca. Lint: ok - Build: ok
+
 ## [2025-07-05] Aceita pagamento 'credito' mapeado para pix nas inscricoes e rota Asaas.
+
 ## [2025-07-05] Página /inscricoes/conclusao adicionada e EventForm passa a redirecionar para ela. Documentação e índice atualizados. Lint e build executados.
+
 ## [2025-07-05] Documentado ajuste de rate limit da rota publica. Lint e build executados.
+
 ## [2025-07-05] EventForm passa a logar automaticamente o novo usuário após POST
+
 na rota /loja/api/inscricoes e documentação atualizada. Lint e build executados.
+
 ## [2025-07-05] EventForm preenche CPF e email da etapa anterior
+
 ## [2025-07-05] FormWizard aguarda onFinish assíncrono e EventForm redireciona após envio. Documentação atualizada. Lint e build executados.
+
 ## [2025-07-05] Signup aceita campo e gênero; valores pré-definidos são bloqueados. Lint e build executados.
+
 ## [2025-07-05] Payload de inscricao unificado e documentados campos de cada endpoint. Lint e build executados.
+
 ## [2025-07-05] ConsultaInscricao preenche e bloqueia campos de CPF e email ao usuario logado. Lint e build executados.
+
 ## [2025-07-05] ConsultaInscricao prioriza dados do usuário autenticado ao ler parametros de consulta. Documentação atualizada. Lint e build executados.
+
 ## [2025-07-06] Adicionada etapa de Revisão no EventForm e documentação atualizada. Lint e build executados.
+
 ## [2025-07-06] Adicionada nota sobre necessidade de logout para cadastrar outra pessoa em docs/regras-inscricoes.md. Lint e build executados.
+
 ## [2025-07-06] Líder não pode alterar status ao editar inscrição ou pedido. Documentação atualizada.

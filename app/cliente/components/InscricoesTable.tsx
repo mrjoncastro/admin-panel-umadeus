@@ -73,7 +73,7 @@ export default function InscricoesTable({
           )}
         </thead>
         <tbody>
-          {inscricoes.map((i) => (
+          {inscricoes.map((i) =>
             variant === 'details' ? (
               <tr key={i.id}>
                 <td>{i.nome}</td>
@@ -87,8 +87,8 @@ export default function InscricoesTable({
                 <td>{i.expand?.evento?.titulo || '-'}</td>
                 <td>{i.created ? formatDate(i.created) : '-'}</td>
               </tr>
-            )
-          ))}
+            ),
+          )}
         </tbody>
       </table>
     </div>

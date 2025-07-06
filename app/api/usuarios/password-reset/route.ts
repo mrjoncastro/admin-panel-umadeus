@@ -10,12 +10,18 @@ export async function POST(req: NextRequest) {
 
     const tenantId = await getTenantFromHost()
     if (!tenantId) {
-      return NextResponse.json({ error: 'Tenant não encontrado' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Tenant não encontrado' },
+        { status: 400 },
+      )
     }
 
     const host = await getTenantHost(tenantId)
     if (!host) {
-      return NextResponse.json({ error: 'Host não configurado' }, { status: 500 })
+      return NextResponse.json(
+        { error: 'Host não configurado' },
+        { status: 500 },
+      )
     }
 
     const redirectUrl = `${host}/auth/confirm-password-reset`

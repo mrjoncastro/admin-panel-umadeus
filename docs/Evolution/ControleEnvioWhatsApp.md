@@ -7,16 +7,19 @@ Implementar um sistema inteligente de envio de mensagens WhatsApp que simula o c
 ## 🧠 Características Principais
 
 ### 🔄 Envio Natural
+
 - **Delays entre mensagens**: 2-3 segundos (como humano digitando)
 - **Delays entre lotes**: 10-15 segundos (pausas naturais)
 - **Processamento em lotes**: 3-5 mensagens por vez
 
 ### 🛡️ Controle de Taxa
+
 - **Limite por minuto**: 20-30 mensagens
 - **Limite por hora**: 80-100 mensagens
 - **Retry automático**: 2-3 tentativas com delays
 
 ### ⏰ Horários Inteligentes
+
 - **Janela de envio**: 9h às 21h (configurável)
 - **Timezone por tenant**: Suporte a diferentes fusos
 - **Bloqueio fora do horário**: Evita envios inadequados
@@ -25,12 +28,12 @@ Implementar um sistema inteligente de envio de mensagens WhatsApp que simula o c
 
 ### Componentes Principais
 
-| Arquivo | Função |
-|---------|--------|
-| `lib/server/flows/whatsapp/broadcastQueue.ts` | Sistema de filas com controle de taxa |
-| `lib/server/flows/whatsapp/broadcastManager.ts` | Gerenciador multi-tenant |
-| `app/api/chats/message/broadcast/route.ts` | API com progresso em tempo real |
-| `app/admin/whatsapp/mensagem-broadcast/page.tsx` | Interface com monitoramento |
+| Arquivo                                          | Função                                |
+| ------------------------------------------------ | ------------------------------------- |
+| `lib/server/flows/whatsapp/broadcastQueue.ts`    | Sistema de filas com controle de taxa |
+| `lib/server/flows/whatsapp/broadcastManager.ts`  | Gerenciador multi-tenant              |
+| `app/api/chats/message/broadcast/route.ts`       | API com progresso em tempo real       |
+| `app/admin/whatsapp/mensagem-broadcast/page.tsx` | Interface com monitoramento           |
 
 ### Fluxo de Execução
 
@@ -59,15 +62,15 @@ graph TD
   delayBetweenMessages: 3000,    // 3 segundos
   delayBetweenBatches: 15000,    // 15 segundos
   batchSize: 3,                   // 3 mensagens por lote
-  
+
   // Limites de taxa
   maxMessagesPerMinute: 20,
   maxMessagesPerHour: 80,
-  
+
   // Retry
   maxRetries: 2,
   retryDelay: 10000,             // 10 segundos
-  
+
   // Horário
   allowedHours: { start: 9, end: 21 },
   timezone: 'America/Sao_Paulo'
@@ -81,13 +84,13 @@ graph TD
   delayBetweenMessages: 1500,    // 1.5 segundos
   delayBetweenBatches: 8000,     // 8 segundos
   batchSize: 5,                   // 5 mensagens por lote
-  
+
   maxMessagesPerMinute: 30,
   maxMessagesPerHour: 100,
-  
+
   maxRetries: 3,
   retryDelay: 5000,
-  
+
   allowedHours: { start: 8, end: 22 },
   timezone: 'America/Sao_Paulo'
 }
@@ -96,9 +99,11 @@ graph TD
 ## 🔧 API Endpoints
 
 ### POST /api/chats/message/broadcast
+
 Inicia um novo broadcast.
 
 **Request:**
+
 ```json
 {
   "message": "Olá! Esta é uma mensagem de teste.",
@@ -107,6 +112,7 @@ Inicia um novo broadcast.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -118,9 +124,11 @@ Inicia um novo broadcast.
 ```
 
 ### GET /api/chats/message/broadcast
+
 Obtém progresso do broadcast atual.
 
 **Response:**
+
 ```json
 {
   "message": "Progresso do broadcast",
@@ -138,9 +146,11 @@ Obtém progresso do broadcast atual.
 ```
 
 ### DELETE /api/chats/message/broadcast
+
 Para o broadcast em andamento.
 
 **Response:**
+
 ```json
 {
   "message": "Broadcast parado com sucesso"
@@ -173,25 +183,25 @@ A página de broadcast agora inclui:
 CREATE TABLE whatsapp_broadcast_config (
   id TEXT PRIMARY KEY,
   cliente TEXT REFERENCES m24_clientes(id),
-  
+
   -- Delays
   delayBetweenMessages INTEGER DEFAULT 3000,
   delayBetweenBatches INTEGER DEFAULT 15000,
   batchSize INTEGER DEFAULT 3,
-  
+
   -- Limites
   maxMessagesPerMinute INTEGER DEFAULT 20,
   maxMessagesPerHour INTEGER DEFAULT 80,
-  
+
   -- Retry
   maxRetries INTEGER DEFAULT 2,
   retryDelay INTEGER DEFAULT 10000,
-  
+
   -- Horário
   allowedHoursStart INTEGER DEFAULT 9,
   allowedHoursEnd INTEGER DEFAULT 21,
   timezone TEXT DEFAULT 'America/Sao_Paulo',
-  
+
   created TIMESTAMP DEFAULT NOW(),
   updated TIMESTAMP DEFAULT NOW()
 );
@@ -222,21 +232,25 @@ npm test __tests__/api/broadcastRoute.test.ts
 ## 🚀 Benefícios
 
 ### 🔒 Segurança
+
 - **Evita bloqueios** da API WhatsApp
 - **Respeita limites** de taxa
 - **Horários apropriados** para envio
 
 ### 🎯 Eficiência
+
 - **Processamento em background** (não bloqueia UI)
 - **Retry inteligente** para falhas temporárias
 - **Progresso em tempo real**
 
 ### 🧩 Flexibilidade
+
 - **Configuração por tenant**
 - **Diferentes perfis** (conservador/agressivo)
 - **Fácil extensão** para novos recursos
 
 ### 📈 Monitoramento
+
 - **Estatísticas detalhadas**
 - **Logs de erro**
 - **Métricas de performance**
@@ -246,19 +260,23 @@ npm test __tests__/api/broadcastRoute.test.ts
 ### Funcionalidades Planejadas
 
 1. **Agendamento de Broadcasts**
+
    - Envio programado para horários específicos
    - Suporte a timezone do destinatário
 
 2. **Templates de Mensagem**
+
    - Variáveis dinâmicas (nome, empresa, etc.)
    - Preview antes do envio
 
 3. **Relatórios Avançados**
+
    - Taxa de entrega
    - Horários de melhor resposta
    - Análise de engajamento
 
 4. **Integração com Filas**
+
    - Redis para persistência
    - Processamento distribuído
    - Failover automático
@@ -273,16 +291,19 @@ npm test __tests__/api/broadcastRoute.test.ts
 ### Problemas Comuns
 
 **Broadcast não inicia:**
+
 - Verificar horário permitido
 - Verificar se já há broadcast ativo
 - Verificar configuração WhatsApp
 
 **Mensagens não são enviadas:**
+
 - Verificar limites de taxa
 - Verificar conectividade com Evolution API
 - Verificar credenciais da instância
 
 **Progresso não atualiza:**
+
 - Verificar polling no frontend
 - Verificar logs do servidor
 - Verificar status da fila
@@ -311,8 +332,8 @@ const response = await fetch('/api/chats/message/broadcast', {
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     message: 'Olá! Lembrete importante.',
-    recipients: ['user1', 'user2']
-  })
+    recipients: ['user1', 'user2'],
+  }),
 })
 
 const data = await response.json()
@@ -322,10 +343,12 @@ console.log(`Broadcast iniciado: ${data.message}`)
 const checkProgress = async () => {
   const res = await fetch('/api/chats/message/broadcast')
   const progress = await res.json()
-  
+
   if (progress.progress) {
-    console.log(`Progresso: ${progress.progress.sent}/${progress.progress.total}`)
-    
+    console.log(
+      `Progresso: ${progress.progress.sent}/${progress.progress.total}`,
+    )
+
     if (!progress.progress.isProcessing) {
       console.log('Broadcast concluído!')
     }
@@ -343,7 +366,7 @@ setInterval(checkProgress, 2000)
 broadcastManager.updateTenantConfig('tenant123', {
   delayBetweenMessages: 2000,
   maxMessagesPerMinute: 25,
-  allowedHours: { start: 8, end: 22 }
+  allowedHours: { start: 8, end: 22 },
 })
 
 // Obter estatísticas
@@ -351,4 +374,4 @@ const stats = broadcastManager.getAllStats()
 console.log('Estatísticas:', stats)
 ```
 
-Este sistema garante que o envio de mensagens WhatsApp seja feito de forma natural, segura e eficiente, evitando problemas com a API e proporcionando uma experiência profissional para os usuários. 
+Este sistema garante que o envio de mensagens WhatsApp seja feito de forma natural, segura e eficiente, evitando problemas com a API e proporcionando uma experiência profissional para os usuários.

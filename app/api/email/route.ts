@@ -39,8 +39,15 @@ export async function POST(req: NextRequest) {
 
   try {
     // 1) parse + validação
-    const { eventType, userId, paymentLink, loginLink, amount, dueDate, campoNome } =
-      (await req.json()) as Body
+    const {
+      eventType,
+      userId,
+      paymentLink,
+      loginLink,
+      amount,
+      dueDate,
+      campoNome,
+    } = (await req.json()) as Body
     if (!eventType || !userId) {
       return NextResponse.json(
         { error: 'Parâmetros faltando' },
@@ -69,8 +76,11 @@ export async function POST(req: NextRequest) {
     }
 
     // 4) busca usuário
-    const user = await pb.collection('usuarios').getOne(userId, { expand: 'campo' })
-    const campoNomeFinal = campoNome ?? (user.expand?.campo?.nome as string | undefined)
+    const user = await pb
+      .collection('usuarios')
+      .getOne(userId, { expand: 'campo' })
+    const campoNomeFinal =
+      campoNome ?? (user.expand?.campo?.nome as string | undefined)
     if (!user.email) {
       return NextResponse.json({ error: 'Usuário sem e-mail' }, { status: 400 })
     }

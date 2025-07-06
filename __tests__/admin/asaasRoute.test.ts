@@ -96,9 +96,12 @@ describe('POST /admin/api/asaas', () => {
       })
       .mockResolvedValueOnce({
         ok: true,
-        clone: () =>
-          ({ text: () => Promise.resolve('{"invoiceUrl":"pay","dueDate":"2025-01-01"}') }),
-        text: () => Promise.resolve('{"invoiceUrl":"pay","dueDate":"2025-01-01"}'),
+        clone: () => ({
+          text: () =>
+            Promise.resolve('{"invoiceUrl":"pay","dueDate":"2025-01-01"}'),
+        }),
+        text: () =>
+          Promise.resolve('{"invoiceUrl":"pay","dueDate":"2025-01-01"}'),
       }) as unknown as typeof fetch
 
     process.env.ASAAS_API_URL = 'https://asaas'

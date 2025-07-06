@@ -99,7 +99,6 @@ describe('checkout route', () => {
     expect(data.checkoutUrl).toBe('url')
   })
 
-
   it('envia dados corretos para boleto', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,

@@ -181,7 +181,9 @@ export default function ModalVisualizarPedido({ pedidoId, onClose }: Props) {
             </p>
             <p>
               <strong>Vencimento:</strong>{' '}
-              {pedido.vencimento ? new Date(pedido.vencimento).toLocaleDateString('pt-BR') : '—'}
+              {pedido.vencimento
+                ? new Date(pedido.vencimento).toLocaleDateString('pt-BR')
+                : '—'}
             </p>
             <p>
               <strong>Produto:</strong>{' '}

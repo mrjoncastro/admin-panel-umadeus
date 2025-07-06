@@ -102,7 +102,9 @@ export default function PedidosPage() {
     if (ordenarPor === 'alfabetica') {
       const nomeA = a.expand?.id_inscricao?.nome?.toLowerCase() || ''
       const nomeB = b.expand?.id_inscricao?.nome?.toLowerCase() || ''
-      return ordem === 'asc' ? nomeA.localeCompare(nomeB) : nomeB.localeCompare(nomeA)
+      return ordem === 'asc'
+        ? nomeA.localeCompare(nomeB)
+        : nomeB.localeCompare(nomeA)
     }
     const dataA = new Date(a.created || 0).getTime()
     const dataB = new Date(b.created || 0).getTime()
@@ -129,7 +131,9 @@ export default function PedidosPage() {
       credentials: 'include',
     })
     const res: { items: Pedido[]; totalPages?: number } = await primeiro.json()
-    let todos = Array.isArray(res.items) ? res.items : (res as unknown as Pedido[])
+    let todos = Array.isArray(res.items)
+      ? res.items
+      : (res as unknown as Pedido[])
 
     for (let p = 2; p <= (res.totalPages ?? 1); p++) {
       params.set('page', String(p))
@@ -148,7 +152,7 @@ export default function PedidosPage() {
       const produtoStr = Array.isArray(p.expand?.produto)
         ? p.expand.produto.map((prod: Produto) => prod.nome).join(', ')
         : (p.expand?.produto as Produto | undefined)?.nome ||
-          (Array.isArray(p.produto) ? p.produto.join(', ') : p.produto ?? '')
+          (Array.isArray(p.produto) ? p.produto.join(', ') : (p.produto ?? ''))
 
       const matchBuscaGlobal =
         buscaGlobal === '' ||
@@ -171,7 +175,9 @@ export default function PedidosPage() {
       if (ordenarPor === 'alfabetica') {
         const nomeA = a.expand?.id_inscricao?.nome?.toLowerCase() || ''
         const nomeB = b.expand?.id_inscricao?.nome?.toLowerCase() || ''
-        return ordem === 'asc' ? nomeA.localeCompare(nomeB) : nomeB.localeCompare(nomeA)
+        return ordem === 'asc'
+          ? nomeA.localeCompare(nomeB)
+          : nomeB.localeCompare(nomeA)
       }
       const dataA = new Date(a.created || 0).getTime()
       const dataB = new Date(b.created || 0).getTime()
@@ -181,9 +187,14 @@ export default function PedidosPage() {
     const doc = new jsPDF({ unit: 'pt', format: 'a4' })
     doc.setFontSize(16)
     doc.setFont('helvetica', 'bold')
-    doc.text('Relat\u00F3rio de Pedidos', doc.internal.pageSize.getWidth() / 2, 40, {
-      align: 'center',
-    })
+    doc.text(
+      'Relat\u00F3rio de Pedidos',
+      doc.internal.pageSize.getWidth() / 2,
+      40,
+      {
+        align: 'center',
+      },
+    )
     doc.setFontSize(11)
     doc.setFont('helvetica', 'normal')
 
@@ -348,7 +359,8 @@ export default function PedidosPage() {
                     >
                       {pedido.status}
                     </span>
-                    {(pedido.status === 'pendente' || pedido.status === 'vencido') &&
+                    {(pedido.status === 'pendente' ||
+                      pedido.status === 'vencido') &&
                     pedido.vencimento &&
                     new Date(pedido.vencimento) < new Date() ? (
                       <span className="ml-1 text-red-600">⚠️</span>

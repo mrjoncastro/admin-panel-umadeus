@@ -96,7 +96,10 @@ export default function InscricoesPage() {
       <p className="text-center text-gray-700 mb-10">{evento.descricao}</p>
 
       <section aria-label="Formulário de inscrição">
-        <ConsultaInscricao eventoId={eventoId} inscricoesEncerradas={inscricoesEncerradas} />
+        <ConsultaInscricao
+          eventoId={eventoId}
+          inscricoesEncerradas={inscricoesEncerradas}
+        />
       </section>
     </main>
   )

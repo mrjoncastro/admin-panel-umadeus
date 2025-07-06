@@ -1,4 +1,8 @@
-import { BroadcastQueue, BroadcastConfig, DEFAULT_CONFIG } from './broadcastQueue'
+import {
+  BroadcastQueue,
+  BroadcastConfig,
+  DEFAULT_CONFIG,
+} from './broadcastQueue'
 
 class BroadcastManager {
   private queues = new Map<string, BroadcastQueue>()

@@ -131,14 +131,17 @@ describe('ModalVisualizarPedido', () => {
     render(<ModalVisualizarPedido pedidoId="p1" onClose={() => {}} />)
 
     expect(
-      await screen.findByRole('button', { name: /Gerar nova cobrança/i })
+      await screen.findByRole('button', { name: /Gerar nova cobrança/i }),
     ).toBeInTheDocument()
   })
 
   it('chama endpoint ao gerar nova cobrança', async () => {
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(mockPedido()) })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockPedido()),
+      })
       .mockResolvedValueOnce({
         ok: true,
         json: () =>
@@ -150,11 +153,16 @@ describe('ModalVisualizarPedido', () => {
     global.fetch = fetchMock as unknown as typeof fetch
 
     render(<ModalVisualizarPedido pedidoId="p1" onClose={() => {}} />)
-    const btn = await screen.findByRole('button', { name: /Gerar nova cobrança/i })
+    const btn = await screen.findByRole('button', {
+      name: /Gerar nova cobrança/i,
+    })
     fireEvent.click(btn)
 
     await vi.waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith('/api/pedidos/p1/nova-cobranca', expect.any(Object))
+      expect(fetchMock).toHaveBeenCalledWith(
+        '/api/pedidos/p1/nova-cobranca',
+        expect.any(Object),
+      )
     })
   })
 })

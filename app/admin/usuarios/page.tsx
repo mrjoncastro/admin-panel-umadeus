@@ -84,9 +84,7 @@ export default function UsuariosPage() {
     const matchRole = filtroRole === '' || u.role === filtroRole
     const matchCampo =
       filtroCampo === '' ||
-      u.expand?.campo?.nome
-        ?.toLowerCase()
-        .includes(filtroCampo.toLowerCase())
+      u.expand?.campo?.nome?.toLowerCase().includes(filtroCampo.toLowerCase())
     return matchBusca && matchRole && matchCampo
   })
 

@@ -37,15 +37,15 @@ describe('GET /api/inscricoes', () => {
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(body).toHaveProperty('totalItems')
-      expect(getListMock).toHaveBeenCalledWith(
-        1,
-        5,
-        expect.objectContaining({
-          filter: 'criado_por = "u1" && status=\'pendente\'',
-          expand: 'evento,campo,pedido,produto',
-          sort: '-created',
-        }),
-      )
+    expect(getListMock).toHaveBeenCalledWith(
+      1,
+      5,
+      expect.objectContaining({
+        filter: 'criado_por = "u1" && status=\'pendente\'',
+        expand: 'evento,campo,pedido,produto',
+        sort: '-created',
+      }),
+    )
   })
 
   it('usa page da URL quando informado', async () => {
@@ -88,15 +88,15 @@ describe('GET /api/inscricoes', () => {
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(body).toHaveProperty('totalItems')
-      expect(getListMock).toHaveBeenLastCalledWith(
-        1,
-        20,
-        expect.objectContaining({
-          filter: 'campo = "c1"',
-          expand: 'evento,campo,pedido,produto',
-          sort: '-created',
-        }),
-      )
+    expect(getListMock).toHaveBeenLastCalledWith(
+      1,
+      20,
+      expect.objectContaining({
+        filter: 'campo = "c1"',
+        expand: 'evento,campo,pedido,produto',
+        sort: '-created',
+      }),
+    )
   })
 
   it('filtra por cliente quando coordenador', async () => {
@@ -109,9 +109,7 @@ describe('GET /api/inscricoes', () => {
     ;(
       getTenantFromHost as unknown as { mockResolvedValue: (v: any) => void }
     ).mockResolvedValue('t1')
-    const req = new Request(
-      'http://test/api/inscricoes?page=1&status=ativo',
-    )
+    const req = new Request('http://test/api/inscricoes?page=1&status=ativo')
     ;(req as any).nextUrl = new URL(
       'http://test/api/inscricoes?page=1&status=ativo',
     )
@@ -120,15 +118,15 @@ describe('GET /api/inscricoes', () => {
     const body = await res.json()
     expect(body).toHaveProperty('totalItems')
     expect(getTenantFromHost).toHaveBeenCalled()
-      expect(getListMock).toHaveBeenLastCalledWith(
-        1,
-        50,
-        expect.objectContaining({
-          filter: 'cliente = "t1" && status=\'ativo\'',
-          expand: 'evento,campo,pedido,produto',
-          sort: '-created',
-        }),
-      )
+    expect(getListMock).toHaveBeenLastCalledWith(
+      1,
+      50,
+      expect.objectContaining({
+        filter: 'cliente = "t1" && status=\'ativo\'',
+        expand: 'evento,campo,pedido,produto',
+        sort: '-created',
+      }),
+    )
   })
 
   it('retorna 400 quando coordenador sem tenant', async () => {

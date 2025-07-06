@@ -41,7 +41,9 @@ export async function PUT(req: NextRequest) {
     const contentType = req.headers.get('content-type') || ''
     if (contentType.includes('application/json')) {
       const body = await req.json()
-      const evento = await pbRetry(() => pb.collection('eventos').update(id, body))
+      const evento = await pbRetry(() =>
+        pb.collection('eventos').update(id, body),
+      )
       return NextResponse.json(evento, { status: 200 })
     }
     const formData = await req.formData()
@@ -55,7 +57,9 @@ export async function PUT(req: NextRequest) {
         String(formData.get('produto_inscricao')),
       )
     }
-    const evento = await pbRetry(() => pb.collection('eventos').update(id, formData))
+    const evento = await pbRetry(() =>
+      pb.collection('eventos').update(id, formData),
+    )
     return NextResponse.json(evento, { status: 200 })
   } catch (err) {
     await logConciliacaoErro(`Erro ao atualizar evento: ${String(err)}`)

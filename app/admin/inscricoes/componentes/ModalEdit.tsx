@@ -41,7 +41,12 @@ export default function ModalEditarInscricao({
       nome: formData.get('nome')?.toString() || '',
       telefone: formData.get('telefone')?.toString() || '',
       ...(user?.role !== 'lider'
-        ? { status: formData.get('status') as 'pendente' | 'confirmado' | 'cancelado' }
+        ? {
+            status: formData.get('status') as
+              | 'pendente'
+              | 'confirmado'
+              | 'cancelado',
+          }
         : {}),
       tamanho: formData.get('tamanho')?.toString(),
       genero: formData.get('genero')?.toString(),
@@ -166,7 +171,13 @@ type SelectProps = {
   disabled?: boolean
 }
 
-function Select({ name, label, defaultValue = '', children, disabled }: SelectProps) {
+function Select({
+  name,
+  label,
+  defaultValue = '',
+  children,
+  disabled,
+}: SelectProps) {
   return (
     <div>
       <label htmlFor={name} className="text-sm font-medium block mb-1">

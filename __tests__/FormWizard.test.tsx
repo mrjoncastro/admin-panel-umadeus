@@ -44,9 +44,10 @@ describe('FormWizard', () => {
   it('desabilita botão enquanto validação está pendente', async () => {
     let resolveFn: (v: boolean) => void = () => {}
     const validate = vi.fn().mockImplementation(
-      () => new Promise<boolean>((res) => {
-        resolveFn = res
-      }),
+      () =>
+        new Promise<boolean>((res) => {
+          resolveFn = res
+        }),
     )
     render(
       <FormWizard

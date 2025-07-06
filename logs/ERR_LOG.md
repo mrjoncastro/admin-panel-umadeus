@@ -225,28 +225,47 @@
 ## [2025-08-13] Erro persistia quando objeto de imagens estava vazio; fallback para array vazio e uso de useMemo - dev - 636db478
 
 ## [2025-08-14] inscricoes.some is not a function quando API retorna objeto; parseado data.items em useInscricoes - dev - 09a133f7
+
 ## [2025-07-02] Erro de checkout retornava campo 'error' nao tratado; exibicao atualizada - prod - aaccd7eb
 
 ## [2025-08-15] PATCH /api/inscricoes/[id] excedeu tentativas de retry - dev - <commit-link>
+
 ## [2025-07-02] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
+
 ## [2025-07-02] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
 
 ## [2025-08-16] Inscricoes bloqueavam usuario logado por CPF existente. Rota /api/usuarios/exists aceita excludeId e EventForm ignora o proprio usuario - dev - cb2b0073
+
 ## [2025-07-02] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
+
 ## [2025-07-02] Webhook Asaas retornava 500 sem tratamento de erro; rota atualizada com logConciliacaoErro - dev - ac00e3389c99092fa0fd57e563bacc899c65f109
+
 ## [2025-07-02] Webhook Asaas inclui detalhes no erro interno - dev - a1a2c3ba
+
 ## [2025-07-02] Webhook Asaas usa host do tenant no envio de notificacoes - dev - c3800972
+
 ## [2025-07-02] Webhook Asaas nao usa mais NEXT_PUBLIC_SITE_URL; host obtido do tenant - dev - fcee1eaf7bdf79c55c4c019c94e5c91d38117490
+
 ## [2025-07-02] getTenantHost retornava dominio sem protocolo, causando erros de redirecionamento - dev - 3d2de08d
+
 ## [2025-07-05] Validação de paymentMethod na rota Asaas - dev - 83c8b653
+
 ## [2025-07-05] Forma de pagamento 'Credito' mapeada para pix nas rotas - dev - 10307d3
+
 ## [2025-07-05] Consulta de inscrição pública retornava erro "Token ou usuário ausente" ao usar rota protegida. Componente ConsultaInscricao chama /api/inscricoes/public - dev
+
 ## [2025-07-05] GET /api/inscricoes/public retornava "Erro interno" quando nenhuma inscrição era encontrada. Rota atualizada para retornar 404 com "Inscrição não encontrada". Commit 6d3daeac - dev
+
 ## [2025-07-05] Login falhava sem redirectTo; fallback para '/' implementado - dev - 75187664
 
 ## [2025-07-05] Removida chamada de login com campos inexistentes apos refatoracao do CreateUserForm; erro de compilacao resolvido - dev - ea109718f369e58f51b00b3994a51ea16c9bee64
+
 ## [2025-07-06] Erro "Todos os campos obrigatórios" ao enviar inscrição sem dados completos. Etapa de revisão agora exibe telefone, nascimento e gênero antes de concluir - dev - 3b2d91f4
+
 ## [2025-07-06] Validação de dados ausentes na etapa de revisão impede erro de campos obrigatórios - dev - 8fd176cd
+
 ## [2025-07-06] Revisão checa todos os campos obrigatórios para evitar erro de envio - dev - 66769d90
+
 ## [2025-07-06] Etapa de revisão exibe ícone de edição para ajustar dados antes do envio - dev - 6d8ffadc
+
 ## [2025-07-06] Revisão inclui endereço completo e valida ausência antes do envio - dev - 3968f02f

@@ -33,7 +33,9 @@ export async function requireClienteFromHost(
 
   try {
     const cfg = await pbRetry(() =>
-      pb.collection('clientes_config').getFirstListItem(`dominio = \"${host}\"`),
+      pb
+        .collection('clientes_config')
+        .getFirstListItem(`dominio = \"${host}\"`),
     )
     if (!cfg) {
       return { error: 'Cliente n\u00e3o encontrado', status: 404 }

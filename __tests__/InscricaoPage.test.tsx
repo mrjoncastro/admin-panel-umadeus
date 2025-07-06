@@ -21,7 +21,12 @@ describe('InscricaoPage', () => {
   it('renderiza título do evento', async () => {
     global.fetch = vi.fn().mockResolvedValueOnce({
       ok: true,
-      json: () => Promise.resolve({ titulo: 'Evento X', descricao: 'Desc', status: 'em breve' }),
+      json: () =>
+        Promise.resolve({
+          titulo: 'Evento X',
+          descricao: 'Desc',
+          status: 'em breve',
+        }),
     })
 
     render(<InscricaoPage />)
@@ -34,7 +39,12 @@ describe('InscricaoPage', () => {
       .fn()
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ titulo: 'Evento', descricao: 'Desc', status: 'em breve' }),
+        json: () =>
+          Promise.resolve({
+            titulo: 'Evento',
+            descricao: 'Desc',
+            status: 'em breve',
+          }),
       })
       .mockResolvedValueOnce({ status: 404 })
       .mockResolvedValueOnce({

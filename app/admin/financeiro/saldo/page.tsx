@@ -80,11 +80,7 @@ export default function SaldoPage() {
 
   const exportXLSM = async () => {
     const worksheet = XLSX.utils.aoa_to_sheet([])
-    worksheet['!cols'] = [
-      { wch: 12 },
-      { wch: 50 },
-      { wch: 12 },
-    ]
+    worksheet['!cols'] = [{ wch: 12 }, { wch: 50 }, { wch: 12 }]
 
     const header = ['Logo', 'Data', 'Descrição', 'Valor (R$)']
     XLSX.utils.sheet_add_aoa(worksheet, [header], { origin: 'A1' })
@@ -136,15 +132,14 @@ export default function SaldoPage() {
           base64 = arrayBufferToBase64(buf)
         }
 
-        ;(
-          worksheet as XLSX.WorkSheet & { '!images'?: unknown[] }
-        )['!images'] = [
-          {
-            name: 'logo',
-            data: base64,
-            opts: { base64: true, origin: 'A1' },
-          },
-        ]
+        ;(worksheet as XLSX.WorkSheet & { '!images'?: unknown[] })['!images'] =
+          [
+            {
+              name: 'logo',
+              data: base64,
+              opts: { base64: true, origin: 'A1' },
+            },
+          ]
       }
     } catch (err) {
       console.error('Erro ao carregar logo', err)
@@ -181,9 +176,14 @@ export default function SaldoPage() {
 
     doc.setFontSize(16)
     doc.setFont('helvetica', 'bold')
-    doc.text('Extrato de Movimentações', doc.internal.pageSize.getWidth() / 2, 60, {
-      align: 'center',
-    })
+    doc.text(
+      'Extrato de Movimentações',
+      doc.internal.pageSize.getWidth() / 2,
+      60,
+      {
+        align: 'center',
+      },
+    )
     doc.setFontSize(11)
     doc.setFont('helvetica', 'normal')
 

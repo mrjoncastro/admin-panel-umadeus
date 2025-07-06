@@ -26,7 +26,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const match = ref ? /cliente_([^_]+)/.exec(ref) : null
   if (match) cliente = match[1]
 
-  const payload: Partial<AsaasWebhookPayload> = { ...data, ...(cliente ? { cliente } : {}) }
+  const payload: Partial<AsaasWebhookPayload> = {
+    ...data,
+    ...(cliente ? { cliente } : {}),
+  }
 
   const pb = createPocketBase()
   const wasValid = pb.authStore.isValid

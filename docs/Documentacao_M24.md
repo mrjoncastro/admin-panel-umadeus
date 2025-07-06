@@ -107,7 +107,7 @@ Para cada coleção, utilize a seguinte estrutura:
 | `user_org`                  | Relation → `usuarios`     | Sim         | Organizador ou dono do produto                   |
 | `quantidade`                | Number                    | Sim         | Estoque disponível (unidades)                    |
 | `preco`                     | Number                    | Sim         | Preço líquido (base)                             |
-| `preco_bruto`               | Number                    | Sim         | Valor final ao cliente (Pix à vista)            |
+| `preco_bruto`               | Number                    | Sim         | Valor final ao cliente (Pix à vista)             |
 | `ativo`                     | Boolean                   | Sim         | Se o produto está ativo/visível no front         |
 | `tamanhos`                  | Array                     | Não         | Tamanhos disponíveis: `PP`, `P`, `M`, `G`, `GG`  |
 | `imagens`                   | Array                     | Não         | Galeria de imagens                               |
@@ -257,7 +257,7 @@ Para cada coleção, utilize a seguinte estrutura:
 | `id_inscricao`   | Relation → `inscricoes`   | Não         | Referência à inscrição associada (quando `canal = inscricao`) |
 | `tamanho`        | Enum                      | Não         | Tamanho do produto: `PP`, `P`, `M`, `G`, `GG`                 |
 | `email`          | String                    | Sim         | Email de confirmação / contato                                |
-| `status`         | Enum                      | Sim         | Status do pedido: `pendente`, `pago`, `vencido`, `cancelado`             |
+| `status`         | Enum                      | Sim         | Status do pedido: `pendente`, `pago`, `vencido`, `cancelado`  |
 | `campo`          | Relation → `campos`       | Não         | Referência a campos adicionais definidos na coleção `campos`  |
 | `responsavel`    | Relation → `usuarios`     | Não         | Usuário responsável pela gestão do pedido                     |
 | `genero`         | Enum                      | Não         | Gênero do destinatário: `masculino`, `feminino`               |

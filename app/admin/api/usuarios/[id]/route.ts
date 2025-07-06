@@ -144,7 +144,9 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
     if (err instanceof Error) {
-      await logConciliacaoErro(`Erro em PATCH /api/usuarios/[id]: ${err.message}`)
+      await logConciliacaoErro(
+        `Erro em PATCH /api/usuarios/[id]: ${err.message}`,
+      )
     } else {
       await logConciliacaoErro('Erro desconhecido em PATCH /api/usuarios/[id]')
     }

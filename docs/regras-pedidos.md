@@ -28,14 +28,14 @@ Consulte também [docs/regras-inscricoes.md](docs/regras-inscricoes.md) para det
 
 O campo `produto` agora aceita **múltiplos** produtos vinculados ao mesmo pedido. O payload de criação deve enviar `produto: [idProduto]` e a tabela de campos fica:
 
-| Campo     | Tipo   | Observações                       |
-| --------- | ------ | --------------------------------- |
-| `id`      | String | Identificador do pedido           |
-| `produto` | Rel.[] | IDs dos produtos selecionados     |
-| `valor`   | Number | Valor total do pedido             |
-| `status`  | Enum   | `pendente`, `pago`, `vencido` ou `cancelado` |
-| `canal`   | Enum   | `inscricao` ou `loja`             |
-| `vencimento` | DateTime | Data limite para pagamento |
+| Campo        | Tipo     | Observações                                  |
+| ------------ | -------- | -------------------------------------------- |
+| `id`         | String   | Identificador do pedido                      |
+| `produto`    | Rel.[]   | IDs dos produtos selecionados                |
+| `valor`      | Number   | Valor total do pedido                        |
+| `status`     | Enum     | `pendente`, `pago`, `vencido` ou `cancelado` |
+| `canal`      | Enum     | `inscricao` ou `loja`                        |
+| `vencimento` | DateTime | Data limite para pagamento                   |
 
 ### Renovação manual de cobrança
 

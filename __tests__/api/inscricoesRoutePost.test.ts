@@ -18,10 +18,17 @@ const createInscricaoMock = vi.fn()
 const pb = createPocketBaseMock()
 pb.collection.mockImplementation((name: string) => {
   if (name === 'usuarios') {
-    return { getOne: getOneLiderMock, getFirstListItem: getFirstUserMock, create: createUserMock }
+    return {
+      getOne: getOneLiderMock,
+      getFirstListItem: getFirstUserMock,
+      create: createUserMock,
+    }
   }
   if (name === 'inscricoes') {
-    return { getFirstListItem: getFirstInscricaoMock, create: createInscricaoMock }
+    return {
+      getFirstListItem: getFirstInscricaoMock,
+      create: createInscricaoMock,
+    }
   }
   return {} as any
 })

@@ -350,7 +350,6 @@ export default function ListaInscricoesPage() {
       const gross = precoProduto // ajuste aqui caso queira aplicar taxas/descontos
       console.log('[confirmarInscricao] gross:', gross)
 
-
       const pedidoRes = await fetch('/api/pedidos', {
         method: 'POST',
         credentials: 'include',
@@ -499,9 +498,14 @@ export default function ListaInscricoesPage() {
     const doc = new jsPDF({ unit: 'pt', format: 'a4' })
     doc.setFontSize(16)
     doc.setFont('helvetica', 'bold')
-    doc.text('Relat\u00F3rio de Inscri\u00E7\u00F5es', doc.internal.pageSize.getWidth() / 2, 40, {
-      align: 'center',
-    })
+    doc.text(
+      'Relat\u00F3rio de Inscri\u00E7\u00F5es',
+      doc.internal.pageSize.getWidth() / 2,
+      40,
+      {
+        align: 'center',
+      },
+    )
     doc.setFontSize(11)
     doc.setFont('helvetica', 'normal')
 
@@ -557,14 +561,16 @@ export default function ListaInscricoesPage() {
       i.cpf?.toLowerCase().includes(busca) ||
       (role === 'coordenador' && i.campo?.toLowerCase().includes(busca))
 
-  return matchStatus && matchBusca
+    return matchStatus && matchBusca
   })
 
   const inscricoesOrdenadas = [...inscricoesFiltradas].sort((a, b) => {
     if (ordenarPor === 'alfabetica') {
       const nomeA = a.nome.toLowerCase()
       const nomeB = b.nome.toLowerCase()
-      return ordem === 'asc' ? nomeA.localeCompare(nomeB) : nomeB.localeCompare(nomeA)
+      return ordem === 'asc'
+        ? nomeA.localeCompare(nomeB)
+        : nomeB.localeCompare(nomeA)
     }
     const dataA = new Date(a.created || 0).getTime()
     const dataB = new Date(b.created || 0).getTime()
@@ -639,13 +645,18 @@ export default function ListaInscricoesPage() {
         </select>
         <select
           value={ordenarPor}
-          onChange={(e) => setOrdenarPor(e.target.value as 'data' | 'alfabetica')}
+          onChange={(e) =>
+            setOrdenarPor(e.target.value as 'data' | 'alfabetica')
+          }
           className="border rounded px-4 py-2 text-sm bg-white shadow-sm"
         >
           <option value="data">Data de criação</option>
           <option value="alfabetica">Ordem alfabética</option>
         </select>
-        <button onClick={() => setOrdem(ordem === 'desc' ? 'asc' : 'desc')} className="btn btn-secondary">
+        <button
+          onClick={() => setOrdem(ordem === 'desc' ? 'asc' : 'desc')}
+          className="btn btn-secondary"
+        >
           {ordem === 'desc' ? '↓' : '↑'}
         </button>
         <button

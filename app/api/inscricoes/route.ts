@@ -206,11 +206,11 @@ export async function POST(req: NextRequest) {
     const dadosInscricao: Omit<Inscricao, 'id'> & {
       paymentMethod: PaymentMethod
       installments: number
-      } = {
-        ...dadosBaseSemId,
-        paymentMethod: paymentMethodNormalized,
-        installments,
-      }
+    } = {
+      ...dadosBaseSemId,
+      paymentMethod: paymentMethodNormalized,
+      installments,
+    }
 
     const inscricao = await pb.collection('inscricoes').create(dadosInscricao)
     logRocketEvent('nova_inscricao_admin', {
@@ -246,13 +246,13 @@ export async function POST(req: NextRequest) {
           const asaasRes = await fetch(`${base}/api/asaas`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                pedidoId,
-                valorBruto: valor,
-                paymentMethod: paymentMethodNormalized,
-                installments,
-              }),
-            })
+            body: JSON.stringify({
+              pedidoId,
+              valorBruto: valor,
+              paymentMethod: paymentMethodNormalized,
+              installments,
+            }),
+          })
 
           if (asaasRes.ok) {
             const data = await asaasRes.json()
@@ -261,7 +261,9 @@ export async function POST(req: NextRequest) {
             const _vencimento = data.vencimento
             const _idAsaas = data.id_asaas
             if (_idAsaas) {
-              await pb.collection('pedidos').update(pedidoId, { id_asaas: _idAsaas })
+              await pb
+                .collection('pedidos')
+                .update(pedidoId, { id_asaas: _idAsaas })
             }
           } else {
             await pb.collection('pedidos').delete(pedidoId)

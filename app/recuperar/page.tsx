@@ -44,9 +44,7 @@ export default function RecuperarPagamentoPage() {
 
   return (
     <div className="max-w-md mx-auto p-6">
-      <h1 className="text-lg font-bold mb-4 text-center">
-        Link de pagamento
-      </h1>
+      <h1 className="text-lg font-bold mb-4 text-center">Link de pagamento</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
           value={cpf}

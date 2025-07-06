@@ -53,7 +53,9 @@ export async function POST(req: NextRequest) {
         String(formData.get('produto_inscricao')),
       )
     }
-    const evento = await pbRetry(() => pb.collection('eventos').create(formData))
+    const evento = await pbRetry(() =>
+      pb.collection('eventos').create(formData),
+    )
     return NextResponse.json(evento, { status: 201 })
   } catch (err) {
     await logConciliacaoErro(`Erro ao criar evento: ${String(err)}`)

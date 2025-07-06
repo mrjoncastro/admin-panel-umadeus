@@ -13,13 +13,11 @@ export async function GET(req: NextRequest) {
     await logConciliacaoErro(
       `GET /inscricoes/public - rate limit exceeded - ${ip}`,
     )
-    return NextResponse.json(
-      { error: 'Muitas requisições' },
-      { status: 429 },
-    )
+    return NextResponse.json({ error: 'Muitas requisições' }, { status: 429 })
   }
 
-  const email = req.nextUrl.searchParams.get('email')?.toLowerCase().trim() || ''
+  const email =
+    req.nextUrl.searchParams.get('email')?.toLowerCase().trim() || ''
   const cpf = req.nextUrl.searchParams.get('cpf')?.replace(/\D/g, '') || ''
   const eventoId = req.nextUrl.searchParams.get('evento') || ''
 
@@ -37,10 +35,7 @@ export async function GET(req: NextRequest) {
     await logConciliacaoErro(
       `GET /inscricoes/public - parametros invalidos - ${ip}`,
     )
-    return NextResponse.json(
-      { error: 'Parâmetros inválidos' },
-      { status: 400 },
-    )
+    return NextResponse.json({ error: 'Parâmetros inválidos' }, { status: 400 })
   }
 
   try {
@@ -64,13 +59,9 @@ export async function GET(req: NextRequest) {
     if (eventoId) filtroParts.push(`evento="${eventoId}"`)
     const filtro = filtroParts.join(' && ')
 
-    const record = await pb
-      .collection('inscricoes')
-      .getFirstListItem(filtro)
+    const record = await pb.collection('inscricoes').getFirstListItem(filtro)
 
-    await logConciliacaoErro(
-      `GET /inscricoes/public - sucesso - ${ip}`,
-    )
+    await logConciliacaoErro(`GET /inscricoes/public - sucesso - ${ip}`)
 
     return NextResponse.json(
       {
@@ -92,12 +83,7 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    await logConciliacaoErro(
-      `GET /inscricoes/public - ${String(err)} - ${ip}`,
-    )
-    return NextResponse.json(
-      { error: 'Erro interno' },
-      { status: 500 },
-    )
+    await logConciliacaoErro(`GET /inscricoes/public - ${String(err)} - ${ip}`)
+    return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
   }
 }

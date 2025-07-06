@@ -29,7 +29,9 @@ vi.mock('@/lib/context/AuthContext', () => ({
 }))
 
 vi.mock('@/utils/cep', () => ({
-  fetchCep: vi.fn().mockResolvedValue({ street: '', neighborhood: '', city: '', state: '' }),
+  fetchCep: vi
+    .fn()
+    .mockResolvedValue({ street: '', neighborhood: '', city: '', state: '' }),
 }))
 
 describe('EventForm login', () => {
@@ -37,17 +39,32 @@ describe('EventForm login', () => {
     const fetchMock = vi.fn()
     global.fetch = fetchMock as unknown as typeof fetch
     fetchMock
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve([{ id: 'c1', nome: 'Campo 1' }]) })
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ expand: { produto_inscricao: { id: 'p1', nome: 'Prod 1' } }, cobra_inscricao: false }),
+        json: () => Promise.resolve([{ id: 'c1', nome: 'Campo 1' }]),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            expand: { produto_inscricao: { id: 'p1', nome: 'Prod 1' } },
+            cobra_inscricao: false,
+          }),
       })
 
-    render(<EventForm eventoId="ev1" initialCpf="52998224725" initialEmail="f@x.com" />)
+    render(
+      <EventForm
+        eventoId="ev1"
+        initialCpf="52998224725"
+        initialEmail="f@x.com"
+      />,
+    )
 
     await screen.findByDisplayValue('529.982.247-25')
     const emailInput = screen.getByDisplayValue('f@x.com') as HTMLInputElement
-    const cpfInput = screen.getByDisplayValue('529.982.247-25') as HTMLInputElement
+    const cpfInput = screen.getByDisplayValue(
+      '529.982.247-25',
+    ) as HTMLInputElement
     expect(emailInput).toHaveAttribute('readonly')
     expect(cpfInput).toHaveAttribute('readonly')
   })

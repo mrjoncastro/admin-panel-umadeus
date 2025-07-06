@@ -7,10 +7,7 @@ export default function PedidosPage() {
       <PedidosTable />
       <div className="text-center text-sm">
         <p>Não recebeu o email de pagamento?</p>
-        <Link
-          href="/recuperar"
-          className="text-purple-600 hover:underline"
-        >
+        <Link href="/recuperar" className="text-purple-600 hover:underline">
           Recupere agora!
         </Link>
       </div>

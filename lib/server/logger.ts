@@ -21,7 +21,9 @@ export async function logConciliacaoErro(message: string) {
   const env = process.env.NODE_ENV || 'dev'
   const line = `## [${date}] ${message} - ${env}\n`
   try {
-    const isServerless = Boolean(process.env.VERCEL || process.env.AWS_EXECUTION_ENV)
+    const isServerless = Boolean(
+      process.env.VERCEL || process.env.AWS_EXECUTION_ENV,
+    )
     const logPath = isServerless
       ? path.join('/tmp', 'ERR_LOG.md')
       : path.join(process.cwd(), 'logs', 'ERR_LOG.md')

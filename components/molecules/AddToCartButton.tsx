@@ -81,7 +81,9 @@ export default function AddToCartButton({ produto }: { produto: Produto }) {
       <button onClick={handleClick} className="block w-full btn btn-primary">
         <ShoppingCart size={20} /> Adicionar ao Carrinho
       </button>
-      {authOpen && <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />}
+      {authOpen && (
+        <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
+      )}
     </>
   )
 }

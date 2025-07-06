@@ -42,7 +42,10 @@ export default function FormWizard({
         HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
       >('input, select, textarea')
       for (const input of Array.from(inputs)) {
-        if (typeof input.reportValidity === 'function' && !input.reportValidity()) {
+        if (
+          typeof input.reportValidity === 'function' &&
+          !input.reportValidity()
+        ) {
           return
         }
       }

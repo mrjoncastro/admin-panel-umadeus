@@ -43,12 +43,20 @@ export default function PasswordField({
           onClick={() => setVisible((v) => !v)}
           className="absolute inset-y-0 right-0 flex items-center px-3 text-neutral-500"
         >
-          {visible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          {visible ? (
+            <EyeOff className="w-4 h-4" />
+          ) : (
+            <Eye className="w-4 h-4" />
+          )}
         </button>
       </div>
       {showValidation && touched && (
-        <p className={`text-sm ${isValid ? 'text-green-600' : 'text-error-600'}`.trim()}>
-          {isValid ? 'Senha válida ✅' : 'A senha precisa ter pelo menos 8 caracteres.'}
+        <p
+          className={`text-sm ${isValid ? 'text-green-600' : 'text-error-600'}`.trim()}
+        >
+          {isValid
+            ? 'Senha válida ✅'
+            : 'A senha precisa ter pelo menos 8 caracteres.'}
         </p>
       )}
     </div>

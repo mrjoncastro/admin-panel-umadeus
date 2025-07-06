@@ -17,24 +17,38 @@ describe('Mapeamento Credito para pix', () => {
     const getUser = vi.fn().mockResolvedValue({ id: 'u1' })
     const getInscricao = vi.fn().mockRejectedValue(new Error('not found'))
     const createInscricao = vi.fn().mockResolvedValue({ id: 'i1' })
-    const getEvento = vi.fn().mockResolvedValue({ cobra_inscricao: true, titulo: 'T' })
+    const getEvento = vi
+      .fn()
+      .mockResolvedValue({ cobra_inscricao: true, titulo: 'T' })
     const getCfg = vi.fn().mockResolvedValue({ confirma_inscricoes: false })
     const updatePedido = vi.fn()
     const pb = createPocketBaseMock()
     pb.collection.mockImplementation((name: string) => {
-      if (name === 'usuarios') return { getOne: getLider, getFirstListItem: getUser }
-      if (name === 'inscricoes') return { getFirstListItem: getInscricao, create: createInscricao }
+      if (name === 'usuarios')
+        return { getOne: getLider, getFirstListItem: getUser }
+      if (name === 'inscricoes')
+        return { getFirstListItem: getInscricao, create: createInscricao }
       if (name === 'eventos') return { getOne: getEvento }
       if (name === 'clientes_config') return { getFirstListItem: getCfg }
       if (name === 'pedidos') return { update: updatePedido, delete: vi.fn() }
       return {} as any
     })
-    ;(requireClienteFromHost as unknown as { mockResolvedValue: (v: any) => void }).mockResolvedValue({ pb, cliente: { nome: 'Cli', asaas_api_key: '$key' } })
+    ;(
+      requireClienteFromHost as unknown as {
+        mockResolvedValue: (v: any) => void
+      }
+    ).mockResolvedValue({ pb, cliente: { nome: 'Cli', asaas_api_key: '$key' } })
 
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ pedidoId: 'p1', valor: 10 }) })
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ url: 'link' }) })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ pedidoId: 'p1', valor: 10 }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ url: 'link' }),
+      })
       .mockResolvedValue({ ok: true, json: () => Promise.resolve({}) })
     global.fetch = fetchMock as unknown as typeof fetch
 
@@ -55,12 +69,20 @@ describe('Mapeamento Credito para pix', () => {
     ;(req as any).nextUrl = new URL('http://test/api/inscricoes')
 
     const pocketbaseModule = await import('../../lib/pocketbase')
-    ;(pocketbaseModule.default as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue(pb)
+    ;(
+      pocketbaseModule.default as unknown as {
+        mockReturnValue: (v: any) => void
+      }
+    ).mockReturnValue(pb)
 
     const res = await postInscricoes(req as unknown as NextRequest)
     expect(res.status).toBe(200)
-    expect(createInscricao).toHaveBeenCalledWith(expect.objectContaining({ paymentMethod: 'pix' }))
-    expect(JSON.parse(fetchMock.mock.calls[1][1].body as string).paymentMethod).toBe('pix')
+    expect(createInscricao).toHaveBeenCalledWith(
+      expect.objectContaining({ paymentMethod: 'pix' }),
+    )
+    expect(
+      JSON.parse(fetchMock.mock.calls[1][1].body as string).paymentMethod,
+    ).toBe('pix')
   })
 
   it('normaliza na rota /api/asaas', async () => {
@@ -68,35 +90,81 @@ describe('Mapeamento Credito para pix', () => {
     pb.collection.mockImplementation((name: string) => {
       if (name === 'pedidos')
         return {
-          getOne: vi.fn().mockResolvedValue({ id: 'p1', id_inscricao: 'ins1', produto: 'P', cliente: 'cli1', responsavel: 'u1' }),
+          getOne: vi
+            .fn()
+            .mockResolvedValue({
+              id: 'p1',
+              id_inscricao: 'ins1',
+              produto: 'P',
+              cliente: 'cli1',
+              responsavel: 'u1',
+            }),
           update: vi.fn(),
         }
       if (name === 'inscricoes')
-        return { getOne: vi.fn().mockResolvedValue({ id: 'ins1', cpf: '1', nome: 'N', email: 'e', telefone: '1', endereco: '', numero: '', cliente: 'cli1', criado_por: 'u1' }) }
+        return {
+          getOne: vi
+            .fn()
+            .mockResolvedValue({
+              id: 'ins1',
+              cpf: '1',
+              nome: 'N',
+              email: 'e',
+              telefone: '1',
+              endereco: '',
+              numero: '',
+              cliente: 'cli1',
+              criado_por: 'u1',
+            }),
+        }
       return {} as any
     })
-    ;(requireClienteFromHost as unknown as { mockResolvedValue: (v: any) => void }).mockResolvedValue({ pb, cliente: { nome: 'Cli', asaas_api_key: '$key' } })
+    ;(
+      requireClienteFromHost as unknown as {
+        mockResolvedValue: (v: any) => void
+      }
+    ).mockResolvedValue({ pb, cliente: { nome: 'Cli', asaas_api_key: '$key' } })
 
     process.env.ASAAS_API_URL = 'http://asaas'
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ data: [] }) })
-      .mockResolvedValueOnce({ ok: true, text: () => Promise.resolve('{"id":"c1"}') })
-      .mockResolvedValueOnce({ ok: true, text: () => Promise.resolve('{"id":"pay","invoiceUrl":"url"}') })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ data: [] }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        text: () => Promise.resolve('{"id":"c1"}'),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        text: () => Promise.resolve('{"id":"pay","invoiceUrl":"url"}'),
+      })
     global.fetch = fetchMock as unknown as typeof fetch
 
     const req = new Request('http://test/api/asaas', {
       method: 'POST',
-      body: JSON.stringify({ pedidoId: 'p1', valorBruto: 10, paymentMethod: 'Credito', installments: 1 }),
+      body: JSON.stringify({
+        pedidoId: 'p1',
+        valorBruto: 10,
+        paymentMethod: 'Credito',
+        installments: 1,
+      }),
     })
     ;(req as any).nextUrl = new URL('http://test/api/asaas')
 
     const pocketbaseModule = await import('../../lib/pocketbase')
-    ;(pocketbaseModule.default as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue(pb)
+    ;(
+      pocketbaseModule.default as unknown as {
+        mockReturnValue: (v: any) => void
+      }
+    ).mockReturnValue(pb)
 
     const res = await postAsaas(req as unknown as NextRequest)
     expect(res.status).toBe(200)
-    const body = JSON.parse((fetchMock.mock.calls[2][1] as RequestInit).body as string)
+    const body = JSON.parse(
+      (fetchMock.mock.calls[2][1] as RequestInit).body as string,
+    )
     expect(body.billingType).toBe('PIX')
   })
 })

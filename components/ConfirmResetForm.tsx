@@ -32,7 +32,9 @@ export default function ConfirmResetForm({ token }: Props) {
     }
 
     try {
-      await pb.collection('users').confirmPasswordReset(token, password, confirm)
+      await pb
+        .collection('users')
+        .confirmPasswordReset(token, password, confirm)
       setSuccess(true)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro desconhecido.'

@@ -125,7 +125,9 @@ export async function processWebhook(body: AsaasWebhookPayload) {
     }
   }
 
-  const keyHeader = clienteApiKey.startsWith('$') ? clienteApiKey : `$${clienteApiKey}`
+  const keyHeader = clienteApiKey.startsWith('$')
+    ? clienteApiKey
+    : `$${clienteApiKey}`
 
   const paymentRes = await fetch(`${baseUrl}/payments/${paymentId}`, {
     headers: {
@@ -140,13 +142,20 @@ export async function processWebhook(body: AsaasWebhookPayload) {
   }
 
   const paymentData = (await paymentRes.json()) as AsaasPaymentResponse
-  const { status, externalReference, customer: asaasCustomerId, value } = paymentData
+  const {
+    status,
+    externalReference,
+    customer: asaasCustomerId,
+    value,
+  } = paymentData
   if (status !== 'RECEIVED' && status !== 'CONFIRMED') {
     return
   }
 
   if (externalReference && !inscricaoId) {
-    const m = /cliente_[^_]+_usuario_[^_]+_inscricao_([^_]+)/.exec(externalReference)
+    const m = /cliente_[^_]+_usuario_[^_]+_inscricao_([^_]+)/.exec(
+      externalReference,
+    )
     inscricaoId = m?.[1]
   }
 
@@ -159,7 +168,9 @@ export async function processWebhook(body: AsaasWebhookPayload) {
       : usuarioId
         ? `id_pagamento = "${paymentId}" && responsavel = "${usuarioId}"`
         : `id_pagamento = "${paymentId}"`
-    pedidoRecord = await pb.collection('pedidos').getFirstListItem<PedidoRecord>(filtro)
+    pedidoRecord = await pb
+      .collection('pedidos')
+      .getFirstListItem<PedidoRecord>(filtro)
   } catch {
     /* nenhum registro inicial */
   }
@@ -178,17 +189,22 @@ export async function processWebhook(body: AsaasWebhookPayload) {
 
   if (!pedidoRecord && asaasCustomerId) {
     try {
-      const clienteRes = await fetch(`${baseUrl}/customers/${asaasCustomerId}`, {
-        headers: { Accept: 'application/json', 'access-token': keyHeader },
-      })
+      const clienteRes = await fetch(
+        `${baseUrl}/customers/${asaasCustomerId}`,
+        {
+          headers: { Accept: 'application/json', 'access-token': keyHeader },
+        },
+      )
       if (clienteRes.ok) {
         const clienteData = (await clienteRes.json()) as AsaasCustomerResponse
         const cpf = clienteData.cpfCnpj?.replace(/\D/g, '')
         if (cpf) {
-          const pedidos = await pb.collection('pedidos').getList<PedidoRecord>(1, 1, {
-            filter: `cpf = "${cpf}"`,
-            sort: '-created',
-          })
+          const pedidos = await pb
+            .collection('pedidos')
+            .getList<PedidoRecord>(1, 1, {
+              filter: `cpf = "${cpf}"`,
+              sort: '-created',
+            })
           if (pedidos.items.length > 0) pedidoRecord = pedidos.items[0]
         }
       }
@@ -198,20 +214,28 @@ export async function processWebhook(body: AsaasWebhookPayload) {
   }
 
   if (!pedidoRecord) {
-    await logConciliacaoErro(`Pedido não encontrado para pagamento ${paymentId}`)
+    await logConciliacaoErro(
+      `Pedido não encontrado para pagamento ${paymentId}`,
+    )
     throw new Error('Pedido não encontrado')
   }
 
   try {
-    await pb.collection('pedidos').update(pedidoRecord.id, { status: 'pago', id_pagamento: paymentId })
+    await pb
+      .collection('pedidos')
+      .update(pedidoRecord.id, { status: 'pago', id_pagamento: paymentId })
     if (inscricaoId) {
-      await pb.collection('inscricoes').update<InscricaoRecord>(inscricaoId, { status: 'confirmado' })
+      await pb
+        .collection('inscricoes')
+        .update<InscricaoRecord>(inscricaoId, { status: 'confirmado' })
     }
 
     let responsavelId = pedidoRecord.responsavel
     if (!responsavelId && inscricaoId) {
       try {
-        const inscricao = await pb.collection('inscricoes').getOne<InscricaoRecord>(inscricaoId)
+        const inscricao = await pb
+          .collection('inscricoes')
+          .getOne<InscricaoRecord>(inscricaoId)
         responsavelId = inscricao.criado_por
       } catch {
         /* ignore */
@@ -238,7 +262,9 @@ export async function processWebhook(body: AsaasWebhookPayload) {
       })
     }
   } catch (error) {
-    await logConciliacaoErro(`Falha ao atualizar pedido ${pedidoRecord.id}: ${String(error)}`)
+    await logConciliacaoErro(
+      `Falha ao atualizar pedido ${pedidoRecord.id}: ${String(error)}`,
+    )
     throw error
   }
 }

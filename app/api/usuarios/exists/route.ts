@@ -22,7 +22,10 @@ export async function GET(req: NextRequest) {
       result.cpf = r.items.length > 0
     }
   } catch {
-    return NextResponse.json({ error: 'Erro ao verificar CPF' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Erro ao verificar CPF' },
+      { status: 500 },
+    )
   }
 
   try {
@@ -34,7 +37,10 @@ export async function GET(req: NextRequest) {
       result.email = r.items.length > 0
     }
   } catch {
-    return NextResponse.json({ error: 'Erro ao verificar email' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Erro ao verificar email' },
+      { status: 500 },
+    )
   }
 
   return NextResponse.json(result)

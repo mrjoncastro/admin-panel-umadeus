@@ -108,22 +108,22 @@ Apenas os seguintes perfis podem executar essas ações:
 
 **Estrutura esperada da coleção `pedidos`:**
 
-| Campo            | Tipo   | Obrigatório | Observações                       |
-| ---------------- | ------ | ----------- | --------------------------------- |
-| `id`             | String | Sim         | Identificador único               |
-| `id_pagamento`   | String | Não         | ID retornado do Asaas             |
-| `id_inscricao`   | Rel.   | Sim         | Relacionado à inscrição           |
-| `produto`        | Rel.[] | Sim         | Produtos vinculados               |
-| `cores`          | Array  | Sim         | Cores escolhidas                  |
-| `tamanho`        | Enum   | Sim         | `PP` • `P` • `M` • `G` • `GG`     |
-| `email`          | String | Sim         | E-mail do inscrito                |
+| Campo            | Tipo   | Obrigatório | Observações                                   |
+| ---------------- | ------ | ----------- | --------------------------------------------- |
+| `id`             | String | Sim         | Identificador único                           |
+| `id_pagamento`   | String | Não         | ID retornado do Asaas                         |
+| `id_inscricao`   | Rel.   | Sim         | Relacionado à inscrição                       |
+| `produto`        | Rel.[] | Sim         | Produtos vinculados                           |
+| `cores`          | Array  | Sim         | Cores escolhidas                              |
+| `tamanho`        | Enum   | Sim         | `PP` • `P` • `M` • `G` • `GG`                 |
+| `email`          | String | Sim         | E-mail do inscrito                            |
 | `status`         | Enum   | Sim         | `pendente` • `pago` • `vencido` • `cancelado` |
-| `campo`          | Rel.   | Sim         | Campo da inscrição                |
-| `responsavel`    | Rel.   | Sim         | Usuário que aprovou               |
-| `genero`         | Enum   | Sim         | `feminino` • `masculino`          |
-| `valor`          | Number | Sim         | Valor total do pedido             |
-| `link_pagamento` | String | Sim         | URL gerada pelo Asaas             |
-| `cliente`        | Rel.   | Sim         | Cliente (tenant) relacionado      |
-| `canal`          | Enum   | Sim         | `inscricao` • `loja`              |
-| `created`        | Date   | Auto        | Data de criação                   |
-| `updated`        | Date   | Auto        | Última atualização                |
+| `campo`          | Rel.   | Sim         | Campo da inscrição                            |
+| `responsavel`    | Rel.   | Sim         | Usuário que aprovou                           |
+| `genero`         | Enum   | Sim         | `feminino` • `masculino`                      |
+| `valor`          | Number | Sim         | Valor total do pedido                         |
+| `link_pagamento` | String | Sim         | URL gerada pelo Asaas                         |
+| `cliente`        | Rel.   | Sim         | Cliente (tenant) relacionado                  |
+| `canal`          | Enum   | Sim         | `inscricao` • `loja`                          |
+| `created`        | Date   | Auto        | Data de criação                               |
+| `updated`        | Date   | Auto        | Última atualização                            |

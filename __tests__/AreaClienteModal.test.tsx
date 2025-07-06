@@ -6,7 +6,12 @@ import DashboardPage from '@/app/cliente/dashboard/page'
 
 vi.mock('@/lib/hooks/useAuthGuard', () => ({
   useAuthGuard: () => ({
-    user: { nome: 'User', email: 'user@example.com', telefone: '123', role: 'usuario' },
+    user: {
+      nome: 'User',
+      email: 'user@example.com',
+      telefone: '123',
+      role: 'usuario',
+    },
     authChecked: true,
   }),
 }))
@@ -18,7 +23,9 @@ vi.mock('@/lib/pocketbase', () => ({
 
 // silence fetch for useEffect
 beforeEach(() => {
-  global.fetch = vi.fn().mockResolvedValue({ json: () => Promise.resolve([]) }) as any
+  global.fetch = vi
+    .fn()
+    .mockResolvedValue({ json: () => Promise.resolve([]) }) as any
 })
 
 test('exibe sauda\u00e7\u00e3o ao carregar dashboard', async () => {

@@ -18,7 +18,9 @@ pb.collection.mockImplementation((name: string) => {
 })
 
 vi.mock('../../lib/pocketbase', () => ({ default: vi.fn(() => pb) }))
-vi.mock('../../lib/getTenantFromHost', () => ({ getTenantFromHost: vi.fn(() => 'cli1') }))
+vi.mock('../../lib/getTenantFromHost', () => ({
+  getTenantFromHost: vi.fn(() => 'cli1'),
+}))
 
 describe('POST /api/recuperar-link', () => {
   it('retorna link de pagamento quando cobranca ativa', async () => {
@@ -27,11 +29,11 @@ describe('POST /api/recuperar-link', () => {
       dueDate: new Date(Date.now() + 86_400_000).toISOString(),
       invoiceUrl: 'http://pay',
       pedido: 'p1',
-      nomeUsuario: 'U'
+      nomeUsuario: 'U',
     })
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({ cpf: '12345678901' })
+      body: JSON.stringify({ cpf: '12345678901' }),
     })
     ;(req as any).nextUrl = new URL('http://test')
     const res = await POST(req as unknown as NextRequest)
@@ -46,7 +48,7 @@ describe('POST /api/recuperar-link', () => {
     getFirstInscricao.mockResolvedValueOnce({ status: 'pendente' })
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({ cpf: '12345678901' })
+      body: JSON.stringify({ cpf: '12345678901' }),
     })
     ;(req as any).nextUrl = new URL('http://test')
     const res = await POST(req as unknown as NextRequest)
@@ -60,11 +62,10 @@ describe('POST /api/recuperar-link', () => {
     getFirstInscricao.mockRejectedValueOnce(new Error('not found'))
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({ cpf: '12345678901' })
+      body: JSON.stringify({ cpf: '12345678901' }),
     })
     ;(req as any).nextUrl = new URL('http://test')
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(404)
   })
-
 })

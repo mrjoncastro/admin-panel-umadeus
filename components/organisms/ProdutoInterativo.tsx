@@ -196,7 +196,9 @@ export default function ProdutoInterativo({
           </>
         ) : (
           <div className="w-full max-w-[480px] h-[480px] mx-auto flex items-center justify-center rounded-xl border border-[var(--accent-900)] bg-[var(--background)] shadow-lg">
-            <p className="text-sm text-[var(--text-primary)]/70">Sem imagens disponíveis</p>
+            <p className="text-sm text-[var(--text-primary)]/70">
+              Sem imagens disponíveis
+            </p>
           </div>
         )}
         {/* Tamanhos e gênero no mobile */}

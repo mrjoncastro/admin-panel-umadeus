@@ -173,25 +173,25 @@ export default function ConsultaInscricao({
   return (
     <div className="space-y-4 mx-auto max-w-xs md:max-w-sm">
       <form onSubmit={handleSubmit} className="space-y-4">
-          <FormField label="CPF" htmlFor="consulta-cpf" error={errors.cpf}>
-            <InputWithMask
-              id="consulta-cpf"
-              mask="cpf"
-              value={cpf}
-              onChange={(e) => setCpf(e.target.value)}
-              disabled={isLoggedIn}
-              required
-            />
-          </FormField>
-          <FormField label="E-mail" htmlFor="consulta-email" error={errors.email}>
-            <TextField
-              id="consulta-email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={isLoggedIn}
-              required
-            />
+        <FormField label="CPF" htmlFor="consulta-cpf" error={errors.cpf}>
+          <InputWithMask
+            id="consulta-cpf"
+            mask="cpf"
+            value={cpf}
+            onChange={(e) => setCpf(e.target.value)}
+            disabled={isLoggedIn}
+            required
+          />
+        </FormField>
+        <FormField label="E-mail" htmlFor="consulta-email" error={errors.email}>
+          <TextField
+            id="consulta-email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={isLoggedIn}
+            required
+          />
         </FormField>
         {errors.geral && (
           <p role="alert" className="text-error-600">
@@ -202,16 +202,14 @@ export default function ConsultaInscricao({
           <p className="flex items-start gap-2 text-sm text-neutral-600">
             <Info className="mt-0.5" size={16} />
             <span>
-              Para inscrever outra pessoa,
-              {' '}
+              Para inscrever outra pessoa,{' '}
               <button
                 type="button"
                 onClick={logout}
                 className="underline text-blue-600 hover:text-blue-800"
               >
                 saia da sua conta
-              </button>
-              {' '}
+              </button>{' '}
               e preencha os dados dela.
             </span>
           </p>

@@ -100,7 +100,10 @@ export default function EventForm({
       try {
         const headers = getAuthHeaders(pb)
         const promises: Promise<Response>[] = [
-          fetch(`/api/eventos/${eventoId}`, { headers, credentials: 'include' }),
+          fetch(`/api/eventos/${eventoId}`, {
+            headers,
+            credentials: 'include',
+          }),
         ]
         if (liderId) {
           promises.unshift(
@@ -110,7 +113,9 @@ export default function EventForm({
             }),
           )
         } else {
-          promises.unshift(fetch('/api/campos', { headers, credentials: 'include' }))
+          promises.unshift(
+            fetch('/api/campos', { headers, credentials: 'include' }),
+          )
         }
         const [campoRes, eventoRes] = await Promise.all(promises)
         if (liderId) {
@@ -134,8 +139,8 @@ export default function EventForm({
             tamanhos: Array.isArray(p.tamanhos)
               ? p.tamanhos
               : p.tamanhos
-              ? [p.tamanhos]
-              : undefined,
+                ? [p.tamanhos]
+                : undefined,
           }))
         } else if (eventoData?.expand?.produto_inscricao) {
           const p = eventoData.expand.produto_inscricao as ProdutoApi
@@ -149,8 +154,8 @@ export default function EventForm({
               tamanhos: Array.isArray(p.tamanhos)
                 ? p.tamanhos
                 : p.tamanhos
-                ? [p.tamanhos]
-                : undefined,
+                  ? [p.tamanhos]
+                  : undefined,
             },
           ]
         } else if (eventoData?.produto_inscricao) {
@@ -258,17 +263,18 @@ export default function EventForm({
       if (!userData?.cpf) missing.push('cpf')
       if (!userData?.data_nascimento) missing.push('data de nascimento')
       if (!userData?.genero && !form.genero) missing.push('gênero')
-      if (!userData?.endereco) missing.push("endereço")
-      if (!userData?.numero) missing.push("numero")
-      if (!userData?.bairro) missing.push("bairro")
-      if (!userData?.cidade) missing.push("cidade")
-      if (!userData?.estado) missing.push("estado")
-      if (!userData?.cep) missing.push("CEP")
+      if (!userData?.endereco) missing.push('endereço')
+      if (!userData?.numero) missing.push('numero')
+      if (!userData?.bairro) missing.push('bairro')
+      if (!userData?.cidade) missing.push('cidade')
+      if (!userData?.estado) missing.push('estado')
+      if (!userData?.cep) missing.push('CEP')
       if (!form.campoId && !userData?.campo) missing.push('campo')
       if (!form.produtoId) missing.push('produto')
       const produto = produtos.find((p) => p.id === form.produtoId)
       if (produto?.tamanhos?.length && !form.tamanho) missing.push('tamanho')
-      if (cobraInscricao && !form.paymentMethod) missing.push('forma de pagamento')
+      if (cobraInscricao && !form.paymentMethod)
+        missing.push('forma de pagamento')
       if (missing.length > 0) {
         showError(
           `Atualize seu perfil: faltam ${missing.join(', ')} antes de prosseguir.`,
@@ -298,7 +304,7 @@ export default function EventForm({
     })
   } else if (!userData?.genero) {
     steps.push({
-      title: "Informações Adicionais",
+      title: 'Informações Adicionais',
       content: (
         <div className="space-y-4">
           <FormField label="Gênero" htmlFor="genero">
@@ -319,8 +325,6 @@ export default function EventForm({
       ),
     })
   }
-
-
 
   if (liderId) {
     steps.push({
@@ -415,7 +419,10 @@ export default function EventForm({
               id="tamanho"
               name="tamanho"
               value={form.tamanho}
-              required={(produtos.find((p) => p.id === form.produtoId)?.tamanhos?.length ?? 0) > 0}
+              required={
+                (produtos.find((p) => p.id === form.produtoId)?.tamanhos
+                  ?.length ?? 0) > 0
+              }
             />
             <div className="flex flex-wrap gap-2 mt-1">
               {produtos
@@ -489,7 +496,8 @@ export default function EventForm({
           {userData?.data_nascimento}
         </p>
         <p>
-          <span className="font-medium">Endereço:</span> {userData?.endereco}, {userData?.numero}
+          <span className="font-medium">Endereço:</span> {userData?.endereco},{' '}
+          {userData?.numero}
         </p>
         <p>
           <span className="font-medium">Bairro:</span> {userData?.bairro}
@@ -549,9 +557,7 @@ export default function EventForm({
   }
 
   if (checouPendentes && pendentes.length > 0) {
-    return (
-      <InscricoesTable inscricoes={pendentes} variant="details" />
-    )
+    return <InscricoesTable inscricoes={pendentes} variant="details" />
   }
 
   return (
