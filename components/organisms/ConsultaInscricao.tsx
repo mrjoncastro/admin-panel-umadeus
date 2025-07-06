@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuthContext } from '@/lib/context/AuthContext'
+import { Info } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import * as Dialog from '@radix-ui/react-dialog'
@@ -23,7 +24,7 @@ export default function ConsultaInscricao({
   liderId,
   inscricoesEncerradas,
 }: ConsultaInscricaoProps) {
-  const { user, isLoggedIn } = useAuthContext()
+  const { user, isLoggedIn, logout } = useAuthContext()
   const [cpf, setCpf] = useState(() =>
     isLoggedIn && user?.cpf ? user.cpf : '',
   )
@@ -195,6 +196,24 @@ export default function ConsultaInscricao({
         {errors.geral && (
           <p role="alert" className="text-error-600">
             {errors.geral}
+          </p>
+        )}
+        {isLoggedIn && (
+          <p className="flex items-start gap-2 text-sm text-neutral-600">
+            <Info className="mt-0.5" size={16} />
+            <span>
+              Para inscrever outra pessoa,
+              {' '}
+              <button
+                type="button"
+                onClick={logout}
+                className="underline text-blue-600 hover:text-blue-800"
+              >
+                saia da sua conta
+              </button>
+              {' '}
+              e preencha os dados dela.
+            </span>
           </p>
         )}
         <Button type="submit" disabled={loading}>
