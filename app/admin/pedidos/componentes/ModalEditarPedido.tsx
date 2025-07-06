@@ -35,11 +35,14 @@ export default function ModalEditarPedido({
     }))
   }
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault()
-      const { status: _discard, ...rest } = formState
-      onSave(disableStatus ? rest : formState)
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const data = { ...formState }
+    if (disableStatus) {
+      delete data.status
     }
+    onSave(data)
+  }
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
