@@ -239,6 +239,21 @@ export default function EventForm({
       const ok = await createUserRef.current?.submit()
       return Boolean(ok)
     }
+
+    const reviewStepIndex = steps.length - 2
+    if (index === reviewStepIndex) {
+      const missing: string[] = []
+      if (!user?.telefone) missing.push('telefone')
+      if (!user?.data_nascimento) missing.push('data de nascimento')
+      if (!user?.genero && !form.genero) missing.push('gênero')
+      if (missing.length > 0) {
+        showError(
+          `Atualize seu perfil: faltam ${missing.join(', ')} antes de prosseguir.`,
+        )
+        return false
+      }
+    }
+
     return true
   }
 
@@ -431,10 +446,21 @@ export default function EventForm({
           <span className="font-medium">Nome:</span> {user?.nome}
         </p>
         <p>
+          <span className="font-medium">Telefone:</span> {user?.telefone}
+        </p>
+        <p>
           <span className="font-medium">CPF:</span> {user?.cpf}
         </p>
         <p>
           <span className="font-medium">E-mail:</span> {user?.email}
+        </p>
+        <p>
+          <span className="font-medium">Data de Nascimento:</span>{' '}
+          {user?.data_nascimento}
+        </p>
+        <p>
+          <span className="font-medium">Gênero:</span>{' '}
+          {form.genero || user?.genero}
         </p>
         <p>
           <span className="font-medium">Campo:</span>{' '}
