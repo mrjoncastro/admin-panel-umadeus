@@ -239,6 +239,21 @@ export default function EventForm({
       const ok = await createUserRef.current?.submit()
       return Boolean(ok)
     }
+
+    const reviewStepIndex = steps.length - 2
+    if (index === reviewStepIndex) {
+      const missing: string[] = []
+      if (!user?.telefone) missing.push('telefone')
+      if (!user?.data_nascimento) missing.push('data de nascimento')
+      if (!user?.genero && !form.genero) missing.push('gênero')
+      if (missing.length > 0) {
+        showError(
+          `Atualize seu perfil: faltam ${missing.join(', ')} antes de prosseguir.`,
+        )
+        return false
+      }
+    }
+
     return true
   }
 
