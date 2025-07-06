@@ -90,32 +90,28 @@ describe('Mapeamento Credito para pix', () => {
     pb.collection.mockImplementation((name: string) => {
       if (name === 'pedidos')
         return {
-          getOne: vi
-            .fn()
-            .mockResolvedValue({
-              id: 'p1',
-              id_inscricao: 'ins1',
-              produto: 'P',
-              cliente: 'cli1',
-              responsavel: 'u1',
-            }),
+          getOne: vi.fn().mockResolvedValue({
+            id: 'p1',
+            id_inscricao: 'ins1',
+            produto: 'P',
+            cliente: 'cli1',
+            responsavel: 'u1',
+          }),
           update: vi.fn(),
         }
       if (name === 'inscricoes')
         return {
-          getOne: vi
-            .fn()
-            .mockResolvedValue({
-              id: 'ins1',
-              cpf: '1',
-              nome: 'N',
-              email: 'e',
-              telefone: '1',
-              endereco: '',
-              numero: '',
-              cliente: 'cli1',
-              criado_por: 'u1',
-            }),
+          getOne: vi.fn().mockResolvedValue({
+            id: 'ins1',
+            cpf: '1',
+            nome: 'N',
+            email: 'e',
+            telefone: '1',
+            endereco: '',
+            numero: '',
+            cliente: 'cli1',
+            criado_por: 'u1',
+          }),
         }
       return {} as any
     })
