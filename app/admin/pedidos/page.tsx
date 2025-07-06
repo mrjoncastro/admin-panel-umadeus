@@ -408,6 +408,7 @@ export default function PedidosPage() {
       {pedidoSelecionado && (
         <ModalEditarPedido
           pedido={pedidoSelecionado}
+          disableStatus={user?.role === 'lider'}
           onClose={() => setPedidoSelecionado(null)}
           onSave={async (dadosAtualizados) => {
             try {

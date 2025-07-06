@@ -40,7 +40,9 @@ export default function ModalEditarInscricao({
     const atualizada: Partial<Inscricao & { eventoId: string }> = {
       nome: formData.get('nome')?.toString() || '',
       telefone: formData.get('telefone')?.toString() || '',
-      status: formData.get('status') as 'pendente' | 'confirmado' | 'cancelado',
+      ...(user?.role !== 'lider'
+        ? { status: formData.get('status') as 'pendente' | 'confirmado' | 'cancelado' }
+        : {}),
       tamanho: formData.get('tamanho')?.toString(),
       genero: formData.get('genero')?.toString(),
       eventoId: eventoId || inscricao.eventoId,
@@ -62,7 +64,12 @@ export default function ModalEditarInscricao({
             defaultValue={inscricao.telefone}
           />
 
-          <Select name="status" label="Status" defaultValue={inscricao.status}>
+          <Select
+            name="status"
+            label="Status"
+            defaultValue={inscricao.status}
+            disabled={user?.role === 'lider'}
+          >
             <option value="pendente">Pendente</option>
             <option value="confirmado">Confirmado</option>
             <option value="cancelado">Cancelado</option>
@@ -156,9 +163,10 @@ type SelectProps = {
   label: string
   defaultValue?: string
   children: React.ReactNode
+  disabled?: boolean
 }
 
-function Select({ name, label, defaultValue = '', children }: SelectProps) {
+function Select({ name, label, defaultValue = '', children, disabled }: SelectProps) {
   return (
     <div>
       <label htmlFor={name} className="text-sm font-medium block mb-1">
@@ -169,6 +177,7 @@ function Select({ name, label, defaultValue = '', children }: SelectProps) {
         name={name}
         defaultValue={defaultValue}
         className="w-full p-2 border rounded"
+        disabled={disabled}
       >
         {children}
       </select>

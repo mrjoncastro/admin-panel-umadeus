@@ -43,3 +43,9 @@ Se o pedido permanecer com status `pendente` e o campo `vencimento` estiver expi
 um administrador pode gerar uma nova cobrança pelo botão **Gerar nova cobrança**
 nos detalhes do pedido. O sistema envia a requisição para `/api/pedidos/[id]/nova-cobranca`,
 atualizando o `link_pagamento` e o `vencimento` com mais três dias.
+
+## Edição de Pedido
+
+O líder pode ajustar campos como email ou tamanho do produto, mas **não** tem
+permissão para alterar o `status` do pedido durante a edição. Essa ação fica
+restrita aos coordenadores.

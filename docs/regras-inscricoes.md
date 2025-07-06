@@ -131,5 +131,11 @@ A seguir é feita uma requisição para `/api/inscricoes/public` passando `cpf`,
    é mostrado para criar uma nova inscrição. Ao abrir, o CPF e o e‑mail
    digitados na consulta são repassados ao formulário, poupando o usuário de
    redigitar essas informações. Com o período encerrado, é exibida uma mensagem
-   informando que não é mais possível se inscrever.
+informando que não é mais possível se inscrever.
+
+## Edição de Inscrição
+
+Líderes podem atualizar dados como nome ou tamanho da camiseta, mas **não**
+podem alterar o campo `status` durante a edição. Apenas coordenadores mantêm
+permissão para mudar o status manualmente.
 
