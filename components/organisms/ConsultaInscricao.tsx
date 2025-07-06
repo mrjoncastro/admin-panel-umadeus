@@ -198,7 +198,9 @@ export default function ConsultaInscricao({
           </p>
         )}
         <Button type="submit" disabled={loading}>
-          Avançar
+          {isLoggedIn && inscricao
+            ? 'Verificar status da inscrição'
+            : 'Avançar'}
         </Button>
       </form>
 
