@@ -119,6 +119,7 @@ os dados da conta e permanecem desabilitados para edição. Caso a tela seja
 acessada com `cpf` e `email` na URL (após o redirecionamento de login, por
 exemplo), esses valores são ignorados e a consulta é feita diretamente com o CPF
 e o e‑mail do usuário autenticado.
+> **Nota**: para cadastrar outra pessoa, faça logout e repita o processo.
 
 A seguir é feita uma requisição para `/api/inscricoes/public` passando `cpf`,
 `email` e `evento`. As respostas definem o que será exibido:
