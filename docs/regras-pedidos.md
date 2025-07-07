@@ -44,6 +44,12 @@ um administrador pode gerar uma nova cobrança pelo botão **Gerar nova cobranç
 nos detalhes do pedido. O sistema envia a requisição para `/api/pedidos/[id]/nova-cobranca`,
 atualizando o `link_pagamento` e o `vencimento` com mais três dias.
 
+### Atualização automática de vencimento
+
+Um job agendado chama `/api/tasks/pedidos-vencidos` a cada hora.
+Ele verifica pedidos com `status = pendente` cujo `vencimento` já
+passou e atualiza para `vencido`.
+
 ## Edição de Pedido
 
 O líder pode ajustar campos como email ou tamanho do produto, mas **não** tem
