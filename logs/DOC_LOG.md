@@ -569,3 +569,4 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 
 ## [2025-07-06] Líder não pode alterar status ao editar inscrição ou pedido. Documentação atualizada.
 ## [2025-07-07] Endereço opcional para inscrições; formulários e API atualizados. Documentação revisada.
+## [2025-07-08] Mensagens enfileiradas em background nas rotas de envio. Documentação atualizada.

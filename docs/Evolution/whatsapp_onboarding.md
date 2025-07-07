@@ -186,7 +186,7 @@ Editar
 "message": "Texto qualquer"
 }
 Resposta 200
-→ JSON retornado pela Evolution
+mensagem enfileirada (processamento em background)
 
 Erros: 400 / 404 / 500 conforme validações
 

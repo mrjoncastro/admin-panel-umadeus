@@ -137,8 +137,11 @@ export async function queueTextMessage(params: {
   apiKey: string
   to: string
   message: string
+  awaitSend?: boolean
 }) {
-  return broadcastManager.enqueue(params.tenant, () =>
+  const { awaitSend = false } = params
+
+  const promise = broadcastManager.enqueue(params.tenant, () =>
     sendTextMessage({
       instanceName: params.instanceName,
       apiKey: params.apiKey,
@@ -146,4 +149,13 @@ export async function queueTextMessage(params: {
       message: params.message,
     }),
   )
+
+  if (awaitSend) {
+    return promise
+  }
+
+  promise.catch((err) =>
+    console.error('[queueTextMessage] erro no envio assíncrono:', err),
+  )
+  return { queued: true }
 }
