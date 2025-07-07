@@ -18,6 +18,13 @@ const nextConfig: NextConfig = {
     },
   ],
   rewrites: async () => [],
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.md$/,
+      type: 'asset/source',
+    })
+    return config
+  },
 }
 
 export default nextConfig

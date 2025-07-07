@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
-import template from './template.md?raw'
+import template from './template.md'
 
 export interface DashboardMetrics {
   labels: string[]
