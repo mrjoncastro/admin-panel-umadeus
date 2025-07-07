@@ -151,7 +151,6 @@ export default function CompletarCadastroPage() {
                 id="cadastro-cep"
                 value={cep}
                 onChange={(e) => setCep(e.target.value)}
-                required
               />
             </FormField>
             <FormField label="Número" htmlFor="cadastro-numero">
@@ -159,7 +158,6 @@ export default function CompletarCadastroPage() {
                 id="cadastro-numero"
                 value={numero}
                 onChange={(e) => setNumero(e.target.value)}
-                required
               />
             </FormField>
             <FormField label="Endereço" htmlFor="cadastro-endereco">
@@ -167,7 +165,6 @@ export default function CompletarCadastroPage() {
                 id="cadastro-endereco"
                 value={endereco}
                 onChange={(e) => setEndereco(e.target.value)}
-                required
               />
             </FormField>
             <FormField label="Bairro" htmlFor="cadastro-bairro">
@@ -175,7 +172,6 @@ export default function CompletarCadastroPage() {
                 id="cadastro-bairro"
                 value={bairro}
                 onChange={(e) => setBairro(e.target.value)}
-                required
               />
             </FormField>
             <FormField label="Cidade" htmlFor="cadastro-cidade">
@@ -183,7 +179,6 @@ export default function CompletarCadastroPage() {
                 id="cadastro-cidade"
                 value={cidade}
                 onChange={(e) => setCidade(e.target.value)}
-                required
               />
             </FormField>
             <FormField label="Estado" htmlFor="cadastro-estado">
@@ -191,7 +186,6 @@ export default function CompletarCadastroPage() {
                 id="cadastro-estado"
                 value={estado}
                 onChange={(e) => setEstado(e.target.value)}
-                required
               />
             </FormField>
             <FormField label="Campo" htmlFor="cadastro-campo">
