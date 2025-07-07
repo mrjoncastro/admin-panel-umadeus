@@ -1,15 +1,11 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { useEffect, useState, useRef } from 'react'
-import { setupCharts } from '@/lib/chartSetup'
 import { Line, Bar } from 'react-chartjs-2'
 import { saveAs } from 'file-saver'
 import * as XLSX from 'xlsx'
 import type { Chart as ChartJS } from 'chart.js'
-import { generateDashboardPdf } from '@/lib/report/generateDashboardPdf'
-import { useToast } from '@/lib/context/ToastContext'
-import type { Chart as ChartJS } from 'chart.js'
+import { setupCharts } from '@/lib/chartSetup'
 import { generateDashboardPdf } from '@/lib/report/generateDashboardPdf'
 import { useToast } from '@/lib/context/ToastContext'
 import type { Inscricao, Pedido } from '@/types'
@@ -118,38 +114,6 @@ export default function DashboardAnalytics({
     ],
   }
 
-  const { showError } = useToast()
-
-  const inscricoesRef = useRef<ChartJS | null>(null)
-  const pedidosRef = useRef<ChartJS | null>(null)
-  const arrecadacaoRef = useRef<ChartJS | null>(null)
-
-  const handleExportPDF = async () => {
-    const charts = {
-      inscricoes: inscricoesRef.current?.toBase64Image(),
-      pedidos: pedidosRef.current?.toBase64Image(),
-      arrecadacao: mostrarFinanceiro
-        ? arrecadacaoRef.current?.toBase64Image()
-        : undefined,
-    }
-
-    const metrics = {
-      labels: inscricoesData.labels,
-      inscricoes: inscricoesData.data,
-      pedidos: pedidosData.data,
-      mediaValor,
-      arrecadacao: arrecadacaoCampo,
-    }
-
-    try {
-      await generateDashboardPdf(metrics, { start: startDate, end: endDate }, charts)
-    } catch (err) {
-      console.error('Erro ao gerar PDF', err)
-      const message =
-        err instanceof Error && err.message.includes('Tempo')
-          ? 'Tempo esgotado ao gerar PDF.'
-          : 'Não foi possível gerar o PDF. Tente novamente.'
-      showError(message)
   const { showError } = useToast()
 
   const inscricoesRef = useRef<ChartJS | null>(null)
