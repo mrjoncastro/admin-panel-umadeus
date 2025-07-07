@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { InputWithMask } from '@/components'
 
 export default function RecuperarPagamentoPage() {
   const [cpf, setCpf] = useState('')
@@ -46,7 +46,8 @@ export default function RecuperarPagamentoPage() {
     <div className="max-w-md mx-auto p-6">
       <h1 className="text-lg font-bold mb-4 text-center">Link de pagamento</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
+        <InputWithMask
+          mask="cpf"
           value={cpf}
           onChange={(e) => setCpf(e.target.value)}
           placeholder="CPF"
