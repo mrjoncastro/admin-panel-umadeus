@@ -11,6 +11,7 @@ vi.mock('../../lib/server/logger', () => ({
 const pb = createPocketBaseMock()
 const getFirstCobranca = vi.fn()
 const getFirstInscricao = vi.fn()
+const getFirstPedido = vi.fn()
 
 pb.collection.mockImplementation((name: string) => {
   if (name === 'cobrancas') {
@@ -18,6 +19,9 @@ pb.collection.mockImplementation((name: string) => {
   }
   if (name === 'inscricoes') {
     return { getFirstListItem: getFirstInscricao }
+  }
+  if (name === 'pedidos') {
+    return { getFirstListItem: getFirstPedido }
   }
   return {}
 })
@@ -60,6 +64,29 @@ describe('POST /api/recuperar-link', () => {
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(body.status).toBe('pendente')
+  })
+
+  it('retorna link quando inscricao aguardando pagamento', async () => {
+    getFirstCobranca.mockRejectedValueOnce(new Error('not found'))
+    getFirstInscricao.mockResolvedValueOnce({
+      id: 'i1',
+      status: 'aguardando_pagamento',
+      nome: 'Ana',
+    })
+    getFirstPedido.mockResolvedValueOnce({
+      id: 'p1',
+      link_pagamento: 'http://pay2',
+    })
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({ cpf: '12345678901' }),
+    })
+    ;(req as any).nextUrl = new URL('http://test')
+    const res = await POST(req as unknown as NextRequest)
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.link_pagamento).toBe('http://pay2')
+    expect(body.nomeUsuario).toBe('Ana')
   })
 
   it('retorna 404 quando inscricao inexistente', async () => {

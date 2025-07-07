@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
 
     if (!cobranca) {
       const tenantId = await getTenantFromHost()
-      let inscricao: { status?: string } | null = null
+      let inscricao: { id?: string; nome?: string; status?: string } | null = null
       if (tenantId) {
         try {
           inscricao = await pbRetry(() =>
@@ -72,6 +72,34 @@ export async function POST(req: NextRequest) {
             mensagem: 'Inscrição aguardando aprovação da liderança.',
           })
         }
+
+        if (inscricao.status === 'aguardando_pagamento' && inscricao.id) {
+          let pedido: { id?: string; link_pagamento?: string } | null = null
+          try {
+            pedido = await pbRetry(() =>
+              pb
+                .collection('pedidos')
+                .getFirstListItem(
+                  `id_inscricao="${inscricao.id}" && status='pendente'`,
+                  { sort: '-created' },
+                ),
+            )
+          } catch {
+            // ignore 404
+          }
+          if (pedido?.link_pagamento) {
+            logRocketEvent('recuperar_link', {
+              cpf: idempotencyKey,
+              pedidoId: pedido.id,
+              via: 'pedido',
+            })
+            return NextResponse.json({
+              nomeUsuario: inscricao.nome,
+              link_pagamento: pedido.link_pagamento,
+            })
+          }
+        }
+
         logRocketEvent('recuperar_status', {
           cpf: idempotencyKey,
           status: inscricao.status,
