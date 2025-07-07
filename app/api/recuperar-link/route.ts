@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { pbRetry } from '@/lib/pbRetry'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
+import { logConciliacaoErro, logRocketEvent } from '@/lib/server/logger'
 import type { RecordModel } from 'pocketbase'
 
 interface CobrancaRecord extends RecordModel {
@@ -62,14 +63,23 @@ export async function POST(req: NextRequest) {
 
       if (inscricao) {
         if (inscricao.status === 'pendente') {
+          logRocketEvent('recuperar_status', {
+            cpf: idempotencyKey,
+            status: 'pendente',
+          })
           return NextResponse.json({
             status: 'pendente',
             mensagem: 'Inscrição aguardando aprovação da liderança.',
           })
         }
+        logRocketEvent('recuperar_status', {
+          cpf: idempotencyKey,
+          status: inscricao.status,
+        })
         return NextResponse.json({ status: inscricao.status })
       }
 
+      logRocketEvent('recuperar_inexistente', { cpf: idempotencyKey })
       return NextResponse.json(
         {
           error:
@@ -109,6 +119,11 @@ export async function POST(req: NextRequest) {
       const nova = await resp.json()
       linkPagamento = nova.link_pagamento
     }
+    logRocketEvent('recuperar_link', {
+      cpf: idempotencyKey,
+      pedidoId,
+      nova: vencida,
+    })
 
     return NextResponse.json({
       nomeUsuario: cobranca.nomeUsuario,
@@ -116,6 +131,7 @@ export async function POST(req: NextRequest) {
     })
   } catch (err) {
     console.error('Erro ao recuperar link:', err)
+    await logConciliacaoErro('Erro ao recuperar link: ' + String(err))
     return NextResponse.json(
       { error: 'Erro interno ao recuperar link' },
       { status: 500 },
