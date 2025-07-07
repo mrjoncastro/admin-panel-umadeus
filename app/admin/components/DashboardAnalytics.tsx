@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { setupCharts } from '@/lib/chartSetup'
-import dynamic from 'next/dynamic'
+import { Line, Bar } from 'react-chartjs-2'
 import { saveAs } from 'file-saver'
 import * as XLSX from 'xlsx'
 import jsPDF from 'jspdf'
@@ -10,12 +10,6 @@ import autoTable from 'jspdf-autotable'
 import type { Inscricao, Pedido } from '@/types'
 import twColors from '@/utils/twColors'
 
-const LineChart = dynamic(() => import('react-chartjs-2').then((m) => m.Line), {
-  ssr: false,
-})
-const BarChart = dynamic(() => import('react-chartjs-2').then((m) => m.Bar), {
-  ssr: false,
-})
 
 interface DashboardAnalyticsProps {
   inscricoes: Inscricao[]
@@ -231,7 +225,7 @@ export default function DashboardAnalytics({
             Evolução de Inscrições
           </h4>
           <div className="aspect-video">
-            <LineChart
+            <Line
               data={inscricoesChart}
               options={{ responsive: true, maintainAspectRatio: false }}
             />
@@ -242,7 +236,7 @@ export default function DashboardAnalytics({
             Evolução de Pedidos
           </h4>
           <div className="aspect-video">
-            <LineChart
+            <Line
               data={pedidosChart}
               options={{ responsive: true, maintainAspectRatio: false }}
             />
@@ -264,7 +258,7 @@ export default function DashboardAnalytics({
               Arrecadação por Campo
             </h4>
             <div className="aspect-video">
-              <BarChart
+              <Bar
                 data={arrecadacaoChart}
                 options={{ responsive: true, maintainAspectRatio: false }}
               />

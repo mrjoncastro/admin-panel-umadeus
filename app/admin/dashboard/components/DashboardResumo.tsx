@@ -17,6 +17,8 @@ interface DashboardResumoProps {
   inscricoes: Inscricao[]
   pedidos: Pedido[]
   filtroStatus: string
+  filtroInscricoes: string
+  setFiltroInscricoes: (status: string) => void
   setFiltroStatus: (status: string) => void
   totalInscricoes: number
   totalPedidos: number
@@ -26,6 +28,8 @@ export default function DashboardResumo({
   inscricoes,
   pedidos,
   filtroStatus,
+  filtroInscricoes,
+  setFiltroInscricoes,
   setFiltroStatus,
   totalInscricoes,
   totalPedidos,
@@ -62,7 +66,12 @@ export default function DashboardResumo({
     return acc
   }, {})
 
-  const contagemInscricoes = inscricoes.reduce<Record<string, number>>(
+  const inscricoesFiltradas = inscricoes.filter(
+    (i) =>
+      filtroInscricoes === 'todos' || i.status === filtroInscricoes,
+  )
+
+  const contagemInscricoes = inscricoesFiltradas.reduce<Record<string, number>>(
     (acc, i) => {
       const campo = i.expand?.campo?.nome || 'Sem campo'
       acc[campo] = (acc[campo] || 0) + 1
@@ -187,20 +196,40 @@ export default function DashboardResumo({
       {/* Gráficos */}
       <div className="card mb-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
-          <label className="text-sm font-medium text-gray-800 dark:text-gray-100">
-            Filtro:
-          </label>
-          <select
-            value={filtroStatus}
-            onChange={(e) => setFiltroStatus(e.target.value)}
-            className="px-4 py-2 rounded-md bg-gray-800 text-gray-100 border-none shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 w-full md:w-64"
-          >
-            {['pago', 'pendente', 'cancelado'].map((status) => (
-              <option key={status} value={status}>
-                {status.charAt(0).toUpperCase() + status.slice(1)}
-              </option>
-            ))}
-          </select>
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium text-gray-800 dark:text-gray-100">
+              Pedidos:
+            </label>
+            <select
+              value={filtroStatus}
+              onChange={(e) => setFiltroStatus(e.target.value)}
+              className="px-4 py-2 rounded-md bg-gray-800 text-gray-100 border-none shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 w-full md:w-64"
+            >
+              {['pago', 'pendente', 'cancelado'].map((status) => (
+                <option key={status} value={status}>
+                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium text-gray-800 dark:text-gray-100">
+              Inscrições:
+            </label>
+            <select
+              value={filtroInscricoes}
+              onChange={(e) => setFiltroInscricoes(e.target.value)}
+              className="px-4 py-2 rounded-md bg-gray-800 text-gray-100 border-none shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 w-full md:w-64"
+            >
+              {['pendente', 'confirmado', 'cancelado', 'todos'].map((status) => (
+                <option key={status} value={status}>
+                  {status === 'todos'
+                    ? 'Todas'
+                    : status.charAt(0).toUpperCase() + status.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
