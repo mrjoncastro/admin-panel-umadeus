@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
   try {
     const finalMessage =
       message ?? `Para concluir seu pagamento, acesse: ${link}`
-    const result = await queueTextMessage(
+    queueTextMessage(
       {
         tenant,
         instanceName: rec.instanceName,
@@ -58,7 +58,10 @@ export async function POST(req: NextRequest) {
       },
       false,
     )
-    return NextResponse.json(result, { status: 200 })
+    return NextResponse.json(
+      { message: 'mensagem enfileirada' },
+      { status: 200 },
+    )
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Erro desconhecido'
     return NextResponse.json({ error: message }, { status: 500 })
