@@ -3,6 +3,11 @@ import { POST } from '../../app/api/recuperar-link/route'
 import { NextRequest } from 'next/server'
 import createPocketBaseMock from '../mocks/pocketbase'
 
+vi.mock('../../lib/server/logger', () => ({
+  logConciliacaoErro: vi.fn(),
+  logRocketEvent: vi.fn(),
+}))
+
 const pb = createPocketBaseMock()
 const getFirstCobranca = vi.fn()
 const getFirstInscricao = vi.fn()
