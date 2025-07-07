@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
         ? new Date(cobranca.dueDate).getTime() < Date.now()
         : true)
 
-    let linkPagamento = cobranca.invoiceUrl
+    let link_pagamento = cobranca.invoiceUrl
 
     if (vencida) {
       const base = req.nextUrl.origin
@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
       }
 
       const nova = await resp.json()
-      linkPagamento = nova.link_pagamento
+      link_pagamento = nova.link_pagamento
     }
     logRocketEvent('recuperar_link', {
       cpf: idempotencyKey,
@@ -127,7 +127,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       nomeUsuario: cobranca.nomeUsuario,
-      linkPagamento,
+      link_pagamento,
     })
   } catch (err) {
     console.error('Erro ao recuperar link:', err)

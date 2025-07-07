@@ -44,7 +44,7 @@ describe('POST /api/recuperar-link', () => {
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(200)
     const body = await res.json()
-    expect(body.linkPagamento).toBe('http://pay')
+    expect(body.link_pagamento).toBe('http://pay')
     expect(body.nomeUsuario).toBe('U')
   })
 

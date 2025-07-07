@@ -9,7 +9,7 @@ export default function RecuperarPagamentoPage() {
   const [loading, setLoading] = useState(false)
   const [resultado, setResultado] = useState<{
     nomeUsuario: string
-    linkPagamento: string
+    link_pagamento: string
   } | null>(null)
   const [erro, setErro] = useState<string | null>(null)
 
@@ -64,7 +64,7 @@ export default function RecuperarPagamentoPage() {
             pagamento:
           </p>
           <a
-            href={resultado.linkPagamento}
+            href={resultado.link_pagamento}
             target="_blank"
             rel="noopener noreferrer"
             className="text-purple-600 underline"

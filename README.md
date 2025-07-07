@@ -7,7 +7,7 @@ As preferências de fonte, cor, logotipo e confirmação de inscrições ficam n
 Para um passo a passo inicial do sistema consulte [docs/iniciar-tour.md](docs/iniciar-tour.md).
 Coordenadores podem iniciar o tour clicando no ícone de mapa ao lado do sino de notificações no painel admin ou acessando `/iniciar-tour` diretamente.
 Usuários que perderam o link de pagamento podem acessar `/recuperar` para recebê-lo novamente.
-Essa página envia o CPF informado para `/api/recuperar-link`, que retorna o `link_pagamento` quando há cobrança registrada. Se a inscrição existir mas ainda não houve cobrança, a resposta contém apenas o `status` correspondente. Caso nenhum registro seja encontrado, crie a inscrição normalmente para receber o link.
+Essa página envia o CPF informado para `/api/recuperar-link`, que retorna o `link_pagamento` quando há cobrança registrada. O retorno inclui `{ nomeUsuario, link_pagamento }`. Se a inscrição existir mas ainda não houve cobrança, a resposta contém apenas o `status` correspondente. Caso nenhum registro seja encontrado, crie a inscrição normalmente para receber o link.
 
 ## Diretórios Principais
 
