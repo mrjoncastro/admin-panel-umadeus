@@ -121,18 +121,16 @@ export async function PATCH(req: NextRequest) {
         } catch (err) {
           console.error('Falha ao enviar email de promoção', err)
         }
-        try {
-          await fetch(`${base}/api/chats/message/sendWelcome`, {
-            method: 'POST',
-            body: JSON.stringify({
-              eventType: 'promocao_lider',
-              userId: id,
-              campoNome,
-            }),
-          })
-        } catch (err) {
-          console.error('Falha ao enviar mensagem de promoção', err)
-        }
+        fetch(`${base}/api/chats/message/sendWelcome`, {
+          method: 'POST',
+          body: JSON.stringify({
+            eventType: 'promocao_lider',
+            userId: id,
+            campoNome,
+          }),
+        }).catch((err) =>
+          console.error('Falha ao enviar mensagem de promoção', err),
+        )
       } else {
         console.error('Base URL não encontrada para envio de notificações')
       }

@@ -103,13 +103,16 @@ export async function POST(req: NextRequest) {
         message = ''
     }
 
-    const result = await queueTextMessage({
-      tenant: tenantId,
-      instanceName: waCfg.instanceName,
-      apiKey: waCfg.apiKey,
-      to: telefone,
-      message,
-    })
+    const result = await queueTextMessage(
+      {
+        tenant: tenantId,
+        instanceName: waCfg.instanceName,
+        apiKey: waCfg.apiKey,
+        to: telefone,
+        message,
+      },
+      false,
+    )
 
     return NextResponse.json(result, { status: 200 })
   } catch (err: unknown) {

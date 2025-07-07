@@ -131,19 +131,30 @@ export async function sendMessage(params: {
 }
 
 /** Enfileira o envio respeitando limites e horários */
-export async function queueTextMessage(params: {
-  tenant: string
-  instanceName: string
-  apiKey: string
-  to: string
-  message: string
-}) {
-  return broadcastManager.enqueue(params.tenant, () =>
+export async function queueTextMessage(
+  params: {
+    tenant: string
+    instanceName: string
+    apiKey: string
+    to: string
+    message: string
+  },
+  awaitSend = true,
+) {
+  const promise = broadcastManager.enqueue(params.tenant, () =>
     sendTextMessage({
       instanceName: params.instanceName,
       apiKey: params.apiKey,
       to: params.to,
       message: params.message,
     }),
+  )
+
+  if (awaitSend) {
+    return promise
+  }
+
+  promise.catch((err) =>
+    console.error('Erro ao enviar mensagem em background:', err),
   )
 }

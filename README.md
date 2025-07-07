@@ -77,6 +77,8 @@ Execute `npm run lint` para verificar problemas de código. Evite o uso de `any`
 - Tabelas e botões minimalistas mantêm a aparência consistente.
 - O dashboard traz gráficos temporais de inscrições e pedidos, além de ticket médio e receita por campo para coordenadores e líderes.
 - Os gráficos permitem filtrar por período e exportar os dados em CSV ou XLSX.
+- Mensagens de WhatsApp são enfileiradas e enviadas em background para não
+  bloquear as requisições.
 
 ## Design System
 

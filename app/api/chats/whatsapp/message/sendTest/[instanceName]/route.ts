@@ -60,13 +60,16 @@ export async function POST(
 
   // 6) envia com controle
   try {
-    const result = await queueTextMessage({
-      tenant,
-      instanceName,
-      apiKey: rec.apiKey,
-      to,
-      message: text,
-    })
+    const result = await queueTextMessage(
+      {
+        tenant,
+        instanceName,
+        apiKey: rec.apiKey,
+        to,
+        message: text,
+      },
+      false,
+    )
 
     // 7) marca como configurado
     await pb

@@ -4,6 +4,8 @@
 
 ## [2025-07-01] Documentado caminho de logs em ambientes serverless no README e no cabeçalho do ERR_LOG
 
+## [2025-07-07] Explicado no README que o envio de WhatsApp ocorre em background
+
 ## [2025-07-01] Integrado LogRocket para coleta de erros e atualizada documentação
 
 ## [2025-07-01] Documentado caminho de logs em ambientes serverless no README e no cabeçalho do ERR_LOG
