@@ -131,16 +131,16 @@ export async function sendMessage(params: {
 }
 
 /** Enfileira o envio respeitando limites e horários */
-export async function queueTextMessage(params: {
-  tenant: string
-  instanceName: string
-  apiKey: string
-  to: string
-  message: string
-  awaitSend?: boolean
-}) {
-  const { awaitSend = false } = params
-
+export async function queueTextMessage(
+  params: {
+    tenant: string
+    instanceName: string
+    apiKey: string
+    to: string
+    message: string
+  },
+  awaitSend = true,
+) {
   const promise = broadcastManager.enqueue(params.tenant, () =>
     sendTextMessage({
       instanceName: params.instanceName,
@@ -155,7 +155,6 @@ export async function queueTextMessage(params: {
   }
 
   promise.catch((err) =>
-    console.error('[queueTextMessage] erro no envio assíncrono:', err),
+    console.error('Erro ao enviar mensagem em background:', err),
   )
-  return { queued: true }
 }

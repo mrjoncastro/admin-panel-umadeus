@@ -69,17 +69,15 @@ export async function POST(req: NextRequest) {
       console.error('Falha ao enviar email de boas-vindas', err)
     }
 
-    try {
-      await fetch(`${base}/api/chats/message/sendWelcome`, {
-        method: 'POST',
-        body: JSON.stringify({
-          eventType: 'novo_usuario',
-          userId: usuario.id,
-        }),
-      })
-    } catch (err) {
-      console.error('Falha ao enviar mensagem de boas-vindas', err)
-    }
+    fetch(`${base}/api/chats/message/sendWelcome`, {
+      method: 'POST',
+      body: JSON.stringify({
+        eventType: 'novo_usuario',
+        userId: usuario.id,
+      }),
+    }).catch((err) =>
+      console.error('Falha ao enviar mensagem de boas-vindas', err),
+    )
 
     logRocketEvent('novo_usuario', { userId: usuario.id })
 

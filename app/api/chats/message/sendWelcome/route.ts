@@ -103,16 +103,18 @@ export async function POST(req: NextRequest) {
         message = ''
     }
 
-    queueTextMessage({
-      tenant: tenantId,
-      instanceName: waCfg.instanceName,
-      apiKey: waCfg.apiKey,
-      to: telefone,
-      message,
-      awaitSend: false,
-    })
+    const result = await queueTextMessage(
+      {
+        tenant: tenantId,
+        instanceName: waCfg.instanceName,
+        apiKey: waCfg.apiKey,
+        to: telefone,
+        message,
+      },
+      false,
+    )
 
-    return NextResponse.json({ message: 'mensagem enfileirada' }, { status: 200 })
+    return NextResponse.json(result, { status: 200 })
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Erro desconhecido'
     return NextResponse.json({ error: msg }, { status: 500 })
