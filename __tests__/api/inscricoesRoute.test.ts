@@ -48,6 +48,33 @@ describe('GET /api/inscricoes', () => {
     )
   })
 
+  it('filtra por evento quando informado', async () => {
+    ;(
+      requireRole as unknown as { mockReturnValue: (v: any) => void }
+    ).mockReturnValue({
+      pb,
+      user: { id: 'u1', role: 'usuario' },
+    })
+    const req = new Request(
+      'http://test/api/inscricoes?status=pendente&evento=ev1',
+    )
+    ;(req as any).nextUrl = new URL(
+      'http://test/api/inscricoes?status=pendente&evento=ev1',
+    )
+    const res = await GET(req as unknown as NextRequest)
+    expect(res.status).toBe(200)
+    await res.json()
+    expect(getListMock).toHaveBeenLastCalledWith(
+      1,
+      50,
+      expect.objectContaining({
+        filter: 'criado_por = "u1" && status=\'pendente\' && evento=\'ev1\'',
+        expand: 'evento,campo,pedido,produto',
+        sort: '-created',
+      }),
+    )
+  })
+
   it('usa page da URL quando informado', async () => {
     ;(
       requireRole as unknown as { mockReturnValue: (v: any) => void }

@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
   const page = Number(req.nextUrl.searchParams.get('page') || '1')
   const perPage = Number(req.nextUrl.searchParams.get('perPage') || '50')
   const status = req.nextUrl.searchParams.get('status') || ''
+  const eventoId = req.nextUrl.searchParams.get('evento') || ''
   try {
     let baseFilter = ''
     if (user.role === 'usuario') {
@@ -32,7 +33,10 @@ export async function GET(req: NextRequest) {
       }
       baseFilter = `cliente = "${tenantId}"`
     }
-    const filtro = status ? `${baseFilter} && status='${status}'` : baseFilter
+    const filtroParts = [baseFilter]
+    if (status) filtroParts.push(`status='${status}'`)
+    if (eventoId) filtroParts.push(`evento='${eventoId}'`)
+    const filtro = filtroParts.filter(Boolean).join(' && ')
     const sortParam = req.nextUrl.searchParams.get('sort') || '-created'
     const result = await pb.collection('inscricoes').getList(page, perPage, {
       filter: filtro,
