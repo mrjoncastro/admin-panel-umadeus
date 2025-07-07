@@ -54,7 +54,7 @@ export async function POST(
 
   // 3) envia mensagem com controle
   try {
-    const result = await queueTextMessage(
+    queueTextMessage(
       {
         tenant,
         instanceName,
@@ -64,7 +64,10 @@ export async function POST(
       },
       false,
     )
-    return NextResponse.json(result, { status: 200 })
+    return NextResponse.json(
+      { message: 'mensagem enfileirada' },
+      { status: 200 },
+    )
   } catch (err: unknown) {
     console.error('[sendText] sendTextMessage error:', err)
     const message = err instanceof Error ? err.message : 'Erro desconhecido'

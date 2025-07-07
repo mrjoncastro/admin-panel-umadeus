@@ -60,7 +60,7 @@ export async function POST(
 
   // 6) envia com controle
   try {
-    const result = await queueTextMessage(
+    queueTextMessage(
       {
         tenant,
         instanceName,
@@ -76,7 +76,10 @@ export async function POST(
       .collection('whatsapp_clientes')
       .update(rec.id, { config_finished: true })
 
-    return NextResponse.json({ ok: true, result }, { status: 200 })
+    return NextResponse.json(
+      { message: 'mensagem enfileirada' },
+      { status: 200 },
+    )
   } catch (err: unknown) {
     console.error('[sendTest] erro ao enviar teste:', err)
     const message = err instanceof Error ? err.message : 'Erro desconhecido'
