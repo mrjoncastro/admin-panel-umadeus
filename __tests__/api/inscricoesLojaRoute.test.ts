@@ -6,6 +6,7 @@ import createPocketBaseMock from '../mocks/pocketbase'
 const getFirstMock = vi.fn()
 const createUserMock = vi.fn()
 const createInscricaoMock = vi.fn()
+const getFirstInscricaoMock = vi.fn()
 const getOneEventoMock = vi.fn().mockResolvedValue({ titulo: 'Evento X' })
 const pb = createPocketBaseMock()
 
@@ -14,7 +15,7 @@ pb.collection.mockImplementation((name: string) => {
     return { getFirstListItem: getFirstMock, create: createUserMock }
   }
   if (name === 'inscricoes') {
-    return { create: createInscricaoMock }
+    return { create: createInscricaoMock, getFirstListItem: getFirstInscricaoMock }
   }
   if (name === 'eventos') {
     return { getOne: getOneEventoMock }
@@ -33,6 +34,7 @@ vi.mock('../../lib/getTenantFromHost', () => ({
 describe('POST /loja/api/inscricoes', () => {
   it('cria usuario quando nao existe', async () => {
     getFirstMock.mockRejectedValueOnce(new Error('not found'))
+    getFirstInscricaoMock.mockRejectedValueOnce(new Error('not found'))
     createUserMock.mockResolvedValueOnce({ id: 'u1' })
     createInscricaoMock.mockResolvedValueOnce({ id: 'i1' })
 
@@ -75,6 +77,7 @@ describe('POST /loja/api/inscricoes', () => {
 
   it('usa usuario existente', async () => {
     getFirstMock.mockResolvedValueOnce({ id: 'u2' })
+    getFirstInscricaoMock.mockRejectedValueOnce(new Error('not found'))
     createInscricaoMock.mockResolvedValueOnce({ id: 'i2' })
 
     const req = new Request('http://test', {
@@ -104,9 +107,35 @@ describe('POST /loja/api/inscricoes', () => {
     )
   })
 
+  it('retorna 409 quando usuario ja inscrito no evento', async () => {
+    getFirstMock.mockResolvedValueOnce({ id: 'u4' })
+    getFirstInscricaoMock.mockResolvedValueOnce({ id: 'dup1' })
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({
+        user_first_name: 'J',
+        user_last_name: 'D',
+        user_email: 'dup@test.com',
+        user_phone: '11999999999',
+        user_cpf: '11111111111',
+        user_birth_date: '2000-01-01',
+        user_gender: 'masculino',
+        campo: 'c1',
+        evento: 'e1',
+      }),
+    })
+    ;(req as any).nextUrl = new URL('http://test')
+    const res = await POST(req as unknown as NextRequest)
+    expect(res.status).toBe(409)
+    const body = await res.json()
+    expect(body.error).toBe('Usuário já inscrito neste evento')
+    expect(createInscricaoMock).not.toHaveBeenCalled()
+  })
+
   it('envia notificacoes apos inscricao', async () => {
     getFirstMock.mockRejectedValueOnce(new Error('not found'))
     getFirstMock.mockResolvedValueOnce({ id: 'lid1' })
+    getFirstInscricaoMock.mockRejectedValueOnce(new Error('not found'))
     createUserMock.mockResolvedValueOnce({ id: 'u3' })
     createInscricaoMock.mockResolvedValueOnce({ id: 'i3' })
     const fetchMock = vi.fn().mockResolvedValue({ ok: true })

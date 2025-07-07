@@ -73,6 +73,18 @@ export async function POST(req: NextRequest) {
       throw new Error('Não foi possível identificar o usuário')
     }
 
+    const cpfNumerico = String(data.user_cpf).replace(/\D/g, '')
+    const filtroDuplicado = `evento='${data.evento}' && (criado_por='${usuario.id}' || cpf='${cpfNumerico}')`
+    try {
+      await pb.collection('inscricoes').getFirstListItem(filtroDuplicado)
+      return NextResponse.json(
+        { error: 'Usuário já inscrito neste evento' },
+        { status: 409 },
+      )
+    } catch {
+      // OK - não encontrado
+    }
+
     const baseInscricao: InscricaoTemplate = {
       nome,
       email: data.user_email,

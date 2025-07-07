@@ -12,6 +12,11 @@ export default function createPocketBaseMock() {
     })),
     files: { getURL: vi.fn() },
     admins: { authWithPassword: vi.fn() },
-    authStore: { save: vi.fn(), clear: vi.fn(), isValid: true },
+    authStore: {
+      save: vi.fn(),
+      clear: vi.fn(),
+      loadFromCookie: vi.fn(),
+      isValid: true,
+    },
   }
 }
