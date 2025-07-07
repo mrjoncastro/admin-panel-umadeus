@@ -47,6 +47,7 @@ export async function GET(req: NextRequest) {
 }
 export async function POST(req: NextRequest) {
   const pb = createPocketBase()
+  pb.authStore.loadFromCookie(req.headers.get('cookie') || '')
   try {
     const body = await req.json()
     const {
