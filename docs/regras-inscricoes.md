@@ -41,6 +41,7 @@ A rota `GET /api/inscricoes` aceita os seguintes filtros:
   - `nome`, `email`, `telefone`, `cpf`, `data_nascimento`, `genero`, `campo`, `eventoId`, `produtoId`, `tamanho`, `paymentMethod`, `liderId`
 - **POST /loja/api/inscricoes**
   - `user_first_name`, `user_last_name`, `user_email`, `user_phone`, `user_cpf`, `user_birth_date`, `user_gender`, `user_cep`, `user_address`, `user_neighborhood`, `user_state`, `user_city`, `user_number`, `campo`, `evento`, `produtoId`, `tamanho`, `paymentMethod`
+  - Os campos de endereço (`user_cep`, `user_address`, `user_neighborhood`, `user_state`, `user_city`, `user_number`) são opcionais e não impedem o envio.
 
 ## Efeito de `confirma_inscricoes`
 

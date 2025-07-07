@@ -30,12 +30,6 @@ export async function POST(req: NextRequest) {
       !cpf ||
       !data_nascimento ||
       !genero ||
-      !endereco ||
-      !numero ||
-      !bairro ||
-      !estado ||
-      !cep ||
-      !cidade ||
       !password ||
       !campo ||
       !cliente
@@ -74,7 +68,7 @@ export async function POST(req: NextRequest) {
         )
       }
     } catch {}
-    const novoUsuario = await pb.collection('usuarios').create({
+    const payload: Record<string, unknown> = {
       nome: String(nome).trim(),
       email: String(email).trim(),
       emailVisibility: true,
@@ -83,17 +77,20 @@ export async function POST(req: NextRequest) {
       cpf: cpfNumerico,
       data_nascimento: String(data_nascimento),
       genero: String(genero).trim(),
-      endereco: String(endereco).trim(),
-      numero: String(numero).trim(),
-      bairro: String(bairro).trim(),
-      estado: String(estado).trim(),
-      cep: String(cep).trim(),
-      cidade: String(cidade).trim(),
       campo: String(campo).trim(),
       password: String(password),
       passwordConfirm: String(password),
       role: 'usuario',
-    })
+    }
+
+    if (endereco) payload.endereco = String(endereco).trim()
+    if (numero) payload.numero = String(numero).trim()
+    if (bairro) payload.bairro = String(bairro).trim()
+    if (estado) payload.estado = String(estado).trim()
+    if (cep) payload.cep = String(cep).trim()
+    if (cidade) payload.cidade = String(cidade).trim()
+
+    const novoUsuario = await pb.collection('usuarios').create(payload)
     logInfo('\u2705 Usu\u00E1rio registrado com sucesso')
     return NextResponse.json(novoUsuario, { status: 201 })
   } catch (err: unknown) {

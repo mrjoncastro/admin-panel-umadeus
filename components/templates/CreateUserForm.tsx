@@ -288,7 +288,6 @@ const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
               value={cep}
               onChange={(e) => setCep(e.target.value)}
               className="w-full rounded-md px-4 py-2"
-              required
             />
           </FormField>
           <FormField label="Endereço" htmlFor="signup-endereco">
@@ -299,7 +298,6 @@ const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
               value={endereco}
               onChange={(e) => setEndereco(e.target.value)}
               className="w-full rounded-md px-4 py-2"
-              required
             />
           </FormField>
           <FormField label="Número" htmlFor="signup-numero">
@@ -310,7 +308,6 @@ const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
               value={numero}
               onChange={(e) => setNumero(e.target.value)}
               className="w-full rounded-md px-4 py-2"
-              required
             />
           </FormField>
           <FormField label="Bairro" htmlFor="signup-bairro">
@@ -321,7 +318,6 @@ const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
               value={bairro}
               onChange={(e) => setBairro(e.target.value)}
               className="w-full rounded-md px-4 py-2"
-              required
             />
           </FormField>
           <FormField label="Cidade" htmlFor="signup-cidade">
@@ -332,7 +328,6 @@ const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
               value={cidade}
               onChange={(e) => setCidade(e.target.value)}
               className="w-full rounded-md px-4 py-2"
-              required
             />
           </FormField>
           <FormField label="Estado" htmlFor="signup-estado">
@@ -343,7 +338,6 @@ const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
               value={estado}
               onChange={(e) => setEstado(e.target.value)}
               className="w-full rounded-md px-4 py-2"
-              required
             />
           </FormField>
         </div>
