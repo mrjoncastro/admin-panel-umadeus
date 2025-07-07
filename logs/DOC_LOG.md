@@ -542,6 +542,7 @@ executados.
 ## [2025-07-04] Rota /api/recuperar-link consulta inscricoes quando cobranca nao encontrada. Lint e build executados.
 
 ## [2025-07-04] Documentadas rotas /recuperar e /api/recuperar-link, orientando criar inscricao quando nao houver cobranca. Lint: ok - Build: ok
+## [2025-07-04] EventForm exibe inscricoes pendentes e InscricoesTable ganha variante `details`. Lint e build executados.
 
 ## [2025-07-05] Aceita pagamento 'credito' mapeado para pix nas inscricoes e rota Asaas.
 
