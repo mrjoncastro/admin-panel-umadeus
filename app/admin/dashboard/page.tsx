@@ -17,6 +17,7 @@ export default function DashboardPage() {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [filtroStatus, setFiltroStatus] = useState('pago')
+  const [filtroInscricoes, setFiltroInscricoes] = useState('pendente')
   const [error, setError] = useState<string | null>(null)
   const isMounted = useRef(true)
 
@@ -185,6 +186,8 @@ export default function DashboardPage() {
             inscricoes={inscricoes}
             pedidos={pedidos}
             filtroStatus={filtroStatus}
+            filtroInscricoes={filtroInscricoes}
+            setFiltroInscricoes={setFiltroInscricoes}
             setFiltroStatus={setFiltroStatus}
             totalInscricoes={totalInscricoes}
             totalPedidos={totalPedidos}
