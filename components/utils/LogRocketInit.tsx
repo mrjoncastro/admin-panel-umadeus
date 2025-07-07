@@ -13,7 +13,11 @@ export default function LogRocketInit() {
   useEffect(() => {
     if (user?.id) {
       try {
-        LogRocket.identify(user.id)
+        LogRocket.identify(user.id, {
+          name: user.nome,
+          email: user.email,
+          role: user.role,
+        })
       } catch (err) {
         console.error('Falha ao identificar usuario no LogRocket', err)
       }
