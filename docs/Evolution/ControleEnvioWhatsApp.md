@@ -212,11 +212,7 @@ CREATE TABLE whatsapp_broadcast_config (
 ### Executar Testes
 
 ```bash
-# Testes do sistema de filas
-npm test __tests__/api/broadcastQueue.test.ts
-
-# Testes da API de broadcast
-npm test __tests__/api/broadcastRoute.test.ts
+npm test
 ```
 
 ### Cenários Testados
