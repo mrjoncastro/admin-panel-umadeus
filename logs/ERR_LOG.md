@@ -269,3 +269,6 @@
 ## [2025-07-06] Etapa de revisão exibe ícone de edição para ajustar dados antes do envio - dev - 6d8ffadc
 
 ## [2025-07-06] Revisão inclui endereço completo e valida ausência antes do envio - dev - 3968f02f
+## [2025-07-07] Build falhou devido a 'Unexpected character' ao compilar template.md?raw - dev
+## [2025-07-07] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
+## [2025-07-07] Erro ao gerar link de pagamento Asaas: TypeError: cobrancaResponse.clone is not a function - test
