@@ -46,6 +46,7 @@ export default function Header() {
   const [gestaoAberto, setGestaoAberto] = useState(false)
   const [gestaoLojaAberto, setGestaoLojaAberto] = useState(false)
   const [gerenciamentoAberto, setGerenciamentoAberto] = useState(false)
+  const [relatoriosAberto, setRelatoriosAberto] = useState(false)
   const [mostrarModalSenha, setMostrarModalSenha] = useState(false)
   const { theme, toggleTheme } = useTheme()
   const { config } = useTenant()
@@ -62,6 +63,8 @@ export default function Header() {
     { href: '/admin/produtos', label: 'Produtos' },
     { href: '/loja', label: 'Ver loja' },
   ]
+
+  const relatoriosLinks = [{ href: '/admin/relatorios', label: 'Relatório Geral' }]
 
   const gerenciamentoLinks =
     user?.role === 'lider'
@@ -349,6 +352,47 @@ export default function Header() {
             </Popover.Root>
           )}
 
+          {/* Relatórios */}
+          {isLoggedIn && (
+            <Popover.Root
+              open={relatoriosAberto}
+              onOpenChange={setRelatoriosAberto}
+            >
+              <Popover.Trigger asChild>
+                <button className="flex items-center gap-1 hover:opacity-90">
+                  <span>Relatórios</span>
+                  <ChevronDown size={14} />
+                </button>
+              </Popover.Trigger>
+              <AnimatePresence>
+                {relatoriosAberto && (
+                  <Popover.Portal forceMount>
+                    <Popover.Content asChild side="bottom" align="start">
+                      <motion.ul
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="mt-2 w-48 bg-white text-[var(--foreground)] dark:bg-zinc-900 dark:text-white rounded-lg shadow z-50 text-sm py-2 space-y-2"
+                      >
+                        {relatoriosLinks.map(({ href, label }) => (
+                          <li key={href}>
+                            <Link
+                              href={href}
+                              onClick={() => setRelatoriosAberto(false)}
+                              className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                            >
+                              {label}
+                            </Link>
+                          </li>
+                        ))}
+                      </motion.ul>
+                    </Popover.Content>
+                  </Popover.Portal>
+                )}
+              </AnimatePresence>
+            </Popover.Root>
+          )}
+
           {/* Tema */}
           <button
             onClick={toggleTheme}
@@ -541,6 +585,17 @@ export default function Header() {
                 </Link>
               </>
             )}
+
+            <span className="mt-2 text-xs uppercase font-semibold opacity-70">
+              Relatórios
+            </span>
+            <Link
+              href="/admin/relatorios"
+              onClick={() => setMenuAberto(false)}
+              className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] rounded-md"
+            >
+              Relatório Geral
+            </Link>
 
             <button
               onClick={() => {

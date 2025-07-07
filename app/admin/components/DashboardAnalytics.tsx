@@ -1,12 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { setupCharts } from '@/lib/chartSetup'
 import dynamic from 'next/dynamic'
 import { saveAs } from 'file-saver'
 import * as XLSX from 'xlsx'
-import jsPDF from 'jspdf'
-import autoTable from 'jspdf-autotable'
+import type { Chart as ChartJS } from 'chart.js'
+import { generateDashboardPdf } from '@/lib/report/generateDashboardPdf'
+import { useToast } from '@/lib/context/ToastContext'
 import type { Inscricao, Pedido } from '@/types'
 import twColors from '@/utils/twColors'
 
@@ -119,55 +120,39 @@ export default function DashboardAnalytics({
     ],
   }
 
-  const handleExportPDF = () => {
-    const doc = new jsPDF({ unit: 'pt', format: 'a4' })
-    doc.setFontSize(16)
-    doc.setFont('helvetica', 'bold')
-    doc.text(
-      'Relat\u00F3rio de Inscri\u00E7\u00F5es e Pedidos',
-      doc.internal.pageSize.getWidth() / 2,
-      40,
-      { align: 'center' },
-    )
-    doc.setFontSize(11)
-    doc.setFont('helvetica', 'normal')
+  const { showError } = useToast()
 
-    const rows = inscricoesData.labels.map((d, idx) => [
-      d,
-      inscricoesData.data[idx] || 0,
-      pedidosData.data[idx] || 0,
-    ])
+  const inscricoesRef = useRef<ChartJS | null>(null)
+  const pedidosRef = useRef<ChartJS | null>(null)
+  const arrecadacaoRef = useRef<ChartJS | null>(null)
 
-    autoTable(doc, {
-      startY: 60,
-      head: [['Data', 'Inscri\u00E7\u00F5es', 'Pedidos']],
-      body: rows,
-      theme: 'striped',
-      headStyles: { fillColor: [217, 217, 217], halign: 'center' },
-      styles: { fontSize: 10 },
-      columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } },
-      margin: { left: 40, right: 40 },
-    })
-
-    const pageCount = doc.getNumberOfPages()
-    for (let i = 1; i <= pageCount; i++) {
-      doc.setPage(i)
-      const pageHeight = doc.internal.pageSize.getHeight()
-      doc.setFontSize(10)
-      doc.text(
-        'Desenvolvido por M24 Tecnologia <m24saude.com.br>',
-        40,
-        pageHeight - 20,
-      )
-      doc.text(
-        `P\u00E1gina ${i} de ${pageCount}`,
-        doc.internal.pageSize.getWidth() - 40,
-        pageHeight - 20,
-        { align: 'right' },
-      )
+  const handleExportPDF = async () => {
+    const charts = {
+      inscricoes: inscricoesRef.current?.toBase64Image(),
+      pedidos: pedidosRef.current?.toBase64Image(),
+      arrecadacao: mostrarFinanceiro
+        ? arrecadacaoRef.current?.toBase64Image()
+        : undefined,
     }
 
-    doc.save('dashboard.pdf')
+    const metrics = {
+      labels: inscricoesData.labels,
+      inscricoes: inscricoesData.data,
+      pedidos: pedidosData.data,
+      mediaValor,
+      arrecadacao: arrecadacaoCampo,
+    }
+
+    try {
+      await generateDashboardPdf(metrics, { start: startDate, end: endDate }, charts)
+    } catch (err) {
+      console.error('Erro ao gerar PDF', err)
+      const message =
+        err instanceof Error && err.message.includes('Tempo')
+          ? 'Tempo esgotado ao gerar PDF.'
+          : 'Não foi possível gerar o PDF. Tente novamente.'
+      showError(message)
+    }
   }
 
   const handleExportXLSX = () => {
@@ -232,6 +217,7 @@ export default function DashboardAnalytics({
           </h4>
           <div className="aspect-video">
             <LineChart
+              ref={inscricoesRef}
               data={inscricoesChart}
               options={{ responsive: true, maintainAspectRatio: false }}
             />
@@ -243,6 +229,7 @@ export default function DashboardAnalytics({
           </h4>
           <div className="aspect-video">
             <LineChart
+              ref={pedidosRef}
               data={pedidosChart}
               options={{ responsive: true, maintainAspectRatio: false }}
             />
@@ -265,6 +252,7 @@ export default function DashboardAnalytics({
             </h4>
             <div className="aspect-video">
               <BarChart
+                ref={arrecadacaoRef}
                 data={arrecadacaoChart}
                 options={{ responsive: true, maintainAspectRatio: false }}
               />
