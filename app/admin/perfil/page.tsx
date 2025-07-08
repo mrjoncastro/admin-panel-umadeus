@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+ 
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
-import ModalEditarPerfil from './components/ModalEditarPerfil'
-import createPocketBase from '@/lib/pocketbase'
+
 
 interface UsuarioAuthModel {
   id: string
@@ -31,11 +32,9 @@ export default function PerfilPage() {
     'coordenador',
     'lider',
   ])
-  const pb = useMemo(() => createPocketBase(), [])
   const [usuario, setUsuario] = useState<UsuarioAuthModel | null>(
     usuarioGuard as UsuarioAuthModel | null,
   )
-  const [mostrarModal, setMostrarModal] = useState(false)
 
   useEffect(() => {
     if (usuarioGuard) {
@@ -43,11 +42,6 @@ export default function PerfilPage() {
     }
   }, [usuarioGuard])
 
-  // Atualiza local após edição
-  const atualizarDados = () => {
-    const model = pb.authStore.model as unknown as UsuarioAuthModel
-    setUsuario(model)
-  }
 
   if (!authChecked) {
     return (
@@ -79,22 +73,13 @@ export default function PerfilPage() {
       </div>
 
       <div className="flex justify-end">
-        <button
-          onClick={() => setMostrarModal(true)}
+        <Link
+          href="/admin/perfil/editar"
           className="bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded-lg hover:opacity-90"
         >
           Editar Perfil
-        </button>
+        </Link>
       </div>
-
-      {mostrarModal && (
-        <ModalEditarPerfil
-          onClose={() => {
-            setMostrarModal(false)
-            atualizarDados()
-          }}
-        />
-      )}
     </div>
   )
 }
