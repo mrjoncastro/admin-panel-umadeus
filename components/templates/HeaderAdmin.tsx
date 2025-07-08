@@ -64,7 +64,9 @@ export default function Header() {
     { href: '/loja', label: 'Ver loja' },
   ]
 
-  const relatoriosLinks = [{ href: '/admin/relatorios', label: 'Relatório Geral' }]
+  const relatoriosLinks = [
+    { href: '/admin/relatorios', label: 'Relatório Geral' },
+  ]
 
   const gerenciamentoLinks =
     user?.role === 'lider'

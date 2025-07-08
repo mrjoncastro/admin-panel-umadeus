@@ -67,8 +67,7 @@ export default function DashboardResumo({
   }, {})
 
   const inscricoesFiltradas = inscricoes.filter(
-    (i) =>
-      filtroInscricoes === 'todos' || i.status === filtroInscricoes,
+    (i) => filtroInscricoes === 'todos' || i.status === filtroInscricoes,
   )
 
   const contagemInscricoes = inscricoesFiltradas.reduce<Record<string, number>>(
@@ -221,13 +220,15 @@ export default function DashboardResumo({
               onChange={(e) => setFiltroInscricoes(e.target.value)}
               className="px-4 py-2 rounded-md bg-gray-800 text-gray-100 border-none shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 w-full md:w-64"
             >
-              {['pendente', 'confirmado', 'cancelado', 'todos'].map((status) => (
-                <option key={status} value={status}>
-                  {status === 'todos'
-                    ? 'Todas'
-                    : status.charAt(0).toUpperCase() + status.slice(1)}
-                </option>
-              ))}
+              {['pendente', 'confirmado', 'cancelado', 'todos'].map(
+                (status) => (
+                  <option key={status} value={status}>
+                    {status === 'todos'
+                      ? 'Todas'
+                      : status.charAt(0).toUpperCase() + status.slice(1)}
+                  </option>
+                ),
+              )}
             </select>
           </div>
         </div>

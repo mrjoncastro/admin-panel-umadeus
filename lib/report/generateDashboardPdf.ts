@@ -47,10 +47,14 @@ export async function generateDashboardPdf(
 
       doc.setFontSize(16)
       doc.setFont('helvetica', 'bold')
-      doc.text(title, doc.internal.pageSize.getWidth() / 2, 40, { align: 'center' })
+      doc.text(title, doc.internal.pageSize.getWidth() / 2, 40, {
+        align: 'center',
+      })
       doc.setFontSize(11)
       doc.setFont('helvetica', 'normal')
-      doc.text(periodLine, doc.internal.pageSize.getWidth() - 40, 60, { align: 'right' })
+      doc.text(periodLine, doc.internal.pageSize.getWidth() - 40, 60, {
+        align: 'right',
+      })
 
       const rows = metrics.labels.map((d, idx) => [
         d,
@@ -69,7 +73,9 @@ export async function generateDashboardPdf(
         margin: { left: 40, right: 40 },
       })
 
-      let y = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? 80
+      let y =
+        (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable
+          ?.finalY ?? 80
       y += 20
 
       if (charts.inscricoes) {
