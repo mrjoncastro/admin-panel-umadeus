@@ -584,4 +584,6 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 ## [2025-07-07] Relatório do dashboard movido para util generateDashboardPdf com template editável. Lint e build executados.
 
 ## [2025-07-08] Corrigido DashboardAnalytics e filtros do relatório. Lint e build executados.
+
+## [2025-07-08] Adicionado package.json básico em libs/types. - Lint: falhou (next not found) - Build: falhou (next not found)
 ## [2025-07-08] Atualizado documento estratégico de desenvolvimento com introdução e ajustes no Anexo A. Lint e build executados.
