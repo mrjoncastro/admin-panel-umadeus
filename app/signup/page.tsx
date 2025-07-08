@@ -26,14 +26,25 @@ export default function SignUpPage() {
   const [senha, setSenha] = useState('')
   const [senhaConfirm, setSenhaConfirm] = useState('')
   const [loading, setLoading] = useState(false)
+  const [errors, setErrors] = useState<{ email?: string; cpf?: string }>({})
+
+  async function checkExists() {
+    const params = new URLSearchParams()
+    if (email) params.append('email', email)
+    if (cpf) params.append('cpf', cpf.replace(/\D/g, ''))
+    if ([...params].length === 0) return {}
+    const res = await fetch(`/api/usuarios/exists?${params.toString()}`)
+    if (!res.ok) return {}
+    const data = await res.json()
+    const errs: { email?: string; cpf?: string } = {}
+    if (data.email) errs.email = 'E-mail já cadastrado'
+    if (data.cpf) errs.cpf = 'CPF já cadastrado'
+    setErrors(errs)
+    return errs
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (senha.length < 8) {
-      showError('A senha deve ter ao menos 8 caracteres.')
-      return
-    }
-
     if (senha.length < 8) {
       showError('A senha deve ter ao menos 8 caracteres.')
       return
@@ -44,6 +55,9 @@ export default function SignUpPage() {
       return
     }
 
+    const dup = await checkExists()
+    if (dup.email || dup.cpf) return
+
     setLoading(true)
     try {
       const res = await fetch('/api/signup', {
@@ -53,6 +67,9 @@ export default function SignUpPage() {
       })
       const data = await res.json()
       if (!res.ok) {
+        if (res.status === 409) {
+          await checkExists()
+        }
         const dupMsg =
           data?.telefone?.message || data?.cpf?.message || data?.email?.message
         showError(dupMsg || data?.error || 'Erro ao criar conta.')
@@ -88,12 +105,15 @@ export default function SignUpPage() {
               required
             />
           </FormField>
-          <FormField label="E-mail" htmlFor="signup-email">
+          <FormField label="E-mail" htmlFor="signup-email" error={errors.email}>
             <TextField
               id="signup-email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value)
+                setErrors((err) => ({ ...err, email: undefined }))
+              }}
               required
             />
           </FormField>
@@ -106,12 +126,15 @@ export default function SignUpPage() {
               required
             />
           </FormField>
-          <FormField label="CPF" htmlFor="signup-cpf">
+          <FormField label="CPF" htmlFor="signup-cpf" error={errors.cpf}>
             <InputWithMask
               id="signup-cpf"
               mask="cpf"
               value={cpf}
-              onChange={(e) => setCpf(e.target.value)}
+              onChange={(e) => {
+                setCpf(e.target.value)
+                setErrors((err) => ({ ...err, cpf: undefined }))
+              }}
               required
             />
           </FormField>
