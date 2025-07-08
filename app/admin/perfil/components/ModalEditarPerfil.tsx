@@ -80,7 +80,7 @@ export default function ModalEditarPerfil({
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="bg-white dark:bg-zinc-900 text-black dark:text-white p-6 rounded-xl shadow-xl w-full max-w-md space-y-5"
+                  className="bg-white dark:bg-zinc-900 text-black dark:text-white p-6 rounded-xl shadow-xl w-full max-w-md space-y-5 max-h-screen overflow-y-auto"
                 >
                   <Dialog.Description className="sr-only">
                     Formulário de perfil
