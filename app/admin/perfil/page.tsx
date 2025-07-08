@@ -1,8 +1,10 @@
 'use client'
 
+ 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
+
 
 interface UsuarioAuthModel {
   id: string
