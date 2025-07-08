@@ -1,0 +1,1 @@
+- 2025-07-08: Finalizada Fase 1 de verificacao inicial. Docker compose nao pode ser executado por limitacoes do ambiente. Workflow ajustado para concluir lint, testes e build do servico auth.

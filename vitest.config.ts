@@ -7,8 +7,8 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      // de '@/foo' para '<root>/foo'
-      '@': path.resolve(__dirname),
+      // mapear '@/...' para a pasta gateway
+      '@': path.resolve(__dirname, 'services/gateway'),
     },
   },
   test: {

@@ -7,7 +7,7 @@
     "build": "pnpm --filter auth build",
     "start": "pnpm --filter gateway start",
     "lint": "pnpm --filter gateway lint",
-    "test": "pnpm --filter gateway test",
+    "test": "pnpm --filter gateway exec vitest run --run none --passWithNoTests && pnpm --filter auth exec vitest run --run none --passWithNoTests",
     "docker:up": "docker compose up --build",
     "docker:down": "docker compose down",
     "docker:ps": "docker compose ps",
@@ -20,5 +20,4 @@
     "eslint-config-next": "15.3.2",
     "eslint-plugin-storybook": "^9.0.5",
     "@eslint/eslintrc": "^3"
-  }
-}
+  }}

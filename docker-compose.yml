@@ -16,4 +16,5 @@ services:
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_PASSWORD: example    ports: ['5432:5432']
+      POSTGRES_PASSWORD: example
+    ports: ['5432:5432']

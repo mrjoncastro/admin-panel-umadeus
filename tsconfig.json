@@ -17,7 +17,8 @@
     "paths": {
       "@types/*": ["libs/types/*"],
       "@utils/*": ["libs/utils/*"],
-      "@design-tokens/*": ["libs/design-tokens/*"]
+      "@design-tokens/*": ["libs/design-tokens/*"],
+      "@/*": ["services/gateway/*"]
     },
     "plugins": [
       {
@@ -27,5 +28,11 @@
     "typeRoots": ["./node_modules/@types", "./types"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "**/__tests__/**",
+    "**/*.stories.tsx",
+    "vitest.config.ts",
+    "vitest.setup.ts"
+  ]
 }
