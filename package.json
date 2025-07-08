@@ -2,10 +2,6 @@
   "name": "qg3-monorepo",
   "version": "1.0.0",
   "private": true,
-  "workspaces": [
-    "services/*",
-    "libs/*"
-  ],
   "scripts": {
     "dev": "pnpm --filter gateway dev",
     "build": "pnpm --filter auth build",
