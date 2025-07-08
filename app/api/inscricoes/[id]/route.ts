@@ -78,7 +78,10 @@ export async function PATCH(req: NextRequest) {
     const data = await req.json()
     const payload = { ...data }
     if (user.role === 'lider') {
-      delete (payload as Record<string, unknown>).status
+      const allowed = ['aguardando_pagamento', 'cancelado']
+      if (!allowed.includes(payload.status)) {
+        delete (payload as Record<string, unknown>).status
+      }
     }
     const updated = await pbRetry(() =>
       pb.collection('inscricoes').update(id, payload),
