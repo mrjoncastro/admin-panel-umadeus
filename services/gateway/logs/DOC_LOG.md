@@ -587,3 +587,4 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 
 ## [2025-07-08] Adicionado package.json básico em libs/types. - Lint: falhou (next not found) - Build: falhou (next not found)
 ## [2025-07-08] Atualizado documento estratégico de desenvolvimento com introdução e ajustes no Anexo A. Lint e build executados.
+## [2025-07-08] Adicionado serviço de autenticação em services/auth com JWT, tests, Docker e CI atualizados. Lint e build executados.

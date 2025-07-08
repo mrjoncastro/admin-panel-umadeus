@@ -18,9 +18,10 @@ Este repositório segue arquitetura monorepo, centralizando múltiplos serviços
 
 - gateway (Next.js)
 - pocketbase (usuários, dados)
+- auth (JWT)
 - Redis (fila, cache)
 - Postgres (persistência)
-- Futuro: auth, catalog, orders, commissions
+- Futuro: catalog, orders, commissions
 
 ## Docker & Docker Compose
 
@@ -31,7 +32,7 @@ Este repositório segue arquitetura monorepo, centralizando múltiplos serviços
 docker compose up --build
 ```
 
-Isso inicia todos os serviços: gateway, pocketbase, redis e postgres.
+Isso inicia todos os serviços: gateway, pocketbase, auth, redis e postgres.
 
 ### Comandos úteis:
 ```sh
@@ -49,6 +50,9 @@ docker compose logs gateway
 ```sh
 # Gateway
 curl http://localhost:3000/
+
+# Auth Service
+curl -X POST http://localhost:4000/login -d '{"username":"test"}' -H "Content-Type: application/json"
 
 # PocketBase Admin
 curl http://localhost:8090/_/
@@ -109,6 +113,7 @@ bun dev
 
 Abra [http://localhost:3000](http://localhost:3000) no navegador para visualizar.
 Você pode editar a página inicial em `app/page.tsx` e ver as alterações em tempo real.
+O Auth Service ficará disponível em [http://localhost:4000](http://localhost:4000).
 
 Este projeto utiliza [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) para otimizar e carregar a fonte [Geist](https://vercel.com/font).
 

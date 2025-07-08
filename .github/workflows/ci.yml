@@ -13,7 +13,9 @@ jobs:
       - run: pnpm tsc --noEmit
       - run: pnpm test
       - run: pnpm build --filter services/gateway
+      - run: pnpm build --filter services/auth
       - name: Build Docker images
         run: |
           docker build -t myorg/gateway:pr-${{ github.event.number }} services/gateway
+          docker build -t myorg/auth:pr-${{ github.event.number }} services/auth
           docker build -t myorg/pocketbase:pr-${{ github.event.number }} services/pocketbase

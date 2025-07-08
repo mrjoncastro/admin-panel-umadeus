@@ -3,15 +3,17 @@ services:
   gateway:
     build: ./services/gateway
     ports: ['3000:3000']
-    depends_on: [pocketbase, redis, postgres]
+    depends_on: [pocketbase, redis, postgres, auth]
   pocketbase:
     image: pocketbase/pocketbase:latest
     ports: ['8090:8090']
+  auth:
+    build: ./services/auth
+    ports: ['4000:4000']
   redis:
     image: redis:alpine
     ports: ['6379:6379']
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_PASSWORD: example
-    ports: ['5432:5432'] 
+      POSTGRES_PASSWORD: example    ports: ['5432:5432']

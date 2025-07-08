@@ -8,15 +8,21 @@
   ],
   "scripts": {
     "dev": "pnpm --filter gateway dev",
-    "build": "pnpm --filter gateway build",
+    "build": "pnpm --filter auth build",
     "start": "pnpm --filter gateway start",
     "lint": "pnpm --filter gateway lint",
     "test": "pnpm --filter gateway test",
     "docker:up": "docker compose up --build",
     "docker:down": "docker compose down",
-    "docker:ps": "docker compose ps"
+    "docker:ps": "docker compose ps",
+    "dev:auth": "pnpm --filter auth dev",
+    "build:auth": "pnpm --filter auth build"
   },
   "devDependencies": {
-    "typescript": "^5"
+    "typescript": "^5",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.2",
+    "eslint-plugin-storybook": "^9.0.5",
+    "@eslint/eslintrc": "^3"
   }
 }

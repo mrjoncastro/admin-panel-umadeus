@@ -20,6 +20,8 @@
 docker compose up --build
 ```
 
+O Auth Service estará disponível em `http://localhost:4000`.
+
 ### Subir em background
 ```bash
 docker compose up -d --build
@@ -49,6 +51,7 @@ docker compose logs postgres
 |---------|-------|-----------|
 | gateway | 3000 | Next.js (portal, admin, loja, blog) |
 | pocketbase | 8090 | Banco de dados e autenticação |
+| auth | 4000 | Serviço de autenticação JWT |
 | redis | 6379 | Cache e filas |
 | postgres | 5432 | Banco de dados relacional |
 
@@ -59,6 +62,9 @@ Após subir os serviços, teste:
 ```bash
 # Gateway
 curl http://localhost:3000/
+
+# Auth Service
+curl -X POST http://localhost:4000/login -d '{"username":"test"}' -H "Content-Type: application/json"
 
 # PocketBase Admin
 curl http://localhost:8090/_/
