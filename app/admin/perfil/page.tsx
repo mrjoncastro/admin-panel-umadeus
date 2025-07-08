@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+ 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
-import createPocketBase from '@/lib/pocketbase'
+
 
 interface UsuarioAuthModel {
   id: string
@@ -31,7 +32,6 @@ export default function PerfilPage() {
     'coordenador',
     'lider',
   ])
-  const pb = useMemo(() => createPocketBase(), [])
   const [usuario, setUsuario] = useState<UsuarioAuthModel | null>(
     usuarioGuard as UsuarioAuthModel | null,
   )
