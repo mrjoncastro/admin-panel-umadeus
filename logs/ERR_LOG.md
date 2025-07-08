@@ -273,3 +273,4 @@
 ## [2025-07-07] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
 ## [2025-07-07] Erro ao gerar link de pagamento Asaas: TypeError: cobrancaResponse.clone is not a function - test
 ## [2025-07-08] Erro no painel devido a código duplicado em DashboardAnalytics.tsx - dev - resolvido restaurando arquivo e tipagens.
+## [2025-07-08] Líder não conseguia definir status "aguardando_pagamento" ao confirmar inscrição. PATCH /api/inscricoes/[id] agora permite esse valor. - dev

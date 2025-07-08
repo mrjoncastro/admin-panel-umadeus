@@ -140,3 +140,5 @@ A seguir é feita uma requisição para `/api/inscricoes/public` passando `cpf`,
 Líderes podem atualizar dados como nome ou tamanho da camiseta, mas **não**
 podem alterar o campo `status` durante a edição. Apenas coordenadores mantêm
 permissão para mudar o status manualmente.
+Quando o líder confirma ou recusa uma inscrição pelo fluxo do painel,
+o status é ajustado automaticamente para `aguardando_pagamento` ou `cancelado`.
