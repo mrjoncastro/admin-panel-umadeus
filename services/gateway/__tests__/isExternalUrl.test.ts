@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { isExternalUrl } from '../utils/isExternalUrl'
+import { isExternalUrl } from '@utils/isExternalUrl'
 
 describe('isExternalUrl', () => {
   it('detects http and https urls', () => {

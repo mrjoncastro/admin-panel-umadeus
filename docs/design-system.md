@@ -1,6 +1,9 @@
-# Design System
+# Design System (Monorepo)
 
-Este documento resume os principais tokens de estilo, tipografia, escala de espaçamento e exemplos de componentes usados neste projeto.
+Tokens de design agora ficam em `libs/design-tokens/`.
+
+- Theming dinâmico via multi-tenancy
+- Consuma tokens via imports do monorepo
 
 ## Tokens Disponíveis
 

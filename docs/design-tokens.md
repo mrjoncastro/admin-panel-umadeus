@@ -1,6 +1,8 @@
-# Design Tokens
+# Design Tokens (Monorepo)
 
-Este documento lista os tokens de design definidos em `app/globals.css` e como utilizá-los nos componentes.
+Tokens de design centralizados em `libs/design-tokens/`.
+
+Consuma tokens via imports nos serviços e apps do monorepo.
 
 ## Cores
 

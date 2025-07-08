@@ -1,6 +1,27 @@
-# 📁 Estrutura de Projeto – M24Vendas
+# Arquitetura Monorepo
 
-Este documento descreve a **arquitetura de pastas e responsabilidades** do projeto M24Vendas, com orientações baseadas em **boas práticas de desenvolvimento, organização e performance**.
+O projeto agora segue arquitetura monorepo:
+
+- `services/` – cada microserviço (gateway, pocketbase, futuros)
+- `libs/` – tipagens, utilitários, design tokens compartilhados
+
+## Multi-tenancy
+
+- Middleware identifica tenant pelo domínio
+- Theming e configurações via tokens e coleção `clientes_config`
+
+## Docker Compose
+
+- Todos os serviços sob `docker-compose.yml`
+- Suba tudo com `docker-compose up`
+
+## Microserviços
+
+- gateway (Next.js)
+- pocketbase
+- redis
+- postgres
+- futuros: auth, catalog, orders, commissions
 
 ---
 

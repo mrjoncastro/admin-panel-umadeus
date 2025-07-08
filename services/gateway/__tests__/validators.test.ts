@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { isValidCPF, isValidCNPJ, isValidDate } from '../utils/validators'
+import { isValidCPF, isValidCNPJ, isValidDate } from '@utils/validators'
 
 describe('isValidCPF', () => {
   it('valida cpfs corretos', () => {

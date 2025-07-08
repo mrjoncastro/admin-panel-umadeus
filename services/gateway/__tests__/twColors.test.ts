@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import twColors from '../utils/twColors'
+import twColors from '@utils/twColors'
 
 describe('twColors utility', () => {
   it('reads colors from tailwind config', () => {

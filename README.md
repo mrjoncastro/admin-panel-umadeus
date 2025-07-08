@@ -1,3 +1,75 @@
+# QG3 Monorepo
+
+Este repositório segue arquitetura monorepo, centralizando múltiplos serviços e bibliotecas compartilhadas.
+
+## Estrutura
+
+- `services/gateway/` – Next.js (portal, admin, loja, blog)
+- `libs/types/` – Tipagens TypeScript compartilhadas
+- `libs/utils/` – Utilitários e hooks
+- `libs/design-tokens/` – Tokens de design (cores, espaçamentos, fontes)
+
+## Multi-tenancy & Theming
+
+- Multi-tenancy via domínio (middleware e API `/api/tenant`)
+- Theming dinâmico: tokens em `libs/design-tokens/` e configurações em `clientes_config`
+
+## Microserviços
+
+- gateway (Next.js)
+- pocketbase (usuários, dados)
+- Redis (fila, cache)
+- Postgres (persistência)
+- Futuro: auth, catalog, orders, commissions
+
+## Docker & Docker Compose
+
+1. **Instale o Docker Desktop** (veja [DOCKER.md](DOCKER.md) para instruções detalhadas)
+2. **Rode o ambiente completo**:
+
+```sh
+docker compose up --build
+```
+
+Isso inicia todos os serviços: gateway, pocketbase, redis e postgres.
+
+### Comandos úteis:
+```sh
+# Ver status dos serviços
+docker compose ps
+
+# Parar todos os serviços
+docker compose down
+
+# Ver logs
+docker compose logs gateway
+```
+
+### Testando endpoints:
+```sh
+# Gateway
+curl http://localhost:3000/
+
+# PocketBase Admin
+curl http://localhost:8090/_/
+```
+
+## CI/CD
+
+- Pipeline GitHub Actions: lint, type-check, testes, build e build/tag de imagens Docker por PR.
+- Exemplo: `.github/workflows/ci.yml`
+
+## Documentação
+
+- [arquitetura.md](arquitetura.md): estrutura, multi-tenancy, libs, serviços
+- [docs/design-system.md](docs/design-system.md): design tokens, theming
+- [docs/design-tokens.md](docs/design-tokens.md): tokens detalhados
+- [CONTRIBUTING.md](CONTRIBUTING.md): guidelines para monorepo, PRs e pipelines
+
+## Status do CI
+
+![CI](https://github.com/SEU_ORG/SEU_REPO/actions/workflows/ci.yml/badge.svg)
+
 Este repositório reúne portal institucional, blog, loja virtual e painel administrativo em uma única aplicação Next.js.
 Visitantes navegam pelo portal e pelo blog, realizam compras na loja e os coordenadores gerenciam tudo pelo admin.
 Consulte [arquitetura.md](arquitetura.md) para entender a divisão de pastas e responsabilidades.

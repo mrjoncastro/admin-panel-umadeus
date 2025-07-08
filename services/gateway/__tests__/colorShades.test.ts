@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { hexToHsl, generateHslShades } from '../utils/colorShades'
+import { hexToHsl, generateHslShades } from '@utils/colorShades'
 
 describe('colorShades utilities', () => {
   it('converts hex to hsl correctly', () => {

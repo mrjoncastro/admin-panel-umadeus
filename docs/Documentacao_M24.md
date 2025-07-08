@@ -1,3 +1,7 @@
+# Documentação M24 (Monorepo)
+
+Agora em arquitetura monorepo: veja `services/`, `libs/`, uso de Docker Compose e microserviços (gateway, pocketbase, redis, postgres).
+
 ## Documentação de Coleções PocketBase
 
 **Índice**

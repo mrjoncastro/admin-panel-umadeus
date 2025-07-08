@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { hexToHsl, generatePrimaryShades } from '../utils/primaryShades'
+import { hexToHsl, generatePrimaryShades } from '@utils/primaryShades'
 
 describe('primaryShades utilities', () => {
   it('converts hex to hsl correctly', () => {

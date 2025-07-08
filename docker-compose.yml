@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  gateway:
+    build: ./services/gateway
+    ports: ['3000:3000']
+    depends_on: [pocketbase, redis, postgres]
+  pocketbase:
+    image: pocketbase/pocketbase:latest
+    ports: ['8090:8090']
+  redis:
+    image: redis:alpine
+    ports: ['6379:6379']
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: example
+    ports: ['5432:5432'] 

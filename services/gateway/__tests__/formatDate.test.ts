@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatDate } from '../utils/formatDate'
+import { formatDate } from '@utils/formatDate'
 
 describe('formatDate', () => {
   it('retorna a data formatada quando valor é válido', () => {

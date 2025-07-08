@@ -1,6 +1,6 @@
-# Regras de Visualização e Pedidos
+# Regras de Pedidos (Monorepo)
 
-Este documento explica quem pode criar e consultar pedidos e como eles são gerados em diferentes cenários.
+Contratos de serviço agora seguem arquitetura monorepo e microserviços.
 
 ## Escopo de Visualização
 

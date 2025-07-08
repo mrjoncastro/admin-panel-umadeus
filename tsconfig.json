@@ -15,7 +15,9 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@types/*": ["libs/types/*"],
+      "@utils/*": ["libs/utils/*"],
+      "@design-tokens/*": ["libs/design-tokens/*"]
     },
     "plugins": [
       {

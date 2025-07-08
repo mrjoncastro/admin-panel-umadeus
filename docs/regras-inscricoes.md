@@ -1,6 +1,6 @@
-# Regras de Visualiza\u00e7\u00e3o e Inscri\u00e7\u00f5es
+# Regras de Inscrições (Monorepo)
 
-Este documento descreve como cada perfil acessa as inscri\u00e7\u00f5es, o processo de cria\u00e7\u00e3o realizado pelo usu\u00e1rio e os par\u00e2metros dispon\u00edveis na API.
+Contratos de serviço agora seguem arquitetura monorepo e microserviços.
 
 ## Perfis Dispon\u00edveis
 

@@ -1,7 +1,16 @@
 # Contribuindo
 
-Este projeto segue algumas boas práticas para manter a qualidade do código e da documentação.
-Após clonar o repositório, execute `npm install` para instalar o **Next**, o **Vitest** e todas as demais dependências.
+Este repositório segue arquitetura monorepo. Siga as orientações abaixo:
+
+## Estrutura
+- Serviços em `services/`
+- Bibliotecas compartilhadas em `libs/`
+
+## Guidelines
+- Cada microserviço deve ter seu próprio Dockerfile e scripts
+- Use libs compartilhadas via imports do `libs/`
+- PRs devem passar por revisão de DevOps/Backend/Frontend conforme área
+- Pipeline CI/CD roda lint, type-check, testes e build em cada PR
 
 ## Validação de código
 

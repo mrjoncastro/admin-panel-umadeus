@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { hexToPtName } from '../utils/colorNamePt'
+import { hexToPtName } from '@utils/colorNamePt'
 
 describe('hexToPtName', () => {
   it('converte cores basicas corretamente', () => {
