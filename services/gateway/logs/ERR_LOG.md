@@ -277,3 +277,4 @@
 ## [2025-07-07] Erro ao gerar link de pagamento Asaas: TypeError: cobrancaResponse.clone is not a function - test
 
 ## [2025-07-08] Erro no painel devido a código duplicado em DashboardAnalytics.tsx - dev - resolvido restaurando arquivo e tipagens.
+## [2025-07-08] Ajustado PATCH de inscrição para permitir alteração de status pelo líder para 'aguardando_pagamento' ou 'cancelado' - dev - 5499c4b0
