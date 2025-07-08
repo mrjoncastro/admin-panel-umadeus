@@ -13,6 +13,8 @@ export default function RelatoriosPage() {
   const [pedidos, setPedidos] = useState<Pedido[]>([])
   const [totalInscricoes, setTotalInscricoes] = useState(0)
   const [totalPedidos, setTotalPedidos] = useState(0)
+  const [filtroStatus, setFiltroStatus] = useState('pago')
+  const [filtroInscricoes, setFiltroInscricoes] = useState('pendente')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const isMounted = useRef(true)
@@ -172,8 +174,10 @@ export default function RelatoriosPage() {
           <DashboardResumo
             inscricoes={inscricoes}
             pedidos={pedidos}
-            filtroStatus="pago"
-            setFiltroStatus={() => {}}
+            filtroStatus={filtroStatus}
+            filtroInscricoes={filtroInscricoes}
+            setFiltroInscricoes={setFiltroInscricoes}
+            setFiltroStatus={setFiltroStatus}
             totalInscricoes={totalInscricoes}
             totalPedidos={totalPedidos}
           />
