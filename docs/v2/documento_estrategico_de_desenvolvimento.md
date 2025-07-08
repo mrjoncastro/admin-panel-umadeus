@@ -1,4 +1,7 @@
-## Documento Estratégico de Desenvolvimento
+# Documento Estratégico de Desenvolvimento
+
+Este guia descreve as diretrizes essenciais para a evolucao do projeto, abordando arquitetura, seguranca e processos de entrega.
+
 
 ### 1. Visão Geral
 Este documento estabelece as diretrizes, processos e práticas recomendadas para o **desenvolvimento de software** do projeto Next MultiApp. O objetivo é garantir qualidade, produtividade e escalabilidade da equipe e da arquitetura, alinhando-se às metas de negócio e suporte aos tenants.
@@ -56,7 +59,7 @@ Este documento estabelece as diretrizes, processos e práticas recomendadas para
 - **Dependências:** Auditar com `npm audit` e `Snyk`; políticas de PR para atualizações de pacotes.
 - **Secrets Management:** Variáveis sensíveis em Vault ou GitHub Secrets; nunca commitar `.env`.
 - **Autenticação & Autorização:** Uso de JWT assinado no gateway; RBAC para coordenador, líder, usuário e fornecedor.
-- **CORS & CSRF:** Configurar cabeçalhos adequados e tokens ant-CSRF nas rotas públicas.
+- **CORS & CSRF:** Configurar cabeçalhos adequados e tokens **anti**-CSRF nas rotas públicas.
 
 ---
 
@@ -89,9 +92,7 @@ Este documento estabelece as diretrizes, processos e práticas recomendadas para
 
 ---
 
-### Anexo A: Documento Estratégico de Melhorias ao Sistema
-
-## Documento Estratégico de Melhorias ao Sistema
+## Anexo A - Documento Estratégico de Melhorias ao Sistema
 
 ### 1. Resumo Executivo
 Apresentamos um plano estratégico de melhorias para transformar o sistema atual (Next.js + PocketBase monolítico) em uma plataforma SaaS moderna, escalável e totalmente white-label. O objetivo é elevar a resiliência, a capacidade de evolução das funcionalidades marketplace e motor de comissões, além de fortalecer a experiência do usuário (web e mobile) para diferentes tenants.
