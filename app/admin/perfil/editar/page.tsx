@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import { useToast } from '@/lib/context/ToastContext'
 import { FormField, TextField, InputWithMask } from '@/components'
+import type { UserModel } from '@/types/UserModel'
 
 export default function EditarPerfilPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
@@ -23,18 +24,51 @@ export default function EditarPerfilPage() {
   const [cidade, setCidade] = useState('')
 
   useEffect(() => {
-    if (user) {
-      setNome(String(user.nome ?? ''))
-      setTelefone(String(user.telefone ?? ''))
-      setCpf(String(user.cpf ?? ''))
-      setDataNascimento(String(user.data_nascimento ?? ''))
-      setEndereco(String(user.endereco ?? ''))
-      setBairro(String(user.bairro ?? ''))
-      setNumero(String(user.numero ?? ''))
-      setEstado(String(user.estado ?? ''))
-      setCep(String(user.cep ?? ''))
-      setCidade(String(user.cidade ?? ''))
+    async function loadUserInfo() {
+      if (!user?.id) return
+      try {
+        const res = await fetch(`/api/usuarios/${user.id}`)
+        if (res.ok) {
+          const data = (await res.json()) as UserModel
+          setNome(String(data.nome ?? ''))
+          setTelefone(String(data.telefone ?? ''))
+          setCpf(String(data.cpf ?? ''))
+          setDataNascimento(String(data.data_nascimento ?? ''))
+          setEndereco(String(data.endereco ?? ''))
+          setBairro(String(data.bairro ?? ''))
+          setNumero(String(data.numero ?? ''))
+          setEstado(String(data.estado ?? ''))
+          setCep(String(data.cep ?? ''))
+          setCidade(String(data.cidade ?? ''))
+        } else if (user) {
+          setNome(String(user.nome ?? ''))
+          setTelefone(String(user.telefone ?? ''))
+          setCpf(String(user.cpf ?? ''))
+          setDataNascimento(String(user.data_nascimento ?? ''))
+          setEndereco(String(user.endereco ?? ''))
+          setBairro(String(user.bairro ?? ''))
+          setNumero(String(user.numero ?? ''))
+          setEstado(String(user.estado ?? ''))
+          setCep(String(user.cep ?? ''))
+          setCidade(String(user.cidade ?? ''))
+        }
+      } catch (err) {
+        console.error(err)
+        if (user) {
+          setNome(String(user.nome ?? ''))
+          setTelefone(String(user.telefone ?? ''))
+          setCpf(String(user.cpf ?? ''))
+          setDataNascimento(String(user.data_nascimento ?? ''))
+          setEndereco(String(user.endereco ?? ''))
+          setBairro(String(user.bairro ?? ''))
+          setNumero(String(user.numero ?? ''))
+          setEstado(String(user.estado ?? ''))
+          setCep(String(user.cep ?? ''))
+          setCidade(String(user.cidade ?? ''))
+        }
+      }
     }
+    loadUserInfo()
   }, [user])
 
   async function handleSave(e: React.FormEvent) {
