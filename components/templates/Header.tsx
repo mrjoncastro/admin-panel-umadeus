@@ -222,14 +222,17 @@ export default function Header() {
             )}
           </nav>
 
-          {/* Botão Menu Mobile */}
-          <button
-            onClick={() => setOpen(!open)}
-            className="md:hidden text-platinum transition"
-            aria-label={open ? 'Fechar menu' : 'Abrir menu'}
-          >
-            {open ? <X size={28} /> : <Menu size={28} />}
-          </button>
+          {/* Ações Mobile */}
+          <div className="flex items-center gap-4 md:hidden">
+            <CartButton />
+            <button
+              onClick={() => setOpen(!open)}
+              className="text-platinum transition"
+              aria-label={open ? 'Fechar menu' : 'Abrir menu'}
+            >
+              {open ? <X size={28} /> : <Menu size={28} />}
+            </button>
+          </div>
         </div>
 
         {/* Navegação Mobile */}
@@ -251,8 +254,6 @@ export default function Header() {
                   {link.label}
                 </Link>
               ))}
-
-              <CartButton />
 
               {(role === 'lider' || role === 'coordenador') && (
                 <>
