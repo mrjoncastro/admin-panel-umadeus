@@ -9,6 +9,7 @@ import { generatePrimaryShades } from '@/utils/primaryShades'
 import { fetchTenantConfig } from '@/lib/fetchTenantConfig'
 import { CartProvider } from '@/lib/context/CartContext'
 import LogRocketInit from '@/components/utils/LogRocketInit'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 export const metadata = {
   icons: {
@@ -59,6 +60,7 @@ export default async function RootLayout({
             </AuthProvider>
           </ThemeProvider>
         </TenantProvider>
+        <SpeedInsights />
       </body>
     </html>
   )
