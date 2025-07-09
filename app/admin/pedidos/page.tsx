@@ -50,6 +50,9 @@ export default function PedidosPage() {
           filter: filtro,
           sort: `${ordem === 'desc' ? '-' : ''}created`,
         })
+        if (filtroStatus) {
+          params.set('status', filtroStatus)
+        }
         const res = await fetch(`/api/pedidos?${params.toString()}`, {
           credentials: 'include',
         })
@@ -69,7 +72,7 @@ export default function PedidosPage() {
     }
 
     fetchPedidos()
-  }, [pagina, ordem, user, authChecked, showError])
+  }, [pagina, ordem, user, authChecked, showError, filtroStatus])
 
   const pedidosFiltrados = pedidos.filter((p) => {
     const matchStatus = filtroStatus === '' || p.status === filtroStatus
