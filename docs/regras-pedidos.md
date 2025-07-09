@@ -50,7 +50,9 @@ Um job agendado chama `/api/tasks/pedidos-vencidos` a cada hora.
 Ele verifica pedidos com `status = pendente` cujo `vencimento` já
 passou e atualiza para `vencido`.
 As operações de atualização utilizam `pbRetry` para prevenir perdas de
-conexão com o PocketBase.
+conexão com o PocketBase e, ao marcar como vencido, o sistema envia
+automaticamente uma mensagem de WhatsApp para o inscrito com o link de
+pagamento do pedido.
 
 ## Edição de Pedido
 
