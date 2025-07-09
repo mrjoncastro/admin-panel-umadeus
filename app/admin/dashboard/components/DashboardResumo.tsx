@@ -180,8 +180,8 @@ export default function DashboardResumo({
         ))}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3 sm:grid-cols-2 mb-8">
-        {['pendente', 'pago', 'cancelado'].map((status) => (
+      <div className="grid gap-4 md:grid-cols-4 sm:grid-cols-2 mb-8">
+        {['pendente', 'pago', 'vencido', 'cancelado'].map((status) => (
           <div key={status} className="card text-center">
             <h3 className="text-sm font-semibold dark:text-gray-100">
               Pedidos {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -205,7 +205,7 @@ export default function DashboardResumo({
               onChange={(e) => setFiltroStatus(e.target.value)}
               className="px-4 py-2 rounded-md bg-gray-800 text-gray-100 border-none shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 w-full md:w-64"
             >
-              {['pago', 'pendente', 'cancelado'].map((status) => (
+              {['pago', 'pendente', 'vencido', 'cancelado'].map((status) => (
                 <option key={status} value={status}>
                   {status.charAt(0).toUpperCase() + status.slice(1)}
                 </option>
