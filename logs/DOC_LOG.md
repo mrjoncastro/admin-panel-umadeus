@@ -573,6 +573,7 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 ## [2025-07-06] Líder não pode alterar status ao editar inscrição ou pedido. Documentação atualizada.
 ## [2025-08-18] Criado job `/api/tasks/pedidos-vencidos` e documentado fluxo automático de vencimento. Lint e build executados.
 ## [2025-08-19] Job de vencimento usa `pbRetry` para evitar perda de conexão com o PocketBase. Documentação atualizada. Lint e build executados.
+## [2025-08-19] Job agora envia mensagem com link de pagamento via WhatsApp ao atualizar pedidos vencidos. Documentação atualizada. Lint e build executados.
 ## [2025-07-07] Endereço opcional para inscrições; formulários e API atualizados. Documentação revisada.
 ## [2025-07-07] Verificada duplicidade na rota /loja/api/inscricoes retornando 409. Testes atualizados. Lint e build executados.
 ## [2025-07-07] Rota /api/recuperar-link passa a retornar `link_pagamento`. Documentação e testes atualizados. Lint e build executados.
