@@ -3,12 +3,20 @@
     "app/api/tasks/worker/route.ts": {
       "runtime": "vercel-node@2.20.0",
       "maxDuration": 300
+    },
+    "app/api/tasks/pedidos-vencidos/route.ts": {
+      "runtime": "vercel-node@2.20.0",
+      "maxDuration": 300
     }
   },
   "crons": [
     {
       "path": "/api/tasks/worker",
       "schedule": "*/1 * * * *"
+    },
+    {
+      "path": "/api/tasks/pedidos-vencidos",
+      "schedule": "0 * * * *"
     }
   ]
 }
