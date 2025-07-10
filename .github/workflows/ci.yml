@@ -13,3 +13,4 @@ jobs:
       - run: pnpm test
       - run: pnpm build --filter services/auth
       - run: pnpm build --filter services/gateway
+      - run: pnpm build --filter services/catalog

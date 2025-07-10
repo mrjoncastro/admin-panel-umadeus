@@ -4,15 +4,17 @@
   "private": true,
   "scripts": {
     "dev": "pnpm --filter gateway dev",
-    "build": "pnpm --filter auth build && pnpm --filter gateway build",
+    "build": "pnpm --filter auth build && pnpm --filter gateway build && pnpm --filter catalog build",
     "start": "pnpm --filter gateway start",
-    "lint": "pnpm --filter gateway lint",
-    "test": "pnpm --filter gateway exec vitest run --run none --passWithNoTests && pnpm --filter auth exec vitest run --run none --passWithNoTests",
+    "lint": "pnpm --filter gateway lint && pnpm --filter catalog lint",
+    "test": "pnpm --filter gateway exec vitest run --run none --passWithNoTests && pnpm --filter auth exec vitest run --run none --passWithNoTests && pnpm --filter catalog exec vitest run --run none --passWithNoTests",
     "docker:up": "docker compose up --build",
     "docker:down": "docker compose down",
     "docker:ps": "docker compose ps",
     "dev:auth": "pnpm --filter auth dev",
-    "build:auth": "pnpm --filter auth build"
+    "build:auth": "pnpm --filter auth build",
+    "dev:catalog": "pnpm --filter catalog dev",
+    "build:catalog": "pnpm --filter catalog build"
   },
   "devDependencies": {
     "typescript": "^5",

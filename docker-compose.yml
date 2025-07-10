@@ -3,13 +3,25 @@ services:
   gateway:
     build: ./services/gateway
     ports: ['3000:3000']
-    depends_on: [pocketbase, redis, postgres, auth]
+    depends_on: [pocketbase, redis, postgres, auth, catalog]
   pocketbase:
     image: pocketbase/pocketbase:latest
     ports: ['8090:8090']
   auth:
     build: ./services/auth
     ports: ['4000:4000']
+  catalog:
+    build: ./services/catalog
+    ports: ['5000:5000']
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: catalog
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: example
+      RUN_MIGRATIONS: 'true'
+      NODE_ENV: development
+    depends_on: [postgres]
   redis:
     image: redis:alpine
     ports: ['6379:6379']
@@ -17,4 +29,10 @@ services:
     image: postgres:15
     environment:
       POSTGRES_PASSWORD: example
+      POSTGRES_DB: catalog
     ports: ['5432:5432']
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
