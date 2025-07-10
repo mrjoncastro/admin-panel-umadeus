@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "pnpm --filter gateway dev",
-    "build": "pnpm --filter auth build",
+    "build": "pnpm --filter auth build && pnpm --filter gateway build",
     "start": "pnpm --filter gateway start",
     "lint": "pnpm --filter gateway lint",
     "test": "pnpm --filter gateway exec vitest run --run none --passWithNoTests && pnpm --filter auth exec vitest run --run none --passWithNoTests",
