@@ -1,213 +1,341 @@
 # Catalog Service
 
-Serviço de catálogo para gerenciamento de produtos e categorias com suporte a multi-tenancy e Row Level Security (RLS).
+Serviço de catálogo para o QG3 Admin Panel, responsável por gerenciar produtos e categorias com suporte a multi-tenancy.
 
-## 🏗️ Arquitetura
+## 🚀 Funcionalidades
 
-- **Framework**: Express.js com TypeScript
-- **Banco de Dados**: PostgreSQL com RLS
-- **Validação**: Zod
-- **Segurança**: Helmet, CORS, Rate Limiting
-- **Versionamento**: API v1
+- **Produtos**: CRUD completo com filtros avançados
+- **Categorias**: Gerenciamento de categorias de produtos
+- **Multi-tenancy**: Isolamento completo por tenant
+- **Row Level Security (RLS)**: Segurança no nível do banco de dados
+- **API Versionada**: Suporte a versionamento de API
+- **Validação**: Validação robusta de dados
+- **Testes**: Cobertura completa de testes unitários e de integração
 
-## 🚀 Execução
+## 📋 Pré-requisitos
 
-### Desenvolvimento Local
+- Node.js 18+
+- PostgreSQL 14+
+- Docker (opcional)
+
+## 🛠️ Instalação
 
 ```bash
 # Instalar dependências
 pnpm install
 
-# Executar migrações
-pnpm migrate
-
-# Iniciar em modo desenvolvimento
-pnpm dev
+# Configurar variáveis de ambiente
+cp .env.example .env
 ```
 
-### Docker
+## ⚙️ Configuração
 
-```bash
-# Build e execução
-docker compose up catalog
-
-# Apenas build
-docker build -t catalog-service .
-```
-
-## 📚 API Endpoints
-
-### Produtos
-
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/v1/products` | Listar produtos (com paginação e filtros) |
-| GET | `/api/v1/products/:id` | Buscar produto por ID |
-| GET | `/api/v1/products/slug/:slug` | Buscar produto por slug |
-| POST | `/api/v1/products` | Criar novo produto |
-| PATCH | `/api/v1/products/:id` | Atualizar produto |
-| DELETE | `/api/v1/products/:id` | Deletar produto |
-| PATCH | `/api/v1/products/:id/stock` | Atualizar estoque |
-
-### Categorias
-
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/api/v1/categories` | Listar categorias |
-| GET | `/api/v1/categories/:id` | Buscar categoria por ID |
-| GET | `/api/v1/categories/slug/:slug` | Buscar categoria por slug |
-| POST | `/api/v1/categories` | Criar nova categoria |
-| PATCH | `/api/v1/categories/:id` | Atualizar categoria |
-| DELETE | `/api/v1/categories/:id` | Deletar categoria |
-
-## 🔐 Multi-Tenancy
-
-O serviço utiliza **Row Level Security (RLS)** do PostgreSQL para isolar dados por tenant:
-
-- Cada requisição deve incluir o header `x-tenant-id`
-- O RLS filtra automaticamente os dados por tenant
-- Políticas de segurança garantem isolamento completo
-
-### Exemplo de Requisição
-
-```bash
-curl -H "x-tenant-id: tenant-123" \
-     -H "Content-Type: application/json" \
-     http://localhost:5000/api/v1/products
-```
-
-## 🗄️ Estrutura do Banco
-
-### Tabela `produtos`
-
-```sql
-CREATE TABLE produtos (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  nome VARCHAR(255) NOT NULL,
-  user_org VARCHAR(255) NOT NULL,
-  quantidade INTEGER NOT NULL DEFAULT 0,
-  preco DECIMAL(10,2) NOT NULL,
-  preco_bruto DECIMAL(10,2) NOT NULL,
-  ativo BOOLEAN NOT NULL DEFAULT true,
-  tamanhos TEXT[],
-  imagens TEXT[],
-  descricao TEXT,
-  detalhes TEXT,
-  categoria UUID REFERENCES categorias(id),
-  slug VARCHAR(255) NOT NULL UNIQUE,
-  cores TEXT[],
-  generos TEXT[],
-  cliente UUID NOT NULL,
-  exclusivo_user BOOLEAN DEFAULT false,
-  requer_inscricao_aprovada BOOLEAN DEFAULT false,
-  evento_id UUID,
-  created TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-```
-
-### Tabela `categorias`
-
-```sql
-CREATE TABLE categorias (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  nome VARCHAR(255) NOT NULL,
-  slug VARCHAR(255) NOT NULL UNIQUE,
-  cliente UUID NOT NULL,
-  created TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-```
-
-## 🔧 Variáveis de Ambiente
+Crie um arquivo `.env` na raiz do serviço:
 
 ```env
-# Banco de Dados
+# Servidor
+PORT=3001
+NODE_ENV=development
+
+# PostgreSQL
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
 POSTGRES_DB=catalog
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=example
 
-# Servidor
-CATALOG_PORT=5000
-NODE_ENV=development
+# Logs
+LOG_LEVEL=info
+```
 
-# Migrações
-RUN_MIGRATIONS=true
+## 🏃‍♂️ Execução
 
-# CORS
-ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001
+### Desenvolvimento
+```bash
+# Executar em modo desenvolvimento
+pnpm dev
+
+# Executar com hot reload
+pnpm dev:watch
+```
+
+### Produção
+```bash
+# Build do projeto
+pnpm build
+
+# Executar em produção
+pnpm start
+```
+
+### Docker
+```bash
+# Build da imagem
+docker build -t catalog-service .
+
+# Executar container
+docker run -p 3001:3001 catalog-service
 ```
 
 ## 🧪 Testes
 
+### Executar todos os testes
 ```bash
-# Executar testes
 pnpm test
-
-# Executar testes em modo watch
-pnpm test --watch
-
-# Executar testes com cobertura
-pnpm test --coverage
 ```
 
-## 📊 Health Check
-
+### Executar testes em modo watch
 ```bash
-curl http://localhost:5000/health
+pnpm test:watch
 ```
 
-Resposta:
-```json
+### Executar testes com cobertura
+```bash
+pnpm test:coverage
+```
+
+### Executar testes de integração
+```bash
+pnpm test:run
+```
+
+### Interface visual para testes
+```bash
+pnpm test:ui
+```
+
+## 📊 Cobertura de Testes
+
+O projeto inclui uma suíte completa de testes:
+
+- **Testes Unitários**: Repositórios, validações e utilitários
+- **Testes de Integração**: Rotas da API e fluxos completos
+- **Testes de Banco**: Conexão e operações com PostgreSQL
+- **Mocks**: Dados de teste e simulações
+
+### Estrutura de Testes
+
+```
+src/
+├── __tests__/
+│   ├── integration.test.ts    # Testes end-to-end
+│   └── database.test.ts       # Testes de banco
+├── repositories/__tests__/
+│   ├── ProductRepository.test.ts
+│   └── CategoryRepository.test.ts
+├── routes/__tests__/
+│   ├── products.test.ts
+│   └── categories.test.ts
+└── test/
+    ├── setup.ts               # Configuração de testes
+    ├── mocks/
+    │   └── database.ts        # Mocks do banco
+    └── helpers/
+        └── validation.ts      # Helpers de validação
+```
+
+## 📚 API Reference
+
+### Base URL
+```
+http://localhost:3001/api/v1
+```
+
+### Headers Obrigatórios
+```
+x-tenant-id: <tenant-id>
+```
+
+### Produtos
+
+#### Listar Produtos
+```http
+GET /products?page=1&perPage=20&ativo=true&categoria=cat-123&search=termo
+```
+
+#### Buscar Produto por ID
+```http
+GET /products/:id
+```
+
+#### Criar Produto
+```http
+POST /products
+Content-Type: application/json
+
 {
-  "success": true,
-  "service": "catalog",
-  "version": "1.0.0",
-  "timestamp": "2024-01-01T00:00:00.000Z"
+  "nome": "Produto Teste",
+  "user_org": "user-123",
+  "quantidade": 10,
+  "preco": 29.90,
+  "preco_bruto": 32.90,
+  "slug": "produto-teste",
+  "descricao": "Descrição do produto"
 }
 ```
 
-## 🔄 Migrações
+#### Atualizar Produto
+```http
+PATCH /products/:id
+Content-Type: application/json
 
-As migrações são executadas automaticamente na inicialização do serviço quando `RUN_MIGRATIONS=true`:
-
-- Criação das tabelas
-- Configuração do RLS
-- Criação de índices
-- Configuração de triggers
-
-Para executar manualmente:
-
-```bash
-pnpm migrate
+{
+  "nome": "Produto Atualizado",
+  "preco": 39.90
+}
 ```
 
-## 🚨 Logs e Monitoramento
-
-O serviço utiliza Morgan para logging HTTP e console.error para erros:
-
-```bash
-# Ver logs do container
-docker compose logs catalog
-
-# Ver logs em tempo real
-docker compose logs -f catalog
+#### Deletar Produto
+```http
+DELETE /products/:id
 ```
+
+#### Atualizar Estoque
+```http
+PATCH /products/:id/stock
+Content-Type: application/json
+
+{
+  "quantity": 2
+}
+```
+
+### Categorias
+
+#### Listar Categorias
+```http
+GET /categories
+```
+
+#### Buscar Categoria por ID
+```http
+GET /categories/:id
+```
+
+#### Criar Categoria
+```http
+POST /categories
+Content-Type: application/json
+
+{
+  "nome": "Nova Categoria",
+  "slug": "nova-categoria"
+}
+```
+
+#### Atualizar Categoria
+```http
+PATCH /categories/:id
+Content-Type: application/json
+
+{
+  "nome": "Categoria Atualizada"
+}
+```
+
+#### Deletar Categoria
+```http
+DELETE /categories/:id
+```
+
+## 🏗️ Arquitetura
+
+### Estrutura do Projeto
+```
+src/
+├── database/
+│   ├── connection.ts          # Conexão com PostgreSQL
+│   └── migrations/
+│       └── index.ts           # Migrações do banco
+├── repositories/
+│   ├── ProductRepository.ts   # Repositório de produtos
+│   └── CategoryRepository.ts  # Repositório de categorias
+├── routes/
+│   └── v1/
+│       ├── products.ts        # Rotas de produtos
+│       └── categories.ts      # Rotas de categorias
+├── types/
+│   └── index.ts               # Tipos TypeScript
+├── utils/
+│   ├── validation.ts          # Validações
+│   └── pagination.ts          # Utilitários de paginação
+└── index.ts                   # Servidor Express
+```
+
+### Padrões Utilizados
+
+- **Repository Pattern**: Isolamento da lógica de acesso a dados
+- **Service Layer**: Separação de responsabilidades
+- **Middleware Pattern**: Interceptação de requisições
+- **Error Handling**: Tratamento centralizado de erros
+- **Validation**: Validação de entrada de dados
+- **Logging**: Sistema de logs estruturado
 
 ## 🔒 Segurança
 
+### Row Level Security (RLS)
+- Isolamento automático por tenant
+- Políticas de segurança no PostgreSQL
+- Prevenção de vazamento de dados entre tenants
+
+### Middlewares de Segurança
 - **Helmet**: Headers de segurança
-- **CORS**: Controle de origens permitidas
-- **Rate Limiting**: 100 requests por 15 minutos por IP
-- **RLS**: Isolamento de dados por tenant
-- **Validação**: Zod para validação de entrada
-- **Sanitização**: Escape de SQL injection via parâmetros
+- **CORS**: Controle de origem
+- **Rate Limiting**: Proteção contra abuso
+- **Input Validation**: Validação de entrada
 
-## 📈 Performance
+## 📈 Monitoramento
 
-- **Índices**: Otimizados para consultas por tenant, slug e status
-- **Paginação**: Suporte a paginação em listagens
-- **Connection Pool**: Pool de conexões PostgreSQL configurado
-- **Caching**: Preparado para integração com Redis (futuro) 
+### Health Check
+```http
+GET /health
+```
+
+### Logs
+- Logs estruturados em JSON
+- Níveis: error, warn, info, debug
+- Contexto de tenant em todas as operações
+
+## 🚀 Deploy
+
+### Docker Compose
+O serviço está integrado ao `docker-compose.yml` principal:
+
+```yaml
+catalog:
+  build: ./services/catalog
+  ports:
+    - "3001:3001"
+  environment:
+    - POSTGRES_HOST=postgres
+    - POSTGRES_DB=catalog
+  depends_on:
+    - postgres
+```
+
+### CI/CD
+- Testes automáticos no GitHub Actions
+- Build e deploy automatizado
+- Verificação de qualidade de código
+
+## 🤝 Contribuição
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
+### Padrões de Código
+- ESLint para linting
+- Prettier para formatação
+- Conventional Commits
+- Testes obrigatórios para novas features
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+## 🆘 Suporte
+
+Para suporte, entre em contato com a equipe QG3 ou abra uma issue no repositório. 
