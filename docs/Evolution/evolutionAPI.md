@@ -1,3 +1,5 @@
+# Evolution API v2 - Documentação Completa
+
 ## 1. Integração – Endpoints Principais
 
 Nesta seção, detalhamos todos os endpoints disponíveis na Evolution API v2, incluindo parâmetros, exemplos de requisição/resposta e códigos de status.
@@ -340,7 +342,7 @@ const pb = new PocketBase(process.env.POCKETBASE_URL)
 })()
 ```
 
-> **Observação**: o `apiKey` é recuperado dinamicamente da coleção `whatsapp_clientes` no PocketBase para garantir segurança e multi-tenant.\*\*: Consulte sempre a documentação oficial para parâmetros avançados, limites de taxa e exemplos adicionais.
+> **Observação**: o `apiKey` é recuperado dinamicamente da coleção `whatsapp_clientes` no PocketBase para garantir segurança e multi-tenant. Consulte sempre a documentação oficial para parâmetros avançados, limites de taxa e exemplos adicionais.
 
 ## 3. Coleção `whatsapp_clientes`
 
@@ -353,9 +355,7 @@ A coleção **whatsapp_clientes** possui o seguinte esquema de campos no PocketB
 | `instanceName`    | Text                                           | Single                                         | Sim         | Nome da instância configurada na Evolution API                     |
 | `instanceId`      | Text                                           | Single                                         | Sim         | ID interno gerado pela Evolution API                               |
 | `apiKey`          | Text                                           | Single                                         | Sim         | Chave de API associada à instância                                 |
-| `telefone`        | Text                                           | Single                                         |
-| Sim               | Número E.164 utilizado na criação da instância |
-|                   |
+| `telefone`        | Text                                           | Single                                         | Sim         | Número E.164 utilizado na criação da instância                     |
 | `pairingCode`     | Text                                           | Single                                         | Não         | Código de pareamento (apenas enquanto `sessionStatus` = `pending`) |
 | `sessionStatus`   | Select                                         | opções: `pending`, `connected`, `disconnected` | Sim         | Status da sessão                                                   |
 | `qrCode`          | Text                                           | Single                                         | Não         | URL ou Base64 do QR Code para autenticação inicial                 |
