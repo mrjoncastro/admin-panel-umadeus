@@ -13,11 +13,14 @@ Este documento descreve a arquitetura de deploy do MVP e a estratégia para gara
 |-----------------------|------------------------------------|-----------------------------------------------------|
 | **Front-end**         | Vercel (Plano Pro)                 | Next.js SSR/SSG com ISR e Edge Caching               |
 | **API & Business**    | Commission Engine (Docker)         | Lógica de pedidos, motor de comissões               |
-| **Banco de Dados**    | PocketBase (Railway Starter)       | Armazenamento de dados (usuários, produtos, pedidos)|
+| **Banco de Dados**    | Supabase (PostgreSQL gerenciado)      | Armazenamento de dados (usuários, produtos, pedidos, multi-tenancy, RLS, policies) |
 | **Cache Dinâmico**    | Redis (contêiner Docker dedicado)  | Cache de queries críticas e sessões                  |
 | **CDN & Edge**        | Vercel Edge Network / Cloudflare   | Distribuição global de assets estáticos e JSON       |
 | **Observabilidade**   | OpenTelemetry → Prometheus → Grafana | Métricas, traces e dashboards                      |
 | **Alertas**           | Grafana Alertas → Slack / E-mail   | Notificações sobre latência, erros e uso de recursos |
+
+### Observação sobre Supabase
+Durante o desenvolvimento, o Supabase será utilizado como banco principal, com dados fictícios para testes e validação de integrações, RLS e policies. Ao final do desenvolvimento, será realizado o processo de migração dos dados reais para o Supabase.
 
 ### 2.1. Segurança e Compliance  
 - **TLS**: criptografia obrigatória em trânsito para todas as conexões (API e web).  

@@ -20,7 +20,7 @@ Este documento estabelece as diretrizes, processos e práticas recomendadas para
 
 ### 3. Padrões de Arquitetura
 - **Monorepo com Microserviços:** Organizar em pastas `services/` e `libs/` compartilhados, garantindo isolamento de domínio e reuso de utilitários.
-- **Camadas Claras:** Segregar presentation (Next.js App), business logic (services/API) e data (bancos, PocketBase/Postgres).
+- **Camadas Claras:** Segregar presentation (Next.js App), business logic (services/API) e data (bancos, Supabase/Postgres).
 - **Domain-Driven Design (DDD):** Modelar entidades (Tenant, Produto, Pedido, Comissão) e seus agregados, com repositórios e serviços dedicados.
 - **API Contract First:** Definir schemas (OpenAPI ou GraphQL SDL) antes de implementar, garantindo contratos estáveis.
 
@@ -123,8 +123,8 @@ Apresentamos um plano estratégico de melhorias para transformar o sistema atual
    - ELK/EFK, OpenTelemetry, SLIs/SLAs e on-call.
 
 ### 4. Propostas de Melhoria
-1. **Arquitetura e Infraestrutura**: Monorepo, microserviços, Docker, Kubernetes e CI/CD.
-2. **Multi-Tenancy**: RLS, schema por tenant e Config Service.
+1. **Arquitetura e Infraestrutura**: Monorepo, microserviços, Docker, Kubernetes, CI/CD e Supabase como backend principal.
+2. **Multi-Tenancy**: RLS, schema por tenant e Config Service no Supabase.
 3. **Marketplace & API**: Catalog Service, GraphQL Gateway e versionamento.
 4. **Motor de Comissões**: Serviço dedicado, regras dinâmicas e agendamentos.
 5. **White-Label e CMS**: Theming dinâmico e CMS de conteúdo.
@@ -139,6 +139,11 @@ Apresentamos um plano estratégico de melhorias para transformar o sistema atual
 | Fase 3 | 1–2 meses | Orders Service; Commission Engine PoC. |
 | Fase 4 | 2–3 meses | React Native/Expo App; theming mobile. |
 | Fase 5 | 1–2 meses | CMS Service; Observabilidade; SLIs/Alertas. |
+
+---
+
+### Observação sobre Supabase
+Durante o desenvolvimento, o Supabase será utilizado como banco principal, com dados fictícios para testes e validação de integrações, RLS e policies. Ao final do desenvolvimento, será realizado o processo de migração dos dados reais para o Supabase, garantindo segurança e integridade.
 
 ---
 
