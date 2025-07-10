@@ -1,142 +1,153 @@
--- Script de criação de schema para Supabase (PostgreSQL)
--- Compatível com o schema do PocketBase (pb_schema.json)
+-- Habilitar extensão UUID
+create extension if not exists "uuid-ossp";
 
--- Tabela de clientes/tenants
-CREATE TABLE IF NOT EXISTS clientes (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  nome VARCHAR(255) NOT NULL,
-  dominio VARCHAR(255) UNIQUE NOT NULL,
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
+-- =========================
+-- TABELA: tenants
+-- =========================
+create table tenants (
+  id uuid primary key default uuid_generate_v4(),
+  name text not null,
+  created_at timestamp with time zone default now()
 );
 
--- Tabela de configuração de clientes (theming, etc)
-CREATE TABLE IF NOT EXISTS clientes_config (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  cliente UUID REFERENCES clientes(id) ON DELETE CASCADE,
-  cor_primary VARCHAR(50),
-  font VARCHAR(100),
-  confirma_inscricoes BOOLEAN,
-  dominio VARCHAR(255) NOT NULL,
-  nome VARCHAR(255),
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
+-- =========================
+-- TABELA: users
+-- =========================
+create table users (
+  id uuid primary key default uuid_generate_v4(),
+  tenant_id uuid not null references tenants(id) on delete cascade,
+  email text not null unique,
+  password_hash text not null,
+  name text,
+  role text not null, -- ex: 'admin', 'lider', 'user'
+  created_at timestamp with time zone default now()
 );
 
--- Tabela de campos (áreas de atuação, etc)
-CREATE TABLE IF NOT EXISTS campos (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  nome VARCHAR(255) NOT NULL,
-  cliente UUID REFERENCES clientes(id),
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
+-- =========================
+-- TABELA: leaders
+-- =========================
+create table leaders (
+  id uuid primary key default uuid_generate_v4(),
+  tenant_id uuid not null references tenants(id) on delete cascade,
+  user_id uuid not null references users(id) on delete cascade,
+  area_of_expertise text not null, -- campo obrigatório
+  created_at timestamp with time zone default now()
 );
 
--- Tabela de usuários
-CREATE TABLE IF NOT EXISTS usuarios (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  nome VARCHAR(255) NOT NULL,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  senha VARCHAR(255) NOT NULL,
-  cliente UUID REFERENCES clientes(id),
-  role VARCHAR(50) NOT NULL DEFAULT 'usuario',
-  telefone VARCHAR(30),
-  cpf VARCHAR(20),
-  data_nascimento DATE,
-  genero VARCHAR(20),
-  endereco VARCHAR(255),
-  numero INTEGER,
-  bairro VARCHAR(100),
-  cidade VARCHAR(100),
-  estado VARCHAR(50),
-  cep VARCHAR(20),
-  email_visibility BOOLEAN DEFAULT false,
-  verified BOOLEAN DEFAULT false,
-  campo UUID REFERENCES campos(id),
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
+-- =========================
+-- TABELA: categories
+-- =========================
+create table categories (
+  id uuid primary key default uuid_generate_v4(),
+  tenant_id uuid not null references tenants(id) on delete cascade,
+  name text not null,
+  description text,
+  created_at timestamp with time zone default now()
 );
 
--- Tabela de categorias
-CREATE TABLE IF NOT EXISTS categorias (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  nome VARCHAR(255) NOT NULL,
-  slug VARCHAR(255) NOT NULL UNIQUE,
-  cliente UUID REFERENCES clientes(id),
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
+-- =========================
+-- TABELA: products
+-- =========================
+create table products (
+  id uuid primary key default uuid_generate_v4(),
+  tenant_id uuid not null references tenants(id) on delete cascade,
+  category_id uuid references categories(id) on delete set null,
+  name text not null,
+  description text,
+  price numeric(12,2) not null,
+  stock integer default 0,
+  created_at timestamp with time zone default now()
 );
 
--- Tabela de produtos
-CREATE TABLE IF NOT EXISTS produtos (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  nome VARCHAR(255) NOT NULL,
-  preco DECIMAL(10,2) NOT NULL,
-  descricao TEXT,
-  categoria UUID REFERENCES categorias(id),
-  cliente UUID REFERENCES clientes(id),
-  imagens TEXT[],
-  tamanhos TEXT[],
-  cores TEXT[],
-  ativo BOOLEAN DEFAULT true,
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
+-- =========================
+-- TABELA: orders
+-- =========================
+create table orders (
+  id uuid primary key default uuid_generate_v4(),
+  tenant_id uuid not null references tenants(id) on delete cascade,
+  user_id uuid not null references users(id) on delete set null,
+  status text not null, -- ex: 'pending', 'paid', 'cancelled'
+  total numeric(12,2) not null,
+  created_at timestamp with time zone default now()
 );
 
--- Tabela de pedidos
-CREATE TABLE IF NOT EXISTS pedidos (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES usuarios(id),
-  produto_ids UUID[] NOT NULL,
-  total DECIMAL(10,2) NOT NULL,
-  status VARCHAR(50) NOT NULL DEFAULT 'criado',
-  cliente UUID REFERENCES clientes(id),
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
+-- =========================
+-- TABELA: order_items
+-- =========================
+create table order_items (
+  id uuid primary key default uuid_generate_v4(),
+  order_id uuid not null references orders(id) on delete cascade,
+  product_id uuid not null references products(id) on delete set null,
+  quantity integer not null,
+  price numeric(12,2) not null
 );
 
--- Tabela de transações de comissão
-CREATE TABLE IF NOT EXISTS commission_transactions (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  pedido_id UUID REFERENCES pedidos(id),
-  user_id UUID REFERENCES usuarios(id),
-  valor_bruto DECIMAL(10,2) NOT NULL,
-  fee_fixed DECIMAL(10,2) NOT NULL,
-  fee_percent DECIMAL(5,4) NOT NULL,
-  split JSONB NOT NULL,
-  payment_method VARCHAR(20) NOT NULL,
-  installments INTEGER,
-  status VARCHAR(50) NOT NULL DEFAULT 'pendente',
-  cliente UUID REFERENCES clientes(id),
-  created_at TIMESTAMP DEFAULT NOW(),
-  updated_at TIMESTAMP DEFAULT NOW()
+-- =========================
+-- TABELA: commissions
+-- =========================
+create table commissions (
+  id uuid primary key default uuid_generate_v4(),
+  tenant_id uuid not null references tenants(id) on delete cascade,
+  leader_id uuid not null references leaders(id) on delete set null,
+  order_id uuid not null references orders(id) on delete set null,
+  amount numeric(12,2) not null,
+  status text not null, -- ex: 'pending', 'paid'
+  created_at timestamp with time zone default now()
 );
 
--- Ativar RLS
-ALTER TABLE usuarios ENABLE ROW LEVEL SECURITY;
-ALTER TABLE categorias ENABLE ROW LEVEL SECURITY;
-ALTER TABLE produtos ENABLE ROW LEVEL SECURITY;
-ALTER TABLE pedidos ENABLE ROW LEVEL SECURITY;
-ALTER TABLE commission_transactions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE campos ENABLE ROW LEVEL SECURITY;
-ALTER TABLE clientes_config ENABLE ROW LEVEL SECURITY;
+-- =========================
+-- Ativar RLS em todas as tabelas
+-- =========================
+alter table tenants enable row level security;
+alter table users enable row level security;
+alter table leaders enable row level security;
+alter table categories enable row level security;
+alter table products enable row level security;
+alter table orders enable row level security;
+alter table order_items enable row level security;
+alter table commissions enable row level security;
 
--- Policy: cada tenant só vê seus próprios dados
-CREATE POLICY "Tenant can access own data" ON usuarios
-  USING (cliente = auth.uid()) WITH CHECK (cliente = auth.uid());
-CREATE POLICY "Tenant can access own data" ON categorias
-  USING (cliente = auth.uid()) WITH CHECK (cliente = auth.uid());
-CREATE POLICY "Tenant can access own data" ON produtos
-  USING (cliente = auth.uid()) WITH CHECK (cliente = auth.uid());
-CREATE POLICY "Tenant can access own data" ON pedidos
-  USING (cliente = auth.uid()) WITH CHECK (cliente = auth.uid());
-CREATE POLICY "Tenant can access own data" ON commission_transactions
-  USING (cliente = auth.uid()) WITH CHECK (cliente = auth.uid());
-CREATE POLICY "Tenant can access own data" ON campos
-  USING (cliente = auth.uid()) WITH CHECK (cliente = auth.uid());
-CREATE POLICY "Tenant can access own data" ON clientes_config
-  USING (cliente = auth.uid()) WITH CHECK (cliente = auth.uid());
+-- =========================
+-- Policies multi-tenant (exemplo para users, repetir para as demais)
+-- =========================
+-- Permitir SELECT apenas para registros do tenant atual
+create policy "Select own tenant users"
+  on users for select
+  using (tenant_id::text = current_setting('app.tenant_id', true));
 
--- Exemplo de inserção de cliente e usuário de teste
-INSERT INTO clientes (id, nome, dominio) VALUES ('00000000-0000-0000-0000-000000000001', 'Tenant Teste', 'localhost') ON CONFLICT DO NOTHING;
-INSERT INTO usuarios (id, nome, email, senha, cliente, role) VALUES ('00000000-0000-0000-0000-000000000002', 'Usuário Teste', 'teste@teste.com', 'senha123', '00000000-0000-0000-0000-000000000001', 'admin') ON CONFLICT DO NOTHING; 
+-- Permitir INSERT apenas para o tenant atual
+create policy "Insert own tenant users"
+  on users for insert
+  with check (tenant_id::text = current_setting('app.tenant_id', true));
+
+-- Permitir UPDATE apenas para o tenant atual
+create policy "Update own tenant users"
+  on users for update
+  using (tenant_id::text = current_setting('app.tenant_id', true));
+
+-- Permitir DELETE apenas para o tenant atual
+create policy "Delete own tenant users"
+  on users for delete
+  using (tenant_id::text = current_setting('app.tenant_id', true));
+
+-- Repita as policies acima para as demais tabelas (leaders, categories, products, orders, commissions, etc).
+
+-- =========================
+-- Índices e constraints extras (exemplo)
+-- =========================
+create index idx_users_tenant_id on users(tenant_id);
+create index idx_leaders_tenant_id on leaders(tenant_id);
+create index idx_categories_tenant_id on categories(tenant_id);
+create index idx_products_tenant_id on products(tenant_id);
+create index idx_orders_tenant_id on orders(tenant_id);
+create index idx_commissions_tenant_id on commissions(tenant_id);
+
+-- Adicione constraints e índices extras conforme necessário para performance e integridade.
+
+-- =========================
+-- Observações
+-- =========================
+-- 1. Adapte os campos extras conforme o schema do PocketBase.
+-- 2. Se precisar de tabelas auxiliares (ex: logs, notificações), posso incluir.
+-- 3. Se preferir IDs como TEXT, basta trocar uuid por text e remover default uuid_generate_v4().
+-- 4. Policies podem ser refinadas para cada caso de uso (ex: admin pode ver tudo, user só vê o próprio registro).

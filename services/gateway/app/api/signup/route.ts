@@ -7,8 +7,8 @@ import { pbRetry } from '@/lib/pbRetry'
 export async function POST(req: NextRequest) {
   const pb = createPocketBase()
   try {
-    const { nome, email, telefone, cpf, senha } = await req.json()
-    if (!nome || !email || !telefone || !cpf || !senha) {
+    const { nome, email, telefone, cpf, senha, campo, role } = await req.json()
+    if (!nome || !email || !telefone || !cpf || !senha || (role === 'lider' && !campo)) {
       return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
     }
     if (String(senha).length < 8) {
@@ -42,7 +42,8 @@ export async function POST(req: NextRequest) {
         cpf: cpfNumerico,
         password: String(senha),
         passwordConfirm: String(senha),
-        role: 'usuario',
+        role: role || 'usuario',
+        campo: campo || null,
         ...(tenantId ? { cliente: tenantId } : {}),
       }),
     )
