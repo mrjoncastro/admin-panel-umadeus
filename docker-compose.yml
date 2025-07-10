@@ -33,6 +33,17 @@ services:
     ports: ['5432:5432']
     volumes:
       - postgres_data:/var/lib/postgresql/data
+  orders:
+    build: ./services/orders
+    ports: ['6000:6000']
+    environment:
+      NODE_ENV: development
+    depends_on: [postgres]
+  commission:
+    build: ./services/commission
+    ports: ['7000:7000']
+    environment:
+      NODE_ENV: development
 
 volumes:
   postgres_data:
