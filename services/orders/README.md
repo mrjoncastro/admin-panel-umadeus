@@ -1,6 +1,6 @@
 # Orders Service
 
-Microserviço responsável pela gestão de pedidos no QG3 Admin Panel.
+Microserviço responsável pela gestão de pedidos no M24 Admin Panel.
 
 ## Rotas principais
 - `POST /orders` – Criar pedido

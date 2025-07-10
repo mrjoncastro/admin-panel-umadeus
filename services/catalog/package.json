@@ -1,7 +1,7 @@
 {
   "name": "catalog-service",
   "version": "1.0.0",
-  "description": "Catalog Service for QG3 Admin Panel",
+  "description": "Catalog Service for M24 Admin Panel",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -50,6 +50,6 @@
     "express",
     "postgresql"
   ],
-  "author": "QG3 Team",
+  "author": "M24 Team",
   "license": "MIT"
 } 

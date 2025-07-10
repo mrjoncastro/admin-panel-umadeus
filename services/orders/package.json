@@ -1,7 +1,7 @@
 {
   "name": "orders-service",
   "version": "1.0.0",
-  "description": "Orders Service for QG3 Admin Panel",
+  "description": "Orders Service for M24 Admin Panel",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -28,6 +28,6 @@
     "typescript": "^5.3.3",
     "vitest": "^1.1.0"
   },
-  "author": "QG3 Team",
+  "author": "M24 Team",
   "license": "MIT"
 } 

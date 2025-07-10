@@ -2253,7 +2253,7 @@ packages:
       '@tiptap/core': ^2.7.0
 
   '@tiptap/extension-italic@2.25.0':
-    resolution: {integrity: sha512-FZHmNqvWJ5SHYlUi+Qg3b2C0ZBt82DUDUqM+bqcQqSQu6B0c4IEc3+VHhjAJwEUIO9wX7xk/PsdM4Z5Ex4Lr3w==}
+    resolution: {integrity: sha512-FZHmNqvWJ5SHYlUi+M24b2C0ZBt82DUDUqM+bqcQqSQu6B0c4IEc3+VHhjAJwEUIO9wX7xk/PsdM4Z5Ex4Lr3w==}
     peerDependencies:
       '@tiptap/core': ^2.7.0
 
@@ -2329,7 +2329,7 @@ packages:
     resolution: {integrity: sha512-dkO5fhS7+/oos4ciWxyEyjWe48zmG6wbCheo/G2ZnHx4fs3EU6YC6UM8rk56gAjNJ9P3MTH2jo5jb92/K6wbng==}
 
   '@types/body-parser@1.19.6':
-    resolution: {integrity: sha512-HLFeCYgz89uk22N5Qg3dvGvsv46B8GLvKKo1zKG4NybA8U2DiEO3w9lqGg29t/tfLRJpJ6iQxnVw4OnB7MoM9g==}
+    resolution: {integrity: sha512-HLFeCYgz89uk22N5M24dvGvsv46B8GLvKKo1zKG4NybA8U2DiEO3w9lqGg29t/tfLRJpJ6iQxnVw4OnB7MoM9g==}
 
   '@types/chai@5.2.2':
     resolution: {integrity: sha512-8kB30R7Hwqf40JPiKhVzodJs2Qc1ZJ5zuT3uzw5Hq/dhNCl3G3l83jfpdI1e20BP348+fV7VIL/+FxaXkqBmWg==}
@@ -3102,7 +3102,7 @@ packages:
     hasBin: true
 
   buffer-equal-constant-time@1.0.1:
-    resolution: {integrity: sha512-zRpUiDwd/xk6ADqPMATG8vc9VPrkck7T07OIx0gnjmJAnHnTVXNQG3vfvWNuiZIkwu9KrKdA1iJKfsfTVxE6NA==}
+    resolution: {integrity: sha512-zRpUiDwd/xk6ADqPMATG8vc9VPrkck7T07OIx0gnjmJAnHnTVXNM24vfvWNuiZIkwu9KrKdA1iJKfsfTVxE6NA==}
 
   buffer-from@1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}

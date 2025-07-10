@@ -1,6 +1,6 @@
 # Catalog Service
 
-Serviço de catálogo para o QG3 Admin Panel, responsável por gerenciar produtos e categorias com suporte a multi-tenancy.
+Serviço de catálogo para o M24 Admin Panel, responsável por gerenciar produtos e categorias com suporte a multi-tenancy.
 
 ## 🚀 Funcionalidades
 
@@ -338,4 +338,4 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ## 🆘 Suporte
 
-Para suporte, entre em contato com a equipe QG3 ou abra uma issue no repositório. 
+Para suporte, entre em contato com a equipe M24 ou abra uma issue no repositório. 

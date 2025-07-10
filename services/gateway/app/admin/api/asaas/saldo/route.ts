@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
   const { cliente } = auth
   const baseUrl = process.env.ASAAS_API_URL
   const apiKey = cliente.asaas_api_key || process.env.ASAAS_API_KEY || ''
-  const userAgent = cliente.nome || 'qg3'
+  const userAgent = cliente.nome || 'M24'
 
   if (!baseUrl || !apiKey) {
     return NextResponse.json(

@@ -2,7 +2,7 @@
 
 ## 📋 Visão Geral
 
-O **Catalog Service** é um microserviço responsável por gerenciar produtos e categorias no sistema QG3 Admin Panel. Implementado com Express.js, TypeScript e PostgreSQL, oferece uma API RESTful com suporte completo a multi-tenancy e Row Level Security (RLS).
+O **Catalog Service** é um microserviço responsável por gerenciar produtos e categorias no sistema M24 Admin Panel. Implementado com Express.js, TypeScript e PostgreSQL, oferece uma API RESTful com suporte completo a multi-tenancy e Row Level Security (RLS).
 
 ## 🏗️ Arquitetura
 

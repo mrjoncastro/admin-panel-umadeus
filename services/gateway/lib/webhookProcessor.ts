@@ -133,7 +133,7 @@ export async function processWebhook(body: AsaasWebhookPayload) {
     headers: {
       Accept: 'application/json',
       'access-token': keyHeader,
-      'User-Agent': clienteNome ?? 'qg3',
+      'User-Agent': clienteNome ?? 'M24',
     },
   })
   if (!paymentRes.ok) {

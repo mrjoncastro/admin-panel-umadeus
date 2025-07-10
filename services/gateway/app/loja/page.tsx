@@ -61,7 +61,7 @@ export default function Home() {
         {/* Direita: Imagem crua */}
         <div className="relative w-full h-[300px] md:h-auto">
           <Image
-            src="/img/qg3_tech.webp"
+            src="/img/M24_tech.webp"
             alt="Congresso UMADEUS"
             fill
             style={{ objectFit: 'cover' }}

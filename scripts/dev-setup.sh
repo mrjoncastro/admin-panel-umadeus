@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 Setup de Desenvolvimento - QG3 Monorepo"
+echo "🚀 Setup de Desenvolvimento - M24 Monorepo"
 echo "=========================================="
 
 # Verificar se o Docker está instalado

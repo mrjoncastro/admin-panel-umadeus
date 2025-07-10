@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   const { pb, cliente } = auth
   const baseUrl = process.env.ASAAS_API_URL
 
-  const userAgent = cliente.nome || 'qg3'
+  const userAgent = cliente.nome || 'M24'
   const apiKey = cliente.asaas_api_key || process.env.ASAAS_API_KEY || ''
 
   if (!apiKey) {

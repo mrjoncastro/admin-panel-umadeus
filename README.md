@@ -1,4 +1,4 @@
-# QG3 Monorepo
+# M24 Monorepo
 
 Este repositório segue arquitetura monorepo, centralizando múltiplos serviços e bibliotecas compartilhadas.
 
