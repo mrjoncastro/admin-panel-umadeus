@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
+// Conexão compatível com Supabase/Postgres
 const pool = new Pool({
   host: process.env['POSTGRES_HOST'] || 'localhost',
   port: parseInt(process.env['POSTGRES_PORT'] || '5432'),
@@ -16,46 +17,9 @@ const pool = new Pool({
 
 // Função para configurar RLS (Row Level Security)
 export async function setupRLS(client: PoolClient, tenantId: string): Promise<void> {
-  // Define o tenant_id para a sessão atual
+  // Define o tenant_id para a sessão atual (ajuste conforme policy do Supabase)
   await client.query('SET app.tenant_id = $1', [tenantId])
 }
 
-// Função para obter conexão com RLS configurado
-export async function getClientWithRLS(tenantId: string): Promise<PoolClient> {
-  const client = await pool.connect()
-  await setupRLS(client, tenantId)
-  return client
-}
-
-// Função para obter conexão padrão
-export async function getClient(): Promise<PoolClient> {
-  return await pool.connect()
-}
-
-// Função para executar query com RLS
-export async function queryWithRLS<T = any>(
-  tenantId: string,
-  text: string,
-  params?: any[]
-): Promise<T[]> {
-  const client = await getClientWithRLS(tenantId)
-  try {
-    const result = await client.query(text, params)
-    return result.rows
-  } finally {
-    client.release()
-  }
-}
-
-// Função para executar query sem RLS (admin)
-export async function query<T = any>(text: string, params?: any[]): Promise<T[]> {
-  const client = await getClient()
-  try {
-    const result = await client.query(text, params)
-    return result.rows
-  } finally {
-    client.release()
-  }
-}
-
-export default pool 
+export const query = (text: string, params?: any[]) => pool.query(text, params)
+export const getClient = () => pool.connect() 

@@ -4,7 +4,7 @@
 
 O **Catalog Service** é um microserviço responsável por gerenciar produtos e categorias no sistema M24 Admin Panel. Implementado com Express.js, TypeScript e PostgreSQL, oferece uma API RESTful com suporte completo a multi-tenancy e Row Level Security (RLS).
 
-## 🏗️ Arquitetura
+## Arquitetura
 
 ### Stack Tecnológica
 - **Runtime**: Node.js 18+
@@ -22,7 +22,7 @@ O **Catalog Service** é um microserviço responsável por gerenciar produtos e 
 - **Validation**: Validação de entrada de dados
 - **Logging**: Sistema de logs estruturado
 
-## 🗄️ Modelo de Dados
+## Modelo de Dados
 
 ### Tabela `produtos`
 ```sql
@@ -63,7 +63,7 @@ CREATE TABLE categorias (
 );
 ```
 
-## 🔒 Segurança
+## Segurança
 
 ### Row Level Security (RLS)
 O serviço implementa RLS no PostgreSQL para garantir isolamento completo entre tenants:
@@ -84,7 +84,7 @@ CREATE POLICY categorias_tenant_isolation ON categorias
 - **Rate Limiting**: Proteção contra abuso da API
 - **Input Validation**: Validação robusta de entrada
 
-## 📡 API Reference
+## API Reference
 
 ### Base URL
 ```
@@ -219,7 +219,7 @@ DELETE /categories/:id
 
 **Nota:** Categorias com produtos associados não podem ser deletadas.
 
-## 🧪 Testes
+## Testes
 
 ### Estrutura de Testes
 ```
@@ -283,7 +283,7 @@ catalog:
     - postgres
 ```
 
-## 📊 Monitoramento
+## Monitoramento
 
 ### Health Check
 ```http
@@ -326,7 +326,7 @@ POSTGRES_PASSWORD=example
 LOG_LEVEL=info
 ```
 
-## 📈 Métricas
+## Métricas
 
 ### Endpoints de Métricas
 - **Produtos por Tenant**: Contagem de produtos por cliente
@@ -334,7 +334,7 @@ LOG_LEVEL=info
 - **Performance**: Tempo de resposta das queries
 - **Erros**: Taxa de erro por endpoint
 
-## 🔄 Integração com Gateway
+## Integração com Gateway
 
 O Gateway faz proxy das requisições de produtos para o Catalog Service:
 
@@ -350,7 +350,7 @@ const catalogResponse = await fetch(`${CATALOG_URL}/api/v1/products`, {
 });
 ```
 
-## 🛠️ Desenvolvimento
+## Desenvolvimento
 
 ### Scripts Disponíveis
 ```bash
@@ -396,14 +396,14 @@ services/catalog/
 └── tsconfig.json
 ```
 
-## 📚 Referências
+## Referências
 
 - [Express.js Documentation](https://expressjs.com/)
 - [PostgreSQL Documentation](https://www.postgresql.org/docs/)
 - [Vitest Documentation](https://vitest.dev/)
 - [Docker Documentation](https://docs.docker.com/)
 
-## 🤝 Contribuição
+## Contribuição
 
 Para contribuir com o Catalog Service:
 

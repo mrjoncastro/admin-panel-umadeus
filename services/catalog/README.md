@@ -34,15 +34,15 @@ Crie um arquivo `.env` na raiz do serviço:
 
 ```env
 # Servidor
-PORT=3001
+PORT=5000
 NODE_ENV=development
 
-# PostgreSQL
-POSTGRES_HOST=localhost
+# Supabase/Postgres
+POSTGRES_HOST=<host do supabase>
 POSTGRES_PORT=5432
-POSTGRES_DB=catalog
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=example
+POSTGRES_DB=<nome do banco>
+POSTGRES_USER=<usuário>
+POSTGRES_PASSWORD=<senha>
 
 # Logs
 LOG_LEVEL=info
@@ -54,9 +54,6 @@ LOG_LEVEL=info
 ```bash
 # Executar em modo desenvolvimento
 pnpm dev
-
-# Executar com hot reload
-pnpm dev:watch
 ```
 
 ### Produção
@@ -66,15 +63,6 @@ pnpm build
 
 # Executar em produção
 pnpm start
-```
-
-### Docker
-```bash
-# Build da imagem
-docker build -t catalog-service .
-
-# Executar container
-docker run -p 3001:3001 catalog-service
 ```
 
 ## 🧪 Testes
