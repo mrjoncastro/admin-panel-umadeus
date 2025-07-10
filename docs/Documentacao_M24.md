@@ -102,7 +102,7 @@ Para cada coleção, utilize a seguinte estrutura:
 
 ### 1. `produtos`
 
-**Descrição**: armazena o catálogo de produtos disponíveis para venda ou distribuição em eventos, com configurações multi-tenant e controle de visibilidade por usuário e inscrição.
+**Descrição**: armazena o catálogo de produtos disponíveis para venda ou distribuição em eventos, com configurações multi-tenant, controle de visibilidade por usuário e inscrição, e agora também produtos públicos (visíveis para todos os tenants).
 
 | Campo                       | Tipo                      | Obrigatório | Descrição / Observações                          |
 | --------------------------- | ------------------------- | ----------- | ------------------------------------------------ |
@@ -125,39 +125,19 @@ Para cada coleção, utilize a seguinte estrutura:
 | `exclusivo_user`            | Boolean                   | Não         | Só usuário específico pode ver/comprar           |
 | `requer_inscricao_aprovada` | Boolean                   | Não         | Requer inscrição aprovada antes da compra        |
 | `evento_id`                 | Relation → `eventos`      | Não         | Evento associado ao produto                      |
+| `publico`                   | Boolean                   | Não         | Se true, produto é exibido para todos os tenants |
 | `created`                   | DateTime                  | Sim         | Timestamp de criação                             |
 | `updated`                   | DateTime                  | Sim         | Timestamp da última atualização                  |
 
 **Permissões / Roles**
 
-- Leitura: Usuário geral vê apenas produtos com `ativo = true` e, se `requer_inscricao_aprovada = true`, somente após inscrição aprovada. Organizador (`user_org`) e `admin` veem tudo.
+- Leitura: Usuário geral vê apenas produtos com `ativo = true` e, se `requer_inscricao_aprovada = true`, somente após inscrição aprovada. Organizador (`user_org`) e `admin` veem tudo. Produtos com `publico = true` são exibidos para todos os tenants, independentemente do campo `cliente`.
 - Gravação: `admin` e `user_org` podem criar / editar / deletar. Usuários comuns não têm acesso de escrita.
 
-**Relacionamentos**
-
-- `user_org` → `usuarios.id`
-- `categoria` → `categorias.id`
-- `cliente` → `m24_clientes.id`
-- `evento_id` → `eventos.id`
-
-**Endpoints de API**
-
-| Rota                       | Métodos | Descrição                                                         |
-| -------------------------- | ------- | ----------------------------------------------------------------- |
-| `GET  /api/produtos`       | GET     | Lista produtos (suporta filtros por `ativo`, `categoria`, `slug`) |
-| `GET  /api/produtos/:id`   | GET     | Detalha um produto                                                |
-| `POST /api/produtos`       | POST    | Cria novo produto                                                 |
-| `PATCH /api/produtos/:id`  | PATCH   | Atualiza campos de um produto                                     |
-| `DELETE /api/produtos/:id` | DELETE  | Remove produto                                                    |
-
-**Fluxos de Negócios**
-
-1. Publicação: Ao criar, `ativo` pode vir como `false`. O front-end exibe botão “Publicar” que faz `PATCH ativo=true`.
-2. Controle de Estoque: Em cada pedido, a API decrementa `quantidade`. Se chegar a zero, seta `ativo=false`.
-3. Checkout Integrado: Se `requer_inscricao_aprovada=true`, bloqueia botão “Comprar” até webhook de aprovação de inscrição; caso contrário, gera link de pagamento Asaas via `/api/asaas/checkout`.
+**Observação:**
+- Produtos públicos (`publico = true`) são visíveis para todos os tenants, inclusive em buscas e listagens gerais. Use com cautela para não expor produtos exclusivos de um tenant.
 
 **Exemplo de Payload**
-
 ```json
 {
   "nome": "Camiseta Básica Preta",
@@ -169,15 +149,16 @@ Para cada coleção, utilize a seguinte estrutura:
   "tamanhos": ["P", "M", "G"],
   "slug": "camiseta-basica-preta",
   "cliente": "tenant_xyz",
-  "requer_inscricao_aprovada": false
+  "requer_inscricao_aprovada": false,
+  "publico": true
 }
 ```
 
 **Notas Adicionais**
-
 - **Índices**: Índice sugerido em `slug` para buscas rápidas.
 - **Validações**: `preco >= 0`, `quantidade >= 0`.
 - **Webhooks**: Ao criar/atualizar `evento_id`, enviar mensagem ao canal de notificações; Ao `quantidade` < 10, notificar organizador.
+- **Visibilidade pública**: Produtos com `publico = true` aparecem para todos os tenants, mesmo que o campo `cliente` seja diferente.
 
 ---
 

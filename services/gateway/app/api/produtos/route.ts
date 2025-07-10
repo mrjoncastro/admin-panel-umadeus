@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    let baseFilter = `ativo = true && cliente='${tenantId}'`
+    let baseFilter = `ativo = true && (cliente='${tenantId}' || publico = true)`
     if (!role) {
       baseFilter += ' && exclusivo_user = false'
     }

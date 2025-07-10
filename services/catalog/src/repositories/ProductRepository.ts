@@ -40,6 +40,11 @@ export class ProductRepository {
       paramIndex++
     }
 
+    // Ajuste para produtos públicos
+    whereConditions.push(`(cliente = $${paramIndex} OR publico = true)`)
+    params.push(tenantId)
+    paramIndex++
+
     const whereClause = whereConditions.length > 0 
       ? `WHERE ${whereConditions.join(' AND ')}` 
       : ''
