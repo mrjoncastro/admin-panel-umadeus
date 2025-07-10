@@ -134,16 +134,16 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Verifica duplicidade por telefone ou CPF
+    // Verifica duplicidade por CPF ou e-mail
     try {
       await pb
         .collection('inscricoes')
         .getFirstListItem(
-          `telefone="${telefoneNumerico}" || cpf="${cpfNumerico}"`,
+          `cpf="${cpfNumerico}" || email="${email}"`,
         )
       return NextResponse.json(
         {
-          erro: 'Telefone ou CPF já cadastrado. Acesse /admin/inscricoes/recuperar para obter o link.',
+          erro: 'CPF ou e-mail já cadastrado. Acesse /admin/inscricoes/recuperar para obter o link.',
         },
         { status: 409 },
       )
