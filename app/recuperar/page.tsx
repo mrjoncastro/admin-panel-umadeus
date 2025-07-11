@@ -4,13 +4,22 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { InputWithMask } from '@/components'
 
+interface ResultadoLink {
+  nomeUsuario: string
+  link_pagamento: string
+}
+
+interface ResultadoStatus {
+  status: string
+  mensagem?: string
+}
+
+type Resultado = ResultadoLink | ResultadoStatus
+
 export default function RecuperarPagamentoPage() {
   const [cpf, setCpf] = useState('')
   const [loading, setLoading] = useState(false)
-  const [resultado, setResultado] = useState<{
-    nomeUsuario: string
-    link_pagamento: string
-  } | null>(null)
+  const [resultado, setResultado] = useState<Resultado | null>(null)
   const [erro, setErro] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -58,7 +67,7 @@ export default function RecuperarPagamentoPage() {
         </Button>
       </form>
       {erro && <p className="mt-2 text-red-600 text-center">{erro}</p>}
-      {resultado && (
+      {resultado && 'link_pagamento' in resultado && (
         <div className="mt-6 text-center space-y-2">
           <p>
             Olá <strong>{resultado.nomeUsuario}</strong>, aqui está seu link de
@@ -73,6 +82,19 @@ export default function RecuperarPagamentoPage() {
             ABRIR LINK
           </a>
         </div>
+      )}
+      {resultado && 'status' in resultado && (
+        <p className="mt-6 text-center">
+          {resultado.mensagem ? (
+            resultado.mensagem
+          ) : resultado.status === 'confirmado' ? (
+            'Inscrição confirmada!'
+          ) : resultado.status === 'cancelado' ? (
+            'Inscrição cancelada.'
+          ) : (
+            `Status: ${resultado.status}`
+          )}
+        </p>
       )}
     </div>
   )
