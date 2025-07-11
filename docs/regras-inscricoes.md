@@ -47,6 +47,8 @@ A rota `GET /api/inscricoes` aceita os seguintes filtros:
 
 Quando `confirma_inscricoes` está **ativado** em `clientes_config`, cada inscrição permanece `pendente` até que um líder ou coordenador a aprove na tela **Inscrições**. Somente após essa aprovação o pedido é criado e o link de pagamento é enviado.
 
+Quando o envio é realizado pelo **próprio líder** responsável pelo `liderId`, o sistema entende que a inscrição já está aprovada. Nesse caso o pedido é criado imediatamente e a inscrição é marcada como `aguardando_pagamento`.
+
 Com a opção **desativada**, o pedido é gerado automaticamente logo após o envio do formulário (desde que o evento tenha `cobra_inscricao` habilitado e um produto definido). A inscrição já é confirmada e a cobrança segue para o usuário.
 
 ## Formulário Multi-etapas

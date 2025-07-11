@@ -93,4 +93,115 @@ describe('POST /api/inscricoes', () => {
       }),
     )
   })
+
+  it('gera pedido automaticamente quando o proprio lider se inscreve', async () => {
+    const updateInscricao = vi.fn()
+    const pbLocal = createPocketBaseMock()
+    pbLocal.authStore.model = { id: 'lid1' }
+    pbLocal.collection.mockImplementation((name: string) => {
+      if (name === 'usuarios') {
+        return {
+          getOne: getOneLiderMock,
+          getFirstListItem: getFirstUserMock,
+          create: createUserMock,
+        }
+      }
+      if (name === 'inscricoes') {
+        return {
+          getFirstListItem: vi.fn().mockRejectedValue(new Error('not found')),
+          create: vi.fn().mockResolvedValue({ id: 'i2' }),
+          update: updateInscricao,
+        }
+      }
+      if (name === 'eventos')
+        return { getOne: vi.fn().mockResolvedValue({ cobra_inscricao: true, titulo: 'T' }) }
+      if (name === 'clientes_config')
+        return { getFirstListItem: vi.fn().mockResolvedValue({ confirma_inscricoes: true }) }
+      if (name === 'pedidos')
+        return { update: vi.fn(), delete: vi.fn() }
+      return {} as any
+    })
+
+    const pocketbaseModule = await import('../../lib/pocketbase')
+    ;(pocketbaseModule.default as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue(pbLocal)
+
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ pedidoId: 'p1', valor: 10 }) })
+      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ url: 'link', id_asaas: 'a1' }) })
+    global.fetch = fetchMock as unknown as typeof fetch
+
+    const req = new Request('http://test/api/inscricoes', {
+      method: 'POST',
+      body: JSON.stringify({
+        nome: 'Lider',
+        email: 'lider@test.com',
+        telefone: '11999999999',
+        cpf: '11111111111',
+        data_nascimento: '2000-01-01',
+        genero: 'masculino',
+        liderId: 'lid1',
+        eventoId: 'ev1',
+      }),
+    })
+    ;(req as any).nextUrl = new URL('http://test/api/inscricoes')
+
+    const res = await POST(req as unknown as NextRequest)
+    expect(res.status).toBe(201)
+    expect(updateInscricao).toHaveBeenCalledWith(
+      'i2',
+      expect.objectContaining({ status: 'aguardando_pagamento' }),
+    )
+  })
+
+  it('mantem pendente para outros usuarios quando confirma_inscricoes ativo', async () => {
+    const updateInscricao = vi.fn()
+    const pbLocal = createPocketBaseMock()
+    pbLocal.authStore.model = { id: 'other' }
+    pbLocal.collection.mockImplementation((name: string) => {
+      if (name === 'usuarios') {
+        return {
+          getOne: getOneLiderMock,
+          getFirstListItem: getFirstUserMock,
+          create: createUserMock,
+        }
+      }
+      if (name === 'inscricoes') {
+        return {
+          getFirstListItem: vi.fn().mockRejectedValue(new Error('not found')),
+          create: vi.fn().mockResolvedValue({ id: 'i3' }),
+          update: updateInscricao,
+        }
+      }
+      if (name === 'eventos')
+        return { getOne: vi.fn().mockResolvedValue({ cobra_inscricao: true, titulo: 'T' }) }
+      if (name === 'clientes_config')
+        return { getFirstListItem: vi.fn().mockResolvedValue({ confirma_inscricoes: true }) }
+      return {} as any
+    })
+
+    const pocketbaseModule = await import('../../lib/pocketbase')
+    ;(pocketbaseModule.default as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue(pbLocal)
+
+    global.fetch = vi.fn() as unknown as typeof fetch
+
+    const req = new Request('http://test/api/inscricoes', {
+      method: 'POST',
+      body: JSON.stringify({
+        nome: 'User',
+        email: 'u@test.com',
+        telefone: '11999999999',
+        cpf: '11111111111',
+        data_nascimento: '2000-01-01',
+        genero: 'masculino',
+        liderId: 'lid1',
+        eventoId: 'ev1',
+      }),
+    })
+    ;(req as any).nextUrl = new URL('http://test/api/inscricoes')
+
+    const res = await POST(req as unknown as NextRequest)
+    expect(res.status).toBe(201)
+    expect(updateInscricao).not.toHaveBeenCalled()
+  })
 })
