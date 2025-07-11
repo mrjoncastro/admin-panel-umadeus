@@ -1,11 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import * as Dialog from '@radix-ui/react-dialog'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useToast } from '@/lib/context/ToastContext'
 import { FormField, TextField, InputWithMask } from '@/components'
+import createPocketBase from '@/lib/pocketbase'
+import { getAuthHeaders } from '@/lib/authHeaders'
 
 export default function ModalEditarPerfil({
   onClose,
@@ -13,6 +15,7 @@ export default function ModalEditarPerfil({
   onClose: () => void
 }) {
   const { user } = useAuthContext()
+  const pb = useMemo(() => createPocketBase(), [])
   const [nome, setNome] = useState(String(user?.nome || ''))
   const [telefone, setTelefone] = useState(String(user?.telefone || ''))
   const [cpf, setCpf] = useState(String(user?.cpf || ''))
@@ -38,8 +41,10 @@ export default function ModalEditarPerfil({
       await fetch(`/api/usuarios/${user.id}`, {
         method: 'PATCH',
         headers: {
+          ...getAuthHeaders(pb),
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           nome: String(nome).trim(),
           telefone: String(telefone).trim(),
