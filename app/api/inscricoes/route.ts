@@ -225,6 +225,9 @@ export async function POST(req: NextRequest) {
 
     const evento = await pb.collection('eventos').getOne(eventoIdFinal!)
 
+    const isSelfLider =
+      pb.authStore.isValid && pb.authStore.model?.id === liderId
+
     let link_pagamento: string | undefined
 
     try {
@@ -232,7 +235,10 @@ export async function POST(req: NextRequest) {
         .collection('clientes_config')
         .getFirstListItem(`cliente='${lider.cliente}'`)
 
-      if (cfg?.confirma_inscricoes === false && evento.cobra_inscricao) {
+      if (
+        (cfg?.confirma_inscricoes === false || isSelfLider) &&
+        evento.cobra_inscricao
+      ) {
         const base = req.nextUrl.origin
 
         const pedidoRes = await fetch(`${base}/api/pedidos`, {
@@ -273,6 +279,20 @@ export async function POST(req: NextRequest) {
           } else {
             await pb.collection('pedidos').delete(pedidoId)
           }
+          if (isSelfLider) {
+            await pb.collection('inscricoes').update(inscricao.id, {
+              status: 'aguardando_pagamento',
+              confirmado_por_lider: true,
+              aprovada: true,
+              pedido: pedidoId,
+            })
+            Object.assign(inscricao, {
+              status: 'aguardando_pagamento',
+              confirmado_por_lider: true,
+              aprovada: true,
+              pedido: pedidoId,
+            })
+          }
         }
       }
     } catch (e) {
@@ -290,6 +310,10 @@ export async function POST(req: NextRequest) {
       responsavel: liderId,
     }
 
+    if (isSelfLider) {
+      responseData.status = 'aguardando_pagamento'
+    }
+
     if (link_pagamento) {
       responseData.link_pagamento = link_pagamento
     }
@@ -301,7 +325,7 @@ export async function POST(req: NextRequest) {
       const cfgConfirm = await pb
         .collection('clientes_config')
         .getFirstListItem(`cliente='${lider.cliente}'`)
-      if (cfgConfirm?.confirma_inscricoes === true) {
+      if (cfgConfirm?.confirma_inscricoes === true && !isSelfLider) {
         eventType = 'nova_inscricao'
       }
     } catch (e) {
