@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 
 export async function GET(req: NextRequest) {
-  const auth = requireRole(req, 'usuario')
+  const auth = requireRole(req, ['usuario', 'lider', 'coordenador'])
   if ('error' in auth) {
     return NextResponse.json({ error: auth.error }, { status: auth.status })
   }
