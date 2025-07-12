@@ -1,20 +1,13 @@
 import type { NextRequest } from 'next/server'
-import PocketBase from 'pocketbase'
-
-const DEFAULT_PB_URL = 'http://127.0.0.1:8090'
+import { supabase } from './supabaseClient'
 
 export function getPocketBaseFromRequest(req: NextRequest) {
-  const url = process.env.PB_URL || DEFAULT_PB_URL
+  // No Supabase, a autenticação é gerenciada automaticamente
+  // O cliente já está configurado para detectar sessões em cookies
+  return supabase
+}
 
-  if (!process.env.PB_URL) {
-    console.warn(
-      `PB_URL não configurada. Usando valor padrão: ${DEFAULT_PB_URL}`,
-    )
-  }
-
-  const pb = new PocketBase(url)
-  const cookieHeader = req.headers.get('cookie') || ''
-  pb.authStore.loadFromCookie(cookieHeader)
-  pb.autoCancellation(false)
-  return pb
+// Função alternativa para obter cliente Supabase com contexto de request
+export function getSupabaseFromRequest(req: NextRequest) {
+  return supabase
 }

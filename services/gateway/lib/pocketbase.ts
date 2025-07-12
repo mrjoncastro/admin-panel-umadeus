@@ -1,43 +1,25 @@
-import PocketBase from 'pocketbase'
+import { supabase, supabaseAdmin } from './supabaseClient'
 
-const DEFAULT_PB_URL = 'http://127.0.0.1:8090'
-
-const PB_URL = process.env.PB_URL || DEFAULT_PB_URL
-
-if (!process.env.PB_URL) {
-  console.warn(`PB_URL não configurada. Usando valor padrão: ${DEFAULT_PB_URL}`)
+// Função para criar um cliente Supabase (mantendo compatibilidade de assinatura)
+export function createPocketBase() {
+  return supabase
 }
 
-const basePb = new PocketBase(PB_URL)
-
-export function createPocketBase(copyAuth = true) {
-  const pbWithClone = basePb as PocketBase & { clone?: () => PocketBase }
-  const pb =
-    typeof pbWithClone.clone === 'function'
-      ? pbWithClone.clone()
-      : new PocketBase(PB_URL)
-  if (copyAuth) {
-    pb.authStore.save(basePb.authStore.token, basePb.authStore.model)
-  } else {
-    pb.authStore.clear()
-  }
-  pb.beforeSend = (url, opt) => {
-    opt.credentials = 'include'
-    return { url, options: opt }
-  }
-  pb.autoCancellation(false)
-  return pb
+// Função para criar um cliente Supabase com permissões de admin
+export function createPocketBaseAdmin() {
+  return supabaseAdmin
 }
 
-export function updateBaseAuth(
-  token: string,
-  model: Parameters<typeof basePb.authStore.save>[1],
-) {
-  basePb.authStore.save(token, model)
+// Função para atualizar o token de autenticação (compatível)
+export function updateBaseAuth(token: string) {
+  // No Supabase, o token é gerenciado automaticamente pelo cliente
+  // Se necessário, pode-se usar supabase.auth.setSession(token)
+  supabase.auth.setSession({ access_token: token, refresh_token: '' })
 }
 
+// Função para limpar autenticação
 export function clearBaseAuth() {
-  basePb.authStore.clear()
+  supabase.auth.signOut()
 }
 
 export default createPocketBase

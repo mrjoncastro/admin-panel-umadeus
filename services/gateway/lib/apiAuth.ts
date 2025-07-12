@@ -1,11 +1,20 @@
 import type { NextRequest } from 'next/server'
-import type { RecordModel } from 'pocketbase'
 import { getUserFromHeaders } from '@/lib/getUserFromHeaders'
-import createPocketBase from '@/lib/pocketbase'
+import { supabase } from './supabaseClient'
+
+// Tipo para usuário do Supabase
+type SupabaseUser = {
+  id: string
+  email: string
+  role: string
+  nome?: string
+  cliente?: string
+  [key: string]: any
+}
 
 export type RequireRoleOk = {
-  user: RecordModel
-  pb: ReturnType<typeof createPocketBase>
+  user: SupabaseUser
+  pb: typeof supabase
 }
 
 export type RequireRoleError = {

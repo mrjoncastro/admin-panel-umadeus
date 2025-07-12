@@ -3,10 +3,9 @@ services:
   gateway:
     build: ./services/gateway
     ports: ['3000:3000']
-    depends_on: [pocketbase, redis, postgres, auth, catalog]
-  pocketbase:
-    image: pocketbase/pocketbase:latest
-    ports: ['8090:8090']
+    depends_on: [redis, postgres, auth, catalog]
+    environment:
+      - NODE_ENV=development
   auth:
     build: ./services/auth
     ports: ['4000:4000']
