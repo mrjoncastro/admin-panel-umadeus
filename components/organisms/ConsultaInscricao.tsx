@@ -157,6 +157,7 @@ export default function ConsultaInscricao({
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     await submitConsulta(cpf, email)
+    autoQueried.current = true
   }
 
   if (showWizard) {
