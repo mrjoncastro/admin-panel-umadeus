@@ -18,6 +18,7 @@ export interface Periodo {
 export interface ChartImages {
   inscricoes?: string
   pedidos?: string
+  campoProduto?: string
   arrecadacao?: string
 }
 
@@ -79,6 +80,11 @@ export async function generateDashboardPdf(
 
       if (charts.pedidos) {
         doc.addImage(charts.pedidos, 'PNG', 40, y, 520, 220)
+        y += 240
+      }
+
+      if (charts.campoProduto) {
+        doc.addImage(charts.campoProduto, 'PNG', 40, y, 520, 220)
         y += 240
       }
 

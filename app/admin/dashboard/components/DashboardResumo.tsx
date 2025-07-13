@@ -4,10 +4,11 @@ import dynamic from 'next/dynamic'
 import { useEffect } from 'react'
 import { setupCharts } from '@/lib/chartSetup'
 import twColors from '@/utils/twColors'
+import colors from 'tailwindcss/colors'
 import { Info } from 'lucide-react'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
-import type { Inscricao, Pedido } from '@/types'
+import type { Inscricao, Pedido, Produto } from '@/types'
 
 const Bar = dynamic(() => import('react-chartjs-2').then((m) => m.Bar), {
   ssr: false,
@@ -112,6 +113,46 @@ export default function DashboardResumo({
         },
       ],
     }
+  })()
+
+  const pedidosCampoProdutoChart = (() => {
+    const contagem: Record<string, Record<string, number>> = {}
+    pedidos.forEach((p) => {
+      const campo = p.expand?.campo?.nome || 'Sem campo'
+      const produtosData = Array.isArray(p.expand?.produto)
+        ? (p.expand?.produto as Produto[])
+        : p.expand?.produto
+          ? [(p.expand.produto as Produto)]
+          : []
+      if (produtosData.length === 0) {
+        contagem[campo] = contagem[campo] || {}
+        contagem[campo]['Sem produto'] = (contagem[campo]['Sem produto'] || 0) + 1
+      } else {
+        produtosData.forEach((pr: Produto) => {
+          const nome = pr?.nome || 'Sem produto'
+          contagem[campo] = contagem[campo] || {}
+          contagem[campo][nome] = (contagem[campo][nome] || 0) + 1
+        })
+      }
+    })
+    const campos = Object.keys(contagem)
+    const produtos = Array.from(
+      new Set(campos.flatMap((c) => Object.keys(contagem[c])))
+    )
+    const palette = [
+      twColors.primary600,
+      twColors.error600,
+      twColors.blue500,
+      colors.emerald[500],
+      colors.amber[500],
+      colors.violet[500],
+    ]
+    const datasets = produtos.map((prod, idx) => ({
+      label: prod,
+      data: campos.map((c) => contagem[c][prod] || 0),
+      backgroundColor: palette[idx % palette.length],
+    }))
+    return { labels: campos, datasets }
   })()
 
   return (
@@ -232,7 +273,7 @@ export default function DashboardResumo({
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="card p-5 rounded-xl">
             <div className="flex justify-between items-center mb-3">
               <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
@@ -265,19 +306,37 @@ export default function DashboardResumo({
                 </span>
               </Tippy>
             </div>
-            <div className="aspect-video">
-              <Bar
-                data={pedidosChart}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  indexAxis: 'y',
-                }}
-              />
-            </div>
+          <div className="aspect-video">
+            <Bar
+              data={pedidosChart}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+              }}
+            />
+          </div>
+        </div>
+        <div className="card p-5 rounded-xl">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+              Pedidos por Campo e Produto
+            </h3>
+          </div>
+          <div className="aspect-video">
+            <Bar
+              id="campoProdutoChart"
+              data={pedidosCampoProdutoChart}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { x: { stacked: true }, y: { stacked: true } },
+              }}
+            />
           </div>
         </div>
       </div>
-    </>
-  )
+    </div>
+  </>
+)
 }
