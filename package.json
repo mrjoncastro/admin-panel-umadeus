@@ -17,9 +17,11 @@
     "build:catalog": "pnpm --filter catalog build"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
     "eslint-plugin-storybook": "^9.0.5",
-    "@eslint/eslintrc": "^3"
-  }}
+    "husk": "^0.5.3",
+    "typescript": "^5"
+  }
+}
