@@ -39,12 +39,21 @@ importers:
         specifier: ^9.0.2
         version: 9.0.2
     devDependencies:
+      '@types/body-parser':
+        specifier: ^1.19.5
+        version: 1.19.6
       '@types/express':
         specifier: ^4.17.17
         version: 4.17.23
+      '@types/express-serve-static-core':
+        specifier: ^4.19.6
+        version: 4.19.6
       '@types/jsonwebtoken':
         specifier: ^9.0.2
         version: 9.0.10
+      '@types/node':
+        specifier: ^20
+        version: 20.19.6
       '@types/supertest':
         specifier: ^2.0.12
         version: 2.0.16
