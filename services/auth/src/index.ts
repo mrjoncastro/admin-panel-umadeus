@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { type Request, type Response } from 'express'
 import jwt from 'jsonwebtoken'
 
 const app = express()
@@ -6,7 +6,7 @@ app.use(express.json())
 
 const SECRET = process.env.JWT_SECRET || 'secret'
 
-app.post('/login', (req, res) => {
+app.post('/login', (req: Request<Record<string, unknown>, any, { username: string }>, res: Response) => {
   const { username } = req.body
   if (!username) {
     return res.status(400).json({ error: 'username required' })

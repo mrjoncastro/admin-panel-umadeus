@@ -13,9 +13,9 @@
   --text-primary: theme('colors.neutral.900');
   --text-secondary: theme('colors.neutral.700');
   --text-header-primary: theme('colors.neutral.100');
-  --text-header-secondary: theme('colors.primary.600');
-  --accent: theme('colors.primary.600');
-  --accent-900: theme('colors.primary.900');
+  --text-header-secondary: theme('colors.purple.600');
+  --accent: theme('colors.purple.600');
+  --accent-900: theme('colors.purple.900');
   --color-secondary: theme('colors.neutral.900');
   /* Fontes padronizadas para evitar depend\u00eancia de downloads no build */
   --font-geist: system-ui, sans-serif;
@@ -37,8 +37,8 @@ html.dark {
   --text-secondary: theme('colors.neutral.400');
   --text-header-primary: theme('colors.neutral.200');
   --text-header-secondary: theme('colors.neutral.300');
-  --accent: theme('colors.primary.600');
-  --accent-900: theme('colors.primary.900');
+  --accent: theme('colors.purple.600');
+  --accent-900: theme('colors.purple.900');
   --color-secondary: theme('colors.neutral.200');
 }
 
@@ -138,19 +138,19 @@ p {
 }
 
 .btn-primary {
-  @apply bg-primary-500 text-white hover:bg-primary-500;
+  @apply bg-purple-600 text-white hover:bg-purple-700;
 }
 
 .btn-secondary {
-  @apply bg-primary-500 text-[var(--background)] hover:bg-primary-700 hover:text-white dark:hover:bg-primary-500;
+  @apply bg-purple-600 text-[var(--background)] hover:bg-purple-700 hover:text-white dark:hover:bg-purple-600;
 }
 
 .btn-danger {
-  @apply bg-error-600 text-white hover:bg-error-700;
+  @apply bg-red-600 text-white hover:bg-red-700;
 }
 
 .input-base {
-  @apply w-full px-4 py-3 rounded-lg border border-neutral-300 bg-neutral-50 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-error-600 transition;
+  @apply w-full px-4 py-3 rounded-lg border border-neutral-300 bg-neutral-50 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-red-600 transition;
 }
 
 /* Card e Tabela base */
@@ -207,9 +207,9 @@ p {
 .bg-animated {
   background: linear-gradient(
     270deg,
-    theme('colors.primary.900'),
-    theme('colors.primary.800'),
-    theme('colors.error.800')
+    theme('colors.purple.900'),
+    theme('colors.purple.800'),
+    theme('colors.red.800')
   );
   background-size: 400% 400%;
   animation: gradient-x 15s ease infinite;
