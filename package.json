@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "eslint": "^9",
+    "eslint": "^8.57.0",
     "eslint-config-next": "15.3.2",
     "eslint-plugin-storybook": "^9.0.5",
     "husk": "^0.5.3",
