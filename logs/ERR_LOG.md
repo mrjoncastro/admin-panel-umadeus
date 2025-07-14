@@ -276,3 +276,4 @@
 ## [2025-07-08] Líder não conseguia definir status "aguardando_pagamento" ao confirmar inscrição. PATCH /api/inscricoes/[id] agora permite esse valor. - dev
 ## [2025-07-08] Modal de edição excedia altura da tela no fluxo de inscrição, impedindo salvar ou cancelar. Adicionado overflow-y-auto e max-h-screen nos modais de edição. - prod - bca77d01a1630e5dd09ae4e9579e9a71d3341df3
 ## [2025-07-11] ModalEditarPerfil não enviava cabeçalhos de autenticação, impedindo salvar perfil durante inscrição. Cabeçalhos adicionados. - dev - f969efa7
+## [2025-08-17] Patch /api/usuarios/[id] nao atualizava cookie de autenticacao apos salvar CPF ou outros dados. Rota agora retorna usuario atualizado e define cookie - dev - 6c3bbe3d

@@ -77,8 +77,18 @@ export async function PATCH(req: NextRequest) {
       payload.tour = Boolean(data.tour)
     }
 
-    await pbRetry(() => pb.collection('usuarios').update(id, payload))
-    return NextResponse.json({ ok: true })
+    const updated = await pbRetry(() =>
+      pb.collection('usuarios').update(id, payload),
+    )
+    pb.authStore.save(pb.authStore.token, updated)
+    const cookie = pb.authStore.exportToCookie({
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+    })
+    const res = NextResponse.json(updated, { status: 200 })
+    res.headers.append('Set-Cookie', cookie)
+    return res
   } catch (err) {
     console.error('Erro ao atualizar perfil:', err)
     return NextResponse.json({ error: 'Erro ao atualizar' }, { status: 500 })
