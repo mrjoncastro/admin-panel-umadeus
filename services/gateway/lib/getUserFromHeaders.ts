@@ -9,7 +9,7 @@ type SupabaseUser = {
   role: string
   nome?: string
   cliente?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 type AuthOk = {

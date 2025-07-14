@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useMemo } from 'react'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
 import Image from 'next/image'
@@ -37,7 +37,7 @@ export default function ModalProdutoForm({
   initial = {},
 }: ModalProdutoFormProps) {
   const { showError } = useToast()
-  const pb = createPocketBase()
+  const pb = useMemo(() => createPocketBase(), [])
   const firstFieldRef = useRef<HTMLInputElement>(null)
   const [eventos, setEventos] = useState<Evento[]>([])
   const [preview, setPreview] = useState<string | null>(initial.imagem || null)

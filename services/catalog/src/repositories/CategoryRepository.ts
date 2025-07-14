@@ -39,7 +39,7 @@ export class CategoryRepository {
 
   async update(tenantId: string, id: string, categoryData: UpdateCategoryRequest): Promise<Category | null> {
     const fields: string[] = []
-    const values: any[] = []
+    const values: unknown[] = []
     let paramIndex = 1
 
     // Construir dinamicamente os campos a serem atualizados

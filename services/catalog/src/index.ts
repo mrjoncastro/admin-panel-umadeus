@@ -59,7 +59,7 @@ app.use('/api/v1/products', productsRouter)
 app.use('/api/v1/categories', categoriesRouter)
 
 // Middleware de erro global
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Erro não tratado:', err)
   
   res.status(500).json({

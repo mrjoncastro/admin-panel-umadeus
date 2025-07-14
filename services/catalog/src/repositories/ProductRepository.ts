@@ -13,7 +13,7 @@ export class ProductRepository {
     } = filters
 
     let whereConditions: string[] = []
-    let params: any[] = []
+    let params: unknown[] = []
     let paramIndex = 1
 
     if (ativo !== undefined) {
@@ -120,7 +120,7 @@ export class ProductRepository {
 
   async update(tenantId: string, id: string, productData: UpdateProductRequest): Promise<Product | null> {
     const fields: string[] = []
-    const values: any[] = []
+    const values: unknown[] = []
     let paramIndex = 1
 
     // Construir dinamicamente os campos a serem atualizados
@@ -160,7 +160,7 @@ export class ProductRepository {
     const { ativo, categoria, search } = filters
 
     let whereConditions: string[] = []
-    let params: any[] = []
+    let params: unknown[] = []
     let paramIndex = 1
 
     if (ativo !== undefined) {

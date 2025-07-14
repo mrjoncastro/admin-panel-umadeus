@@ -1,6 +1,6 @@
 import { Product, Category } from '../../types'
 
-export const validateProduct = (product: any): product is Product => {
+export const validateProduct = (product: unknown): product is Product => {
   const requiredFields = [
     'id', 'nome', 'user_org', 'quantidade', 'preco', 
     'preco_bruto', 'ativo', 'slug', 'cliente'
@@ -9,7 +9,7 @@ export const validateProduct = (product: any): product is Product => {
   return requiredFields.every(field => product.hasOwnProperty(field))
 }
 
-export const validateCategory = (category: any): category is Category => {
+export const validateCategory = (category: unknown): category is Category => {
   const requiredFields = ['id', 'nome', 'slug', 'cliente']
 
   return requiredFields.every(field => category.hasOwnProperty(field))

@@ -21,5 +21,6 @@ export async function setupRLS(client: PoolClient, tenantId: string): Promise<vo
   await client.query('SET app.tenant_id = $1', [tenantId])
 }
 
-export const query = (text: string, params?: any[]) => pool.query(text, params)
-export const getClient = () => pool.connect() 
+export const query = (text: string, params?: unknown[]) =>
+  pool.query(text, params as any[])
+export const getClient = () => pool.connect()

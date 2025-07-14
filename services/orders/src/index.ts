@@ -12,7 +12,16 @@ app.use(cors());
 app.use(helmet());
 
 // Mock DB
-const orders: any[] = [];
+interface Order {
+  id: string
+  userId: string
+  items: Record<string, unknown>[]
+  total: number
+  status: string
+  createdAt: Date
+}
+
+const orders: Order[] = [];
 
 // Criar pedido
 app.post('/orders', (req, res) => {

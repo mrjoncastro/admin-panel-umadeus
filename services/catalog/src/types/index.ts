@@ -94,7 +94,7 @@ export type CommissionTransaction = {
   valor_bruto: number
   fee_fixed: number
   fee_percent: number
-  split: any
+  split: Record<string, unknown>
   payment_method: string
   installments?: number
   status: string
