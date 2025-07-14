@@ -134,6 +134,7 @@ export default function RelatoriosPage() {
           expand: {
             campo: r.expand?.campo,
             criado_por: r.expand?.criado_por,
+            produto: r.expand?.produto,
           },
         }))
 
