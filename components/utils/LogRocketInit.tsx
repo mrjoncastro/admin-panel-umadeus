@@ -7,7 +7,10 @@ export default function LogRocketInit() {
   const { user } = useAuthContext()
 
   useEffect(() => {
-    LogRocket.init('4pjmeb/m24')
+    const id = process.env.NEXT_PUBLIC_LOGROCKET_ID
+    if (id) {
+      LogRocket.init(id)
+    }
   }, [])
 
   useEffect(() => {

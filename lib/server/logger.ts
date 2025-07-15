@@ -7,8 +7,11 @@ let lrInitialized = false
 function ensureLogRocket() {
   if (!lrInitialized) {
     try {
-      LogRocket.init('4pjmeb/m24')
-      lrInitialized = true
+      const id = process.env.NEXT_PUBLIC_LOGROCKET_ID
+      if (id) {
+        LogRocket.init(id)
+        lrInitialized = true
+      }
     } catch (err) {
       console.error('Falha ao iniciar LogRocket', err)
     }
