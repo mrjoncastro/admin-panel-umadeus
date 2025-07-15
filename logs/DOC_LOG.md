@@ -583,3 +583,4 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 ## [2025-07-08] Ajustada regra em docs/regras-inscricoes.md permitindo alteração automática de status ao confirmar ou recusar inscrição. Lint e build executados.
 ## [2025-07-11] Página /recuperar exibe confirmação ou cancelamento conforme status. Documentação atualizada. Lint e build executados.
 ## [2025-07-11] Documentado que líderes podem se inscrever e já recebem pedido automático se forem responsáveis. Lint e build executados.
+## [2025-07-15] Configurada variavel NEXT_PUBLIC_LOGROCKET_ID e inicializacao condicional

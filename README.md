@@ -103,6 +103,7 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `ASAAS_API_URL` - URL base da API do Asaas (ex.: `https://api-sandbox.asaas.com/api/v3/`)
 - `NEXT_PUBLIC_BRASILAPI_URL` - base para chamadas à BrasilAPI
 - `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` e `SMTP_FROM` - credenciais SMTP padrão para envio de e-mails (definidas em `clientes_config`; para `SMTP_USER` e `SMTP_PASS` solicite acesso ao administrador do PocketBase)
+- `NEXT_PUBLIC_LOGROCKET_ID` - ID do projeto LogRocket (opcional; exemplo `4pjmeb/m24`)
 
 Os servidores identificam automaticamente o tenant **priorizando o domínio** de cada requisição por meio da função `getTenantFromHost`, que consulta a coleção `clientes_config` para descobrir o ID do cliente.
 
