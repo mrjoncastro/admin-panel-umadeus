@@ -6,6 +6,7 @@ import type { Inscricao, Pedido } from '@/types'
 import DashboardAnalytics from '../components/DashboardAnalytics'
 import DashboardResumo from '../dashboard/components/DashboardResumo'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
+import { fetchAllPages } from '@/lib/utils/fetchAllPages'
 
 export default function RelatoriosPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
@@ -52,17 +53,21 @@ export default function RelatoriosPage() {
           credentials: 'include',
           signal,
         }).then((r) => r.json())
+        const insRest = await fetchAllPages<
+          { items?: Inscricao[] } | Inscricao
+        >(
+          `/api/inscricoes?${params.toString()}`,
+          insRes.totalPages ?? 1,
+          signal,
+        )
         let rawInscricoes = Array.isArray(insRes.items) ? insRes.items : insRes
-        for (let p = 2; p <= (insRes.totalPages ?? 1); p++) {
-          params.set('page', String(p))
-          const more = await fetch(`/api/inscricoes?${params.toString()}`, {
-            credentials: 'include',
-            signal,
-          }).then((r) => r.json())
-          rawInscricoes = rawInscricoes.concat(
-            Array.isArray(more.items) ? more.items : more,
-          )
-        }
+        rawInscricoes = rawInscricoes.concat(
+          insRest.flatMap((r) =>
+            Array.isArray((r as { items?: Inscricao[] }).items)
+              ? ((r as { items: Inscricao[] }).items)
+              : (r as Inscricao),
+          ),
+        )
 
         params.set('page', '1')
         const pedRes = await fetch(
@@ -72,20 +77,21 @@ export default function RelatoriosPage() {
             signal,
           },
         ).then((r) => r.json())
+        const pedRest = await fetchAllPages<
+          { items?: Pedido[] } | Pedido
+        >(
+          `/api/pedidos?${params.toString()}&expand=campo,produto`,
+          pedRes.totalPages ?? 1,
+          signal,
+        )
         let rawPedidos = Array.isArray(pedRes.items) ? pedRes.items : pedRes
-        for (let p = 2; p <= (pedRes.totalPages ?? 1); p++) {
-          params.set('page', String(p))
-          const more = await fetch(
-            `/api/pedidos?${params.toString()}&expand=campo,produto`,
-            {
-              credentials: 'include',
-              signal,
-            },
-          ).then((r) => r.json())
-          rawPedidos = rawPedidos.concat(
-            Array.isArray(more.items) ? more.items : more,
-          )
-        }
+        rawPedidos = rawPedidos.concat(
+          pedRest.flatMap((r) =>
+            Array.isArray((r as { items?: Pedido[] }).items)
+              ? ((r as { items: Pedido[] }).items)
+              : (r as Pedido),
+          ),
+        )
 
         setTotalInscricoes(rawInscricoes.length)
         setTotalPedidos(rawPedidos.length)
