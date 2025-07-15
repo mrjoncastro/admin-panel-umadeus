@@ -80,13 +80,14 @@ export async function POST(req: NextRequest) {
               pb
                 .collection('pedidos')
                 .getFirstListItem(
-                  `id_inscricao="${inscricao.id}" && status='pendente'`,
+                  `id_inscricao="${inscricao.id}" && (status='pendente' || status='vencido')`,
                   { sort: '-created' },
                 ),
             )
           } catch {
             // ignore 404
           }
+
           if (pedido?.link_pagamento) {
             logRocketEvent('recuperar_link', {
               cpf: idempotencyKey,
@@ -98,6 +99,7 @@ export async function POST(req: NextRequest) {
               link_pagamento: pedido.link_pagamento,
             })
           }
+
         }
 
         logRocketEvent('recuperar_status', {
