@@ -78,7 +78,7 @@ export default function EventForm({
   })
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(true)
-  const [pendentes, setPendentes] = useState<Inscricao[]>([])
+  const [inscricoesExistentes, setInscricoesExistentes] = useState<Inscricao[]>([])
   const [checouPendentes, setChecouPendentes] = useState(false)
   const [signupDone, setSignupDone] = useState(isLoggedIn)
   const createUserRef = useRef<CreateUserFormHandle>(null)
@@ -184,26 +184,36 @@ export default function EventForm({
       }
       try {
         const headers = getAuthHeaders(pb)
-        const res = await fetch(
+        const resPendentes = await fetch(
           `/api/inscricoes?status=pendente&evento=${eventoId}`,
           { headers, credentials: 'include' },
         )
-        if (res.ok) {
-          const data = await res.json()
-          const items = Array.isArray(data)
-            ? data
-            : Array.isArray(data.items)
-              ? (data.items as Inscricao[])
+        const resConfirmadas = await fetch(
+          `/api/inscricoes?status=confirmado&evento=${eventoId}`,
+          { headers, credentials: 'include' },
+        )
+        if (resPendentes.ok && resConfirmadas.ok) {
+          const dataPendentes = await resPendentes.json()
+          const pendentes = Array.isArray(dataPendentes)
+            ? dataPendentes
+            : Array.isArray(dataPendentes.items)
+              ? (dataPendentes.items as Inscricao[])
               : []
-          const meusPendentes = items.filter(
+          const dataConfirmadas = await resConfirmadas.json()
+          const confirmadas = Array.isArray(dataConfirmadas)
+            ? dataConfirmadas
+            : Array.isArray(dataConfirmadas.items)
+              ? (dataConfirmadas.items as Inscricao[])
+              : []
+          const minhasInscricoes = [...pendentes, ...confirmadas].filter(
             (i) => i.criado_por === user.id,
           )
-          setPendentes(meusPendentes)
+          setInscricoesExistentes(minhasInscricoes)
         } else {
-          setPendentes([])
+          setInscricoesExistentes([])
         }
       } catch {
-        setPendentes([])
+        setInscricoesExistentes([])
       } finally {
         setChecouPendentes(true)
       }
@@ -553,8 +563,10 @@ export default function EventForm({
     return <LoadingOverlay show={true} text="Carregando..." />
   }
 
-  if (checouPendentes && pendentes.length > 0) {
-    return <InscricoesTable inscricoes={pendentes} variant="details" />
+  if (checouPendentes && inscricoesExistentes.length > 0) {
+    return (
+      <InscricoesTable inscricoes={inscricoesExistentes} variant="details" />
+    )
   }
 
   return (

@@ -584,3 +584,4 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 ## [2025-07-11] Página /recuperar exibe confirmação ou cancelamento conforme status. Documentação atualizada. Lint e build executados.
 ## [2025-07-11] Documentado que líderes podem se inscrever e já recebem pedido automático se forem responsáveis. Lint e build executados.
 ## [2025-07-15] Configurada variavel NEXT_PUBLIC_LOGROCKET_ID e inicializacao condicional
+## [2025-07-15] EventForm agora lista inscricoes pendentes e confirmadas do usuario antes do formulario. Lint e build executados.
