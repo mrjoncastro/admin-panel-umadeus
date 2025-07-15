@@ -118,39 +118,11 @@ export async function POST(req: NextRequest) {
     }
 
     const pedidoId = cobranca.pedido
-    const vencida =
-      (cobranca.status !== 'PENDING' && cobranca.status !== 'UNPAID') ||
-      (cobranca.dueDate
-        ? new Date(cobranca.dueDate).getTime() < Date.now()
-        : true)
+    const link_pagamento = cobranca.invoiceUrl
 
-    let link_pagamento = cobranca.invoiceUrl
-
-    if (vencida) {
-      const base = req.nextUrl.origin
-      const resp = await fetch(
-        `${base}/api/pedidos/${pedidoId}/nova-cobranca`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ idempotencyKey }),
-        },
-      )
-
-      if (!resp.ok) {
-        return NextResponse.json(
-          { error: 'Erro ao criar nova cobrança' },
-          { status: 500 },
-        )
-      }
-
-      const nova = await resp.json()
-      link_pagamento = nova.link_pagamento
-    }
     logRocketEvent('recuperar_link', {
       cpf: idempotencyKey,
       pedidoId,
-      nova: vencida,
     })
 
     return NextResponse.json({
