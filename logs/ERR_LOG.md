@@ -277,3 +277,6 @@
 ## [2025-07-08] Modal de edição excedia altura da tela no fluxo de inscrição, impedindo salvar ou cancelar. Adicionado overflow-y-auto e max-h-screen nos modais de edição. - prod - bca77d01a1630e5dd09ae4e9579e9a71d3341df3
 ## [2025-07-11] ModalEditarPerfil não enviava cabeçalhos de autenticação, impedindo salvar perfil durante inscrição. Cabeçalhos adicionados. - dev - f969efa7
 ## [2025-08-17] Patch /api/usuarios/[id] nao atualizava cookie de autenticacao apos salvar CPF ou outros dados. Rota agora retorna usuario atualizado e define cookie - dev - 6c3bbe3d
+## [2025-07-15] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
+## [2025-07-15] Erro ao gerar link de pagamento Asaas: TypeError: cobrancaResponse.clone is not a function - test
+## [2025-08-18] ConsultaInscricao sobrescrevia CPF/email do lider ao logar, exibindo inscricao errada e redirecionando para home. Efeito ajustado para manter valores digitados. - dev - 3155a7a1
