@@ -109,6 +109,30 @@ describe('POST /api/recuperar-link', () => {
     expect(body.nomeUsuario).toBe('Ana')
   })
 
+  it('retorna link de pedido vencido quando inscricao aguardando pagamento', async () => {
+    getFirstCobranca.mockRejectedValueOnce(new Error('not found'))
+    getFirstInscricao.mockResolvedValueOnce({
+      id: 'i1',
+      status: 'aguardando_pagamento',
+      nome: 'Ana',
+    })
+    getFirstPedido.mockResolvedValueOnce({
+      id: 'p1',
+      link_pagamento: 'http://pay3',
+      status: 'vencido',
+    })
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({ cpf: '12345678901' }),
+    })
+    ;(req as any).nextUrl = new URL('http://test')
+    const res = await POST(req as unknown as NextRequest)
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.link_pagamento).toBe('http://pay3')
+    expect(body.nomeUsuario).toBe('Ana')
+  })
+
   it('retorna 404 quando inscricao inexistente', async () => {
     getFirstCobranca.mockRejectedValueOnce(new Error('not found'))
     getFirstInscricao.mockRejectedValueOnce(new Error('not found'))

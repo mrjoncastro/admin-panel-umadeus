@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
               pb
                 .collection('pedidos')
                 .getFirstListItem(
-                  `id_inscricao="${inscricao.id}" && status='pendente'`,
+                  `id_inscricao="${inscricao.id}" && (status='pendente' || status='vencido')`,
                   { sort: '-created' },
                 ),
             )
