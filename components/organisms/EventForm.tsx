@@ -188,16 +188,26 @@ export default function EventForm({
           `/api/inscricoes?status=pendente&evento=${eventoId}`,
           { headers, credentials: 'include' },
         )
+        const resAguardando = await fetch(
+          `/api/inscricoes?status=aguardando_pagamento&evento=${eventoId}`,
+          { headers, credentials: 'include' },
+        )
         const resConfirmadas = await fetch(
           `/api/inscricoes?status=confirmado&evento=${eventoId}`,
           { headers, credentials: 'include' },
         )
-        if (resPendentes.ok && resConfirmadas.ok) {
+        if (resPendentes.ok && resAguardando.ok && resConfirmadas.ok) {
           const dataPendentes = await resPendentes.json()
           const pendentes = Array.isArray(dataPendentes)
             ? dataPendentes
             : Array.isArray(dataPendentes.items)
               ? (dataPendentes.items as Inscricao[])
+              : []
+          const dataAguardando = await resAguardando.json()
+          const aguardando = Array.isArray(dataAguardando)
+            ? dataAguardando
+            : Array.isArray(dataAguardando.items)
+              ? (dataAguardando.items as Inscricao[])
               : []
           const dataConfirmadas = await resConfirmadas.json()
           const confirmadas = Array.isArray(dataConfirmadas)
@@ -205,10 +215,14 @@ export default function EventForm({
             : Array.isArray(dataConfirmadas.items)
               ? (dataConfirmadas.items as Inscricao[])
               : []
-          const minhasInscricoes = [...pendentes, ...confirmadas].filter(
+          const minhasInscricoes = [...pendentes, ...aguardando, ...confirmadas].filter(
             (i) => i.criado_por === user.id,
           )
           setInscricoesExistentes(minhasInscricoes)
+          if (minhasInscricoes.length > 0) {
+            router.replace('/recuperar')
+            return
+          }
         } else {
           setInscricoesExistentes([])
         }
@@ -219,7 +233,7 @@ export default function EventForm({
       }
     }
     verificarPendentes()
-  }, [isLoggedIn, user, eventoId, pb])
+  }, [isLoggedIn, user, eventoId, pb, router])
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {

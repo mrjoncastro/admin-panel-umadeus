@@ -70,8 +70,8 @@ Execute `npm run lint` para verificar problemas de código. Evite o uso de `any`
 ## Funcionalidades Adicionais
 
 - Sinal de notificações lista inscrições pendentes fora do cabeçalho.
-- EventForm verifica inscrições já cadastradas (pendentes ou confirmadas) e
-  exibe a tabela correspondente antes do formulário.
+- EventForm verifica inscrições já cadastradas (pendentes, aguardando pagamento
+  ou confirmadas) e redireciona para `/recuperar` quando houver registros.
 - A navegação mobile inclui botão "voltar ao topo" para facilitar a rolagem.
 - Formulários de busca de pedidos e inscrições se adaptam ao tipo de usuário, permitindo busca pelo nome do inscrito.
 - Usuários podem alternar entre os temas claro e escuro.
