@@ -195,7 +195,10 @@ export default function EventForm({
             : Array.isArray(data.items)
               ? (data.items as Inscricao[])
               : []
-          setPendentes(items)
+          const meusPendentes = items.filter(
+            (i) => i.criado_por === user.id,
+          )
+          setPendentes(meusPendentes)
         } else {
           setPendentes([])
         }
