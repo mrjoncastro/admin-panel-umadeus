@@ -87,6 +87,7 @@ export async function POST(req: NextRequest) {
           } catch {
             // ignore 404
           }
+
           if (pedido?.link_pagamento) {
             logRocketEvent('recuperar_link', {
               cpf: idempotencyKey,
@@ -97,6 +98,30 @@ export async function POST(req: NextRequest) {
               nomeUsuario: inscricao.nome,
               link_pagamento: pedido.link_pagamento,
             })
+          }
+
+          if (pedido?.id) {
+            const base = req.nextUrl.origin
+            const resp = await fetch(
+              `${base}/api/pedidos/${pedido.id}/nova-cobranca`,
+              {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ idempotencyKey }),
+              },
+            )
+            if (resp.ok) {
+              const nova = await resp.json()
+              logRocketEvent('recuperar_link', {
+                cpf: idempotencyKey,
+                pedidoId: pedido.id,
+                via: 'nova_cobranca',
+              })
+              return NextResponse.json({
+                nomeUsuario: inscricao.nome,
+                link_pagamento: nova.link_pagamento,
+              })
+            }
           }
         }
 
@@ -118,39 +143,11 @@ export async function POST(req: NextRequest) {
     }
 
     const pedidoId = cobranca.pedido
-    const vencida =
-      (cobranca.status !== 'PENDING' && cobranca.status !== 'UNPAID') ||
-      (cobranca.dueDate
-        ? new Date(cobranca.dueDate).getTime() < Date.now()
-        : true)
+    const link_pagamento = cobranca.invoiceUrl
 
-    let link_pagamento = cobranca.invoiceUrl
-
-    if (vencida) {
-      const base = req.nextUrl.origin
-      const resp = await fetch(
-        `${base}/api/pedidos/${pedidoId}/nova-cobranca`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ idempotencyKey }),
-        },
-      )
-
-      if (!resp.ok) {
-        return NextResponse.json(
-          { error: 'Erro ao criar nova cobrança' },
-          { status: 500 },
-        )
-      }
-
-      const nova = await resp.json()
-      link_pagamento = nova.link_pagamento
-    }
     logRocketEvent('recuperar_link', {
       cpf: idempotencyKey,
       pedidoId,
-      nova: vencida,
     })
 
     return NextResponse.json({

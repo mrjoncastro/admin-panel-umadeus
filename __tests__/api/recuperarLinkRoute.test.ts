@@ -52,6 +52,26 @@ describe('POST /api/recuperar-link', () => {
     expect(body.nomeUsuario).toBe('U')
   })
 
+  it('retorna link mesmo quando cobranca vencida', async () => {
+    getFirstCobranca.mockResolvedValueOnce({
+      status: 'OVERDUE',
+      dueDate: new Date(Date.now() - 86_400_000).toISOString(),
+      invoiceUrl: 'http://expired',
+      pedido: 'p1',
+      nomeUsuario: 'U',
+    })
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({ cpf: '12345678901' }),
+    })
+    ;(req as any).nextUrl = new URL('http://test')
+    const res = await POST(req as unknown as NextRequest)
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.link_pagamento).toBe('http://expired')
+    expect(body.nomeUsuario).toBe('U')
+  })
+
   it('retorna status pendente quando inscricao em aprovacao', async () => {
     getFirstCobranca.mockRejectedValueOnce(new Error('not found'))
     getFirstInscricao.mockResolvedValueOnce({ status: 'pendente' })
