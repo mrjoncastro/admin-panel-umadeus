@@ -61,6 +61,36 @@ vi.mock('@/utils/cep', () => ({
 }))
 
 describe('EventForm signup flow', () => {
+  it('redireciona para /recuperar se houver inscricoes existentes', async () => {
+    const fetchMock = vi.fn()
+    global.fetch = fetchMock as unknown as typeof fetch
+    currentUser = { id: 'u1', nome: 'Fulano' }
+    fetchMock
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve([{ id: 'c1', nome: 'Campo 1' }]),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            expand: { produto_inscricao: { id: 'p1', nome: 'Prod 1' } },
+            cobra_inscricao: false,
+          }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve([{ id: 'i1', criado_por: 'u1' }]),
+      })
+      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve([]) })
+      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve([]) })
+
+    render(<EventForm eventoId="ev1" />)
+
+    await vi.waitFor(() => {
+      expect(replace).toHaveBeenCalledWith('/recuperar')
+    })
+  })
   it('envia inscricao com user.id e avanca o wizard', async () => {
     vi.useFakeTimers()
     const fetchMock = vi.fn()
