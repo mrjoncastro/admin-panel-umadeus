@@ -587,3 +587,4 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 ## [2025-07-15] EventForm agora lista inscricoes pendentes e confirmadas do usuario antes do formulario. Lint e build executados.
 ## [2025-07-15] Rota /api/recuperar-link nao renova cobranca vencida, retornando link existente. README ajustado. Lint e build executados.
 ## [2025-07-15] Rota /api/recuperar-link gera nova cobranca quando pedido sem link. README atualizado. Lint e build executados.
+## [2025-07-15] Rota /api/recuperar-link deixou de criar nova cobranca, retornando o link existente mesmo vencido. Lint e build executados.

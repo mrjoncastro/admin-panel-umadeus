@@ -100,29 +100,6 @@ export async function POST(req: NextRequest) {
             })
           }
 
-          if (pedido?.id) {
-            const base = req.nextUrl.origin
-            const resp = await fetch(
-              `${base}/api/pedidos/${pedido.id}/nova-cobranca`,
-              {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ idempotencyKey }),
-              },
-            )
-            if (resp.ok) {
-              const nova = await resp.json()
-              logRocketEvent('recuperar_link', {
-                cpf: idempotencyKey,
-                pedidoId: pedido.id,
-                via: 'nova_cobranca',
-              })
-              return NextResponse.json({
-                nomeUsuario: inscricao.nome,
-                link_pagamento: nova.link_pagamento,
-              })
-            }
-          }
         }
 
         logRocketEvent('recuperar_status', {
