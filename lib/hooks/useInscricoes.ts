@@ -16,7 +16,7 @@ export default function useInscricoes() {
     if (!tenantId) return
     let active = true
     const headers = getAuthHeaders(pb)
-    fetch('/api/inscricoes', { headers, credentials: 'include' })
+    fetch('/loja/api/minhas-inscricoes', { headers, credentials: 'include' })
       .then((res) => (res.ok ? res.json() : Promise.reject()))
       .then((data) => {
         const items = Array.isArray(data)

@@ -41,7 +41,7 @@ export default function LiderDashboardPage() {
             credentials: 'include',
             signal,
           }).then((r) => r.json()),
-          fetch(`/api/pedidos?${params.toString()}`, {
+          fetch(`/api/pedidos?${params.toString()}&expand=campo,produto`, {
             credentials: 'include',
             signal,
           }).then((r) => r.json()),
@@ -98,6 +98,7 @@ export default function LiderDashboardPage() {
           expand: {
             campo: r.expand?.campo,
             criado_por: r.expand?.criado_por,
+            produto: r.expand?.produto,
           },
         }))
 

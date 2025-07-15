@@ -127,9 +127,13 @@ export default function DashboardAnalytics({
   const arrecadacaoRef = useRef<Chart<'bar'> | null>(null)
 
   const handleExportPDF = async () => {
+    const campoProdutoCanvas = document.getElementById(
+      'campoProdutoChart',
+    ) as HTMLCanvasElement | null
     const charts = {
       inscricoes: inscricoesRef.current?.toBase64Image(),
       pedidos: pedidosRef.current?.toBase64Image(),
+      campoProduto: campoProdutoCanvas?.toDataURL('image/png'),
       arrecadacao: mostrarFinanceiro
         ? arrecadacaoRef.current?.toBase64Image()
         : undefined,

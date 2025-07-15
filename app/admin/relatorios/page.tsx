@@ -65,17 +65,23 @@ export default function RelatoriosPage() {
         }
 
         params.set('page', '1')
-        const pedRes = await fetch(`/api/pedidos?${params.toString()}`, {
-          credentials: 'include',
-          signal,
-        }).then((r) => r.json())
+        const pedRes = await fetch(
+          `/api/pedidos?${params.toString()}&expand=campo,produto`,
+          {
+            credentials: 'include',
+            signal,
+          },
+        ).then((r) => r.json())
         let rawPedidos = Array.isArray(pedRes.items) ? pedRes.items : pedRes
         for (let p = 2; p <= (pedRes.totalPages ?? 1); p++) {
           params.set('page', String(p))
-          const more = await fetch(`/api/pedidos?${params.toString()}`, {
-            credentials: 'include',
-            signal,
-          }).then((r) => r.json())
+          const more = await fetch(
+            `/api/pedidos?${params.toString()}&expand=campo,produto`,
+            {
+              credentials: 'include',
+              signal,
+            },
+          ).then((r) => r.json())
           rawPedidos = rawPedidos.concat(
             Array.isArray(more.items) ? more.items : more,
           )
@@ -128,6 +134,7 @@ export default function RelatoriosPage() {
           expand: {
             campo: r.expand?.campo,
             criado_por: r.expand?.criado_por,
+            produto: r.expand?.produto,
           },
         }))
 

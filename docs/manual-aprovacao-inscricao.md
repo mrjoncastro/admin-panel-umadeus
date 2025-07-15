@@ -2,6 +2,8 @@
 
 Este documento detalha as **duas possibilidades de ação manual** sobre uma inscrição no painel administrativo, quando `confirma_inscricoes = true`.
 
+Se o próprio líder enviar a inscrição e o campo `liderId` coincidir com seu usuário autenticado, o sistema já executa a confirmação automaticamente, gerando o pedido e marcando a inscrição como `aguardando_pagamento`.
+
 ---
 
 ## 📌 Opções de Ação Manual
