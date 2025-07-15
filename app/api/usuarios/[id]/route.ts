@@ -44,41 +44,61 @@ export async function PATCH(req: NextRequest) {
     const payload: Record<string, unknown> = { role: user.role }
 
     if (data.nome !== undefined) {
-      payload.nome = String(data.nome).trim()
+      const nome = String(data.nome).trim()
+      if (nome) payload.nome = nome
     }
     if (data.telefone !== undefined) {
-      payload.telefone = String(data.telefone).replace(/\D/g, '')
+      const telefone = String(data.telefone).replace(/\D/g, '')
+      if (telefone) payload.telefone = telefone
     }
     if (data.cpf !== undefined) {
-      payload.cpf = String(data.cpf).replace(/\D/g, '')
+      const cpf = String(data.cpf).replace(/\D/g, '')
+      if (cpf) payload.cpf = cpf
     }
     if (data.data_nascimento !== undefined) {
-      payload.data_nascimento = String(data.data_nascimento)
+      const nascimento = String(data.data_nascimento).trim()
+      if (nascimento) payload.data_nascimento = nascimento
     }
     if (data.endereco !== undefined) {
-      payload.endereco = String(data.endereco).trim()
+      const endereco = String(data.endereco).trim()
+      if (endereco) payload.endereco = endereco
     }
     if (data.numero !== undefined) {
-      payload.numero = String(data.numero).trim()
+      const numero = String(data.numero).trim()
+      if (numero) payload.numero = numero
     }
     if (data.bairro !== undefined) {
-      payload.bairro = String(data.bairro).trim()
+      const bairro = String(data.bairro).trim()
+      if (bairro) payload.bairro = bairro
     }
     if (data.cidade !== undefined) {
-      payload.cidade = String(data.cidade).trim()
+      const cidade = String(data.cidade).trim()
+      if (cidade) payload.cidade = cidade
     }
     if (data.estado !== undefined) {
-      payload.estado = String(data.estado).trim()
+      const estado = String(data.estado).trim()
+      if (estado) payload.estado = estado
     }
     if (data.cep !== undefined) {
-      payload.cep = String(data.cep).replace(/\D/g, '')
+      const cep = String(data.cep).replace(/\D/g, '')
+      if (cep) payload.cep = cep
     }
     if (data.tour !== undefined) {
-      payload.tour = Boolean(data.tour)
+      if (data.tour !== '') payload.tour = Boolean(data.tour)
     }
 
-    await pbRetry(() => pb.collection('usuarios').update(id, payload))
-    return NextResponse.json({ ok: true })
+    const updated = await pbRetry(() =>
+      pb.collection('usuarios').update(id, payload),
+    )
+    pb.authStore.save(pb.authStore.token, updated)
+    const cookie = pb.authStore.exportToCookie({
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+    })
+    const res = NextResponse.json(updated, { status: 200 })
+    res.headers.append('Set-Cookie', cookie)
+    return res
   } catch (err) {
     console.error('Erro ao atualizar perfil:', err)
     return NextResponse.json({ error: 'Erro ao atualizar' }, { status: 500 })
