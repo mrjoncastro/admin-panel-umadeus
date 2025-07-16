@@ -64,7 +64,7 @@ export default function Header() {
     { href: '/loja', label: 'Ver loja' },
   ]
 
-  const relatoriosLinks = [{ href: '/admin/relatorios', label: 'Relatório Geral' }]
+  const relatoriosLinks = [{ href: '/admin/relatorio', label: 'Relatório Geral' }]
 
   const gerenciamentoLinks =
     user?.role === 'lider'
@@ -590,7 +590,7 @@ export default function Header() {
               Relatórios
             </span>
             <Link
-              href="/admin/relatorios"
+              href="/admin/relatorio"
               onClick={() => setMenuAberto(false)}
               className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] rounded-md"
             >
