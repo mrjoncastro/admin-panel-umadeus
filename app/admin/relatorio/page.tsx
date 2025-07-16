@@ -1,6 +1,6 @@
 'use client'
 
-import LayoutWrapper from '@/components/templates/LayoutWrapper'
+import LayoutWrapperAdmin from '@/components/templates/LayoutWrapperAdmin'
 import { generateRelatorioPdf } from '@/lib/report/generateRelatorioPdf'
 import { useToast } from '@/lib/context/ToastContext'
 
@@ -22,7 +22,7 @@ export default function RelatorioPage() {
   }
 
   return (
-    <LayoutWrapper>
+    <LayoutWrapperAdmin>
       <div className="max-w-2xl mx-auto px-6 py-10 space-y-6">
         <h1 className="text-3xl font-bold">Relatório</h1>
 
@@ -83,6 +83,6 @@ export default function RelatorioPage() {
           Baixar PDF
         </button>
       </div>
-    </LayoutWrapper>
+    </LayoutWrapperAdmin>
   )
 }
