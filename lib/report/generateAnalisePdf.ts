@@ -6,6 +6,7 @@ export async function generateAnalisePdf(
   headers: string[],
   rows: (string | number)[][],
   details?: (string | number)[][],
+  chart?: string,
 ) {
   return new Promise<void>((resolve, reject) => {
     const timeout = setTimeout(() => {
@@ -20,8 +21,14 @@ export async function generateAnalisePdf(
         align: 'center',
       })
 
+      let y = 60
+      if (chart) {
+        doc.addImage(chart, 'PNG', 40, y, 520, 220)
+        y += 240
+      }
+
       autoTable(doc, {
-        startY: 60,
+        startY: y,
         head: [headers],
         body: rows,
         theme: 'striped',

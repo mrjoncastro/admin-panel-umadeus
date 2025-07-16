@@ -5,9 +5,18 @@ import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import { generateRelatorioPdf } from '@/lib/report/generateRelatorioPdf'
 import { generateAnalisePdf } from '@/lib/report/generateAnalisePdf'
 import { useToast } from '@/lib/context/ToastContext'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import type { Pedido, Produto } from '@/types'
 import { fetchAllPages } from '@/lib/utils/fetchAllPages'
+import dynamic from 'next/dynamic'
+import { setupCharts } from '@/lib/chartSetup'
+import twColors from '@/utils/twColors'
+import colors from 'tailwindcss/colors'
+import type { Chart, ChartData } from 'chart.js'
+
+const BarChart = dynamic(() => import('react-chartjs-2').then((m) => m.Bar), {
+  ssr: false,
+})
 
 export default function RelatorioPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
@@ -16,7 +25,17 @@ export default function RelatorioPage() {
   const [analysis, setAnalysis] = useState<'produtoCampo' | 'produtoCanalCampo'>(
     'produtoCampo',
   )
+  const [statusFilter, setStatusFilter] = useState('todos')
   const [rows, setRows] = useState<(string | number)[][]>([])
+  const [chartData, setChartData] = useState<ChartData<'bar'>>({
+    labels: [],
+    datasets: [],
+  })
+  const chartRef = useRef<Chart<'bar'> | null>(null)
+
+  useEffect(() => {
+    setupCharts()
+  }, [])
 
   useEffect(() => {
     if (!authChecked || !user) return
@@ -60,10 +79,17 @@ export default function RelatorioPage() {
   }, [authChecked, user, showError])
 
   useEffect(() => {
+    const filtered =
+      statusFilter === 'todos'
+        ? pedidos
+        : pedidos.filter((p) => p.status === statusFilter)
     const rowsCalc: (string | number)[][] = []
+    let labels: string[] = []
+    let datasets: ChartData<'bar'>['datasets'] = []
+
     if (analysis === 'produtoCampo') {
       const count: Record<string, Record<string, number>> = {}
-      pedidos.forEach((p) => {
+      filtered.forEach((p) => {
         const campo = p.expand?.campo?.nome || 'Sem campo'
         const produtosData = Array.isArray(p.expand?.produto)
           ? (p.expand?.produto as Produto[])
@@ -81,14 +107,33 @@ export default function RelatorioPage() {
           })
         }
       })
-      Object.keys(count).forEach((campo) => {
-        Object.keys(count[campo]).forEach((prod) => {
-          rowsCalc.push([campo, prod, count[campo][prod]])
+      labels = Object.keys(count)
+      const produtos = Array.from(
+        new Set(labels.flatMap((c) => Object.keys(count[c])))
+      )
+      const palette = [
+        twColors.primary600,
+        twColors.error600,
+        twColors.blue500,
+        colors.emerald[500],
+        colors.amber[500],
+        colors.violet[500],
+      ]
+      datasets = produtos.map((prod, idx) => {
+        labels.forEach((campo) => {
+          const total = count[campo][prod]
+          if (total !== undefined) rowsCalc.push([campo, prod, total])
         })
+        return {
+          label: prod,
+          data: labels.map((c) => count[c][prod] || 0),
+          backgroundColor: palette[idx % palette.length],
+          stack: 'stack',
+        }
       })
     } else {
       const count: Record<string, Record<string, Record<string, number>>> = {}
-      pedidos.forEach((p) => {
+      filtered.forEach((p) => {
         const campo = p.expand?.campo?.nome || 'Sem campo'
         const canal = p.canal || 'indefinido'
         const produtosData = Array.isArray(p.expand?.produto)
@@ -111,16 +156,44 @@ export default function RelatorioPage() {
           })
         }
       })
-      Object.keys(count).forEach((campo) => {
-        Object.keys(count[campo]).forEach((prod) => {
-          Object.keys(count[campo][prod]).forEach((canal) => {
-            rowsCalc.push([campo, prod, canal, count[campo][prod][canal]])
-          })
+      labels = Object.keys(count)
+      const combos = Array.from(
+        new Set(
+          labels.flatMap((c) =>
+            Object.keys(count[c]).flatMap((prod) =>
+              Object.keys(count[c][prod]).map((canal) => `${prod} (${canal})`),
+            ),
+          ),
+        ),
+      )
+      const palette = [
+        twColors.primary600,
+        twColors.error600,
+        twColors.blue500,
+        colors.emerald[500],
+        colors.amber[500],
+        colors.violet[500],
+      ]
+      datasets = combos.map((combo, idx) => {
+        const match = combo.match(/^(.*) \((.*)\)$/)
+        const prod = match?.[1] || ''
+        const canal = match?.[2] || ''
+        labels.forEach((campo) => {
+          const total = count[campo][prod]?.[canal]
+          if (total !== undefined) rowsCalc.push([campo, prod, canal, total])
         })
+        return {
+          label: combo,
+          data: labels.map((c) => count[c][prod]?.[canal] || 0),
+          backgroundColor: palette[idx % palette.length],
+          stack: prod,
+        }
       })
     }
+
     setRows(rowsCalc)
-  }, [analysis, pedidos])
+    setChartData({ labels, datasets })
+  }, [analysis, pedidos, statusFilter])
 
   const handleDownload = async () => {
     try {
@@ -138,65 +211,16 @@ export default function RelatorioPage() {
 
   return (
     <LayoutWrapperAdmin>
-      <div className="max-w-2xl mx-auto px-6 py-10 space-y-6">
+      <div className="max-w-4xl mx-auto px-6 py-10 space-y-6">
         <h1 className="text-3xl font-bold">Relatório</h1>
 
-        <section>
-          <h2 className="text-2xl font-semibold mt-4">Pedidos</h2>
-          <ul className="list-disc pl-5 space-y-1 mt-2">
-            <li>
-              Coordenadores visualizam todos os pedidos, líderes apenas do seu
-              campo e usuários somente os próprios.
-            </li>
-            <li>
-              Os pedidos nascem do checkout ou da aprovação de inscrições e
-              começam como <code>pendente</code>. Após confirmação do Asaas
-              passam a <code>pago</code>.
-            </li>
-            <li>
-              Se <code>confirma_inscricoes</code> estiver ativo, a inscrição
-              precisa ser aprovada antes do pedido ser criado.
-            </li>
-            <li>
-              Um pedido pode conter múltiplos produtos e registra valor total,
-              status e vencimento.
-            </li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mt-4">Produtos</h2>
-          <ol className="list-decimal pl-5 space-y-1 mt-2">
-            <li>
-              <strong>Independente</strong> – vendido na loja (canal
-              <code>loja</code>).
-            </li>
-            <li>
-              <strong>Vinculado a evento sem aprovação</strong> – cria pedido
-              automático com canal <code>inscricao</code>.
-            </li>
-            <li>
-              <strong>Vinculado a evento com aprovação</strong> – a compra só é
-              liberada após a inscrição ser aprovada.
-            </li>
-          </ol>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mt-4">
-            Campo <code>canal</code>
-          </h2>
-          <p className="mt-2">
-            Define a origem do pedido. Usamos <code>loja</code> para produtos
-            independentes, <code>inscricao</code> para pedidos vindos de
-            inscrições e <code>avulso</code> quando o líder registra um pedido
-            manualmente.
-          </p>
-        </section>
+        <button onClick={handleDownload} className="btn btn-primary px-3 py-1">
+          Baixar Regras (PDF)
+        </button>
 
         <section>
           <h2 className="text-2xl font-semibold mt-4">Análises</h2>
-          <div className="flex items-center gap-2 mt-2">
+          <div className="flex flex-wrap items-center gap-2 mt-2">
             <select
               value={analysis}
               onChange={(e) =>
@@ -208,6 +232,17 @@ export default function RelatorioPage() {
             >
               <option value="produtoCampo">Produto x Campo</option>
               <option value="produtoCanalCampo">Produto x Canal x Campo</option>
+            </select>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="border rounded px-2 py-1"
+            >
+              <option value="todos">Todos</option>
+              <option value="pago">Pago</option>
+              <option value="pendente">Pendente</option>
+              <option value="vencido">Vencido</option>
+              <option value="cancelado">Cancelado</option>
             </select>
             <button
               onClick={async () => {
@@ -238,6 +273,7 @@ export default function RelatorioPage() {
                       : ['Campo', 'Produto', 'Canal', 'Total'],
                     rows,
                     detailRows,
+                    chartRef.current?.toBase64Image(),
                   )
                   showSuccess('PDF gerado com sucesso.')
                 } catch (err) {
@@ -254,37 +290,18 @@ export default function RelatorioPage() {
               Gerar PDF
             </button>
           </div>
-          <div className="overflow-x-auto mt-4">
-            <table className="table-auto border-collapse w-full text-sm">
-              <thead>
-                <tr>
-                  {(
-                    analysis === 'produtoCampo'
-                      ? ['Campo', 'Produto', 'Total']
-                      : ['Campo', 'Produto', 'Canal', 'Total']
-                  ).map((h) => (
-                    <th key={h} className="border px-2 py-1 text-left">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((r, idx) => (
-                  <tr key={idx}>
-                    {r.map((c, i) => (
-                      <td key={i} className="border px-2 py-1">{c}</td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="mt-4 aspect-video">
+            <BarChart
+              ref={chartRef}
+              data={chartData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { x: { stacked: true }, y: { stacked: true } },
+              }}
+            />
           </div>
         </section>
-
-        <button onClick={handleDownload} className="btn btn-primary px-3 py-1 mt-6">
-          Baixar PDF
-        </button>
       </div>
     </LayoutWrapperAdmin>
   )
