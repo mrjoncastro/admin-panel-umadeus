@@ -2,10 +2,9 @@
 
 import LayoutWrapperAdmin from '@/components/templates/LayoutWrapperAdmin'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
-import { generateRelatorioPdf } from '@/lib/report/generateRelatorioPdf'
 import { generateAnalisePdf } from '@/lib/report/generateAnalisePdf'
 import { useToast } from '@/lib/context/ToastContext'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import type { Pedido, Produto } from '@/types'
 import { fetchAllPages } from '@/lib/utils/fetchAllPages'
 import dynamic from 'next/dynamic'
@@ -26,6 +25,7 @@ export default function RelatorioPage() {
     'produtoCampo',
   )
   const [statusFilter, setStatusFilter] = useState('todos')
+  const [orderBy, setOrderBy] = useState<'campo' | 'data'>('campo')
   const [rows, setRows] = useState<(string | number)[][]>([])
   const [totals, setTotals] = useState<Record<string, number>>({})
   const [chartData, setChartData] = useState<ChartData<'bar'>>({
@@ -33,6 +33,20 @@ export default function RelatorioPage() {
     datasets: [],
   })
   const chartRef = useRef<Chart<'bar'> | null>(null)
+
+  const sortPedidos = useCallback((lista: Pedido[]) => {
+    return [...lista].sort((a, b) => {
+      if (orderBy === 'data') {
+        return (
+          new Date(a.created || '').getTime() -
+          new Date(b.created || '').getTime()
+        )
+      }
+      const campoA = a.expand?.campo?.nome || ''
+      const campoB = b.expand?.campo?.nome || ''
+      return campoA.localeCompare(campoB)
+    })
+  }, [orderBy])
 
   useEffect(() => {
     setupCharts()
@@ -84,6 +98,7 @@ export default function RelatorioPage() {
       statusFilter === 'todos'
         ? pedidos
         : pedidos.filter((p) => p.status === statusFilter)
+    const ordered = sortPedidos(filtered)
     const rowsCalc: (string | number)[][] = []
     const totalsCalc: Record<string, number> = {}
     let labels: string[] = []
@@ -91,7 +106,7 @@ export default function RelatorioPage() {
 
     if (analysis === 'produtoCampo') {
       const count: Record<string, Record<string, number>> = {}
-      filtered.forEach((p) => {
+      ordered.forEach((p) => {
         const campo = p.expand?.campo?.nome || 'Sem campo'
         const produtosData = Array.isArray(p.expand?.produto)
           ? (p.expand?.produto as Produto[])
@@ -137,7 +152,7 @@ export default function RelatorioPage() {
       })
     } else {
       const count: Record<string, Record<string, Record<string, number>>> = {}
-      filtered.forEach((p) => {
+      ordered.forEach((p) => {
         const campo = p.expand?.campo?.nome || 'Sem campo'
         const canal = p.canal || 'indefinido'
         const produtosData = Array.isArray(p.expand?.produto)
@@ -200,30 +215,13 @@ export default function RelatorioPage() {
     setRows(rowsCalc)
     setTotals(totalsCalc)
     setChartData({ labels, datasets })
-  }, [analysis, pedidos, statusFilter])
+  }, [analysis, pedidos, statusFilter, orderBy, sortPedidos])
 
-  const handleDownload = async () => {
-    try {
-      await generateRelatorioPdf()
-      showSuccess('PDF gerado com sucesso.')
-    } catch (err) {
-      console.error('Erro ao gerar PDF', err)
-      const message =
-        err instanceof Error && err.message.includes('Tempo')
-          ? 'Tempo esgotado ao gerar PDF.'
-          : 'Não foi possível gerar o PDF. Tente novamente.'
-      showError(message)
-    }
-  }
 
   return (
     <LayoutWrapperAdmin>
       <div className="max-w-4xl mx-auto px-6 py-10 space-y-6">
         <h1 className="text-3xl font-bold">Relatório</h1>
-
-        <button onClick={handleDownload} className="btn btn-primary px-3 py-1">
-          Baixar Regras (PDF)
-        </button>
 
         <section>
           <h2 className="text-2xl font-semibold mt-4">Análises</h2>
@@ -251,10 +249,25 @@ export default function RelatorioPage() {
               <option value="vencido">Vencido</option>
               <option value="cancelado">Cancelado</option>
             </select>
+            <select
+              value={orderBy}
+              onChange={(e) =>
+                setOrderBy(e.target.value as 'campo' | 'data')
+              }
+              className="border rounded px-2 py-1"
+            >
+              <option value="campo">Ordem A-Z do campo</option>
+              <option value="data">Ordem por data</option>
+            </select>
             <button
               onClick={async () => {
                 try {
-                  const detailRows = pedidos.map((p) => [
+                  const filteredForDetails =
+                    statusFilter === 'todos'
+                      ? pedidos
+                      : pedidos.filter((p) => p.status === statusFilter)
+                  const orderedDetails = sortPedidos(filteredForDetails)
+                  const detailRows = orderedDetails.map((p) => [
                     Array.isArray(p.expand?.produto)
                       ? p.expand.produto
                           .map((prod: Produto) => prod.nome)

@@ -597,3 +597,4 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 ## [2025-07-16] PDF das análises inclui tabela detalhada de pedidos com forma de pagamento. Lint e build executados.
 ## [2025-07-16] Página /admin/relatorio limpa, apenas gráficos. Filtro de status e gráficos exportados no PDF das análises. Lint e build executados.
 ## [2025-07-16] Relatorio PDF exibe totais por produto. Lint e build executados.
+## [2025-07-16] Relatorio admin permite ordenar por campo ou data e remove PDF de regras. Lint e build executados.
