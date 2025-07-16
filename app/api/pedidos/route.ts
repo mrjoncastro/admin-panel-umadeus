@@ -246,6 +246,7 @@ export async function POST(req: NextRequest) {
         email,
         valor: Number(valor) || 0,
         vencimento,
+        paymentMethod: body.paymentMethod ?? 'pix',
         canal: isAvulso ? 'avulso' : 'loja',
       }
       console.log('[PEDIDOS][POST] Payload para criação:', payload)
