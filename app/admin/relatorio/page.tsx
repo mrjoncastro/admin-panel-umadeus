@@ -27,6 +27,7 @@ export default function RelatorioPage() {
   )
   const [statusFilter, setStatusFilter] = useState('todos')
   const [rows, setRows] = useState<(string | number)[][]>([])
+  const [totals, setTotals] = useState<Record<string, number>>({})
   const [chartData, setChartData] = useState<ChartData<'bar'>>({
     labels: [],
     datasets: [],
@@ -84,6 +85,7 @@ export default function RelatorioPage() {
         ? pedidos
         : pedidos.filter((p) => p.status === statusFilter)
     const rowsCalc: (string | number)[][] = []
+    const totalsCalc: Record<string, number> = {}
     let labels: string[] = []
     let datasets: ChartData<'bar'>['datasets'] = []
 
@@ -99,11 +101,13 @@ export default function RelatorioPage() {
         if (produtosData.length === 0) {
           count[campo] = count[campo] || {}
           count[campo]['Sem produto'] = (count[campo]['Sem produto'] || 0) + 1
+          totalsCalc['Sem produto'] = (totalsCalc['Sem produto'] || 0) + 1
         } else {
           produtosData.forEach((pr: Produto) => {
             const nome = pr?.nome || 'Sem produto'
             count[campo] = count[campo] || {}
             count[campo][nome] = (count[campo][nome] || 0) + 1
+            totalsCalc[nome] = (totalsCalc[nome] || 0) + 1
           })
         }
       })
@@ -146,6 +150,7 @@ export default function RelatorioPage() {
           count[campo]['Sem produto'] = count[campo]['Sem produto'] || {}
           count[campo]['Sem produto'][canal] =
             (count[campo]['Sem produto'][canal] || 0) + 1
+          totalsCalc['Sem produto'] = (totalsCalc['Sem produto'] || 0) + 1
         } else {
           produtosData.forEach((pr: Produto) => {
             const nome = pr?.nome || 'Sem produto'
@@ -153,6 +158,7 @@ export default function RelatorioPage() {
             count[campo][nome] = count[campo][nome] || {}
             count[campo][nome][canal] =
               (count[campo][nome][canal] || 0) + 1
+            totalsCalc[nome] = (totalsCalc[nome] || 0) + 1
           })
         }
       })
@@ -192,6 +198,7 @@ export default function RelatorioPage() {
     }
 
     setRows(rowsCalc)
+    setTotals(totalsCalc)
     setChartData({ labels, datasets })
   }, [analysis, pedidos, statusFilter])
 
@@ -274,6 +281,7 @@ export default function RelatorioPage() {
                     rows,
                     detailRows,
                     chartRef.current?.toBase64Image(),
+                    totals,
                   )
                   showSuccess('PDF gerado com sucesso.')
                 } catch (err) {

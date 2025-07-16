@@ -7,6 +7,7 @@ export async function generateAnalisePdf(
   rows: (string | number)[][],
   details?: (string | number)[][],
   chart?: string,
+  totals?: Record<string, number>,
 ) {
   return new Promise<void>((resolve, reject) => {
     const timeout = setTimeout(() => {
@@ -36,6 +37,22 @@ export async function generateAnalisePdf(
         styles: { fontSize: 10 },
         margin: { left: 40, right: 40 },
       })
+
+      if (totals && Object.keys(totals).length > 0) {
+        const totalRows = Object.entries(totals).map(([prod, total]) => [prod, total])
+        const lastTableY = (
+          doc as unknown as { lastAutoTable?: { finalY?: number } }
+        ).lastAutoTable?.finalY ?? y
+        autoTable(doc, {
+          startY: lastTableY + 20,
+          head: [['Produto', 'Total']],
+          body: totalRows,
+          theme: 'striped',
+          headStyles: { fillColor: [217, 217, 217], halign: 'center' },
+          styles: { fontSize: 10 },
+          margin: { left: 40, right: 40 },
+        })
+      }
 
       if (details && details.length > 0) {
         doc.addPage()
