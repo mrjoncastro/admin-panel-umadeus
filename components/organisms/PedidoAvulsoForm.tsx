@@ -1,8 +1,6 @@
 'use client'
-import { useMemo, useState, useEffect } from 'react'
-import Link from 'next/link'
+import { useMemo, useState } from 'react'
 import { FormField, TextField, InputWithMask } from '@/components'
-import type { Produto } from '@/types'
 import LoadingOverlay from './LoadingOverlay'
 import { useToast } from '@/lib/context/ToastContext'
 import { useAuthContext } from '@/lib/context/AuthContext'
@@ -27,13 +25,6 @@ export default function PedidoAvulsoForm() {
     vencimento: '',
   })
 
-  const [produtoSel, setProdutoSel] = useState<Produto | undefined>(undefined)
-
-  useEffect(() => {
-    const prod = produtos.find((p) => p.id === form.produtoId)
-    setProdutoSel(prod)
-  }, [produtos, form.produtoId])
-
   const [errors, setErrors] = useState<{ cpf?: string; email?: string; telefone?: string }>({})
   const [loading, setLoading] = useState(false)
 
@@ -49,10 +40,6 @@ export default function PedidoAvulsoForm() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
-    if (name === 'produtoId') {
-      const prod = produtos.find((p) => p.id === value)
-      setProdutoSel(prod)
-    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -111,23 +98,12 @@ export default function PedidoAvulsoForm() {
       <FormField label="Produto" htmlFor="produtoId">
         <select id="produtoId" name="produtoId" value={form.produtoId} onChange={handleChange} className="input-base w-full" required>
           <option value="">Selecione</option>
-      {produtos.map((p) => (
-        <option key={p.id} value={p.id}>
-          {p.nome}
-        </option>
-      ))}
+          {produtos.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.nome}
+            </option>
+          ))}
         </select>
-        {produtoSel?.evento_id && (
-          <p className="text-sm mt-2">
-            Produto vinculado a evento.{' '}
-            <Link
-              href={`/inscricoes/lider/${user?.id}/evento/${produtoSel.evento_id}?cpf=${form.cpf}&email=${form.email}`}
-              className="text-primary underline"
-            >
-              Iniciar inscrição
-            </Link>
-          </p>
-        )}
       </FormField>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormField label="Valor" htmlFor="valor">
