@@ -15,7 +15,13 @@ vi.mock('@/lib/context/ToastContext', () => ({
 vi.mock('@/lib/hooks/useProdutos', () => ({
   default: () => ({
     produtos: [
-      { id: 'p1', nome: 'Prod 1', evento_id: 'e1', requer_inscricao_aprovada: true },
+      {
+        id: 'p1',
+        nome: 'Prod 1',
+        evento_id: 'e1',
+        requer_inscricao_aprovada: true,
+        preco_bruto: 55,
+      },
     ],
     loading: false,
   }),
@@ -36,7 +42,9 @@ describe('PedidoAvulsoForm', () => {
     expect(
       screen.getByRole('link', { name: /iniciar inscrição/i }),
     ).toBeInTheDocument()
-    fireEvent.change(screen.getByLabelText('Valor'), { target: { value: '10' } })
+    const valorField = screen.getByLabelText('Valor')
+    expect(valorField).toHaveValue(55)
+    expect(valorField).toHaveAttribute('readonly')
     fireEvent.change(screen.getByLabelText('Vencimento'), { target: { value: '2025-12-31' } })
     fireEvent.change(screen.getByLabelText('Forma de Pagamento'), { target: { value: 'pix' } })
     fireEvent.click(screen.getByRole('button', { name: /criar pedido/i }))
