@@ -68,8 +68,8 @@ O líder seleciona o produto e o valor é preenchido automaticamente conforme o
 preço do item, sem possibilidade de edição. Além disso informa o email do
 inscrito, data de vencimento e a forma de pagamento (`pix` ou `boleto`). O
 pedido sempre pertence ao mesmo campo do líder autenticado. Antes de enviar, o
-formulário
-verifica se o CPF ou e‑mail já estão cadastrados e avisa sobre duplicidades.
+formulário verifica se o CPF ou e‑mail já estão cadastrados e avisa sobre
+duplicidades, mas essa checagem não bloqueia a criação do pedido.
 Se o produto escolhido estiver vinculado a um evento, o formulário exibe um link
 para iniciar o fluxo de inscrição em `/inscricoes/lider/[liderId]/evento/[eventoId]`.
 Assim o líder pode cadastrar ou atualizar os dados do participante antes de gerar o pedido.

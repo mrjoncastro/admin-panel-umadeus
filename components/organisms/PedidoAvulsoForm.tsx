@@ -83,8 +83,7 @@ export default function PedidoAvulsoForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validate()) return
-    const dup = await checkExists()
-    if (dup.cpf || dup.email) return
+    await checkExists()
     if (!user?.campo) {
       showError('Campo do líder não encontrado.')
       return

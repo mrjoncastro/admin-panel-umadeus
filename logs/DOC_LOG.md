@@ -594,3 +594,4 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 ## [2025-07-16] Formulário de pedido avulso agora sugere inscrição quando o produto pertence a evento. Documentação atualizada. Lint e build executados.
 ## [2025-07-16] Pedido avulso recebe campo de forma de pagamento e checagem de CPF duplicado. Lint e build executados.
 ## [2025-07-16] Valor do pedido avulso agora é preenchido automaticamente com o preço do produto, sem edição manual. Lint e build executados.
+## [2025-07-16] Checagem de CPF/Email em pedido avulso não bloqueia geração de cobrança. Lint e build executados.
