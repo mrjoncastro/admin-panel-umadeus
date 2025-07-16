@@ -60,6 +60,7 @@ export type Pedido = {
   campo?: string
   email: string
   canal: 'loja' | 'inscricao'
+  paymentMethod?: 'pix' | 'boleto'
   created?: string
   valor: string
   /** URL gerada pelo Asaas */
