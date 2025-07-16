@@ -591,3 +591,4 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 ## [2025-07-15] Recuperacao de link busca pedido pendente ou vencido quando inscricao aguardando_pagamento. Lint e build executados.
 ## [2025-07-15] fetchAllPages acelera carregamento de dashboard e relatórios. Lint e build executados.
 ## [2025-08-20] Adicionada criação de pedido avulso por líderes e documentação atualizada. Lint e build executados.
+## [2025-07-16] Formulário de pedido avulso agora sugere inscrição quando o produto pertence a evento. Documentação atualizada. Lint e build executados.
