@@ -13,7 +13,12 @@ vi.mock('@/lib/context/ToastContext', () => ({
 }))
 
 vi.mock('@/lib/hooks/useProdutos', () => ({
-  default: () => ({ produtos: [{ id: 'p1', nome: 'Prod 1' }], loading: false }),
+  default: () => ({
+    produtos: [
+      { id: 'p1', nome: 'Prod 1', evento_id: 'e1', requer_inscricao_aprovada: true },
+    ],
+    loading: false,
+  }),
 }))
 
 describe('PedidoAvulsoForm', () => {
@@ -25,6 +30,9 @@ describe('PedidoAvulsoForm', () => {
     fireEvent.change(screen.getByLabelText('Telefone'), { target: { value: '11999999999' } })
     fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'f@x.com' } })
     fireEvent.change(screen.getByLabelText('Produto'), { target: { value: 'p1' } })
+    expect(
+      screen.getByRole('link', { name: /iniciar inscrição/i }),
+    ).toBeInTheDocument()
     fireEvent.change(screen.getByLabelText('Valor'), { target: { value: '10' } })
     fireEvent.change(screen.getByLabelText('Vencimento'), { target: { value: '2025-12-31' } })
     fireEvent.click(screen.getByRole('button', { name: /criar pedido/i }))

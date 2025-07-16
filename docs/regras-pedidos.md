@@ -66,3 +66,6 @@ Líderes podem registrar pedidos manuais acessando `/admin/pedidos/novo`.
 Esse fluxo cria um pedido sem vínculo a inscrição e utiliza `canal = 'avulso'`.
 O líder seleciona o produto, informa o valor, email do inscrito e data de
 vencimento. O pedido sempre pertence ao mesmo campo do líder autenticado.
+Se o produto escolhido estiver vinculado a um evento, o formulário exibe um link
+para iniciar o fluxo de inscrição em `/inscricoes/lider/[liderId]/evento/[eventoId]`.
+Assim o líder pode cadastrar ou atualizar os dados do participante antes de gerar o pedido.
