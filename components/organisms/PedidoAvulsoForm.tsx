@@ -33,6 +33,9 @@ export default function PedidoAvulsoForm() {
   useEffect(() => {
     const prod = produtos.find((p) => p.id === form.produtoId)
     setProdutoSel(prod)
+    if (prod) {
+      setForm((prev) => ({ ...prev, valor: String(prod.preco_bruto) }))
+    }
   }, [produtos, form.produtoId])
 
   const [errors, setErrors] = useState<{ cpf?: string; email?: string; telefone?: string }>({})
@@ -64,10 +67,16 @@ export default function PedidoAvulsoForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
     if (name === 'produtoId') {
       const prod = produtos.find((p) => p.id === value)
       setProdutoSel(prod)
+      setForm((prev) => ({
+        ...prev,
+        produtoId: value,
+        valor: prod ? String(prod.preco_bruto) : '',
+      }))
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }))
     }
   }
 
@@ -159,7 +168,14 @@ export default function PedidoAvulsoForm() {
       </FormField>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormField label="Valor" htmlFor="valor">
-          <TextField id="valor" name="valor" type="number" value={form.valor} onChange={handleChange} required />
+          <TextField
+            id="valor"
+            name="valor"
+            type="number"
+            value={form.valor}
+            readOnly
+            required
+          />
         </FormField>
         <FormField label="Vencimento" htmlFor="vencimento">
           <TextField id="vencimento" name="vencimento" type="date" value={form.vencimento} onChange={handleChange} required />
