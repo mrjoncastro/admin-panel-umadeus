@@ -6,5 +6,6 @@
   "types": "index.ts",
   "exports": {
     ".": "./index.ts"
-  }
+  },
+  "eslint": "^8.57.0"
 } 

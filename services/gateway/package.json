@@ -14,7 +14,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "a11y": "vitest run __tests__/a11y/**/*.a11y.test.tsx",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "lint:manual": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",
@@ -36,7 +37,7 @@
     "jspdf-autotable": "^5.0.2",
     "logrocket": "^10.1.0",
     "lucide-react": "^0.511.0",
-    "next": "15.3.2",
+    "next": "latest",
     "next-rate-limit": "^0.0.3",
     "nodemailer": "^7.0.3",
     "p-retry": "^6.2.1",

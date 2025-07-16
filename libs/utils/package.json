@@ -6,5 +6,11 @@
   "types": "index.ts",
   "exports": {
     ".": "./index.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .ts"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0"
   }
 } 
