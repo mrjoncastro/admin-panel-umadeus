@@ -591,3 +591,10 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 ## [2025-07-15] Recuperacao de link busca pedido pendente ou vencido quando inscricao aguardando_pagamento. Lint e build executados.
 ## [2025-07-15] fetchAllPages acelera carregamento de dashboard e relatórios. Lint e build executados.
 ## [2025-08-20] Adicionada criação de pedido avulso por líderes e documentação atualizada. Lint e build executados.
+## [2025-08-21] Criada rota /admin/relatorio com resumo das regras e exportação em PDF. Lint e build executados.
+
+## [2025-07-16] Relatorio admin apresenta analises por produto e canal com filtro de campo e exportacao em PDF. Lint e build executados.
+## [2025-07-16] PDF das análises inclui tabela detalhada de pedidos com forma de pagamento. Lint e build executados.
+## [2025-07-16] Página /admin/relatorio limpa, apenas gráficos. Filtro de status e gráficos exportados no PDF das análises. Lint e build executados.
+## [2025-07-16] Relatorio PDF exibe totais por produto. Lint e build executados.
+## [2025-07-16] Relatorio admin permite ordenar por campo ou data e remove PDF de regras. Lint e build executados.
