@@ -5,6 +5,7 @@ export async function generateAnalisePdf(
   title: string,
   headers: string[],
   rows: (string | number)[][],
+  details?: (string | number)[][],
 ) {
   return new Promise<void>((resolve, reject) => {
     const timeout = setTimeout(() => {
@@ -28,6 +29,28 @@ export async function generateAnalisePdf(
         styles: { fontSize: 10 },
         margin: { left: 40, right: 40 },
       })
+
+      if (details && details.length > 0) {
+        doc.addPage()
+        autoTable(doc, {
+          startY: 40,
+          head: [
+            [
+              'Produto',
+              'Nome',
+              'Tamanho',
+              'Campo',
+              'Forma de pagamento',
+              'Data',
+            ],
+          ],
+          body: details,
+          theme: 'striped',
+          headStyles: { fillColor: [217, 217, 217], halign: 'center' },
+          styles: { fontSize: 8 },
+          margin: { left: 20, right: 20 },
+        })
+      }
 
       const pageCount = doc.getNumberOfPages()
       for (let i = 1; i <= pageCount; i++) {

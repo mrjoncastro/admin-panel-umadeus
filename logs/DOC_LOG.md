@@ -594,3 +594,4 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 ## [2025-08-21] Criada rota /admin/relatorio com resumo das regras e exportação em PDF. Lint e build executados.
 
 ## [2025-07-16] Relatorio admin apresenta analises por produto e canal com filtro de campo e exportacao em PDF. Lint e build executados.
+## [2025-07-16] PDF das análises inclui tabela detalhada de pedidos com forma de pagamento. Lint e build executados.

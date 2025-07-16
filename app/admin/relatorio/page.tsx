@@ -212,6 +212,23 @@ export default function RelatorioPage() {
             <button
               onClick={async () => {
                 try {
+                  const detailRows = pedidos.map((p) => [
+                    Array.isArray(p.expand?.produto)
+                      ? p.expand.produto
+                          .map((prod: Produto) => prod.nome)
+                          .join(', ')
+                      : (p.expand?.produto as Produto | undefined)?.nome ||
+                        (Array.isArray(p.produto)
+                          ? p.produto.join(', ')
+                          : p.produto ?? ''),
+                    p.expand?.id_inscricao?.nome || '',
+                    p.tamanho || '',
+                    p.expand?.campo?.nome || '',
+                    (p as unknown as { formaPagamento?: string }).formaPagamento ||
+                      '',
+                    p.created?.split('T')[0] || '',
+                  ])
+
                   await generateAnalisePdf(
                     analysis === 'produtoCampo'
                       ? 'Análise Produto x Campo'
@@ -220,6 +237,7 @@ export default function RelatorioPage() {
                       ? ['Campo', 'Produto', 'Total']
                       : ['Campo', 'Produto', 'Canal', 'Total'],
                     rows,
+                    detailRows,
                   )
                   showSuccess('PDF gerado com sucesso.')
                 } catch (err) {
