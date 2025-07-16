@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
 import { getUserFromHeaders } from '@/lib/getUserFromHeaders'
 import { requireRole } from '@/lib/apiAuth'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
@@ -147,12 +146,28 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   console.log('[PEDIDOS][POST] Nova requisição recebida')
-  const auth = getUserFromHeaders(req)
-  console.log('[PEDIDOS][POST] Auth:', auth)
-  const pb = 'error' in auth ? createPocketBase(false) : auth.pbSafe
+  const body = await req.json()
+  const isAvulso = body.canal === 'avulso' && !body.id_inscricao && !body.inscricaoId
+  let user
+  let pb
+  if (isAvulso) {
+    const auth = requireRole(req, 'lider')
+    if ('error' in auth) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status })
+    }
+    user = auth.user
+    pb = auth.pb
+  } else {
+    const auth = getUserFromHeaders(req)
+    console.log('[PEDIDOS][POST] Auth:', auth)
+    if ('error' in auth) {
+      return NextResponse.json({ error: auth.error }, { status: 401 })
+    }
+    user = auth.user
+    pb = auth.pbSafe
+  }
 
   try {
-    const body = await req.json()
     console.log('[PEDIDOS][POST] Body recebido:', body)
     const inscricaoId = body.id_inscricao ?? body.inscricaoId
 
@@ -167,22 +182,14 @@ export async function POST(req: NextRequest) {
         )
       }
 
-      const { produto, tamanho, cor, genero, campoId, email, valor } = body
+      const { produto, tamanho, cor, genero, campoId, email, valor, vencimento } = body
       const produtoIds = Array.isArray(produto)
         ? produto
         : produto
           ? [produto]
           : []
-      const userId = 'error' in auth ? undefined : (auth.user.id as string)
+      const userId = user.id as string
       console.log('[PEDIDOS][POST] userId:', userId)
-
-      if (!userId) {
-        console.log('[PEDIDOS][POST] Usuário não autenticado')
-        return NextResponse.json(
-          { erro: 'Usuário não autenticado' },
-          { status: 401 },
-        )
-      }
 
       let produtoRecord: Produto | null = null
       try {
@@ -223,6 +230,7 @@ export async function POST(req: NextRequest) {
       const corTratada = corParaSchema(cor)
       console.log('[PEDIDOS][POST] corTratada:', corTratada)
 
+      const finalCampo = isAvulso ? user.campo : campoId
       const payload = {
         id_inscricao: '',
         id_pagamento: '',
@@ -234,10 +242,11 @@ export async function POST(req: NextRequest) {
         genero: normalizarGenero(genero),
         responsavel: userId,
         cliente: tenantId,
-        ...(campoId ? { campo: campoId } : {}),
+        ...(finalCampo ? { campo: finalCampo } : {}),
         email,
         valor: Number(valor) || 0,
-        canal: 'loja',
+        vencimento,
+        canal: isAvulso ? 'avulso' : 'loja',
       }
       console.log('[PEDIDOS][POST] Payload para criação:', payload)
 

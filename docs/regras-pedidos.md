@@ -59,3 +59,10 @@ pagamento do pedido.
 O líder pode ajustar campos como email ou tamanho do produto, mas **não** tem
 permissão para alterar o `status` do pedido durante a edição. Essa ação fica
 restrita aos coordenadores.
+
+## Pedido Avulso
+
+Líderes podem registrar pedidos manuais acessando `/admin/pedidos/novo`.
+Esse fluxo cria um pedido sem vínculo a inscrição e utiliza `canal = 'avulso'`.
+O líder seleciona o produto, informa o valor, email do inscrito e data de
+vencimento. O pedido sempre pertence ao mesmo campo do líder autenticado.
