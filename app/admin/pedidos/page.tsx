@@ -8,6 +8,7 @@ import autoTable from 'jspdf-autotable'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import ModalEditarPedido from './componentes/ModalEditarPedido'
 import { useToast } from '@/lib/context/ToastContext'
+import Link from 'next/link'
 
 const PER_PAGE = 50
 
@@ -268,7 +269,12 @@ export default function PedidosPage() {
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-8">
-      <h2 className="heading">Pedidos Recebidos</h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="heading">Pedidos Recebidos</h2>
+        <Link href="/admin/pedidos/novo" className="btn btn-primary">
+          + Novo Pedido
+        </Link>
+      </div>
 
       {/* Filtros */}
       <div className="flex flex-wrap gap-4 mb-6">
