@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { pbRetry } from '@/lib/pbRetry'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
-import { logConciliacaoErro, logRocketEvent } from '@/lib/server/logger'
+import { logConciliacaoErro, logSentryEvent } from '@/lib/server/logger'
 import type { RecordModel } from 'pocketbase'
 
 interface CobrancaRecord extends RecordModel {
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
 
       if (inscricao) {
         if (inscricao.status === 'pendente') {
-          logRocketEvent('recuperar_status', {
+          logSentryEvent('recuperar_status', {
             cpf: idempotencyKey,
             status: 'pendente',
           })
@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
           }
 
           if (pedido?.link_pagamento) {
-            logRocketEvent('recuperar_link', {
+            logSentryEvent('recuperar_link', {
               cpf: idempotencyKey,
               pedidoId: pedido.id,
               via: 'pedido',
@@ -102,14 +102,14 @@ export async function POST(req: NextRequest) {
 
         }
 
-        logRocketEvent('recuperar_status', {
+        logSentryEvent('recuperar_status', {
           cpf: idempotencyKey,
           status: inscricao.status,
         })
         return NextResponse.json({ status: inscricao.status })
       }
 
-      logRocketEvent('recuperar_inexistente', { cpf: idempotencyKey })
+      logSentryEvent('recuperar_inexistente', { cpf: idempotencyKey })
       return NextResponse.json(
         {
           error:
@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
     const pedidoId = cobranca.pedido
     const link_pagamento = cobranca.invoiceUrl
 
-    logRocketEvent('recuperar_link', {
+    logSentryEvent('recuperar_link', {
       cpf: idempotencyKey,
       pedidoId,
     })

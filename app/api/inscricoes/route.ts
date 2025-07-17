@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { createPocketBase } from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
-import { logConciliacaoErro, logRocketEvent } from '@/lib/server/logger'
+import { logConciliacaoErro, logSentryEvent } from '@/lib/server/logger'
 import type { PaymentMethod } from '@/lib/asaasFees'
 import { criarInscricao, InscricaoTemplate } from '@/lib/templates/inscricao'
 import type { Inscricao } from '@/types'
@@ -218,7 +218,7 @@ export async function POST(req: NextRequest) {
     }
 
     const inscricao = await pb.collection('inscricoes').create(dadosInscricao)
-    logRocketEvent('nova_inscricao_admin', {
+    logSentryEvent('nova_inscricao_admin', {
       inscricaoId: inscricao.id,
       userId: usuario.id,
     })
@@ -249,7 +249,7 @@ export async function POST(req: NextRequest) {
 
         if (pedidoRes.ok) {
           const { pedidoId, valor } = await pedidoRes.json()
-          logRocketEvent('pedido_criado_auto', {
+          logSentryEvent('pedido_criado_auto', {
             pedidoId,
             inscricaoId: inscricao.id,
           })
@@ -371,7 +371,7 @@ export async function POST(req: NextRequest) {
       console.error('Erro ao enviar WhatsApp para o líder:', e),
     )
 
-    logRocketEvent('inscricao_criada', {
+    logSentryEvent('inscricao_criada', {
       inscricaoId: inscricao.id,
       responsavel: liderId,
     })

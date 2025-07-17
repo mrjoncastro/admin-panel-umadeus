@@ -1,23 +1,8 @@
 import { appendFile } from 'fs/promises'
 import path from 'path'
-import LogRocket from 'logrocket'
+import * as Sentry from '@sentry/nextjs'
 
-let lrInitialized = false
-
-function ensureLogRocket() {
-  if (!lrInitialized) {
-    try {
-      const id = process.env.NEXT_PUBLIC_LOGROCKET_ID
-      if (id) {
-        LogRocket.init(id)
-        lrInitialized = true
-      }
-    } catch (err) {
-      console.error('Falha ao iniciar LogRocket', err)
-    }
-  }
-  return lrInitialized
-}
+const { logger } = Sentry
 
 export async function logConciliacaoErro(message: string) {
   const date = new Date().toISOString().split('T')[0]
@@ -32,40 +17,30 @@ export async function logConciliacaoErro(message: string) {
       : path.join(process.cwd(), 'logs', 'ERR_LOG.md')
 
     await appendFile(logPath, line)
-
-    // em ambientes serverless, opcionalmente envie a linha para um servico externo
-    // await sendLogToExternalService(line)
+    logger.error(message)
+    Sentry.captureException(new Error(message))
   } catch (err) {
     console.error('Falha ao registrar ERR_LOG', err)
+    Sentry.captureException(err)
   }
 }
 
-export function logRocketEvent(
+export function logSentryEvent(
   message: string,
   data?: Record<string, unknown>,
 ) {
   if (process.env.NODE_ENV !== 'production') return
-  if (!ensureLogRocket()) return
   try {
     if (data) {
-      LogRocket.track(
-        message,
-        data as Record<
-          string,
-          | string
-          | number
-          | boolean
-          | string[]
-          | number[]
-          | boolean[]
-          | null
-          | undefined
-        >,
-      )
+      Sentry.withScope(scope => {
+        Object.entries(data).forEach(([k, v]) => scope.setExtra(k, v))
+        Sentry.captureMessage(message)
+      })
     } else {
-      LogRocket.captureMessage(message)
+      Sentry.captureMessage(message)
     }
   } catch (err) {
-    console.error('Falha ao enviar log ao LogRocket', err)
+    console.error('Falha ao enviar log ao Sentry', err)
+    Sentry.captureException(err)
   }
 }

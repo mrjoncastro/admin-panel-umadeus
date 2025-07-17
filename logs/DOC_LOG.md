@@ -1,5 +1,10 @@
 # Registro de Alterações Documentais
 
+## [2025-07-16] Migrado de LogRocket para Sentry e atualizada documentação
+
+## [2025-07-16] Ajustada configuração do Sentry com logs e captura de exceções
+
+
 ## [2025-07-01] Registrados eventos de inscrição e pedidos no LogRocket
 
 ## [2025-07-01] Documentado caminho de logs em ambientes serverless no README e no cabeçalho do ERR_LOG

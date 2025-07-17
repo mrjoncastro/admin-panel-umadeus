@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
-import { logRocketEvent } from '@/lib/server/logger'
+import { logSentryEvent } from '@/lib/server/logger'
 import { pbRetry } from '@/lib/pbRetry'
 
 export async function POST(req: NextRequest) {
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
       console.error('Falha ao enviar mensagem de boas-vindas', err),
     )
 
-    logRocketEvent('novo_usuario', { userId: usuario.id })
+    logSentryEvent('novo_usuario', { userId: usuario.id })
 
     return NextResponse.json(usuario, { status: 201 })
   } catch (err: unknown) {
