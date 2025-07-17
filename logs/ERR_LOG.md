@@ -283,3 +283,4 @@
 ## [2025-08-19] EventForm buscava inscricoes pendentes de todo o campo para lider, exibindo inscricoes de subordinados e bloqueando prosseguimento. Lista agora filtrada para mostrar apenas as inscricoes do usuario logado. - dev - 7b24a941
 ## [2025-07-17] Lista de pedidos nao atualizava paginacao ao aplicar filtros. Paginas recalculadas e pagina atual redefinida. - dev - 04cd8656
 ## [2025-07-17] Relatório não incluía expand id_inscricao na busca; adicionada no URLSearchParams - dev - 2b383b28
+## [2025-07-17] Relatório buscava apenas inscricao, mas alguns pedidos sem id_inscricao ficavam sem nome. Agora utiliza nome do responsavel se necessario. - dev - 99cf75a8
