@@ -282,4 +282,5 @@
 ## [2025-08-18] ConsultaInscricao sobrescrevia CPF/email do lider ao logar, exibindo inscricao errada e redirecionando para home. Efeito ajustado para manter valores digitados. - dev - 3155a7a1
 ## [2025-08-19] EventForm buscava inscricoes pendentes de todo o campo para lider, exibindo inscricoes de subordinados e bloqueando prosseguimento. Lista agora filtrada para mostrar apenas as inscricoes do usuario logado. - dev - 7b24a941
 ## [2025-07-17] Lista de pedidos nao atualizava paginacao ao aplicar filtros. Paginas recalculadas e pagina atual redefinida. - dev - 04cd8656
+## [2025-07-17] Relatório não incluía expand id_inscricao na busca; adicionada no URLSearchParams - dev - 2b383b28
 ## [2025-07-17] Pedidos buscavam apenas a primeira pagina; resultado incompleto e paginacao incorreta. Fetch atualizado para usar fetchAllPages e pagina resetada ao alterar filtros globais. - dev - a2bf8fc4
