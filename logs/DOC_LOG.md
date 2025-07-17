@@ -603,3 +603,5 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 ## [2025-07-16] Página /admin/relatorio limpa, apenas gráficos. Filtro de status e gráficos exportados no PDF das análises. Lint e build executados.
 ## [2025-07-16] Relatorio PDF exibe totais por produto. Lint e build executados.
 ## [2025-07-16] Relatorio admin permite ordenar por campo ou data e remove PDF de regras. Lint e build executados.
+## [2025-07-17] Adicionado sentry.client.config.ts para coletar Feedback do Usuario via Sentry. Lint e build executados.
+## [2025-07-17] Integrada Sentry Replay com mascaramento de texto e bloqueio de mídia. Lint e build executados.
