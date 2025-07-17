@@ -9,8 +9,7 @@ import type { Pedido, Produto } from '@/types'
 import { fetchAllPages } from '@/lib/utils/fetchAllPages'
 import dynamic from 'next/dynamic'
 import { setupCharts } from '@/lib/chartSetup'
-import twColors from '@/utils/twColors'
-import colors from 'tailwindcss/colors'
+import { createPattern, PatternType } from '@/utils/chartPatterns'
 import type { Chart, ChartData } from 'chart.js'
 
 const BarChart = dynamic(() => import('react-chartjs-2').then((m) => m.Bar), {
@@ -130,13 +129,11 @@ export default function RelatorioPage() {
       const produtos = Array.from(
         new Set(labels.flatMap((c) => Object.keys(count[c])))
       )
-      const palette = [
-        twColors.primary600,
-        twColors.error600,
-        twColors.blue500,
-        colors.emerald[500],
-        colors.amber[500],
-        colors.violet[500],
+      const patterns: PatternType[] = [
+        'diagonal',
+        'dots',
+        'cross',
+        'reverseDiagonal',
       ]
       datasets = produtos.map((prod, idx) => {
         labels.forEach((campo) => {
@@ -146,7 +143,11 @@ export default function RelatorioPage() {
         return {
           label: prod,
           data: labels.map((c) => count[c][prod] || 0),
-          backgroundColor: palette[idx % palette.length],
+          backgroundColor: createPattern(
+            patterns[idx % patterns.length],
+            '#666',
+          ),
+          borderColor: '#000',
           stack: 'stack',
         }
       })
@@ -187,13 +188,11 @@ export default function RelatorioPage() {
           ),
         ),
       )
-      const palette = [
-        twColors.primary600,
-        twColors.error600,
-        twColors.blue500,
-        colors.emerald[500],
-        colors.amber[500],
-        colors.violet[500],
+      const patterns: PatternType[] = [
+        'diagonal',
+        'dots',
+        'cross',
+        'reverseDiagonal',
       ]
       datasets = combos.map((combo, idx) => {
         const match = combo.match(/^(.*) \((.*)\)$/)
@@ -206,7 +205,11 @@ export default function RelatorioPage() {
         return {
           label: combo,
           data: labels.map((c) => count[c][prod]?.[canal] || 0),
-          backgroundColor: palette[idx % palette.length],
+          backgroundColor: createPattern(
+            patterns[idx % patterns.length],
+            '#666',
+          ),
+          borderColor: '#000',
           stack: prod,
         }
       })

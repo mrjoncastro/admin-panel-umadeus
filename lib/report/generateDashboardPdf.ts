@@ -2,6 +2,32 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import template from './template.md'
 
+async function toGrayscale(src: string): Promise<string> {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.onload = () => {
+      const canvas = document.createElement('canvas')
+      canvas.width = img.width
+      canvas.height = img.height
+      const ctx = canvas.getContext('2d')!
+      ctx.drawImage(img, 0, 0)
+      const data = ctx.getImageData(0, 0, canvas.width, canvas.height)
+      for (let i = 0; i < data.data.length; i += 4) {
+        const r = data.data[i]
+        const g = data.data[i + 1]
+        const b = data.data[i + 2]
+        const gray = r * 0.3 + g * 0.59 + b * 0.11
+        data.data[i] = gray
+        data.data[i + 1] = gray
+        data.data[i + 2] = gray
+      }
+      ctx.putImageData(data, 0, 0)
+      resolve(canvas.toDataURL('image/png'))
+    }
+    img.src = src
+  })
+}
+
 export interface DashboardMetrics {
   labels: string[]
   inscricoes: number[]
@@ -33,7 +59,7 @@ export async function generateDashboardPdf(
   periodo: Periodo,
   charts: ChartImages = {},
 ) {
-  return new Promise<void>((resolve, reject) => {
+  return new Promise<void>(async (resolve, reject) => {
     const timeout = setTimeout(() => {
       reject(new Error('Tempo esgotado ao gerar PDF.'))
     }, 10_000)
@@ -74,22 +100,26 @@ export async function generateDashboardPdf(
       y += 20
 
       if (charts.inscricoes) {
-        doc.addImage(charts.inscricoes, 'PNG', 40, y, 520, 220)
+        const img = await toGrayscale(charts.inscricoes)
+        doc.addImage(img, 'PNG', 40, y, 520, 220)
         y += 240
       }
 
       if (charts.pedidos) {
-        doc.addImage(charts.pedidos, 'PNG', 40, y, 520, 220)
+        const img = await toGrayscale(charts.pedidos)
+        doc.addImage(img, 'PNG', 40, y, 520, 220)
         y += 240
       }
 
       if (charts.campoProduto) {
-        doc.addImage(charts.campoProduto, 'PNG', 40, y, 520, 220)
+        const img = await toGrayscale(charts.campoProduto)
+        doc.addImage(img, 'PNG', 40, y, 520, 220)
         y += 240
       }
 
       if (charts.arrecadacao) {
-        doc.addImage(charts.arrecadacao, 'PNG', 40, y, 520, 220)
+        const img = await toGrayscale(charts.arrecadacao)
+        doc.addImage(img, 'PNG', 40, y, 520, 220)
         y += 240
       }
 

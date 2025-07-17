@@ -49,6 +49,7 @@ Este documento define as diretrizes para criação de relatórios em PDF estáti
 
 - **Uso**: Comparativo de totais por região.
 - **Texturas**: Hachuras (linhas diagonais, pontos, listras verticais) para cada região.
+- **Implementação**: Nos gráficos gerados via Chart.js utilize padrões em tons de cinza para cada dataset (diagonal, pontos, cruzado).
 - **Eixos**: Eixo X na base; rótulos externos.
 - **Legenda**: À direita, com amostra da textura e nome da região.
 
