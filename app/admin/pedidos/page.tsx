@@ -102,6 +102,11 @@ export default function PedidosPage() {
     return matchStatus && matchCampo && matchBuscaGlobal
   })
 
+  useEffect(() => {
+    const total = Math.ceil(pedidosFiltrados.length / PER_PAGE) || 1
+    setTotalPaginas(total)
+  }, [pedidosFiltrados])
+
   const pedidosOrdenados = [...pedidosFiltrados].sort((a, b) => {
     if (ordenarPor === 'alfabetica') {
       const nomeA = a.expand?.id_inscricao?.nome?.toLowerCase() || ''
@@ -282,12 +287,18 @@ export default function PedidosPage() {
           type="text"
           placeholder={placeholderBusca}
           value={buscaGlobal}
-          onChange={(e) => setBuscaGlobal(e.target.value)}
+          onChange={(e) => {
+            setBuscaGlobal(e.target.value)
+            setPagina(1)
+          }}
           className="flex-1 md:flex-none border rounded px-4 py-2 text-sm w-full md:w-64 shadow-sm"
         />
         <select
           value={filtroStatus}
-          onChange={(e) => setFiltroStatus(e.target.value)}
+          onChange={(e) => {
+            setFiltroStatus(e.target.value)
+            setPagina(1)
+          }}
           className="border rounded px-4 py-2 text-sm bg-white shadow-sm"
         >
           <option value="">Todos os Status</option>
@@ -301,7 +312,10 @@ export default function PedidosPage() {
             type="text"
             placeholder="Filtrar por campo"
             value={filtroCampo}
-            onChange={(e) => setFiltroCampo(e.target.value)}
+            onChange={(e) => {
+              setFiltroCampo(e.target.value)
+              setPagina(1)
+            }}
             className="border rounded px-4 py-2 text-sm w-full md:w-60 shadow-sm"
           />
         )}
