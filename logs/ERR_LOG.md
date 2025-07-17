@@ -283,3 +283,4 @@
 ## [2025-08-19] EventForm buscava inscricoes pendentes de todo o campo para lider, exibindo inscricoes de subordinados e bloqueando prosseguimento. Lista agora filtrada para mostrar apenas as inscricoes do usuario logado. - dev - 7b24a941
 ## [2025-07-17] Lista de pedidos nao atualizava paginacao ao aplicar filtros. Paginas recalculadas e pagina atual redefinida. - dev - 04cd8656
 ## [2025-07-17] Pedidos buscavam apenas a primeira pagina; resultado incompleto e paginacao incorreta. Fetch atualizado para usar fetchAllPages e pagina resetada ao alterar filtros globais. - dev - a2bf8fc4
+## [2025-07-17] Inscricoes buscavam paginas manualmente; fetchAllPages adotado e paginacao recalculada ao filtrar. - dev - ac1da4cd

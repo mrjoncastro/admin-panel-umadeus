@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useMemo } from 'react'
+import { fetchAllPages } from '@/lib/utils/fetchAllPages'
 import createPocketBase from '@/lib/pocketbase'
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { Copy } from 'lucide-react'
@@ -51,6 +52,8 @@ type Inscricao = {
   produtoNome?: string
 }
 
+const PER_PAGE = 50
+
 export default function ListaInscricoesPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
   const pb = useMemo(() => createPocketBase(), [])
@@ -64,6 +67,8 @@ export default function ListaInscricoesPage() {
   const [eventoId, setEventoId] = useState('')
   const [filtroStatus, setFiltroStatus] = useState('')
   const [filtroBusca, setFiltroBusca] = useState('')
+  const [pagina, setPagina] = useState(1)
+  const [totalPaginas, setTotalPaginas] = useState(1)
   const [ordenarPor, setOrdenarPor] = useState<'data' | 'alfabetica'>('data')
   const [ordem, setOrdem] = useState<'asc' | 'desc'>('desc')
   const [inscricaoEmEdicao, setInscricaoEmEdicao] = useState<Inscricao | null>(
@@ -115,28 +120,29 @@ export default function ListaInscricoesPage() {
         filter: filtro,
         expand: 'evento,campo,produto,pedido',
         page: '1',
-        perPage: '50',
+        perPage: String(PER_PAGE),
       })
 
       try {
-        const primeiro = await fetch(`/api/inscricoes?${params.toString()}`, {
+        const baseUrl = `/api/inscricoes?${params.toString()}`
+        const primeiro = await fetch(baseUrl, {
           credentials: 'include',
           headers: getAuthHeaders(pb),
         })
         const res: { items: InscricaoRecord[]; totalPages: number } =
           await primeiro.json()
-        // setTotalPaginas(res.totalPages)
+        const rest = await fetchAllPages<{ items: InscricaoRecord[] } | InscricaoRecord>(
+          baseUrl,
+          res.totalPages,
+        )
         let todos = res.items
-
-        for (let p = 2; p <= res.totalPages; p++) {
-          params.set('page', String(p))
-          const r = await fetch(`/api/inscricoes?${params.toString()}`, {
-            credentials: 'include',
-            headers: getAuthHeaders(pb),
-          })
-          const pj: { items: InscricaoRecord[] } = await r.json()
-          todos = todos.concat(pj.items)
-        }
+        todos = todos.concat(
+          rest.flatMap((r) =>
+            Array.isArray((r as { items?: InscricaoRecord[] }).items)
+              ? (r as { items: InscricaoRecord[] }).items
+              : (r as InscricaoRecord),
+          ),
+        )
 
         const lista = todos.map((r) => {
           const produtoExpand = (
@@ -196,6 +202,10 @@ export default function ListaInscricoesPage() {
       `${window.location.origin}/inscricoes/lider/${user.id}/evento/${eventoId}`,
     )
   }, [eventoId, user])
+
+  useEffect(() => {
+    setPagina(1)
+  }, [filtroStatus, filtroBusca])
 
   const copiarLink = async () => {
     try {
@@ -574,6 +584,11 @@ export default function ListaInscricoesPage() {
     return matchStatus && matchBusca
   })
 
+  useEffect(() => {
+    const total = Math.ceil(inscricoesFiltradas.length / PER_PAGE) || 1
+    setTotalPaginas(total)
+  }, [inscricoesFiltradas])
+
   const inscricoesOrdenadas = [...inscricoesFiltradas].sort((a, b) => {
     if (ordenarPor === 'alfabetica') {
       const nomeA = a.nome.toLowerCase()
@@ -922,7 +937,26 @@ export default function ListaInscricoesPage() {
         />
       )}
 
-      {/* Paginação removida */}
+      {/* Paginação */}
+      <div className="flex justify-between items-center mt-6 text-sm">
+        <button
+          disabled={pagina === 1}
+          onClick={() => setPagina((p) => Math.max(1, p - 1))}
+          className="btn btn-secondary disabled:opacity-50"
+        >
+          Anterior
+        </button>
+        <span>
+          Página {pagina} de {totalPaginas}
+        </span>
+        <button
+          disabled={pagina === totalPaginas}
+          onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
+          className="btn btn-secondary disabled:opacity-50"
+        >
+          Próxima
+        </button>
+      </div>
     </main>
   )
 }
