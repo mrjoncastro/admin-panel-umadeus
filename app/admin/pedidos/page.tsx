@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { fetchAllPages } from '@/lib/utils/fetchAllPages'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import type { Pedido, Produto } from '@/types'
 import jsPDF from 'jspdf'
@@ -34,6 +35,10 @@ export default function PedidosPage() {
       : 'Buscar por nome ou email'
 
   useEffect(() => {
+    setPagina(1)
+  }, [buscaGlobal, filtroCampo])
+
+  useEffect(() => {
     if (!authChecked || !user) return
 
     const fetchPedidos = async () => {
@@ -46,7 +51,7 @@ export default function PedidosPage() {
             : `campo = "${user.campo}" && ${baseFiltro}`
 
         const params = new URLSearchParams({
-          page: String(pagina),
+          page: '1',
           perPage: String(PER_PAGE),
           filter: filtro,
           sort: `${ordem === 'desc' ? '-' : ''}created`,
@@ -54,16 +59,32 @@ export default function PedidosPage() {
         if (filtroStatus) {
           params.set('status', filtroStatus)
         }
-        const res = await fetch(`/api/pedidos?${params.toString()}`, {
+
+        const baseUrl = `/api/pedidos?${params.toString()}`
+        const res = await fetch(baseUrl, {
           credentials: 'include',
         })
         const data = await res.json()
-        const rawItems: Pedido[] = Array.isArray(data.items) ? data.items : data
+
+        const rest = await fetchAllPages<{ items?: Pedido[] } | Pedido>(
+          baseUrl,
+          data.totalPages ?? 1,
+        )
+
+        let rawItems: Pedido[] = Array.isArray(data.items) ? data.items : data
+        rawItems = rawItems.concat(
+          rest.flatMap((r) =>
+            Array.isArray((r as { items?: Pedido[] }).items)
+              ? ((r as { items: Pedido[] }).items)
+              : (r as Pedido),
+          ),
+        )
+
         const unique = Array.from(
           new Map(rawItems.map((p) => [p.id, p])).values(),
         )
         setPedidos(unique)
-        if (data.totalPages) setTotalPaginas(data.totalPages)
+        setTotalPaginas(Math.ceil(unique.length / PER_PAGE) || 1)
       } catch (err) {
         console.error('Erro ao carregar pedidos', err)
         showError('Erro ao carregar pedidos')
