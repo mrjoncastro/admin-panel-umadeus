@@ -117,7 +117,7 @@ export default function SaldoPage() {
     const footerRow = rows.length + 3
     XLSX.utils.sheet_add_aoa(
       worksheet,
-      [['Desenvolvido por M24 Tecnologia <m24saude.com.br>']],
+      [['Desenvolvido por M24 Tecnologia']],
       { origin: `B${footerRow}` },
     )
 
@@ -225,7 +225,7 @@ export default function SaldoPage() {
       const pageHeight = doc.internal.pageSize.getHeight()
       doc.setFontSize(10)
       doc.text(
-        'Desenvolvido por M24 Tecnologia <m24saude.com.br>',
+        'Desenvolvido por M24 Tecnologia',
         40,
         pageHeight - 20,
       )

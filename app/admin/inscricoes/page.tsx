@@ -548,7 +548,7 @@ export default function ListaInscricoesPage() {
       const pageHeight = doc.internal.pageSize.getHeight()
       doc.setFontSize(10)
       doc.text(
-        'Desenvolvido por M24 Tecnologia <m24saude.com.br>',
+        'Desenvolvido por M24 Tecnologia',
         MARGINS.left,
         pageHeight - 20,
       )
