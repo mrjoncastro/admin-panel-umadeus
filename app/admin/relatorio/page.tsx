@@ -60,7 +60,7 @@ export default function RelatorioPage() {
         const params = new URLSearchParams({
           page: '1',
           perPage: '50',
-          expand: 'campo,produto,id_inscricao',
+          expand: 'campo,produto,id_inscricao,responsavel',
         })
         const baseUrl = `/api/pedidos?${params.toString()}`
         const res = await fetch(baseUrl, { credentials: 'include', signal })
@@ -279,7 +279,9 @@ export default function RelatorioPage() {
                         (Array.isArray(p.produto)
                           ? p.produto.join(', ')
                           : p.produto ?? ''),
-                    p.expand?.id_inscricao?.nome || '',
+                    p.expand?.id_inscricao?.nome ||
+                      p.expand?.responsavel?.nome ||
+                      '',
                     p.tamanho || '',
                     p.expand?.campo?.nome || '',
                     (p as unknown as { formaPagamento?: string }).formaPagamento ||

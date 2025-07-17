@@ -86,6 +86,10 @@ export type Pedido = {
       telefone?: string
       cpf?: string
     }
+    responsavel?: {
+      id: string
+      nome: string
+    }
     evento?: Evento
     /** Produto associado ao pedido */
     produto?: Produto | Produto[]
