@@ -6,6 +6,12 @@ import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import type { Pedido, Produto } from '@/types'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import {
+  PDF_MARGINS,
+  FONT_SIZE_TITLE,
+  FONT_SIZE_BODY,
+  FONT_SIZE_FOOTER,
+} from '@/lib/report/constants'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import ModalEditarPedido from './componentes/ModalEditarPedido'
 import { useToast } from '@/lib/context/ToastContext'
@@ -214,19 +220,18 @@ export default function PedidosPage() {
       return ordem === 'asc' ? dataA - dataB : dataB - dataA
     })
 
-    const MARGINS = { top: 56.7, bottom: 56.7, left: 56.7, right: 56.7 }
     const doc = new jsPDF({ unit: 'pt', format: 'a4' })
-    doc.setFontSize(16)
+    doc.setFontSize(FONT_SIZE_TITLE)
     doc.setFont('helvetica', 'bold')
     doc.text(
       'Relat\u00F3rio de Pedidos',
       doc.internal.pageSize.getWidth() / 2,
-      MARGINS.top,
+      PDF_MARGINS.top,
       {
         align: 'center',
       },
     )
-    doc.setFontSize(11)
+    doc.setFontSize(FONT_SIZE_BODY)
     doc.setFont('helvetica', 'normal')
 
     const linhas = pedidosOrdenadosPdf.map((p) => [
@@ -243,7 +248,7 @@ export default function PedidosPage() {
     ])
 
     autoTable(doc, {
-      startY: MARGINS.top + 20,
+      startY: PDF_MARGINS.top + 20,
       head: [
         [
           'Produto',
@@ -260,7 +265,7 @@ export default function PedidosPage() {
       theme: 'striped',
       headStyles: { fillColor: [217, 217, 217], halign: 'center' },
       styles: { fontSize: 8 },
-      margin: MARGINS,
+      margin: PDF_MARGINS,
     })
 
     const dataHora = new Date().toLocaleString('pt-BR', {
@@ -270,10 +275,10 @@ export default function PedidosPage() {
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i)
       const pageHeight = doc.internal.pageSize.getHeight()
-      doc.setFontSize(10)
+      doc.setFontSize(FONT_SIZE_FOOTER)
       doc.text(
         'Desenvolvido por M24 Tecnologia <m24saude.com.br>',
-        MARGINS.left,
+        PDF_MARGINS.left,
         pageHeight - 20,
       )
       doc.text(
@@ -284,7 +289,7 @@ export default function PedidosPage() {
       )
       doc.text(
         dataHora,
-        doc.internal.pageSize.getWidth() - MARGINS.right,
+        doc.internal.pageSize.getWidth() - PDF_MARGINS.right,
         pageHeight - 20,
         { align: 'right' },
       )

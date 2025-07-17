@@ -1,5 +1,11 @@
 import jsPDF from 'jspdf'
 import template from './templateRelatorio.md'
+import {
+  PDF_MARGINS,
+  FONT_SIZE_TITLE,
+  FONT_SIZE_BODY,
+  FONT_SIZE_FOOTER,
+} from './constants'
 
 export async function generateRelatorioPdf() {
   return new Promise<void>((resolve, reject) => {
@@ -8,7 +14,7 @@ export async function generateRelatorioPdf() {
     }, 5000)
 
     try {
-      const margin = { top: 56.7, bottom: 56.7, left: 56.7, right: 56.7 }
+      const margin = PDF_MARGINS
       const doc = new jsPDF({ unit: 'pt', format: 'a4' })
       const pageWidth = doc.internal.pageSize.getWidth()
       const contentWidth = pageWidth - margin.left - margin.right
@@ -16,11 +22,11 @@ export async function generateRelatorioPdf() {
       const title = lines[0].replace(/^#\s*/, '')
       const body = lines.slice(1)
 
-      doc.setFontSize(16)
+      doc.setFontSize(FONT_SIZE_TITLE)
       doc.setFont('helvetica', 'bold')
       doc.text(title, pageWidth / 2, margin.top, { align: 'center' })
 
-      doc.setFontSize(12)
+      doc.setFontSize(FONT_SIZE_BODY)
       doc.setFont('helvetica', 'normal')
 
       let y = margin.top + 30
@@ -38,7 +44,7 @@ export async function generateRelatorioPdf() {
       for (let i = 1; i <= pages; i++) {
         doc.setPage(i)
         const pageHeight = doc.internal.pageSize.getHeight()
-        doc.setFontSize(10)
+        doc.setFontSize(FONT_SIZE_FOOTER)
 
         const date = new Date().toLocaleString('pt-BR', {
           timeZone: 'America/Sao_Paulo',

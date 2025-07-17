@@ -7,6 +7,12 @@ import { getAuthHeaders } from '@/lib/authHeaders'
 import { Copy } from 'lucide-react'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import {
+  PDF_MARGINS,
+  FONT_SIZE_TITLE,
+  FONT_SIZE_BODY,
+  FONT_SIZE_FOOTER,
+} from '@/lib/report/constants'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import ModalEditarInscricao from './componentes/ModalEdit'
 import ModalVisualizarPedido from './componentes/ModalVisualizarPedido'
@@ -505,19 +511,18 @@ export default function ListaInscricoesPage() {
     useState<Inscricao | null>(null)
 
   const exportarPDF = () => {
-    const MARGINS = { top: 56.7, bottom: 56.7, left: 56.7, right: 56.7 }
     const doc = new jsPDF({ unit: 'pt', format: 'a4' })
-    doc.setFontSize(16)
+    doc.setFontSize(FONT_SIZE_TITLE)
     doc.setFont('helvetica', 'bold')
     doc.text(
       'Relat\u00F3rio de Inscri\u00E7\u00F5es',
       doc.internal.pageSize.getWidth() / 2,
-      MARGINS.top,
+      PDF_MARGINS.top,
       {
         align: 'center',
       },
     )
-    doc.setFontSize(11)
+    doc.setFontSize(FONT_SIZE_BODY)
     doc.setFont('helvetica', 'normal')
 
     const linhas = inscricoes.map((i) => [
@@ -530,13 +535,13 @@ export default function ListaInscricoesPage() {
     ])
 
     autoTable(doc, {
-      startY: MARGINS.top + 20,
+      startY: PDF_MARGINS.top + 20,
       head: [['Nome', 'Telefone', 'Evento', 'Status', 'Campo', 'Criado em']],
       body: linhas,
       theme: 'striped',
       headStyles: { fillColor: [217, 217, 217], halign: 'center' },
       styles: { fontSize: 8 },
-      margin: MARGINS,
+      margin: PDF_MARGINS,
     })
 
     const dataHora = new Date().toLocaleString('pt-BR', {
@@ -546,10 +551,10 @@ export default function ListaInscricoesPage() {
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i)
       const pageHeight = doc.internal.pageSize.getHeight()
-      doc.setFontSize(10)
+      doc.setFontSize(FONT_SIZE_FOOTER)
       doc.text(
         'Desenvolvido por M24 Tecnologia <m24saude.com.br>',
-        MARGINS.left,
+        PDF_MARGINS.left,
         pageHeight - 20,
       )
       doc.text(
@@ -560,7 +565,7 @@ export default function ListaInscricoesPage() {
       )
       doc.text(
         dataHora,
-        doc.internal.pageSize.getWidth() - MARGINS.right,
+        doc.internal.pageSize.getWidth() - PDF_MARGINS.right,
         pageHeight - 20,
         { align: 'right' },
       )

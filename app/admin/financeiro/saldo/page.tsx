@@ -8,6 +8,12 @@ import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import * as XLSX from 'xlsx'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import {
+  PDF_MARGINS,
+  FONT_SIZE_TITLE,
+  FONT_SIZE_BODY,
+  FONT_SIZE_FOOTER,
+} from '@/lib/report/constants'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import { DateRangePicker } from '@/components/molecules'
 import { useTenant } from '@/lib/context/TenantContext'
@@ -171,20 +177,20 @@ export default function SaldoPage() {
     }
 
     if (imgData) {
-      doc.addImage(imgData, 'PNG', 40, 40, 60, 30)
+      doc.addImage(imgData, 'PNG', PDF_MARGINS.left, PDF_MARGINS.top - 16, 60, 30)
     }
 
-    doc.setFontSize(16)
+    doc.setFontSize(FONT_SIZE_TITLE)
     doc.setFont('helvetica', 'bold')
     doc.text(
       'Extrato de Movimentações',
       doc.internal.pageSize.getWidth() / 2,
-      60,
+      PDF_MARGINS.top,
       {
         align: 'center',
       },
     )
-    doc.setFontSize(11)
+    doc.setFontSize(FONT_SIZE_BODY)
     doc.setFont('helvetica', 'normal')
 
     const startText = range.start
@@ -194,7 +200,7 @@ export default function SaldoPage() {
       ? new Date(range.end).toLocaleDateString('pt-BR')
       : ''
     const period = `Período: ${startText} – ${endText}`
-    doc.text(period, doc.internal.pageSize.getWidth() - 40, 80, {
+    doc.text(period, doc.internal.pageSize.getWidth() - PDF_MARGINS.right, PDF_MARGINS.top + 20, {
       align: 'right',
     })
 
@@ -205,7 +211,7 @@ export default function SaldoPage() {
     ])
 
     autoTable(doc, {
-      startY: 100,
+      startY: PDF_MARGINS.top + 40,
       head: [['Data', 'Descrição', 'Valor (R$)']],
       body: rows,
       theme: 'striped',
@@ -216,22 +222,22 @@ export default function SaldoPage() {
         1: { cellWidth: 340 },
         2: { cellWidth: 80, halign: 'right' },
       },
-      margin: { left: 40, right: 40 },
+      margin: { left: PDF_MARGINS.left, right: PDF_MARGINS.right },
     })
 
     const pageCount = doc.getNumberOfPages()
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i)
       const pageHeight = doc.internal.pageSize.getHeight()
-      doc.setFontSize(10)
+      doc.setFontSize(FONT_SIZE_FOOTER)
       doc.text(
         'Desenvolvido por M24 Tecnologia <m24saude.com.br>',
-        40,
+        PDF_MARGINS.left,
         pageHeight - 20,
       )
       doc.text(
         `Página ${i} de ${pageCount}`,
-        doc.internal.pageSize.getWidth() - 40,
+        doc.internal.pageSize.getWidth() - PDF_MARGINS.right,
         pageHeight - 20,
         { align: 'right' },
       )
