@@ -105,7 +105,7 @@ Crie um arquivo `.env.local` na raiz e defina as seguintes variáveis:
 - `ASAAS_API_URL` - URL base da API do Asaas (ex.: `https://api-sandbox.asaas.com/api/v3/`)
 - `NEXT_PUBLIC_BRASILAPI_URL` - base para chamadas à BrasilAPI
 - `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` e `SMTP_FROM` - credenciais SMTP padrão para envio de e-mails (definidas em `clientes_config`; para `SMTP_USER` e `SMTP_PASS` solicite acesso ao administrador do PocketBase)
-- `NEXT_PUBLIC_LOGROCKET_ID` - ID do projeto LogRocket (opcional; exemplo `4pjmeb/m24`)
+- `SENTRY_DSN` - DSN do Sentry (opcional)
 
 Os servidores identificam automaticamente o tenant **priorizando o domínio** de cada requisição por meio da função `getTenantFromHost`, que consulta a coleção `clientes_config` para descobrir o ID do cliente.
 
@@ -366,9 +366,9 @@ Os arquivos dentro do diretório `logs/` guardam o histórico do projeto.
 - `logs/DOC_LOG.md` registra alterações de documentação e processos.
 - `logs/ERR_LOG.md` armazena erros ocorridos e como foram corrigidos.
 
-Em ambientes serverless (como a hospedagem na Vercel) o log de erros é gravado em `/tmp/ERR_LOG.md` ou encaminhado para o LogRocket (`4pjmeb/m24`), pois o diretório do projeto é efêmero. Para inspecionar, baixe esse arquivo ou consulte o painel do LogRocket.
+Em ambientes serverless (como a hospedagem na Vercel) o log de erros é gravado em `/tmp/ERR_LOG.md` ou enviado ao Sentry, pois o diretório do projeto é efêmero. Para inspecionar, baixe esse arquivo ou consulte o painel do Sentry.
 
-Além dos erros, o LogRocket registra eventos importantes como criação de usuários, inscrições confirmadas e pedidos gerados, facilitando a auditoria.
+Além dos erros, o Sentry registra eventos importantes como criação de usuários, inscrições confirmadas e pedidos gerados, facilitando a auditoria.
 
 Para adicionar uma nova entrada manualmente, abra o arquivo correspondente e inclua uma linha no formato:
 

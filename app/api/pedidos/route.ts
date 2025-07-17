@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getUserFromHeaders } from '@/lib/getUserFromHeaders'
 import { requireRole } from '@/lib/apiAuth'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
-import { logConciliacaoErro, logRocketEvent } from '@/lib/server/logger'
+import { logConciliacaoErro, logSentryEvent } from '@/lib/server/logger'
 import type { Inscricao, Pedido, Produto } from '@/types'
 import colorName from 'color-namer'
 
@@ -254,7 +254,7 @@ export async function POST(req: NextRequest) {
       try {
         const pedido = await pb.collection('pedidos').create<Pedido>(payload)
         console.log('[PEDIDOS][POST] Pedido criado:', pedido)
-        logRocketEvent('pedido_criado', {
+        logSentryEvent('pedido_criado', {
           pedidoId: pedido.id,
           responsavel: userId,
         })
@@ -381,7 +381,7 @@ export async function POST(req: NextRequest) {
     try {
       const pedido = await pb.collection('pedidos').create<Pedido>(payload)
       console.log('[PEDIDOS][POST] Pedido criado:', pedido)
-      logRocketEvent('pedido_criado', {
+      logSentryEvent('pedido_criado', {
         pedidoId: pedido.id,
         responsavel: responsavelId,
       })

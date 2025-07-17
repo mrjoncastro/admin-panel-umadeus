@@ -5,7 +5,7 @@ import createPocketBaseMock from '../mocks/pocketbase'
 
 vi.mock('../../lib/server/logger', () => ({
   logConciliacaoErro: vi.fn(),
-  logRocketEvent: vi.fn(),
+  logSentryEvent: vi.fn(),
 }))
 
 const pb = createPocketBaseMock()

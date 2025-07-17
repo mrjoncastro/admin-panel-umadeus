@@ -3,7 +3,7 @@ import { requireRole } from '@/lib/apiAuth'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import type { Inscricao } from '@/types'
 import type { RecordModel } from 'pocketbase'
-import { logConciliacaoErro, logRocketEvent } from '@/lib/server/logger'
+import { logConciliacaoErro, logSentryEvent } from '@/lib/server/logger'
 import { pbRetry } from '@/lib/pbRetry'
 
 async function checkAccess(
@@ -86,7 +86,7 @@ export async function PATCH(req: NextRequest) {
     const updated = await pbRetry(() =>
       pb.collection('inscricoes').update(id, payload),
     )
-    logRocketEvent('inscricao_atualizada', {
+    logSentryEvent('inscricao_atualizada', {
       inscricaoId: id,
       status: updated.status,
     })
@@ -118,7 +118,7 @@ export async function DELETE(req: NextRequest) {
       )
     }
     await pb.collection('inscricoes').delete(id)
-    logRocketEvent('inscricao_cancelada', { inscricaoId: id })
+    logSentryEvent('inscricao_cancelada', { inscricaoId: id })
     return NextResponse.json({ ok: true })
   } catch (err) {
     console.error('Erro ao excluir inscricao:', err)
