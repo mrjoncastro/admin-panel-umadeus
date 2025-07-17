@@ -99,11 +99,19 @@ export async function generateDashboardPdf(
         const pageHeight = doc.internal.pageSize.getHeight()
         doc.setFontSize(10)
         doc.text(footer, 40, pageHeight - 20)
+
+        const date = new Date().toLocaleString('pt-BR', {
+          timeZone: 'America/Sao_Paulo',
+        })
+        doc.text(date, doc.internal.pageSize.getWidth() - 40, pageHeight - 20, {
+          align: 'right',
+        })
+
         doc.text(
           `Página ${i} de ${pageCount}`,
-          doc.internal.pageSize.getWidth() - 40,
+          doc.internal.pageSize.getWidth() / 2,
           pageHeight - 20,
-          { align: 'right' },
+          { align: 'center' },
         )
       }
 

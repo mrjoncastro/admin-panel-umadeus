@@ -79,12 +79,21 @@ export async function generateAnalisePdf(
       const pageCount = doc.getNumberOfPages()
       for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i)
+        const pageHeight = doc.internal.pageSize.getHeight()
         doc.setFontSize(10)
+
+        const date = new Date().toLocaleString('pt-BR', {
+          timeZone: 'America/Sao_Paulo',
+        })
+        doc.text(date, doc.internal.pageSize.getWidth() - 40, pageHeight - 20, {
+          align: 'right',
+        })
+
         doc.text(
           `Página ${i} de ${pageCount}`,
-          doc.internal.pageSize.getWidth() - 40,
-          doc.internal.pageSize.getHeight() - 20,
-          { align: 'right' },
+          doc.internal.pageSize.getWidth() / 2,
+          pageHeight - 20,
+          { align: 'center' },
         )
       }
 
