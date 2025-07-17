@@ -1,0 +1,93 @@
+# Padrão de Relatórios para Liderança
+
+Guia compacto para criação de relatórios em PDF estático (A4), voltado exclusivamente para líderes. Foco em indicadores estratégicos, confidencialidade e formato enxuto.
+
+---
+
+## 1. Estrutura de Páginas
+
+| Página | Seção               | Conteúdo                                                  |
+|--------|---------------------|-----------------------------------------------------------|
+| 1      | Capa                | Título (24 pt, bold), período, data e horário de emissão (BRT), logotipo opcional |
+| 2      | Sumário             | Índice das seções com numeração e links internos          |
+| 3      | Visão Estratégica   | Cards de KPI e insights-chave                             |
+| 4      | Panorama Regional   | Gráfico de barras horizontais + mini-tabela de totais     |
+| 5      | Participação        | Gráfico de donuts com texturas + valores percentuais      |
+| 6      | Anexos              | Tabelas usadas
+
+---
+
+## 2. Capa e Rodapé
+
+- **Capa**:
+  - Título: "Relatório Executivo – [Nome do Evento]"
+  - Período de análise: ex. 01/07/2025–15/07/2025
+  - Emissão: DD/MM/YYYY HH:MM BRT
+- **Rodapé** (todas as páginas):
+  - Centro: "Página X de Y"
+  - Direita: "Desenvolvido por M24"
+
+---
+
+## 3. Tipografia e Estilo
+
+- **Família**: Sans-serif ( Open Sans, Montserrat)
+- **Tamanhos**:
+  - Título: 24 pt Bold
+  - Seções (H2): 18 pt Semi-bold
+  - Corpo/legenda: 10–11 pt Regular
+  - Notas: 8 pt Italic
+- **Cor**: Preto puro (#000)
+- **Espaçamento**:
+  - Entre blocos: 12 pt
+  - Entre parágrafo e títulos: 6 pt
+
+---
+
+## 4. Visão Estratégica (Página 3)
+
+- **Formato de Cards**:
+  - 3 a 4 KPIs principais (Total Geral, Meta vs Realizado, Crescimento Mês a Mês, Top 3 Regiões)
+  - Caixa com borda dupla, título no topo, valor centralizado (H2)
+
+- **Exemplo de KPIs**:
+  1. **Total de Vendas**: R$ 450.000
+  2. **Variação M/M**: +12%
+  3. **Meta Atingida**: 95%
+  4. **Top 3 Regiões**: A, B, C
+
+---
+
+## 5. Panorama Geral (Página 4)
+
+- **Gráfico de Barras Horizontais**:
+  - Texturas hachuradas para cada região
+  - Eixo X com valores absolutos
+- **Mini-Tabela de Totais** abaixo do gráfico:
+  | Produto | Quantidade | Total (R$) |
+  |--------|-----------:| -----------:|
+  | A      | 1.000    | 200.000,00   |
+  | B      | 2.000    | 150.000,00    |
+  | C      | 3.000    | 100.000,00    |
+
+---
+
+## 6. Participação (Página 5)
+
+- **Gráfico de Donut**:
+  - 3–5 fatias com texturas diferenciadas
+  - Call-outs externos indicando %
+- **Legenda Simplificada** ao lado:
+  - Regiões ou produtos com símbolos de textura
+
+---
+
+## 7. Confidencialidade e Acesso
+
+- **Isolamento de Dados**: nenhum detalhe operacional ou individual
+- **Controle de Acesso**:
+  - Nota de validade de acesso no rodapé
+
+---
+
+_End of Leader Guide._

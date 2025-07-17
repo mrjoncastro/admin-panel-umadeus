@@ -1,0 +1,129 @@
+# Guia de Padronização de Relatórios
+
+Este documento define as diretrizes para criação de relatórios em PDF estático (A4) em preto e branco, com foco em totais agregados e comparativos por região. Inclui estrutura, tipografia, gráficos, tabelas e microcopy.
+
+---
+
+## 1. Estrutura Geral
+
+- **Formato**: PDF estático, papel A4 (210×297 mm).
+- **Margens**: 20 mm em todos os lados.
+- **Grid**: 12 colunas com gutter de 5 mm.
+- **Paginação e Emissão**: Numeração no rodapé (centralizado, 9 pt); emissão com data e horário (horário de Brasília, UTC-3) alinhada à direita no rodapé (9 pt).
+
+---
+
+## 2. Sumário e Capa
+
+- **Página 1 - Capa**:
+  - Título do relatório (24 pt, bold).
+  - Logotipo (opcional, ao topo).
+  - Período coberto (11 pt, regular).
+  - Data de emissão e horário (horário de Brasília, UTC-3) (11 pt, regular).
+- **Página 2 - Sumário**:
+  - Índice das seções com numeração de página.
+  - Links internos (bookmarks do PDF).
+
+---
+
+## 3. Tipografia
+
+| Elemento              | Família          | Tamanho (pt) | Peso         |
+|-----------------------|------------------|--------------|--------------|
+| Título Principal      | Sans-serif       | 24           | Bold         |
+| Títulos de Seção (H2) | Sans-serif       | 18           | Semi-bold    |
+| Subtítulos (H3)       | Sans-serif       | 14           | Regular      |
+| Corpo de Texto        | Sans-serif       | 10-11        | Regular      |
+| Legendas / Notas      | Sans-serif       | 8-9          | Italic       |
+
+- **Cor**: Preto puro (#000000) em fundo branco.
+- **Espaçamento**:
+  - Entre parágrafos: 6 pt.
+  - Antes e depois de títulos: 12-18 pt.
+
+---
+
+## 4. Gráficos em Preto e Branco
+
+### 4.1 Gráfico de Barras Horizontais
+
+- **Uso**: Comparativo de totais por região.
+- **Texturas**: Hachuras (linhas diagonais, pontos, listras verticais) para cada região.
+- **Eixos**: Eixo X na base; rótulos externos.
+- **Legenda**: À direita, com amostra da textura e nome da região.
+
+### 4.2 Gráfico de Donut
+
+- **Uso**: Participação percentual de produtos.
+- **Texturas**: Zig-zag, pontos, listras.
+- **Rótulos**: Chamadas externas (call-outs) para evitar sobreposição.
+
+---
+
+## 5. Tabelas
+
+- **Zebra-Striping**: Fundo cinza-claro (#F2F2F2) em linhas pares.
+- **Alinhamento**:
+  - Texto: esquerda.
+  - Números: direita.
+- **Cabeçalhos**:
+  - Negrito, 11 pt, fundo branco.
+  - Repetir em cada página de tabela.
+- **Notas de Rodapé**: Tamanho 8 pt, explica siglas ou fontes de dados.
+
+**Exemplo de Tabela**:
+
+| Campo    | Produto  | Total (R$) | % sobre Total |
+|----------|----------|-----------:|--------------:|
+| Região A | Kit      |   150.000  |           30% |
+| Região B | Pulseira |   120.000  |           24% |
+
+---
+
+## 6. Layout por Página
+
+| Página | Seção                     | Conteúdo                                                       |
+|--------|---------------------------|----------------------------------------------------------------|
+| 1      | Capa                      | Título, logotipo, período, data e horário de emissão           |
+| 2      | Sumário                   | Índice com links internos                                      |
+| 3      | Visão Geral               | Cards de KPI (Total geral, Média diária, Crescimento)          |
+| 4      | Comparativo por Região    | Gráfico de barras + tabela de dados brutos                     |
+| 5–n    | Detalhamento de Dados     | Tabelas detalhadas por campo/produto                           |
+| n+1    | Anexos e Metodologia      | Fontes de dados, data e horário de extração, responsáveis      |
+
+---
+
+## 7. Microcopy e Legendas
+
+- **Títulos de Seção**: Verbos de ação (“Desempenho Geral”, “Comparativo Regional”).
+- **Legendas de Gráficos**: Diretas (“Vendas por Região (R$)”).
+- **Observações**: Itálico para comentários (“*Dados extraídos em 15/07/2025*”).
+
+---
+
+## 8. Anexos e Metodologia
+
+- Descrição dos cálculos.
+- Data e horário de extração (horário de Brasília, UTC-3).
+- Responsáveis pela análise.
+
+---
+
+## 9. Relatórios Restritos à Liderança
+
+- **Granularidade**: para relatórios de liderança, inclua apenas indicadores agregados e KPIs estratégicos, sem detalhes operacionais ou dados sensíveis de outros usuários.
+- **Isolamento de Dados**: garanta que métricas específicas de cada unidade/região ou colaborador não sejam expostas no relatório do líder; crie seções dedicadas com acesso controlado.
+- **Exemplos de Dados Restritos**:
+  - Desempenho individual de gestores de campo.
+  - Comentários confidenciais de performance.
+  - Alertas de desvios críticos para ação imediata.
+- **Formato**:
+  - Seção exclusiva denominada “Visão Estratégica”.
+  - Cards de KPI em destaque (margem superior) com borda dupla.
+  - Gráficos resumidos (donuts e barras simples).
+- **Controle de Acesso**:
+  - Nome do líder e validade de acesso no rodapé (ex.: “Exclusivo para Líder: Maria Silva – até 31/12/2025”).
+
+---
+
+_End of Guide._
