@@ -1,5 +1,10 @@
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import {
+  PDF_MARGINS,
+  FONT_SIZE_TITLE,
+  FONT_SIZE_FOOTER,
+} from './constants'
 
 export async function generateAnalisePdf(
   title: string,
@@ -15,11 +20,11 @@ export async function generateAnalisePdf(
     }, 5000)
 
     try {
-      const margin = { top: 56.7, bottom: 56.7, left: 56.7, right: 56.7 }
+      const margin = PDF_MARGINS
       const doc = new jsPDF({ unit: 'pt', format: 'a4' })
       const pageWidth = doc.internal.pageSize.getWidth()
       const contentWidth = pageWidth - margin.left - margin.right
-      doc.setFontSize(16)
+      doc.setFontSize(FONT_SIZE_TITLE)
       doc.setFont('helvetica', 'bold')
       doc.text(title, pageWidth / 2, margin.top, {
         align: 'center',
@@ -83,7 +88,7 @@ export async function generateAnalisePdf(
       for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i)
         const pageHeight = doc.internal.pageSize.getHeight()
-        doc.setFontSize(10)
+        doc.setFontSize(FONT_SIZE_FOOTER)
 
         const date = new Date().toLocaleString('pt-BR', {
           timeZone: 'America/Sao_Paulo',

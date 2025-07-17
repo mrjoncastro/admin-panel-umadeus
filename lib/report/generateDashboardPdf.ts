@@ -1,5 +1,11 @@
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import {
+  PDF_MARGINS,
+  FONT_SIZE_TITLE,
+  FONT_SIZE_BODY,
+  FONT_SIZE_FOOTER,
+} from './constants'
 import template from './template.md'
 
 async function toGrayscale(src: string): Promise<string> {
@@ -65,7 +71,7 @@ export async function generateDashboardPdf(
     }, 10_000)
 
     try {
-      const margin = { top: 56.7, bottom: 56.7, left: 56.7, right: 56.7 }
+      const margin = PDF_MARGINS
       const doc = new jsPDF({ unit: 'pt', format: 'a4' })
       const pageWidth = doc.internal.pageSize.getWidth()
       const contentWidth = pageWidth - margin.left - margin.right
@@ -75,10 +81,10 @@ export async function generateDashboardPdf(
       const periodLine = content[1].replace('{{period}}', formatPeriod(periodo))
       const footer = content[2]
 
-      doc.setFontSize(16)
+      doc.setFontSize(FONT_SIZE_TITLE)
       doc.setFont('helvetica', 'bold')
       doc.text(title, pageWidth / 2, margin.top, { align: 'center' })
-      doc.setFontSize(11)
+      doc.setFontSize(FONT_SIZE_BODY)
       doc.setFont('helvetica', 'normal')
       doc.text(periodLine, pageWidth - margin.right, margin.top + 20, { align: 'right' })
 
@@ -130,7 +136,7 @@ export async function generateDashboardPdf(
       for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i)
         const pageHeight = doc.internal.pageSize.getHeight()
-        doc.setFontSize(10)
+        doc.setFontSize(FONT_SIZE_FOOTER)
         doc.text(footer, margin.left, pageHeight - 20)
 
         const date = new Date().toLocaleString('pt-BR', {
