@@ -15,16 +15,19 @@ export async function generateAnalisePdf(
     }, 5000)
 
     try {
+      const margin = { top: 56.7, bottom: 56.7, left: 56.7, right: 56.7 }
       const doc = new jsPDF({ unit: 'pt', format: 'a4' })
+      const pageWidth = doc.internal.pageSize.getWidth()
+      const contentWidth = pageWidth - margin.left - margin.right
       doc.setFontSize(16)
       doc.setFont('helvetica', 'bold')
-      doc.text(title, doc.internal.pageSize.getWidth() / 2, 40, {
+      doc.text(title, pageWidth / 2, margin.top, {
         align: 'center',
       })
 
-      let y = 60
+      let y = margin.top + 20
       if (chart) {
-        doc.addImage(chart, 'PNG', 40, y, 520, 220)
+        doc.addImage(chart, 'PNG', margin.left, y, contentWidth, 220)
         y += 240
       }
 
@@ -35,7 +38,7 @@ export async function generateAnalisePdf(
         theme: 'striped',
         headStyles: { fillColor: [217, 217, 217], halign: 'center' },
         styles: { fontSize: 10 },
-        margin: { left: 40, right: 40 },
+        margin,
       })
 
       if (totals && Object.keys(totals).length > 0) {
@@ -50,14 +53,14 @@ export async function generateAnalisePdf(
           theme: 'striped',
           headStyles: { fillColor: [217, 217, 217], halign: 'center' },
           styles: { fontSize: 10 },
-          margin: { left: 40, right: 40 },
+          margin,
         })
       }
 
       if (details && details.length > 0) {
         doc.addPage()
         autoTable(doc, {
-          startY: 40,
+          startY: margin.top,
           head: [
             [
               'Produto',
@@ -72,7 +75,7 @@ export async function generateAnalisePdf(
           theme: 'striped',
           headStyles: { fillColor: [217, 217, 217], halign: 'center' },
           styles: { fontSize: 8 },
-          margin: { left: 20, right: 20 },
+          margin,
         })
       }
 
@@ -85,13 +88,13 @@ export async function generateAnalisePdf(
         const date = new Date().toLocaleString('pt-BR', {
           timeZone: 'America/Sao_Paulo',
         })
-        doc.text(date, doc.internal.pageSize.getWidth() - 40, pageHeight - 20, {
+        doc.text(date, pageWidth - margin.right, pageHeight - 20, {
           align: 'right',
         })
 
         doc.text(
           `Página ${i} de ${pageCount}`,
-          doc.internal.pageSize.getWidth() / 2,
+          pageWidth / 2,
           pageHeight - 20,
           { align: 'center' },
         )

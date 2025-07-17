@@ -8,26 +8,29 @@ export async function generateRelatorioPdf() {
     }, 5000)
 
     try {
+      const margin = { top: 56.7, bottom: 56.7, left: 56.7, right: 56.7 }
       const doc = new jsPDF({ unit: 'pt', format: 'a4' })
+      const pageWidth = doc.internal.pageSize.getWidth()
+      const contentWidth = pageWidth - margin.left - margin.right
       const lines = template.split('\n')
       const title = lines[0].replace(/^#\s*/, '')
       const body = lines.slice(1)
 
       doc.setFontSize(16)
       doc.setFont('helvetica', 'bold')
-      doc.text(title, doc.internal.pageSize.getWidth() / 2, 40, { align: 'center' })
+      doc.text(title, pageWidth / 2, margin.top, { align: 'center' })
 
       doc.setFontSize(12)
       doc.setFont('helvetica', 'normal')
 
-      let y = 70
+      let y = margin.top + 30
       body.forEach((line) => {
         if (!line.trim()) {
           y += 12
           return
         }
-        const splitted = doc.splitTextToSize(line, doc.internal.pageSize.getWidth() - 80)
-        doc.text(splitted, 40, y)
+        const splitted = doc.splitTextToSize(line, contentWidth)
+        doc.text(splitted, margin.left, y)
         y += splitted.length * 12 + 8
       })
 
@@ -40,13 +43,13 @@ export async function generateRelatorioPdf() {
         const date = new Date().toLocaleString('pt-BR', {
           timeZone: 'America/Sao_Paulo',
         })
-        doc.text(date, doc.internal.pageSize.getWidth() - 40, pageHeight - 20, {
+        doc.text(date, pageWidth - margin.right, pageHeight - 20, {
           align: 'right',
         })
 
         doc.text(
           `Página ${i} de ${pages}`,
-          doc.internal.pageSize.getWidth() / 2,
+          pageWidth / 2,
           pageHeight - 20,
           { align: 'center' },
         )
