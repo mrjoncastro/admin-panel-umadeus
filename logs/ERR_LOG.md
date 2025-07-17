@@ -281,3 +281,4 @@
 ## [2025-07-15] Erro ao gerar link de pagamento Asaas: TypeError: cobrancaResponse.clone is not a function - test
 ## [2025-08-18] ConsultaInscricao sobrescrevia CPF/email do lider ao logar, exibindo inscricao errada e redirecionando para home. Efeito ajustado para manter valores digitados. - dev - 3155a7a1
 ## [2025-08-19] EventForm buscava inscricoes pendentes de todo o campo para lider, exibindo inscricoes de subordinados e bloqueando prosseguimento. Lista agora filtrada para mostrar apenas as inscricoes do usuario logado. - dev - 7b24a941
+## [2025-07-17] Lista de pedidos nao atualizava paginacao ao aplicar filtros. Paginas recalculadas e pagina atual redefinida. - dev - 04cd8656
