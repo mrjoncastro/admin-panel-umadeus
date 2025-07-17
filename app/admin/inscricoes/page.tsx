@@ -495,13 +495,14 @@ export default function ListaInscricoesPage() {
     useState<Inscricao | null>(null)
 
   const exportarPDF = () => {
+    const MARGINS = { top: 56.7, bottom: 56.7, left: 56.7, right: 56.7 }
     const doc = new jsPDF({ unit: 'pt', format: 'a4' })
     doc.setFontSize(16)
     doc.setFont('helvetica', 'bold')
     doc.text(
       'Relat\u00F3rio de Inscri\u00E7\u00F5es',
       doc.internal.pageSize.getWidth() / 2,
-      40,
+      MARGINS.top,
       {
         align: 'center',
       },
@@ -519,15 +520,18 @@ export default function ListaInscricoesPage() {
     ])
 
     autoTable(doc, {
-      startY: 60,
+      startY: MARGINS.top + 20,
       head: [['Nome', 'Telefone', 'Evento', 'Status', 'Campo', 'Criado em']],
       body: linhas,
       theme: 'striped',
       headStyles: { fillColor: [217, 217, 217], halign: 'center' },
       styles: { fontSize: 8 },
-      margin: { left: 20, right: 20 },
+      margin: MARGINS,
     })
 
+    const dataHora = new Date().toLocaleString('pt-BR', {
+      timeZone: 'America/Sao_Paulo',
+    })
     const pageCount = doc.getNumberOfPages()
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i)
@@ -535,12 +539,18 @@ export default function ListaInscricoesPage() {
       doc.setFontSize(10)
       doc.text(
         'Desenvolvido por M24 Tecnologia <m24saude.com.br>',
-        40,
+        MARGINS.left,
         pageHeight - 20,
       )
       doc.text(
         `P\u00E1gina ${i} de ${pageCount}`,
-        doc.internal.pageSize.getWidth() - 40,
+        doc.internal.pageSize.getWidth() / 2,
+        pageHeight - 20,
+        { align: 'center' },
+      )
+      doc.text(
+        dataHora,
+        doc.internal.pageSize.getWidth() - MARGINS.right,
         pageHeight - 20,
         { align: 'right' },
       )
