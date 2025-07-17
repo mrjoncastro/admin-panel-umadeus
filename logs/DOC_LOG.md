@@ -606,3 +606,4 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 ## [2025-07-17] Adicionado sentry.client.config.ts para coletar Feedback do Usuario via Sentry. Lint e build executados.
 ## [2025-07-17] Integrada Sentry Replay com mascaramento de texto e bloqueio de mídia. Lint e build executados.
 ## [2025-07-17] Gráficos exportados em tons de cinza com padrões de hachura. Lint e build executados.
+## [2025-07-17] Margens dos PDFs normalizadas para 20mm. Lint e build executados.

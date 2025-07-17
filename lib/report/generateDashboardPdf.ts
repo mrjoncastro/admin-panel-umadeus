@@ -65,7 +65,10 @@ export async function generateDashboardPdf(
     }, 10_000)
 
     try {
+      const margin = { top: 56.7, bottom: 56.7, left: 56.7, right: 56.7 }
       const doc = new jsPDF({ unit: 'pt', format: 'a4' })
+      const pageWidth = doc.internal.pageSize.getWidth()
+      const contentWidth = pageWidth - margin.left - margin.right
 
       const content = template.split('\n').filter(Boolean)
       const title = content[0].replace(/^#\s*/, '')
@@ -74,10 +77,10 @@ export async function generateDashboardPdf(
 
       doc.setFontSize(16)
       doc.setFont('helvetica', 'bold')
-      doc.text(title, doc.internal.pageSize.getWidth() / 2, 40, { align: 'center' })
+      doc.text(title, pageWidth / 2, margin.top, { align: 'center' })
       doc.setFontSize(11)
       doc.setFont('helvetica', 'normal')
-      doc.text(periodLine, doc.internal.pageSize.getWidth() - 40, 60, { align: 'right' })
+      doc.text(periodLine, pageWidth - margin.right, margin.top + 20, { align: 'right' })
 
       const rows = metrics.labels.map((d, idx) => [
         d,
@@ -86,40 +89,40 @@ export async function generateDashboardPdf(
       ])
 
       autoTable(doc, {
-        startY: 80,
+        startY: margin.top + 40,
         head: [['Data', 'Inscrições', 'Pedidos']],
         body: rows,
         theme: 'striped',
         headStyles: { fillColor: [217, 217, 217], halign: 'center' },
         styles: { fontSize: 10 },
         columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } },
-        margin: { left: 40, right: 40 },
+        margin,
       })
 
-      let y = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? 80
+      let y = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? margin.top + 40
       y += 20
 
       if (charts.inscricoes) {
         const img = await toGrayscale(charts.inscricoes)
-        doc.addImage(img, 'PNG', 40, y, 520, 220)
+        doc.addImage(img, 'PNG', margin.left, y, contentWidth, 220)
         y += 240
       }
 
       if (charts.pedidos) {
         const img = await toGrayscale(charts.pedidos)
-        doc.addImage(img, 'PNG', 40, y, 520, 220)
+        doc.addImage(img, 'PNG', margin.left, y, contentWidth, 220)
         y += 240
       }
 
       if (charts.campoProduto) {
         const img = await toGrayscale(charts.campoProduto)
-        doc.addImage(img, 'PNG', 40, y, 520, 220)
+        doc.addImage(img, 'PNG', margin.left, y, contentWidth, 220)
         y += 240
       }
 
       if (charts.arrecadacao) {
         const img = await toGrayscale(charts.arrecadacao)
-        doc.addImage(img, 'PNG', 40, y, 520, 220)
+        doc.addImage(img, 'PNG', margin.left, y, contentWidth, 220)
         y += 240
       }
 
@@ -128,18 +131,18 @@ export async function generateDashboardPdf(
         doc.setPage(i)
         const pageHeight = doc.internal.pageSize.getHeight()
         doc.setFontSize(10)
-        doc.text(footer, 40, pageHeight - 20)
+        doc.text(footer, margin.left, pageHeight - 20)
 
         const date = new Date().toLocaleString('pt-BR', {
           timeZone: 'America/Sao_Paulo',
         })
-        doc.text(date, doc.internal.pageSize.getWidth() - 40, pageHeight - 20, {
+        doc.text(date, pageWidth - margin.right, pageHeight - 20, {
           align: 'right',
         })
 
         doc.text(
           `Página ${i} de ${pageCount}`,
-          doc.internal.pageSize.getWidth() / 2,
+          pageWidth / 2,
           pageHeight - 20,
           { align: 'center' },
         )
