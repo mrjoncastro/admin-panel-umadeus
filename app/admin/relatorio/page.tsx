@@ -60,7 +60,7 @@ export default function RelatorioPage() {
         const params = new URLSearchParams({
           page: '1',
           perPage: '50',
-          expand: 'campo,produto',
+          expand: 'campo,produto,id_inscricao',
         })
         const baseUrl = `/api/pedidos?${params.toString()}`
         const res = await fetch(baseUrl, { credentials: 'include', signal })
