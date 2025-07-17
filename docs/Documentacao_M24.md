@@ -286,7 +286,7 @@ Para cada coleção, utilize a seguinte estrutura:
 
 | Rota                      | Métodos | Descrição                                              |
 | ------------------------- | ------- | ------------------------------------------------------ |
-| `GET  /api/pedidos`       | GET     | Lista pedidos (filtros por `status`, `email`, `canal`) |
+| `GET  /api/pedidos`       | GET     | Lista pedidos (filtros por `status`) |
 | `GET  /api/pedidos/:id`   | GET     | Detalha um pedido                                      |
 | `POST /api/pedidos`       | POST    | Cria novo pedido (fluxo de loja ou inscrição)          |
 | `PATCH /api/pedidos/:id`  | PATCH   | Atualiza status ou outros campos do pedido             |
