@@ -231,7 +231,7 @@ export async function POST(req: NextRequest) {
       console.log('[PEDIDOS][POST] corTratada:', corTratada)
 
       const finalCampo = isAvulso ? user.campo : campoId
-      const payload: Record<string, any> = {
+      const payload: Record<string, unknown> = {
         produto: produtoIds,
         tamanho,
         status: 'pendente',
