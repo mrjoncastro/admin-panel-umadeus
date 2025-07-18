@@ -38,23 +38,36 @@ export default function PedidoAvulsoForm() {
     }
   }, [produtos, form.produtoId])
 
+  useEffect(() => {
+    const cleanCpf = form.cpf.replace(/\D/g, '')
+    if (cleanCpf.length !== 11) return
+    async function lookup() {
+      try {
+        const res = await fetch(`/api/usuarios/by-cpf?cpf=${cleanCpf}`)
+        if (res.ok) {
+          const data = await res.json()
+          setForm((prev) => ({
+            ...prev,
+            nome: prev.nome || data.nome || '',
+            telefone: prev.telefone || data.telefone || '',
+            email: prev.email || data.email || '',
+          }))
+        }
+      } catch {
+        // ignore
+      }
+    }
+    lookup()
+  }, [form.cpf])
+
+  useEffect(() => {
+    validate()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.cpf, form.email, form.telefone])
+
   const [errors, setErrors] = useState<{ cpf?: string; email?: string; telefone?: string }>({})
   const [loading, setLoading] = useState(false)
 
-  async function checkExists() {
-    const params = new URLSearchParams()
-    if (form.email) params.append('email', form.email)
-    if (form.cpf) params.append('cpf', form.cpf.replace(/\D/g, ''))
-    if ([...params].length === 0) return {}
-    const res = await fetch(`/api/usuarios/exists?${params.toString()}`)
-    if (!res.ok) return {}
-    const data = await res.json()
-    const errs: { cpf?: string; email?: string } = {}
-    if (data.cpf) errs.cpf = 'CPF já cadastrado'
-    if (data.email) errs.email = 'E-mail já cadastrado'
-    setErrors((prev) => ({ ...prev, ...errs }))
-    return errs
-  }
 
   const validate = () => {
     const err: { cpf?: string; email?: string; telefone?: string } = {}
@@ -83,7 +96,6 @@ export default function PedidoAvulsoForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validate()) return
-    await checkExists()
     if (!user?.campo) {
       showError('Campo do líder não encontrado.')
       return
@@ -135,13 +147,37 @@ export default function PedidoAvulsoForm() {
           <TextField id="nome" name="nome" value={form.nome} onChange={handleChange} required />
         </FormField>
         <FormField label="CPF" htmlFor="cpf" error={errors.cpf}>
-          <InputWithMask id="cpf" name="cpf" mask="cpf" value={form.cpf} onChange={(e) => { handleChange(e); validate() }} required />
+          <InputWithMask
+            id="cpf"
+            name="cpf"
+            mask="cpf"
+            value={form.cpf}
+            onChange={handleChange}
+            onBlur={validate}
+            required
+          />
         </FormField>
         <FormField label="Telefone" htmlFor="telefone" error={errors.telefone}>
-          <InputWithMask id="telefone" name="telefone" mask="telefone" value={form.telefone} onChange={(e) => { handleChange(e); validate() }} required />
+          <InputWithMask
+            id="telefone"
+            name="telefone"
+            mask="telefone"
+            value={form.telefone}
+            onChange={handleChange}
+            onBlur={validate}
+            required
+          />
         </FormField>
         <FormField label="E-mail" htmlFor="email" error={errors.email}>
-          <TextField id="email" name="email" type="email" value={form.email} onChange={(e) => { handleChange(e); validate() }} required />
+          <TextField
+            id="email"
+            name="email"
+            type="email"
+            value={form.email}
+            onChange={handleChange}
+            onBlur={validate}
+            required
+          />
         </FormField>
       </div>
       <FormField label="Produto" htmlFor="produtoId">
