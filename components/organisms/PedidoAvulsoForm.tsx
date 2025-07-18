@@ -60,6 +60,11 @@ export default function PedidoAvulsoForm() {
     lookup()
   }, [form.cpf])
 
+  useEffect(() => {
+    validate()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.cpf, form.email, form.telefone])
+
   const [errors, setErrors] = useState<{ cpf?: string; email?: string; telefone?: string }>({})
   const [loading, setLoading] = useState(false)
 
@@ -157,13 +162,37 @@ export default function PedidoAvulsoForm() {
           <TextField id="nome" name="nome" value={form.nome} onChange={handleChange} required />
         </FormField>
         <FormField label="CPF" htmlFor="cpf" error={errors.cpf}>
-          <InputWithMask id="cpf" name="cpf" mask="cpf" value={form.cpf} onChange={(e) => { handleChange(e); validate() }} required />
+          <InputWithMask
+            id="cpf"
+            name="cpf"
+            mask="cpf"
+            value={form.cpf}
+            onChange={handleChange}
+            onBlur={validate}
+            required
+          />
         </FormField>
         <FormField label="Telefone" htmlFor="telefone" error={errors.telefone}>
-          <InputWithMask id="telefone" name="telefone" mask="telefone" value={form.telefone} onChange={(e) => { handleChange(e); validate() }} required />
+          <InputWithMask
+            id="telefone"
+            name="telefone"
+            mask="telefone"
+            value={form.telefone}
+            onChange={handleChange}
+            onBlur={validate}
+            required
+          />
         </FormField>
         <FormField label="E-mail" htmlFor="email" error={errors.email}>
-          <TextField id="email" name="email" type="email" value={form.email} onChange={(e) => { handleChange(e); validate() }} required />
+          <TextField
+            id="email"
+            name="email"
+            type="email"
+            value={form.email}
+            onChange={handleChange}
+            onBlur={validate}
+            required
+          />
         </FormField>
       </div>
       <FormField label="Produto" htmlFor="produtoId">
