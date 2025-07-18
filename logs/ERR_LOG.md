@@ -284,3 +284,4 @@
 ## [2025-07-17] Lista de pedidos nao atualizava paginacao ao aplicar filtros. Paginas recalculadas e pagina atual redefinida. - dev - 04cd8656
 ## [2025-07-17] Pedidos buscavam apenas a primeira pagina; resultado incompleto e paginacao incorreta. Fetch atualizado para usar fetchAllPages e pagina resetada ao alterar filtros globais. - dev - a2bf8fc4
 ## [2025-07-17] Inscricoes buscavam paginas manualmente; fetchAllPages adotado e paginacao recalculada ao filtrar. - dev - ac1da4cd
+## [2025-07-18] Erro ao criar pedido avulso: ClientResponseError 400: Failed to create record. Ajustado para não enviar campos vazios. - dev - 1f72bca4
