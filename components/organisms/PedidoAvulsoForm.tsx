@@ -38,6 +38,28 @@ export default function PedidoAvulsoForm() {
     }
   }, [produtos, form.produtoId])
 
+  useEffect(() => {
+    const cleanCpf = form.cpf.replace(/\D/g, '')
+    if (cleanCpf.length !== 11) return
+    async function lookup() {
+      try {
+        const res = await fetch(`/api/usuarios/by-cpf?cpf=${cleanCpf}`)
+        if (res.ok) {
+          const data = await res.json()
+          setForm((prev) => ({
+            ...prev,
+            nome: prev.nome || data.nome || '',
+            telefone: prev.telefone || data.telefone || '',
+            email: prev.email || data.email || '',
+          }))
+        }
+      } catch {
+        // ignore
+      }
+    }
+    lookup()
+  }, [form.cpf])
+
   const [errors, setErrors] = useState<{ cpf?: string; email?: string; telefone?: string }>({})
   const [loading, setLoading] = useState(false)
 

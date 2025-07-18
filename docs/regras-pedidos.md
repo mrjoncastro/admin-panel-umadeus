@@ -70,6 +70,8 @@ inscrito, data de vencimento e a forma de pagamento (`pix` ou `boleto`). O
 pedido sempre pertence ao mesmo campo do líder autenticado. Antes de enviar, o
 formulário verifica se o CPF ou e‑mail já estão cadastrados e avisa sobre
 duplicidades, mas essa checagem não bloqueia a criação do pedido.
+Ao digitar o CPF o sistema consulta automaticamente a base e preenche nome,
+telefone e email se houver correspondência, agilizando o cadastro.
 Se o produto escolhido estiver vinculado a um evento, o formulário exibe um link
 para iniciar o fluxo de inscrição em `/inscricoes/lider/[liderId]/evento/[eventoId]`.
 Assim o líder pode cadastrar ou atualizar os dados do participante antes de gerar o pedido.
