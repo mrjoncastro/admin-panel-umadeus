@@ -231,10 +231,7 @@ export async function POST(req: NextRequest) {
       console.log('[PEDIDOS][POST] corTratada:', corTratada)
 
       const finalCampo = isAvulso ? user.campo : campoId
-      const payload = {
-        id_inscricao: '',
-        id_pagamento: '',
-        id_asaas: '',
+      const payload: Record<string, any> = {
         produto: produtoIds,
         tamanho,
         status: 'pendente',
@@ -248,6 +245,10 @@ export async function POST(req: NextRequest) {
         vencimento,
         paymentMethod: body.paymentMethod ?? 'pix',
         canal: isAvulso ? 'avulso' : 'loja',
+      }
+
+      if (!isAvulso) {
+        payload.id_inscricao = inscricaoId || ''
       }
       console.log('[PEDIDOS][POST] Payload para criação:', payload)
 
