@@ -670,6 +670,7 @@ export default function ListaInscricoesPage() {
         >
           <option value="">Todos os Status</option>
           <option value="pendente">Pendente</option>
+          <option value="aguardando_pagamento">Aguardando Pagamento</option>
           <option value="confirmado">Confirmado</option>
           <option value="cancelado">Cancelado</option>
         </select>
