@@ -63,9 +63,8 @@ Durante o desenvolvimento, o Supabase será utilizado como banco principal, com 
   - No Railway: ajuste manual de réplicas ou use Cloud Run para autoscaling automático.
 
 #### 4.2. Escalabilidade Vertical  
-- **PocketBase**:  
+- **Supabase**:  
   - Inicialmente 1 vCPU + 2 GB RAM; em picos, vertical scale até 2 vCPUs + 4 GB RAM.  
-  - Monitorar locks do SQLite; se frequentes, considerar migração para Postgres (Supabase).  
 - **Redis Cache**:  
   - Contêiner com 1 vCPU + 1 GB RAM, escala vertical conforme miss rate no cache.
 
@@ -144,7 +143,6 @@ Durante o desenvolvimento, o Supabase será utilizado como banco principal, com 
    - Configurar scripts automatizados de backup/restauração e testes periódicos de restore.  
 6. **Revisar Mensalmente**  
    - Analisar métricas reais e redefinir limites de autoscaling.  
-   - Se uso constante ultrapassar limites do Starter, migrar PocketBase para plano Pro ou para Postgres gerenciado.  
 7. **Planejar Migração de Banco**  
    - Quando concorrência e volume de dados crescerem, migrar para banco SQL robusto (e.g. Supabase) com replicação e backups automáticos.
 
