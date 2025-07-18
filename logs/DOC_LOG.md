@@ -610,3 +610,4 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 ## [2025-07-17] Atualizadas rotinas de exportação nos relatórios para usar margens de 56.7pt e rodapé com data/hora. Lint e build executados.
 ## [2025-07-17] Normalizadas fontes e margens dos PDFs; rodapé agora usa fonte 9pt. Lint e build executados.
 ## [2025-07-18] Formulario avulso preenche dados pelo CPF. Lint e build executados.
+## [2025-07-18] Mensagem de CPF/email duplicado removida no pedido avulso. Lint e build executados.

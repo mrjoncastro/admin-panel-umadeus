@@ -68,20 +68,6 @@ export default function PedidoAvulsoForm() {
   const [errors, setErrors] = useState<{ cpf?: string; email?: string; telefone?: string }>({})
   const [loading, setLoading] = useState(false)
 
-  async function checkExists() {
-    const params = new URLSearchParams()
-    if (form.email) params.append('email', form.email)
-    if (form.cpf) params.append('cpf', form.cpf.replace(/\D/g, ''))
-    if ([...params].length === 0) return {}
-    const res = await fetch(`/api/usuarios/exists?${params.toString()}`)
-    if (!res.ok) return {}
-    const data = await res.json()
-    const errs: { cpf?: string; email?: string } = {}
-    if (data.cpf) errs.cpf = 'CPF já cadastrado'
-    if (data.email) errs.email = 'E-mail já cadastrado'
-    setErrors((prev) => ({ ...prev, ...errs }))
-    return errs
-  }
 
   const validate = () => {
     const err: { cpf?: string; email?: string; telefone?: string } = {}
@@ -110,7 +96,6 @@ export default function PedidoAvulsoForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validate()) return
-    await checkExists()
     if (!user?.campo) {
       showError('Campo do líder não encontrado.')
       return
