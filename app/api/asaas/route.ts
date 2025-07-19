@@ -116,32 +116,94 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Buscar inscrição vinculada
-    if (!pedido.id_inscricao) {
-      console.log(
-        '🔴 [POST /api/asaas] Pedido sem inscrição vinculada',
-      )
-      return NextResponse.json(
-        { error: 'Pedido sem inscrição vinculada' },
-        { status: 400 },
-      )
+    // Buscar inscrição vinculada ou dados do responsável
+    type InscricaoData = {
+      id?: string
+      cpf?: string
+      nome?: string
+      email?: string
+      telefone?: string
+      endereco?: string
+      numero?: string
+      cliente?: string
+      campo?: string
+      criado_por?: string
+    }
+    type UsuarioData = {
+      id?: string
+      cpf?: string
+      nome?: string
+      email?: string
+      telefone?: string
+      endereco?: string
+      numero?: string
+      cliente?: string
+      campo?: string
     }
 
-    const inscricao = await pb
-      .collection('inscricoes')
-      .getOne(pedido.id_inscricao)
-    console.log('📦 Inscrição encontrada:', inscricao)
+    let inscricao: InscricaoData | null = null
+    let userInfo: UsuarioData | null = null
+
+    if (pedido.id_inscricao) {
+      try {
+        inscricao = await pb.collection('inscricoes').getOne(pedido.id_inscricao)
+        console.log('📦 Inscrição encontrada:', inscricao)
+      } catch (e) {
+        console.log(
+          '🔴 [POST /api/asaas] Erro ao buscar inscrição associada:',
+          e,
+        )
+      }
+    }
+
     if (!inscricao) {
-      console.log(
-        '🔴 [POST /api/asaas] Inscrição associada ao pedido não encontrada',
-      )
-      return NextResponse.json(
-        { error: 'Inscrição associada ao pedido não encontrada' },
-        { status: 404 },
-      )
+      const prodId = Array.isArray(pedido.produto)
+        ? pedido.produto[0]
+        : pedido.produto
+      if (prodId) {
+        try {
+          const prod = await pb.collection('produtos').getOne(prodId)
+          console.log('📦 Produto encontrado:', prod)
+          if (prod?.requer_inscricao_aprovada) {
+            console.log(
+              '🔴 [POST /api/asaas] Produto exige inscrição aprovada',
+            )
+            return NextResponse.json(
+              { error: 'Produto requer inscrição aprovada' },
+              { status: 400 },
+            )
+          }
+        } catch (e) {
+          console.log('🔴 [POST /api/asaas] Erro ao buscar produto:', e)
+        }
+      }
+
+      try {
+        userInfo = await pb
+          .collection('usuarios')
+          .getOne(pedido.responsavel)
+        console.log('📦 Usuário responsável:', userInfo)
+      } catch (e) {
+        console.log('🔴 [POST /api/asaas] Erro ao buscar usuário:', e)
+      }
+
+      if (!userInfo || !userInfo.cpf) {
+        return NextResponse.json(
+          { error: 'Dados do usuário incompletos' },
+          { status: 400 },
+        )
+      }
     }
 
-    const cpfCnpj = inscricao.cpf.replace(/\D/g, '')
+    const cpfCnpj = (inscricao?.cpf || userInfo?.cpf || '').replace(/\D/g, '')
+    const nomeCliente = inscricao?.nome || userInfo?.nome
+    const emailCliente = inscricao?.email || pedido.email || userInfo?.email
+    const telefoneCliente =
+      inscricao?.telefone || userInfo?.telefone || '71900000000'
+    const enderecoCliente =
+      inscricao?.endereco || userInfo?.endereco || 'Endereço padrão'
+    const numeroEndereco = inscricao?.numero || userInfo?.numero || '02'
+
     console.log('🟢 [POST /api/asaas] CPF/CNPJ processado:', cpfCnpj)
 
     // 🔹 Verificar se cliente já existe no Asaas pelo CPF
@@ -177,12 +239,12 @@ export async function POST(req: NextRequest) {
     // 🔹 Se não existe, cria o cliente
     if (!clienteId) {
       const clientePayload = {
-        name: inscricao.nome,
-        email: inscricao.email,
+        name: nomeCliente,
+        email: emailCliente,
         cpfCnpj,
-        phone: inscricao.telefone || '71900000000',
-        address: inscricao.endereco || 'Endereço padrão',
-        addressNumber: inscricao.numero || '02',
+        phone: telefoneCliente,
+        address: enderecoCliente,
+        addressNumber: numeroEndereco,
         province: 'BA',
         postalCode: '41770055',
       }
@@ -229,15 +291,18 @@ export async function POST(req: NextRequest) {
 
     const clienteTenantId =
       ((pedido as Record<string, unknown>).cliente as string | undefined) ||
-      ((inscricao as Record<string, unknown>).cliente as string | undefined) ||
-      ((inscricao as Record<string, unknown>).campo as string | undefined)
+      ((inscricao as Record<string, unknown>)?.cliente as string | undefined) ||
+      ((inscricao as Record<string, unknown>)?.campo as string | undefined) ||
+      (userInfo?.cliente as string | undefined) ||
+      (userInfo?.campo as string | undefined)
     const usuarioIdRef =
       (pedido.responsavel as string | undefined) ||
-      (inscricao.criado_por as string | undefined)
+      (inscricao?.criado_por as string | undefined) ||
+      (userInfo?.id as string | undefined)
     const externalReference = buildExternalReference(
       String(clienteTenantId),
       String(usuarioIdRef),
-      inscricao.id,
+      inscricao?.id,
     )
     logInfo('🔧 Chamando createCheckout com:', {
       pedido,

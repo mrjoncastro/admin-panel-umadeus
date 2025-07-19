@@ -288,3 +288,4 @@
 ## [2025-08-22] Erro ao criar pedido avulso por tamanho indefinido; campo agora selecionável e genero preenchido via CPF. - dev - 8caa9780
 ## [2025-07-18] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
 ## [2025-08-24] Erro ao gerar link de pagamento Asaas: Missing required record id ao processar pedido avulso sem inscricao. Validacao adicionada para id_inscricao - dev - 40253017
+## [2025-08-25] Ajuste na rota /api/asaas para permitir pedidos avulsos sem inscricao quando produto nao requer inscricao. Dados do usuario usados para criar cliente - dev - 74680867
