@@ -117,6 +117,16 @@ export async function POST(req: NextRequest) {
     }
 
     // Buscar inscrição vinculada
+    if (!pedido.id_inscricao) {
+      console.log(
+        '🔴 [POST /api/asaas] Pedido sem inscrição vinculada',
+      )
+      return NextResponse.json(
+        { error: 'Pedido sem inscrição vinculada' },
+        { status: 400 },
+      )
+    }
+
     const inscricao = await pb
       .collection('inscricoes')
       .getOne(pedido.id_inscricao)

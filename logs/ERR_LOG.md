@@ -287,3 +287,4 @@
 ## [2025-07-18] Erro ao criar pedido avulso: ClientResponseError 400: Failed to create record. Ajustado para não enviar campos vazios. - dev - 1f72bca4
 ## [2025-08-22] Erro ao criar pedido avulso por tamanho indefinido; campo agora selecionável e genero preenchido via CPF. - dev - 8caa9780
 ## [2025-07-18] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
+## [2025-08-24] Erro ao gerar link de pagamento Asaas: Missing required record id ao processar pedido avulso sem inscricao. Validacao adicionada para id_inscricao - dev - 40253017
