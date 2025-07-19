@@ -29,6 +29,7 @@ describe('GET /api/usuarios/by-cpf', () => {
       nome: 'Fulano',
       telefone: '11999999999',
       email: 'f@x.com',
+      genero: 'masculino',
     })
     const req = new Request('http://test/api/usuarios/by-cpf?cpf=52998224725')
     ;(req as any).nextUrl = new URL('http://test/api/usuarios/by-cpf?cpf=52998224725')
@@ -36,6 +37,7 @@ describe('GET /api/usuarios/by-cpf', () => {
     expect(res.status).toBe(200)
     const body = await res.json()
     expect(body.id).toBe('u1')
+    expect(body.genero).toBe('masculino')
     expect(getFirstMock).toHaveBeenCalled()
   })
 })

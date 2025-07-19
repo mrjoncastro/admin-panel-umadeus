@@ -231,7 +231,7 @@ export async function POST(req: NextRequest) {
       console.log('[PEDIDOS][POST] corTratada:', corTratada)
 
       const finalCampo = isAvulso ? user.campo : campoId
-      const payload: Record<string, unknown> = {
+      const payloadBase: Record<string, unknown> = {
         produto: produtoIds,
         tamanho,
         status: 'pendente',
@@ -246,6 +246,10 @@ export async function POST(req: NextRequest) {
         paymentMethod: body.paymentMethod ?? 'pix',
         canal: isAvulso ? 'avulso' : 'loja',
       }
+
+      const payload = Object.fromEntries(
+        Object.entries(payloadBase).filter(([, v]) => v !== undefined),
+      )
 
       if (!isAvulso) {
         payload.id_inscricao = inscricaoId || ''
@@ -349,7 +353,7 @@ export async function POST(req: NextRequest) {
     const valor = produtoRecord?.preco_bruto ?? 0
     console.log('[PEDIDOS][POST] Valor final do pedido:', valor)
 
-    const payload = {
+    const payloadBase = {
       id_inscricao: inscricaoId,
       valor,
       status: 'pendente',
@@ -377,6 +381,9 @@ export async function POST(req: NextRequest) {
       cliente: inscricao.cliente,
       canal: 'inscricao',
     }
+    const payload = Object.fromEntries(
+      Object.entries(payloadBase).filter(([, v]) => v !== undefined),
+    )
     console.log('[PEDIDOS][POST] Payload com inscrição:', payload)
 
     try {

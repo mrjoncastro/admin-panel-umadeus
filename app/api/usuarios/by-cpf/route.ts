@@ -18,6 +18,7 @@ export async function GET(req: NextRequest) {
       nome: usuario.nome,
       telefone: usuario.telefone,
       email: usuario.email,
+      genero: usuario.genero,
     })
   } catch (err: unknown) {
     if (err instanceof ClientResponseError && err.status === 404) {

@@ -21,6 +21,7 @@ vi.mock('@/lib/hooks/useProdutos', () => ({
         evento_id: 'e1',
         requer_inscricao_aprovada: true,
         preco_bruto: 55,
+        tamanhos: ['P', 'M'],
       },
     ],
     loading: false,
@@ -55,5 +56,6 @@ describe('PedidoAvulsoForm', () => {
     const body = JSON.parse(call[1].body)
     expect(body.canal).toBe('avulso')
     expect(body.paymentMethod).toBe('pix')
+    expect(body.tamanho).toBe('P')
   })
 })

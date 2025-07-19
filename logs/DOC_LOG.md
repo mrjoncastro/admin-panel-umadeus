@@ -611,3 +611,4 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 ## [2025-07-17] Normalizadas fontes e margens dos PDFs; rodapé agora usa fonte 9pt. Lint e build executados.
 ## [2025-07-18] Formulario avulso preenche dados pelo CPF. Lint e build executados.
 ## [2025-07-18] Mensagem de CPF/email duplicado removida no pedido avulso. Lint e build executados.
+## [2025-08-22] Pedido avulso permite selecionar tamanho e preenche gênero via CPF. Lint e build executados.

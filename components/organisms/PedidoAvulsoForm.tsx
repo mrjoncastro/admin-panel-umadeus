@@ -23,18 +23,38 @@ export default function PedidoAvulsoForm() {
     telefone: '',
     email: '',
     produtoId: '',
+    tamanho: '',
+    genero: '',
     valor: '',
     vencimento: '',
     paymentMethod: 'pix',
   })
 
   const [produtoSel, setProdutoSel] = useState<Produto | undefined>(undefined)
+  const tamanhosDisponiveis = useMemo(() => {
+    if (!produtoSel) return [] as string[]
+    const list = Array.isArray(produtoSel.tamanhos)
+      ? produtoSel.tamanhos
+      : typeof produtoSel.tamanhos === 'string'
+        ? produtoSel.tamanhos.split(',').map((t) => t.trim())
+        : []
+    return list
+  }, [produtoSel])
 
   useEffect(() => {
     const prod = produtos.find((p) => p.id === form.produtoId)
     setProdutoSel(prod)
     if (prod) {
-      setForm((prev) => ({ ...prev, valor: String(prod.preco_bruto) }))
+      const tamanhos = Array.isArray(prod.tamanhos)
+        ? prod.tamanhos
+        : typeof prod.tamanhos === 'string'
+          ? prod.tamanhos.split(',').map((t: string) => t.trim())
+          : []
+      setForm((prev) => ({
+        ...prev,
+        valor: String(prod.preco_bruto),
+        tamanho: tamanhos[0] || '',
+      }))
     }
   }, [produtos, form.produtoId])
 
@@ -51,6 +71,7 @@ export default function PedidoAvulsoForm() {
             nome: prev.nome || data.nome || '',
             telefone: prev.telefone || data.telefone || '',
             email: prev.email || data.email || '',
+            genero: data.genero || prev.genero,
           }))
         }
       } catch {
@@ -109,6 +130,8 @@ export default function PedidoAvulsoForm() {
         credentials: 'include',
         body: JSON.stringify({
           produto: [form.produtoId],
+          tamanho: form.tamanho,
+          genero: form.genero,
           valor: Number(form.valor),
           email: form.email,
           vencimento: form.vencimento,
@@ -125,6 +148,8 @@ export default function PedidoAvulsoForm() {
           telefone: '',
           email: '',
           produtoId: '',
+          tamanho: '',
+          genero: '',
           valor: '',
           vencimento: '',
           paymentMethod: 'pix',
@@ -201,6 +226,24 @@ export default function PedidoAvulsoForm() {
           </p>
         )}
       </FormField>
+      {tamanhosDisponiveis.length > 0 && (
+        <FormField label="Tamanho" htmlFor="tamanho">
+          <select
+            id="tamanho"
+            name="tamanho"
+            value={form.tamanho}
+            onChange={handleChange}
+            className="input-base w-full"
+            required
+          >
+            {tamanhosDisponiveis.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+        </FormField>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormField label="Valor" htmlFor="valor">
           <TextField
