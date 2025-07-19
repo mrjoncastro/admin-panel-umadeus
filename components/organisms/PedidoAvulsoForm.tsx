@@ -23,18 +23,37 @@ export default function PedidoAvulsoForm() {
     telefone: '',
     email: '',
     produtoId: '',
+    tamanho: '',
+    genero: '',
     valor: '',
-    vencimento: '',
     paymentMethod: 'pix',
   })
 
   const [produtoSel, setProdutoSel] = useState<Produto | undefined>(undefined)
+  const tamanhosDisponiveis = useMemo(() => {
+    if (!produtoSel) return [] as string[]
+    const list = Array.isArray(produtoSel.tamanhos)
+      ? produtoSel.tamanhos
+      : typeof produtoSel.tamanhos === 'string'
+        ? produtoSel.tamanhos.split(',').map((t) => t.trim())
+        : []
+    return list
+  }, [produtoSel])
 
   useEffect(() => {
     const prod = produtos.find((p) => p.id === form.produtoId)
     setProdutoSel(prod)
     if (prod) {
-      setForm((prev) => ({ ...prev, valor: String(prod.preco_bruto) }))
+      const tamanhos = Array.isArray(prod.tamanhos)
+        ? prod.tamanhos
+        : typeof prod.tamanhos === 'string'
+          ? prod.tamanhos.split(',').map((t: string) => t.trim())
+          : []
+      setForm((prev) => ({
+        ...prev,
+        valor: String(prod.preco_bruto),
+        tamanho: tamanhos[0] || '',
+      }))
     }
   }, [produtos, form.produtoId])
 
@@ -51,6 +70,7 @@ export default function PedidoAvulsoForm() {
             nome: prev.nome || data.nome || '',
             telefone: prev.telefone || data.telefone || '',
             email: prev.email || data.email || '',
+            genero: data.genero || prev.genero,
           }))
         }
       } catch {
@@ -109,26 +129,44 @@ export default function PedidoAvulsoForm() {
         credentials: 'include',
         body: JSON.stringify({
           produto: [form.produtoId],
+          tamanho: form.tamanho,
+          genero: form.genero,
           valor: Number(form.valor),
           email: form.email,
-          vencimento: form.vencimento,
           paymentMethod: form.paymentMethod,
           canal: 'avulso',
           campoId: user.campo,
         }),
       })
       if (res.ok) {
-        showSuccess('Pedido criado!')
-        setForm({
-          nome: '',
-          cpf: '',
-          telefone: '',
-          email: '',
-          produtoId: '',
-          valor: '',
-          vencimento: '',
-          paymentMethod: 'pix',
+        const { pedidoId, valor } = await res.json()
+        const payRes = await fetch('/api/asaas', {
+          method: 'POST',
+          headers,
+          credentials: 'include',
+          body: JSON.stringify({
+            pedidoId,
+            valorBruto: valor,
+            paymentMethod: form.paymentMethod,
+          }),
         })
+        if (payRes.ok) {
+          showSuccess('Pedido criado!')
+          setForm({
+            nome: '',
+            cpf: '',
+            telefone: '',
+            email: '',
+            produtoId: '',
+            tamanho: '',
+            genero: '',
+            valor: '',
+            paymentMethod: 'pix',
+          })
+        } else {
+          const err = await payRes.json().catch(() => null)
+          showError(err?.error || 'Erro ao gerar cobrança.')
+        }
       } else {
         const data = await res.json().catch(() => null)
         showError(data?.erro || data?.error || 'Erro ao criar pedido.')
@@ -201,6 +239,24 @@ export default function PedidoAvulsoForm() {
           </p>
         )}
       </FormField>
+      {tamanhosDisponiveis.length > 0 && (
+        <FormField label="Tamanho" htmlFor="tamanho">
+          <select
+            id="tamanho"
+            name="tamanho"
+            value={form.tamanho}
+            onChange={handleChange}
+            className="input-base w-full"
+            required
+          >
+            {tamanhosDisponiveis.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </select>
+        </FormField>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormField label="Valor" htmlFor="valor">
           <TextField
@@ -211,9 +267,6 @@ export default function PedidoAvulsoForm() {
             readOnly
             required
           />
-        </FormField>
-        <FormField label="Vencimento" htmlFor="vencimento">
-          <TextField id="vencimento" name="vencimento" type="date" value={form.vencimento} onChange={handleChange} required />
         </FormField>
         <FormField label="Forma de Pagamento" htmlFor="paymentMethod">
           <select
