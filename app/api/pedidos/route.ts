@@ -3,6 +3,7 @@ import { getUserFromHeaders } from '@/lib/getUserFromHeaders'
 import { requireRole } from '@/lib/apiAuth'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro, logSentryEvent } from '@/lib/server/logger'
+import { pbRetry } from '@/lib/pbRetry'
 import type { Inscricao, Pedido, Produto } from '@/types'
 import colorName from 'color-namer'
 
@@ -256,7 +257,9 @@ export async function POST(req: NextRequest) {
       console.log('[PEDIDOS][POST] Payload para criação:', payload)
 
       try {
-        const pedido = await pb.collection('pedidos').create<Pedido>(payload)
+        const pedido = await pbRetry(() =>
+          pb.collection('pedidos').create<Pedido>(payload),
+        )
         console.log('[PEDIDOS][POST] Pedido criado:', pedido)
         logSentryEvent('pedido_criado', {
           pedidoId: pedido.id,
@@ -412,7 +415,9 @@ export async function POST(req: NextRequest) {
     console.log('[PEDIDOS][POST] Payload com inscrição:', payload)
 
     try {
-      const pedido = await pb.collection('pedidos').create<Pedido>(payload)
+      const pedido = await pbRetry(() =>
+        pb.collection('pedidos').create<Pedido>(payload),
+      )
       console.log('[PEDIDOS][POST] Pedido criado:', pedido)
       logSentryEvent('pedido_criado', {
         pedidoId: pedido.id,
