@@ -26,7 +26,6 @@ export default function PedidoAvulsoForm() {
     tamanho: '',
     genero: '',
     valor: '',
-    vencimento: '',
     paymentMethod: 'pix',
   })
 
@@ -134,26 +133,40 @@ export default function PedidoAvulsoForm() {
           genero: form.genero,
           valor: Number(form.valor),
           email: form.email,
-          vencimento: form.vencimento,
           paymentMethod: form.paymentMethod,
           canal: 'avulso',
           campoId: user.campo,
         }),
       })
       if (res.ok) {
-        showSuccess('Pedido criado!')
-        setForm({
-          nome: '',
-          cpf: '',
-          telefone: '',
-          email: '',
-          produtoId: '',
-          tamanho: '',
-          genero: '',
-          valor: '',
-          vencimento: '',
-          paymentMethod: 'pix',
+        const { pedidoId, valor } = await res.json()
+        const payRes = await fetch('/api/asaas', {
+          method: 'POST',
+          headers,
+          credentials: 'include',
+          body: JSON.stringify({
+            pedidoId,
+            valorBruto: valor,
+            paymentMethod: form.paymentMethod,
+          }),
         })
+        if (payRes.ok) {
+          showSuccess('Pedido criado!')
+          setForm({
+            nome: '',
+            cpf: '',
+            telefone: '',
+            email: '',
+            produtoId: '',
+            tamanho: '',
+            genero: '',
+            valor: '',
+            paymentMethod: 'pix',
+          })
+        } else {
+          const err = await payRes.json().catch(() => null)
+          showError(err?.error || 'Erro ao gerar cobrança.')
+        }
       } else {
         const data = await res.json().catch(() => null)
         showError(data?.erro || data?.error || 'Erro ao criar pedido.')
@@ -254,9 +267,6 @@ export default function PedidoAvulsoForm() {
             readOnly
             required
           />
-        </FormField>
-        <FormField label="Vencimento" htmlFor="vencimento">
-          <TextField id="vencimento" name="vencimento" type="date" value={form.vencimento} onChange={handleChange} required />
         </FormField>
         <FormField label="Forma de Pagamento" htmlFor="paymentMethod">
           <select

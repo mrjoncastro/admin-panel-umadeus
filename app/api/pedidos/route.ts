@@ -182,7 +182,7 @@ export async function POST(req: NextRequest) {
         )
       }
 
-      const { produto, tamanho, cor, genero, campoId, email, valor, vencimento } = body
+      const { produto, tamanho, cor, genero, campoId, email, valor } = body
       const produtoIds = Array.isArray(produto)
         ? produto
         : produto
@@ -242,7 +242,6 @@ export async function POST(req: NextRequest) {
         ...(finalCampo ? { campo: finalCampo } : {}),
         email,
         valor: Number(valor) || 0,
-        vencimento,
         paymentMethod: body.paymentMethod ?? 'pix',
         canal: isAvulso ? 'avulso' : 'loja',
       }
@@ -264,10 +263,36 @@ export async function POST(req: NextRequest) {
           responsavel: userId,
         })
 
+        let link_pagamento: string | undefined
+        let idAsaas: string | undefined
+        try {
+          const payRes = await fetch(`${req.nextUrl.origin}/api/asaas`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              pedidoId: pedido.id,
+              valorBruto: pedido.valor,
+              paymentMethod: body.paymentMethod ?? 'pix',
+            }),
+          })
+          if (payRes.ok) {
+            const data = await payRes.json()
+            link_pagamento = data.url
+            idAsaas = data.id_asaas
+            await pb.collection('pedidos').update(pedido.id, {
+              link_pagamento,
+              ...(idAsaas ? { id_asaas: idAsaas } : {}),
+            })
+          }
+        } catch (e) {
+          console.error('[PEDIDOS][POST] Erro ao gerar cobrança:', e)
+        }
         return NextResponse.json({
           pedidoId: pedido.id,
           valor: pedido.valor,
           status: pedido.status,
+          ...(link_pagamento ? { link_pagamento } : {}),
+          ...(idAsaas ? { id_asaas: idAsaas } : {}),
         })
       } catch (err: unknown) {
         console.error('[PEDIDOS][POST] Erro ao criar pedido:', err)

@@ -33,7 +33,11 @@ describe('PedidoAvulsoForm', () => {
     global.fetch = vi
       .fn()
       .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) })
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ pedidoId: 'p1', valor: 55, status: 'pendente' }),
+      })
+      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ url: 'pay', id_asaas: 'a1' }) })
     render(<PedidoAvulsoForm />)
     fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Fulano' } })
     fireEvent.change(screen.getByLabelText('CPF'), { target: { value: '52998224725' } })
@@ -46,11 +50,10 @@ describe('PedidoAvulsoForm', () => {
     const valorField = screen.getByLabelText('Valor')
     expect(valorField).toHaveValue(55)
     expect(valorField).toHaveAttribute('readonly')
-    fireEvent.change(screen.getByLabelText('Vencimento'), { target: { value: '2025-12-31' } })
     fireEvent.change(screen.getByLabelText('Forma de Pagamento'), { target: { value: 'pix' } })
     fireEvent.click(screen.getByRole('button', { name: /criar pedido/i }))
 
-    await waitFor(() => expect(global.fetch).toHaveBeenCalled())
+    await waitFor(() => expect((global.fetch as any).mock.calls.length).toBe(3))
     const call = (global.fetch as any).mock.calls[1]
     expect(call[0]).toBe('/api/pedidos')
     const body = JSON.parse(call[1].body)
