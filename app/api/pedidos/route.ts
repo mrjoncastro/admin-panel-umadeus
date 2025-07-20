@@ -113,7 +113,7 @@ export async function GET(req: NextRequest) {
     const result = await pb.collection('pedidos').getList(page, perPage, {
       filter: filtro,
       sort: sortParam,
-      expand: 'campo,id_inscricao,produto',
+      expand: 'campo,id_inscricao,produto,responsavel',
     })
     const { items } = result
 

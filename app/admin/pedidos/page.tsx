@@ -10,6 +10,7 @@ import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import ModalEditarPedido from './componentes/ModalEditarPedido'
 import { useToast } from '@/lib/context/ToastContext'
 import Link from 'next/link'
+import { getNomeCliente } from '@/utils/getNomeCliente'
 
 const PER_PAGE = 50
 
@@ -113,8 +114,8 @@ export default function PedidosPage() {
       p.expand?.campo?.nome
         ?.toLowerCase()
         .includes(buscaGlobal.toLowerCase()) ||
-      p.expand?.id_inscricao?.nome
-        ?.toLowerCase()
+      getNomeCliente(p)
+        .toLowerCase()
         .includes(buscaGlobal.toLowerCase()) ||
       p.expand?.id_inscricao?.cpf
         ?.toLowerCase()
@@ -130,8 +131,8 @@ export default function PedidosPage() {
 
   const pedidosOrdenados = [...pedidosFiltrados].sort((a, b) => {
     if (ordenarPor === 'alfabetica') {
-      const nomeA = a.expand?.id_inscricao?.nome?.toLowerCase() || ''
-      const nomeB = b.expand?.id_inscricao?.nome?.toLowerCase() || ''
+      const nomeA = getNomeCliente(a).toLowerCase()
+      const nomeB = getNomeCliente(b).toLowerCase()
       return ordem === 'asc'
         ? nomeA.localeCompare(nomeB)
         : nomeB.localeCompare(nomeA)
@@ -191,8 +192,8 @@ export default function PedidosPage() {
         p.expand?.campo?.nome
           ?.toLowerCase()
           .includes(buscaGlobal.toLowerCase()) ||
-        p.expand?.id_inscricao?.nome
-          ?.toLowerCase()
+        getNomeCliente(p)
+          .toLowerCase()
           .includes(buscaGlobal.toLowerCase()) ||
         p.expand?.id_inscricao?.cpf
           ?.toLowerCase()
@@ -203,8 +204,8 @@ export default function PedidosPage() {
 
     const pedidosOrdenadosPdf = [...pedidosFiltradosPdf].sort((a, b) => {
       if (ordenarPor === 'alfabetica') {
-        const nomeA = a.expand?.id_inscricao?.nome?.toLowerCase() || ''
-        const nomeB = b.expand?.id_inscricao?.nome?.toLowerCase() || ''
+        const nomeA = getNomeCliente(a).toLowerCase()
+        const nomeB = getNomeCliente(b).toLowerCase()
         return ordem === 'asc'
           ? nomeA.localeCompare(nomeB)
           : nomeB.localeCompare(nomeA)
@@ -233,7 +234,7 @@ export default function PedidosPage() {
       Array.isArray(p.expand?.produto)
         ? p.expand.produto.map((prod: Produto) => prod.nome).join(', ')
         : (p.expand?.produto as Produto | undefined)?.nome || p.produto,
-      p.expand?.id_inscricao?.nome || '',
+      getNomeCliente(p) || '',
       p.email,
       p.tamanho || '',
       p.status,
@@ -402,7 +403,7 @@ export default function PedidosPage() {
                           ? pedido.produto.join(', ')
                           : pedido.produto)}
                   </td>
-                  <td>{pedido.expand?.id_inscricao?.nome || '—'}</td>
+                  <td>{getNomeCliente(pedido) || '—'}</td>
                   <td>{pedido.email}</td>
                   <td>{pedido.tamanho || '—'}</td>
                   <td className="capitalize">
