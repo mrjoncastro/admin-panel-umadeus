@@ -613,4 +613,4 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 ## [2025-07-18] Mensagem de CPF/email duplicado removida no pedido avulso. Lint e build executados.
 ## [2025-08-22] Pedido avulso permite selecionar tamanho e preenche gênero via CPF. Lint e build executados.
 ## [2025-08-23] Pedido avulso gera cobrança automática no Asaas e remove campo de vencimento. Lint, build e testes executados.
-## [2025-07-20] Documentado disparo automatico de WhatsApp e email em pedidos avulsos. Lint e build executados.
+## [2025-07-20] Pedido avulso redireciona para listagem com aviso de sucesso. Lint e build executados.

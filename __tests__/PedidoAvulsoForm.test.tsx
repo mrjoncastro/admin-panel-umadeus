@@ -4,6 +4,11 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { vi } from 'vitest'
 import PedidoAvulsoForm from '@/components/organisms/PedidoAvulsoForm'
 
+const push = vi.fn()
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push }),
+}))
+
 vi.mock('@/lib/context/AuthContext', () => ({
   useAuthContext: () => ({ user: { id: 'u1', campo: 'c1' } }),
 }))
@@ -60,5 +65,6 @@ describe('PedidoAvulsoForm', () => {
     expect(body.canal).toBe('avulso')
     expect(body.paymentMethod).toBe('pix')
     expect(body.tamanho).toBe('P')
+    expect(push).toHaveBeenCalledWith('/admin/pedidos')
   })
 })
