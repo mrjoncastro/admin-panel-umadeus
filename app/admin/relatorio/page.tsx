@@ -1,6 +1,5 @@
 'use client'
 
-import LayoutWrapperAdmin from '@/components/templates/LayoutWrapperAdmin'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import { generateAnalisePdf } from '@/lib/report/generateAnalisePdf'
 import { useToast } from '@/lib/context/ToastContext'
@@ -222,8 +221,7 @@ export default function RelatorioPage() {
 
 
   return (
-    <LayoutWrapperAdmin>
-      <div className="max-w-4xl mx-auto px-6 py-10 space-y-6">
+    <div className="max-w-4xl mx-auto px-6 py-10 space-y-6">
         <h1 className="text-3xl font-bold">Relatório</h1>
 
         <section>
@@ -329,6 +327,5 @@ export default function RelatorioPage() {
           </div>
         </section>
       </div>
-    </LayoutWrapperAdmin>
   )
 }
