@@ -151,6 +151,28 @@ export default function PedidoAvulsoForm() {
           }),
         })
         if (payRes.ok) {
+          const { url } = await payRes.json()
+          try {
+            await fetch('/api/chats/message/sendPayment', {
+              method: 'POST',
+              headers,
+              credentials: 'include',
+              body: JSON.stringify({ telefone: form.telefone, link: url }),
+            })
+            await fetch('/api/email', {
+              method: 'POST',
+              headers,
+              credentials: 'include',
+              body: JSON.stringify({
+                eventType: 'confirmacao_inscricao',
+                email: form.email,
+                name: form.nome,
+                paymentLink: url,
+              }),
+            })
+          } catch {
+            // ignore
+          }
           showSuccess('Pedido criado!')
           setForm({
             nome: '',

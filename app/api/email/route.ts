@@ -15,7 +15,9 @@ export type Body = {
     | 'novo_usuario'
     | 'confirmacao_pagamento'
     | 'promocao_lider'
-  userId: string
+  userId?: string
+  email?: string
+  name?: string
   paymentLink?: string
   loginLink?: string
   amount?: number
@@ -42,13 +44,15 @@ export async function POST(req: NextRequest) {
     const {
       eventType,
       userId,
+      email,
+      name,
       paymentLink,
       loginLink,
       amount,
       dueDate,
       campoNome,
     } = (await req.json()) as Body
-    if (!eventType || !userId) {
+    if (!eventType || (!userId && !email)) {
       return NextResponse.json(
         { error: 'Parâmetros faltando' },
         { status: 400 },
@@ -75,13 +79,23 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // 4) busca usuário
-    const user = await pb
-      .collection('usuarios')
-      .getOne(userId, { expand: 'campo' })
-    const campoNomeFinal =
-      campoNome ?? (user.expand?.campo?.nome as string | undefined)
-    if (!user.email) {
+    // 4) obtém dados do usuário
+    let userEmail = email
+    let userName = name
+    let campoNomeFinal = campoNome
+
+    if (userId) {
+      const user = await pb
+        .collection('usuarios')
+        .getOne(userId, { expand: 'campo' })
+      userEmail = user.email
+      userName = user.nome || user.name
+      if (!campoNomeFinal) {
+        campoNomeFinal = user.expand?.campo?.nome as string | undefined
+      }
+    }
+
+    if (!userEmail) {
       return NextResponse.json({ error: 'Usuário sem e-mail' }, { status: 400 })
     }
 
@@ -117,7 +131,7 @@ export async function POST(req: NextRequest) {
     }
 
     html = html
-      .replace(/{{userName}}/g, user.nome || user.name || '')
+      .replace(/{{userName}}/g, userName || '')
       .replace(/{{logoUrl}}/g, logo)
       .replace(/{{cor_primary}}/g, cor)
       .replace(/{{tenantNome}}/g, cfg.nome || '')
@@ -143,7 +157,7 @@ export async function POST(req: NextRequest) {
     await transporter.verify()
     await transporter.sendMail({
       from: cfg.smtpFrom || process.env.SMTP_FROM!,
-      to: user.email,
+      to: userEmail,
       subject,
       html,
     })
