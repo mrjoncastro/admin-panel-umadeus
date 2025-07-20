@@ -26,11 +26,32 @@ class BroadcastManager {
   }
 
   getAllStats() {
-    const stats: Record<string, { pending: number }> = {}
+    const stats: Record<string, { pending: number; total: number; sent: number; failed: number }> = {}
     for (const [tenant, q] of this.queues.entries()) {
-      stats[tenant] = { pending: q.pending }
+      stats[tenant] = {
+        pending: q.pending,
+        total: q.total,
+        sent: q.sent,
+        failed: q.failed,
+      }
     }
     return stats
+  }
+
+  getStats(tenant: string) {
+    const q = this.queues.get(tenant)
+    if (!q) return { total: 0, sent: 0, failed: 0, pending: 0 }
+    return {
+      total: q.total,
+      sent: q.sent,
+      failed: q.failed,
+      pending: q.pending,
+    }
+  }
+
+  cancel(tenant: string) {
+    const q = this.queues.get(tenant)
+    if (q) q.cancel()
   }
 }
 

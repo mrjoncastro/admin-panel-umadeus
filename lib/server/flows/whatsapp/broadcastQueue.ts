@@ -36,10 +36,23 @@ export class BroadcastQueue {
   private queue: QueueItem<unknown>[] = []
   private processing = false
   private timestamps: number[] = []
+  private counters = { total: 0, sent: 0, failed: 0 }
   constructor(public config: BroadcastConfig = { ...DEFAULT_CONFIG }) {}
 
   get pending() {
     return this.queue.length
+  }
+
+  get total() {
+    return this.counters.total
+  }
+
+  get sent() {
+    return this.counters.sent
+  }
+
+  get failed() {
+    return this.counters.failed
   }
 
   add<T>(task: () => Promise<T>): Promise<T> {
@@ -49,6 +62,7 @@ export class BroadcastQueue {
         resolve: resolve as (value: unknown) => void,
         reject,
       })
+      this.counters.total++
       this.process().catch((err) =>
         console.error('Erro no processamento da fila:', err),
       )
@@ -69,9 +83,11 @@ export class BroadcastQueue {
             this.config.maxRetries,
           )
           item.resolve(res)
+          this.counters.sent++
         } catch (err) {
           item.reject(err)
           console.error('Erro no processamento da fila:', err)
+          this.counters.failed++
         }
         this.timestamps.push(Date.now())
         await sleep(this.config.delayBetweenMessages)
@@ -123,5 +139,10 @@ export class BroadcastQueue {
       const wait = 3600_000 - (now - this.timestamps[0])
       await sleep(wait)
     }
+  }
+
+  cancel() {
+    this.queue = []
+    this.processing = false
   }
 }
