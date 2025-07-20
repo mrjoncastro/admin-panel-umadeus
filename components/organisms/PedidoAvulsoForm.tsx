@@ -1,5 +1,6 @@
 'use client'
 import { useMemo, useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FormField, TextField, InputWithMask } from '@/components'
 import type { Produto } from '@/types'
@@ -16,6 +17,7 @@ export default function PedidoAvulsoForm() {
   const pb = useMemo(() => createPocketBase(), [])
   const { produtos } = useProdutos()
   const { showError, showSuccess } = useToast()
+  const router = useRouter()
 
   const [form, setForm] = useState({
     nome: '',
@@ -152,6 +154,7 @@ export default function PedidoAvulsoForm() {
         })
         if (payRes.ok) {
           showSuccess('Pedido criado!')
+          setTimeout(() => router.push('/admin/pedidos'), 1000)
           setForm({
             nome: '',
             cpf: '',

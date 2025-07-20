@@ -73,3 +73,5 @@ houver correspondência, agilizando o cadastro.
 Se o produto escolhido estiver vinculado a um evento, o formulário exibe um link
 para iniciar o fluxo de inscrição em `/inscricoes/lider/[liderId]/evento/[eventoId]`.
 Assim o líder pode cadastrar ou atualizar os dados do participante antes de gerar o pedido.
+Quando o pedido é criado com sucesso, o usuário é redirecionado automaticamente
+para a lista de pedidos e vê um aviso de confirmação.
