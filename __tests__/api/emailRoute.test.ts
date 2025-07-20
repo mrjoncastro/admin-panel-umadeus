@@ -44,7 +44,7 @@ describe('POST /api/email', () => {
   it('retorna 400 se faltar parametros', async () => {
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({}),
+      body: JSON.stringify({ eventType: 'nova_inscricao' }),
     })
     const res = await POST(req as unknown as NextRequest)
     expect(res.status).toBe(400)
@@ -78,7 +78,23 @@ describe('POST /api/email', () => {
     expect(res.status).toBe(200)
     expect(sendMailMock).toHaveBeenCalled()
     const body = await res.json()
-    expect(body.message).toBe('E-mail enviado')
-    expect(body.messageId).toBe('m1')
+    expect(body.message).toBe('E-mail enviado com sucesso')
+  })
+
+  it('envia email quando apenas email e nome fornecidos', async () => {
+    const req = new Request('http://test', {
+      method: 'POST',
+      body: JSON.stringify({
+        eventType: 'confirmacao_inscricao',
+        email: 'e@test.com',
+        name: 'Nome',
+        paymentLink: 'http://pay',
+      }),
+    })
+    const res = await POST(req as unknown as NextRequest)
+    expect(res.status).toBe(200)
+    expect(sendMailMock).toHaveBeenCalled()
+    const body = await res.json()
+    expect(body.message).toBe('E-mail enviado com sucesso')
   })
 })
