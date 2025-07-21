@@ -74,6 +74,14 @@ export default function Header() {
           { href: '/admin/posts', label: 'Posts' },
           { href: '/admin/campos', label: 'Campos' },
           { href: '/admin/whatsapp', label: 'WhatsApp' },
+          ...(user?.role === 'coordenador'
+            ? [
+                {
+                  href: '/admin/whatsapp/broadcast-config',
+                  label: 'Broadcast WhatsApp',
+                },
+              ]
+            : []),
         ]
 
   const router = useRouter()
