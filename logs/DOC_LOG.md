@@ -614,3 +614,4 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 ## [2025-08-22] Pedido avulso permite selecionar tamanho e preenche gênero via CPF. Lint e build executados.
 ## [2025-08-23] Pedido avulso gera cobrança automática no Asaas e remove campo de vencimento. Lint, build e testes executados.
 ## [2025-07-20] Pedido avulso redireciona para listagem com aviso de sucesso. Lint e build executados.
+## [2025-07-21] Documentados exemplos dos endpoints de configuração de broadcast (commit ffc5a29bc7eec9a17498d216021130426f01f1f2). Lint e build executados.
