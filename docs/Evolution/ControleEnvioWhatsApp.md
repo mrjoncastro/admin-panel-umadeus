@@ -157,6 +157,64 @@ Para o broadcast em andamento.
 }
 ```
 
+### GET /api/chats/whatsapp/config
+
+Retorna a configuração atual do tenant. Caso não exista, um registro padrão é criado utilizando `whatsapp_broadcast_config`.
+
+**Request:**
+
+```http
+GET /api/chats/whatsapp/config HTTP/1.1
+X-Tenant-Id: tenant123
+```
+
+**Response:**
+
+```json
+{
+  "delayBetweenMessages": 3000,
+  "delayBetweenBatches": 15000,
+  "batchSize": 3,
+  "maxMessagesPerMinute": 20,
+  "maxMessagesPerHour": 80,
+  "maxRetries": 2,
+  "retryDelay": 10000,
+  "allowedHoursStart": 9,
+  "allowedHoursEnd": 21,
+  "timezone": "America/Sao_Paulo"
+}
+```
+
+### POST /api/chats/whatsapp/config
+
+Atualiza a configuração do broadcast para o tenant informado.
+
+**Request:**
+
+```json
+{
+  "delayBetweenMessages": 2000,
+  "allowedHours": { "start": 8, "end": 22 }
+}
+```
+
+**Response:**
+
+```json
+{
+  "delayBetweenMessages": 2000,
+  "delayBetweenBatches": 15000,
+  "batchSize": 3,
+  "maxMessagesPerMinute": 20,
+  "maxMessagesPerHour": 80,
+  "maxRetries": 2,
+  "retryDelay": 10000,
+  "allowedHoursStart": 8,
+  "allowedHoursEnd": 22,
+  "timezone": "America/Sao_Paulo"
+}
+```
+
 ## 📊 Monitoramento em Tempo Real
 
 ### Interface do Usuário
@@ -206,6 +264,8 @@ CREATE TABLE whatsapp_broadcast_config (
   updated TIMESTAMP DEFAULT NOW()
 );
 ```
+
+O endpoint `/api/chats/whatsapp/config` é responsável por ler e persistir esses dados. Na primeira chamada, caso não exista registro para o tenant, um documento é criado com os valores padrão. Quando um POST (ou PUT) atualiza a configuração, a instância em memória é sincronizada via `broadcastManager.updateTenantConfig`, garantindo que novos envios respeitem as regras definidas em `whatsapp_broadcast_config`.
 
 ## 🧪 Testes
 
