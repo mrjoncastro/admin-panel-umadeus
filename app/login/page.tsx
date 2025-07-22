@@ -2,11 +2,12 @@ import LoginForm from '@/components/templates/LoginForm'
 import LayoutWrapper from '@/components/templates/LayoutWrapper'
 
 interface LoginPageProps {
-  searchParams?: { redirectTo?: string; redirect?: string }
+  searchParams: Promise<{ redirectTo?: string; redirect?: string }>
 }
 
-function LoginPage({ searchParams }: LoginPageProps) {
-  const redirectTo = searchParams?.redirectTo || searchParams?.redirect
+async function LoginPage({ searchParams }: LoginPageProps) {
+  const { redirectTo, redirect } = (await searchParams) || {}
+  const finalRedirect = redirectTo || redirect
 
   return (
     <LayoutWrapper>
@@ -14,7 +15,7 @@ function LoginPage({ searchParams }: LoginPageProps) {
         <div className="w-full max-w-2xl flex flex-col justify-center items-center px-6 md:px-8 py-6 text-[var(--text-primary)]">
           <div className="w-full">
             <div>
-              <LoginForm redirectTo={redirectTo}>
+              <LoginForm redirectTo={finalRedirect}>
                 Ainda não tem conta?{' '}
                 <a
                   href="/signup"
