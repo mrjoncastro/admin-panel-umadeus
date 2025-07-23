@@ -1,4 +1,7 @@
-import createPocketBase from './pocketbase'
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
+// [REMOVED] PocketBase import
 import { logConciliacaoErro } from './server/logger'
 import { getTenantHost } from './getTenantHost'
 
@@ -47,14 +50,14 @@ interface InscricaoRecord {
 }
 
 export async function processWebhook(body: AsaasWebhookPayload) {
-  const pb = createPocketBase()
+  // const pb = createPocketBase() // [REMOVED]
   const baseUrl = process.env.ASAAS_API_URL
   let site: string | undefined
 
-  if (!pb.authStore.isValid) {
-    await pb.admins.authWithPassword(
-      process.env.PB_ADMIN_EMAIL!,
-      process.env.PB_ADMIN_PASSWORD!,
+  if (!// pb. // [REMOVED] authStore.isValid) {
+    await // pb. // [REMOVED] admins.authWithPassword(
+      process.env.// PB_ADMIN_EMAIL // [REMOVED]!,
+      process.env.// PB_ADMIN_PASSWORD // [REMOVED]!,
     )
   }
 
@@ -177,7 +180,7 @@ export async function processWebhook(body: AsaasWebhookPayload) {
 
   if (!pedidoRecord && inscricaoId) {
     try {
-      const lista = await pb.collection('pedidos').getList<PedidoRecord>(1, 1, {
+      const lista = await // pb. // [REMOVED] collection('pedidos').getList<PedidoRecord>(1, 1, {
         filter: `id_inscricao = "${inscricaoId}"`,
         sort: '-created',
       })

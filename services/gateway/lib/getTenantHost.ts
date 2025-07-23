@@ -1,4 +1,7 @@
-import createPocketBase from '@/lib/pocketbase'
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
+// [REMOVED] PocketBase import
 
 /**
  * Retorna o host configurado para o tenant informado.
@@ -11,7 +14,7 @@ interface ClienteConfig {
 
 export async function getTenantHost(tenantId: string): Promise<string | null> {
   try {
-    const pb = createPocketBase()
+    // const pb = createPocketBase() // [REMOVED]
     const cfg = await pb
       .collection('clientes_config')
       .getFirstListItem<ClienteConfig>(`cliente='${tenantId}'`)

@@ -1,7 +1,10 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { describe, it, expect, vi } from 'vitest'
 import { GET, POST } from '../../app/api/pedidos/route'
 import { NextRequest } from 'next/server'
-import createPocketBaseMock from '../mocks/pocketbase'
+// [REMOVED] PocketBase import
 
 const getListMock = vi.fn().mockResolvedValue({
   items: [],
@@ -15,7 +18,7 @@ const createMock = vi
   .mockResolvedValue({ id: 'p1', valor: 10, status: 'pendente' })
 const getOneMock = vi.fn()
 const pb = createPocketBaseMock()
-pb.collection.mockImplementation((name: string) => {
+// pb. // [REMOVED] collection.mockImplementation((name: string) => {
   if (name === 'pedidos') {
     return { getList: getListMock, create: createMock }
   }
@@ -140,7 +143,7 @@ describe('POST /api/pedidos', () => {
   const getOneMock = vi.fn()
   const getFirstMock = vi.fn()
   beforeEach(() => {
-    pb.collection.mockImplementation((name: string) => {
+    // pb. // [REMOVED] collection.mockImplementation((name: string) => {
       if (name === 'pedidos') return { create: createMock }
       if (name === 'produtos') return { getOne: getOneMock }
       if (name === 'inscricoes') return { getFirstListItem: getFirstMock }
@@ -276,7 +279,7 @@ describe('POST /api/pedidos', () => {
       expand: { campo: { id: 'c1' }, criado_por: 'u2' },
     }
     const prodMock = vi.fn().mockResolvedValue({ id: 'p1', preco_bruto: 10 })
-    pb.collection.mockImplementation((name: string) => {
+    // pb. // [REMOVED] collection.mockImplementation((name: string) => {
       if (name === 'pedidos') return { create: createMock }
       if (name === 'inscricoes') return { getOne: getOneMock }
       if (name === 'produtos') return { getOne: prodMock }

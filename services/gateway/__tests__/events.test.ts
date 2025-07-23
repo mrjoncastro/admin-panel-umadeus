@@ -1,5 +1,8 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { describe, it, expect, vi } from 'vitest'
-import type PocketBase from 'pocketbase'
+// [REMOVED] PocketBase import
 import { atualizarStatus, type EventoRecord } from '../lib/events'
 
 function criarEvento(

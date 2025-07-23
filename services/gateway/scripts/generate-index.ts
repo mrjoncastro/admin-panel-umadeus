@@ -93,10 +93,11 @@ async function main() {
     path.join(ROOT, 'docs', 'function-index.md'),
     lines.join('\n'),
   )
-  console.log('\u2705 docs/function-index.md gerado')
+  logger.debug('\u2705 docs/function-index.md gerado')
 }
 
 main().catch((err) => {
-  console.error(err)
+  logger.error(err)
   process.exit(1)
 })
+import { logger } from '@/lib/logger'

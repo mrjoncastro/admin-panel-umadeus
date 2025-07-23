@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 import { useEffect } from 'react'
 import LogRocket from 'logrocket'
@@ -19,7 +20,7 @@ export default function LogRocketInit() {
           role: user.role,
         })
       } catch (err) {
-        console.error('Falha ao identificar usuario no LogRocket', err)
+        logger.error('Falha ao identificar usuario no LogRocket', err)
       }
     }
   }, [user])

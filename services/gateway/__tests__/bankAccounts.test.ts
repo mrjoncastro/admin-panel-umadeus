@@ -1,3 +1,6 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import {
   describe,
   it,
@@ -14,8 +17,8 @@ import {
   getBankAccountsByTenant,
   type ClienteContaBancariaRecord,
 } from '../lib/bankAccounts'
-import type PocketBase from 'pocketbase'
-import createPocketBaseMock from './mocks/pocketbase'
+// [REMOVED] PocketBase import
+// [REMOVED] PocketBase import
 
 describe('searchBanks', () => {
   const env = process.env
@@ -63,7 +66,7 @@ describe('createBankAccount', () => {
   it('envia dados para pocketbase', async () => {
     const createMock = vi.fn().mockResolvedValue({ id: '1' })
     const pb = createPocketBaseMock() as unknown as PocketBase
-    pb.collection.mockReturnValue({ create: createMock })
+    // pb. // [REMOVED] collection.mockReturnValue({ create: createMock })
     await createBankAccount(
       pb,
       {
@@ -82,7 +85,7 @@ describe('createBankAccount', () => {
       'u1',
       'cli1',
     )
-    expect(pb.collection).toHaveBeenCalledWith('clientes_contas_bancarias')
+    expect(// pb. // [REMOVED] collection).toHaveBeenCalledWith('clientes_contas_bancarias')
     expect(createMock).toHaveBeenCalledWith(
       expect.objectContaining({
         usuario: 'u1',
@@ -96,7 +99,7 @@ describe('createBankAccount', () => {
   it('inclui accountName no payload', async () => {
     const createMock = vi.fn().mockResolvedValue({ id: '1' })
     const pb = createPocketBaseMock() as unknown as PocketBase
-    pb.collection.mockReturnValue({ create: createMock })
+    // pb. // [REMOVED] collection.mockReturnValue({ create: createMock })
     await createBankAccount(
       pb,
       {
@@ -129,7 +132,7 @@ describe('createPixKey', () => {
   it('chama a coleção clientes_pix', async () => {
     const createMock = vi.fn().mockResolvedValue({ id: '1' })
     const pb = createPocketBaseMock() as unknown as PocketBase
-    pb.collection.mockReturnValue({ create: createMock })
+    // pb. // [REMOVED] collection.mockReturnValue({ create: createMock })
     await createPixKey(
       pb,
       {
@@ -141,13 +144,13 @@ describe('createPixKey', () => {
       'u1',
       'cli1',
     )
-    expect(pb.collection).toHaveBeenCalledWith('clientes_pix')
+    expect(// pb. // [REMOVED] collection).toHaveBeenCalledWith('clientes_pix')
   })
 
   it('inclui usuario e cliente no payload', async () => {
     const createMock = vi.fn().mockResolvedValue({ id: '1' })
     const pb = createPocketBaseMock() as unknown as PocketBase
-    pb.collection.mockReturnValue({ create: createMock })
+    // pb. // [REMOVED] collection.mockReturnValue({ create: createMock })
     await createPixKey(
       pb,
       {
@@ -169,9 +172,9 @@ describe('getBankAccountsByTenant', () => {
   it('filtra por cliente', async () => {
     const listMock = vi.fn().mockResolvedValue([{ id: '1', cliente: 'cli1' }])
     const pb = createPocketBaseMock() as unknown as PocketBase
-    pb.collection.mockReturnValue({ getFullList: listMock })
+    // pb. // [REMOVED] collection.mockReturnValue({ getFullList: listMock })
     const contas = await getBankAccountsByTenant(pb, 'cli1')
-    expect(pb.collection).toHaveBeenCalledWith('clientes_contas_bancarias')
+    expect(// pb. // [REMOVED] collection).toHaveBeenCalledWith('clientes_contas_bancarias')
     expect(listMock).toHaveBeenCalledWith({ filter: "cliente='cli1'" })
     expect(contas[0].id).toBe('1')
   })
@@ -183,7 +186,7 @@ describe('getBankAccountsByTenant', () => {
         { id: '1', accountName: 'Conta', ownerName: 'Fulano' },
       ])
     const pb = createPocketBaseMock() as unknown as PocketBase
-    pb.collection.mockReturnValue({ getFullList: listMock })
+    // pb. // [REMOVED] collection.mockReturnValue({ getFullList: listMock })
     const contas = await getBankAccountsByTenant(pb, 'cli1')
     expectTypeOf(contas).toEqualTypeOf<ClienteContaBancariaRecord[]>()
     expect(contas[0].accountName).toBe('Conta')

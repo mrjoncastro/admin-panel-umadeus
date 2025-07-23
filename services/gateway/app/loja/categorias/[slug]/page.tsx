@@ -1,5 +1,8 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 // app/loja/categorias/[slug]/page.tsx
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import ProdutosFiltrados from './ProdutosFiltrados.dynamic'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
@@ -22,17 +25,17 @@ export default async function CategoriaDetalhe({
   params: Promise<Params>
 }) {
   const { slug } = await params
-  const pb = createPocketBase()
+  // const pb = createPocketBase() // [REMOVED]
   const tenantId = await getTenantFromHost()
 
-  const produtosPB: Produto[] = await pb.collection('produtos').getFullList({
+  const produtosPB: Produto[] = await // pb. // [REMOVED] collection('produtos').getFullList({
     filter: `ativo = true && categoria = '${slug}' && cliente='${tenantId}'`,
     sort: '-created',
   })
 
   const produtos = produtosPB.map((p) => ({
     ...p,
-    imagens: (p.imagens || []).map((img) => pb.files.getURL(p, img)),
+    imagens: (p.imagens || []).map((img) => // pb. // [REMOVED] files.getURL(p, img)),
   }))
 
   return (

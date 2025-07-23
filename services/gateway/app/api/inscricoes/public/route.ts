@@ -1,9 +1,12 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro } from '@/lib/server/logger'
 import { publicLimiter } from '@/lib/server/publicLimiter'
-import { ClientResponseError } from 'pocketbase'
+// [REMOVED] PocketBase import
 
 export async function GET(req: NextRequest) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0] || 'local'
@@ -39,7 +42,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const pb = createPocketBase()
+    // const pb = createPocketBase() // [REMOVED]
     const tenantId = await getTenantFromHost()
     if (!tenantId) {
       await logConciliacaoErro(
@@ -59,7 +62,7 @@ export async function GET(req: NextRequest) {
     if (eventoId) filtroParts.push(`evento="${eventoId}"`)
     const filtro = filtroParts.join(' && ')
 
-    const record = await pb.collection('inscricoes').getFirstListItem(filtro)
+    const record = await // pb. // [REMOVED] collection('inscricoes').getFirstListItem(filtro)
 
     await logConciliacaoErro(`GET /inscricoes/public - sucesso - ${ip}`)
 

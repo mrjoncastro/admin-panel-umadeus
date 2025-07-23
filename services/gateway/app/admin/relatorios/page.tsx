@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
@@ -142,7 +143,7 @@ export default function RelatoriosPage() {
         }
       } catch (err: unknown) {
         if (err instanceof Error) {
-          console.error('Erro no relatório:', err.message)
+          logger.error('Erro no relatório:', err.message)
         }
         setError('Erro ao carregar relatório.')
       } finally {

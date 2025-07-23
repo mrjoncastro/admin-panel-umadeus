@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -82,7 +83,7 @@ export default function LoginForm({
       await login(email, senha)
       // Redirecionamento ocorre no useEffect
     } catch (e: unknown) {
-      console.error('❌ Erro no login:', e)
+      logger.error('❌ Erro no login:', e)
       if (e instanceof Error) {
         showError(e.message || 'Credenciais inválidas.')
       } else {

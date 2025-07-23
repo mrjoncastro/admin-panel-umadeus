@@ -1,7 +1,10 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { PATCH } from '../../app/api/inscricoes/[id]/route'
 import { NextRequest } from 'next/server'
-import createPocketBaseMock from '../mocks/pocketbase'
+// [REMOVED] PocketBase import
 
 vi.mock('../../lib/apiAuth', () => ({ requireRole: vi.fn() }))
 import { requireRole } from '../../lib/apiAuth'
@@ -23,7 +26,7 @@ describe('PATCH /api/inscricoes/[id]', () => {
       .mockResolvedValue({ id: 'i1', status: 'pago' })
     const getOneMock = vi.fn().mockResolvedValue({ id: 'i1', criado_por: 'u1' })
     const pb = createPocketBaseMock()
-    pb.collection.mockImplementation(() => ({
+    // pb. // [REMOVED] collection.mockImplementation(() => ({
       update: updateMock,
       getOne: getOneMock,
     }))
@@ -49,7 +52,7 @@ describe('PATCH /api/inscricoes/[id]', () => {
     const updateMock = vi.fn().mockRejectedValue(error)
     const getOneMock = vi.fn().mockResolvedValue({ id: 'i1', criado_por: 'u1' })
     const pb = createPocketBaseMock()
-    pb.collection.mockImplementation(() => ({
+    // pb. // [REMOVED] collection.mockImplementation(() => ({
       update: updateMock,
       getOne: getOneMock,
     }))

@@ -1,10 +1,13 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { EventoRecord, atualizarStatus } from '@/lib/events'
 import { logConciliacaoErro } from '@/lib/server/logger'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 export async function GET() {
-  const pb = createPocketBase()
+  // const pb = createPocketBase() // [REMOVED]
   const tenant = await getTenantFromHost()
 
   if (!tenant) {
@@ -14,7 +17,7 @@ export async function GET() {
     )
   }
   try {
-    const eventos = await pb.collection('eventos').getFullList<EventoRecord>({
+    const eventos = await // pb. // [REMOVED] collection('eventos').getFullList<EventoRecord>({
       sort: '-data',
       filter: `cliente='${tenant}'`,
       expand: 'produtos,produto_inscricao',
@@ -24,7 +27,7 @@ export async function GET() {
       const fileName = e.imagem || e.logo
       return {
         ...e,
-        imagem: fileName ? pb.files.getURL(e, fileName) : undefined,
+        imagem: fileName ? // pb. // [REMOVED] files.getURL(e, fileName) : undefined,
       }
     })
     return NextResponse.json(comUrls)

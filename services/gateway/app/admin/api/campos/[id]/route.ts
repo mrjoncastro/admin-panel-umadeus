@@ -1,3 +1,6 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { logConciliacaoErro } from '@/lib/server/logger'
@@ -25,7 +28,7 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: 'Nome inválido' }, { status: 400 })
     }
 
-    const campo = await pb.collection('campos').update(id, { nome })
+    const campo = await // pb. // [REMOVED] collection('campos').update(id, { nome })
 
     return NextResponse.json(campo, { status: 200 })
   } catch (err: unknown) {
@@ -51,7 +54,7 @@ export async function DELETE(req: NextRequest) {
   const { pb } = auth
 
   try {
-    await pb.collection('campos').delete(id)
+    await // pb. // [REMOVED] collection('campos').delete(id)
     return NextResponse.json({ sucesso: true }, { status: 200 })
   } catch (err: unknown) {
     await logConciliacaoErro(`Erro: ${String(err)}`)

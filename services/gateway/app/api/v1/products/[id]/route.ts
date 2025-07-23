@@ -28,7 +28,7 @@ export async function GET(
     
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('Erro ao consultar produto no Catalog Service:', error)
+    logger.error('Erro ao consultar produto no Catalog Service:', error)
     return NextResponse.json(
       { success: false, error: 'Erro interno do servidor' },
       { status: 500 }
@@ -65,7 +65,7 @@ export async function PATCH(
     
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('Erro ao atualizar produto no Catalog Service:', error)
+    logger.error('Erro ao atualizar produto no Catalog Service:', error)
     return NextResponse.json(
       { success: false, error: 'Erro interno do servidor' },
       { status: 500 }
@@ -100,10 +100,10 @@ export async function DELETE(
     
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('Erro ao deletar produto no Catalog Service:', error)
+    logger.error('Erro ao deletar produto no Catalog Service:', error)
     return NextResponse.json(
       { success: false, error: 'Erro interno do servidor' },
       { status: 500 }
     )
   }
-} 
+} import { logger } from '@/lib/logger'

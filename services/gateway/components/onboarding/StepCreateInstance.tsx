@@ -1,6 +1,9 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 'use client'
 import { useEffect, useState } from 'react'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { useOnboarding } from '@/lib/context/OnboardingContext'
 import { useAuthContext } from '@/lib/context/AuthContext'
@@ -22,7 +25,7 @@ export default function StepCreateInstance({
       setLoading(true)
       setError(undefined)
       try {
-        const pb = createPocketBase()
+        // const pb = createPocketBase() // [REMOVED]
         const headers = {
           ...getAuthHeaders(pb),
           'Content-Type': 'application/json',

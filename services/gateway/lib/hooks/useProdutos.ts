@@ -1,14 +1,17 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 'use client'
 import { useEffect, useState, useMemo } from 'react'
 
 import { useAuthContext } from '@/lib/context/AuthContext'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getAuthHeaders } from '@/lib/authHeaders'
 import type { Produto } from '@/types'
 
 export default function useProdutos() {
   const { tenantId } = useAuthContext()
-  const pb = useMemo(() => createPocketBase(), [])
+  // const pb = useMemo(() => createPocketBase(), []) // [REMOVED]
   const [produtos, setProdutos] = useState<Produto[]>([])
   const [loading, setLoading] = useState(true)
 

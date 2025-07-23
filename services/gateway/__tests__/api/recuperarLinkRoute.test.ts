@@ -1,7 +1,10 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { describe, it, expect, vi } from 'vitest'
 import { POST } from '../../app/api/recuperar-link/route'
 import { NextRequest } from 'next/server'
-import createPocketBaseMock from '../mocks/pocketbase'
+// [REMOVED] PocketBase import
 
 vi.mock('../../lib/server/logger', () => ({
   logConciliacaoErro: vi.fn(),
@@ -13,7 +16,7 @@ const getFirstCobranca = vi.fn()
 const getFirstInscricao = vi.fn()
 const getFirstPedido = vi.fn()
 
-pb.collection.mockImplementation((name: string) => {
+// pb. // [REMOVED] collection.mockImplementation((name: string) => {
   if (name === 'cobrancas') {
     return { getFirstListItem: getFirstCobranca }
   }

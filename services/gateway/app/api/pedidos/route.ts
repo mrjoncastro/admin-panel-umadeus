@@ -1,5 +1,8 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getUserFromHeaders } from '@/lib/getUserFromHeaders'
 import { requireRole } from '@/lib/apiAuth'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
@@ -69,10 +72,10 @@ function normalizarGenero(valor?: string): string | undefined {
 }
 
 export async function GET(req: NextRequest) {
-  console.log('[PEDIDOS][GET] Nova requisição recebida')
+  logger.debug('[PEDIDOS][GET] Nova requisição recebida')
   const auth = requireRole(req, ['usuario', 'lider', 'coordenador'])
   if ('error' in auth) {
-    console.log('[PEDIDOS][GET] Erro de autenticação:', auth.error)
+    // [REMOVED] Sensitive console.log
     return NextResponse.json({ error: auth.error }, { status: auth.status })
   }
 
@@ -80,7 +83,7 @@ export async function GET(req: NextRequest) {
   const page = Number(req.nextUrl.searchParams.get('page') || '1')
   const perPage = Number(req.nextUrl.searchParams.get('perPage') || '50')
   const status = req.nextUrl.searchParams.get('status') || ''
-  console.log(
+  logger.debug(
     '[PEDIDOS][GET] page:',
     page,
     'perPage:',
@@ -98,7 +101,7 @@ export async function GET(req: NextRequest) {
     } else {
       const tenantId = await getTenantFromHost()
       if (!tenantId) {
-        console.log('[PEDIDOS][GET] Tenant não informado')
+        logger.debug('[PEDIDOS][GET] Tenant não informado')
         return NextResponse.json(
           { error: 'Tenant não informado' },
           { status: 400 },
@@ -109,8 +112,8 @@ export async function GET(req: NextRequest) {
 
     const filtro = status ? `${baseFilter} && status='${status}'` : baseFilter
     const sortParam = req.nextUrl.searchParams.get('sort') || '-created'
-    console.log('[PEDIDOS][GET] Filtro final:', filtro, 'sort:', sortParam)
-    const result = await pb.collection('pedidos').getList(page, perPage, {
+    logger.debug('[PEDIDOS][GET] Filtro final:', filtro, 'sort:', sortParam)
+    const result = await // pb. // [REMOVED] collection('pedidos').getList(page, perPage, {
       filter: filtro,
       sort: sortParam,
       expand: 'campo,id_inscricao,produto',
@@ -137,30 +140,30 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    console.log('[PEDIDOS][GET] Retornando pedidos:', items.length)
+    logger.debug('[PEDIDOS][GET] Retornando pedidos:', items.length)
     return NextResponse.json(result)
   } catch (err) {
-    console.error('[PEDIDOS][GET] Erro ao listar:', err)
+    logger.error('[PEDIDOS][GET] Erro ao listar:', err)
     return NextResponse.json({ error: 'Erro ao listar' }, { status: 500 })
   }
 }
 
 export async function POST(req: NextRequest) {
-  console.log('[PEDIDOS][POST] Nova requisição recebida')
+  logger.debug('[PEDIDOS][POST] Nova requisição recebida')
   const auth = getUserFromHeaders(req)
-  console.log('[PEDIDOS][POST] Auth:', auth)
+  // [REMOVED] Sensitive console.log
   const pb = 'error' in auth ? createPocketBase(false) : auth.pbSafe
 
   try {
     const body = await req.json()
-    console.log('[PEDIDOS][POST] Body recebido:', body)
+    logger.debug('[PEDIDOS][POST] Body recebido:', body)
     const inscricaoId = body.id_inscricao ?? body.inscricaoId
 
     if (!inscricaoId) {
-      console.log('[PEDIDOS][POST] Criando pedido sem inscriçãoId')
+      logger.debug('[PEDIDOS][POST] Criando pedido sem inscriçãoId')
       const tenantId = await getTenantFromHost()
       if (!tenantId) {
-        console.log('[PEDIDOS][POST] Tenant não encontrado')
+        logger.debug('[PEDIDOS][POST] Tenant não encontrado')
         return NextResponse.json(
           { erro: 'Tenant não encontrado' },
           { status: 400 },
@@ -174,10 +177,10 @@ export async function POST(req: NextRequest) {
           ? [produto]
           : []
       const userId = 'error' in auth ? undefined : (auth.user.id as string)
-      console.log('[PEDIDOS][POST] userId:', userId)
+      logger.debug('[PEDIDOS][POST] userId:', userId)
 
       if (!userId) {
-        console.log('[PEDIDOS][POST] Usuário não autenticado')
+        logger.debug('[PEDIDOS][POST] Usuário não autenticado')
         return NextResponse.json(
           { erro: 'Usuário não autenticado' },
           { status: 401 },
@@ -190,10 +193,10 @@ export async function POST(req: NextRequest) {
           produtoRecord = await pb
             .collection('produtos')
             .getOne<Produto>(produtoIds[0])
-          console.log('[PEDIDOS][POST] produtoRecord pelo id:', produtoRecord)
+          logger.debug('[PEDIDOS][POST] produtoRecord pelo id:', produtoRecord)
         }
       } catch (e) {
-        console.error('[PEDIDOS][POST] Erro ao buscar produto pelo id:', e)
+        logger.error('[PEDIDOS][POST] Erro ao buscar produto pelo id:', e)
       }
 
       if (produtoRecord?.requer_inscricao_aprovada) {
@@ -205,7 +208,7 @@ export async function POST(req: NextRequest) {
             )
             .then(() => true)
             .catch(() => false)
-          console.log('[PEDIDOS][POST] Possui inscrição aprovada?', possui)
+          logger.debug('[PEDIDOS][POST] Possui inscrição aprovada?', possui)
           if (!possui) {
             return NextResponse.json(
               { erro: 'É necessário possuir inscrição aprovada no evento.' },
@@ -213,7 +216,7 @@ export async function POST(req: NextRequest) {
             )
           }
         } catch (e) {
-          console.error(
+          logger.error(
             '[PEDIDOS][POST] Erro ao verificar inscrição aprovada:',
             e,
           )
@@ -221,7 +224,7 @@ export async function POST(req: NextRequest) {
       }
 
       const corTratada = corParaSchema(cor)
-      console.log('[PEDIDOS][POST] corTratada:', corTratada)
+      logger.debug('[PEDIDOS][POST] corTratada:', corTratada)
 
       const payload = {
         id_inscricao: '',
@@ -239,11 +242,11 @@ export async function POST(req: NextRequest) {
         valor: Number(valor) || 0,
         canal: 'loja',
       }
-      console.log('[PEDIDOS][POST] Payload para criação:', payload)
+      logger.debug('[PEDIDOS][POST] Payload para criação:', payload)
 
       try {
-        const pedido = await pb.collection('pedidos').create<Pedido>(payload)
-        console.log('[PEDIDOS][POST] Pedido criado:', pedido)
+        const pedido = await // pb. // [REMOVED] collection('pedidos').create<Pedido>(payload)
+        logger.debug('[PEDIDOS][POST] Pedido criado:', pedido)
         logRocketEvent('pedido_criado', {
           pedidoId: pedido.id,
           responsavel: userId,
@@ -255,7 +258,7 @@ export async function POST(req: NextRequest) {
           status: pedido.status,
         })
       } catch (err: unknown) {
-        console.error('[PEDIDOS][POST] Erro ao criar pedido:', err)
+        logger.error('[PEDIDOS][POST] Erro ao criar pedido:', err)
         throw err
       }
     }
@@ -268,13 +271,13 @@ export async function POST(req: NextRequest) {
         .getOne<Inscricao>(inscricaoId, {
           expand: 'campo,criado_por',
         })
-      console.log('[PEDIDOS][POST] Inscrição encontrada:', inscricao)
+      logger.debug('[PEDIDOS][POST] Inscrição encontrada:', inscricao)
     } catch (e) {
-      console.error('[PEDIDOS][POST] Erro ao buscar inscrição:', e)
+      logger.error('[PEDIDOS][POST] Erro ao buscar inscrição:', e)
     }
 
     if (!inscricao) {
-      console.log('[PEDIDOS][POST] Inscrição não encontrada')
+      logger.debug('[PEDIDOS][POST] Inscrição não encontrada')
       return NextResponse.json(
         { erro: 'Inscrição não encontrada.' },
         { status: 404 },
@@ -289,7 +292,7 @@ export async function POST(req: NextRequest) {
           `id_inscricao="${inscricaoId}" && status!='cancelado'`,
         )
       if (existente) {
-        console.log('[PEDIDOS][POST] Pedido existente:', existente.id)
+        logger.debug('[PEDIDOS][POST] Pedido existente:', existente.id)
         return NextResponse.json({
           pedidoId: existente.id,
           valor: existente.valor,
@@ -297,8 +300,8 @@ export async function POST(req: NextRequest) {
         })
       }
     } catch (err) {
-      console.log('[PEDIDOS][POST] Nenhum pedido existente encontrado')
-      console.error(err)
+      logger.debug('[PEDIDOS][POST] Nenhum pedido existente encontrado')
+      logger.error(err)
     }
 
     const campoId = inscricao.expand?.campo?.id
@@ -312,10 +315,10 @@ export async function POST(req: NextRequest) {
         produtoRecord = await pb
           .collection('produtos')
           .getOne(produtoIdInscricao)
-        console.log('[PEDIDOS][POST] produtoRecord pelo id:', produtoRecord)
+        logger.debug('[PEDIDOS][POST] produtoRecord pelo id:', produtoRecord)
       }
     } catch (e) {
-      console.error('[PEDIDOS][POST] Erro ao buscar produto pelo id:', e)
+      logger.error('[PEDIDOS][POST] Erro ao buscar produto pelo id:', e)
       try {
         if (inscricao.evento) {
           const ev = await pb
@@ -325,18 +328,18 @@ export async function POST(req: NextRequest) {
             ? (ev.expand.produtos as Produto[])
             : []
           produtoRecord = lista.find((p) => p.id === produtoIdInscricao)
-          console.log(
+          logger.debug(
             '[PEDIDOS][POST] produtoRecord via evento:',
             produtoRecord,
           )
         }
       } catch (ee) {
-        console.error('[PEDIDOS][POST] Erro ao buscar produto via evento:', ee)
+        logger.error('[PEDIDOS][POST] Erro ao buscar produto via evento:', ee)
       }
     }
 
     const valor = produtoRecord?.preco_bruto ?? 0
-    console.log('[PEDIDOS][POST] Valor final do pedido:', valor)
+    logger.debug('[PEDIDOS][POST] Valor final do pedido:', valor)
 
     const payload = {
       id_inscricao: inscricaoId,
@@ -366,11 +369,11 @@ export async function POST(req: NextRequest) {
       cliente: inscricao.cliente,
       canal: 'inscricao',
     }
-    console.log('[PEDIDOS][POST] Payload com inscrição:', payload)
+    logger.debug('[PEDIDOS][POST] Payload com inscrição:', payload)
 
     try {
-      const pedido = await pb.collection('pedidos').create<Pedido>(payload)
-      console.log('[PEDIDOS][POST] Pedido criado:', pedido)
+      const pedido = await // pb. // [REMOVED] collection('pedidos').create<Pedido>(payload)
+      logger.debug('[PEDIDOS][POST] Pedido criado:', pedido)
       logRocketEvent('pedido_criado', {
         pedidoId: pedido.id,
         responsavel: responsavelId,
@@ -382,12 +385,13 @@ export async function POST(req: NextRequest) {
         status: pedido.status,
       })
     } catch (err: unknown) {
-      console.error('[PEDIDOS][POST] Erro ao criar pedido com inscrição:', err)
+      logger.error('[PEDIDOS][POST] Erro ao criar pedido com inscrição:', err)
       throw err
     }
   } catch (err: unknown) {
     await logConciliacaoErro(`Erro ao criar pedido: ${String(err)}`)
-    console.error('[PEDIDOS][POST] Erro geral:', err)
+    logger.error('[PEDIDOS][POST] Erro geral:', err)
     return NextResponse.json({ erro: 'Erro ao criar pedido.' }, { status: 500 })
   }
 }
+import { logger } from '@/lib/logger'

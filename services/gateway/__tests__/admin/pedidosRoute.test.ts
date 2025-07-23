@@ -1,7 +1,10 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { POST } from '../../app/api/pedidos/route'
 import { NextRequest } from 'next/server'
-import createPocketBaseMock from '../mocks/pocketbase'
+// [REMOVED] PocketBase import
 
 const pb = createPocketBaseMock()
 vi.mock('../../lib/pocketbase', () => ({
@@ -15,8 +18,8 @@ vi.mock('../../lib/getTenantFromHost', () => ({
 
 beforeEach(() => {
   getTenantFromHostMock = vi.fn().mockResolvedValue('cli1')
-  pb.collection.mockReset()
-  pb.authStore.model = { id: 'u1' }
+  // pb. // [REMOVED] collection.mockReset()
+  // pb. // [REMOVED] authStore.model = { id: 'u1' }
 })
 
 describe('POST /admin/api/pedidos', () => {
@@ -31,7 +34,7 @@ describe('POST /admin/api/pedidos', () => {
   })
 
   it('retorna 401 quando usuario nao autenticado', async () => {
-    pb.authStore.model = undefined
+    // pb. // [REMOVED] authStore.model = undefined
     const req = new Request('http://test', {
       method: 'POST',
       body: JSON.stringify({ produto: ['P'] }),
@@ -44,7 +47,7 @@ describe('POST /admin/api/pedidos', () => {
     const createMock = vi
       .fn()
       .mockResolvedValue({ id: 'p1', valor: 10, status: 'pendente' })
-    pb.collection.mockReturnValue({ create: createMock })
+    // pb. // [REMOVED] collection.mockReturnValue({ create: createMock })
 
     const req = new Request('http://test', {
       method: 'POST',

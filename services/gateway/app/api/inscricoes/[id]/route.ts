@@ -1,15 +1,19 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import type { Inscricao } from '@/types'
-import type { RecordModel } from 'pocketbase'
+// [REMOVED] PocketBase import
 import { logConciliacaoErro, logRocketEvent } from '@/lib/server/logger'
 import { pbRetry } from '@/lib/pbRetry'
 
 async function checkAccess(
   inscricao: Inscricao,
   user: RecordModel,
-): Promise<{ ok: true } | { error: string; status: number }> {
+): Promise<{ ok: true } | { error: string;import { logger } from '@/lib/logger'
+ status: number }> {
   if (user.role === 'usuario') {
     if (inscricao.criado_por !== user.id) {
       return { error: 'Acesso negado', status: 403 }
@@ -53,7 +57,7 @@ export async function GET(req: NextRequest) {
     }
     return NextResponse.json(record)
   } catch (err) {
-    console.error('Erro ao obter inscricao:', err)
+    logger.error('Erro ao obter inscricao:', err)
     return NextResponse.json({ error: 'Erro ao obter' }, { status: 500 })
   }
 }
@@ -67,7 +71,7 @@ export async function PATCH(req: NextRequest) {
   }
   const { pb, user } = auth
   try {
-    const inscricao = await pb.collection('inscricoes').getOne<Inscricao>(id)
+    const inscricao = await // pb. // [REMOVED] collection('inscricoes').getOne<Inscricao>(id)
     const access = await checkAccess(inscricao, user)
     if ('error' in access) {
       return NextResponse.json(
@@ -87,7 +91,7 @@ export async function PATCH(req: NextRequest) {
       }
     }
     const updated = await pbRetry(() =>
-      pb.collection('inscricoes').update(id, payload),
+      // pb. // [REMOVED] collection('inscricoes').update(id, payload),
     )
     logRocketEvent('inscricao_atualizada', {
       inscricaoId: id,
@@ -95,7 +99,7 @@ export async function PATCH(req: NextRequest) {
     })
     return NextResponse.json(updated)
   } catch (err) {
-    console.error('Erro ao atualizar inscricao:', err)
+    logger.error('Erro ao atualizar inscricao:', err)
     await logConciliacaoErro('Erro ao atualizar inscricao: ' + String(err))
     return NextResponse.json({ error: 'Erro ao atualizar' }, { status: 500 })
   }
@@ -112,7 +116,7 @@ export async function DELETE(req: NextRequest) {
   }
   const { pb, user } = auth
   try {
-    const inscricao = await pb.collection('inscricoes').getOne<Inscricao>(id)
+    const inscricao = await // pb. // [REMOVED] collection('inscricoes').getOne<Inscricao>(id)
     const access = await checkAccess(inscricao, user)
     if ('error' in access) {
       return NextResponse.json(
@@ -120,11 +124,11 @@ export async function DELETE(req: NextRequest) {
         { status: access.status },
       )
     }
-    await pb.collection('inscricoes').delete(id)
+    await // pb. // [REMOVED] collection('inscricoes').delete(id)
     logRocketEvent('inscricao_cancelada', { inscricaoId: id })
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error('Erro ao excluir inscricao:', err)
+    logger.error('Erro ao excluir inscricao:', err)
     await logConciliacaoErro('Erro ao excluir inscricao: ' + String(err))
     return NextResponse.json({ error: 'Erro ao excluir' }, { status: 500 })
   }

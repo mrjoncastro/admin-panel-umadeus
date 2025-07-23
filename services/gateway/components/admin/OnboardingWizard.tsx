@@ -1,6 +1,9 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 'use client'
 import { useEffect, useState, useMemo } from 'react'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import StepSelectClient from '../onboarding/StepSelectClient'
@@ -34,7 +37,7 @@ function WizardSteps() {
     setLoading,
   } = useOnboarding()
   const { tenantId } = useAuthContext()
-  const pb = useMemo(() => createPocketBase(), [])
+  // const pb = useMemo(() => createPocketBase(), []) // [REMOVED]
   const [qrUrl, setQrUrl] = useState('')
   const [qrBase, setQrBase] = useState('')
 

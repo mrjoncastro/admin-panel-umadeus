@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
@@ -109,7 +110,7 @@ export default function EditarEventoPage() {
       setProdutos((prev) => [data, ...prev])
       setSelectedProdutos((prev) => [...prev, data.id])
     } catch (err) {
-      console.error('Erro ao criar produto:', err)
+      logger.error('Erro ao criar produto:', err)
     } finally {
       setProdutoModalOpen(false)
     }
@@ -146,7 +147,7 @@ export default function EditarEventoPage() {
         showError('Falha ao salvar evento')
       }
     } catch (err) {
-      console.error('Erro ao salvar evento:', err)
+      logger.error('Erro ao salvar evento:', err)
       showError('Falha ao salvar evento')
     }
   }

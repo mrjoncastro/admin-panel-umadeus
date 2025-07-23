@@ -10,7 +10,7 @@ function ensureLogRocket() {
       LogRocket.init('4pjmeb/m24')
       lrInitialized = true
     } catch (err) {
-      console.error('Falha ao iniciar LogRocket', err)
+      logger.error('Falha ao iniciar LogRocket', err)
     }
   }
   return lrInitialized
@@ -33,7 +33,7 @@ export async function logConciliacaoErro(message: string) {
     // em ambientes serverless, opcionalmente envie a linha para um servico externo
     // await sendLogToExternalService(line)
   } catch (err) {
-    console.error('Falha ao registrar ERR_LOG', err)
+    logger.error('Falha ao registrar ERR_LOG', err)
   }
 }
 
@@ -63,6 +63,7 @@ export function logRocketEvent(
       LogRocket.captureMessage(message)
     }
   } catch (err) {
-    console.error('Falha ao enviar log ao LogRocket', err)
+    logger.error('Falha ao enviar log ao LogRocket', err)
   }
 }
+import { logger } from '@/lib/logger'

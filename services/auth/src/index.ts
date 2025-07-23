@@ -18,8 +18,9 @@ app.post('/login', (req: Request<Record<string, unknown>, any, { username: strin
 if (require.main === module) {
   const port = process.env.PORT || 4000
   app.listen(port, () => {
-    console.log(`Auth service running on port ${port}`)
+    // [REMOVED] Sensitive console.log
   })
 }
 
 export default app
+import { logger } from '@/lib/logger'

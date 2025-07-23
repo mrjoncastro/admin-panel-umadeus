@@ -70,7 +70,7 @@ router.get('/', async (req: Request, res: Response) => {
       }
     })
   } catch (error) {
-    console.error('Erro ao listar produtos:', error)
+    logger.error('Erro ao listar produtos:', error)
     res.status(500).json({
       success: false,
       error: 'Erro interno do servidor'
@@ -98,7 +98,7 @@ router.get('/:id', async (req: Request, res: Response) => {
       data: product
     })
   } catch (error) {
-    console.error('Erro ao buscar produto:', error)
+    logger.error('Erro ao buscar produto:', error)
     res.status(500).json({
       success: false,
       error: 'Erro interno do servidor'
@@ -126,7 +126,7 @@ router.get('/slug/:slug', async (req: Request, res: Response) => {
       data: product
     })
   } catch (error) {
-    console.error('Erro ao buscar produto por slug:', error)
+    logger.error('Erro ao buscar produto por slug:', error)
     res.status(500).json({
       success: false,
       error: 'Erro interno do servidor'
@@ -163,7 +163,7 @@ router.post('/', async (req: Request, res: Response) => {
       })
     }
     
-    console.error('Erro ao criar produto:', error)
+    logger.error('Erro ao criar produto:', error)
     res.status(500).json({
       success: false,
       error: 'Erro interno do servidor'
@@ -203,7 +203,7 @@ router.patch('/:id', async (req: Request, res: Response) => {
       })
     }
     
-    console.error('Erro ao atualizar produto:', error)
+    logger.error('Erro ao atualizar produto:', error)
     res.status(500).json({
       success: false,
       error: 'Erro interno do servidor'
@@ -231,7 +231,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
       message: 'Produto deletado com sucesso'
     })
   } catch (error) {
-    console.error('Erro ao deletar produto:', error)
+    logger.error('Erro ao deletar produto:', error)
     res.status(500).json({
       success: false,
       error: 'Erro interno do servidor'
@@ -268,7 +268,7 @@ router.patch('/:id/stock', async (req: Request, res: Response) => {
       message: 'Estoque atualizado com sucesso'
     })
   } catch (error) {
-    console.error('Erro ao atualizar estoque:', error)
+    logger.error('Erro ao atualizar estoque:', error)
     res.status(500).json({
       success: false,
       error: 'Erro interno do servidor'
@@ -276,4 +276,4 @@ router.patch('/:id/stock', async (req: Request, res: Response) => {
   }
 })
 
-export default router 
+export default router import { logger } from '@/lib/logger'

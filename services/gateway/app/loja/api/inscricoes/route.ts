@@ -1,14 +1,17 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
-import { ClientResponseError } from 'pocketbase'
+// [REMOVED] PocketBase import
+// [REMOVED] PocketBase import
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro, logRocketEvent } from '@/lib/server/logger'
 import type { PaymentMethod } from '@/lib/asaasFees'
 import { criarInscricao, InscricaoTemplate } from '@/lib/templates/inscricao'
 
 export async function POST(req: NextRequest) {
-  const pb = createPocketBase()
-  pb.authStore.loadFromCookie(req.headers.get('cookie') || '')
+  // const pb = createPocketBase() // [REMOVED]
+  // pb. // [REMOVED] authStore.loadFromCookie(req.headers.get('cookie') || '')
   const tenantId = await getTenantFromHost()
 
   try {
@@ -19,7 +22,7 @@ export async function POST(req: NextRequest) {
     }`.trim()
     const senha = data.password || data.passwordConfirm
 
-    let usuario = pb.authStore.isValid ? pb.authStore.model : null
+    let usuario = // pb. // [REMOVED] authStore.isValid ? // pb. // [REMOVED] authStore.model : null
     if (!usuario) {
       try {
         usuario = await pb
@@ -29,7 +32,7 @@ export async function POST(req: NextRequest) {
         const cpf = String(data.user_cpf).replace(/\D/g, '')
         const telefone = String(data.user_phone).replace(/\D/g, '')
         try {
-          const dup = await pb.collection('usuarios').getList(1, 1, {
+          const dup = await // pb. // [REMOVED] collection('usuarios').getList(1, 1, {
             filter: `cpf='${cpf}' || email='${data.user_email}'`,
           })
           if (dup.items.length > 0) {
@@ -46,7 +49,7 @@ export async function POST(req: NextRequest) {
           )
         }
         const tempPass = Math.random().toString(36).slice(2, 10)
-        usuario = await pb.collection('usuarios').create({
+        usuario = await // pb. // [REMOVED] collection('usuarios').create({
           nome,
           email: data.user_email,
           emailVisibility: true,
@@ -76,7 +79,7 @@ export async function POST(req: NextRequest) {
     const cpfNumerico = String(data.user_cpf).replace(/\D/g, '')
     const filtroDuplicado = `evento='${data.evento}' && (criado_por='${usuario.id}' || cpf='${cpfNumerico}')`
     try {
-      await pb.collection('inscricoes').getFirstListItem(filtroDuplicado)
+      await // pb. // [REMOVED] collection('inscricoes').getFirstListItem(filtroDuplicado)
       return NextResponse.json(
         { error: 'Usuário já inscrito neste evento' },
         { status: 409 },
@@ -117,11 +120,11 @@ export async function POST(req: NextRequest) {
       installments,
     }
 
-    const record = await pb.collection('inscricoes').create(registroParaCriar)
+    const record = await // pb. // [REMOVED] collection('inscricoes').create(registroParaCriar)
 
-    const evento = await pb.collection('eventos').getOne(data.evento)
+    const evento = await // pb. // [REMOVED] collection('eventos').getOne(data.evento)
 
-    console.log('Registro criado com sucesso:', record)
+    logger.debug('Registro criado com sucesso:', record)
     logRocketEvent('inscricao_loja', {
       inscricaoId: record.id,
       userId: usuario?.id,
@@ -140,7 +143,7 @@ export async function POST(req: NextRequest) {
         }
       }
     } catch (e) {
-      console.error('Erro ao verificar confirma_inscricoes:', e)
+      logger.error('Erro ao verificar confirma_inscricoes:', e)
     }
 
     const payload: Record<string, unknown> = {
@@ -150,7 +153,7 @@ export async function POST(req: NextRequest) {
 
     const base = req.nextUrl?.origin || req.headers.get('origin')
     if (!base) {
-      console.error('Base URL não encontrada para envio de notificações')
+      logger.error('Base URL não encontrada para envio de notificações')
       return
     }
 
@@ -161,7 +164,7 @@ export async function POST(req: NextRequest) {
         .getFirstListItem(`campo='${data.campo}' && role='lider'`)
       liderId = lider.id
     } catch (e) {
-      console.error('Líder não encontrado para o campo', e)
+      logger.error('Líder não encontrado para o campo', e)
     }
 
     try {
@@ -171,14 +174,14 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify(payload),
       })
     } catch (e) {
-      console.error('Erro ao enviar e-mail de inscrição:', e)
+      logger.error('Erro ao enviar e-mail de inscrição:', e)
     }
 
     fetch(`${base}/api/chats/message/sendWelcome`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
-    }).catch((e) => console.error('Erro ao enviar WhatsApp de inscrição:', e))
+    }).catch((e) => logger.error('Erro ao enviar WhatsApp de inscrição:', e))
 
     if (liderId) {
       fetch(`${base}/api/chats/message/sendWelcome`, {
@@ -190,38 +193,38 @@ export async function POST(req: NextRequest) {
           inscritoNome: nome,
           eventoTitulo: evento.titulo,
         }),
-      }).catch((e) => console.error('Erro ao enviar WhatsApp para o líder:', e))
+      }).catch((e) => logger.error('Erro ao enviar WhatsApp para o líder:', e))
     }
 
     return NextResponse.json(record, { status: 201 })
   } catch (err: unknown) {
-    console.error('Erro ao criar inscrição:', err)
+    logger.error('Erro ao criar inscrição:', err)
 
     let detalhes: unknown = null
     if (err instanceof ClientResponseError) {
-      console.error('URL chamada:', err.url)
-      console.error('Status HTTP:', err.status)
-      console.error(
+      logger.error('URL chamada:', err.url)
+      logger.error('Status HTTP:', err.status)
+      logger.error(
         'Resposta do PocketBase:',
         JSON.stringify(err.response, null, 2),
       )
       detalhes = err.response
       if (err.originalError) {
-        console.error('Erro original:', err.originalError)
+        logger.error('Erro original:', err.originalError)
       }
     } else if (err && typeof err === 'object') {
       const errorData = err as Record<string, unknown>
-      if ('url' in errorData) console.error('URL chamada:', errorData.url)
-      if ('status' in errorData) console.error('Status HTTP:', errorData.status)
+      if ('url' in errorData) logger.error('URL chamada:', errorData.url)
+      if ('status' in errorData) logger.error('Status HTTP:', errorData.status)
       if ('response' in errorData) {
-        console.error(
+        logger.error(
           'Resposta do PocketBase:',
           JSON.stringify(errorData.response, null, 2),
         )
         detalhes = errorData.response
       }
       if ('originalError' in errorData) {
-        console.error('Erro original:', errorData.originalError)
+        logger.error('Erro original:', errorData.originalError)
       }
     }
 
@@ -232,3 +235,4 @@ export async function POST(req: NextRequest) {
     )
   }
 }
+import { logger } from '@/lib/logger'

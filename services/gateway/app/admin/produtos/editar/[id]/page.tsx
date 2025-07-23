@@ -1,7 +1,11 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
+import { logger } from '@/lib/logger'
 'use client'
 
 import { useEffect, useState, useRef, useMemo } from 'react'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { useParams, useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
@@ -36,7 +40,7 @@ function slugify(str: string) {
 export default function EditarProdutoPage() {
   const { id } = useParams<{ id: string }>()
   const { user: ctxUser, isLoggedIn } = useAuthContext()
-  const pb = useMemo(() => createPocketBase(), [])
+  // const pb = useMemo(() => createPocketBase(), []) // [REMOVED]
   const router = useRouter()
   const { showSuccess, showError } = useToast()
   const { authChecked } = useAuthGuard(['coordenador'])
@@ -248,11 +252,11 @@ export default function EditarProdutoPage() {
     formData.set('requer_inscricao_aprovada', String(requerAprov))
 
     // <<< AQUI O CONSOLE!
-    console.log('---- FormData a ser enviado ----')
+    logger.debug('---- FormData a ser enviado ----')
     for (const [key, value] of formData.entries()) {
-      console.log(key, value)
+      // [REMOVED] Sensitive console.log
     }
-    console.log('-------------------------------')
+    logger.debug('-------------------------------')
 
     try {
       const res = await fetch(`/admin/api/produtos/${id}`, {
@@ -268,7 +272,7 @@ export default function EditarProdutoPage() {
         showError('Erro ao atualizar produto')
       }
     } catch (err) {
-      console.error('Erro ao atualizar produto:', err)
+      logger.error('Erro ao atualizar produto:', err)
       showError('Erro ao atualizar produto')
     }
   }

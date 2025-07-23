@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
@@ -150,7 +151,7 @@ export default function DashboardAnalytics({
         charts,
       )
     } catch (err) {
-      console.error('Erro ao gerar PDF', err)
+      logger.error('Erro ao gerar PDF', err)
       const message =
         err instanceof Error && err.message.includes('Tempo')
           ? 'Tempo esgotado ao gerar PDF.'

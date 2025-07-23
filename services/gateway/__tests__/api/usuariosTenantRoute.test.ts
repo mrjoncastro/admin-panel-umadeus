@@ -1,3 +1,6 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { describe, it, expect, vi } from 'vitest'
 import { GET } from '../../app/admin/api/usuarios/[id]/route'
 import { NextRequest } from 'next/server'
@@ -8,7 +11,7 @@ import { requireRole } from '../../lib/apiAuth'
 vi.mock('../../lib/services/pocketbase', () => ({
   fetchUsuario: vi.fn(),
 }))
-import { fetchUsuario } from '../../lib/services/pocketbase'
+// [REMOVED] PocketBase import
 
 describe('GET /admin/api/usuarios/[id] multi-tenant', () => {
   it('nega acesso quando usuario pertence a outro tenant', async () => {

@@ -1,3 +1,6 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { logConciliacaoErro } from '@/lib/server/logger'
@@ -33,7 +36,7 @@ export async function DELETE(req: NextRequest) {
   }
   const { pb } = auth
   try {
-    await pb.collection('clientes_contas_bancarias').delete(id)
+    await // pb. // [REMOVED] collection('clientes_contas_bancarias').delete(id)
     return NextResponse.json({ sucesso: true }, { status: 200 })
   } catch (err) {
     await logConciliacaoErro(`Erro ao excluir conta bancaria: ${String(err)}`)

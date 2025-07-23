@@ -1,3 +1,6 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { logInfo } from '@/lib/logger'
@@ -14,7 +17,7 @@ export async function GET(req: NextRequest) {
   const { pb, user } = auth
 
   try {
-    const usuarios = await pb.collection('usuarios').getFullList({
+    const usuarios = await // pb. // [REMOVED] collection('usuarios').getFullList({
       sort: 'nome',
       expand: 'campo',
       filter: `cliente='${user.cliente}'`,
@@ -105,7 +108,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'CEP inválido' }, { status: 400 })
     }
 
-    const novoUsuario = await pb.collection('usuarios').create({
+    const novoUsuario = await // pb. // [REMOVED] collection('usuarios').create({
       nome,
       email,
       emailVisibility: true,

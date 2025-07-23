@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
+import { logger } from '@/lib/logger'
 
 dotenv.config();
 
@@ -43,5 +44,5 @@ app.post('/calculate', (req, res) => {
 
 const port = process.env.PORT || 7000;
 app.listen(port, () => {
-  console.log(`Commission Engine rodando na porta ${port}`);
+  logger.debug(`Commission Engine rodando na porta ${port}`);
 }); 

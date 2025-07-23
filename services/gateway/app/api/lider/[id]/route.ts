@@ -1,5 +1,8 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
-import { createPocketBase } from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { logConciliacaoErro } from '@/lib/server/logger'
 
 export async function GET(req: NextRequest) {

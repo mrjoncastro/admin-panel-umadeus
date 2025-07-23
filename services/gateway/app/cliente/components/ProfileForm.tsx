@@ -1,14 +1,17 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 'use client'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import { useEffect, useMemo, useState } from 'react'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { useToast } from '@/lib/context/ToastContext'
 import { FormField, TextField, InputWithMask } from '@/components'
 
 export default function ProfileForm() {
   const { user, authChecked } = useAuthGuard(['usuario'])
-  const pb = useMemo(() => createPocketBase(), [])
+  // const pb = useMemo(() => createPocketBase(), []) // [REMOVED]
   const { showSuccess, showError } = useToast()
 
   const [nome, setNome] = useState('')
@@ -68,7 +71,7 @@ export default function ProfileForm() {
       })
       if (res.ok) {
         const updated = await res.json()
-        pb.authStore.save(pb.authStore.token, updated)
+        // pb. // [REMOVED] authStore.save(// pb. // [REMOVED] authStore.token, updated)
         showSuccess('Dados atualizados!')
       } else {
         showError('Erro ao salvar.')

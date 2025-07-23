@@ -1,11 +1,14 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { requireRole } from '@/lib/apiAuth'
 import { logConciliacaoErro } from '@/lib/server/logger'
 
 export async function GET() {
-  const pb = createPocketBase()
+  // const pb = createPocketBase() // [REMOVED]
   const tenantId = await getTenantFromHost()
 
   if (!tenantId) {
@@ -24,7 +27,7 @@ export async function GET() {
       id: cfg.id,
       nome: cfg.nome ?? '',
       cor_primary: cfg.cor_primary ?? '',
-      logo_url: cfg.logo ? pb.files.getUrl(cfg, cfg.logo) : '',
+      logo_url: cfg.logo ? // pb. // [REMOVED] files.getUrl(cfg, cfg.logo) : '',
       font: cfg.font ?? '',
       confirma_inscricoes:
         cfg.confirmaInscricoes ?? cfg.confirma_inscricoes ?? false,
@@ -46,7 +49,7 @@ export async function PUT(req: NextRequest) {
     const cfg = await pb
       .collection('clientes_config')
       .getFirstListItem(`cliente='${user.cliente}'`)
-    const updated = await pb.collection('clientes_config').update(cfg.id, {
+    const updated = await // pb. // [REMOVED] collection('clientes_config').update(cfg.id, {
       cor_primary: data.cor_primary,
       logo_url: data.logo_url,
       font: data.font,

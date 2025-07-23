@@ -1,5 +1,8 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { headers, cookies } from 'next/headers'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { defaultConfig, TenantConfig } from '@/lib/context/TenantContext'
 
 export async function fetchTenantConfig(): Promise<TenantConfig> {
@@ -9,7 +12,7 @@ export async function fetchTenantConfig(): Promise<TenantConfig> {
   // aqui fazemos await direto, eliminando o headerList que dava conflito
   const host = (await headers()).get('host')?.split(':')[0] ?? ''
 
-  const pb = createPocketBase()
+  // const pb = createPocketBase() // [REMOVED]
   try {
     if (host) {
       const rec = await pb

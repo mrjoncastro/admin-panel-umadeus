@@ -1,6 +1,9 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { queueTextMessage } from '@/lib/server/chats'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 
 export async function POST(req: NextRequest) {
   const tenant = req.headers.get('x-tenant-id')
@@ -24,11 +27,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
   }
 
-  const pb = createPocketBase()
-  if (!pb.authStore.isValid) {
-    await pb.admins.authWithPassword(
-      process.env.PB_ADMIN_EMAIL!,
-      process.env.PB_ADMIN_PASSWORD!,
+  // const pb = createPocketBase() // [REMOVED]
+  if (!// pb. // [REMOVED] authStore.isValid) {
+    await // pb. // [REMOVED] admins.authWithPassword(
+      process.env.// PB_ADMIN_EMAIL // [REMOVED]!,
+      process.env.// PB_ADMIN_PASSWORD // [REMOVED]!,
     )
   }
 

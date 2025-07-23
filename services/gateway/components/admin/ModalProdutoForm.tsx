@@ -1,7 +1,10 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getAuthHeaders } from '@/lib/authHeaders'
 import Image from 'next/image'
 import * as Dialog from '@radix-ui/react-dialog'
@@ -37,7 +40,7 @@ export default function ModalProdutoForm({
   initial = {},
 }: ModalProdutoFormProps) {
   const { showError } = useToast()
-  const pb = createPocketBase()
+  // const pb = createPocketBase() // [REMOVED]
   const firstFieldRef = useRef<HTMLInputElement>(null)
   const [eventos, setEventos] = useState<Evento[]>([])
   const [preview, setPreview] = useState<string | null>(initial.imagem || null)

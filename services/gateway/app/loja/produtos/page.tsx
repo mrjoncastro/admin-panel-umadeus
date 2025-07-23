@@ -1,4 +1,7 @@
-import createPocketBase from '@/lib/pocketbase'
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
+// [REMOVED] PocketBase import
 import ProdutosFiltrados from './ProdutosFiltrados.dynamic'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
@@ -24,8 +27,8 @@ export default async function ProdutosPage() {
     )
   }
 
-  const pb = createPocketBase()
-  const list = await pb.collection('produtos').getList<Produto>(1, 50, {
+  // const pb = createPocketBase() // [REMOVED]
+  const list = await // pb. // [REMOVED] collection('produtos').getList<Produto>(1, 50, {
     filter: `ativo = true && cliente='${tenantId}'`,
     sort: '-created',
   })
@@ -33,7 +36,7 @@ export default async function ProdutosPage() {
 
   const produtos = produtosPB.map((p) => ({
     ...p,
-    imagens: (p.imagens || []).map((img) => pb.files.getURL(p, img)),
+    imagens: (p.imagens || []).map((img) => // pb. // [REMOVED] files.getURL(p, img)),
   }))
 
   return (

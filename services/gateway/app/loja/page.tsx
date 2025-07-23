@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 import Image from 'next/image'
@@ -29,7 +30,7 @@ export default function Home() {
           setProdutosDestaque(prods)
         }
       } catch (err) {
-        console.error(err)
+        logger.error(err)
       }
     }
     fetchProdutos()

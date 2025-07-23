@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 import { useState } from 'react'
@@ -62,7 +63,7 @@ export default function SignUpPage() {
       showSuccess('Conta criada com sucesso!')
       router.push('/completar-cadastro')
     } catch (err) {
-      console.error('Erro no cadastro:', err)
+      logger.error('Erro no cadastro:', err)
       if (err instanceof Error) {
         showError(err.message)
       } else {

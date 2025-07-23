@@ -1,11 +1,14 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logRocketEvent } from '@/lib/server/logger'
 import { pbRetry } from '@/lib/pbRetry'
 
 export async function POST(req: NextRequest) {
-  const pb = createPocketBase()
+  // const pb = createPocketBase() // [REMOVED]
   try {
     const { nome, email, telefone, cpf, senha, campo, role } = await req.json()
     if (!nome || !email || !telefone || !cpf || !senha || (role === 'lider' && !campo)) {
@@ -22,7 +25,7 @@ export async function POST(req: NextRequest) {
     const cpfNumerico = String(cpf).replace(/\D/g, '')
     try {
       const dup = await pbRetry(() =>
-        pb.collection('usuarios').getList(1, 1, {
+        // pb. // [REMOVED] collection('usuarios').getList(1, 1, {
           filter: `cpf='${cpfNumerico}' || email='${email}'`,
         }),
       )
@@ -34,7 +37,7 @@ export async function POST(req: NextRequest) {
       }
     } catch {}
     const usuario = await pbRetry(() =>
-      pb.collection('usuarios').create({
+      // pb. // [REMOVED] collection('usuarios').create({
         nome: String(nome).trim(),
         email: String(email).trim(),
         emailVisibility: true,
@@ -50,7 +53,7 @@ export async function POST(req: NextRequest) {
 
     const base = req.nextUrl?.origin || req.headers.get('origin')
     if (!base) {
-      console.error('Base URL não encontrada para envio de notificações')
+      logger.error('Base URL não encontrada para envio de notificações')
       return NextResponse.json(
         { error: 'Base URL não encontrada' },
         { status: 500 },
@@ -67,7 +70,7 @@ export async function POST(req: NextRequest) {
         }),
       })
     } catch (err) {
-      console.error('Falha ao enviar email de boas-vindas', err)
+      logger.error('Falha ao enviar email de boas-vindas', err)
     }
 
     fetch(`${base}/api/chats/message/sendWelcome`, {
@@ -77,7 +80,7 @@ export async function POST(req: NextRequest) {
         userId: usuario.id,
       }),
     }).catch((err) =>
-      console.error('Falha ao enviar mensagem de boas-vindas', err),
+      logger.error('Falha ao enviar mensagem de boas-vindas', err),
     )
 
     logRocketEvent('novo_usuario', { userId: usuario.id })
@@ -88,10 +91,11 @@ export async function POST(req: NextRequest) {
     if (e.response?.data) {
       return NextResponse.json(e.response.data, { status: 400 })
     }
-    console.error('Erro em /api/signup:', err)
+    logger.error('Erro em /api/signup:', err)
     return NextResponse.json(
       { error: 'Erro ao criar usuário' },
       { status: 500 },
     )
   }
 }
+import { logger } from '@/lib/logger'

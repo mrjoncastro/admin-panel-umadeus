@@ -60,7 +60,7 @@ app.use('/api/v1/categories', categoriesRouter)
 
 // Middleware de erro global
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error('Erro não tratado:', err)
+  logger.error('Erro não tratado:', err)
   
   res.status(500).json({
     success: false,
@@ -83,19 +83,19 @@ async function startServer() {
   try {
     // Executar migrações se necessário
     if (process.env['RUN_MIGRATIONS'] === 'true') {
-      console.log('🔄 Executando migrações...')
+      logger.debug('🔄 Executando migrações...')
       await runMigrations()
-      console.log('✅ Migrações concluídas')
+      logger.debug('✅ Migrações concluídas')
     }
 
     // Iniciar servidor
     app.listen(PORT, () => {
-      console.log(`🚀 Catalog Service rodando na porta ${PORT}`)
-      console.log(`📚 API v1 disponível em http://localhost:${PORT}/api/v1`)
-      console.log(`🏥 Health check em http://localhost:${PORT}/health`)
+      logger.debug(`🚀 Catalog Service rodando na porta ${PORT}`)
+      logger.debug(`📚 API v1 disponível em http://localhost:${PORT}/api/v1`)
+      logger.debug(`🏥 Health check em http://localhost:${PORT}/health`)
     })
   } catch (error) {
-    console.error('💥 Erro ao iniciar servidor:', error)
+    logger.error('💥 Erro ao iniciar servidor:', error)
     process.exit(1)
   }
 }
@@ -105,4 +105,4 @@ if (require.main === module) {
   startServer()
 }
 
-export default app 
+export default app import { logger } from '@/lib/logger'

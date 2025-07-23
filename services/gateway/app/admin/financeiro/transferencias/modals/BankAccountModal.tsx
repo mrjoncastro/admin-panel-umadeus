@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -108,7 +109,7 @@ export default function BankAccountModal({
       showSuccess('Conta salva!')
       onClose()
     } catch (err) {
-      console.error(err)
+      logger.error(err)
       showError('Erro ao salvar.')
     }
   }

@@ -1,8 +1,12 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
+import { logger } from '@/lib/logger'
 // ./app/api/chats/message/sendText/[instanceName]/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
 import { queueTextMessage } from '@/lib/server/chats'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 
 export async function POST(
   req: NextRequest,
@@ -10,7 +14,7 @@ export async function POST(
 ) {
   // 1) precisa fazer await em context.params
   const { instanceName } = await context.params
-  console.log('[sendText] instanceName:', instanceName)
+  logger.debug('[sendText] instanceName:', instanceName)
 
   if (!instanceName) {
     return NextResponse.json({ error: 'instanceName missing' }, { status: 400 })
@@ -33,11 +37,11 @@ export async function POST(
   }
 
   // 2) pega apiKey do PB
-  const pb = createPocketBase()
-  if (!pb.authStore.isValid) {
-    await pb.admins.authWithPassword(
-      process.env.PB_ADMIN_EMAIL!,
-      process.env.PB_ADMIN_PASSWORD!,
+  // const pb = createPocketBase() // [REMOVED]
+  if (!// pb. // [REMOVED] authStore.isValid) {
+    await // pb. // [REMOVED] admins.authWithPassword(
+      process.env.// PB_ADMIN_EMAIL // [REMOVED]!,
+      process.env.// PB_ADMIN_PASSWORD // [REMOVED]!,
     )
   }
   let rec
@@ -69,7 +73,7 @@ export async function POST(
       { status: 200 },
     )
   } catch (err: unknown) {
-    console.error('[sendText] sendTextMessage error:', err)
+    logger.error('[sendText] sendTextMessage error:', err)
     const message = err instanceof Error ? err.message : 'Erro desconhecido'
     return NextResponse.json({ error: message }, { status: 500 })
   }

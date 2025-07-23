@@ -1,3 +1,7 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
+import { logger } from '@/lib/logger'
 'use client'
 
 import {
@@ -11,7 +15,7 @@ import { fetchCep } from '@/utils/cep'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useToast } from '@/lib/context/ToastContext'
 import Spinner from '@/components/atoms/Spinner'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getAuthHeaders } from '@/lib/authHeaders'
 import {
   FormField,
@@ -46,7 +50,7 @@ const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
     ref,
   ) {
     const { signUp } = useAuthContext()
-    const pb = useMemo(() => createPocketBase(), [])
+    // const pb = useMemo(() => createPocketBase(), []) // [REMOVED]
 
     const [campos, setCampos] = useState<{ id: string; nome: string }[]>([])
     const [campo, setCampo] = useState('')
@@ -105,7 +109,7 @@ const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
             setCampos(lista)
           }
         } catch {
-          console.warn('Erro ao carregar os campos')
+          logger.warn('Erro ao carregar os campos')
         }
       }
 
@@ -170,7 +174,7 @@ const CreateUserForm = forwardRef<CreateUserFormHandle, CreateUserFormProps>(
         }, 500)
         return true
       } catch (err: unknown) {
-        console.error('Erro no cadastro:', err)
+        logger.error('Erro no cadastro:', err)
         const message =
           err instanceof Error ? err.message : 'Não foi possível criar a conta.'
         showError(message)

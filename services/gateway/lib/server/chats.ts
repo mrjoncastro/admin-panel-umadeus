@@ -1,19 +1,23 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
+import { logger } from '@/lib/logger'
 // ./lib/server/chats.ts
 
-import PocketBase from 'pocketbase'
+// [REMOVED] PocketBase import
 import { pbRetry } from '@/lib/pbRetry'
 import { broadcastManager } from '@/lib/server/flows/whatsapp'
 
 const EVOLUTION_API_URL = process.env.EVOLUTION_API_URL?.replace(/\/$/, '')
-const PB_URL = process.env.PB_URL!
+const // PB_URL // [REMOVED] = process.env.// PB_URL // [REMOVED]!
 
 /** Retorna um cliente admin autenticado do PocketBase */
 async function getAdminClient() {
-  const pb = new PocketBase(PB_URL)
-  if (!pb.authStore.isValid) {
-    await pb.admins.authWithPassword(
-      process.env.PB_ADMIN_EMAIL!,
-      process.env.PB_ADMIN_PASSWORD!,
+  const pb = new PocketBase(// PB_URL // [REMOVED])
+  if (!// pb. // [REMOVED] authStore.isValid) {
+    await // pb. // [REMOVED] admins.authWithPassword(
+      process.env.// PB_ADMIN_EMAIL // [REMOVED]!,
+      process.env.// PB_ADMIN_PASSWORD // [REMOVED]!,
     )
   }
   return pb
@@ -51,10 +55,10 @@ export async function saveClient(data: {
 
   if (existing) {
     return pbRetry(() =>
-      pb.collection('whatsapp_clientes').update(existing.id, record),
+      // pb. // [REMOVED] collection('whatsapp_clientes').update(existing.id, record),
     )
   } else {
-    return pbRetry(() => pb.collection('whatsapp_clientes').create(record))
+    return pbRetry(() => // pb. // [REMOVED] collection('whatsapp_clientes').create(record))
   }
 }
 
@@ -155,6 +159,6 @@ export async function queueTextMessage(
   }
 
   promise.catch((err) =>
-    console.error('Erro ao enviar mensagem em background:', err),
+    logger.error('Erro ao enviar mensagem em background:', err),
   )
 }

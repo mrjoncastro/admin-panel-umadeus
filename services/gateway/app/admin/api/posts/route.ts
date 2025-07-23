@@ -1,6 +1,9 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { logConciliacaoErro } from '@/lib/server/logger'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
 function slugify(text: string) {
@@ -30,7 +33,7 @@ export async function POST(req: NextRequest) {
     }
 
     const slug = slugify(title)
-    const pb = createPocketBase()
+    // const pb = createPocketBase() // [REMOVED]
     const tenantId = await getTenantFromHost()
 
     const data = {
@@ -52,9 +55,9 @@ export async function POST(req: NextRequest) {
       const existing = await pb
         .collection('posts')
         .getFirstListItem(`slug='${slug}' && cliente='${tenantId}'`)
-      await pb.collection('posts').update(existing.id, data)
+      await // pb. // [REMOVED] collection('posts').update(existing.id, data)
     } catch {
-      await pb.collection('posts').create(data)
+      await // pb. // [REMOVED] collection('posts').create(data)
     }
 
     return NextResponse.json({ slug, thumbnail })

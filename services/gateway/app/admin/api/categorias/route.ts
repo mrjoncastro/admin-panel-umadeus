@@ -1,3 +1,6 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { logConciliacaoErro } from '@/lib/server/logger'
@@ -9,7 +12,7 @@ export async function GET(req: NextRequest) {
   }
   const { pb, user } = auth
   try {
-    const categorias = await pb.collection('categorias').getFullList({
+    const categorias = await // pb. // [REMOVED] collection('categorias').getFullList({
       sort: 'nome',
       filter: `cliente='${user.cliente}'`,
     })

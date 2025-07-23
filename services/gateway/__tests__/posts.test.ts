@@ -1,6 +1,9 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { describe, it, expect, vi } from 'vitest'
-import type PocketBase from 'pocketbase'
-import { listPosts, getRecentPosts } from '../lib/posts/getPostsPocketBase'
+// [REMOVED] PocketBase import
+// [REMOVED] PocketBase import
 import { getRelatedPosts } from '../lib/posts/getRelatedPosts'
 import { getRecentPostsPB } from '../lib/posts/getRecentPostsPB'
 
@@ -20,7 +23,7 @@ describe('posts utilities with PocketBase', () => {
     ]
     const pb = createMockPb(items)
     const posts = await listPosts(pb)
-    expect(pb.collection).toHaveBeenCalledWith('posts')
+    expect(// pb. // [REMOVED] collection).toHaveBeenCalledWith('posts')
     expect(posts[0].slug).toBe('b')
     expect(posts[1].slug).toBe('a')
   })

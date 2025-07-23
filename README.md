@@ -1,6 +1,6 @@
 # M24 Monorepo
 
-Este repositório segue arquitetura monorepo, centralizando múltiplos serviços e bibliotecas compartilhadas.
+Este repositório segue arquitetura monorepo, centralizando múltiplos serviços e bibliotecas compartilhadas com **Supabase** como backend principal.
 
 ---
 
@@ -8,9 +8,9 @@ Este repositório segue arquitetura monorepo, centralizando múltiplos serviços
 
 ### 1. Pré-requisitos
 - [Node.js](https://nodejs.org/) (recomendado v18+)
-- [pnpm](https://pnpm.io/) (ou npm/yarn)
+- [pnpm](https://pnpm.io/) (recomendado para workspaces)
 - [Docker](https://www.docker.com/) e [Docker Compose](https://docs.docker.com/compose/)
-- [Supabase CLI](https://supabase.com/docs/guides/cli) (para rodar o Supabase localmente)
+- [Supabase CLI](https://supabase.com/docs/guides/cli) (para desenvolvimento local)
 
 ### 2. Instale o Supabase CLI (Windows recomendado via Scoop)
 ```sh
@@ -56,7 +56,7 @@ Isso irá iniciar todos os containers necessários (Postgres, API, Auth, Studio,
 ```sh
 docker-compose up
 ```
-Isso irá subir gateway (Next.js), redis, etc. O banco de dados já estará disponível via Supabase.
+Isso irá subir gateway (Next.js), redis e postgres. Use o Supabase local para desenvolvimento ou conecte ao Supabase Cloud para produção.
 
 ### 7. Acesse a aplicação
 - Next.js: http://localhost:3000
@@ -64,15 +64,16 @@ Isso irá subir gateway (Next.js), redis, etc. O banco de dados já estará disp
 
 ---
 
-## Estrutura
+## 📁 Estrutura do Monorepo
 
 - `services/gateway/` – Next.js (portal, admin, loja, blog)
-- `services/catalog/` – Catálogo de produtos e categorias (Supabase/Postgres)
-- `services/orders/` – Pedidos (Supabase/Postgres)
-- `services/commission/` – Engine de comissão (Supabase/Postgres)
+- `services/catalog/` – Catálogo de produtos e categorias 
+- `services/orders/` – Gerenciamento de pedidos
+- `services/auth/` – Serviços de autenticação
+- `services/commission/` – Engine de comissão e pagamentos
 - `libs/types/` – Tipagens TypeScript compartilhadas
-- `libs/utils/` – Utilitários e hooks
-- `libs/design-tokens/` – Tokens de design (cores, espaçamentos, fontes)
+- `libs/utils/` – Utilitários e hooks compartilhados
+- `libs/design-tokens/` – Sistema de design (cores, espaçamentos, fontes)
 
 ## Multi-tenancy & Theming
 
@@ -124,9 +125,27 @@ SELECT * FROM produtos WHERE cliente = '<tenant_id>';
 - [docs/v2/arquitetura_deploy_escalabilidade.md](docs/v2/arquitetura_deploy_escalabilidade.md): arquitetura, deploy, escalabilidade
 - [docs/v2/documento_estrategico_de_desenvolvimento.md](docs/v2/documento_estrategico_de_desenvolvimento.md): diretrizes estratégicas
 
-## Observações
+## 🔒 Segurança e Observações
 
-- O banco de dados Supabase deve ser criado e configurado previamente (ou rodar local via CLI).
-- Todos os serviços devem apontar para o Supabase/Postgres via variáveis de ambiente.
-- Para desenvolvimento, utilize dados fictícios e policies de RLS para garantir isolamento.
-- Nunca exponha a SUPABASE_SERVICE_ROLE_KEY no frontend.
+- **Banco de dados**: Supabase deve ser configurado com RLS (Row Level Security) habilitado
+- **Variáveis de ambiente**: Todos os serviços apontam para Supabase via variáveis de ambiente
+- **Isolamento**: Use policies de RLS para garantir isolamento multi-tenant
+- **Service Role Key**: **NUNCA** exponha a `SUPABASE_SERVICE_ROLE_KEY` no frontend
+- **Logs**: Sistema de logs seguro implementado - não loga dados sensíveis em produção
+- **Autenticação**: Usa Supabase Auth com hash seguro de senhas
+
+## 🚨 Correções de Segurança Implementadas
+
+### ✅ Corrigido
+- ❌ Remoção completa do PocketBase
+- ❌ Autenticação com senhas hasheadas via Supabase Auth
+- ❌ Sistema de logs seguro (não vaza dados sensíveis)
+- ❌ CI/CD melhorado com auditoria de segurança
+- ❌ Docker Compose corrigido
+- ❌ Dependências atualizadas
+
+### 🔧 Melhorias Adicionais
+- **Multi-tenancy** via middleware Supabase
+- **Type checking** no CI/CD
+- **Audit de dependências** automatizado
+- **Workspace management** otimizado

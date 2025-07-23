@@ -1,8 +1,11 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { describe, it, expect, vi } from 'vitest'
 import { POST as postInscricoes } from '../../app/api/inscricoes/route'
 import { POST as postAsaas } from '../../app/api/asaas/route'
 import { NextRequest } from 'next/server'
-import createPocketBaseMock from '../mocks/pocketbase'
+// [REMOVED] PocketBase import
 
 vi.mock('../../lib/pocketbase', () => ({ default: vi.fn() }))
 vi.mock('../../lib/clienteAuth', () => ({ requireClienteFromHost: vi.fn() }))
@@ -23,7 +26,7 @@ describe('Mapeamento Credito para pix', () => {
     const getCfg = vi.fn().mockResolvedValue({ confirma_inscricoes: false })
     const updatePedido = vi.fn()
     const pb = createPocketBaseMock()
-    pb.collection.mockImplementation((name: string) => {
+    // pb. // [REMOVED] collection.mockImplementation((name: string) => {
       if (name === 'usuarios')
         return { getOne: getLider, getFirstListItem: getUser }
       if (name === 'inscricoes')
@@ -68,7 +71,7 @@ describe('Mapeamento Credito para pix', () => {
     })
     ;(req as any).nextUrl = new URL('http://test/api/inscricoes')
 
-    const pocketbaseModule = await import('../../lib/pocketbase')
+    const pocketbaseModule = await // [REMOVED] PocketBase import
     ;(
       pocketbaseModule.default as unknown as {
         mockReturnValue: (v: any) => void
@@ -87,7 +90,7 @@ describe('Mapeamento Credito para pix', () => {
 
   it('normaliza na rota /api/asaas', async () => {
     const pb = createPocketBaseMock()
-    pb.collection.mockImplementation((name: string) => {
+    // pb. // [REMOVED] collection.mockImplementation((name: string) => {
       if (name === 'pedidos')
         return {
           getOne: vi.fn().mockResolvedValue({
@@ -149,7 +152,7 @@ describe('Mapeamento Credito para pix', () => {
     })
     ;(req as any).nextUrl = new URL('http://test/api/asaas')
 
-    const pocketbaseModule = await import('../../lib/pocketbase')
+    const pocketbaseModule = await // [REMOVED] PocketBase import
     ;(
       pocketbaseModule.default as unknown as {
         mockReturnValue: (v: any) => void

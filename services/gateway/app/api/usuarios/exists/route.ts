@@ -1,5 +1,8 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 
 export async function GET(req: NextRequest) {
   const pb = createPocketBase(false)
@@ -16,7 +19,7 @@ export async function GET(req: NextRequest) {
   try {
     if (cpf) {
       const filter = `cpf='${cpf}'${excludeId ? ` && id!='${excludeId}'` : ''}`
-      const r = await pb.collection('usuarios').getList(1, 1, {
+      const r = await // pb. // [REMOVED] collection('usuarios').getList(1, 1, {
         filter,
       })
       result.cpf = r.items.length > 0
@@ -31,7 +34,7 @@ export async function GET(req: NextRequest) {
   try {
     if (email) {
       const filter = `email='${email}'${excludeId ? ` && id!='${excludeId}'` : ''}`
-      const r = await pb.collection('usuarios').getList(1, 1, {
+      const r = await // pb. // [REMOVED] collection('usuarios').getList(1, 1, {
         filter,
       })
       result.email = r.items.length > 0

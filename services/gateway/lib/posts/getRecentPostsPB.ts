@@ -1,5 +1,8 @@
-import createPocketBase from '@/lib/pocketbase'
-import type { RecordModel } from 'pocketbase'
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
+// [REMOVED] PocketBase import
+// [REMOVED] PocketBase import
 import { pbRetry } from '@/lib/pbRetry'
 
 export interface BlogPostRecord extends RecordModel {
@@ -17,7 +20,7 @@ export async function getRecentPostsPB(
   pb = createPocketBase(),
 ): Promise<BlogPostRecord[]> {
   const list = await pbRetry(() =>
-    pb.collection('posts').getList(1, limit, { sort: '-date' }),
+    // pb. // [REMOVED] collection('posts').getList(1, limit, { sort: '-date' }),
   )
   return list.items as BlogPostRecord[]
 }

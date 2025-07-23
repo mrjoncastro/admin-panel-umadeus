@@ -1,9 +1,12 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import ModalEditarPerfil from './components/ModalEditarPerfil'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 
 interface UsuarioAuthModel {
   id: string
@@ -31,7 +34,7 @@ export default function PerfilPage() {
     'coordenador',
     'lider',
   ])
-  const pb = useMemo(() => createPocketBase(), [])
+  // const pb = useMemo(() => createPocketBase(), []) // [REMOVED]
   const [usuario, setUsuario] = useState<UsuarioAuthModel | null>(
     usuarioGuard as UsuarioAuthModel | null,
   )
@@ -45,7 +48,7 @@ export default function PerfilPage() {
 
   // Atualiza local após edição
   const atualizarDados = () => {
-    const model = pb.authStore.model as unknown as UsuarioAuthModel
+    const model = // pb. // [REMOVED] authStore.model as unknown as UsuarioAuthModel
     setUsuario(model)
   }
 

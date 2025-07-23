@@ -1,10 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPocketBaseFromRequest } from '@/lib/pbWithAuth'
+import { supabase } from '@/lib/supabaseClient'
 
 export async function GET(req: NextRequest) {
-  const pb = getPocketBaseFromRequest(req)
-  if (!pb.authStore.isValid || !pb.authStore.model) {
+  const authHeader = req.headers.get('authorization')
+  
+  if (!authHeader?.startsWith('Bearer ')) {
     return NextResponse.json({ user: null }, { status: 401 })
   }
-  return NextResponse.json({ user: pb.authStore.model })
+
+  const token = authHeader.substring(7)
+
+  try {
+    const { data: { user }, error } = await supabase.auth.getUser(token)
+    
+    if (error || !user) {
+      return NextResponse.json({ user: null }, { status: 401 })
+    }
+
+    return NextResponse.json({ user })
+  } catch (error) {
+    return NextResponse.json({ user: null }, { status: 401 })
+  }
 }

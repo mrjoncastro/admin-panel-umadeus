@@ -1,7 +1,10 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 'use client'
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import createPocketBase, {
+// [REMOVED] PocketBase import
   clearBaseAuth,
   updateBaseAuth,
 } from '@/lib/pocketbase'
@@ -45,7 +48,7 @@ const AuthContext = createContext<AuthContextType>({
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const pb = useMemo(() => createPocketBase(), [])
+  // const pb = useMemo(() => createPocketBase(), []) // [REMOVED]
   const [user, setUser] = useState<UserModel | null>(null)
   const [tenantId, setTenantId] = useState<string | null>(null)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -84,7 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } finally {
         setIsLoading(false)
       }
-      unsubscribe = pb.authStore.onChange(() => {})
+      unsubscribe = // pb. // [REMOVED] authStore.onChange(() => {})
     }
 
     loadAuth()
@@ -109,7 +112,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error(data?.error || 'Login failed')
     }
     const data = await res.json()
-    pb.authStore.save(data.token, data.user)
+    // pb. // [REMOVED] authStore.save(data.token, data.user)
     updateBaseAuth(data.token, data.user)
     setUser(data.user as UserModel)
     setIsLoggedIn(true)
@@ -197,7 +200,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       headers: getAuthHeaders(pb),
       credentials: 'include',
     })
-    pb.authStore.clear()
+    // pb. // [REMOVED] authStore.clear()
     clearBaseAuth()
     if (typeof window !== 'undefined') {
       localStorage.removeItem('pb_user')

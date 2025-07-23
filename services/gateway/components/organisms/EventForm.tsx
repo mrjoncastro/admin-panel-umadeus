@@ -1,3 +1,6 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 'use client'
 
 import React, { useEffect, useState, useMemo, useRef } from 'react'
@@ -6,7 +9,7 @@ import { useTenant } from '@/lib/context/TenantContext'
 import { useToast } from '@/lib/context/ToastContext'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { buildInscricaoPayload } from '@/utils/buildInscricaoPayload'
 import ModalEditarPerfil from '@/app/admin/perfil/components/ModalEditarPerfil'
@@ -64,7 +67,7 @@ export default function EventForm({
   const { isLoggedIn, user } = useAuthContext()
   const [userData, setUserData] = useState<UserModel | null>(user)
   const [showEditPerfil, setShowEditPerfil] = useState(false)
-  const pb = useMemo(() => createPocketBase(), [])
+  // const pb = useMemo(() => createPocketBase(), []) // [REMOVED]
   const [campoNome, setCampoNome] = useState('')
   const [campos, setCampos] = useState<Campo[]>([])
   const [produtos, setProdutos] = useState<Produto[]>([])
@@ -567,7 +570,7 @@ export default function EventForm({
         <ModalEditarPerfil
           onClose={() => {
             setShowEditPerfil(false)
-            const model = pb.authStore.model as unknown as UserModel
+            const model = // pb. // [REMOVED] authStore.model as unknown as UserModel
             setUserData(model)
           }}
         />

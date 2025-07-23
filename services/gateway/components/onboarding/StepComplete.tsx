@@ -1,10 +1,13 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 'use client'
 import { CheckCircle } from 'lucide-react'
 import { Button } from '@/components/atoms/Button'
 import { useOnboarding } from '@/lib/context/OnboardingContext'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useState } from 'react'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { maskPhone } from '@/utils/formatPhone'
 
@@ -16,7 +19,7 @@ export default function StepComplete() {
   const handleDisconnect = async () => {
     setLoading(true)
     try {
-      const pb = createPocketBase()
+      // const pb = createPocketBase() // [REMOVED]
       const headers = {
         ...getAuthHeaders(pb),
         'x-tenant-id': tenantId!,

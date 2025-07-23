@@ -3,7 +3,7 @@ services:
   gateway:
     build: ./services/gateway
     ports: ['3000:3000']
-    depends_on: [redis, postgres, supabase]
+    depends_on: [redis, postgres]
     environment:
       - NODE_ENV=development
       - SUPABASE_URL=${SUPABASE_URL}
@@ -20,21 +20,7 @@ services:
     ports: ['5432:5432']
     volumes:
       - postgres_data:/var/lib/postgresql/data
-  supabase:
-    image: supabase/supabase-local:latest
-    ports:
-      - '54321:54321'
-      - '54322:54322'
-    environment:
-      SUPABASE_DB_HOST: postgres
-      SUPABASE_DB_PORT: 5432
-      SUPABASE_DB_NAME: ${POSTGRES_DB}
-      SUPABASE_DB_USER: postgres
-      SUPABASE_DB_PASSWORD: ${POSTGRES_PASSWORD}
-      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
-      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
-    depends_on:
-      - postgres
+
 
 volumes:
   postgres_data:

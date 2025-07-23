@@ -1,3 +1,6 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { createCheckout } from '@/lib/asaas'
@@ -83,13 +86,13 @@ export async function POST(req: NextRequest) {
     } = parse.data
 
     if (
-      process.env.PB_ADMIN_EMAIL &&
-      process.env.PB_ADMIN_PASSWORD &&
-      !pb.authStore.isValid
+      process.env.// PB_ADMIN_EMAIL // [REMOVED] &&
+      process.env.// PB_ADMIN_PASSWORD // [REMOVED] &&
+      !// pb. // [REMOVED] authStore.isValid
     ) {
-      await pb.admins.authWithPassword(
-        process.env.PB_ADMIN_EMAIL,
-        process.env.PB_ADMIN_PASSWORD,
+      await // pb. // [REMOVED] admins.authWithPassword(
+        process.env.// PB_ADMIN_EMAIL // [REMOVED],
+        process.env.// PB_ADMIN_PASSWORD // [REMOVED],
       )
     }
     const apiKey = cliente.asaas_api_key || process.env.ASAAS_API_KEY || ''

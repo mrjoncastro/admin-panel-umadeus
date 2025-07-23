@@ -1,9 +1,12 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { pbRetry } from '@/lib/pbRetry'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro, logRocketEvent } from '@/lib/server/logger'
-import type { RecordModel } from 'pocketbase'
+// [REMOVED] PocketBase import
 
 interface CobrancaRecord extends RecordModel {
   status?: string
@@ -22,11 +25,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'CPF inválido' }, { status: 400 })
     }
 
-    const pb = createPocketBase()
-    if (!pb.authStore.isValid) {
-      await pb.admins.authWithPassword(
-        process.env.PB_ADMIN_EMAIL!,
-        process.env.PB_ADMIN_PASSWORD!,
+    // const pb = createPocketBase() // [REMOVED]
+    if (!// pb. // [REMOVED] authStore.isValid) {
+      await // pb. // [REMOVED] admins.authWithPassword(
+        process.env.// PB_ADMIN_EMAIL // [REMOVED]!,
+        process.env.// PB_ADMIN_PASSWORD // [REMOVED]!,
       )
     }
 
@@ -46,7 +49,8 @@ export async function POST(req: NextRequest) {
 
     if (!cobranca) {
       const tenantId = await getTenantFromHost()
-      let inscricao: { id?: string; nome?: string; status?: string } | null =
+      let inscricao: { id?: string;import { logger } from '@/lib/logger'
+ nome?: string; status?: string } | null =
         null
       if (tenantId) {
         try {
@@ -159,7 +163,7 @@ export async function POST(req: NextRequest) {
       link_pagamento,
     })
   } catch (err) {
-    console.error('Erro ao recuperar link:', err)
+    logger.error('Erro ao recuperar link:', err)
     await logConciliacaoErro('Erro ao recuperar link: ' + String(err))
     return NextResponse.json(
       { error: 'Erro interno ao recuperar link' },

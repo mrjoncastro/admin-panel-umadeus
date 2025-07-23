@@ -1,5 +1,8 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { filtrarProdutos, ProdutoRecord } from '@/lib/products'
 import { pbRetry } from '@/lib/pbRetry'
 import { getUserFromHeaders } from '@/lib/getUserFromHeaders'
@@ -26,7 +29,7 @@ export async function GET(req: NextRequest) {
       : baseFilter
 
     const produtos = await pbRetry(() =>
-      pb.collection('produtos').getFullList<ProdutoRecord>({
+      // pb. // [REMOVED] collection('produtos').getFullList<ProdutoRecord>({
         filter: filterString,
         sort: '-created',
       }),
@@ -38,7 +41,7 @@ export async function GET(req: NextRequest) {
     // Monta URLs completas das imagens
     const comUrls = ativos.map((p) => ({
       ...p,
-      imagens: (p.imagens || []).map((img) => pb.files.getURL(p, img)),
+      imagens: (p.imagens || []).map((img) => // pb. // [REMOVED] files.getURL(p, img)),
     }))
 
     return NextResponse.json(comUrls)

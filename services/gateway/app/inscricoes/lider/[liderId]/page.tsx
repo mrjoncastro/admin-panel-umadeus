@@ -1,9 +1,12 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 'use client'
 
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState, useMemo } from 'react'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { useParams } from 'next/navigation'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
@@ -13,7 +16,7 @@ import type { Evento } from '@/types'
 export default function EscolherEventoPage() {
   const params = useParams()
   const liderId = params.liderId as string
-  const pb = useMemo(() => createPocketBase(), [])
+  // const pb = useMemo(() => createPocketBase(), []) // [REMOVED]
   const [eventos, setEventos] = useState<Evento[]>([])
   const [loading, setLoading] = useState(true)
 

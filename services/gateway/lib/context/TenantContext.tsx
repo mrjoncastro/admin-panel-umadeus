@@ -1,8 +1,12 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
+import { logger } from '@/lib/logger'
 'use client'
 import * as React from 'react'
 import { createContext, useContext, useEffect, useState, useMemo } from 'react'
 import { generatePrimaryShades } from '@/utils/primaryShades'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getAuthHeaders } from '@/lib/authHeaders'
 
 const STALE_TIME = 1000 * 60 * 60 // 1 hour
@@ -41,7 +45,7 @@ export function TenantProvider({
   const [config, setConfig] = useState<TenantConfig>(
     initialConfig ?? defaultConfig,
   )
-  const pb = useMemo(() => createPocketBase(), [])
+  // const pb = useMemo(() => createPocketBase(), []) // [REMOVED]
   const [configId, setConfigId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -167,7 +171,7 @@ export function TenantProvider({
           font: newCfg.font,
           confirma_inscricoes: newCfg.confirmaInscricoes,
         }),
-      }).catch((err) => console.error('Erro ao salvar config:', err))
+      }).catch((err) => logger.error('Erro ao salvar config:', err))
     }
   }
 
