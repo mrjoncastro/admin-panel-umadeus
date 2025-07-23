@@ -35,7 +35,7 @@ router.get('/', async (req: Request, res: Response) => {
       data: categories
     })
   } catch (error) {
-    console.error('Erro ao listar categorias:', error)
+    logger.error('Erro ao listar categorias:', error)
     res.status(500).json({
       success: false,
       error: 'Erro interno do servidor'
@@ -63,7 +63,7 @@ router.get('/:id', async (req: Request, res: Response) => {
       data: category
     })
   } catch (error) {
-    console.error('Erro ao buscar categoria:', error)
+    logger.error('Erro ao buscar categoria:', error)
     res.status(500).json({
       success: false,
       error: 'Erro interno do servidor'
@@ -91,7 +91,7 @@ router.get('/slug/:slug', async (req: Request, res: Response) => {
       data: category
     })
   } catch (error) {
-    console.error('Erro ao buscar categoria por slug:', error)
+    logger.error('Erro ao buscar categoria por slug:', error)
     res.status(500).json({
       success: false,
       error: 'Erro interno do servidor'
@@ -128,7 +128,7 @@ router.post('/', async (req: Request, res: Response) => {
       })
     }
     
-    console.error('Erro ao criar categoria:', error)
+    logger.error('Erro ao criar categoria:', error)
     res.status(500).json({
       success: false,
       error: 'Erro interno do servidor'
@@ -173,7 +173,7 @@ router.patch('/:id', async (req: Request, res: Response) => {
       })
     }
     
-    console.error('Erro ao atualizar categoria:', error)
+    logger.error('Erro ao atualizar categoria:', error)
     res.status(500).json({
       success: false,
       error: 'Erro interno do servidor'
@@ -208,7 +208,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
       })
     }
     
-    console.error('Erro ao deletar categoria:', error)
+    logger.error('Erro ao deletar categoria:', error)
     res.status(500).json({
       success: false,
       error: 'Erro interno do servidor'
@@ -216,4 +216,4 @@ router.delete('/:id', async (req: Request, res: Response) => {
   }
 })
 
-export default router 
+export default router import { logger } from '@/lib/logger'

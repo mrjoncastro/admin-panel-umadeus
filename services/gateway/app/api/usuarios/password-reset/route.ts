@@ -1,12 +1,15 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { getTenantHost } from '@/lib/getTenantHost'
 
 export async function POST(req: NextRequest) {
   try {
     const { email } = await req.json()
-    const pb = createPocketBase()
+    // const pb = createPocketBase() // [REMOVED]
 
     const tenantId = await getTenantFromHost()
     if (!tenantId) {
@@ -25,14 +28,15 @@ export async function POST(req: NextRequest) {
     }
 
     const redirectUrl = `${host}/auth/confirm-password-reset`
-    console.log('REDIRECT_URL:', redirectUrl)
+    logger.debug('REDIRECT_URL:', redirectUrl)
 
     await pb
       .collection('usuarios')
       .requestPasswordReset(String(email), redirectUrl)
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error('Erro ao solicitar reset:', err)
+    logger.error('Erro ao solicitar reset:', err)
     return NextResponse.json({ error: 'Erro ao solicitar' }, { status: 500 })
   }
 }
+import { logger } from '@/lib/logger'

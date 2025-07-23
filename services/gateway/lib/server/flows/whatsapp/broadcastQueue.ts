@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 export interface BroadcastConfig {
   delayBetweenMessages: number
   delayBetweenBatches: number
@@ -50,7 +51,7 @@ export class BroadcastQueue {
         reject,
       })
       this.process().catch((err) =>
-        console.error('Erro no processamento da fila:', err),
+        logger.error('Erro no processamento da fila:', err),
       )
     })
   }
@@ -71,7 +72,7 @@ export class BroadcastQueue {
           item.resolve(res)
         } catch (err) {
           item.reject(err)
-          console.error('Erro no processamento da fila:', err)
+          logger.error('Erro no processamento da fila:', err)
         }
         this.timestamps.push(Date.now())
         await sleep(this.config.delayBetweenMessages)

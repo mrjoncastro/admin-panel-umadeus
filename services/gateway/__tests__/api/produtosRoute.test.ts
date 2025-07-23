@@ -1,11 +1,14 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { describe, it, expect, vi } from 'vitest'
 import { GET } from '../../app/api/produtos/route'
 import { NextRequest } from 'next/server'
-import createPocketBaseMock from '../mocks/pocketbase'
+// [REMOVED] PocketBase import
 
 const pb = createPocketBaseMock()
 const getFullListMock = vi.fn().mockRejectedValue(new Error('fail'))
-pb.collection.mockReturnValue({
+// pb. // [REMOVED] collection.mockReturnValue({
   getFullList: getFullListMock,
 })
 vi.mock('../../lib/pocketbase', () => ({
@@ -56,7 +59,7 @@ describe('GET /api/produtos', () => {
       { id: 'p1', imagens: ['img1.jpg'], ativo: true, exclusivo_user: false },
     ]
     getFullListMock.mockResolvedValueOnce(produtos)
-    pb.files.getURL.mockImplementation((_p, img) => `url/${img}`)
+    // pb. // [REMOVED] files.getURL.mockImplementation((_p, img) => `url/${img}`)
     const req = new Request('http://test')
     ;(req as any).nextUrl = new URL('http://test')
     const res = await GET(req as unknown as NextRequest)
@@ -71,7 +74,7 @@ describe('GET /api/produtos', () => {
       { id: 'p2', imagens: ['img2.jpg'], ativo: true, exclusivo_user: false },
     ]
     getFullListMock.mockResolvedValueOnce(produtos)
-    pb.files.getURL.mockImplementation((_p, img) => `url/${img}`)
+    // pb. // [REMOVED] files.getURL.mockImplementation((_p, img) => `url/${img}`)
     const req = new Request('http://test')
     ;(req as any).nextUrl = new URL('http://test')
     const res = await GET(req as unknown as NextRequest)

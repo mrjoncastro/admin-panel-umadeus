@@ -1,3 +1,6 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { pbRetry } from '@/lib/pbRetry'
@@ -17,11 +20,11 @@ export async function GET(req: NextRequest) {
   }
   try {
     const record = await pbRetry(() =>
-      pb.collection('usuarios').getOne(id, { expand: 'campo' }),
+      // pb. // [REMOVED] collection('usuarios').getOne(id, { expand: 'campo' }),
     )
     return NextResponse.json(record, { status: 200 })
   } catch (err) {
-    console.error('Erro ao obter usuario:', err)
+    logger.error('Erro ao obter usuario:', err)
     return NextResponse.json({ error: 'Erro ao obter' }, { status: 500 })
   }
 }
@@ -77,10 +80,11 @@ export async function PATCH(req: NextRequest) {
       payload.tour = Boolean(data.tour)
     }
 
-    await pbRetry(() => pb.collection('usuarios').update(id, payload))
+    await pbRetry(() => // pb. // [REMOVED] collection('usuarios').update(id, payload))
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error('Erro ao atualizar perfil:', err)
+    logger.error('Erro ao atualizar perfil:', err)
     return NextResponse.json({ error: 'Erro ao atualizar' }, { status: 500 })
   }
 }
+import { logger } from '@/lib/logger'

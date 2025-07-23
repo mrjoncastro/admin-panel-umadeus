@@ -1,10 +1,13 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { describe, it, expect, vi } from 'vitest'
 import { POST as POST_INSTANCE } from '../../app/api/chats/whatsapp/instance/route'
 import { POST as POST_STATE } from '../../app/api/chats/whatsapp/instance/connectionState/route'
 import { POST as POST_CONNECT } from '../../app/api/chats/whatsapp/instance/connect/route'
 import { POST as POST_SEND } from '../../app/api/chats/whatsapp/message/sendTest/[instanceName]/route'
 import { NextRequest } from 'next/server'
-import createPocketBaseMock from '../mocks/pocketbase'
+// [REMOVED] PocketBase import
 
 vi.mock('../../lib/apiAuth', () => ({ requireRole: vi.fn() }))
 import { requireRole } from '../../lib/apiAuth'
@@ -88,7 +91,7 @@ describe('POST /api/chats/whatsapp/message/sendTest/[instanceName]', () => {
 
 describe('POST /api/chats/whatsapp/instance/connect', () => {
   it('retorna 404 quando instancia inexistente', async () => {
-    pb.collection.mockReturnValueOnce({
+    // pb. // [REMOVED] collection.mockReturnValueOnce({
       getFullList: vi.fn().mockResolvedValue([]),
     })
     const req = new Request('http://test', {
@@ -104,7 +107,7 @@ describe('POST /api/chats/whatsapp/instance/connect', () => {
   it('retorna dados de QR quando sucesso', async () => {
     const getFullList = vi.fn().mockResolvedValue([{ id: '1' }])
     const update = vi.fn().mockResolvedValue({ qrCode: 'url.png' })
-    pb.collection.mockReturnValue({ getFullList, update })
+    // pb. // [REMOVED] collection.mockReturnValue({ getFullList, update })
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({ pairingCode: 'p', base64: 'abc' }),
@@ -128,7 +131,7 @@ describe('POST /api/chats/whatsapp/instance/connectionState sucesso', () => {
   it('atualiza status para connected quando aberto', async () => {
     const getFullList = vi.fn().mockResolvedValue([{ id: '1' }])
     const update = vi.fn()
-    pb.collection.mockReturnValue({ getFullList, update })
+    // pb. // [REMOVED] collection.mockReturnValue({ getFullList, update })
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: () => Promise.resolve({ instance: { state: 'open' } }),

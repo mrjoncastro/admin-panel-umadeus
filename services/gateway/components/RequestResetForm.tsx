@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 import { useState } from 'react'
 import { useToast } from '@/lib/context/ToastContext'
@@ -21,7 +22,7 @@ export default function RequestResetForm() {
       showSuccess('Enviamos um link para redefinir sua senha.')
       setEmail('')
     } catch (err) {
-      console.error(err)
+      logger.error(err)
       showError('Não foi possível enviar o link. Verifique o e-mail.')
     }
   }

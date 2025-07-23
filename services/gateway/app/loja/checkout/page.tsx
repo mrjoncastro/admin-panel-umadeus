@@ -1,9 +1,12 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 'use client'
 
 import { useCart } from '@/lib/context/CartContext'
 import { useRouter } from 'next/navigation'
 import { Suspense, useState, useEffect, useMemo } from 'react'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getAuthHeaders } from '@/lib/authHeaders'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import { useAuthContext } from '@/lib/context/AuthContext'
@@ -27,7 +30,7 @@ function CheckoutContent() {
 
   const router = useRouter()
   const { isLoggedIn, user, tenantId } = useAuthContext()
-  const pb = useMemo(() => createPocketBase(), [])
+  // const pb = useMemo(() => createPocketBase(), []) // [REMOVED]
   useSyncTenant()
   const { showSuccess, showError } = useToast()
 

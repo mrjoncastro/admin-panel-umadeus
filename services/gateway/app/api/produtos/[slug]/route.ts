@@ -1,5 +1,8 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { getUserFromHeaders } from '@/lib/getUserFromHeaders'
 import { pbRetry } from '@/lib/pbRetry'
@@ -38,10 +41,10 @@ export async function GET(req: NextRequest) {
     }
 
     const imagens = Array.isArray(p.imagens)
-      ? p.imagens.map((img) => pb.files.getURL(p, img))
+      ? p.imagens.map((img) => // pb. // [REMOVED] files.getURL(p, img))
       : Object.fromEntries(
           Object.entries((p.imagens ?? {}) as Record<string, string[]>).map(
-            ([g, arr]) => [g, arr.map((img) => pb.files.getURL(p, img))],
+            ([g, arr]) => [g, arr.map((img) => // pb. // [REMOVED] files.getURL(p, img))],
           ),
         )
 

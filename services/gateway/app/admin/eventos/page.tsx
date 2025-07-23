@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -39,7 +40,7 @@ export default function AdminEventosPage() {
         const data = await res.json()
         setEventos(Array.isArray(data) ? data : (data.items ?? []))
       } catch (err) {
-        console.error('Erro ao carregar eventos:', err)
+        logger.error('Erro ao carregar eventos:', err)
       }
     }
 

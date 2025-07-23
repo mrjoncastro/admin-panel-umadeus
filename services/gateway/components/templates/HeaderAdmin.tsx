@@ -1,10 +1,13 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 'use client'
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { useState } from 'react'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getAuthHeaders } from '@/lib/authHeaders'
 import Image from 'next/image'
 import {
@@ -91,7 +94,7 @@ export default function Header() {
       return
     }
     try {
-      const pb = createPocketBase()
+      // const pb = createPocketBase() // [REMOVED]
       const headers = {
         ...getAuthHeaders(pb),
         'x-tenant-id': tenantId,

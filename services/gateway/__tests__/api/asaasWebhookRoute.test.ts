@@ -1,7 +1,10 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { POST } from '../../app/api/asaas/webhook/route'
 import { NextRequest } from 'next/server'
-import createPocketBaseMock from '../mocks/pocketbase'
+// [REMOVED] PocketBase import
 
 const pb = createPocketBaseMock()
 const getFirstConfig = vi.fn()
@@ -10,7 +13,7 @@ const getFirstPedido = vi.fn()
 const updatePedido = vi.fn()
 const updateInscricao = vi.fn()
 
-pb.collection.mockImplementation((name: string) => {
+// pb. // [REMOVED] collection.mockImplementation((name: string) => {
   if (name === 'clientes_config')
     return { getFirstListItem: getFirstConfig, getOne: getOneConfig }
   if (name === 'pedidos')
@@ -96,7 +99,7 @@ describe('POST /api/asaas/webhook', () => {
       .fn()
       .mockRejectedValue(new Error('Failed to create record.'))
 
-    pb.collection.mockImplementation((name: string) => {
+    // pb. // [REMOVED] collection.mockImplementation((name: string) => {
       if (name === 'clientes_config')
         return { getFirstListItem: getFirstConfig, getOne: getOneConfig }
       if (name === 'pedidos')

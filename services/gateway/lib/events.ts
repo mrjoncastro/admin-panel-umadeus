@@ -1,3 +1,6 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 export interface EventoRecord {
   id: string
   titulo: string
@@ -10,7 +13,7 @@ export interface EventoRecord {
   [key: string]: unknown
 }
 
-import type PocketBase from 'pocketbase'
+// [REMOVED] PocketBase import
 
 export function atualizarStatus(
   eventos: EventoRecord[],

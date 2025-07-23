@@ -1,5 +1,8 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import type { NextRequest } from 'next/server'
-import { getPocketBaseFromRequest } from '@/lib/pbWithAuth'
+// [REMOVED] PocketBase import
 import { supabase } from './supabaseClient'
 
 // Tipo para usuário do Supabase

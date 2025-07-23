@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -43,7 +44,7 @@ export default function BlogClient() {
           setNomeCliente('')
         }
       } catch (err) {
-        console.error('Erro ao buscar nome do cliente:', err)
+        logger.error('Erro ao buscar nome do cliente:', err)
       }
     }
     fetchCliente()
@@ -66,7 +67,7 @@ export default function BlogClient() {
     getPostsClientPB()
       .then(setPosts)
       .catch((err) => {
-        console.error('Erro ao carregar posts:', err)
+        logger.error('Erro ao carregar posts:', err)
       })
   }, [])
 

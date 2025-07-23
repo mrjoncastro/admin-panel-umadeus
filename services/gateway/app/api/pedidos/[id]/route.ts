@@ -1,13 +1,17 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import type { Pedido, Produto } from '@/types'
-import type { RecordModel } from 'pocketbase'
+// [REMOVED] PocketBase import
 
 async function checkAccess(
   pedido: Pedido,
   user: RecordModel,
-): Promise<{ ok: true } | { error: string; status: number }> {
+): Promise<{ ok: true } | { error: string;import { logger } from '@/lib/logger'
+ status: number }> {
   if (user.role === 'usuario') {
     if (pedido.responsavel !== user.id) {
       return { error: 'Acesso negado', status: 403 }
@@ -37,7 +41,7 @@ export async function GET(req: NextRequest) {
   }
   const { pb, user } = auth
   try {
-    const pedido = await pb.collection('pedidos').getOne<Pedido>(id, {
+    const pedido = await // pb. // [REMOVED] collection('pedidos').getOne<Pedido>(id, {
       expand: 'campo,responsavel,id_inscricao,id_inscricao.criado_por,produto',
     })
 
@@ -69,7 +73,7 @@ export async function GET(req: NextRequest) {
     }
     return NextResponse.json(pedido)
   } catch (err) {
-    console.error('Erro ao obter pedido:', err)
+    logger.error('Erro ao obter pedido:', err)
     return NextResponse.json({ error: 'Erro ao obter' }, { status: 500 })
   }
 }
@@ -83,7 +87,7 @@ export async function PATCH(req: NextRequest) {
   }
   const { pb, user } = auth
   try {
-    const pedido = await pb.collection('pedidos').getOne<Pedido>(id)
+    const pedido = await // pb. // [REMOVED] collection('pedidos').getOne<Pedido>(id)
     const access = await checkAccess(pedido, user)
     if ('error' in access) {
       return NextResponse.json(
@@ -101,10 +105,10 @@ export async function PATCH(req: NextRequest) {
     if (user.role !== 'lider' && data.status !== undefined) {
       updateData.status = String(data.status)
     }
-    const updated = await pb.collection('pedidos').update(id, updateData)
+    const updated = await // pb. // [REMOVED] collection('pedidos').update(id, updateData)
     return NextResponse.json(updated)
   } catch (err) {
-    console.error('Erro ao atualizar pedido:', err)
+    logger.error('Erro ao atualizar pedido:', err)
     return NextResponse.json({ error: 'Erro ao atualizar' }, { status: 500 })
   }
 }
@@ -118,7 +122,7 @@ export async function DELETE(req: NextRequest) {
   }
   const { pb, user } = auth
   try {
-    const pedido = await pb.collection('pedidos').getOne<Pedido>(id)
+    const pedido = await // pb. // [REMOVED] collection('pedidos').getOne<Pedido>(id)
     const access = await checkAccess(pedido, user)
     if ('error' in access) {
       return NextResponse.json(
@@ -126,10 +130,10 @@ export async function DELETE(req: NextRequest) {
         { status: access.status },
       )
     }
-    await pb.collection('pedidos').delete(id)
+    await // pb. // [REMOVED] collection('pedidos').delete(id)
     return NextResponse.json({ ok: true })
   } catch (err) {
-    console.error('Erro ao excluir pedido:', err)
+    logger.error('Erro ao excluir pedido:', err)
     return NextResponse.json({ error: 'Erro ao excluir' }, { status: 500 })
   }
 }

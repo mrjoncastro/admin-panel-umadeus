@@ -1,13 +1,16 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
 export async function GET(req: Request) {
   const cookie = req.headers.get('cookie') || ''
-  const pb = createPocketBase()
-  pb.authStore.loadFromCookie(cookie)
+  // const pb = createPocketBase() // [REMOVED]
+  // pb. // [REMOVED] authStore.loadFromCookie(cookie)
 
-  if (!pb.authStore.isValid) {
+  if (!// pb. // [REMOVED] authStore.isValid) {
     return NextResponse.json([], { status: 401 })
   }
 

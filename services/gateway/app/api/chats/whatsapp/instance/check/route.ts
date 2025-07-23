@@ -1,49 +1,53 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
+import { logger } from '@/lib/logger'
 // ./app/api/chats/whatsapp/instance/check/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { requireRole } from '@/lib/apiAuth'
 
 export async function GET(req: NextRequest) {
   const tenant = req.headers.get('x-tenant-id')
-  console.log(`[instance/check] Tenant header:`, tenant)
+  logger.debug(`[instance/check] Tenant header:`, tenant)
   if (!tenant) {
-    console.log('[instance/check] Sem tenant → retorna null')
+    logger.debug('[instance/check] Sem tenant → retorna null')
     return NextResponse.json(null, { status: 200 })
   }
 
   // valida role
   const auth = requireRole(req, ['coordenador', 'admin'])
   if ('error' in auth) {
-    console.log('[instance/check] Sem permissão → retorna null')
+    logger.debug('[instance/check] Sem permissão → retorna null')
     return NextResponse.json(null, { status: 200 })
   }
 
   // inicia PB como admin
-  const pb = createPocketBase()
-  if (!pb.authStore.isValid) {
-    await pb.admins.authWithPassword(
-      process.env.PB_ADMIN_EMAIL!,
-      process.env.PB_ADMIN_PASSWORD!,
+  // const pb = createPocketBase() // [REMOVED]
+  if (!// pb. // [REMOVED] authStore.isValid) {
+    await // pb. // [REMOVED] admins.authWithPassword(
+      process.env.// PB_ADMIN_EMAIL // [REMOVED]!,
+      process.env.// PB_ADMIN_PASSWORD // [REMOVED]!,
     )
   }
 
   // busca whatsapp_clientes
-  console.log(
+  logger.debug(
     `[instance/check] Buscando whatsapp_clientes para cliente="${tenant}"`,
   )
   const list = await pb
     .collection('whatsapp_clientes')
     .getFullList({ filter: `cliente="${tenant}"`, limit: 1 })
 
-  console.log(`[instance/check] Registros encontrados:`, list.length)
+  logger.debug(`[instance/check] Registros encontrados:`, list.length)
   if (list.length === 0) {
-    console.log('[instance/check] Nenhum registro → retorna null')
+    logger.debug('[instance/check] Nenhum registro → retorna null')
     return NextResponse.json(null, { status: 200 })
   }
 
   const rec = list[0]
-  console.log(
+  logger.debug(
     `[instance/check] sessionStatus="${rec.sessionStatus}", instanceName="${rec.instanceName}"`,
   )
 

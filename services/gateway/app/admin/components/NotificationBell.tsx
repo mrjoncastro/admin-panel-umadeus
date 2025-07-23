@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -40,7 +41,7 @@ export default function NotificationBell() {
         setCount(insList.length + pedidos.length)
         setInscricoes(insList)
       } catch (err) {
-        console.error('Erro ao buscar notificações', err)
+        logger.error('Erro ao buscar notificações', err)
       }
     }
 

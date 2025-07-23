@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 import { useRouter } from 'next/navigation'
@@ -41,7 +42,7 @@ export default function FinanceiroPage() {
           setALiberar(stats.netValue)
         }
       } catch (err) {
-        console.error('Erro ao obter saldo:', err)
+        logger.error('Erro ao obter saldo:', err)
       } finally {
         setLoading(false)
       }

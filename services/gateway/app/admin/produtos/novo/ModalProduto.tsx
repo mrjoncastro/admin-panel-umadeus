@@ -1,3 +1,7 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
+import { logger } from '@/lib/logger'
 'use client'
 
 /**
@@ -7,7 +11,7 @@
  */
 
 import { useEffect, useRef, useState, useMemo } from 'react'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { useAuthContext } from '@/lib/context/AuthContext'
 import { calculateGross } from '@/lib/asaasFees'
@@ -83,7 +87,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
     initial.requer_inscricao_aprovada ?? false,
   )
   const { isLoggedIn, user: ctxUser } = useAuthContext()
-  const pb = useMemo(() => createPocketBase(), [])
+  // const pb = useMemo(() => createPocketBase(), []) // [REMOVED]
   const { showSuccess, showError } = useToast()
   const [exclusivo, setExclusivo] = useState<boolean>(
     initial.exclusivo_user ?? false,
@@ -138,7 +142,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
         setCategorias(Array.isArray(data) ? data : [])
       })
       .catch((err) => {
-        console.error('Erro ao carregar categorias:', err)
+        logger.error('Erro ao carregar categorias:', err)
         setCategorias([])
       })
   }, [isLoggedIn, ctxUser?.role, open])
@@ -188,7 +192,7 @@ export function ModalProduto<T extends Record<string, unknown>>({
         setSelectedCategoria(data.id)
         showSuccess('Categoria criada')
       } else {
-        console.error(data)
+        logger.error(data)
         showError('Erro ao criar categoria')
       }
     } finally {

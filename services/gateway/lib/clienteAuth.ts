@@ -1,12 +1,10 @@
 import type { NextRequest } from 'next/server'
-import type { RecordModel } from 'pocketbase'
-import createPocketBase from '@/lib/pocketbase'
-import { pbRetry } from '@/lib/pbRetry'
-import { logConciliacaoErro } from '@/lib/server/logger'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
+import { logger } from '@/lib/logger'
 
 export type ClienteAuthOk = {
-  pb: ReturnType<typeof createPocketBase>
-  cliente: RecordModel
+  cliente: any // Tipo do cliente do Supabase
+  config: any // Configuração do cliente
 }
 
 export type ClienteAuthError = {
@@ -19,33 +17,37 @@ export async function requireClienteFromHost(
 ): Promise<ClienteAuthOk | ClienteAuthError> {
   const host = req.headers.get('host')?.split(':')[0] ?? ''
   if (!host) {
-    return { error: 'Dom\u00ednio ausente', status: 400 }
-  }
-
-  const pb = createPocketBase()
-
-  if (!pb.authStore.isValid) {
-    await pb.admins.authWithPassword(
-      process.env.PB_ADMIN_EMAIL!,
-      process.env.PB_ADMIN_PASSWORD!,
-    )
+    return { error: 'Domínio ausente', status: 400 }
   }
 
   try {
-    const cfg = await pbRetry(() =>
-      pb
-        .collection('clientes_config')
-        .getFirstListItem(`dominio = \"${host}\"`),
-    )
-    if (!cfg) {
-      return { error: 'Cliente n\u00e3o encontrado', status: 404 }
+    // Buscar configuração do cliente pelo domínio
+    const { data: config, error: configError } = await supabaseAdmin
+      .from('clientes_config')
+      .select('*')
+      .eq('dominio', host)
+      .single()
+
+    if (configError || !config) {
+      logger.warn('Cliente não encontrado para domínio', { host })
+      return { error: 'Cliente não encontrado', status: 404 }
     }
-    const cliente = await pbRetry(() =>
-      pb.collection('m24_clientes').getOne(cfg.cliente),
-    )
-    return { pb, cliente }
+
+    // Buscar dados do cliente
+    const { data: cliente, error: clienteError } = await supabaseAdmin
+      .from('m24_clientes')
+      .select('*')
+      .eq('id', config.cliente)
+      .single()
+
+    if (clienteError || !cliente) {
+      logger.error('Dados do cliente não encontrados', { clienteId: config.cliente })
+      return { error: 'Cliente não encontrado', status: 404 }
+    }
+
+    return { cliente, config }
   } catch (err) {
-    await logConciliacaoErro('Erro requireClienteFromHost: ' + String(err))
-    return { error: 'Cliente n\u00e3o encontrado', status: 404 }
+    logger.error('Erro requireClienteFromHost', err)
+    return { error: 'Cliente não encontrado', status: 404 }
   }
 }

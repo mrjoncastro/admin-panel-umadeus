@@ -1,16 +1,76 @@
 name: CI
-on: [pull_request]
+on: 
+  pull_request:
+  push:
+    branches: [main, develop]
+
 jobs:
-  build:
+  security:
     runs-on: ubuntu-latest
+    name: Security Audit
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: pnpm install
-      - run: pnpm lint
-      - run: pnpm test
-      - run: pnpm build --filter services/auth
-      - run: pnpm build --filter services/gateway
-      - run: pnpm build --filter services/catalog
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: Audit dependencies
+        run: pnpm audit --audit-level moderate
+      - name: Check for secrets
+        run: |
+          if grep -r "password.*=" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" services/; then
+            echo "Potential hardcoded passwords found!"
+            exit 1
+          fi
+
+  test:
+    runs-on: ubuntu-latest
+    name: Tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: Run linting
+        run: pnpm lint
+      - name: Run tests
+        run: pnpm test
+      - name: Type checking
+        run: pnpm run type-check
+
+  build:
+    runs-on: ubuntu-latest
+    name: Build Services
+    needs: [security, test]
+    strategy:
+      matrix:
+        service: [auth, gateway, catalog]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: Build ${{ matrix.service }}
+        run: pnpm build --filter services/${{ matrix.service }}
+      - name: Check build artifacts
+        run: |
+          if [ -d "services/${{ matrix.service }}/dist" ] || [ -d "services/${{ matrix.service }}/.next" ]; then
+            echo "Build successful for ${{ matrix.service }}"
+          else
+            echo "Build artifacts not found for ${{ matrix.service }}"
+            exit 1
+          fi

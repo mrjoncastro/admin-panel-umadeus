@@ -1,12 +1,15 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { describe, it, expect, vi } from 'vitest'
 import { POST } from '../../app/api/register/route'
 import { NextRequest } from 'next/server'
-import createPocketBaseMock from '../mocks/pocketbase'
+// [REMOVED] PocketBase import
 
 const getFirstListItemMock = vi.fn().mockRejectedValue(new Error('not found'))
 const createMock = vi.fn().mockResolvedValue({ id: 'u1' })
 const pb = createPocketBaseMock()
-pb.collection.mockReturnValue({
+// pb. // [REMOVED] collection.mockReturnValue({
   getFirstListItem: getFirstListItemMock,
   create: createMock,
 })

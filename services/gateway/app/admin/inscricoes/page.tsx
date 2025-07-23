@@ -1,7 +1,11 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
+import { logger } from '@/lib/logger'
 'use client'
 
 import { useEffect, useState, useMemo } from 'react'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { Copy } from 'lucide-react'
 import jsPDF from 'jspdf'
@@ -53,7 +57,7 @@ type Inscricao = {
 
 export default function ListaInscricoesPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
-  const pb = useMemo(() => createPocketBase(), [])
+  // const pb = useMemo(() => createPocketBase(), []) // [REMOVED]
   const tenantId = user?.cliente || ''
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [role, setRole] = useState('')
@@ -225,7 +229,7 @@ export default function ListaInscricoesPage() {
 
   const confirmarInscricao = async (id: string) => {
     try {
-      console.log('[confirmarInscricao] Iniciando confirmação para id:', id)
+      logger.debug('[confirmarInscricao] Iniciando confirmação para id:', id)
       setConfirmandoId(id)
 
       // 1. Buscar inscrição com expand do campo, produto e pedido
@@ -233,7 +237,7 @@ export default function ListaInscricoesPage() {
         `/api/inscricoes/${id}?expand=campo,produto,pedido`,
         { credentials: 'include' },
       )
-      console.log(
+      logger.debug(
         '[confirmarInscricao] Status inscricaoRes:',
         inscricaoRes.status,
       )
@@ -246,7 +250,7 @@ export default function ListaInscricoesPage() {
           }
         }
       } = await inscricaoRes.json()
-      console.log('[confirmarInscricao] inscricao:', inscricao)
+      logger.debug('[confirmarInscricao] inscricao:', inscricao)
 
       const pedidoExistente = inscricao.expand?.pedido
       if (pedidoExistente) {
@@ -269,7 +273,7 @@ export default function ListaInscricoesPage() {
       const rawProd =
         inscricao.produto || (inscricao as InscricaoWithProduto).produto
       const produtoId = Array.isArray(rawProd) ? rawProd[0] : rawProd
-      console.log('[confirmarInscricao] produtoId:', produtoId)
+      logger.debug('[confirmarInscricao] produtoId:', produtoId)
 
       // Extrair produto do expand (array ou objeto)
       let produtoRecord: Produto | undefined = undefined
@@ -280,13 +284,13 @@ export default function ListaInscricoesPage() {
           produtoRecord = inscricao.expand.produto.find(
             (p: Produto) => p.id === produtoId || p.id === inscricao.produto,
           )
-          console.log(
+          logger.debug(
             '[confirmarInscricao] produtoRecord (array):',
             produtoRecord,
           )
         } else if (typeof inscricao.expand.produto === 'object') {
           produtoRecord = inscricao.expand.produto as Produto
-          console.log(
+          logger.debug(
             '[confirmarInscricao] produtoRecord (obj):',
             produtoRecord,
           )
@@ -299,21 +303,21 @@ export default function ListaInscricoesPage() {
           const prodRes = await fetch(`/admin/api/produtos/${produtoId}`, {
             credentials: 'include',
           })
-          console.log('[confirmarInscricao] Status prodRes:', prodRes.status)
+          logger.debug('[confirmarInscricao] Status prodRes:', prodRes.status)
           if (prodRes.ok) {
             produtoRecord = await prodRes.json()
-            console.log(
+            logger.debug(
               '[confirmarInscricao] produtoRecord (fallback):',
               produtoRecord,
             )
           }
         } catch (e) {
-          console.error('[confirmarInscricao] Erro fetch produto:', e)
+          logger.error('[confirmarInscricao] Erro fetch produto:', e)
         }
       }
 
       // Log do produto final escolhido
-      console.log('[confirmarInscricao] Produto final:', produtoRecord)
+      logger.debug('[confirmarInscricao] Produto final:', produtoRecord)
 
       // Se mesmo assim não encontrou, aborta!
       if (!produtoRecord || typeof produtoRecord.preco !== 'number') {
@@ -321,7 +325,7 @@ export default function ListaInscricoesPage() {
           'Não foi possível identificar o produto ou o preço da inscrição.',
         )
         setConfirmandoId(null)
-        console.log(
+        logger.debug(
           '[confirmarInscricao] Produto/preço não encontrado, abortando!',
         )
         return
@@ -331,7 +335,7 @@ export default function ListaInscricoesPage() {
       const campo = inscricao.expand?.campo as
         | { id?: string; responsavel?: string }
         | undefined
-      console.log('[confirmarInscricao] campo expand:', campo)
+      logger.debug('[confirmarInscricao] campo expand:', campo)
 
       const insc = inscricao as InscricaoRecord & {
         paymentMethod?: PaymentMethod
@@ -340,15 +344,15 @@ export default function ListaInscricoesPage() {
 
       const metodo = insc.paymentMethod ?? 'boleto'
       const parcelas = insc.installments ?? 1
-      console.log('[confirmarInscricao] metodo:', metodo, 'parcelas:', parcelas)
+      logger.debug('[confirmarInscricao] metodo:', metodo, 'parcelas:', parcelas)
 
       // Valor base do produto
       const precoProduto = Number(produtoRecord?.preco ?? 0)
-      console.log('[confirmarInscricao] precoProduto:', precoProduto)
+      logger.debug('[confirmarInscricao] precoProduto:', precoProduto)
 
       // Aqui você pode aplicar algum cálculo se desejar
       const gross = precoProduto // ajuste aqui caso queira aplicar taxas/descontos
-      console.log('[confirmarInscricao] gross:', gross)
+      logger.debug('[confirmarInscricao] gross:', gross)
 
       const pedidoRes = await fetch('/api/pedidos', {
         method: 'POST',
@@ -404,7 +408,7 @@ export default function ListaInscricoesPage() {
           result?.error ||
           result?.errors?.[0]?.description ||
           'Tivemos um problema ao gerar seu link de pagamento. Por favor, entre em contato com a equipe.'
-        console.error(
+        logger.error(
           '[confirmarInscricao] Erro ao gerar link de pagamento:',
           result,
         )
@@ -415,7 +419,7 @@ export default function ListaInscricoesPage() {
             headers: getAuthHeaders(pb),
           })
         } catch (e) {
-          console.error('[confirmarInscricao] Falha ao remover pedido:', e)
+          logger.error('[confirmarInscricao] Falha ao remover pedido:', e)
         }
         showError(msg)
         setConfirmandoId(null)
@@ -463,7 +467,7 @@ export default function ListaInscricoesPage() {
           }),
         })
         if (!emailRes.ok) {
-          console.warn('Falha ao enviar e-mail', await emailRes.text())
+          logger.warn('Falha ao enviar e-mail', await emailRes.text())
         }
       }
 
@@ -477,17 +481,17 @@ export default function ListaInscricoesPage() {
         }),
       })
       if (!waRes.ok) {
-        console.warn('Falha ao enviar WhatsApp', await waRes.text())
+        logger.warn('Falha ao enviar WhatsApp', await waRes.text())
       }
 
       // 🔹 7. Mostrar sucesso visual
       showSuccess('Link de pagamento enviado com sucesso!')
     } catch (e) {
-      console.error('[confirmarInscricao] Erro:', e)
+      logger.error('[confirmarInscricao] Erro:', e)
       showError('Erro ao confirmar inscrição e gerar pedido.')
     } finally {
       setConfirmandoId(null)
-      console.log('[confirmarInscricao] Fim do fluxo.')
+      logger.debug('[confirmarInscricao] Fim do fluxo.')
     }
   }
 

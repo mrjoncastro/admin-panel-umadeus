@@ -1,3 +1,6 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { logInfo } from '@/lib/logger'
@@ -10,10 +13,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: auth.error }, { status: auth.status })
   }
   const { pb, user } = auth
-  logInfo('PocketBase host:', pb.baseUrl)
+  logInfo('PocketBase host:', // pb. // [REMOVED] baseUrl)
   try {
     const eventos = await pbRetry(() =>
-      pb.collection('eventos').getFullList({
+      // pb. // [REMOVED] collection('eventos').getFullList({
         sort: '-created',
         filter: `cliente='${user.cliente}'`,
         expand: 'produtos',
@@ -32,13 +35,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: auth.error }, { status: auth.status })
   }
   const { pb, user } = auth
-  logInfo('PocketBase host:', pb.baseUrl)
+  logInfo('PocketBase host:', // pb. // [REMOVED] baseUrl)
   try {
     const contentType = req.headers.get('content-type') || ''
     if (contentType.includes('application/json')) {
       const body = await req.json()
       body.cliente = user.cliente as string
-      const evento = await pbRetry(() => pb.collection('eventos').create(body))
+      const evento = await pbRetry(() => // pb. // [REMOVED] collection('eventos').create(body))
       return NextResponse.json(evento, { status: 201 })
     }
     const formData = await req.formData()
@@ -54,7 +57,7 @@ export async function POST(req: NextRequest) {
       )
     }
     const evento = await pbRetry(() =>
-      pb.collection('eventos').create(formData),
+      // pb. // [REMOVED] collection('eventos').create(formData),
     )
     return NextResponse.json(evento, { status: 201 })
   } catch (err) {

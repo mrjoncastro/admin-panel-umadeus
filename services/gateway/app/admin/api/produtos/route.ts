@@ -1,3 +1,6 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { logInfo } from '@/lib/logger'
@@ -11,14 +14,14 @@ export async function GET(req: NextRequest) {
   }
   const { pb, user } = auth
   try {
-    const produtos = await pb.collection('produtos').getFullList({
+    const produtos = await // pb. // [REMOVED] collection('produtos').getFullList({
       sort: '-created',
       filter: `user_org = "${user.id}" && cliente="${user.cliente}"`,
     })
     return NextResponse.json(produtos, { status: 200 })
   } catch (err) {
     await logConciliacaoErro(
-      `Erro ao listar produtos: ${String(err)} | host: ${pb.baseUrl} | user: ${user.id}`,
+      `Erro ao listar produtos: ${String(err)} | host: ${// pb. // [REMOVED] baseUrl} | user: ${user.id}`,
     )
     return NextResponse.json({ error: 'Erro ao listar' }, { status: 500 })
   }
@@ -39,15 +42,15 @@ export async function POST(req: NextRequest) {
     formData.set('preco_bruto', String(bruto))
     const keys = Array.from(formData.keys())
     logInfo('Criando produto', {
-      pbHost: pb.baseUrl,
+      pbHost: // pb. // [REMOVED] baseUrl,
       userId: user.id,
       keys,
     })
-    const produto = await pb.collection('produtos').create(formData)
+    const produto = await // pb. // [REMOVED] collection('produtos').create(formData)
     return NextResponse.json(produto, { status: 201 })
   } catch (err) {
     await logConciliacaoErro(
-      `Erro ao criar produto: ${String(err)} | host: ${pb.baseUrl} | user: ${user.id}`,
+      `Erro ao criar produto: ${String(err)} | host: ${// pb. // [REMOVED] baseUrl} | user: ${user.id}`,
     )
     return NextResponse.json({ error: 'Erro ao criar' }, { status: 500 })
   }

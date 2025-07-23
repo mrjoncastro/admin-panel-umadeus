@@ -1,27 +1,30 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { processWebhook } from '@/lib/webhookProcessor'
 import { logConciliacaoErro } from '@/lib/server/logger'
 
 export const config = { runtime: 'nodejs' }
 
 export async function GET(): Promise<NextResponse> {
-  const pb = createPocketBase()
-  if (!pb.authStore.isValid) {
-    await pb.admins.authWithPassword(
-      process.env.PB_ADMIN_EMAIL!,
-      process.env.PB_ADMIN_PASSWORD!,
+  // const pb = createPocketBase() // [REMOVED]
+  if (!// pb. // [REMOVED] authStore.isValid) {
+    await // pb. // [REMOVED] admins.authWithPassword(
+      process.env.// PB_ADMIN_EMAIL // [REMOVED]!,
+      process.env.// PB_ADMIN_PASSWORD // [REMOVED]!,
     )
   }
 
   const now = new Date().toISOString()
-  const { items: tasks } = await pb.collection('webhook_tasks').getList(1, 20, {
+  const { items: tasks } = await // pb. // [REMOVED] collection('webhook_tasks').getList(1, 20, {
     filter: `status="pending" || (status="failed" && next_retry <= "${now}")`,
     sort: 'created',
   })
 
   for (const task of tasks) {
-    await pb.collection('webhook_tasks').update(task.id, {
+    await // pb. // [REMOVED] collection('webhook_tasks').update(task.id, {
       status: 'processing',
       attempts: task.attempts + 1,
       updated: new Date().toISOString(),
@@ -30,13 +33,13 @@ export async function GET(): Promise<NextResponse> {
     try {
       const data = JSON.parse(task.payload)
       await processWebhook(data)
-      await pb.collection('webhook_tasks').update(task.id, {
+      await // pb. // [REMOVED] collection('webhook_tasks').update(task.id, {
         status: 'done',
         updated: new Date().toISOString(),
       })
     } catch (error) {
       const willRetry = task.attempts + 1 < task.max_attempts
-      await pb.collection('webhook_tasks').update(task.id, {
+      await // pb. // [REMOVED] collection('webhook_tasks').update(task.id, {
         status: willRetry ? 'failed' : 'done',
         error: String(error).substring(0, 200),
         next_retry: willRetry

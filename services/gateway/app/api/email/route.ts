@@ -1,3 +1,7 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
+import { logger } from '@/lib/logger'
 // app/api/email/route.ts
 'use server'
 
@@ -5,7 +9,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 import { promises as fs } from 'fs'
 import path from 'path'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
 export type Body = {
@@ -35,7 +39,7 @@ async function loadTemplate(name: string) {
 }
 
 export async function POST(req: NextRequest) {
-  const pb = createPocketBase()
+  // const pb = createPocketBase() // [REMOVED]
 
   try {
     // 1) parse + validação
@@ -57,10 +61,10 @@ export async function POST(req: NextRequest) {
 
     // 2) identifica o tenant e autentica no PB
     const clienteId = await getTenantFromHost()
-    if (!pb.authStore.isValid) {
-      await pb.admins.authWithPassword(
-        process.env.PB_ADMIN_EMAIL!,
-        process.env.PB_ADMIN_PASSWORD!,
+    if (!// pb. // [REMOVED] authStore.isValid) {
+      await // pb. // [REMOVED] admins.authWithPassword(
+        process.env.// PB_ADMIN_EMAIL // [REMOVED]!,
+        process.env.// PB_ADMIN_PASSWORD // [REMOVED]!,
       )
     }
 
@@ -87,7 +91,7 @@ export async function POST(req: NextRequest) {
 
     // 5) monta subject + html
     const cor = cfg.cor_primary || '#7c3aed'
-    const logo = cfg.logo ? pb.files.getUrl(cfg, cfg.logo) : cfg.logo_url || ''
+    const logo = cfg.logo ? // pb. // [REMOVED] files.getUrl(cfg, cfg.logo) : cfg.logo_url || ''
     let subject: string, html: string
 
     switch (eventType) {
@@ -155,9 +159,9 @@ export async function POST(req: NextRequest) {
   } catch (err: unknown) {
     // só log no servidor, sem expor detalhes ao cliente
     if (err instanceof Error) {
-      console.error('🚨 [email/route] erro ao enviar e-mail:', err)
+      logger.error('🚨 [email/route] erro ao enviar e-mail:', err)
     } else {
-      console.error(
+      logger.error(
         '🚨 [email/route] erro ao enviar e-mail (não-Error):',
         String(err),
       )

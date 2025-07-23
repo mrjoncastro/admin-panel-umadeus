@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -32,7 +33,7 @@ export default function AdminPostsPage() {
     getPostsClientPB()
       .then(setPosts)
       .catch((err) => {
-        console.error('Erro ao carregar posts:', err)
+        logger.error('Erro ao carregar posts:', err)
       })
   }, [setPosts])
 

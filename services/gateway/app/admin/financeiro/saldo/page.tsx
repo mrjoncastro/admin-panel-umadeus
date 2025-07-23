@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 import { useAuthContext } from '@/lib/context/AuthContext'
@@ -67,7 +68,7 @@ export default function SaldoPage() {
           setExtrato(data.data || [])
         }
       } catch (err) {
-        console.error('Erro ao obter dados:', err)
+        logger.error('Erro ao obter dados:', err)
       } finally {
         setLoading(false)
       }
@@ -142,7 +143,7 @@ export default function SaldoPage() {
           ]
       }
     } catch (err) {
-      console.error('Erro ao carregar logo', err)
+      logger.error('Erro ao carregar logo', err)
     }
 
     const workbook = XLSX.utils.book_new()
@@ -167,7 +168,7 @@ export default function SaldoPage() {
         }
       }
     } catch (err) {
-      console.error('Erro ao carregar logo', err)
+      logger.error('Erro ao carregar logo', err)
     }
 
     if (imgData) {

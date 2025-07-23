@@ -1,3 +1,6 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 export interface Bank {
   ispb: string
   name: string
@@ -21,7 +24,7 @@ export async function searchBanks(
   return query ? data : data.slice(0, 15)
 }
 
-import type PocketBase from 'pocketbase'
+// [REMOVED] PocketBase import
 import { pbRetry } from '@/lib/pbRetry'
 
 export interface BankAccount {
@@ -56,7 +59,7 @@ export async function createBankAccount(
     usuario: userId,
     cliente: clienteId,
   }
-  return pbRetry(() => pb.collection('clientes_contas_bancarias').create(data))
+  return pbRetry(() => // pb. // [REMOVED] collection('clientes_contas_bancarias').create(data))
 }
 
 export interface PixKey {
@@ -77,7 +80,7 @@ export async function createPixKey(
     usuario: userId,
     cliente: clienteId,
   }
-  return pbRetry(() => pb.collection('clientes_pix').create(data))
+  return pbRetry(() => // pb. // [REMOVED] collection('clientes_pix').create(data))
 }
 
 export interface PixKeyRecord {

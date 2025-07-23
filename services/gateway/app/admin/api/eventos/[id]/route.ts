@@ -1,3 +1,6 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { logConciliacaoErro } from '@/lib/server/logger'
@@ -15,12 +18,12 @@ export async function GET(req: NextRequest) {
   const { pb } = auth
   try {
     const evento = await pbRetry(() =>
-      pb.collection('eventos').getOne<EventoRecord>(id, {
+      // pb. // [REMOVED] collection('eventos').getOne<EventoRecord>(id, {
         expand: 'produtos',
       }),
     )
     const fileName = evento.imagem || evento.logo
-    const imagemUrl = fileName ? pb.files.getURL(evento, fileName) : undefined
+    const imagemUrl = fileName ? // pb. // [REMOVED] files.getURL(evento, fileName) : undefined
     return NextResponse.json({ ...evento, imagemUrl }, { status: 200 })
   } catch (err) {
     await logConciliacaoErro(`Erro ao obter evento: ${String(err)}`)
@@ -42,7 +45,7 @@ export async function PUT(req: NextRequest) {
     if (contentType.includes('application/json')) {
       const body = await req.json()
       const evento = await pbRetry(() =>
-        pb.collection('eventos').update(id, body),
+        // pb. // [REMOVED] collection('eventos').update(id, body),
       )
       return NextResponse.json(evento, { status: 200 })
     }
@@ -58,7 +61,7 @@ export async function PUT(req: NextRequest) {
       )
     }
     const evento = await pbRetry(() =>
-      pb.collection('eventos').update(id, formData),
+      // pb. // [REMOVED] collection('eventos').update(id, formData),
     )
     return NextResponse.json(evento, { status: 200 })
   } catch (err) {
@@ -77,7 +80,7 @@ export async function DELETE(req: NextRequest) {
   }
   const { pb } = auth
   try {
-    await pbRetry(() => pb.collection('eventos').delete(id))
+    await pbRetry(() => // pb. // [REMOVED] collection('eventos').delete(id))
     return NextResponse.json({ sucesso: true }, { status: 200 })
   } catch (err) {
     await logConciliacaoErro(`Erro ao excluir evento: ${String(err)}`)

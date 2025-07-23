@@ -1,7 +1,10 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { logConciliacaoErro } from '@/lib/server/logger'
-import { fetchUsuario } from '@/lib/services/pocketbase'
+// [REMOVED] PocketBase import
 
 export async function GET(req: NextRequest) {
   const { pathname } = req.nextUrl
@@ -100,7 +103,7 @@ export async function PATCH(req: NextRequest) {
       payload.campo = data.campo
     }
 
-    const usuario = await pb.collection('usuarios').update(id, payload)
+    const usuario = await // pb. // [REMOVED] collection('usuarios').update(id, payload)
 
     if (usuarioAtual.role !== 'lider' && payload.role === 'lider') {
       const base = req.nextUrl?.origin || req.headers.get('origin')
@@ -119,7 +122,7 @@ export async function PATCH(req: NextRequest) {
             }),
           })
         } catch (err) {
-          console.error('Falha ao enviar email de promoção', err)
+          logger.error('Falha ao enviar email de promoção', err)
         }
         fetch(`${base}/api/chats/message/sendWelcome`, {
           method: 'POST',
@@ -129,10 +132,10 @@ export async function PATCH(req: NextRequest) {
             campoNome,
           }),
         }).catch((err) =>
-          console.error('Falha ao enviar mensagem de promoção', err),
+          logger.error('Falha ao enviar mensagem de promoção', err),
         )
       } else {
-        console.error('Base URL não encontrada para envio de notificações')
+        logger.error('Base URL não encontrada para envio de notificações')
       }
     }
 
@@ -155,3 +158,4 @@ export async function PATCH(req: NextRequest) {
     )
   }
 }
+import { logger } from '@/lib/logger'

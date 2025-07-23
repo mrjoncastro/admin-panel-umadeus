@@ -1,9 +1,12 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { logInfo } from '@/lib/logger'
 
 export async function POST(req: NextRequest) {
-  const pb = createPocketBase()
+  // const pb = createPocketBase() // [REMOVED]
   try {
     const { cpf, telefone, cliente } = await req.json()
 
@@ -21,11 +24,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Cliente ausente.' }, { status: 400 })
     }
 
-    if (!pb.authStore.isValid) {
+    if (!// pb. // [REMOVED] authStore.isValid) {
       logInfo('🔐 Autenticando como admin...')
-      await pb.admins.authWithPassword(
-        process.env.PB_ADMIN_EMAIL!,
-        process.env.PB_ADMIN_PASSWORD!,
+      await // pb. // [REMOVED] admins.authWithPassword(
+        process.env.// PB_ADMIN_EMAIL // [REMOVED]!,
+        process.env.// PB_ADMIN_PASSWORD // [REMOVED]!,
       )
       logInfo('✅ Autenticado com sucesso.')
     }
@@ -34,7 +37,7 @@ export async function POST(req: NextRequest) {
     const filtro = `${filtroBase} && cliente='${cliente}'`
     logInfo('🔎 Filtro usado:', filtro)
 
-    const inscricoes = await pb.collection('inscricoes').getFullList({
+    const inscricoes = await // pb. // [REMOVED] collection('inscricoes').getFullList({
       filter: filtro,
       expand: 'pedido',
     })

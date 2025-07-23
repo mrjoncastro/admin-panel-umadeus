@@ -1,6 +1,9 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { getClient } from '@/lib/server/chats'
-import PocketBase from 'pocketbase'
+// [REMOVED] PocketBase import
 
 export async function POST(req: NextRequest) {
   const tenant = req.headers.get('x-tenant-id')
@@ -9,18 +12,18 @@ export async function POST(req: NextRequest) {
   }
   const { eventName, body } = await req.json()
 
-  const pb = new PocketBase(process.env.PB_URL!)
-  if (!pb.authStore.isValid) {
-    await pb.admins.authWithPassword(
-      process.env.PB_ADMIN_EMAIL!,
-      process.env.PB_ADMIN_PASSWORD!,
+  const pb = new PocketBase(process.env.// PB_URL // [REMOVED]!)
+  if (!// pb. // [REMOVED] authStore.isValid) {
+    await // pb. // [REMOVED] admins.authWithPassword(
+      process.env.// PB_ADMIN_EMAIL // [REMOVED]!,
+      process.env.// PB_ADMIN_PASSWORD // [REMOVED]!,
     )
   }
 
   if (eventName === 'qrCode' && body?.instanceName) {
     const record = await getClient(body.instanceName)
     if (record) {
-      await pb.collection('whatsapp_clientes').update(record.id, {
+      await // pb. // [REMOVED] collection('whatsapp_clientes').update(record.id, {
         qrCode: body.qrCode,
         sessionStatus: 'pending',
       })
@@ -28,7 +31,7 @@ export async function POST(req: NextRequest) {
   } else if (eventName === 'ready' && body?.instanceName) {
     const record = await getClient(body.instanceName)
     if (record) {
-      await pb.collection('whatsapp_clientes').update(record.id, {
+      await // pb. // [REMOVED] collection('whatsapp_clientes').update(record.id, {
         sessionStatus: 'connected',
         qrCode: null,
       })
@@ -36,7 +39,7 @@ export async function POST(req: NextRequest) {
   } else if (eventName === 'disconnected' && body?.instanceName) {
     const record = await getClient(body.instanceName)
     if (record) {
-      await pb.collection('whatsapp_clientes').update(record.id, {
+      await // pb. // [REMOVED] collection('whatsapp_clientes').update(record.id, {
         sessionStatus: 'disconnected',
       })
     }

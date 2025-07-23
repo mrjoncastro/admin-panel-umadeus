@@ -1,5 +1,8 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import type { AsaasWebhookPayload } from '@/lib/webhookProcessor'
 import { logConciliacaoErro } from '@/lib/server/logger'
 
@@ -31,18 +34,18 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     ...(cliente ? { cliente } : {}),
   }
 
-  const pb = createPocketBase()
-  const wasValid = pb.authStore.isValid
+  // const pb = createPocketBase() // [REMOVED]
+  const wasValid = // pb. // [REMOVED] authStore.isValid
 
   try {
-    if (!pb.authStore.isValid) {
-      await pb.admins.authWithPassword(
-        process.env.PB_ADMIN_EMAIL!,
-        process.env.PB_ADMIN_PASSWORD!,
+    if (!// pb. // [REMOVED] authStore.isValid) {
+      await // pb. // [REMOVED] admins.authWithPassword(
+        process.env.// PB_ADMIN_EMAIL // [REMOVED]!,
+        process.env.// PB_ADMIN_PASSWORD // [REMOVED]!,
       )
     }
 
-    await pb.collection('webhook_tasks').create({
+    await // pb. // [REMOVED] collection('webhook_tasks').create({
       event: payload.event ?? 'unknown',
       payload: JSON.stringify(payload),
       status: 'pending',
@@ -68,8 +71,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         `Method: ${req.method}\n` +
         `Headers: ${JSON.stringify(headers)}\n` +
         `PB.authStore.isValid (antes): ${wasValid}\n` +
-        `ENV PB_ADMIN_EMAIL definida: ${Boolean(process.env.PB_ADMIN_EMAIL)}\n` +
-        `ENV PB_ADMIN_PASSWORD definida: ${Boolean(process.env.PB_ADMIN_PASSWORD)}\n` +
+        `ENV // PB_ADMIN_EMAIL // [REMOVED] definida: ${Boolean(process.env.// PB_ADMIN_EMAIL // [REMOVED])}\n` +
+        `ENV // PB_ADMIN_PASSWORD // [REMOVED] definida: ${Boolean(process.env.// PB_ADMIN_PASSWORD // [REMOVED])}\n` +
         `Payload: ${JSON.stringify(payload)}\n` +
         `ErrorName: ${errName}\n` +
         `ErrorMessage: ${errMsg}\n` +

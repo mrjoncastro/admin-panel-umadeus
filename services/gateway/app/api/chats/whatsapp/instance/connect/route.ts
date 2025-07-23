@@ -1,7 +1,11 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
+import { logger } from '@/lib/logger'
 // ./app/api/chats/whatsapp/instance/connect/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { requireRole } from '@/lib/apiAuth'
 
 export async function POST(req: NextRequest) {
@@ -22,11 +26,11 @@ export async function POST(req: NextRequest) {
   }
 
   // 1) verifica existência no PocketBase
-  const pb = createPocketBase()
-  if (!pb.authStore.isValid) {
-    await pb.admins.authWithPassword(
-      process.env.PB_ADMIN_EMAIL!,
-      process.env.PB_ADMIN_PASSWORD!,
+  // const pb = createPocketBase() // [REMOVED]
+  if (!// pb. // [REMOVED] authStore.isValid) {
+    await // pb. // [REMOVED] admins.authWithPassword(
+      process.env.// PB_ADMIN_EMAIL // [REMOVED]!,
+      process.env.// PB_ADMIN_PASSWORD // [REMOVED]!,
     )
   }
   const list = await pb
@@ -53,7 +57,7 @@ export async function POST(req: NextRequest) {
   )
   if (!connectRes.ok) {
     const err = await connectRes.json().catch(() => ({}))
-    console.error('Evolution API connect error', err)
+    logger.error('Evolution API connect error', err)
     return NextResponse.json(
       { error: 'evolution_connect_failed', details: err },
       { status: connectRes.status },

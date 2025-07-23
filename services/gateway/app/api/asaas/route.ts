@@ -1,40 +1,40 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { requireClienteFromHost } from '@/lib/clienteAuth'
-import { logInfo } from '@/lib/logger'
+import { logger } from '@/lib/logger'
 import { buildExternalReference } from '@/lib/asaas'
 import { calculateGross, PaymentMethod } from '@/lib/asaasFees'
 import { toAsaasBilling } from '@/lib/paymentMethodMap'
 import { logConciliacaoErro } from '@/lib/server/logger'
 
 export async function POST(req: NextRequest) {
-  console.log('🟢 [POST /api/asaas] Nova requisição recebida.')
+  logger.info('Nova requisição para pagamento Asaas')
 
   const auth = await requireClienteFromHost(req)
-  console.log('🟢 [POST /api/asaas] Resultado do auth:', auth)
-
+  
   if ('error' in auth) {
-    console.log('🔴 [POST /api/asaas] Erro de autenticação:', auth.error)
+    logger.error('Erro de autenticação Asaas', auth.error)
     return NextResponse.json({ error: auth.error }, { status: auth.status })
   }
-  const { pb, cliente } = auth
+  const { cliente } = auth
   const baseUrl = process.env.ASAAS_API_URL
 
   const userAgent = cliente.nome || 'M24'
   const apiKey = cliente.asaas_api_key || process.env.ASAAS_API_KEY || ''
 
   if (!apiKey) {
-    console.log('🔴 [POST /api/asaas] ASAAS_API_KEY não definida!')
-    throw new Error(
-      '❌ ASAAS_API_KEY não definida! Confira seu .env ou painel de variáveis.',
-    )
+    logger.error('ASAAS_API_KEY não definida')
+    throw new Error('ASAAS_API_KEY não definida! Confira configuração.')
   }
-  logInfo('🔑 API Key utilizada:', apiKey)
-  console.log('🔑 API Key utilizada:', apiKey)
+  
+  logger.debug('API Key configurada', { hasKey: !!apiKey })
 
   const keyHeader = apiKey.startsWith('$') ? apiKey : '$' + apiKey
 
   if (!keyHeader || !baseUrl) {
-    console.log(
+    logger.debug(
       '🔴 [POST /api/asaas] Chave da API Asaas ou URL não configurada',
     )
     return NextResponse.json(
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
       paymentMethod,
       installments,
     })
-    console.log('📦 Dados recebidos:', {
+    logger.debug('📦 Dados recebidos:', {
       pedidoId,
       valorBruto,
       paymentMethod,
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
       paymentMethod?.toLowerCase() === 'credito' ? 'pix' : paymentMethod
 
     if (!pedidoId || valorBruto === undefined || valorBruto === null) {
-      console.log('🔴 [POST /api/asaas] pedidoId e valorBruto são obrigatórios')
+      logger.debug('🔴 [POST /api/asaas] pedidoId e valorBruto são obrigatórios')
       return NextResponse.json(
         { error: 'pedidoId e valorBruto são obrigatórios' },
         { status: 400 },
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
 
     const parsedValor = Number(valorBruto)
     if (!isFinite(parsedValor) || parsedValor <= 0) {
-      console.log('🔴 [POST /api/asaas] Valor deve ser numérico e positivo')
+      logger.debug('🔴 [POST /api/asaas] Valor deve ser numérico e positivo')
       return NextResponse.json(
         { error: 'Valor deve ser numérico e positivo' },
         { status: 400 },
@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
       normalizedPaymentMethod !== 'pix' &&
       normalizedPaymentMethod !== 'boleto'
     ) {
-      console.log(
+      logger.debug(
         '🔴 [POST /api/asaas] Forma de pagamento inválida:',
         normalizedPaymentMethod,
       )
@@ -97,19 +97,19 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    if (!pb.authStore.isValid) {
-      console.log('🟡 [POST /api/asaas] Autenticando admin PocketBase...')
-      await pb.admins.authWithPassword(
-        process.env.PB_ADMIN_EMAIL!,
-        process.env.PB_ADMIN_PASSWORD!,
+    if (!// pb. // [REMOVED] authStore.isValid) {
+      logger.debug('🟡 [POST /api/asaas] Autenticando admin PocketBase...')
+      await // pb. // [REMOVED] admins.authWithPassword(
+        process.env.// PB_ADMIN_EMAIL // [REMOVED]!,
+        process.env.// PB_ADMIN_PASSWORD // [REMOVED]!,
       )
     }
 
     // Buscar pedido
-    const pedido = await pb.collection('pedidos').getOne(pedidoId)
-    console.log('📦 Pedido encontrado:', pedido)
+    const pedido = await // pb. // [REMOVED] collection('pedidos').getOne(pedidoId)
+    logger.debug('📦 Pedido encontrado:', pedido)
     if (!pedido) {
-      console.log('🔴 [POST /api/asaas] Pedido não encontrado')
+      logger.debug('🔴 [POST /api/asaas] Pedido não encontrado')
       return NextResponse.json(
         { error: 'Pedido não encontrado' },
         { status: 404 },
@@ -120,9 +120,9 @@ export async function POST(req: NextRequest) {
     const inscricao = await pb
       .collection('inscricoes')
       .getOne(pedido.id_inscricao)
-    console.log('📦 Inscrição encontrada:', inscricao)
+    logger.debug('📦 Inscrição encontrada:', inscricao)
     if (!inscricao) {
-      console.log(
+      logger.debug(
         '🔴 [POST /api/asaas] Inscrição associada ao pedido não encontrada',
       )
       return NextResponse.json(
@@ -132,7 +132,7 @@ export async function POST(req: NextRequest) {
     }
 
     const cpfCnpj = inscricao.cpf.replace(/\D/g, '')
-    console.log('🟢 [POST /api/asaas] CPF/CNPJ processado:', cpfCnpj)
+    logger.debug('🟢 [POST /api/asaas] CPF/CNPJ processado:', cpfCnpj)
 
     // 🔹 Verificar se cliente já existe no Asaas pelo CPF
     const buscaCliente = await fetch(
@@ -146,19 +146,19 @@ export async function POST(req: NextRequest) {
         },
       },
     )
-    console.log('📤 [POST /api/asaas] Request buscar cliente enviada')
+    logger.debug('📤 [POST /api/asaas] Request buscar cliente enviada')
 
     let clienteId: string | null = null
     if (buscaCliente.ok) {
       const data = await buscaCliente.json()
-      console.log('📥 [POST /api/asaas] Resposta buscar cliente:', data)
+      logger.debug('📥 [POST /api/asaas] Resposta buscar cliente:', data)
       if (Array.isArray(data.data) && data.data.length > 0) {
         clienteId = data.data[0].id // Usa o primeiro cliente encontrado
         logInfo('👤 Cliente já existe no Asaas: ' + clienteId)
-        console.log('👤 Cliente já existe no Asaas:', clienteId)
+        logger.debug('👤 Cliente já existe no Asaas:', clienteId)
       }
     } else {
-      console.log(
+      logger.debug(
         '🔴 [POST /api/asaas] Falha ao buscar cliente no Asaas:',
         buscaCliente.status,
       )
@@ -178,7 +178,7 @@ export async function POST(req: NextRequest) {
       }
 
       logInfo('➡️ Payload enviado para criar cliente no Asaas:', clientePayload)
-      console.log(
+      logger.debug(
         '➡️ Payload enviado para criar cliente no Asaas:',
         clientePayload,
       )
@@ -196,20 +196,20 @@ export async function POST(req: NextRequest) {
 
       const raw = await clienteResponse.text()
       logInfo('⬅️ Resposta recebida do Asaas (cliente):', raw)
-      console.log('⬅️ Resposta recebida do Asaas (cliente):', raw)
+      logger.debug('⬅️ Resposta recebida do Asaas (cliente):', raw)
 
       if (!clienteResponse.ok) {
         await logConciliacaoErro(
           `Erro ao criar cliente: status ${clienteResponse.status} | ${raw}`,
         )
-        console.log('🔴 [POST /api/asaas] Erro ao criar cliente:', raw)
+        logger.debug('🔴 [POST /api/asaas] Erro ao criar cliente:', raw)
         throw new Error('Erro ao criar cliente')
       }
 
       const cliente = JSON.parse(raw)
       clienteId = cliente.id
       logInfo('✅ Cliente criado: ' + clienteId)
-      console.log('✅ Cliente criado:', clienteId)
+      logger.debug('✅ Cliente criado:', clienteId)
     }
 
     // 🔹 Criar cobrança
@@ -233,7 +233,7 @@ export async function POST(req: NextRequest) {
       pedido,
       externalReference,
     })
-    console.log('🔧 Chamando createCheckout com:', {
+    logger.debug('🔧 Chamando createCheckout com:', {
       pedido,
       externalReference,
     })
@@ -244,11 +244,11 @@ export async function POST(req: NextRequest) {
       normalizedPaymentMethod as PaymentMethod,
       installments,
     )
-    console.log('💰 gross:', gross, 'margin:', margin)
+    logger.debug('💰 gross:', gross, 'margin:', margin)
 
     const billingType = toAsaasBilling(normalizedPaymentMethod as PaymentMethod)
     if (!['PIX', 'BOLETO'].includes(billingType)) {
-      console.log(
+      logger.debug(
         '🔴 [POST /api/asaas] Forma de pagamento inválida:',
         billingType,
       )
@@ -276,7 +276,7 @@ export async function POST(req: NextRequest) {
     }
 
     logInfo('➡️ Payload enviado para criar cobrança no Asaas:', paymentPayload)
-    console.log(
+    logger.debug(
       '➡️ Payload enviado para criar cobrança no Asaas:',
       paymentPayload,
     )
@@ -294,13 +294,13 @@ export async function POST(req: NextRequest) {
     // Log da resposta do Asaas (pagamento)
     const cobrancaRaw = await cobrancaResponse.clone().text()
     logInfo('⬅️ Resposta recebida do Asaas (cobrança):', cobrancaRaw)
-    console.log('⬅️ Resposta recebida do Asaas (cobrança):', cobrancaRaw)
+    logger.debug('⬅️ Resposta recebida do Asaas (cobrança):', cobrancaRaw)
 
     if (!cobrancaResponse.ok) {
       await logConciliacaoErro(
         `Erro ao criar cobrança: status ${cobrancaResponse.status} | ${cobrancaRaw}`,
       )
-      console.log('🔴 [POST /api/asaas] Erro ao criar cobrança:', cobrancaRaw)
+      logger.debug('🔴 [POST /api/asaas] Erro ao criar cobrança:', cobrancaRaw)
       throw new Error('Erro ao criar cobrança')
     }
 
@@ -311,11 +311,11 @@ export async function POST(req: NextRequest) {
       ? new Date(cobranca.dueDate).toISOString()
       : new Date(dueDate).toISOString()
     logInfo('✅ Cobrança criada. Link: ' + link)
-    console.log('✅ Cobrança criada. Link:', link)
+    logger.debug('✅ Cobrança criada. Link:', link)
 
     // 🔹 Atualizar pedido
     const taxaAplicada = Number((gross - parsedValor - margin).toFixed(2))
-    await pb.collection('pedidos').update(pedido.id, {
+    await // pb. // [REMOVED] collection('pedidos').update(pedido.id, {
       link_pagamento: link,
       valorBrutoDesejado: parsedValor,
       valorBruto: gross,
@@ -326,7 +326,7 @@ export async function POST(req: NextRequest) {
       vencimento: dueDateISO,
       ...(asaasId ? { id_asaas: asaasId } : {}),
     })
-    console.log('🟢 Pedido atualizado com link de pagamento')
+    logger.debug('🟢 Pedido atualizado com link de pagamento')
 
     return NextResponse.json({
       url: link,
@@ -337,7 +337,7 @@ export async function POST(req: NextRequest) {
     await logConciliacaoErro(
       `Erro ao gerar link de pagamento Asaas: ${String(err)}`,
     )
-    console.log('🔴 [POST /api/asaas] Erro ao gerar link de pagamento:', err)
+    logger.debug('🔴 [POST /api/asaas] Erro ao gerar link de pagamento:', err)
     return NextResponse.json(
       { error: 'Erro ao gerar link de pagamento' },
       { status: 500 },

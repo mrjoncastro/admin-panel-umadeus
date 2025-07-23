@@ -1,8 +1,11 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import ModalEditarPerfil from '@/app/admin/perfil/components/ModalEditarPerfil'
 import { useAuthContext } from '@/lib/context/AuthContext'
 
@@ -30,7 +33,7 @@ interface UsuarioAuthModel {
 export default function PerfilPage() {
   const { authChecked } = useAuthGuard(['usuario'])
   const { logout } = useAuthContext()
-  const pb = useMemo(() => createPocketBase(), [])
+  // const pb = useMemo(() => createPocketBase(), []) // [REMOVED]
   const [usuario, setUsuario] = useState<UsuarioAuthModel | null>(null)
   const [mostrarModal, setMostrarModal] = useState(false)
 
@@ -38,12 +41,12 @@ export default function PerfilPage() {
     if (!authChecked) return
 
     const handleAuthChange = () => {
-      const model = pb.authStore.model as unknown as UsuarioAuthModel
+      const model = // pb. // [REMOVED] authStore.model as unknown as UsuarioAuthModel
       setUsuario(model)
     }
 
     handleAuthChange()
-    const unsubscribe = pb.authStore.onChange(handleAuthChange)
+    const unsubscribe = // pb. // [REMOVED] authStore.onChange(handleAuthChange)
     return () => unsubscribe()
   }, [authChecked, pb])
 
@@ -87,7 +90,7 @@ export default function PerfilPage() {
         <ModalEditarPerfil
           onClose={() => {
             setMostrarModal(false)
-            const model = pb.authStore.model as unknown as UsuarioAuthModel
+            const model = // pb. // [REMOVED] authStore.model as unknown as UsuarioAuthModel
             setUsuario(model)
           }}
         />

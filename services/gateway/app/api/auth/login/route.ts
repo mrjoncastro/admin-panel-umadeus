@@ -1,16 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
-import { ClientResponseError } from 'pocketbase'
+import { supabase } from '@/lib/supabaseClient'
 
 export async function POST(req: NextRequest) {
   const { email, password } = await req.json()
-  const pb = createPocketBase()
 
   try {
     // Verifica se o e-mail existe na base de usuários
-    await pb.collection('usuarios').getFirstListItem(`email='${email}'`)
-  } catch (err) {
-    if (err instanceof ClientResponseError && err.status === 404) {
+    const { data: existingUser } = await supabase
+      .from('usuarios')
+      .select('email')
+      .eq('email', email)
+      .single()
+
+    if (!existingUser) {
       return NextResponse.json(
         {
           error:
@@ -19,23 +21,14 @@ export async function POST(req: NextRequest) {
         { status: 401 },
       )
     }
-    throw err
-  }
 
-  try {
-    await pb.collection('usuarios').authWithPassword(email, password)
-    const user = pb.authStore.model
-    const token = pb.authStore.token
-    const cookie = pb.authStore.exportToCookie({
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      path: '/',
+    // Autenticar com Supabase Auth
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     })
-    const res = NextResponse.json({ user, token })
-    res.headers.append('Set-Cookie', cookie)
-    return res
-  } catch (err) {
-    if (err instanceof ClientResponseError) {
+
+    if (error) {
       return NextResponse.json(
         {
           error:
@@ -44,9 +37,29 @@ export async function POST(req: NextRequest) {
         { status: 401 },
       )
     }
+
+    const res = NextResponse.json({ 
+      user: data.user, 
+      session: data.session 
+    })
+    
+    // Set auth cookie
+    if (data.session) {
+      res.cookies.set('sb-access-token', data.session.access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
+        maxAge: data.session.expires_in,
+      })
+    }
+    
+    return res
+  } catch (err) {
+    logger.error('Login error:', err)
     return NextResponse.json(
-      { error: 'Credenciais inválidas' },
-      { status: 401 },
+      { error: 'Erro interno do servidor' },
+      { status: 500 },
     )
   }
 }
+import { logger } from '@/lib/logger'

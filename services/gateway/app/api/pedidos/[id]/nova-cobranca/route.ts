@@ -1,3 +1,6 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
@@ -6,7 +9,7 @@ import { buildExternalReference } from '@/lib/asaas'
 import { calculateGross, PaymentMethod } from '@/lib/asaasFees'
 import { toAsaasBilling } from '@/lib/paymentMethodMap'
 import { logConciliacaoErro } from '@/lib/server/logger'
-import type { RecordModel } from 'pocketbase'
+// [REMOVED] PocketBase import
 
 async function checkAccess(pedido: Pedido, user: RecordModel) {
   if (user.role === 'usuario') {
@@ -39,7 +42,7 @@ export async function POST(req: NextRequest) {
   const { pb, user } = auth
 
   try {
-    const pedido = await pb.collection('pedidos').getOne<Pedido>(id)
+    const pedido = await // pb. // [REMOVED] collection('pedidos').getOne<Pedido>(id)
     const access = await checkAccess(pedido, user)
     if ('error' in access) {
       return NextResponse.json(
@@ -66,7 +69,7 @@ export async function POST(req: NextRequest) {
     const cpfCnpj = inscricao.cpf.replace(/\D/g, '')
     const baseUrl = process.env.ASAAS_API_URL
     const apiKey = inscricao.cliente
-      ? (await pb.collection('clientes').getOne(inscricao.cliente))
+      ? (await // pb. // [REMOVED] collection('clientes').getOne(inscricao.cliente))
           .asaas_api_key
       : process.env.ASAAS_API_KEY
     const userAgent = inscricao.nome || 'umadeus'
@@ -77,10 +80,10 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    if (!pb.authStore.isValid) {
-      await pb.admins.authWithPassword(
-        process.env.PB_ADMIN_EMAIL!,
-        process.env.PB_ADMIN_PASSWORD!,
+    if (!// pb. // [REMOVED] authStore.isValid) {
+      await // pb. // [REMOVED] admins.authWithPassword(
+        process.env.// PB_ADMIN_EMAIL // [REMOVED]!,
+        process.env.// PB_ADMIN_PASSWORD // [REMOVED]!,
       )
     }
 
@@ -190,7 +193,7 @@ export async function POST(req: NextRequest) {
     const dueDateStr = cobranca.dueDate
       ? new Date(cobranca.dueDate).toISOString()
       : new Date(defaultDue).toISOString()
-    await pb.collection('pedidos').update(pedido.id, {
+    await // pb. // [REMOVED] collection('pedidos').update(pedido.id, {
       link_pagamento: link,
       vencimento: dueDateStr,
       ...(asaasId ? { id_asaas: asaasId } : {}),

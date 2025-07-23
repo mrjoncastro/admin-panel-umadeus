@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
@@ -39,7 +40,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
     fetch('/api/campos')
       .then((r) => (r.ok ? r.json() : []))
       .then((data) => (Array.isArray(data) ? setCampos(data) : setCampos([])))
-      .catch((err) => console.error('Erro ao carregar campos:', err))
+      .catch((err) => logger.error('Erro ao carregar campos:', err))
   }, [])
 
   useEffect(() => {
@@ -118,7 +119,7 @@ export default function InscricaoForm({ eventoId }: InscricaoFormProps) {
         router.push('/loja/inscricoes/confirmacao')
       }, 500)
     } catch (err: unknown) {
-      console.warn('Erro ao enviar inscrição:', err)
+      logger.warn('Erro ao enviar inscrição:', err)
       setStatus('error')
       showError('Erro ao enviar a inscrição. Tente novamente.')
     }

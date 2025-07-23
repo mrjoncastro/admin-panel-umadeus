@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 const fs = require('fs')
 const path = require('path')
 const matter = require('gray-matter')
@@ -82,7 +83,7 @@ function sanitizeDate(dateString) {
 
     return new Date(dateString).toISOString().split('T')[0]
   } catch (e) {
-    console.warn('⚠️ Data inválida encontrada:', dateString)
+    logger.warn('⚠️ Data inválida encontrada:', dateString)
     return new Date().toISOString().split('T')[0]
   }
 }
@@ -121,7 +122,7 @@ ${routes
 </urlset>`
 
   fs.writeFileSync(path.join('public', 'sitemap.xml'), sitemap)
-  console.log(
+  logger.debug(
     `✅ sitemap.xml gerado com ${routes.length} URLs e datas validadas`,
   )
 }
@@ -134,7 +135,7 @@ Sitemap: ${BASE_URL}/sitemap.xml
 Sitemap: ${BASE_URL}/rss.xml
 `
   fs.writeFileSync(path.join('public', 'robots.txt'), content)
-  console.log('✅ robots.txt gerado')
+  logger.debug('✅ robots.txt gerado')
 }
 
 function generateRSS(posts) {
@@ -162,7 +163,7 @@ function generateRSS(posts) {
 </rss>`
 
   fs.writeFileSync(path.join('public', 'rss.xml'), rss)
-  console.log(`✅ rss.xml gerado com ${posts.length} posts`)
+  logger.debug(`✅ rss.xml gerado com ${posts.length} posts`)
 }
 
 function main() {

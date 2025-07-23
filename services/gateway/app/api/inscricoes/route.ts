@@ -1,6 +1,9 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
-import { createPocketBase } from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro, logRocketEvent } from '@/lib/server/logger'
 import type { PaymentMethod } from '@/lib/asaasFees'
@@ -38,20 +41,20 @@ export async function GET(req: NextRequest) {
     if (eventoId) filtroParts.push(`evento='${eventoId}'`)
     const filtro = filtroParts.filter(Boolean).join(' && ')
     const sortParam = req.nextUrl.searchParams.get('sort') || '-created'
-    const result = await pb.collection('inscricoes').getList(page, perPage, {
+    const result = await // pb. // [REMOVED] collection('inscricoes').getList(page, perPage, {
       filter: filtro,
       expand: 'evento,campo,pedido,produto',
       sort: sortParam,
     })
     return NextResponse.json(result, { status: 200 })
   } catch (err) {
-    console.error('Erro ao listar inscricoes:', err)
+    logger.error('Erro ao listar inscricoes:', err)
     return NextResponse.json({ error: 'Erro ao listar' }, { status: 500 })
   }
 }
 export async function POST(req: NextRequest) {
-  const pb = createPocketBase()
-  pb.authStore.loadFromCookie(req.headers.get('cookie') || '')
+  // const pb = createPocketBase() // [REMOVED]
+  // pb. // [REMOVED] authStore.loadFromCookie(req.headers.get('cookie') || '')
   try {
     const body = await req.json()
     const {
@@ -121,7 +124,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const lider = await pb.collection('usuarios').getOne(liderId, {
+    const lider = await // pb. // [REMOVED] collection('usuarios').getOne(liderId, {
       expand: 'campo',
     })
 
@@ -161,7 +164,7 @@ export async function POST(req: NextRequest) {
       usuarioExistente = true
     } catch {
       const tempPass = Math.random().toString(36).slice(2, 10)
-      usuario = await pb.collection('usuarios').create({
+      usuario = await // pb. // [REMOVED] collection('usuarios').create({
         nome,
         email,
         emailVisibility: true,
@@ -181,7 +184,7 @@ export async function POST(req: NextRequest) {
       ? `evento="${eventoIdFinal}" && criado_por="${usuario.id}"`
       : `evento="${eventoIdFinal}" && cpf="${cpfNumerico}"`
     try {
-      await pb.collection('inscricoes').getFirstListItem(filtroDuplicado)
+      await // pb. // [REMOVED] collection('inscricoes').getFirstListItem(filtroDuplicado)
       return NextResponse.json(
         { erro: 'Usuário já inscrito neste evento' },
         { status: 409 },
@@ -217,13 +220,13 @@ export async function POST(req: NextRequest) {
       installments,
     }
 
-    const inscricao = await pb.collection('inscricoes').create(dadosInscricao)
+    const inscricao = await // pb. // [REMOVED] collection('inscricoes').create(dadosInscricao)
     logRocketEvent('nova_inscricao_admin', {
       inscricaoId: inscricao.id,
       userId: usuario.id,
     })
 
-    const evento = await pb.collection('eventos').getOne(eventoIdFinal!)
+    const evento = await // pb. // [REMOVED] collection('eventos').getOne(eventoIdFinal!)
 
     let link_pagamento: string | undefined
 
@@ -271,12 +274,12 @@ export async function POST(req: NextRequest) {
                 .update(pedidoId, { id_asaas: _idAsaas })
             }
           } else {
-            await pb.collection('pedidos').delete(pedidoId)
+            await // pb. // [REMOVED] collection('pedidos').delete(pedidoId)
           }
         }
       }
     } catch (e) {
-      console.error('Erro ao gerar pagamento automático:', e)
+      logger.error('Erro ao gerar pagamento automático:', e)
     }
 
     const responseData: Record<string, unknown> = {
@@ -305,7 +308,7 @@ export async function POST(req: NextRequest) {
         eventType = 'nova_inscricao'
       }
     } catch (e) {
-      console.error('Erro ao verificar confirma_inscricoes:', e)
+      logger.error('Erro ao verificar confirma_inscricoes:', e)
     }
 
     const payload: Record<string, unknown> = {
@@ -323,14 +326,14 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify(payload),
       })
     } catch (e) {
-      console.error('Erro ao enviar e-mail de inscrição:', e)
+      logger.error('Erro ao enviar e-mail de inscrição:', e)
     }
 
     fetch(`${req.nextUrl.origin}/api/chats/message/sendWelcome`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
-    }).catch((e) => console.error('Erro ao enviar WhatsApp de inscrição:', e))
+    }).catch((e) => logger.error('Erro ao enviar WhatsApp de inscrição:', e))
 
     fetch(`${req.nextUrl.origin}/api/chats/message/sendWelcome`, {
       method: 'POST',
@@ -341,7 +344,7 @@ export async function POST(req: NextRequest) {
         inscritoNome: nome,
         eventoTitulo: evento.titulo,
       }),
-    }).catch((e) => console.error('Erro ao enviar WhatsApp para o líder:', e))
+    }).catch((e) => logger.error('Erro ao enviar WhatsApp para o líder:', e))
 
     logRocketEvent('inscricao_criada', {
       inscricaoId: inscricao.id,
@@ -357,3 +360,4 @@ export async function POST(req: NextRequest) {
     )
   }
 }
+import { logger } from '@/lib/logger'

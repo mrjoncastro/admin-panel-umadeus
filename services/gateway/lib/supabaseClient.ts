@@ -367,17 +367,15 @@ export async function getTenantConfig(tenantId: string) {
   return config
 }
 
-// Função para autenticar usuário
+// Função para autenticar usuário (usar Supabase Auth ao invés de comparação direta)
 export async function authenticateUser(email: string, password: string) {
-  const { data: user, error } = await supabase
-    .from('usuarios')
-    .select('*')
-    .eq('email', email)
-    .eq('password', password) // Em produção, usar hash da senha
-    .single()
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  })
 
   if (error) throw error
-  return user
+  return data.user
 }
 
 // Função para buscar usuário por email

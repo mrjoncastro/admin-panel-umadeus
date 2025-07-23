@@ -1,6 +1,9 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { logConciliacaoErro } from '@/lib/server/logger'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
 export async function GET(req: NextRequest) {
@@ -14,7 +17,7 @@ export async function GET(req: NextRequest) {
     )
   }
 
-  const pb = createPocketBase()
+  // const pb = createPocketBase() // [REMOVED]
   const tenantId = await getTenantFromHost()
 
   try {

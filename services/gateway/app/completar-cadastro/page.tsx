@@ -1,7 +1,11 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
+import { logger } from '@/lib/logger'
 'use client'
 
 import { useEffect, useState, useMemo } from 'react'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getAuthHeaders } from '@/lib/authHeaders'
 import { fetchCep } from '@/utils/cep'
 import { useRouter } from 'next/navigation'
@@ -18,7 +22,7 @@ export default function CompletarCadastroPage() {
   const { authChecked } = useAuthGuard(['usuario'])
   const { showError, showSuccess } = useToast()
   const router = useRouter()
-  const pb = useMemo(() => createPocketBase(), [])
+  // const pb = useMemo(() => createPocketBase(), []) // [REMOVED]
 
   const [dataNasc, setDataNasc] = useState('')
   const [genero, setGenero] = useState('')
@@ -89,7 +93,7 @@ export default function CompletarCadastroPage() {
       showSuccess('Dados atualizados!')
       router.push('/cliente/dashboard')
     } catch (err) {
-      console.error('Erro ao atualizar dados:', err)
+      logger.error('Erro ao atualizar dados:', err)
       showError('Erro ao atualizar dados.')
     } finally {
       setLoading(false)

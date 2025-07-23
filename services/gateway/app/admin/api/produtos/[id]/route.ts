@@ -1,3 +1,6 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { logInfo } from '@/lib/logger'
@@ -18,11 +21,11 @@ export async function GET(req: NextRequest) {
   const { pb } = auth
 
   try {
-    const produto = await pb.collection('produtos').getOne(id)
+    const produto = await // pb. // [REMOVED] collection('produtos').getOne(id)
     return NextResponse.json(produto, { status: 200 })
   } catch (err) {
     await logConciliacaoErro(
-      `Erro ao obter produto ${id}: ${String(err)} | host: ${pb.baseUrl}`,
+      `Erro ao obter produto ${id}: ${String(err)} | host: ${// pb. // [REMOVED] baseUrl}`,
     )
     return NextResponse.json({ error: 'Erro ao obter' }, { status: 500 })
   }
@@ -50,12 +53,12 @@ export async function PUT(req: NextRequest) {
     formData.set('preco_bruto', String(bruto))
 
     logInfo('Atualizando produto', {
-      pbHost: pb.baseUrl,
+      pbHost: // pb. // [REMOVED] baseUrl,
       userId: user.id,
       produtoId: id,
     })
 
-    const produto = await pb.collection('produtos').update(id, formData)
+    const produto = await // pb. // [REMOVED] collection('produtos').update(id, formData)
 
     return NextResponse.json(produto, { status: 200 })
   } catch (err: unknown) {
@@ -64,7 +67,7 @@ export async function PUT(req: NextRequest) {
 
     await logConciliacaoErro(
       `Erro ao atualizar produto ${id}: ${String(err)} | host: ${
-        pb.baseUrl
+        // pb. // [REMOVED] baseUrl
       } | user: ${user.id}`,
     )
     return NextResponse.json({ error: pocketError }, { status: 400 })
@@ -85,11 +88,11 @@ export async function DELETE(req: NextRequest) {
   const { pb } = auth
 
   try {
-    await pb.collection('produtos').delete(id)
+    await // pb. // [REMOVED] collection('produtos').delete(id)
     return NextResponse.json({ sucesso: true }, { status: 200 })
   } catch (err) {
     await logConciliacaoErro(
-      `Erro ao excluir produto ${id}: ${String(err)} | host: ${pb.baseUrl}`,
+      `Erro ao excluir produto ${id}: ${String(err)} | host: ${// pb. // [REMOVED] baseUrl}`,
     )
     return NextResponse.json({ error: 'Erro ao excluir' }, { status: 500 })
   }

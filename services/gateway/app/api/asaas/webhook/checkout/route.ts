@@ -1,7 +1,10 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 // ./app/api/asaas/webhook/checkout/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { logConciliacaoErro } from '@/lib/server/logger'
 
 type AsaasCheckoutWebhook = {
@@ -23,7 +26,7 @@ type AsaasCheckoutWebhook = {
 }
 
 export async function POST(req: NextRequest) {
-  const pb = createPocketBase()
+  // const pb = createPocketBase() // [REMOVED]
   const rawBody = await req.text()
   let body: AsaasCheckoutWebhook
 
@@ -34,10 +37,10 @@ export async function POST(req: NextRequest) {
   }
 
   // Garantir autenticação do PB antes de qualquer operação
-  if (!pb.authStore.isValid) {
-    await pb.admins.authWithPassword(
-      process.env.PB_ADMIN_EMAIL!,
-      process.env.PB_ADMIN_PASSWORD!,
+  if (!// pb. // [REMOVED] authStore.isValid) {
+    await // pb. // [REMOVED] admins.authWithPassword(
+      process.env.// PB_ADMIN_EMAIL // [REMOVED]!,
+      process.env.// PB_ADMIN_PASSWORD // [REMOVED]!,
     )
   }
 
@@ -49,7 +52,7 @@ export async function POST(req: NextRequest) {
 
     if (pedidoId) {
       try {
-        await pb.collection('pedidos').update(pedidoId, {
+        await // pb. // [REMOVED] collection('pedidos').update(pedidoId, {
           status: 'pago',
           id_pagamento: idPagamento,
         })

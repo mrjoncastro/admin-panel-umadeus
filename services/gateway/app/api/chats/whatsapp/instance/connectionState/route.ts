@@ -1,7 +1,11 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
+import { logger } from '@/lib/logger'
 // ./app/api/chats/whatsapp/instance/connectionState/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { requireRole } from '@/lib/apiAuth'
 
 export async function POST(req: NextRequest) {
@@ -27,7 +31,7 @@ export async function POST(req: NextRequest) {
   )
   if (!evoRes.ok) {
     const err = await evoRes.json().catch(() => ({}))
-    console.error('Evolution connectionState error:', evoRes.status, err)
+    logger.error('Evolution connectionState error:', evoRes.status, err)
     return NextResponse.json(
       { error: 'evolution_state_failed', details: err },
       { status: evoRes.status },
@@ -36,7 +40,7 @@ export async function POST(req: NextRequest) {
 
   // 2) lê JSON cru
   const raw = await evoRes.json().catch(() => ({}))
-  console.log('Raw connectionState response:', raw)
+  logger.debug('Raw connectionState response:', raw)
 
   // 3) extrai estado de raw.instance.state
   const state =
@@ -45,37 +49,37 @@ export async function POST(req: NextRequest) {
     raw.connectionState ||
     raw.status
 
-  console.log(`Parsed state for "${instanceName}":`, state)
+  logger.debug(`Parsed state for "${instanceName}":`, state)
 
   // 4) atualiza PocketBase conforme o estado
-  const pb = createPocketBase()
-  if (!pb.authStore.isValid) {
-    await pb.admins.authWithPassword(
-      process.env.PB_ADMIN_EMAIL!,
-      process.env.PB_ADMIN_PASSWORD!,
+  // const pb = createPocketBase() // [REMOVED]
+  if (!// pb. // [REMOVED] authStore.isValid) {
+    await // pb. // [REMOVED] admins.authWithPassword(
+      process.env.// PB_ADMIN_EMAIL // [REMOVED]!,
+      process.env.// PB_ADMIN_PASSWORD // [REMOVED]!,
     )
   }
   const list = await pb
     .collection('whatsapp_clientes')
     .getFullList({ filter: `instanceName="${instanceName}"` })
-  console.log(`Found ${list.length} whatsapp_clientes for "${instanceName}"`)
+  logger.debug(`Found ${list.length} whatsapp_clientes for "${instanceName}"`)
 
   if (list.length > 0) {
     const recId = list[0].id
     if (state === 'open') {
       // conectado com sucesso
-      await pb.collection('whatsapp_clientes').update(recId, {
+      await // pb. // [REMOVED] collection('whatsapp_clientes').update(recId, {
         sessionStatus: 'connected',
       })
-      console.log('→ sessionStatus set to connected')
+      logger.debug('→ sessionStatus set to connected')
     } else if (state === 'close') {
       // QR expirou / sessão fechada → volta para pending
-      await pb.collection('whatsapp_clientes').update(recId, {
+      await // pb. // [REMOVED] collection('whatsapp_clientes').update(recId, {
         sessionStatus: 'pending',
       })
-      console.log('→ sessionStatus reset to pending (re-QR)')
+      logger.debug('→ sessionStatus reset to pending (re-QR)')
     } else {
-      console.log('→ state is neither open nor close; no change')
+      logger.debug('→ state is neither open nor close; no change')
     }
   }
 

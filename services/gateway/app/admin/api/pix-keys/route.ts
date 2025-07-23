@@ -1,3 +1,6 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
 import { requireRole } from '@/lib/apiAuth'
 import { logConciliacaoErro } from '@/lib/server/logger'
@@ -9,7 +12,7 @@ export async function GET(req: NextRequest) {
   }
   const { pb, user } = auth
   try {
-    const keys = await pb.collection('clientes_pix').getFullList({
+    const keys = await // pb. // [REMOVED] collection('clientes_pix').getFullList({
       filter: `cliente='${user.cliente}'`,
     })
     return NextResponse.json(keys, { status: 200 })
@@ -27,7 +30,7 @@ export async function POST(req: NextRequest) {
   const { pb, user } = auth
   try {
     const body = await req.json()
-    const record = await pb.collection('clientes_pix').create({
+    const record = await // pb. // [REMOVED] collection('clientes_pix').create({
       ...body,
       usuario: user.id,
       cliente: user.cliente,

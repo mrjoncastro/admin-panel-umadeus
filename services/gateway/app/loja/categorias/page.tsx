@@ -1,4 +1,7 @@
-import createPocketBase from '@/lib/pocketbase'
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
+// [REMOVED] PocketBase import
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
 export const dynamic = 'force-dynamic'
@@ -10,7 +13,7 @@ interface Categoria {
 }
 
 export default async function CategoriasPage() {
-  const pb = createPocketBase()
+  // const pb = createPocketBase() // [REMOVED]
   const tenantId = await getTenantFromHost()
   const categorias: Categoria[] = await pb
     .collection('categorias')

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
@@ -147,7 +148,7 @@ export default function DashboardPage() {
         }
       } catch (err: unknown) {
         if (err instanceof Error) {
-          console.error('Erro no dashboard:', err.message)
+          logger.error('Erro no dashboard:', err.message)
         }
         setError('Erro ao carregar dashboard.')
       } finally {

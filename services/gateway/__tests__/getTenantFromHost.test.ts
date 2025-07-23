@@ -1,6 +1,9 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-import createPocketBaseMock from './mocks/pocketbase'
+// [REMOVED] PocketBase import
 
 let headersData: Record<string, string>
 let cookieStore: Record<string, string>
@@ -29,7 +32,7 @@ beforeEach(() => {
   headersData = { host: 'dom.com' }
   cookieStore = { tenantId: 'old' }
   getFirstListItemMock = vi.fn().mockResolvedValue({ cliente: 'new' })
-  pb.collection.mockReturnValue({ getFirstListItem: getFirstListItemMock })
+  // pb. // [REMOVED] collection.mockReturnValue({ getFirstListItem: getFirstListItemMock })
 })
 
 describe('getTenantFromHost', () => {

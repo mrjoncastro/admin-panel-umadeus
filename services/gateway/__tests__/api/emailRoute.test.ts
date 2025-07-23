@@ -1,7 +1,10 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { POST } from '../../app/api/email/route'
 import { NextRequest } from 'next/server'
-import createPocketBaseMock from '../mocks/pocketbase'
+// [REMOVED] PocketBase import
 
 const pb = createPocketBaseMock()
 const cfgMock = {
@@ -16,7 +19,7 @@ const cfgMock = {
 }
 const userGetMock = vi.fn()
 
-pb.collection.mockImplementation((name: string) => {
+// pb. // [REMOVED] collection.mockImplementation((name: string) => {
   if (name === 'clientes_config')
     return { getOne: vi.fn().mockResolvedValue(cfgMock) }
   if (name === 'users') return { getOne: userGetMock }

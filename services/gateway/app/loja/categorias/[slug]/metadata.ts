@@ -1,5 +1,8 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import type { Metadata } from 'next'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { getTenantFromHost } from '@/lib/getTenantFromHost'
 
 interface Params {
@@ -11,7 +14,7 @@ export async function generateMetadata({
 }: {
   params: Params
 }): Promise<Metadata> {
-  const pb = createPocketBase()
+  // const pb = createPocketBase() // [REMOVED]
   const tenantId = await getTenantFromHost()
   let nome = params.slug
   try {

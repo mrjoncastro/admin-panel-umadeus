@@ -1,12 +1,13 @@
 import { query } from '../database/connection'
 
 export async function runMigrations(): Promise<void> {
-  console.log('🚀 Iniciando migrações do Catalog Service...')
+  logger.debug('🚀 Iniciando migrações do Catalog Service...')
 
   try {
     // 1. Criar extensão para UUID se não existir
     await query(`
       CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+import { logger } from '@/lib/logger'
     `)
 
     // 2. Criar schema app se não existir
@@ -112,9 +113,9 @@ export async function runMigrations(): Promise<void> {
         EXECUTE FUNCTION update_updated_column();
     `)
 
-    console.log('✅ Migrações concluídas com sucesso!')
+    logger.debug('✅ Migrações concluídas com sucesso!')
   } catch (error) {
-    console.error('❌ Erro durante migrações:', error)
+    logger.error('❌ Erro durante migrações:', error)
     throw error
   }
 }
@@ -123,11 +124,11 @@ export async function runMigrations(): Promise<void> {
 if (require.main === module) {
   runMigrations()
     .then(() => {
-      console.log('🎉 Migrações finalizadas!')
+      logger.debug('🎉 Migrações finalizadas!')
       process.exit(0)
     })
     .catch((error) => {
-      console.error('💥 Falha nas migrações:', error)
+      logger.error('💥 Falha nas migrações:', error)
       process.exit(1)
     })
 } 

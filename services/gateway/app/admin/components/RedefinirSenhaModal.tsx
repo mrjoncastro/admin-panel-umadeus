@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 
 import { useState } from 'react'
@@ -22,7 +23,7 @@ export default function RedefinirSenhaModal({
       showSuccess('Enviamos um link de redefinição para seu e-mail.')
       onClose()
     } catch (err) {
-      console.error(err)
+      logger.error(err)
       showError('Não foi possível enviar o link. Verifique o e-mail.')
     }
   }

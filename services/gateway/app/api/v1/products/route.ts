@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('Erro ao consultar Catalog Service:', error)
+    logger.error('Erro ao consultar Catalog Service:', error)
     return NextResponse.json(
       { success: false, error: 'Erro interno do servidor' },
       { status: 500 }
@@ -61,10 +61,10 @@ export async function POST(req: NextRequest) {
     
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('Erro ao criar produto no Catalog Service:', error)
+    logger.error('Erro ao criar produto no Catalog Service:', error)
     return NextResponse.json(
       { success: false, error: 'Erro interno do servidor' },
       { status: 500 }
     )
   }
-} 
+} import { logger } from '@/lib/logger'

@@ -75,10 +75,11 @@ export async function PATCH(req: NextRequest) {
     res.headers.append('Set-Cookie', cookie)
     return res
   } catch (err) {
-    console.error('Erro ao atualizar dados:', err)
+    logger.error('Erro ao atualizar dados:', err)
     return NextResponse.json(
       { error: 'Erro ao atualizar dados' },
       { status: 500 },
     )
   }
 }
+import { logger } from '@/lib/logger'

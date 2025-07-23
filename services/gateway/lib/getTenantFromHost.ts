@@ -1,5 +1,8 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { headers, cookies } from 'next/headers'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 
 export async function getTenantFromHost(): Promise<string | null> {
   try {
@@ -11,7 +14,7 @@ export async function getTenantFromHost(): Promise<string | null> {
 
     if (host) {
       try {
-        const pb = createPocketBase()
+        // const pb = createPocketBase() // [REMOVED]
         const cfg = await pb
           .collection('clientes_config')
           .getFirstListItem(`dominio='${host}'`)

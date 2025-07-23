@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import { v4 as uuidv4 } from 'uuid';
+import { logger } from '@/lib/logger'
 
 dotenv.config();
 
@@ -39,5 +40,5 @@ app.patch('/orders/:id', (req, res) => {
 
 const port = process.env.PORT || 6000;
 app.listen(port, () => {
-  console.log(`Orders Service rodando na porta ${port}`);
+  logger.debug(`Orders Service rodando na porta ${port}`);
 }); 

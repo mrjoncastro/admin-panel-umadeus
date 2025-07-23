@@ -1,7 +1,11 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
+import { logger } from '@/lib/logger'
 // ./app/api/chats/whatsapp/instance/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { requireRole } from '@/lib/apiAuth'
 
 const PHONE_REGEX = /^\+?[1-9]\d{7,14}$/
@@ -19,7 +23,7 @@ export async function POST(req: NextRequest) {
   }
 
   // 2) PocketBase client
-  const pb = createPocketBase()
+  // const pb = createPocketBase() // [REMOVED]
   const { pb: pbUser } = auth
 
   try {
@@ -60,7 +64,7 @@ export async function POST(req: NextRequest) {
     )
     if (!createRes.ok) {
       const err = await createRes.json()
-      console.error('Evolution API create error', err)
+      logger.error('Evolution API create error', err)
       return NextResponse.json(
         { error: 'evolution_create_failed', details: err },
         { status: createRes.status },
@@ -69,7 +73,7 @@ export async function POST(req: NextRequest) {
 
     // 5) parse e extrai dados
     const createJson = await createRes.json()
-    console.log(
+    logger.debug(
       'Evolution create response:',
       JSON.stringify(createJson, null, 2),
     )
@@ -80,10 +84,10 @@ export async function POST(req: NextRequest) {
     const qrCodeBase64 = createJson.qrcode.base64 // data:image/png;base64,...
 
     // 6) autentica como admin
-    if (!pb.authStore.isValid) {
-      await pb.admins.authWithPassword(
-        process.env.PB_ADMIN_EMAIL!,
-        process.env.PB_ADMIN_PASSWORD!,
+    if (!// pb. // [REMOVED] authStore.isValid) {
+      await // pb. // [REMOVED] admins.authWithPassword(
+        process.env.// PB_ADMIN_EMAIL // [REMOVED]!,
+        process.env.// PB_ADMIN_PASSWORD // [REMOVED]!,
       )
     }
 
@@ -121,7 +125,7 @@ export async function POST(req: NextRequest) {
         .create(recordData, { files: { qrCode: blob } })
     }
 
-    console.log('Registro salvo com QR upload:', rec)
+    logger.debug('Registro salvo com QR upload:', rec)
 
     // 10) retorna ao frontend
     return NextResponse.json(
@@ -135,7 +139,7 @@ export async function POST(req: NextRequest) {
       { status: 201 },
     )
   } catch (err) {
-    console.error('cadastro whatsapp error', err)
+    logger.error('cadastro whatsapp error', err)
     return NextResponse.json({ error: 'server_error' }, { status: 500 })
   }
 }

@@ -1,3 +1,6 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { NextRequest } from 'next/server'
 
@@ -7,8 +10,8 @@ const pbMock = () => {
       isValid: false,
       model: null as any,
       save: vi.fn((_: string, model: any) => {
-        pb.authStore.isValid = true
-        pb.authStore.model = model
+        // pb. // [REMOVED] authStore.isValid = true
+        // pb. // [REMOVED] authStore.model = model
       }),
     },
     autoCancellation: vi.fn(),
@@ -21,7 +24,7 @@ vi.mock('../lib/pbWithAuth', () => {
 })
 
 import { getUserFromHeaders } from '../lib/getUserFromHeaders'
-import { getPocketBaseFromRequest } from '../lib/pbWithAuth'
+// [REMOVED] PocketBase import
 
 describe('getUserFromHeaders', () => {
   afterEach(() => {
@@ -55,6 +58,6 @@ describe('getUserFromHeaders', () => {
     const pb = (getPocketBaseFromRequest as unknown as vi.Mock).mock.results[0]
       .value
     expect(result).toEqual({ user, pbSafe: pb })
-    expect(pb.authStore.save).toHaveBeenCalledWith('token123', user)
+    expect(// pb. // [REMOVED] authStore.save).toHaveBeenCalledWith('token123', user)
   })
 })

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 'use client'
 import { useState, useRef, ChangeEvent } from 'react'
 import { useTenant } from '@/lib/context/TenantContext'
@@ -153,7 +154,7 @@ export default function ConfiguracoesPage() {
         showError('Erro ao salvar configurações')
       }
     } catch (err) {
-      console.error('Erro ao salvar configura\u00e7\u00f5es:', err)
+      logger.error('Erro ao salvar configura\u00e7\u00f5es:', err)
       showError('Erro ao salvar configurações')
     }
 

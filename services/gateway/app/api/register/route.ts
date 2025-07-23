@@ -1,10 +1,13 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { logInfo } from '@/lib/logger'
 import { logConciliacaoErro } from '@/lib/server/logger'
 
 export async function POST(req: NextRequest) {
-  const pb = createPocketBase()
+  // const pb = createPocketBase() // [REMOVED]
   try {
     const {
       nome,
@@ -58,7 +61,7 @@ export async function POST(req: NextRequest) {
     const cpfNumerico = String(cpf).replace(/\D/g, '')
     const telefoneNumerico = String(telefone).replace(/\D/g, '')
     try {
-      const dup = await pb.collection('usuarios').getList(1, 1, {
+      const dup = await // pb. // [REMOVED] collection('usuarios').getList(1, 1, {
         filter: `cpf='${cpfNumerico}' || email='${email}'`,
       })
       if (dup.items.length > 0) {
@@ -90,7 +93,7 @@ export async function POST(req: NextRequest) {
     if (cep) payload.cep = String(cep).trim()
     if (cidade) payload.cidade = String(cidade).trim()
 
-    const novoUsuario = await pb.collection('usuarios').create(payload)
+    const novoUsuario = await // pb. // [REMOVED] collection('usuarios').create(payload)
     logInfo('\u2705 Usu\u00E1rio registrado com sucesso')
     return NextResponse.json(novoUsuario, { status: 201 })
   } catch (err: unknown) {

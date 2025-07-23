@@ -1,5 +1,8 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase from '@/lib/pocketbase'
+// [REMOVED] PocketBase import
 import { pbRetry } from '@/lib/pbRetry'
 import { getUserFromHeaders } from '@/lib/getUserFromHeaders'
 import { logInfo } from '@/lib/logger'
@@ -7,7 +10,7 @@ import { getTenantFromHost } from '@/lib/getTenantFromHost'
 import { logConciliacaoErro } from '@/lib/server/logger'
 
 export async function GET() {
-  const pb = createPocketBase()
+  // const pb = createPocketBase() // [REMOVED]
   const tenantId = await getTenantFromHost()
 
   if (!tenantId) {
@@ -16,7 +19,7 @@ export async function GET() {
 
   try {
     const campos = await pbRetry(() =>
-      pb.collection('campos').getFullList({
+      // pb. // [REMOVED] collection('campos').getFullList({
         sort: 'nome',
         filter: `cliente='${tenantId}'`,
       }),
