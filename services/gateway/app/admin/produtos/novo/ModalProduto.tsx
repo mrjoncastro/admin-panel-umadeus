@@ -58,6 +58,13 @@ interface Evento {
   titulo: string
 }
 
+interface Vendedor {
+  id: string
+  nome: string
+  email: string
+  taxa_comissao: number
+}
+
 // Função para gerar slug automático
 function slugify(str: string) {
   return str
@@ -83,6 +90,10 @@ export function ModalProduto<T extends Record<string, unknown>>({
   )
   const [eventos, setEventos] = useState<Evento[]>([])
   const [eventoId, setEventoId] = useState<string>(initial.evento_id || '')
+  const [vendedores, setVendedores] = useState<Vendedor[]>([])
+  const [vendedorId, setVendedorId] = useState<string>('')
+  const [custo, setCusto] = useState<number>(0)
+  const [margemVendedor, setMargemVendedor] = useState<number>(0)
   const [requerAprov, setRequerAprov] = useState<boolean>(
     initial.requer_inscricao_aprovada ?? false,
   )
@@ -115,6 +126,18 @@ export function ModalProduto<T extends Record<string, unknown>>({
           else setEventos([])
         })
         .catch(() => setEventos([]))
+
+      // Carregar vendedores aprovados
+      fetch('/admin/api/vendedores/aprovados')
+        .then((r) => r.json())
+        .then((data) => {
+          if (Array.isArray(data)) setVendedores(data)
+          else setVendedores([])
+        })
+        .catch((err) => {
+          logger.error('Erro ao carregar vendedores:', err)
+          setVendedores([])
+        })
     }
   }, [open, pb])
 
@@ -236,6 +259,16 @@ export function ModalProduto<T extends Record<string, unknown>>({
     form.evento_id = eventoId || ''
     form.requer_inscricao_aprovada = requerAprov
 
+    // Campos de vendedor
+    form.vendedor_id = vendedorId || ''
+    if (vendedorId) {
+      form.custo = custo
+      form.margem_vendedor = margemVendedor
+      form.status_aprovacao = 'pendente' // Produtos de vendedores precisam ser aprovados
+    } else {
+      form.status_aprovacao = 'aprovado' // Produtos do marketplace são auto-aprovados
+    }
+
     // Slug automático (sempre gerado a partir do nome)
     if (typeof form.nome === 'string') {
       form.slug = slugify(form.nome)
@@ -344,6 +377,79 @@ export function ModalProduto<T extends Record<string, unknown>>({
               </span>
             </div>
           </div>
+
+          {/* Seleção de Vendedor */}
+          <div>
+            <label className="label-base">Vendedor</label>
+            <select
+              name="vendedor_id"
+              value={vendedorId}
+              onChange={(e) => {
+                setVendedorId(e.target.value)
+                const vendedor = vendedores.find(v => v.id === e.target.value)
+                setMargemVendedor(vendedor?.taxa_comissao || 0)
+              }}
+              className="input-base w-full"
+            >
+              <option value="">Produto do marketplace (sem vendedor específico)</option>
+              {vendedores.map((vendedor) => (
+                <option key={vendedor.id} value={vendedor.id}>
+                  {vendedor.nome} - {vendedor.taxa_comissao}% comissão
+                </option>
+              ))}
+            </select>
+            <span className="text-xs text-gray-400 ml-1">
+              Selecione um vendedor se este produto pertence a um vendor específico.
+            </span>
+          </div>
+
+          {/* Campos de custo e margem quando vendedor for selecionado */}
+          {vendedorId && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-blue-50 rounded-lg">
+              <div>
+                <label className="label-base">Custo do Produto (R$) *</label>
+                <input
+                  type="number"
+                  name="custo"
+                  value={custo}
+                  onChange={(e) => setCusto(Number(e.target.value) || 0)}
+                  className="input-base"
+                  placeholder="0,00"
+                  min="0"
+                  step="0.01"
+                  required={!!vendedorId}
+                />
+                <span className="text-xs text-gray-600">
+                  Custo que será repassado ao vendedor.
+                </span>
+              </div>
+              <div>
+                <label className="label-base">Taxa do Vendedor (%)</label>
+                <input
+                  type="number"
+                  name="margem_vendedor"
+                  value={margemVendedor}
+                  onChange={(e) => setMargemVendedor(Number(e.target.value) || 0)}
+                  className="input-base"
+                  placeholder="0,00"
+                  min="0"
+                  max="100"
+                  step="0.01"
+                />
+                <span className="text-xs text-gray-600">
+                  Percentual de comissão do vendedor sobre o preço de venda.
+                </span>
+              </div>
+              {custo > 0 && margemVendedor > 0 && (
+                <div className="md:col-span-2 text-sm text-gray-700 bg-white p-3 rounded border">
+                  <strong>Simulação:</strong><br/>
+                  Custo: R$ {custo.toFixed(2)}<br/>
+                  Comissão vendedor ({margemVendedor}%): R$ {((valorCliente * margemVendedor) / 100).toFixed(2)}<br/>
+                  Preço sugerido: R$ {valorCliente.toFixed(2)}
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>

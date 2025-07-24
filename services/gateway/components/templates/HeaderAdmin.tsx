@@ -225,7 +225,7 @@ export default function Header() {
             >
               <Popover.Trigger asChild>
                 <button className="flex items-center gap-1 hover:opacity-90">
-                  <span>Gestão da Loja</span>
+                  <span>Marketplace</span>
                   <ChevronDown size={14} />
                 </button>
               </Popover.Trigger>
@@ -239,6 +239,15 @@ export default function Header() {
                         exit={{ opacity: 0, scale: 0.95 }}
                         className="mt-2 w-48 bg-white text-[var(--foreground)] dark:bg-zinc-900 dark:text-white rounded-lg shadow z-50 text-sm py-2 space-y-2"
                       >
+                        <li>
+                          <Link
+                            href="/admin/vendedores"
+                            onClick={() => setGestaoLojaAberto(false)}
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                          >
+                            Vendedores
+                          </Link>
+                        </li>
                         {gestaoLojaLinks.map(({ href, label }) => (
                           <li key={href}>
                             <Link
@@ -530,8 +539,15 @@ export default function Header() {
                     ))}
 
                     <span className="mt-2 text-xs uppercase font-semibold opacity-70">
-                      Gestão da Loja
+                      Marketplace
                     </span>
+                    <Link
+                      href="/admin/vendedores"
+                      onClick={() => setMenuAberto(false)}
+                      className="px-4 py-2 text-sm hover:bg-[var(--background)] hover:text-[var(--foreground)] rounded-md"
+                    >
+                      Vendedores
+                    </Link>
                     {gestaoLojaLinks.map(({ href, label }) => (
                       <Link
                         key={href}
