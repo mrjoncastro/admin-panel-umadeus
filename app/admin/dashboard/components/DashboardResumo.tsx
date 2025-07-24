@@ -5,10 +5,11 @@ import { useEffect } from 'react'
 import { setupCharts } from '@/lib/chartSetup'
 import twColors from '@/utils/twColors'
 import colors from 'tailwindcss/colors'
-import { Info } from 'lucide-react'
+import { Info, Download, FileSpreadsheet } from 'lucide-react'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 import type { Inscricao, Pedido, Produto } from '@/types'
+import { exportToExcel, exportInscricoesToExcel, exportPedidosToExcel } from '@/lib/utils/excelExport'
 
 const Bar = dynamic(() => import('react-chartjs-2').then((m) => m.Bar), {
   ssr: false,
@@ -38,6 +39,7 @@ export default function DashboardResumo({
   useEffect(() => {
     setupCharts()
   }, [])
+  
   const valorTotalConfirmado = inscricoes.reduce((total, i) => {
     const pedido = i.expand?.pedido
     const confirmado =
@@ -51,6 +53,24 @@ export default function DashboardResumo({
 
     return total
   }, 0)
+
+  const handleExportComplete = () => {
+    exportToExcel({
+      inscricoes,
+      pedidos,
+      totalInscricoes,
+      totalPedidos,
+      valorTotal: valorTotalConfirmado,
+    })
+  }
+
+  const handleExportInscricoes = () => {
+    exportInscricoesToExcel(inscricoes)
+  }
+
+  const handleExportPedidos = () => {
+    exportPedidosToExcel(pedidos)
+  }
 
   const statusInscricoes = inscricoes.reduce<Record<string, number>>(
     (acc, i) => {
@@ -204,6 +224,47 @@ export default function DashboardResumo({
           <p className="text-3xl font-bold dark:text-gray-100">
             R$ {valorTotalConfirmado.toFixed(2)}
           </p>
+        </div>
+      </div>
+
+      {/* Seção de Exportação */}
+      <div className="card mb-6">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4">
+          <div className="flex items-center gap-2">
+            <FileSpreadsheet className="w-5 h-5 text-green-600" />
+            <h3 className="text-lg font-semibold dark:text-gray-100">
+              Exportar Relatórios
+            </h3>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <Tippy content="Exportar relatório completo com resumo, inscrições, pedidos e estatísticas">
+              <button
+                onClick={handleExportComplete}
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-200 font-medium"
+              >
+                <Download className="w-4 h-4" />
+                Relatório Completo (XLSX)
+              </button>
+            </Tippy>
+            <Tippy content="Exportar apenas dados das inscrições">
+              <button
+                onClick={handleExportInscricoes}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 font-medium"
+              >
+                <Download className="w-4 h-4" />
+                Inscrições (XLSX)
+              </button>
+            </Tippy>
+            <Tippy content="Exportar apenas dados dos pedidos">
+              <button
+                onClick={handleExportPedidos}
+                className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors duration-200 font-medium"
+              >
+                <Download className="w-4 h-4" />
+                Pedidos (XLSX)
+              </button>
+            </Tippy>
+          </div>
         </div>
       </div>
 
