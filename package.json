@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
     "test": "vitest",
     "test:ci": "vitest run",
     "storybook": "storybook dev -p 6006",
@@ -28,6 +28,8 @@
     "@tiptap/extension-link": "^2.14.0",
     "@tiptap/react": "^2.14.0",
     "@tiptap/starter-kit": "^2.14.0",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
     "@vercel/speed-insights": "^1.2.0",
     "chart.js": "^4.4.9",
     "color-name": "^2.0.0",
@@ -50,7 +52,7 @@
     "zod": "^3.25.61"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
+    "@eslint/eslintrc": "^3.3.1",
     "@storybook/addon-docs": "^9.0.5",
     "@storybook/addon-onboarding": "^9.0.5",
     "@storybook/nextjs": "^9.0.5",
