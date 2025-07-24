@@ -342,3 +342,178 @@ export type VendedorDocumentoForm = {
   arquivo: File
   observacoes?: string
 }
+
+// =========================
+// TIPOS MARKETPLACE - FASE 2
+// =========================
+
+export type VendedorAuth = {
+  id: string
+  vendedor_id: string
+  email: string
+  password_hash: string
+  token_reset?: string
+  token_reset_expires?: string
+  last_login?: string
+  login_attempts: number
+  blocked_until?: string
+  ativo: boolean
+  created?: string
+  updated?: string
+}
+
+export type VendedorSessao = {
+  id: string
+  vendedor_id: string
+  token: string
+  expires_at: string
+  user_agent?: string
+  ip_address?: string
+  created?: string
+}
+
+export type ProdutoAprovacaoHistorico = {
+  id: string
+  produto_id: string
+  status_anterior: string
+  status_novo: string
+  motivo?: string
+  aprovado_por?: string
+  cliente: string
+  created?: string
+  expand?: {
+    produto_id?: Produto
+    aprovado_por?: {
+      id: string
+      nome: string
+    }
+  }
+}
+
+export type VendedorEstatistica = {
+  id: string
+  vendedor_id: string
+  periodo: string // data
+  vendas_quantidade: number
+  vendas_valor: number
+  comissoes_valor: number
+  produtos_visualizacoes: number
+  produtos_novos: number
+  avaliacoes_recebidas: number
+  avaliacoes_media: number
+  cliente: string
+  created?: string
+  updated?: string
+}
+
+export type PedidoVendedor = {
+  id: string
+  pedido_id: string
+  vendedor_id: string
+  produto_id: string
+  quantidade: number
+  valor_produto: number
+  valor_custo: number
+  valor_comissao: number
+  taxa_comissao: number
+  status: 'pendente' | 'processando' | 'enviado' | 'entregue' | 'cancelado'
+  codigo_rastreamento?: string
+  estimativa_entrega?: string
+  entregue_em?: string
+  observacoes?: string
+  cliente: string
+  created?: string
+  updated?: string
+  expand?: {
+    pedido_id?: Pedido
+    vendedor_id?: Vendedor
+    produto_id?: Produto
+  }
+}
+
+export type VendedorRepasse = {
+  id: string
+  vendedor_id: string
+  periodo_inicio: string // data
+  periodo_fim: string // data
+  valor_vendas: number
+  valor_comissoes: number
+  valor_taxas: number
+  valor_liquido: number
+  status: 'pendente' | 'processando' | 'pago' | 'cancelado'
+  pago_em?: string
+  comprovante_url?: string
+  observacoes?: string
+  cliente: string
+  created?: string
+  updated?: string
+  expand?: {
+    vendedor_id?: Vendedor
+  }
+}
+
+export type ProdutoVisualizacao = {
+  id: string
+  produto_id: string
+  vendedor_id?: string
+  usuario_id?: string
+  ip_address?: string
+  user_agent?: string
+  referrer?: string
+  session_id?: string
+  tempo_visualizacao: number
+  origem?: 'loja' | 'busca' | 'categoria' | 'vendedor' | 'recomendacao'
+  cliente: string
+  created?: string
+  expand?: {
+    produto_id?: Produto
+    vendedor_id?: Vendedor
+    usuario_id?: {
+      id: string
+      nome: string
+    }
+  }
+}
+
+export type VendedorNotificacao = {
+  id: string
+  vendedor_id: string
+  tipo: 'pedido' | 'aprovacao' | 'rejeicao' | 'suspensao' | 'pagamento' | 'avaliacao' | 'sistema'
+  titulo: string
+  mensagem: string
+  link?: string
+  lida: boolean
+  lida_em?: string
+  dados_extras?: Record<string, any>
+  cliente: string
+  created?: string
+  expand?: {
+    vendedor_id?: Vendedor
+  }
+}
+
+// Dashboard e Analytics
+export type VendedorDashboard = {
+  vendedor: Vendedor
+  estatisticas_hoje: VendedorEstatistica
+  estatisticas_mes: VendedorEstatistica
+  pedidos_pendentes: PedidoVendedor[]
+  produtos_pendentes: Produto[]
+  avaliacoes_recentes: AvaliacaoVendedor[]
+  notificacoes_nao_lidas: number
+  repasse_pendente?: VendedorRepasse
+}
+
+export type MarketplaceAnalytics = {
+  total_vendedores: number
+  vendedores_ativos: number
+  vendedores_pendentes: number
+  vendas_mes: number
+  comissoes_mes: number
+  produtos_vendedores: number
+  top_vendedores: Array<{
+    vendedor: Vendedor
+    vendas: number
+    comissoes: number
+  }>
+}
