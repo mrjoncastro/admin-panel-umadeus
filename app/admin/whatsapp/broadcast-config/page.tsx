@@ -93,7 +93,10 @@ export default function BroadcastConfigPage() {
             className="input-base w-full"
             value={config.delayBetweenMessages}
             onChange={(e) =>
-              setConfig({ ...config, delayBetweenMessages: Number(e.target.value) })
+              setConfig({
+                ...config,
+                delayBetweenMessages: Number(e.target.value),
+              })
             }
           />
         </label>
@@ -104,7 +107,10 @@ export default function BroadcastConfigPage() {
             className="input-base w-full"
             value={config.delayBetweenBatches}
             onChange={(e) =>
-              setConfig({ ...config, delayBetweenBatches: Number(e.target.value) })
+              setConfig({
+                ...config,
+                delayBetweenBatches: Number(e.target.value),
+              })
             }
           />
         </label>
@@ -114,7 +120,9 @@ export default function BroadcastConfigPage() {
             type="number"
             className="input-base w-full"
             value={config.batchSize}
-            onChange={(e) => setConfig({ ...config, batchSize: Number(e.target.value) })}
+            onChange={(e) =>
+              setConfig({ ...config, batchSize: Number(e.target.value) })
+            }
           />
         </label>
         <label className="block">
@@ -124,7 +132,10 @@ export default function BroadcastConfigPage() {
             className="input-base w-full"
             value={config.maxMessagesPerMinute}
             onChange={(e) =>
-              setConfig({ ...config, maxMessagesPerMinute: Number(e.target.value) })
+              setConfig({
+                ...config,
+                maxMessagesPerMinute: Number(e.target.value),
+              })
             }
           />
         </label>
@@ -135,7 +146,10 @@ export default function BroadcastConfigPage() {
             className="input-base w-full"
             value={config.maxMessagesPerHour}
             onChange={(e) =>
-              setConfig({ ...config, maxMessagesPerHour: Number(e.target.value) })
+              setConfig({
+                ...config,
+                maxMessagesPerHour: Number(e.target.value),
+              })
             }
           />
         </label>
@@ -145,7 +159,9 @@ export default function BroadcastConfigPage() {
             type="number"
             className="input-base w-full"
             value={config.maxRetries}
-            onChange={(e) => setConfig({ ...config, maxRetries: Number(e.target.value) })}
+            onChange={(e) =>
+              setConfig({ ...config, maxRetries: Number(e.target.value) })
+            }
           />
         </label>
         <label className="block">
@@ -154,7 +170,9 @@ export default function BroadcastConfigPage() {
             type="number"
             className="input-base w-full"
             value={config.retryDelay}
-            onChange={(e) => setConfig({ ...config, retryDelay: Number(e.target.value) })}
+            onChange={(e) =>
+              setConfig({ ...config, retryDelay: Number(e.target.value) })
+            }
           />
         </label>
         <label className="block">
@@ -164,7 +182,10 @@ export default function BroadcastConfigPage() {
             className="input-base w-full"
             value={config.allowedHoursStart}
             onChange={(e) =>
-              setConfig({ ...config, allowedHoursStart: Number(e.target.value) })
+              setConfig({
+                ...config,
+                allowedHoursStart: Number(e.target.value),
+              })
             }
           />
         </label>

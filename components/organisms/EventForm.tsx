@@ -78,7 +78,9 @@ export default function EventForm({
   })
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(true)
-  const [inscricoesExistentes, setInscricoesExistentes] = useState<Inscricao[]>([])
+  const [inscricoesExistentes, setInscricoesExistentes] = useState<Inscricao[]>(
+    [],
+  )
   const [checouPendentes, setChecouPendentes] = useState(false)
   const [signupDone, setSignupDone] = useState(isLoggedIn)
   const createUserRef = useRef<CreateUserFormHandle>(null)
@@ -215,9 +217,11 @@ export default function EventForm({
             : Array.isArray(dataConfirmadas.items)
               ? (dataConfirmadas.items as Inscricao[])
               : []
-          const minhasInscricoes = [...pendentes, ...aguardando, ...confirmadas].filter(
-            (i) => i.criado_por === user.id,
-          )
+          const minhasInscricoes = [
+            ...pendentes,
+            ...aguardando,
+            ...confirmadas,
+          ].filter((i) => i.criado_por === user.id)
           setInscricoesExistentes(minhasInscricoes)
           if (minhasInscricoes.length > 0) {
             router.replace('/recuperar')

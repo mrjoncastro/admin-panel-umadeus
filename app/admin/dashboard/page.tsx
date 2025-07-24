@@ -66,7 +66,7 @@ export default function DashboardPage() {
         rawInscricoes = rawInscricoes.concat(
           insRest.flatMap((r) =>
             Array.isArray((r as { items?: Inscricao[] }).items)
-              ? ((r as { items: Inscricao[] }).items)
+              ? (r as { items: Inscricao[] }).items
               : (r as Inscricao),
           ),
         )
@@ -79,9 +79,7 @@ export default function DashboardPage() {
             signal,
           },
         ).then((r) => r.json())
-        const pedRest = await fetchAllPages<
-          { items?: Pedido[] } | Pedido
-        >(
+        const pedRest = await fetchAllPages<{ items?: Pedido[] } | Pedido>(
           `/api/pedidos?${params.toString()}&expand=campo,produto`,
           pedRes.totalPages ?? 1,
           signal,
@@ -90,7 +88,7 @@ export default function DashboardPage() {
         rawPedidos = rawPedidos.concat(
           pedRest.flatMap((r) =>
             Array.isArray((r as { items?: Pedido[] }).items)
-              ? ((r as { items: Pedido[] }).items)
+              ? (r as { items: Pedido[] }).items
               : (r as Pedido),
           ),
         )

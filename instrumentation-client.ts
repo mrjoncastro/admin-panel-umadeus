@@ -8,3 +8,6 @@ Sentry.init({
     Sentry.consoleLoggingIntegration({ levels: ['log', 'error', 'warn'] }),
   ],
 })
+
+// Export required for router transition tracking
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart

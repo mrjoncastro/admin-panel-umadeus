@@ -15,7 +15,10 @@ pb.collection.mockImplementation((name: string) => {
     return { getFirstListItem: getFirstMock, create: createUserMock }
   }
   if (name === 'inscricoes') {
-    return { create: createInscricaoMock, getFirstListItem: getFirstInscricaoMock }
+    return {
+      create: createInscricaoMock,
+      getFirstListItem: getFirstInscricaoMock,
+    }
   }
   if (name === 'eventos') {
     return { getOne: getOneEventoMock }

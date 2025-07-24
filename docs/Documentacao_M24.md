@@ -284,13 +284,13 @@ Para cada coleção, utilize a seguinte estrutura:
 
 **Endpoints de API**
 
-| Rota                      | Métodos | Descrição                                              |
-| ------------------------- | ------- | ------------------------------------------------------ |
-| `GET  /api/pedidos`       | GET     | Lista pedidos (filtros por `status`) |
-| `GET  /api/pedidos/:id`   | GET     | Detalha um pedido                                      |
-| `POST /api/pedidos`       | POST    | Cria novo pedido (fluxo de loja ou inscrição)          |
-| `PATCH /api/pedidos/:id`  | PATCH   | Atualiza status ou outros campos do pedido             |
-| `DELETE /api/pedidos/:id` | DELETE  | Cancela pedido                                         |
+| Rota                      | Métodos | Descrição                                     |
+| ------------------------- | ------- | --------------------------------------------- |
+| `GET  /api/pedidos`       | GET     | Lista pedidos (filtros por `status`)          |
+| `GET  /api/pedidos/:id`   | GET     | Detalha um pedido                             |
+| `POST /api/pedidos`       | POST    | Cria novo pedido (fluxo de loja ou inscrição) |
+| `PATCH /api/pedidos/:id`  | PATCH   | Atualiza status ou outros campos do pedido    |
+| `DELETE /api/pedidos/:id` | DELETE  | Cancela pedido                                |
 
 **Fluxos de Negócios**
 

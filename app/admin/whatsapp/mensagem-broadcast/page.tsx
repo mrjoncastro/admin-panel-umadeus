@@ -16,7 +16,9 @@ export default function BroadcastPage() {
   const { authChecked } = useAuthGuard(['coordenador'])
   const { showSuccess, showError } = useToast()
 
-  const [alvo, setAlvo] = useState<'lideres' | 'inscritos' | 'pendentes'>('lideres')
+  const [alvo, setAlvo] = useState<'lideres' | 'inscritos' | 'pendentes'>(
+    'lideres',
+  )
   const [mensagem, setMensagem] = useState('')
   const [loading, setLoading] = useState(false)
   const [stats, setStats] = useState<Stats | null>(null)

@@ -146,7 +146,9 @@ export async function POST(req: NextRequest) {
 
     if (pedido.id_inscricao) {
       try {
-        inscricao = await pb.collection('inscricoes').getOne(pedido.id_inscricao)
+        inscricao = await pb
+          .collection('inscricoes')
+          .getOne(pedido.id_inscricao)
         console.log('📦 Inscrição encontrada:', inscricao)
       } catch (e) {
         console.log(
@@ -165,9 +167,7 @@ export async function POST(req: NextRequest) {
           const prod = await pb.collection('produtos').getOne(prodId)
           console.log('📦 Produto encontrado:', prod)
           if (prod?.requer_inscricao_aprovada) {
-            console.log(
-              '🔴 [POST /api/asaas] Produto exige inscrição aprovada',
-            )
+            console.log('🔴 [POST /api/asaas] Produto exige inscrição aprovada')
             return NextResponse.json(
               { error: 'Produto requer inscrição aprovada' },
               { status: 400 },
@@ -179,9 +179,7 @@ export async function POST(req: NextRequest) {
       }
 
       try {
-        userInfo = await pb
-          .collection('usuarios')
-          .getOne(pedido.responsavel)
+        userInfo = await pb.collection('usuarios').getOne(pedido.responsavel)
         console.log('📦 Usuário responsável:', userInfo)
       } catch (e) {
         console.log('🔴 [POST /api/asaas] Erro ao buscar usuário:', e)

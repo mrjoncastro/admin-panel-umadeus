@@ -138,9 +138,7 @@ export async function POST(req: NextRequest) {
     try {
       await pb
         .collection('inscricoes')
-        .getFirstListItem(
-          `cpf="${cpfNumerico}" || email="${email}"`,
-        )
+        .getFirstListItem(`cpf="${cpfNumerico}" || email="${email}"`)
       return NextResponse.json(
         {
           erro: 'CPF ou e-mail já cadastrado. Acesse /admin/inscricoes/recuperar para obter o link.',
@@ -354,9 +352,7 @@ export async function POST(req: NextRequest) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
-    }).catch((e) =>
-      console.error('Erro ao enviar WhatsApp de inscrição:', e),
-    )
+    }).catch((e) => console.error('Erro ao enviar WhatsApp de inscrição:', e))
 
     fetch(`${req.nextUrl.origin}/api/chats/message/sendWelcome`, {
       method: 'POST',
@@ -367,9 +363,7 @@ export async function POST(req: NextRequest) {
         inscritoNome: nome,
         eventoTitulo: evento.titulo,
       }),
-    }).catch((e) =>
-      console.error('Erro ao enviar WhatsApp para o líder:', e),
-    )
+    }).catch((e) => console.error('Erro ao enviar WhatsApp para o líder:', e))
 
     logSentryEvent('inscricao_criada', {
       inscricaoId: inscricao.id,

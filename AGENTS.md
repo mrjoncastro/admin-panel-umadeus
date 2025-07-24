@@ -126,14 +126,12 @@ Este projeto conta com uma estrutura multidisciplinar de agentes simulados, resp
 - Trabalhar em conjunto com o agente de Documentação para registrar resoluções.
   **Lógica especial:**
 - Todos os erros detectados em produção devem ser registrados no arquivo `/logs/ERR_LOG.md` com:
-
   - timestamp
   - ambiente
   - descrição do erro
   - link para o commit que resolveu (se aplicável)
 
 - Após correção, o próprio agente deve:
-
   1. Confirmar a resolução
   2. Descrever no mesmo `ERR_LOG.md` como foi resolvido
   3. Notificar o agente de Documentação para atualizar os guias se necessário

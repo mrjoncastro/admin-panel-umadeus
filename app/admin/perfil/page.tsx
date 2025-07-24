@@ -40,7 +40,6 @@ export default function PerfilPage() {
     }
   }, [usuarioGuard])
 
-
   if (!authChecked) {
     return (
       <div className="min-h-screen flex items-center justify-center">

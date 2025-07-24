@@ -1,10 +1,6 @@
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
-import {
-  PDF_MARGINS,
-  FONT_SIZE_TITLE,
-  FONT_SIZE_FOOTER,
-} from './constants'
+import { PDF_MARGINS, FONT_SIZE_TITLE, FONT_SIZE_FOOTER } from './constants'
 
 export async function generateAnalisePdf(
   title: string,
@@ -47,10 +43,13 @@ export async function generateAnalisePdf(
       })
 
       if (totals && Object.keys(totals).length > 0) {
-        const totalRows = Object.entries(totals).map(([prod, total]) => [prod, total])
-        const lastTableY = (
-          doc as unknown as { lastAutoTable?: { finalY?: number } }
-        ).lastAutoTable?.finalY ?? y
+        const totalRows = Object.entries(totals).map(([prod, total]) => [
+          prod,
+          total,
+        ])
+        const lastTableY =
+          (doc as unknown as { lastAutoTable?: { finalY?: number } })
+            .lastAutoTable?.finalY ?? y
         autoTable(doc, {
           startY: lastTableY + 20,
           head: [['Produto', 'Total']],

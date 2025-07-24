@@ -26,7 +26,10 @@ class BroadcastManager {
   }
 
   getAllStats() {
-    const stats: Record<string, { pending: number; total: number; sent: number; failed: number }> = {}
+    const stats: Record<
+      string,
+      { pending: number; total: number; sent: number; failed: number }
+    > = {}
     for (const [tenant, q] of this.queues.entries()) {
       stats[tenant] = {
         pending: q.pending,

@@ -121,11 +121,9 @@ export default function SaldoPage() {
     XLSX.utils.sheet_add_aoa(worksheet, rows, { origin: 'B3' })
 
     const footerRow = rows.length + 3
-    XLSX.utils.sheet_add_aoa(
-      worksheet,
-      [['Desenvolvido por M24 Tecnologia']],
-      { origin: `B${footerRow}` },
-    )
+    XLSX.utils.sheet_add_aoa(worksheet, [['Desenvolvido por M24 Tecnologia']], {
+      origin: `B${footerRow}`,
+    })
 
     try {
       if (config.logoUrl) {
@@ -177,7 +175,14 @@ export default function SaldoPage() {
     }
 
     if (imgData) {
-      doc.addImage(imgData, 'PNG', PDF_MARGINS.left, PDF_MARGINS.top - 16, 60, 30)
+      doc.addImage(
+        imgData,
+        'PNG',
+        PDF_MARGINS.left,
+        PDF_MARGINS.top - 16,
+        60,
+        30,
+      )
     }
 
     doc.setFontSize(FONT_SIZE_TITLE)
@@ -200,9 +205,14 @@ export default function SaldoPage() {
       ? new Date(range.end).toLocaleDateString('pt-BR')
       : ''
     const period = `Período: ${startText} – ${endText}`
-    doc.text(period, doc.internal.pageSize.getWidth() - PDF_MARGINS.right, PDF_MARGINS.top + 20, {
-      align: 'right',
-    })
+    doc.text(
+      period,
+      doc.internal.pageSize.getWidth() - PDF_MARGINS.right,
+      PDF_MARGINS.top + 20,
+      {
+        align: 'right',
+      },
+    )
 
     const rows = extrato.map((item) => [
       new Date(item.date).toLocaleDateString('pt-BR'),

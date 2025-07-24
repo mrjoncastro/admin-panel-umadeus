@@ -23,13 +23,15 @@ vi.mock('../../lib/server/chats', () => ({ queueTextMessage }))
 
 const getStats = vi.fn()
 const cancel = vi.fn()
-vi.mock('../../lib/server/flows/whatsapp', () => ({ broadcastManager: { getStats, cancel } }))
+vi.mock('../../lib/server/flows/whatsapp', () => ({
+  broadcastManager: { getStats, cancel },
+}))
 
 describe('POST /api/chats/message/broadcast', () => {
   it('retorna 400 quando tenant ausente', async () => {
     const req = new Request('http://test', {
       method: 'POST',
-      body: JSON.stringify({ target: 'lideres', message: 'Oi' })
+      body: JSON.stringify({ target: 'lideres', message: 'Oi' }),
     })
     ;(req as any).nextUrl = new URL('http://test')
     const res = await POST(req as unknown as NextRequest)
@@ -41,12 +43,12 @@ describe('POST /api/chats/message/broadcast', () => {
     getUsersMock.mockResolvedValueOnce([
       { telefone: '111' },
       { telefone: '222' },
-      { telefone: '111' }
+      { telefone: '111' },
     ])
     const req = new Request('http://test', {
       method: 'POST',
       headers: { 'x-tenant-id': 't1' },
-      body: JSON.stringify({ target: 'lideres', message: 'Oi' })
+      body: JSON.stringify({ target: 'lideres', message: 'Oi' }),
     })
     ;(req as any).nextUrl = new URL('http://test')
     const res = await POST(req as unknown as NextRequest)
@@ -70,7 +72,10 @@ describe('GET /api/chats/message/broadcast', () => {
 
 describe('DELETE /api/chats/message/broadcast', () => {
   it('cancela a fila', async () => {
-    const req = new Request('http://test', { method: 'DELETE', headers: { 'x-tenant-id': 't1' } })
+    const req = new Request('http://test', {
+      method: 'DELETE',
+      headers: { 'x-tenant-id': 't1' },
+    })
     ;(req as any).nextUrl = new URL('http://test')
     const res = await DELETE(req as unknown as NextRequest)
     expect(res.status).toBe(200)

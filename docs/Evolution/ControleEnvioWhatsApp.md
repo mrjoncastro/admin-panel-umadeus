@@ -316,23 +316,19 @@ npm test
 ### Funcionalidades Planejadas
 
 1. **Agendamento de Broadcasts**
-
    - Envio programado para horários específicos
    - Suporte a timezone do destinatário
 
 2. **Templates de Mensagem**
-
    - Variáveis dinâmicas (nome, empresa, etc.)
    - Preview antes do envio
 
 3. **Relatórios Avançados**
-
    - Taxa de entrega
    - Horários de melhor resposta
    - Análise de engajamento
 
 4. **Integração com Filas**
-
    - Redis para persistência
    - Processamento distribuído
    - Failover automático

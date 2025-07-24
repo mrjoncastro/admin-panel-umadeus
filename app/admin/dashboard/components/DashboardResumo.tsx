@@ -9,7 +9,11 @@ import { Info, Download, FileSpreadsheet } from 'lucide-react'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 import type { Inscricao, Pedido, Produto } from '@/types'
-import { exportToExcel, exportInscricoesToExcel, exportPedidosToExcel } from '@/lib/utils/excelExport'
+import {
+  exportToExcel,
+  exportInscricoesToExcel,
+  exportPedidosToExcel,
+} from '@/lib/utils/excelExport'
 
 const Bar = dynamic(() => import('react-chartjs-2').then((m) => m.Bar), {
   ssr: false,
@@ -39,7 +43,7 @@ export default function DashboardResumo({
   useEffect(() => {
     setupCharts()
   }, [])
-  
+
   const valorTotalConfirmado = inscricoes.reduce((total, i) => {
     const pedido = i.expand?.pedido
     const confirmado =
@@ -88,8 +92,7 @@ export default function DashboardResumo({
   }, {})
 
   const inscricoesFiltradas = inscricoes.filter(
-    (i) =>
-      filtroInscricoes === 'todos' || i.status === filtroInscricoes,
+    (i) => filtroInscricoes === 'todos' || i.status === filtroInscricoes,
   )
 
   const contagemInscricoes = inscricoesFiltradas.reduce<Record<string, number>>(
@@ -142,11 +145,12 @@ export default function DashboardResumo({
       const produtosData = Array.isArray(p.expand?.produto)
         ? (p.expand?.produto as Produto[])
         : p.expand?.produto
-          ? [(p.expand.produto as Produto)]
+          ? [p.expand.produto as Produto]
           : []
       if (produtosData.length === 0) {
         contagem[campo] = contagem[campo] || {}
-        contagem[campo]['Sem produto'] = (contagem[campo]['Sem produto'] || 0) + 1
+        contagem[campo]['Sem produto'] =
+          (contagem[campo]['Sem produto'] || 0) + 1
       } else {
         produtosData.forEach((pr: Produto) => {
           const nome = pr?.nome || 'Sem produto'
@@ -157,7 +161,7 @@ export default function DashboardResumo({
     })
     const campos = Object.keys(contagem)
     const produtos = Array.from(
-      new Set(campos.flatMap((c) => Object.keys(contagem[c])))
+      new Set(campos.flatMap((c) => Object.keys(contagem[c]))),
     )
     const palette = [
       twColors.primary600,
@@ -323,13 +327,15 @@ export default function DashboardResumo({
               onChange={(e) => setFiltroInscricoes(e.target.value)}
               className="px-4 py-2 rounded-md bg-gray-800 text-gray-100 border-none shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 w-full md:w-64"
             >
-              {['pendente', 'confirmado', 'cancelado', 'todos'].map((status) => (
-                <option key={status} value={status}>
-                  {status === 'todos'
-                    ? 'Todas'
-                    : status.charAt(0).toUpperCase() + status.slice(1)}
-                </option>
-              ))}
+              {['pendente', 'confirmado', 'cancelado', 'todos'].map(
+                (status) => (
+                  <option key={status} value={status}>
+                    {status === 'todos'
+                      ? 'Todas'
+                      : status.charAt(0).toUpperCase() + status.slice(1)}
+                  </option>
+                ),
+              )}
             </select>
           </div>
         </div>
@@ -367,37 +373,37 @@ export default function DashboardResumo({
                 </span>
               </Tippy>
             </div>
-          <div className="aspect-video">
-            <Bar
-              data={pedidosChart}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                indexAxis: 'y',
-              }}
-            />
+            <div className="aspect-video">
+              <Bar
+                data={pedidosChart}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  indexAxis: 'y',
+                }}
+              />
+            </div>
           </div>
-        </div>
-        <div className="card p-5 rounded-xl">
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-              Pedidos por Campo e Produto
-            </h3>
-          </div>
-          <div className="aspect-video">
-            <Bar
-              id="campoProdutoChart"
-              data={pedidosCampoProdutoChart}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: { x: { stacked: true }, y: { stacked: true } },
-              }}
-            />
+          <div className="card p-5 rounded-xl">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                Pedidos por Campo e Produto
+              </h3>
+            </div>
+            <div className="aspect-video">
+              <Bar
+                id="campoProdutoChart"
+                data={pedidosCampoProdutoChart}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: { x: { stacked: true }, y: { stacked: true } },
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </>
-)
+    </>
+  )
 }

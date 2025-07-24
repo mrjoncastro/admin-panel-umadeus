@@ -148,7 +148,8 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   console.log('[PEDIDOS][POST] Nova requisição recebida')
   const body = await req.json()
-  const isAvulso = body.canal === 'avulso' && !body.id_inscricao && !body.inscricaoId
+  const isAvulso =
+    body.canal === 'avulso' && !body.id_inscricao && !body.inscricaoId
   let user
   let pb
   if (isAvulso) {

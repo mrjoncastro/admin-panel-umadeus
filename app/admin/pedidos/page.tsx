@@ -76,7 +76,7 @@ export default function PedidosPage() {
         rawItems = rawItems.concat(
           rest.flatMap((r) =>
             Array.isArray((r as { items?: Pedido[] }).items)
-              ? ((r as { items: Pedido[] }).items)
+              ? (r as { items: Pedido[] }).items
               : (r as Pedido),
           ),
         )
@@ -114,9 +114,7 @@ export default function PedidosPage() {
       p.expand?.campo?.nome
         ?.toLowerCase()
         .includes(buscaGlobal.toLowerCase()) ||
-      getNomeCliente(p)
-        .toLowerCase()
-        .includes(buscaGlobal.toLowerCase()) ||
+      getNomeCliente(p).toLowerCase().includes(buscaGlobal.toLowerCase()) ||
       p.expand?.id_inscricao?.cpf
         ?.toLowerCase()
         .includes(buscaGlobal.toLowerCase())
@@ -192,9 +190,7 @@ export default function PedidosPage() {
         p.expand?.campo?.nome
           ?.toLowerCase()
           .includes(buscaGlobal.toLowerCase()) ||
-        getNomeCliente(p)
-          .toLowerCase()
-          .includes(buscaGlobal.toLowerCase()) ||
+        getNomeCliente(p).toLowerCase().includes(buscaGlobal.toLowerCase()) ||
         p.expand?.id_inscricao?.cpf
           ?.toLowerCase()
           .includes(buscaGlobal.toLowerCase())
@@ -272,11 +268,7 @@ export default function PedidosPage() {
       doc.setPage(i)
       const pageHeight = doc.internal.pageSize.getHeight()
       doc.setFontSize(10)
-      doc.text(
-        'Desenvolvido por M24 Tecnologia',
-        MARGINS.left,
-        pageHeight - 20,
-      )
+      doc.text('Desenvolvido por M24 Tecnologia', MARGINS.left, pageHeight - 20)
       doc.text(
         `P\u00E1gina ${i} de ${pageCount}`,
         doc.internal.pageSize.getWidth() / 2,

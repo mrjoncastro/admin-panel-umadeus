@@ -74,7 +74,6 @@ Para **multi-tenant**, adicione campos na coleção `clientes_config`:
 1. **Preenchimento no PocketBase**: no painel de administração, configure em **clientes_config** os campos `smtpHost`, `smtpPort`, `smtpSecure`, `smtpUser`, `smtpPass`, `smtpFrom` e `cor_primary` para cada tenant.
 2. **Verificação no Código**: assegure-se de que `await pb.collection('clientes_config').getOne(tenantId)` retorna todos os campos SMTP e `cor_primary` corretamente.
 3. **Testes de Envio**: execute chamadas à rota `/api/email` utilizando cada tipo de evento:
-
    - `nova_inscricao`
    - `confirmacao_inscricao` (opcionalmente fornecendo `paymentLink`)
    - `promocao_lider`

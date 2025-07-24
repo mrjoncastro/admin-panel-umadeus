@@ -49,7 +49,9 @@ export const exportToExcel = (data: ExportData, filename?: string) => {
       inscricao.tamanho || 'N/A',
       inscricao.genero || 'N/A',
       inscricao.data_nascimento || 'N/A',
-      inscricao.created ? new Date(inscricao.created).toLocaleDateString('pt-BR') : 'N/A',
+      inscricao.created
+        ? new Date(inscricao.created).toLocaleDateString('pt-BR')
+        : 'N/A',
       inscricao.expand?.criado_por?.nome || 'N/A',
     ]),
   ]
@@ -81,14 +83,16 @@ export const exportToExcel = (data: ExportData, filename?: string) => {
       pedido.status,
       Number(pedido.valor || 0).toFixed(2),
       pedido.expand?.campo?.nome || 'N/A',
-      Array.isArray(pedido.expand?.produto) 
+      Array.isArray(pedido.expand?.produto)
         ? pedido.expand?.produto[0]?.nome || 'N/A'
         : pedido.expand?.produto?.nome || 'N/A',
       pedido.tamanho || 'N/A',
       pedido.cor || 'N/A',
       pedido.genero || 'N/A',
       pedido.canal || 'N/A',
-      pedido.created ? new Date(pedido.created).toLocaleDateString('pt-BR') : 'N/A',
+      pedido.created
+        ? new Date(pedido.created).toLocaleDateString('pt-BR')
+        : 'N/A',
     ]),
   ]
 
@@ -140,11 +144,15 @@ export const exportToExcel = (data: ExportData, filename?: string) => {
     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   })
 
-  const finalFilename = filename || `relatorio_geral_${new Date().toISOString().split('T')[0]}.xlsx`
+  const finalFilename =
+    filename || `relatorio_geral_${new Date().toISOString().split('T')[0]}.xlsx`
   saveAs(blob, finalFilename)
 }
 
-export const exportInscricoesToExcel = (inscricoes: Inscricao[], filename?: string) => {
+export const exportInscricoesToExcel = (
+  inscricoes: Inscricao[],
+  filename?: string,
+) => {
   const workbook = XLSX.utils.book_new()
 
   const data = [
@@ -169,7 +177,9 @@ export const exportInscricoesToExcel = (inscricoes: Inscricao[], filename?: stri
       inscricao.tamanho || 'N/A',
       inscricao.genero || 'N/A',
       inscricao.data_nascimento || 'N/A',
-      inscricao.created ? new Date(inscricao.created).toLocaleDateString('pt-BR') : 'N/A',
+      inscricao.created
+        ? new Date(inscricao.created).toLocaleDateString('pt-BR')
+        : 'N/A',
       inscricao.expand?.criado_por?.nome || 'N/A',
     ]),
   ]
@@ -182,7 +192,8 @@ export const exportInscricoesToExcel = (inscricoes: Inscricao[], filename?: stri
     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   })
 
-  const finalFilename = filename || `inscricoes_${new Date().toISOString().split('T')[0]}.xlsx`
+  const finalFilename =
+    filename || `inscricoes_${new Date().toISOString().split('T')[0]}.xlsx`
   saveAs(blob, finalFilename)
 }
 
@@ -211,14 +222,16 @@ export const exportPedidosToExcel = (pedidos: Pedido[], filename?: string) => {
       pedido.status,
       Number(pedido.valor || 0).toFixed(2),
       pedido.expand?.campo?.nome || 'N/A',
-      Array.isArray(pedido.expand?.produto) 
+      Array.isArray(pedido.expand?.produto)
         ? pedido.expand?.produto[0]?.nome || 'N/A'
         : pedido.expand?.produto?.nome || 'N/A',
       pedido.tamanho || 'N/A',
       pedido.cor || 'N/A',
       pedido.genero || 'N/A',
       pedido.canal || 'N/A',
-      pedido.created ? new Date(pedido.created).toLocaleDateString('pt-BR') : 'N/A',
+      pedido.created
+        ? new Date(pedido.created).toLocaleDateString('pt-BR')
+        : 'N/A',
     ]),
   ]
 
@@ -230,6 +243,7 @@ export const exportPedidosToExcel = (pedidos: Pedido[], filename?: string) => {
     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   })
 
-  const finalFilename = filename || `pedidos_${new Date().toISOString().split('T')[0]}.xlsx`
+  const finalFilename =
+    filename || `pedidos_${new Date().toISOString().split('T')[0]}.xlsx`
   saveAs(blob, finalFilename)
 }

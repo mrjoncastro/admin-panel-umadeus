@@ -32,7 +32,7 @@ export function logSentryEvent(
   if (process.env.NODE_ENV !== 'production') return
   try {
     if (data) {
-      Sentry.withScope(scope => {
+      Sentry.withScope((scope) => {
         Object.entries(data).forEach(([k, v]) => scope.setExtra(k, v))
         Sentry.captureMessage(message)
       })

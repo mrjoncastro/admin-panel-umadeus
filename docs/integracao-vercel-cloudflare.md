@@ -24,7 +24,6 @@ Este documento detalha os requisitos funcionais, casos de uso e integrações t�
 - **Nome**: Configurar Subdomínio Gratuito
 - **Atores**: Cliente, Sistema
 - **Fluxo Principal**:
-
   1. Cliente escolhe subdomínio no onboarding
   2. Sistema verifica disponibilidade
   3. Registra no PocketBase com `verificado: true`
@@ -40,7 +39,6 @@ Este documento detalha os requisitos funcionais, casos de uso e integrações t�
 
 1. Endpoint de cadastro de cliente recebe `subdominio` como campo opcional.
 2. Se presente, o backend:
-
    - Valida unicidade do subdomínio (`clienteX.m24.com.br`)
    - Cria entrada na coleção `clientes` do PocketBase com `tipo_dominio = subdominio`, `verificado = true`, `modo_validacao = wildcard`
    - Responde com `cliente.id` e URL de acesso
@@ -61,7 +59,6 @@ Este documento detalha os requisitos funcionais, casos de uso e integrações t�
 - **Nome**: Vincular Domínio Próprio
 - **Atores**: Cliente, Suporte, Sistema
 - **Fluxo Principal**:
-
   1. Cliente informa domínio ao suporte
   2. Sistema registra domínio via API Vercel
   3. Obtém CNAME de verificação
@@ -88,7 +85,6 @@ Este documento detalha os requisitos funcionais, casos de uso e integrações t�
 - **Nome**: Registrar e Configurar Domínio
 - **Atores**: Cliente, Sistema
 - **Fluxo Principal**:
-
   1. Cliente solicita nome de domínio
   2. Sistema verifica e registra via registrador
   3. Configura DNS via Cloudflare
@@ -146,12 +142,10 @@ Este documento detalha os requisitos funcionais, casos de uso e integrações t�
 **Componentes Principais**:
 
 - **Backend**:
-
   - Rota `/api/dominios/status`: Retorna status detalhado dos domínios com base no campo `verificado`, `modo_validacao` e registros DNS.
   - Rota `/api/dominios/revalidar`: Permite revalidar domínios manualmente.
 
 - **Frontend**:
-
   - Componente de lista com cards de domínio.
   - Filtros por status: pendente, validando, verificado, erro.
   - Botões de ação: revalidar, copiar instrução DNS, marcar como resolvido.

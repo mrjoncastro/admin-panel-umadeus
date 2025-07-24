@@ -68,7 +68,7 @@ describe('GET /api/inscricoes', () => {
       1,
       50,
       expect.objectContaining({
-        filter: 'criado_por = "u1" && status=\'pendente\' && evento=\'ev1\'',
+        filter: "criado_por = \"u1\" && status='pendente' && evento='ev1'",
         expand: 'evento,campo,pedido,produto',
         sort: '-created',
       }),

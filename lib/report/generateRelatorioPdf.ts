@@ -53,12 +53,9 @@ export async function generateRelatorioPdf() {
           align: 'right',
         })
 
-        doc.text(
-          `Página ${i} de ${pages}`,
-          pageWidth / 2,
-          pageHeight - 20,
-          { align: 'center' },
-        )
+        doc.text(`Página ${i} de ${pages}`, pageWidth / 2, pageHeight - 20, {
+          align: 'center',
+        })
       }
 
       doc.save('relatorio.pdf')

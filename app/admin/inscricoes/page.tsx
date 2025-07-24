@@ -137,10 +137,9 @@ export default function ListaInscricoesPage() {
         })
         const res: { items: InscricaoRecord[]; totalPages: number } =
           await primeiro.json()
-        const rest = await fetchAllPages<{ items: InscricaoRecord[] } | InscricaoRecord>(
-          baseUrl,
-          res.totalPages,
-        )
+        const rest = await fetchAllPages<
+          { items: InscricaoRecord[] } | InscricaoRecord
+        >(baseUrl, res.totalPages)
         let todos = res.items
         todos = todos.concat(
           rest.flatMap((r) =>

@@ -18,14 +18,12 @@ Este documento orienta a criação e padronização de componentes em seu Design
   ```
 
 - **Props Padrão**:
-
   - `className?: string` para extensão de estilo.
   - `id?: string`, `data-testid?: string` para testes.
   - `aria-*` para acessibilidade.
 
 - **Estilos**: Utilizar classes utilitárias do Tailwind e tokens do Design System (`input-base`, `btn-primary`, etc.).
 - **Documentação**: Cada componente deve ter:
-
   1. **Descrição** breve do propósito.
   2. **API** de props (com tipos, obrigatoriedade e defaultValues).
   3. **Exemplos** de uso (Storybook).
@@ -137,7 +135,6 @@ Para garantir que o design system esteja plenamente alinhado ao seu plano de neg
 - **Filtragem e Isolamento de Dados**: o layout e os componentes de navegação (e.g., `DashboardLayout`, `SmoothTabs`) devem respeitar o escopo multi-tenant, usando o hook ou contexto `useTenant()` para filtrar rotas, dados e menus conforme o host em `clientes_config`.
 
 - **Configurador de Componentes**: disponibilize um `TenantProvider` que carrega e expõe em React Context:
-
   - **Tokens de Design** (cores, fontes, espaçamentos) personalizados.
   - **URLs de API** e credenciais (sem expor chaves sensíveis no cliente).
   - **Regras de Negócio** (confirmações, limites de uso, branding).
