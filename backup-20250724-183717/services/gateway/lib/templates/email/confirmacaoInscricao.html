@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inscrição Confirmada</title>
+  </head>
+
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background-color: #f2f2f2;
+      font-family: Helvetica, Arial, sans-serif;
+    "
+  >
+    <!-- Container Geral -->
+    <table
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      border="0"
+      style="background-color: #f2f2f2; padding: 20px"
+    >
+      <tr>
+        <td align="center">
+          <!-- Card -->
+          <table
+            width="600"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="
+              background-color: #ffffff;
+              border-radius: 8px;
+              overflow: hidden;
+              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            "
+          >
+            <!-- Preheader -->
+            <tr>
+              <td
+                style="
+                  display: none;
+                  font-size: 1px;
+                  line-height: 1px;
+                  max-height: 0;
+                  max-width: 0;
+                  opacity: 0;
+                  overflow: hidden;
+                "
+              >
+                Sua inscrição foi confirmada! 🎉
+              </td>
+            </tr>
+            <!-- Cabeçalho -->
+            <tr>
+              <td align="center" style="padding: 24px">
+                <img
+                  src="{{logoUrl}}"
+                  alt="Logo"
+                  width="120"
+                  style="
+                    display: block;
+                    border: 0;
+                    outline: none;
+                    text-decoration: none;
+                  "
+                />
+              </td>
+            </tr>
+            <!-- Conteúdo -->
+            <tr>
+              <td style="padding: 0 24px 24px; color: #333333">
+                <h2
+                  style="margin:0 0 16px; font-size:24px; color:{{cor_primary}};"
+                >
+                  Parabéns, {{userName}}!
+                </h2>
+                <p style="margin: 0 0 12px; font-size: 16px; line-height: 24px">
+                  Sua inscrição foi confirmada com sucesso. Estamos empolgados
+                  em tê-lo conosco!
+                </p>
+                <p style="margin: 0 0 24px; font-size: 16px; line-height: 24px">
+                  Clique no botão abaixo para concluir o pagamento:
+                </p>
+                <!-- Botão CTA -->
+                <table
+                  cellpadding="0"
+                  cellspacing="0"
+                  border="0"
+                  style="margin: 0 auto"
+                >
+                  <tr>
+                    <td
+                      align="center"
+                      style="background-color:{{cor_primary}}; border-radius:4px;"
+                    >
+                      <a
+                        href="{{paymentLink}}"
+                        style="
+                          display: inline-block;
+                          padding: 12px 24px;
+                          font-size: 16px;
+                          color: #ffffff;
+                          text-decoration: none;
+                          border-radius: 4px;
+                        "
+                        >Pagar Agora</a
+                      >
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <!-- Rodapé -->
+            <tr>
+              <td
+                style="
+                  padding: 16px 24px;
+                  background-color: #f9f9f9;
+                  text-align: center;
+                  font-size: 14px;
+                  color: #777777;
+                "
+              >
+                <p style="margin: 0">
+                  Se você não solicitou este e-mail, apenas ignore-o.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

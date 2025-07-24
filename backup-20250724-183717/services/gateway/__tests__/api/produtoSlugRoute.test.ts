@@ -1,0 +1,60 @@
+// [MIGRATION NOTE] This file needs to be updated to use Supabase instead of PocketBase
+// TODO: Replace PocketBase functionality with Supabase equivalents
+
+import { describe, it, expect, vi } from 'vitest'
+import { GET } from '../../app/api/produtos/[slug]/route'
+import { NextRequest } from 'next/server'
+// [REMOVED] PocketBase import
+
+const pb = createPocketBaseMock()
+const getFirstListItemMock = vi.fn()
+// pb. // [REMOVED] collection.mockReturnValue({ getFirstListItem: getFirstListItemMock })
+vi.mock('../../lib/pocketbase', () => ({
+  default: vi.fn(() => pb),
+}))
+
+vi.mock('../../lib/getUserFromHeaders', () => ({
+  getUserFromHeaders: vi.fn(() => ({ error: 'Token ou usuário ausente.' })),
+}))
+
+let getTenantFromHostMock: any
+vi.mock('../../lib/getTenantFromHost', () => ({
+  getTenantFromHost: (...args: any[]) => getTenantFromHostMock(...args),
+}))
+getTenantFromHostMock = vi.fn().mockResolvedValue(null)
+
+beforeEach(() => {
+  getTenantFromHostMock.mockResolvedValue('t1')
+})
+
+describe('GET /api/produtos/[slug]', () => {
+  it('retorna 400 quando tenant não informado', async () => {
+    getTenantFromHostMock.mockResolvedValueOnce(null)
+    const req = new Request('http://test/produtos/p')
+    ;(req as any).nextUrl = new URL('http://test/produtos/p')
+    const res = await GET(req as unknown as NextRequest)
+    expect(res.status).toBe(400)
+    const body = await res.json()
+    expect(body.error).toBe('Tenant não informado')
+  })
+
+  it('retorna produto quando visitante', async () => {
+    const produto = { id: 'p1', imagens: ['img1.jpg'], ativo: true }
+    getFirstListItemMock.mockResolvedValueOnce(produto)
+    // pb. // [REMOVED] files.getURL.mockImplementation((_p, img) => `url/${img}`)
+    const req = new Request('http://test/produtos/p1')
+    ;(req as any).nextUrl = new URL('http://test/produtos/p1')
+    const res = await GET(req as unknown as NextRequest)
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(body.imagens[0]).toBe('url/img1.jpg')
+  })
+
+  it('não retorna produto exclusivo para visitante', async () => {
+    getFirstListItemMock.mockRejectedValueOnce(new Error('not found'))
+    const req = new Request('http://test/produtos/p1')
+    ;(req as any).nextUrl = new URL('http://test/produtos/p1')
+    const res = await GET(req as unknown as NextRequest)
+    expect(res.status).toBe(404)
+  })
+})

@@ -1,0 +1,16 @@
+# Ignorar node_modules e builds
+node_modules/
+dist/
+build/
+
+# Ignorar arquivos de ambiente
+.env
+.env.*.local
+
+# Ignorar logs e temporários
+*.log
+tmp/
+temp/
+
+# Ignorar arquivos de build do TypeScript
+*.tsbuildinfo 

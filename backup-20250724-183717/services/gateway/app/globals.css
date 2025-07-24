@@ -1,0 +1,221 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================
+   🎨 Variáveis de cor customizadas
+   ========================== */
+:root {
+  --background: theme('colors.neutral.200');
+  /* modo claro */
+  --foreground: theme('colors.neutral.900');
+  /* texto escuro */
+  --text-primary: theme('colors.neutral.900');
+  --text-secondary: theme('colors.neutral.700');
+  --text-header-primary: theme('colors.neutral.100');
+  --text-header-secondary: theme('colors.purple.600');
+  --accent: theme('colors.purple.600');
+  --accent-900: theme('colors.purple.900');
+  --color-secondary: theme('colors.neutral.900');
+  /* Fontes padronizadas para evitar depend\u00eancia de downloads no build */
+  --font-geist: system-ui, sans-serif;
+  --font-body: var(--font-geist);
+  --font-heading: var(--font-geist);
+  /* Fallback para a fonte Bebas Neue */
+  --font-bebas: system-ui, sans-serif;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+}
+
+html.dark {
+  --background: theme('colors.neutral.900');
+  --foreground: theme('colors.neutral.200');
+  --text-primary: theme('colors.neutral.200');
+  --text-secondary: theme('colors.neutral.400');
+  --text-header-primary: theme('colors.neutral.200');
+  --text-header-secondary: theme('colors.neutral.300');
+  --accent: theme('colors.purple.600');
+  --accent-900: theme('colors.purple.900');
+  --color-secondary: theme('colors.neutral.200');
+}
+
+/* ==========================
+   🌐 Temas base via CSS variables
+   ========================== */
+html {
+  color-scheme: light dark;
+}
+
+body {
+  color: var(--text-primary);
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
+  transition:
+    background-color 0.5s ease,
+    color 0.9s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  html.dark body {
+    background: linear-gradient(
+      270deg,
+      theme('colors.neutral.950'),
+      theme('colors.neutral.900'),
+      theme('colors.neutral.900'),
+      theme('colors.neutral.950')
+    );
+    background-size: 500% 500%;
+    background-repeat: no-repeat;
+    animation: gradient-x 30s ease-in-out infinite;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  html.light body {
+    background: linear-gradient(
+      270deg,
+      theme('colors.neutral.100'),
+      theme('colors.neutral.200'),
+      theme('colors.neutral.100'),
+      theme('colors.neutral.200')
+    );
+    background-size: 500% 500%;
+    background-repeat: no-repeat;
+    animation: gradient-x 30s ease-in-out infinite;
+  }
+}
+
+/* ==========================
+   ✨ Heading Styles (h1, h2, h3) e Parágrafo
+   ========================== */
+h1 {
+  font-family: var(--font-heading), Arial, Helvetica, sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-md);
+}
+
+h2 {
+  font-family: var(--font-heading), Arial, Helvetica, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.25;
+  letter-spacing: -0.005em;
+  margin-bottom: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+h3 {
+  font-family: var(--font-heading), Arial, Helvetica, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.35;
+  margin-bottom: var(--space-xs);
+  margin-top: var(--space-sm);
+}
+
+p {
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.7;
+  margin-bottom: var(--space-xs);
+}
+
+/* ==========================
+   📦 Utilitários reutilizáveis
+   ========================== */
+.btn {
+  @apply px-4 py-2 rounded text-sm font-medium transition-colors;
+}
+
+.btn-primary {
+  @apply bg-purple-600 text-white hover:bg-purple-700;
+}
+
+.btn-secondary {
+  @apply bg-purple-600 text-[var(--background)] hover:bg-purple-700 hover:text-white dark:hover:bg-purple-600;
+}
+
+.btn-danger {
+  @apply bg-red-600 text-white hover:bg-red-700;
+}
+
+.input-base {
+  @apply w-full px-4 py-3 rounded-lg border border-neutral-300 bg-neutral-50 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-red-600 transition;
+}
+
+/* Card e Tabela base */
+.card {
+  @apply flex flex-col gap-[var(--space-sm)] p-[var(--space-md)] bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-sm;
+}
+
+.table-base {
+  @apply w-full text-left text-sm divide-y divide-neutral-200 dark:divide-neutral-700;
+}
+
+.table-base thead {
+  @apply bg-neutral-50 dark:bg-neutral-800;
+}
+
+.table-base th,
+.table-base td {
+  @apply px-[var(--space-md)] py-[var(--space-sm)];
+}
+
+.table-base tbody tr:nth-child(even) {
+  @apply bg-neutral-50 dark:bg-neutral-950;
+}
+
+/* ==========================
+   🎞️ Animações
+   ========================== */
+@keyframes gradient-x {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bg-animated {
+  background: linear-gradient(
+    270deg,
+    theme('colors.purple.900'),
+    theme('colors.purple.800'),
+    theme('colors.red.800')
+  );
+  background-size: 400% 400%;
+  animation: gradient-x 15s ease infinite;
+}
+
+.fade-in-up {
+  opacity: 0;
+  animation: fade-in-up 0.8s ease forwards;
+}

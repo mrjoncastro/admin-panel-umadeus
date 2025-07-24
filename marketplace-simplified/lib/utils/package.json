@@ -1,0 +1,16 @@
+{
+  "name": "@M24/utils",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.ts",
+  "types": "index.ts",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .ts"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0"
+  }
+} 

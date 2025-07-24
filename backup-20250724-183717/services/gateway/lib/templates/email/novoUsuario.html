@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Novo Usuário</title>
+  </head>
+
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background-color: #e9f7fd;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      color: #333333;
+    "
+  >
+    <!-- Container Geral -->
+    <table
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      border="0"
+      style="background-color: #e9f7fd; padding: 30px"
+    >
+      <tr>
+        <td align="center">
+          <!-- Card Principal -->
+          <table
+            width="600"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="
+              background-color: #ffffff;
+              border-radius: 12px;
+              overflow: hidden;
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            "
+          >
+            <!-- Preheader -->
+            <tr>
+              <td
+                style="
+                  display: none;
+                  font-size: 1px;
+                  line-height: 1px;
+                  max-height: 0;
+                  max-width: 0;
+                  opacity: 0;
+                  overflow: hidden;
+                "
+              >
+                🎉 Sua conta está pronta para começar!
+              </td>
+            </tr>
+            <!-- Banner Colorido -->
+            <tr>
+              <td style="background-color:{{cor_primary}}; height:8px;"></td>
+            </tr>
+            <!-- Cabeçalho com Logo -->
+            <tr>
+              <td align="center" style="padding: 24px 24px 0">
+                <img
+                  src="{{logoUrl}}"
+                  alt="Logo"
+                  width="120"
+                  style="
+                    display: block;
+                    border: 0;
+                    outline: none;
+                    text-decoration: none;
+                  "
+                />
+              </td>
+            </tr>
+            <!-- Conteúdo Principal -->
+            <tr>
+              <td style="padding: 24px">
+                <h2
+                  style="margin:0 0 16px; font-size:26px; line-height:34px; color:{{cor_primary}};"
+                >
+                  Olá, {{userName}}! 🎉
+                </h2>
+                <p style="margin: 0 0 16px; font-size: 16px; line-height: 24px">
+                  Sua conta em <strong>{{tenantNome}}</strong> foi criada com
+                  sucesso.
+                </p>
+                <p style="margin: 0 0 24px; font-size: 16px; line-height: 24px">
+                  Que tal dar o primeiro passo? Clique no botão abaixo para
+                  acessar seu painel e explorar!
+                </p>
+                <!-- Botão de Acesso -->
+                <table
+                  cellpadding="0"
+                  cellspacing="0"
+                  border="0"
+                  style="margin: 0 auto"
+                >
+                  <tr>
+                    <td
+                      align="center"
+                      style="background-color:{{cor_primary}}; border-radius:6px;"
+                    >
+                      <a
+                        href="{{loginLink}}"
+                        style="
+                          display: inline-block;
+                          padding: 14px 28px;
+                          font-size: 16px;
+                          color: #ffffff;
+                          text-decoration: none;
+                          border-radius: 6px;
+                        "
+                        >Vamos Começar</a
+                      >
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <!-- Rodapé Alegre -->
+            <tr>
+              <td
+                style="
+                  padding: 20px 24px;
+                  background-color: #f0f8ff;
+                  text-align: center;
+                  font-size: 14px;
+                  color: #555555;
+                "
+              >
+                <p style="margin: 0">
+                  Se você não solicitou este e-mail, apenas ignore-o 😊
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

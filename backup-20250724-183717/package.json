@@ -1,0 +1,31 @@
+{
+  "name": "M24-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter gateway dev",
+    "build": "pnpm --filter auth build && pnpm --filter gateway build && pnpm --filter catalog build",
+    "start": "pnpm --filter gateway start",
+    "lint": "pnpm --filter gateway lint && pnpm --filter catalog lint",
+    "test": "pnpm --filter gateway test && pnpm --filter auth test && pnpm --filter catalog test",
+    "type-check": "pnpm --filter gateway exec tsc --noEmit && pnpm --filter auth exec tsc --noEmit && pnpm --filter catalog exec tsc --noEmit",
+    "format:check": "pnpm --filter gateway run format:check",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down",
+    "docker:ps": "docker compose ps",
+    "dev:auth": "pnpm --filter auth dev",
+    "build:auth": "pnpm --filter auth build",
+    "dev:catalog": "pnpm --filter catalog dev",
+    "build:catalog": "pnpm --filter catalog build",
+    "clean": "rm -rf services/*/node_modules services/*/.next services/*/dist",
+    "reset": "pnpm clean && pnpm install"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "15.3.2",
+    "eslint-plugin-storybook": "^9.0.5",
+    "husky": "^9.1.7",
+    "typescript": "^5"
+  }
+}
