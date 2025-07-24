@@ -32,7 +32,9 @@ describe('GET /api/usuarios/by-cpf', () => {
       genero: 'masculino',
     })
     const req = new Request('http://test/api/usuarios/by-cpf?cpf=52998224725')
-    ;(req as any).nextUrl = new URL('http://test/api/usuarios/by-cpf?cpf=52998224725')
+    ;(req as any).nextUrl = new URL(
+      'http://test/api/usuarios/by-cpf?cpf=52998224725',
+    )
     const res = await GET(req as unknown as NextRequest)
     expect(res.status).toBe(200)
     const body = await res.json()

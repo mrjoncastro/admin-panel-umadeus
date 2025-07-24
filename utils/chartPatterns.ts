@@ -1,6 +1,9 @@
 export type PatternType = 'diagonal' | 'dots' | 'cross' | 'reverseDiagonal'
 
-export function createPattern(type: PatternType, color = '#000'): CanvasPattern {
+export function createPattern(
+  type: PatternType,
+  color = '#000',
+): CanvasPattern {
   const size = 8
   const canvas = document.createElement('canvas')
   canvas.width = size

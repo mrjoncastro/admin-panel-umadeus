@@ -178,9 +178,7 @@ export async function POST(req: NextRequest) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
-    }).catch((e) =>
-      console.error('Erro ao enviar WhatsApp de inscrição:', e),
-    )
+    }).catch((e) => console.error('Erro ao enviar WhatsApp de inscrição:', e))
 
     if (liderId) {
       fetch(`${base}/api/chats/message/sendWelcome`, {
@@ -192,9 +190,7 @@ export async function POST(req: NextRequest) {
           inscritoNome: nome,
           eventoTitulo: evento.titulo,
         }),
-      }).catch((e) =>
-        console.error('Erro ao enviar WhatsApp para o líder:', e),
-      )
+      }).catch((e) => console.error('Erro ao enviar WhatsApp para o líder:', e))
     }
 
     return NextResponse.json(record, { status: 201 })

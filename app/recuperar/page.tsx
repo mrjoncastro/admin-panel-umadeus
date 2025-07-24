@@ -85,15 +85,13 @@ export default function RecuperarPagamentoPage() {
       )}
       {resultado && 'status' in resultado && (
         <p className="mt-6 text-center">
-          {resultado.mensagem ? (
-            resultado.mensagem
-          ) : resultado.status === 'confirmado' ? (
-            'Inscrição confirmada!'
-          ) : resultado.status === 'cancelado' ? (
-            'Inscrição cancelada.'
-          ) : (
-            `Status: ${resultado.status}`
-          )}
+          {resultado.mensagem
+            ? resultado.mensagem
+            : resultado.status === 'confirmado'
+              ? 'Inscrição confirmada!'
+              : resultado.status === 'cancelado'
+                ? 'Inscrição cancelada.'
+                : `Status: ${resultado.status}`}
         </p>
       )}
     </div>

@@ -23,7 +23,6 @@
 **POST** `/api/chats/whatsapp/cadastrar`
 
 - **Headers**
-
   - `Content-Type: application/json`
   - `x-tenant-id: <tenantId>`
   - Cookie `pb_auth`

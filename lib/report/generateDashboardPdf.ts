@@ -86,7 +86,9 @@ export async function generateDashboardPdf(
       doc.text(title, pageWidth / 2, margin.top, { align: 'center' })
       doc.setFontSize(FONT_SIZE_BODY)
       doc.setFont('helvetica', 'normal')
-      doc.text(periodLine, pageWidth - margin.right, margin.top + 20, { align: 'right' })
+      doc.text(periodLine, pageWidth - margin.right, margin.top + 20, {
+        align: 'right',
+      })
 
       const rows = metrics.labels.map((d, idx) => [
         d,
@@ -105,7 +107,9 @@ export async function generateDashboardPdf(
         margin,
       })
 
-      let y = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? margin.top + 40
+      let y =
+        (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable
+          ?.finalY ?? margin.top + 40
       y += 20
 
       if (charts.inscricoes) {

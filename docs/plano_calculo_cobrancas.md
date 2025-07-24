@@ -44,12 +44,10 @@ G = (V × (1 + M) + F) / (1 - P)
 ## 3. Processo no Sistema
 
 1. **Entrada de Dados**
-
    - Coordenador cadastra preço líquido **V**.
    - Usuário final escolhe forma de pagamento e, se for cartão, número de parcelas.
 
 2. **Determinação de F e P**
-
    - Buscar em configuração interna as taxas `F` e `P` conforme forma e parcelas.
 
 3. **Cálculo do Valor Bruto G**
@@ -63,7 +61,6 @@ G = (V × (1 + M) + F) / (1 - P)
    ```
 
 4. **Montagem do Payload para Asaas**
-
    - `value`: deve ser `G` (valorBruto).
    - `split`: repassar **7% de V** para carteira da plataforma.
 
@@ -77,7 +74,6 @@ G = (V × (1 + M) + F) / (1 - P)
    ```
 
 5. **Envio e Registro**
-
    - Enviar payload ao Asaas.
    - No banco, salvar:
      - `valorBase = V`

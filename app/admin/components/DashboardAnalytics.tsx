@@ -148,7 +148,11 @@ export default function DashboardAnalytics({
     }
 
     try {
-      await generateDashboardPdf(metrics, { start: startDate, end: endDate }, charts)
+      await generateDashboardPdf(
+        metrics,
+        { start: startDate, end: endDate },
+        charts,
+      )
     } catch (err) {
       console.error('Erro ao gerar PDF', err)
       const message =
