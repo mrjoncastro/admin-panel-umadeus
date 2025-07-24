@@ -87,20 +87,26 @@ export default function PedidoAvulsoForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.cpf, form.email, form.telefone])
 
-  const [errors, setErrors] = useState<{ cpf?: string; email?: string; telefone?: string }>({})
+  const [errors, setErrors] = useState<{
+    cpf?: string
+    email?: string
+    telefone?: string
+  }>({})
   const [loading, setLoading] = useState(false)
-
 
   const validate = () => {
     const err: { cpf?: string; email?: string; telefone?: string } = {}
     if (!isValidCPF(form.cpf)) err.cpf = 'CPF inválido'
     if (!isValidEmail(form.email)) err.email = 'E-mail inválido'
-    if (form.telefone.replace(/\D/g, '').length < 10) err.telefone = 'Telefone inválido'
+    if (form.telefone.replace(/\D/g, '').length < 10)
+      err.telefone = 'Telefone inválido'
     setErrors(err)
     return Object.keys(err).length === 0
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target
     if (name === 'produtoId') {
       const prod = produtos.find((p) => p.id === value)
@@ -124,7 +130,10 @@ export default function PedidoAvulsoForm() {
     }
     setLoading(true)
     try {
-      const headers = { ...getAuthHeaders(pb), 'Content-Type': 'application/json' }
+      const headers = {
+        ...getAuthHeaders(pb),
+        'Content-Type': 'application/json',
+      }
       const res = await fetch('/api/pedidos', {
         method: 'POST',
         headers,
@@ -207,7 +216,13 @@ export default function PedidoAvulsoForm() {
     <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <FormField label="Nome" htmlFor="nome">
-          <TextField id="nome" name="nome" value={form.nome} onChange={handleChange} required />
+          <TextField
+            id="nome"
+            name="nome"
+            value={form.nome}
+            onChange={handleChange}
+            required
+          />
         </FormField>
         <FormField label="CPF" htmlFor="cpf" error={errors.cpf}>
           <InputWithMask
@@ -244,13 +259,20 @@ export default function PedidoAvulsoForm() {
         </FormField>
       </div>
       <FormField label="Produto" htmlFor="produtoId">
-        <select id="produtoId" name="produtoId" value={form.produtoId} onChange={handleChange} className="input-base w-full" required>
+        <select
+          id="produtoId"
+          name="produtoId"
+          value={form.produtoId}
+          onChange={handleChange}
+          className="input-base w-full"
+          required
+        >
           <option value="">Selecione</option>
-      {produtos.map((p) => (
-        <option key={p.id} value={p.id}>
-          {p.nome}
-        </option>
-      ))}
+          {produtos.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.nome}
+            </option>
+          ))}
         </select>
         {produtoSel?.evento_id && (
           <p className="text-sm mt-2">

@@ -4,7 +4,6 @@
 
 ## [2025-07-16] Ajustada configuração do Sentry com logs e captura de exceções
 
-
 ## [2025-07-01] Registrados eventos de inscrição e pedidos no LogRocket
 
 ## [2025-07-01] Documentado caminho de logs em ambientes serverless no README e no cabeçalho do ERR_LOG
@@ -547,6 +546,7 @@ executados.
 ## [2025-07-04] Rota /api/recuperar-link consulta inscricoes quando cobranca nao encontrada. Lint e build executados.
 
 ## [2025-07-04] Documentadas rotas /recuperar e /api/recuperar-link, orientando criar inscricao quando nao houver cobranca. Lint: ok - Build: ok
+
 ## [2025-07-04] EventForm exibe inscricoes pendentes e InscricoesTable ganha variante `details`. Lint e build executados.
 
 ## [2025-07-05] Aceita pagamento 'credito' mapeado para pix nas inscricoes e rota Asaas.
@@ -576,42 +576,79 @@ na rota /loja/api/inscricoes e documentação atualizada. Lint e build executado
 ## [2025-07-06] Adicionada nota sobre necessidade de logout para cadastrar outra pessoa em docs/regras-inscricoes.md. Lint e build executados.
 
 ## [2025-07-06] Líder não pode alterar status ao editar inscrição ou pedido. Documentação atualizada.
+
 ## [2025-08-18] Criado job `/api/tasks/pedidos-vencidos` e documentado fluxo automático de vencimento. Lint e build executados.
+
 ## [2025-08-19] Job de vencimento usa `pbRetry` para evitar perda de conexão com o PocketBase. Documentação atualizada. Lint e build executados.
+
 ## [2025-08-19] Job agora envia mensagem com link de pagamento via WhatsApp ao atualizar pedidos vencidos. Documentação atualizada. Lint e build executados.
+
 ## [2025-07-07] Endereço opcional para inscrições; formulários e API atualizados. Documentação revisada.
+
 ## [2025-07-07] Verificada duplicidade na rota /loja/api/inscricoes retornando 409. Testes atualizados. Lint e build executados.
+
 ## [2025-07-07] Rota /api/recuperar-link passa a retornar `link_pagamento`. Documentação e testes atualizados. Lint e build executados.
+
 ## [2025-07-07] Recuperacao de link busca pedido pendente quando inscricao em aguardando_pagamento. Documentação e testes atualizados. Lint e build executados.
+
 ## [2025-07-07] Relatório do dashboard movido para util generateDashboardPdf com template editável. Lint e build executados.
+
 ## [2025-07-08] Corrigido DashboardAnalytics e filtros do relatório. Lint e build executados.
+
 ## [2025-07-08] Ajustada regra em docs/regras-inscricoes.md permitindo alteração automática de status ao confirmar ou recusar inscrição. Lint e build executados.
+
 ## [2025-07-11] Página /recuperar exibe confirmação ou cancelamento conforme status. Documentação atualizada. Lint e build executados.
+
 ## [2025-07-11] Documentado que líderes podem se inscrever e já recebem pedido automático se forem responsáveis. Lint e build executados.
+
 ## [2025-07-15] Configurada variavel NEXT_PUBLIC_LOGROCKET_ID e inicializacao condicional
+
 ## [2025-07-15] EventForm agora lista inscricoes pendentes e confirmadas do usuario antes do formulario. Lint e build executados.
+
 ## [2025-07-15] Rota /api/recuperar-link nao renova cobranca vencida, retornando link existente. README ajustado. Lint e build executados.
+
 ## [2025-07-15] Rota /api/recuperar-link gera nova cobranca quando pedido sem link. README atualizado. Lint e build executados.
+
 ## [2025-07-15] Rota /api/recuperar-link deixou de criar nova cobranca, retornando o link existente mesmo vencido. Lint e build executados.
+
 ## [2025-07-15] Recuperacao de link busca pedido pendente ou vencido quando inscricao aguardando_pagamento. Lint e build executados.
+
 ## [2025-07-15] fetchAllPages acelera carregamento de dashboard e relatórios. Lint e build executados.
+
 ## [2025-08-20] Adicionada criação de pedido avulso por líderes e documentação atualizada. Lint e build executados.
+
 ## [2025-08-21] Criada rota /admin/relatorio com resumo das regras e exportação em PDF. Lint e build executados.
 
 ## [2025-07-16] Relatorio admin apresenta analises por produto e canal com filtro de campo e exportacao em PDF. Lint e build executados.
+
 ## [2025-07-16] PDF das análises inclui tabela detalhada de pedidos com forma de pagamento. Lint e build executados.
+
 ## [2025-07-16] Página /admin/relatorio limpa, apenas gráficos. Filtro de status e gráficos exportados no PDF das análises. Lint e build executados.
+
 ## [2025-07-16] Relatorio PDF exibe totais por produto. Lint e build executados.
+
 ## [2025-07-16] Relatorio admin permite ordenar por campo ou data e remove PDF de regras. Lint e build executados.
+
 ## [2025-07-17] Adicionado sentry.client.config.ts para coletar Feedback do Usuario via Sentry. Lint e build executados.
+
 ## [2025-07-17] Integrada Sentry Replay com mascaramento de texto e bloqueio de mídia. Lint e build executados.
+
 ## [2025-07-17] Gráficos exportados em tons de cinza com padrões de hachura. Lint e build executados.
+
 ## [2025-07-17] Margens dos PDFs normalizadas para 20mm. Lint e build executados.
+
 ## [2025-07-17] Atualizadas rotinas de exportação nos relatórios para usar margens de 56.7pt e rodapé com data/hora. Lint e build executados.
+
 ## [2025-07-17] Normalizadas fontes e margens dos PDFs; rodapé agora usa fonte 9pt. Lint e build executados.
+
 ## [2025-07-18] Formulario avulso preenche dados pelo CPF. Lint e build executados.
+
 ## [2025-07-18] Mensagem de CPF/email duplicado removida no pedido avulso. Lint e build executados.
+
 ## [2025-08-22] Pedido avulso permite selecionar tamanho e preenche gênero via CPF. Lint e build executados.
+
 ## [2025-08-23] Pedido avulso gera cobrança automática no Asaas e remove campo de vencimento. Lint, build e testes executados.
+
 ## [2025-07-20] Pedido avulso redireciona para listagem com aviso de sucesso. Lint e build executados.
+
 ## [2025-07-21] Documentados exemplos dos endpoints de configuração de broadcast (commit ffc5a29bc7eec9a17498d216021130426f01f1f2). Lint e build executados.

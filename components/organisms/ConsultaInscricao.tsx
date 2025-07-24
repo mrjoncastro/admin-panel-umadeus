@@ -45,8 +45,8 @@ export default function ConsultaInscricao({
 
   useEffect(() => {
     if (isLoggedIn && user) {
-      setCpf((prev) => (prev === '' ? user.cpf ?? '' : prev))
-      setEmail((prev) => (prev === '' ? user.email ?? '' : prev))
+      setCpf((prev) => (prev === '' ? (user.cpf ?? '') : prev))
+      setEmail((prev) => (prev === '' ? (user.email ?? '') : prev))
     }
   }, [isLoggedIn, user])
 

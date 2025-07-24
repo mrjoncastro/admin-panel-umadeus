@@ -64,7 +64,7 @@ export default function RelatoriosPage() {
         rawInscricoes = rawInscricoes.concat(
           insRest.flatMap((r) =>
             Array.isArray((r as { items?: Inscricao[] }).items)
-              ? ((r as { items: Inscricao[] }).items)
+              ? (r as { items: Inscricao[] }).items
               : (r as Inscricao),
           ),
         )
@@ -77,9 +77,7 @@ export default function RelatoriosPage() {
             signal,
           },
         ).then((r) => r.json())
-        const pedRest = await fetchAllPages<
-          { items?: Pedido[] } | Pedido
-        >(
+        const pedRest = await fetchAllPages<{ items?: Pedido[] } | Pedido>(
           `/api/pedidos?${params.toString()}&expand=campo,produto`,
           pedRes.totalPages ?? 1,
           signal,
@@ -88,7 +86,7 @@ export default function RelatoriosPage() {
         rawPedidos = rawPedidos.concat(
           pedRest.flatMap((r) =>
             Array.isArray((r as { items?: Pedido[] }).items)
-              ? ((r as { items: Pedido[] }).items)
+              ? (r as { items: Pedido[] }).items
               : (r as Pedido),
           ),
         )
@@ -100,25 +98,27 @@ export default function RelatoriosPage() {
 
         const campoId = expandedUser.expand?.campo?.id
 
-        const allInscricoes: Inscricao[] = rawInscricoes.map((r: Inscricao) => ({
-          id: r.id,
-          nome: r.nome,
-          telefone: r.telefone,
-          evento: r.expand?.evento?.titulo,
-          status: r.status,
-          created: r.created,
-          campo: r.campo,
-          tamanho: r.tamanho,
-          produto: r.produto,
-          genero: r.genero,
-          data_nascimento: r.data_nascimento,
-          criado_por: r.criado_por,
-          expand: {
-            campo: r.expand?.campo,
-            criado_por: r.expand?.criado_por,
-            pedido: r.expand?.pedido,
-          },
-        }))
+        const allInscricoes: Inscricao[] = rawInscricoes.map(
+          (r: Inscricao) => ({
+            id: r.id,
+            nome: r.nome,
+            telefone: r.telefone,
+            evento: r.expand?.evento?.titulo,
+            status: r.status,
+            created: r.created,
+            campo: r.campo,
+            tamanho: r.tamanho,
+            produto: r.produto,
+            genero: r.genero,
+            data_nascimento: r.data_nascimento,
+            criado_por: r.criado_por,
+            expand: {
+              campo: r.expand?.campo,
+              criado_por: r.expand?.criado_por,
+              pedido: r.expand?.pedido,
+            },
+          }),
+        )
 
         const allPedidos: Pedido[] = rawPedidos.map((r: Pedido) => ({
           id: r.id,

@@ -269,25 +269,45 @@
 ## [2025-07-06] Etapa de revisão exibe ícone de edição para ajustar dados antes do envio - dev - 6d8ffadc
 
 ## [2025-07-06] Revisão inclui endereço completo e valida ausência antes do envio - dev - 3968f02f
-## [2025-07-07] Build falhou devido a 'Unexpected character' ao compilar template.md?raw - dev
-## [2025-07-07] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
-## [2025-07-07] Erro ao gerar link de pagamento Asaas: TypeError: cobrancaResponse.clone is not a function - test
-## [2025-07-08] Erro no painel devido a código duplicado em DashboardAnalytics.tsx - dev - resolvido restaurando arquivo e tipagens.
-## [2025-07-08] Líder não conseguia definir status "aguardando_pagamento" ao confirmar inscrição. PATCH /api/inscricoes/[id] agora permite esse valor. - dev
-## [2025-07-08] Modal de edição excedia altura da tela no fluxo de inscrição, impedindo salvar ou cancelar. Adicionado overflow-y-auto e max-h-screen nos modais de edição. - prod - bca77d01a1630e5dd09ae4e9579e9a71d3341df3
-## [2025-07-11] ModalEditarPerfil não enviava cabeçalhos de autenticação, impedindo salvar perfil durante inscrição. Cabeçalhos adicionados. - dev - f969efa7
-## [2025-08-17] Patch /api/usuarios/[id] nao atualizava cookie de autenticacao apos salvar CPF ou outros dados. Rota agora retorna usuario atualizado e define cookie - dev - 6c3bbe3d
-## [2025-07-15] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
-## [2025-07-15] Erro ao gerar link de pagamento Asaas: TypeError: cobrancaResponse.clone is not a function - test
-## [2025-08-18] ConsultaInscricao sobrescrevia CPF/email do lider ao logar, exibindo inscricao errada e redirecionando para home. Efeito ajustado para manter valores digitados. - dev - 3155a7a1
-## [2025-08-19] EventForm buscava inscricoes pendentes de todo o campo para lider, exibindo inscricoes de subordinados e bloqueando prosseguimento. Lista agora filtrada para mostrar apenas as inscricoes do usuario logado. - dev - 7b24a941
-## [2025-07-17] Lista de pedidos nao atualizava paginacao ao aplicar filtros. Paginas recalculadas e pagina atual redefinida. - dev - 04cd8656
-## [2025-07-17] Pedidos buscavam apenas a primeira pagina; resultado incompleto e paginacao incorreta. Fetch atualizado para usar fetchAllPages e pagina resetada ao alterar filtros globais. - dev - a2bf8fc4
-## [2025-07-17] Inscricoes buscavam paginas manualmente; fetchAllPages adotado e paginacao recalculada ao filtrar. - dev - ac1da4cd
-## [2025-07-18] Erro ao criar pedido avulso: ClientResponseError 400: Failed to create record. Ajustado para não enviar campos vazios. - dev - 1f72bca4
-## [2025-08-22] Erro ao criar pedido avulso por tamanho indefinido; campo agora selecionável e genero preenchido via CPF. - dev - 8caa9780
-## [2025-07-18] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
-## [2025-08-24] Erro ao gerar link de pagamento Asaas: Missing required record id ao processar pedido avulso sem inscricao. Validacao adicionada para id_inscricao - dev - 40253017
-## [2025-08-25] Ajuste na rota /api/asaas para permitir pedidos avulsos sem inscricao quando produto nao requer inscricao. Dados do usuario usados para criar cliente - dev - 74680867
-## [2025-07-22] Erro ao acessar searchParams sincronamente na rota /login; login falhava com aviso 'searchParams should be awaited'. Função atualizada para async e parâmetros aguardados. - dev - c203c6d
 
+## [2025-07-07] Build falhou devido a 'Unexpected character' ao compilar template.md?raw - dev
+
+## [2025-07-07] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
+
+## [2025-07-07] Erro ao gerar link de pagamento Asaas: TypeError: cobrancaResponse.clone is not a function - test
+
+## [2025-07-08] Erro no painel devido a código duplicado em DashboardAnalytics.tsx - dev - resolvido restaurando arquivo e tipagens.
+
+## [2025-07-08] Líder não conseguia definir status "aguardando_pagamento" ao confirmar inscrição. PATCH /api/inscricoes/[id] agora permite esse valor. - dev
+
+## [2025-07-08] Modal de edição excedia altura da tela no fluxo de inscrição, impedindo salvar ou cancelar. Adicionado overflow-y-auto e max-h-screen nos modais de edição. - prod - bca77d01a1630e5dd09ae4e9579e9a71d3341df3
+
+## [2025-07-11] ModalEditarPerfil não enviava cabeçalhos de autenticação, impedindo salvar perfil durante inscrição. Cabeçalhos adicionados. - dev - f969efa7
+
+## [2025-08-17] Patch /api/usuarios/[id] nao atualizava cookie de autenticacao apos salvar CPF ou outros dados. Rota agora retorna usuario atualizado e define cookie - dev - 6c3bbe3d
+
+## [2025-07-15] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
+
+## [2025-07-15] Erro ao gerar link de pagamento Asaas: TypeError: cobrancaResponse.clone is not a function - test
+
+## [2025-08-18] ConsultaInscricao sobrescrevia CPF/email do lider ao logar, exibindo inscricao errada e redirecionando para home. Efeito ajustado para manter valores digitados. - dev - 3155a7a1
+
+## [2025-08-19] EventForm buscava inscricoes pendentes de todo o campo para lider, exibindo inscricoes de subordinados e bloqueando prosseguimento. Lista agora filtrada para mostrar apenas as inscricoes do usuario logado. - dev - 7b24a941
+
+## [2025-07-17] Lista de pedidos nao atualizava paginacao ao aplicar filtros. Paginas recalculadas e pagina atual redefinida. - dev - 04cd8656
+
+## [2025-07-17] Pedidos buscavam apenas a primeira pagina; resultado incompleto e paginacao incorreta. Fetch atualizado para usar fetchAllPages e pagina resetada ao alterar filtros globais. - dev - a2bf8fc4
+
+## [2025-07-17] Inscricoes buscavam paginas manualmente; fetchAllPages adotado e paginacao recalculada ao filtrar. - dev - ac1da4cd
+
+## [2025-07-18] Erro ao criar pedido avulso: ClientResponseError 400: Failed to create record. Ajustado para não enviar campos vazios. - dev - 1f72bca4
+
+## [2025-08-22] Erro ao criar pedido avulso por tamanho indefinido; campo agora selecionável e genero preenchido via CPF. - dev - 8caa9780
+
+## [2025-07-18] Erro ao criar pedido: TypeError: Cannot read properties of undefined (reading 'id') - test
+
+## [2025-08-24] Erro ao gerar link de pagamento Asaas: Missing required record id ao processar pedido avulso sem inscricao. Validacao adicionada para id_inscricao - dev - 40253017
+
+## [2025-08-25] Ajuste na rota /api/asaas para permitir pedidos avulsos sem inscricao quando produto nao requer inscricao. Dados do usuario usados para criar cliente - dev - 74680867
+
+## [2025-07-22] Erro ao acessar searchParams sincronamente na rota /login; login falhava com aviso 'searchParams should be awaited'. Função atualizada para async e parâmetros aguardados. - dev - c203c6d

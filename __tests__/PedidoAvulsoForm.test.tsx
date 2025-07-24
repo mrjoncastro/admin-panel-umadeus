@@ -40,22 +40,38 @@ describe('PedidoAvulsoForm', () => {
       .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({}) })
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ pedidoId: 'p1', valor: 55, status: 'pendente' }),
+        json: () =>
+          Promise.resolve({ pedidoId: 'p1', valor: 55, status: 'pendente' }),
       })
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ url: 'pay', id_asaas: 'a1' }) })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ url: 'pay', id_asaas: 'a1' }),
+      })
     render(<PedidoAvulsoForm />)
-    fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Fulano' } })
-    fireEvent.change(screen.getByLabelText('CPF'), { target: { value: '52998224725' } })
-    fireEvent.change(screen.getByLabelText('Telefone'), { target: { value: '11999999999' } })
-    fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'f@x.com' } })
-    fireEvent.change(screen.getByLabelText('Produto'), { target: { value: 'p1' } })
+    fireEvent.change(screen.getByLabelText('Nome'), {
+      target: { value: 'Fulano' },
+    })
+    fireEvent.change(screen.getByLabelText('CPF'), {
+      target: { value: '52998224725' },
+    })
+    fireEvent.change(screen.getByLabelText('Telefone'), {
+      target: { value: '11999999999' },
+    })
+    fireEvent.change(screen.getByLabelText('E-mail'), {
+      target: { value: 'f@x.com' },
+    })
+    fireEvent.change(screen.getByLabelText('Produto'), {
+      target: { value: 'p1' },
+    })
     expect(
       screen.getByRole('link', { name: /iniciar inscrição/i }),
     ).toBeInTheDocument()
     const valorField = screen.getByLabelText('Valor')
     expect(valorField).toHaveValue(55)
     expect(valorField).toHaveAttribute('readonly')
-    fireEvent.change(screen.getByLabelText('Forma de Pagamento'), { target: { value: 'pix' } })
+    fireEvent.change(screen.getByLabelText('Forma de Pagamento'), {
+      target: { value: 'pix' },
+    })
     fireEvent.click(screen.getByRole('button', { name: /criar pedido/i }))
 
     await waitFor(() => expect((global.fetch as any).mock.calls.length).toBe(3))

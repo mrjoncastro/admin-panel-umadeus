@@ -4,7 +4,10 @@ import { requireRole } from '@/lib/apiAuth'
 import { broadcastManager } from '@/lib/server/flows/whatsapp'
 import { DEFAULT_CONFIG } from '@/lib/server/flows/whatsapp/broadcastQueue'
 
-async function getOrCreateConfig(pb: ReturnType<typeof createPocketBase>, tenant: string) {
+async function getOrCreateConfig(
+  pb: ReturnType<typeof createPocketBase>,
+  tenant: string,
+) {
   const list = await pb
     .collection('whatsapp_broadcast_config')
     .getFullList({ filter: `cliente="${tenant}"`, limit: 1 })
@@ -26,11 +29,15 @@ async function getOrCreateConfig(pb: ReturnType<typeof createPocketBase>, tenant
 
 export async function GET(req: NextRequest) {
   const tenant = req.headers.get('x-tenant-id')
-  if (!tenant) return NextResponse.json({ error: 'Tenant ausente' }, { status: 400 })
+  if (!tenant)
+    return NextResponse.json({ error: 'Tenant ausente' }, { status: 400 })
 
   const pb = createPocketBase()
   if (!pb.authStore.isValid) {
-    await pb.admins.authWithPassword(process.env.PB_ADMIN_EMAIL!, process.env.PB_ADMIN_PASSWORD!)
+    await pb.admins.authWithPassword(
+      process.env.PB_ADMIN_EMAIL!,
+      process.env.PB_ADMIN_PASSWORD!,
+    )
   }
   const cfg = await getOrCreateConfig(pb, tenant)
   return NextResponse.json(cfg)
@@ -38,7 +45,8 @@ export async function GET(req: NextRequest) {
 
 async function saveConfig(req: NextRequest) {
   const tenant = req.headers.get('x-tenant-id')
-  if (!tenant) return NextResponse.json({ error: 'Tenant ausente' }, { status: 400 })
+  if (!tenant)
+    return NextResponse.json({ error: 'Tenant ausente' }, { status: 400 })
 
   const auth = requireRole(req, ['coordenador', 'admin'])
   if ('error' in auth) {
@@ -46,11 +54,15 @@ async function saveConfig(req: NextRequest) {
   }
 
   const body = await req.json().catch(() => null)
-  if (!body) return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
+  if (!body)
+    return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
 
   const pb = createPocketBase()
   if (!pb.authStore.isValid) {
-    await pb.admins.authWithPassword(process.env.PB_ADMIN_EMAIL!, process.env.PB_ADMIN_PASSWORD!)
+    await pb.admins.authWithPassword(
+      process.env.PB_ADMIN_EMAIL!,
+      process.env.PB_ADMIN_PASSWORD!,
+    )
   }
   const existing = await getOrCreateConfig(pb, tenant)
 
@@ -68,8 +80,10 @@ async function saveConfig(req: NextRequest) {
   for (const field of simpleFields) {
     if (field in body) payload[field] = body[field]
   }
-  if (body.allowedHours?.start !== undefined) payload.allowedHoursStart = body.allowedHours.start
-  if (body.allowedHours?.end !== undefined) payload.allowedHoursEnd = body.allowedHours.end
+  if (body.allowedHours?.start !== undefined)
+    payload.allowedHoursStart = body.allowedHours.start
+  if (body.allowedHours?.end !== undefined)
+    payload.allowedHoursEnd = body.allowedHours.end
 
   const updated = await pb
     .collection('whatsapp_broadcast_config')

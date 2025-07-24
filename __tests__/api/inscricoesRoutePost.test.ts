@@ -114,21 +114,38 @@ describe('POST /api/inscricoes', () => {
         }
       }
       if (name === 'eventos')
-        return { getOne: vi.fn().mockResolvedValue({ cobra_inscricao: true, titulo: 'T' }) }
+        return {
+          getOne: vi
+            .fn()
+            .mockResolvedValue({ cobra_inscricao: true, titulo: 'T' }),
+        }
       if (name === 'clientes_config')
-        return { getFirstListItem: vi.fn().mockResolvedValue({ confirma_inscricoes: true }) }
-      if (name === 'pedidos')
-        return { update: vi.fn(), delete: vi.fn() }
+        return {
+          getFirstListItem: vi
+            .fn()
+            .mockResolvedValue({ confirma_inscricoes: true }),
+        }
+      if (name === 'pedidos') return { update: vi.fn(), delete: vi.fn() }
       return {} as any
     })
 
     const pocketbaseModule = await import('../../lib/pocketbase')
-    ;(pocketbaseModule.default as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue(pbLocal)
+    ;(
+      pocketbaseModule.default as unknown as {
+        mockReturnValue: (v: any) => void
+      }
+    ).mockReturnValue(pbLocal)
 
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ pedidoId: 'p1', valor: 10 }) })
-      .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ url: 'link', id_asaas: 'a1' }) })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ pedidoId: 'p1', valor: 10 }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ url: 'link', id_asaas: 'a1' }),
+      })
     global.fetch = fetchMock as unknown as typeof fetch
 
     const req = new Request('http://test/api/inscricoes', {
@@ -174,14 +191,26 @@ describe('POST /api/inscricoes', () => {
         }
       }
       if (name === 'eventos')
-        return { getOne: vi.fn().mockResolvedValue({ cobra_inscricao: true, titulo: 'T' }) }
+        return {
+          getOne: vi
+            .fn()
+            .mockResolvedValue({ cobra_inscricao: true, titulo: 'T' }),
+        }
       if (name === 'clientes_config')
-        return { getFirstListItem: vi.fn().mockResolvedValue({ confirma_inscricoes: true }) }
+        return {
+          getFirstListItem: vi
+            .fn()
+            .mockResolvedValue({ confirma_inscricoes: true }),
+        }
       return {} as any
     })
 
     const pocketbaseModule = await import('../../lib/pocketbase')
-    ;(pocketbaseModule.default as unknown as { mockReturnValue: (v: any) => void }).mockReturnValue(pbLocal)
+    ;(
+      pocketbaseModule.default as unknown as {
+        mockReturnValue: (v: any) => void
+      }
+    ).mockReturnValue(pbLocal)
 
     global.fetch = vi.fn() as unknown as typeof fetch
 

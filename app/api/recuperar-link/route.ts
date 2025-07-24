@@ -46,7 +46,8 @@ export async function POST(req: NextRequest) {
 
     if (!cobranca) {
       const tenantId = await getTenantFromHost()
-      let inscricao: { id?: string; nome?: string; status?: string } | null = null
+      let inscricao: { id?: string; nome?: string; status?: string } | null =
+        null
       if (tenantId) {
         try {
           inscricao = await pbRetry(() =>
@@ -99,7 +100,6 @@ export async function POST(req: NextRequest) {
               link_pagamento: pedido.link_pagamento,
             })
           }
-
         }
 
         logSentryEvent('recuperar_status', {

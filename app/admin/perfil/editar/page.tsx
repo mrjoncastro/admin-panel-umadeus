@@ -234,7 +234,8 @@ export default function EditarPerfilPage() {
           className={`${inputStyle} cursor-not-allowed`}
         />
         <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-          O e-mail n\u00e3o pode ser alterado. Para mudan\u00e7as, entre em contato com o suporte.
+          O e-mail n\u00e3o pode ser alterado. Para mudan\u00e7as, entre em
+          contato com o suporte.
         </p>
       </FormField>
 
@@ -256,4 +257,3 @@ export default function EditarPerfilPage() {
     </form>
   )
 }
-

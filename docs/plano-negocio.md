@@ -12,7 +12,6 @@ Cadastro central de cada cliente (tenant).
 
 - **Campo `documento`** (CPF ou CNPJ) **obrigatório** e **único**, para identificação fiscal e integrações.
 - Outros campos principais:
-
   - `nome`: Nome ou razão social do cliente.
   - `dominio`: Endereço principal configurado.
   - `tipo_dominio`: `subdominio` ou `proprio`, indicando a forma de domínio.
@@ -105,7 +104,6 @@ Todas as coleções filhas (`usuarios`, `produtos`, `pedidos`, `inscricoes`, etc
   ```
 
 - Fluxo ao receber evento:
-
   1. Identificar `accountId` no payload.
   2. Buscar `m24_clientes` pelo `asaas_account_id`.
   3. Processar e atualizar somente registros desse cliente.

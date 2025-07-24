@@ -33,7 +33,10 @@ export async function POST(req: NextRequest) {
     .collection('whatsapp_clientes')
     .getFullList({ filter: `cliente="${tenant}"`, limit: 1 })
   if (cfgList.length === 0) {
-    return NextResponse.json({ error: 'configuração não encontrada' }, { status: 404 })
+    return NextResponse.json(
+      { error: 'configuração não encontrada' },
+      { status: 404 },
+    )
   }
   const cfg = cfgList[0]
 
@@ -74,7 +77,10 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  return NextResponse.json({ message: 'mensagens enfileiradas', total: phones.length })
+  return NextResponse.json({
+    message: 'mensagens enfileiradas',
+    total: phones.length,
+  })
 }
 
 export async function GET(req: NextRequest) {

@@ -46,7 +46,6 @@ Nesta seção, detalhamos todos os endpoints disponíveis na Evolution API v2, i
   ```
 
 - **Erros Comuns**:
-
   - `400 Bad Request` – parâmetro faltando ou inválido
   - `409 Conflict` – instância já existe
 
@@ -66,7 +65,6 @@ Nesta seção, detalhamos todos os endpoints disponíveis na Evolution API v2, i
 
 - **Endpoint**: `GET /instance/connect/{instance}`
 - **Path Parameter**:
-
   - `instance`: nome da instância
 
 - **Resposta 200**:
@@ -222,7 +220,6 @@ Para todos os endpoints de envio, o campo `instance` no path identifica a instâ
 
 - **Pasta**: `/call`
 - **Endpoints**:
-
   - `POST /call/voice/{instance}`
   - `POST /call/fakeCall/{instance}`
 
@@ -266,12 +263,10 @@ Para todos os endpoints de envio, o campo `instance` no path identifica a instâ
 Endpoints para configurar e testar integrações:
 
 - **Webhooks**:
-
   - `POST /integration/webhook/set/{instance}`
   - `DELETE /integration/webhook/remove/{instance}`
 
 - **RabbitMQ / SQS**:
-
   - `POST /integration/rabbitmq/set/{instance}`
   - `POST /integration/sqs/set/{instance}`
 
