@@ -1,0 +1,2 @@
+export const MAX_ITEM_NAME_LENGTH = 30
+export const MAX_ITEM_DESCRIPTION_LENGTH = 120
