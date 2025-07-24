@@ -273,6 +273,155 @@ create table manifesto_clientes (
 );
 
 -- =========================
+-- TABELA: vendedores (MARKETPLACE - FASE 1)
+-- =========================
+create table vendedores (
+  id uuid primary key default uuid_generate_v4(),
+  nome text not null,
+  email text not null unique,
+  telefone text,
+  cpf_cnpj text not null unique,
+  tipo_pessoa text not null check (tipo_pessoa in ('fisica', 'juridica')),
+  razao_social text, -- para PJ
+  nome_fantasia text, -- para PJ
+  endereco text,
+  cidade text,
+  estado text,
+  cep text,
+  status text not null default 'pendente' check (status in ('pendente', 'aprovado', 'rejeitado', 'suspenso')),
+  taxa_comissao decimal(5,2) default 15.00, -- taxa padrão de 15%
+  bio text,
+  logo_url text,
+  banner_url text,
+  site_url text,
+  instagram text,
+  facebook text,
+  whatsapp text,
+  -- Dados bancários
+  banco text,
+  agencia text,
+  conta text,
+  tipo_conta text check (tipo_conta in ('corrente', 'poupanca')),
+  pix_key text,
+  -- Configurações
+  aceita_devolvidos boolean default true,
+  tempo_processamento integer default 2, -- dias úteis
+  politica_troca text,
+  politica_devolucao text,
+  -- Métricas
+  total_vendas integer default 0,
+  total_produtos integer default 0,
+  avaliacao_media decimal(3,2) default 0.00,
+  total_avaliacoes integer default 0,
+  -- Multi-tenant
+  cliente uuid not null references m24_clientes(id) on delete cascade,
+  -- Auditoria
+  aprovado_por uuid references usuarios(id),
+  aprovado_em timestamp with time zone,
+  rejeitado_motivo text,
+  created timestamp with time zone default now(),
+  updated timestamp with time zone default now()
+);
+
+-- =========================
+-- TABELA: vendedores_documentos (KYC)
+-- =========================
+create table vendedores_documentos (
+  id uuid primary key default uuid_generate_v4(),
+  vendedor_id uuid not null references vendedores(id) on delete cascade,
+  tipo_documento text not null check (tipo_documento in ('rg', 'cpf', 'cnpj', 'contrato_social', 'comprovante_endereco', 'comprovante_bancario')),
+  nome_arquivo text not null,
+  url_arquivo text not null,
+  verificado boolean default false,
+  verificado_por uuid references usuarios(id),
+  verificado_em timestamp with time zone,
+  observacoes text,
+  created timestamp with time zone default now(),
+  updated timestamp with time zone default now()
+);
+
+-- =========================
+-- TABELA: produtos_vendedores (ATUALIZAÇÃO PARA MARKETPLACE)
+-- =========================
+-- Adicionar campos de vendedor à tabela produtos existente
+alter table produtos add column vendedor_id uuid references vendedores(id);
+alter table produtos add column status_aprovacao text default 'aprovado' check (status_aprovacao in ('pendente', 'aprovado', 'rejeitado'));
+alter table produtos add column aprovado_por uuid references usuarios(id);
+alter table produtos add column aprovado_em timestamp with time zone;
+alter table produtos add column rejeitado_motivo text;
+alter table produtos add column custo decimal(10,2); -- custo para o vendedor
+alter table produtos add column margem_vendedor decimal(5,2) default 0.00; -- margem do vendedor
+
+-- =========================
+-- TABELA: avaliacoes_vendedores
+-- =========================
+create table avaliacoes_vendedores (
+  id uuid primary key default uuid_generate_v4(),
+  vendedor_id uuid not null references vendedores(id) on delete cascade,
+  usuario_id uuid not null references usuarios(id) on delete cascade,
+  pedido_id uuid references pedidos(id),
+  nota integer not null check (nota >= 1 and nota <= 5),
+  comentario text,
+  resposta_vendedor text,
+  respondido_em timestamp with time zone,
+  cliente uuid not null references m24_clientes(id) on delete cascade,
+  created timestamp with time zone default now(),
+  updated timestamp with time zone default now(),
+  unique(vendedor_id, usuario_id, pedido_id)
+);
+
+-- =========================
+-- TABELA: mensagens_vendedores (Chat básico)
+-- =========================
+create table mensagens_vendedores (
+  id uuid primary key default uuid_generate_v4(),
+  vendedor_id uuid not null references vendedores(id) on delete cascade,
+  usuario_id uuid not null references usuarios(id) on delete cascade,
+  produto_id uuid references produtos(id),
+  remetente text not null check (remetente in ('vendedor', 'usuario')),
+  mensagem text not null,
+  lida boolean default false,
+  cliente uuid not null references m24_clientes(id) on delete cascade,
+  created timestamp with time zone default now(),
+  updated timestamp with time zone default now()
+);
+
+-- =========================
+-- TABELA: comissoes_vendedores (Histórico de comissões)
+-- =========================
+create table comissoes_vendedores (
+  id uuid primary key default uuid_generate_v4(),
+  vendedor_id uuid not null references vendedores(id) on delete cascade,
+  pedido_id uuid not null references pedidos(id) on delete cascade,
+  produto_id uuid not null references produtos(id) on delete cascade,
+  valor_produto decimal(10,2) not null,
+  valor_comissao decimal(10,2) not null,
+  taxa_comissao decimal(5,2) not null,
+  status text not null default 'pendente' check (status in ('pendente', 'pago', 'cancelado')),
+  data_pagamento timestamp with time zone,
+  observacoes text,
+  cliente uuid not null references m24_clientes(id) on delete cascade,
+  created timestamp with time zone default now(),
+  updated timestamp with time zone default now()
+);
+
+-- =========================
+-- ÍNDICES PARA PERFORMANCE
+-- =========================
+create index idx_vendedores_email on vendedores(email);
+create index idx_vendedores_cpf_cnpj on vendedores(cpf_cnpj);
+create index idx_vendedores_status on vendedores(status);
+create index idx_vendedores_cliente on vendedores(cliente);
+create index idx_vendedores_documentos_vendedor on vendedores_documentos(vendedor_id);
+create index idx_produtos_vendedor on produtos(vendedor_id);
+create index idx_produtos_status_aprovacao on produtos(status_aprovacao);
+create index idx_avaliacoes_vendedores_vendedor on avaliacoes_vendedores(vendedor_id);
+create index idx_mensagens_vendedores_vendedor on mensagens_vendedores(vendedor_id);
+create index idx_mensagens_vendedores_usuario on mensagens_vendedores(usuario_id);
+create index idx_comissoes_vendedores_vendedor on comissoes_vendedores(vendedor_id);
+create index idx_comissoes_vendedores_status on comissoes_vendedores(status);
+
+-- =========================
 -- TABELAS DE RELACIONAMENTO (M:N)
 -- =========================
 
@@ -317,6 +466,13 @@ alter table produtos_eventos enable row level security;
 alter table pedidos_produtos enable row level security;
 alter table inscricoes_produtos enable row level security;
 
+-- RLS para novas tabelas de marketplace
+alter table vendedores enable row level security;
+alter table vendedores_documentos enable row level security;
+alter table avaliacoes_vendedores enable row level security;
+alter table mensagens_vendedores enable row level security;
+alter table comissoes_vendedores enable row level security;
+
 -- =========================
 -- Exemplo de policies multi-tenant (replicar para todas as tabelas)
 -- =========================
@@ -334,6 +490,19 @@ create policy "Update own tenant" on produtos for update
   using (cliente::text = current_setting('app.tenant_id', true));
 
 create policy "Delete own tenant" on produtos for delete
+  using (cliente::text = current_setting('app.tenant_id', true));
+
+-- Policies para vendedores
+create policy "Select own tenant vendors" on vendedores for select
+  using (cliente::text = current_setting('app.tenant_id', true));
+
+create policy "Insert own tenant vendors" on vendedores for insert
+  with check (cliente::text = current_setting('app.tenant_id', true));
+
+create policy "Update own tenant vendors" on vendedores for update
+  using (cliente::text = current_setting('app.tenant_id', true));
+
+create policy "Delete own tenant vendors" on vendedores for delete
   using (cliente::text = current_setting('app.tenant_id', true));
 
 -- Repita as policies para as demais tabelas com campo cliente.

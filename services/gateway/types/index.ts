@@ -114,12 +114,21 @@ export type Produto = {
   user_org?: string
   cliente?: string
   categoria?: string
+  // Campos de marketplace
+  vendedor_id?: string
+  status_aprovacao?: 'pendente' | 'aprovado' | 'rejeitado'
+  aprovado_por?: string
+  aprovado_em?: string
+  rejeitado_motivo?: string
+  custo?: number
+  margem_vendedor?: number
   created?: string
   expand?: {
     user_org?: {
       id: string
       nome: string
     }
+    vendedor_id?: Vendedor
   }
 }
 
@@ -180,4 +189,156 @@ export type Compra = {
   endereco_entrega?: Record<string, unknown>
   created?: string
   updated?: string
+}
+
+// =========================
+// TIPOS MARKETPLACE - FASE 1
+// =========================
+
+export type Vendedor = {
+  id: string
+  nome: string
+  email: string
+  telefone?: string
+  cpf_cnpj: string
+  tipo_pessoa: 'fisica' | 'juridica'
+  razao_social?: string
+  nome_fantasia?: string
+  endereco?: string
+  cidade?: string
+  estado?: string
+  cep?: string
+  status: 'pendente' | 'aprovado' | 'rejeitado' | 'suspenso'
+  taxa_comissao: number
+  bio?: string
+  logo_url?: string
+  banner_url?: string
+  site_url?: string
+  instagram?: string
+  facebook?: string
+  whatsapp?: string
+  // Dados bancários
+  banco?: string
+  agencia?: string
+  conta?: string
+  tipo_conta?: 'corrente' | 'poupanca'
+  pix_key?: string
+  // Configurações
+  aceita_devolvidos: boolean
+  tempo_processamento: number
+  politica_troca?: string
+  politica_devolucao?: string
+  // Métricas
+  total_vendas: number
+  total_produtos: number
+  avaliacao_media: number
+  total_avaliacoes: number
+  // Multi-tenant
+  cliente: string
+  // Auditoria
+  aprovado_por?: string
+  aprovado_em?: string
+  rejeitado_motivo?: string
+  created?: string
+  updated?: string
+  expand?: {
+    aprovado_por?: {
+      id: string
+      nome: string
+    }
+  }
+}
+
+export type VendedorDocumento = {
+  id: string
+  vendedor_id: string
+  tipo_documento: 'rg' | 'cpf' | 'cnpj' | 'contrato_social' | 'comprovante_endereco' | 'comprovante_bancario'
+  nome_arquivo: string
+  url_arquivo: string
+  verificado: boolean
+  verificado_por?: string
+  verificado_em?: string
+  observacoes?: string
+  created?: string
+  updated?: string
+  expand?: {
+    vendedor_id?: Vendedor
+    verificado_por?: {
+      id: string
+      nome: string
+    }
+  }
+}
+
+export type AvaliacaoVendedor = {
+  id: string
+  vendedor_id: string
+  usuario_id: string
+  pedido_id?: string
+  nota: number
+  comentario?: string
+  resposta_vendedor?: string
+  respondido_em?: string
+  cliente: string
+  created?: string
+  updated?: string
+  expand?: {
+    vendedor_id?: Vendedor
+    usuario_id?: {
+      id: string
+      nome: string
+    }
+    pedido_id?: Pedido
+  }
+}
+
+export type MensagemVendedor = {
+  id: string
+  vendedor_id: string
+  usuario_id: string
+  produto_id?: string
+  remetente: 'vendedor' | 'usuario'
+  mensagem: string
+  lida: boolean
+  cliente: string
+  created?: string
+  updated?: string
+  expand?: {
+    vendedor_id?: Vendedor
+    usuario_id?: {
+      id: string
+      nome: string
+    }
+    produto_id?: Produto
+  }
+}
+
+export type ComissaoVendedor = {
+  id: string
+  vendedor_id: string
+  pedido_id: string
+  produto_id: string
+  valor_produto: number
+  valor_comissao: number
+  taxa_comissao: number
+  status: 'pendente' | 'pago' | 'cancelado'
+  data_pagamento?: string
+  observacoes?: string
+  cliente: string
+  created?: string
+  updated?: string
+  expand?: {
+    vendedor_id?: Vendedor
+    pedido_id?: Pedido
+    produto_id?: Produto
+  }
+}
+
+// Formulários de cadastro
+export type VendedorForm = Omit<Vendedor, 'id' | 'status' | 'total_vendas' | 'total_produtos' | 'avaliacao_media' | 'total_avaliacoes' | 'created' | 'updated'>
+
+export type VendedorDocumentoForm = {
+  tipo_documento: VendedorDocumento['tipo_documento']
+  arquivo: File
+  observacoes?: string
 }
