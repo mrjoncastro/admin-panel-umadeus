@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import createPocketBase, { getTenantDatabaseUrl, registerTenantDatabase } from '@/lib/pocketbase'
+import createPocketBase from '@/lib/pocketbase'
 
-// Cache para configurações de tenant
-const tenantConfigCache = new Map<string, { tenantId: string; databaseUrl?: string }>()
+// Cache para configurações de tenant (host -> tenantId)
+const tenantConfigCache = new Map<string, string>()
 
 export async function middleware(request: NextRequest) {
   const host = request.headers.get('host')?.split(':')[0] ?? ''
@@ -11,51 +11,34 @@ export async function middleware(request: NextRequest) {
   if (host) {
     try {
       // Verifica cache primeiro
-      let tenantConfig = tenantConfigCache.get(host)
+      let tenantId = tenantConfigCache.get(host)
       
-      if (!tenantConfig) {
-        // Consulta configuração usando banco padrão
+      if (!tenantId) {
+        // Consulta configuração no banco único
         const pb = createPocketBase()
         const cfg = await pb
           .collection('clientes_config')
-          .getFirstListItem(`dominio='${host}'`, {
-            expand: 'cliente'
-          })
+          .getFirstListItem(`dominio='${host}'`)
           
         if (cfg?.cliente) {
-          tenantConfig = {
-            tenantId: String(cfg.cliente),
-            databaseUrl: cfg.database_url || undefined
-          }
+          tenantId = String(cfg.cliente)
           
-          // Se há URL de banco específica, registra
-          if (cfg.database_url) {
-            registerTenantDatabase(tenantConfig.tenantId, cfg.database_url)
-          }
-          
-          // Cache por 5 minutos
-          tenantConfigCache.set(host, tenantConfig)
+          // Cache por 5 minutos para otimizar performance
+          tenantConfigCache.set(host, tenantId)
           setTimeout(() => tenantConfigCache.delete(host), 5 * 60 * 1000)
         }
       }
       
-      if (tenantConfig) {
-        // Injeta headers do tenant
-        requestHeaders.set('x-tenant-id', tenantConfig.tenantId)
-        requestHeaders.set('x-tenant-database-url', getTenantDatabaseUrl(tenantConfig.tenantId))
+      if (tenantId) {
+        // Injeta header do tenant para identificação nas APIs
+        requestHeaders.set('x-tenant-id', tenantId)
         
         const response = NextResponse.next({
           request: { headers: requestHeaders },
         })
         
-        // Cookies para o frontend
-        response.cookies.set('tenantId', tenantConfig.tenantId, { path: '/' })
-        if (tenantConfig.databaseUrl) {
-          response.cookies.set('tenantDatabaseUrl', tenantConfig.databaseUrl, { 
-            path: '/', 
-            httpOnly: true // Segurança: não expor URL do banco no frontend
-          })
-        }
+        // Cookie para o frontend acessar o tenantId
+        response.cookies.set('tenantId', tenantId, { path: '/' })
         
         return response
       }

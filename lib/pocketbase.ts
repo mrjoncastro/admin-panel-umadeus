@@ -1,4 +1,5 @@
 import PocketBase from 'pocketbase'
+import { headers } from 'next/headers'
 
 const DEFAULT_PB_URL = 'http://127.0.0.1:8090'
 
@@ -8,82 +9,9 @@ if (!process.env.PB_URL) {
   console.warn(`PB_URL não configurada. Usando valor padrão: ${DEFAULT_PB_URL}`)
 }
 
-// Cache de instâncias PocketBase por tenant
-const tenantPbInstances = new Map<string, PocketBase>()
-
-// Configuração de URLs de banco por tenant
-const tenantDatabaseUrls = new Map<string, string>()
-
-// Função para registrar URL de banco específico por tenant
-export function registerTenantDatabase(tenantId: string, databaseUrl: string) {
-  tenantDatabaseUrls.set(tenantId, databaseUrl)
-  // Remove instância em cache para forçar recriação com nova URL
-  tenantPbInstances.delete(tenantId)
-}
-
-// Função para obter URL do banco por tenant
-export function getTenantDatabaseUrl(tenantId?: string): string {
-  if (!tenantId) return PB_URL
-  
-  // Verifica se há URL específica para o tenant
-  const tenantUrl = tenantDatabaseUrls.get(tenantId)
-  if (tenantUrl) {
-    return tenantUrl
-  }
-  
-  // Verifica variável de ambiente específica do tenant
-  const envVar = `PB_URL_TENANT_${tenantId.toUpperCase()}`
-  const tenantEnvUrl = process.env[envVar]
-  if (tenantEnvUrl) {
-    tenantDatabaseUrls.set(tenantId, tenantEnvUrl)
-    return tenantEnvUrl
-  }
-  
-  // Fallback para URL padrão
-  return PB_URL
-}
-
 const basePb = new PocketBase(PB_URL)
 
-export function createPocketBase(copyAuth = true, tenantId?: string) {
-  const databaseUrl = getTenantDatabaseUrl(tenantId)
-  
-  // Se tem tenant específico, gerencia instância em cache
-  if (tenantId && databaseUrl !== PB_URL) {
-    let tenantPb = tenantPbInstances.get(tenantId)
-    
-    if (!tenantPb) {
-      tenantPb = new PocketBase(databaseUrl)
-      tenantPb.beforeSend = (url, opt) => {
-        opt.credentials = 'include'
-        return { url, options: opt }
-      }
-      tenantPb.autoCancellation(false)
-      tenantPbInstances.set(tenantId, tenantPb)
-    }
-    
-    // Cria uma nova instância ou clona
-    const pbWithClone = tenantPb as PocketBase & { clone?: () => PocketBase }
-    const pb = typeof pbWithClone.clone === 'function'
-      ? pbWithClone.clone()
-      : new PocketBase(databaseUrl)
-      
-    if (copyAuth && tenantPb.authStore.token) {
-      pb.authStore.save(tenantPb.authStore.token, tenantPb.authStore.model)
-    } else if (!copyAuth) {
-      pb.authStore.clear()
-    }
-    
-    pb.beforeSend = (url, opt) => {
-      opt.credentials = 'include'
-      return { url, options: opt }
-    }
-    pb.autoCancellation(false)
-    
-    return pb
-  }
-  
-  // Comportamento original para tenant padrão
+export function createPocketBase(copyAuth = true) {
   const pbWithClone = basePb as PocketBase & { clone?: () => PocketBase }
   const pb =
     typeof pbWithClone.clone === 'function'
@@ -105,36 +33,101 @@ export function createPocketBase(copyAuth = true, tenantId?: string) {
 export function updateBaseAuth(
   token: string,
   model: Parameters<typeof basePb.authStore.save>[1],
-  tenantId?: string,
 ) {
-  if (tenantId) {
-    const tenantPb = tenantPbInstances.get(tenantId)
-    if (tenantPb) {
-      tenantPb.authStore.save(token, model)
-    }
-  }
   basePb.authStore.save(token, model)
 }
 
-export function clearBaseAuth(tenantId?: string) {
-  if (tenantId) {
-    const tenantPb = tenantPbInstances.get(tenantId)
-    if (tenantPb) {
-      tenantPb.authStore.clear()
-    }
-  }
+export function clearBaseAuth() {
   basePb.authStore.clear()
 }
 
-// Função para limpar cache de tenant (útil para testes ou reconfiguração)
-export function clearTenantCache(tenantId?: string) {
-  if (tenantId) {
-    tenantPbInstances.delete(tenantId)
-    tenantDatabaseUrls.delete(tenantId)
-  } else {
-    tenantPbInstances.clear()
-    tenantDatabaseUrls.clear()
+// Função utilitária para obter o tenant ID atual
+export function getCurrentTenantId(): string | null {
+  try {
+    const headersList = headers()
+    return headersList.get('x-tenant-id')
+  } catch {
+    // Fallback para cookies no lado cliente
+    if (typeof document !== 'undefined') {
+      const cookies = document.cookie.split(';')
+      const tenantCookie = cookies.find(cookie => 
+        cookie.trim().startsWith('tenantId=')
+      )
+      return tenantCookie ? tenantCookie.split('=')[1] : null
+    }
+    return null
   }
+}
+
+// Função utilitária para adicionar filtro de tenant automaticamente
+export function addTenantFilter(filter: string, tenantId?: string): string {
+  const currentTenantId = tenantId || getCurrentTenantId()
+  if (!currentTenantId) {
+    return filter
+  }
+  
+  const tenantFilter = `cliente='${currentTenantId}'`
+  
+  if (!filter || filter.trim() === '') {
+    return tenantFilter
+  }
+  
+  return `${tenantFilter} && (${filter})`
+}
+
+// Função para criar PocketBase com contexto de tenant
+export function createTenantPocketBase(copyAuth = true, tenantId?: string) {
+  const pb = createPocketBase(copyAuth)
+  const currentTenantId = tenantId || getCurrentTenantId()
+  
+  if (currentTenantId) {
+    // Adiciona interceptor para filtros automáticos de tenant
+    const originalCollection = pb.collection
+    pb.collection = function(idOrName: string) {
+      const collection = originalCollection.call(this, idOrName)
+      
+      // Lista de coleções que têm campo 'cliente' para filtro automático
+      const tenantCollections = [
+        'produtos', 'posts', 'pedidos', 'inscricoes', 'eventos',
+        'clientes_pix', 'clientes_contas_bancarias', 'clientes_config',
+        'categorias', 'campos', 'usuarios', 'manifesto_clientes'
+      ]
+      
+      if (tenantCollections.includes(idOrName)) {
+        // Override dos métodos de listagem para adicionar filtro automático
+        const originalGetList = collection.getList
+        const originalGetFirstListItem = collection.getFirstListItem
+        const originalGetFullList = collection.getFullList
+        
+        collection.getList = function(page?: number, perPage?: number, options?: any) {
+          const filter = options?.filter || ''
+          const newOptions = {
+            ...options,
+            filter: addTenantFilter(filter, currentTenantId)
+          }
+          return originalGetList.call(this, page, perPage, newOptions)
+        }
+        
+        collection.getFirstListItem = function(filter?: string, options?: any) {
+          const newFilter = addTenantFilter(filter || '', currentTenantId)
+          return originalGetFirstListItem.call(this, newFilter, options)
+        }
+        
+        collection.getFullList = function(options?: any) {
+          const filter = options?.filter || ''
+          const newOptions = {
+            ...options,
+            filter: addTenantFilter(filter, currentTenantId)
+          }
+          return originalGetFullList.call(this, newOptions)
+        }
+      }
+      
+      return collection
+    }
+  }
+  
+  return pb
 }
 
 export default createPocketBase
