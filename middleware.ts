@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import createPocketBase from '@/lib/pocketbase'
 import { checkRateLimit, getClientId, RATE_LIMITS } from '@/lib/rateLimiting'
+import { detectRegionFromSubdomain, getRegionTerritory } from '@/lib/services/subdomain-detection'
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -56,9 +57,58 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Buscar configuração do tenant
+  // Detecção de região por subdomínio
+  let regionDetection = null
   if (host) {
     try {
+      regionDetection = await detectRegionFromSubdomain(host)
+      
+      // Se encontrou região válida, configurar headers
+      if (regionDetection.isValid) {
+        const territory = getRegionTerritory(regionDetection)
+        
+        requestHeaders.set('x-tenant-id', regionDetection.tenantId || 'default')
+        requestHeaders.set('x-region-id', regionDetection.regionId || '')
+        requestHeaders.set('x-estado-id', regionDetection.estadoId || '')
+        requestHeaders.set('x-cidade-id', regionDetection.cidadeId || '')
+        requestHeaders.set('x-subdomain', regionDetection.subdomain || '')
+        
+        // Adicionar configuração da região se disponível
+        if (regionDetection.config) {
+          requestHeaders.set('x-region-config', JSON.stringify(regionDetection.config))
+        }
+        
+        const response = NextResponse.next({
+          request: { headers: requestHeaders },
+        })
+        
+        // Configurar cookies para o frontend
+        response.cookies.set('tenantId', regionDetection.tenantId || 'default', { path: '/' })
+        response.cookies.set('regionId', regionDetection.regionId || '', { path: '/' })
+        response.cookies.set('estadoId', regionDetection.estadoId || '', { path: '/' })
+        response.cookies.set('cidadeId', regionDetection.cidadeId || '', { path: '/' })
+        response.cookies.set('subdomain', regionDetection.subdomain || '', { path: '/' })
+        
+        // Headers visíveis para o cliente
+        response.headers.set('X-Region-Id', regionDetection.regionId || '')
+        response.headers.set('X-Estado-Id', regionDetection.estadoId || '')
+        response.headers.set('X-Cidade-Id', regionDetection.cidadeId || '')
+        response.headers.set('X-Subdomain', regionDetection.subdomain || '')
+        
+        // Adicionar headers de rate limiting
+        if (rateLimitKey) {
+          const clientId = getClientId(request)
+          const rateLimitResult = await checkRateLimit(clientId, rateLimitKey)
+          
+          response.headers.set('X-RateLimit-Limit', rateLimitResult.limit.toString())
+          response.headers.set('X-RateLimit-Remaining', rateLimitResult.remaining.toString())
+          response.headers.set('X-RateLimit-Reset', new Date(rateLimitResult.resetTime).toISOString())
+        }
+        
+        return response
+      }
+      
+      // Fallback para sistema antigo de tenant por domínio
       const pb = createPocketBase()
       const cfg = await pb
         .collection('clientes_config')
@@ -82,8 +132,9 @@ export async function middleware(request: NextRequest) {
         
         return response
       }
-    } catch {
-      /* ignore */
+    } catch (error) {
+      console.warn('Erro na detecção de região:', error)
+      /* continua para fallback */
     }
   }
   

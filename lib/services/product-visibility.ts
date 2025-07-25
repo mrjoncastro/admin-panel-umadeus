@@ -297,6 +297,24 @@ export async function buscarProdutosVisiveis(
   })
 }
 
+// Nova função que usa headers do middleware para detectar território automaticamente
+export async function buscarProdutosVisiveisPorSubdominio(
+  request: Request,
+  filtros?: Partial<FiltrosProdutoVisibilidade>,
+  pb?: PocketBase
+) {
+  // Extrair território dos headers do middleware
+  const territorio = {
+    estado_id: request.headers.get('x-estado-id') || '',
+    regiao_id: request.headers.get('x-region-id') || '',
+    cidade_id: request.headers.get('x-cidade-id') || ''
+  }
+  
+  const usuarioId = request.headers.get('x-user-id') || 'anonymous'
+  
+  return buscarProdutosVisiveis(usuarioId, territorio, filtros, pb)
+}
+
 export async function buscarProdutosPendentesAprovacao(
   aprovadorId: string,
   nivelAprovador: NivelHierarquia,
