@@ -1,5 +1,4 @@
 import PocketBase from 'pocketbase'
-import { headers } from 'next/headers'
 
 const DEFAULT_PB_URL = 'http://127.0.0.1:8090'
 
@@ -43,20 +42,27 @@ export function clearBaseAuth() {
 
 // Função utilitária para obter o tenant ID atual
 export function getCurrentTenantId(): string | null {
-  try {
-    const headersList = headers()
-    return headersList.get('x-tenant-id')
-  } catch {
-    // Fallback para cookies no lado cliente
-    if (typeof document !== 'undefined') {
-      const cookies = document.cookie.split(';')
-      const tenantCookie = cookies.find(cookie => 
-        cookie.trim().startsWith('tenantId=')
-      )
-      return tenantCookie ? tenantCookie.split('=')[1] : null
+  // Só tenta usar headers() se estiver no ambiente server
+  if (typeof window === 'undefined') {
+    try {
+      // Importação dinâmica para evitar erro no client
+      const { headers } = require('next/headers')
+      const headersList = headers()
+      return headersList.get('x-tenant-id')
+    } catch {
+      // Se falhar, retorna null
+      return null
     }
-    return null
   }
+  // Fallback para cookies no lado cliente
+  if (typeof document !== 'undefined') {
+    const cookies = document.cookie.split(';')
+    const tenantCookie = cookies.find(cookie => 
+      cookie.trim().startsWith('tenantId=')
+    )
+    return tenantCookie ? tenantCookie.split('=')[1] : null
+  }
+  return null
 }
 
 // Função utilitária para adicionar filtro de tenant automaticamente
