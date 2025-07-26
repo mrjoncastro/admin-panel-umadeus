@@ -13,7 +13,7 @@ export type UserModel = {
   cidade?: string
   genero?: string
   campo?: string
-  role: 'coordenador' | 'lider' | 'usuario'
+  role: 'coordenador' | 'lider' | 'usuario' | 'fornecedor'
   cliente?: string
   tour?: boolean
   [key: string]: unknown
