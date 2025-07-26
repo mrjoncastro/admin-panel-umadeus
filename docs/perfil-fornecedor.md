@@ -135,16 +135,19 @@ type Comissao = {
 ## 🔄 Fluxos de Trabalho
 
 ### 1. Cadastro de Fornecedor
-1. Fornecedor se cadastra na plataforma
-2. Status inicial: `pendente_aprovacao`
-3. Coordenador revisa documentos e informações
-4. Aprovação ou rejeição com motivo
+1. **Líderes e Coordenadores** cadastram fornecedores na plataforma
+2. Status inicial: `pendente_aprovacao` (se cadastrado por líder) ou `ativo` (se por coordenador)
+3. Coordenador revisa e aprova fornecedores cadastrados por líderes
+4. Aprovação ou rejeição com motivo detalhado
 5. Fornecedor aprovado pode cadastrar produtos
 
 ### 2. Gestão de Produtos
-1. Fornecedor cadastra produto
-2. Status inicial: `pendente`
-3. Coordenador aprova ou rejeita
+1. **Coordenadores, Líderes e Fornecedores** podem cadastrar produtos
+2. Status inicial baseado no criador:
+   - **Coordenador**: `aprovado` (direto na loja)
+   - **Líder**: `pendente` (aguarda aprovação do coordenador)
+   - **Fornecedor**: `pendente` (aguarda aprovação da liderança)
+3. Fluxo de aprovação hierárquico
 4. Produto aprovado fica visível na loja
 5. Vendas geram comissões automáticas
 
@@ -177,10 +180,37 @@ type Comissao = {
 role: 'coordenador' | 'lider' | 'usuario' | 'fornecedor'
 ```
 
+### Regras de Autorização
+
+#### **Cadastro de Fornecedores**
+- **Coordenadores**: Podem cadastrar e aprovar qualquer fornecedor
+- **Líderes**: Podem cadastrar fornecedores (requer aprovação do coordenador)
+- **Fornecedores**: Não podem cadastrar outros fornecedores
+
+#### **Lançamento de Produtos**
+- **Coordenadores**: 
+  - Podem criar produtos para qualquer fornecedor
+  - Produtos são aprovados automaticamente
+  - Podem definir produtos em destaque
+- **Líderes**: 
+  - Podem criar produtos para fornecedores do seu território
+  - Produtos ficam pendentes até aprovação do coordenador
+  - Podem aprovar produtos de fornecedores
+- **Fornecedores**: 
+  - Podem criar produtos apenas para si
+  - Produtos ficam pendentes até aprovação
+  - Não podem aprovar produtos
+
+#### **Processo de Autorização**
+- **Hierarquia de aprovação**: Fornecedor → Líder → Coordenador
+- **Visibilidade**: Produtos só ficam visíveis após aprovação
+- **Rastreabilidade**: Todas as ações são registradas com timestamp e responsável
+
 ### Middleware de Autenticação
 - **Rotas protegidas**: `/vendor/*` apenas para fornecedores
 - **Validação de tenant**: Fornecedor associado ao cliente correto
 - **Sessão segura**: Tokens JWT com expiração
+- **Controle granular**: Permissões baseadas no role do usuário
 
 ## 📈 Métricas e Analytics
 
@@ -214,13 +244,55 @@ role: 'coordenador' | 'lider' | 'usuario' | 'fornecedor'
 
 ---
 
+## 📋 Resumo das Regras Implementadas
+
+### **Cadastro de Fornecedores**
+| Role | Pode Cadastrar | Status Inicial | Aprovação Necessária |
+|------|----------------|----------------|---------------------|
+| **Coordenador** | ✅ Qualquer fornecedor | `ativo` | ❌ Não |
+| **Líder** | ✅ Fornecedores do território | `pendente_aprovacao` | ✅ Coordenador |
+| **Fornecedor** | ❌ Não pode | - | - |
+
+### **Lançamento de Produtos**
+| Role | Pode Criar Para | Status Inicial | Aprovação Necessária |
+|------|-----------------|----------------|---------------------|
+| **Coordenador** | ✅ Qualquer fornecedor | `aprovado` | ❌ Não |
+| **Líder** | ✅ Fornecedores do território | `pendente` | ✅ Coordenador |
+| **Fornecedor** | ✅ Apenas próprios | `pendente` | ✅ Líder/Coordenador |
+
+### **Processo de Autorização para Exibição**
+| Origem | Criado Por | Aprovação | Visibilidade |
+|--------|------------|-----------|--------------|
+| **Admin** | Coordenador | ✅ Automática | 🟢 Imediata |
+| **Admin** | Líder | ⏳ Coordenador | 🟡 Após aprovação |
+| **Vendor** | Fornecedor | ⏳ Líder/Coordenador | 🟡 Após aprovação |
+
+### **Hierarquia de Aprovação**
+```
+Fornecedor → Líder → Coordenador
+    ↓         ↓         ↓
+ Pendente → Revisão → Aprovado
+```
+
+### **Regras de Visualização na Plataforma**
+- ✅ **Produtos Aprovados**: Visíveis para todos na loja
+- 🟡 **Produtos Pendentes**: Visíveis apenas no painel administrativo
+- ❌ **Produtos Rejeitados**: Não visíveis na loja (apenas histórico)
+- 🔄 **Produtos em Revisão**: Aguardando nova análise
+
+---
+
 ## 💡 Conclusão
 
-O perfil fornecedor implementado segue a arquitetura de marketplace proposta, onde:
+O perfil fornecedor implementado segue rigorosamente a arquitetura de marketplace proposta, onde:
 
-- **Fornecedores** têm autonomia para gerenciar produtos e acompanhar vendas
-- **Coordenadores** mantêm controle sobre qualidade e aprovações
-- **Clientes** têm acesso a produtos diversificados e de qualidade
-- **Sistema** automatiza comissões e facilita a gestão
+- **Líderes e Coordenadores** mantêm controle total sobre o cadastro de fornecedores
+- **Coordenadores, Líderes e Fornecedores** podem colaborar no lançamento de produtos
+- **Processo hierárquico de aprovação** garante qualidade e controle
+- **Rastreabilidade completa** de todas as ações e responsáveis
+- **Regras claras de autorização** para exibição na plataforma
+- **Fornecedores** atuam como produtores dos artefatos
+- **Líderes/Coordenadores** servem como intermediários entre clientes e fornecedores
+- **Sistema automatizado** de comissões e gestão financeira
 
-Esta implementação cria um ecossistema sustentável onde todas as partes se beneficiam, mantendo a qualidade e a confiança da plataforma.
+Esta implementação cria um **ecossistema sustentável** onde todas as partes se beneficiam, mantendo a qualidade, controle e confiança da plataforma através de um sistema de governança bem estruturado.

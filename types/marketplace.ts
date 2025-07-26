@@ -75,8 +75,10 @@ export type ProdutoMarketplace = Produto & {
   vendor_id: string
   aprovado: boolean
   aprovado_por?: string
+  aprovado_por_role?: 'coordenador' | 'lider'
   data_aprovacao?: string
   motivo_rejeicao?: string
+  observacoes_internas?: string
   moderacao_status: 'pendente' | 'aprovado' | 'rejeitado' | 'revisao'
   vendas_totais: number
   estoque_disponivel: number
@@ -88,10 +90,17 @@ export type ProdutoMarketplace = Produto & {
     profundidade: number
   }
   origem: 'admin' | 'vendor' // quem criou o produto
+  created_by: string // ID do usuário que criou
+  created_by_role: 'coordenador' | 'lider' | 'fornecedor' // role de quem criou
   destaque: boolean // produto em destaque no marketplace
   expand?: Produto['expand'] & {
     vendor?: Vendor
     avaliacoes?: ProdutoAvaliacao[]
+    created_by_user?: {
+      id: string
+      nome: string
+      role: string
+    }
   }
 }
 
