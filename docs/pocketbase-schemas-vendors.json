@@ -61,7 +61,7 @@
           "required": false
         },
         {
-          "name": "endereco_cep",
+          "name": "cep",
           "type": "text",
           "required": true,
           "options": {
@@ -70,7 +70,7 @@
           }
         },
         {
-          "name": "endereco_rua",
+          "name": "endereco",
           "type": "text",
           "required": true,
           "options": {
@@ -79,12 +79,11 @@
           }
         },
         {
-          "name": "endereco_numero",
-          "type": "text",
+          "name": "numero",
+          "type": "number",
           "required": true,
           "options": {
-            "min": 1,
-            "max": 10
+            "min": 1
           }
         },
         {
@@ -96,7 +95,7 @@
           }
         },
         {
-          "name": "endereco_bairro",
+          "name": "bairro",
           "type": "text",
           "required": true,
           "options": {
@@ -105,7 +104,7 @@
           }
         },
         {
-          "name": "endereco_cidade",
+          "name": "cidade",
           "type": "text",
           "required": true,
           "options": {
@@ -114,7 +113,7 @@
           }
         },
         {
-          "name": "endereco_estado",
+          "name": "estado",
           "type": "text",
           "required": true,
           "options": {
@@ -149,7 +148,7 @@
           "type": "relation",
           "required": false,
           "options": {
-            "collectionId": "users",
+            "collectionId": "pbc_882525820",
             "cascadeDelete": false,
             "minSelect": null,
             "maxSelect": 1,
@@ -314,7 +313,7 @@
           "type": "relation",
           "required": true,
           "options": {
-            "collectionId": "clientes",
+            "collectionId": "pbc_328821001",
             "cascadeDelete": true,
             "minSelect": 1,
             "maxSelect": 1,
@@ -326,7 +325,7 @@
           "type": "relation",
           "required": true,
           "options": {
-            "collectionId": "users",
+            "collectionId": "pbc_882525820",
             "cascadeDelete": false,
             "minSelect": 1,
             "maxSelect": 1,
@@ -340,6 +339,14 @@
           "options": {
             "values": ["coordenador", "lider"]
           }
+        },
+        {
+          "name": "genero",
+          "type": "select",
+          "required": false,
+          "options": {
+            "values": ["masculino", "feminino"]
+          }
         }
       ],
       "indexes": [
@@ -348,11 +355,11 @@
         "CREATE INDEX idx_vendors_status_cliente ON vendors (status, cliente)",
         "CREATE INDEX idx_vendors_created_by ON vendors (created_by)"
       ],
-      "listRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || @request.auth.role = 'lider' || id = @request.auth.vendor_id)",
-      "viewRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || @request.auth.role = 'lider' || id = @request.auth.vendor_id)",
-      "createRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || @request.auth.role = 'lider')",
-      "updateRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || (@request.auth.role = 'lider' && status != 'ativo') || id = @request.auth.vendor_id)",
-      "deleteRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'"
+      "listRule": "@request.auth.verified = true && (@request.auth.role = \"coordenador\" && cliente = @request.auth.cliente || @request.auth.role = \"lider\" && cliente = @request.auth.cliente || id = @request.auth.vendor_id)",
+      "viewRule": "@request.auth.verified = true && (@request.auth.role = \"coordenador\" && cliente = @request.auth.cliente || @request.auth.role = \"lider\" && cliente = @request.auth.cliente || id = @request.auth.vendor_id)",
+      "createRule": "@request.auth.verified = true && (@request.auth.role = \"coordenador\" && cliente = @request.auth.cliente || @request.auth.role = \"lider\" && cliente = @request.auth.cliente)",
+      "updateRule": "@request.auth.verified = true && (@request.auth.role = \"coordenador\" && cliente = @request.auth.cliente || (@request.auth.role = \"lider\" && cliente = @request.auth.cliente && status != \"ativo\") || id = @request.auth.vendor_id)",
+      "deleteRule": "@request.auth.verified = true && @request.auth.role = \"coordenador\" && cliente = @request.auth.cliente"
     },
     {
       "name": "comissoes",
@@ -376,7 +383,7 @@
           "type": "relation",
           "required": true,
           "options": {
-            "collectionId": "pedidos",
+            "collectionId": "pbc_4131763008",
             "cascadeDelete": true,
             "minSelect": 1,
             "maxSelect": 1,
@@ -388,7 +395,7 @@
           "type": "relation",
           "required": true,
           "options": {
-            "collectionId": "produtos",
+            "collectionId": "pbc_1135311916",
             "cascadeDelete": true,
             "minSelect": 1,
             "maxSelect": 1,
@@ -489,7 +496,7 @@
           "type": "relation",
           "required": true,
           "options": {
-            "collectionId": "clientes",
+            "collectionId": "pbc_328821001",
             "cascadeDelete": true,
             "minSelect": 1,
             "maxSelect": 1,
@@ -503,11 +510,11 @@
         "CREATE INDEX idx_comissoes_cliente_data ON comissoes (cliente, data_venda)",
         "CREATE INDEX idx_comissoes_status_liberacao ON comissoes (status, data_liberacao)"
       ],
-      "listRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || (@request.auth.role = 'lider' && vendor_id.cliente = @request.auth.cliente) || vendor_id = @request.auth.vendor_id)",
-      "viewRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || (@request.auth.role = 'lider' && vendor_id.cliente = @request.auth.cliente) || vendor_id = @request.auth.vendor_id)",
-      "createRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'",
-      "updateRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'",
-      "deleteRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'"
+      "listRule": "@request.auth.verified = true && (@request.auth.role = \"coordenador\" && cliente = @request.auth.cliente || (@request.auth.role = \"lider\" && vendor_id.cliente = @request.auth.cliente) || vendor_id = @request.auth.vendor_id)",
+      "viewRule": "@request.auth.verified = true && (@request.auth.role = \"coordenador\" && cliente = @request.auth.cliente || (@request.auth.role = \"lider\" && vendor_id.cliente = @request.auth.cliente) || vendor_id = @request.auth.vendor_id)",
+      "createRule": "@request.auth.verified = true && @request.auth.role = \"coordenador\" && cliente = @request.auth.cliente",
+      "updateRule": "@request.auth.verified = true && @request.auth.role = \"coordenador\" && cliente = @request.auth.cliente",
+      "deleteRule": "@request.auth.verified = true && @request.auth.role = \"coordenador\" && cliente = @request.auth.cliente"
     },
     {
       "name": "saques_comissao",
@@ -583,7 +590,7 @@
           "type": "relation",
           "required": false,
           "options": {
-            "collectionId": "users",
+            "collectionId": "pbc_882525820",
             "cascadeDelete": false,
             "minSelect": null,
             "maxSelect": 1,
@@ -618,7 +625,7 @@
           "type": "relation",
           "required": true,
           "options": {
-            "collectionId": "clientes",
+            "collectionId": "pbc_328821001",
             "cascadeDelete": true,
             "minSelect": 1,
             "maxSelect": 1,
@@ -630,11 +637,11 @@
         "CREATE INDEX idx_saques_vendor_status ON saques_comissao (vendor_id, status)",
         "CREATE INDEX idx_saques_cliente_data ON saques_comissao (cliente, data_solicitacao)"
       ],
-      "listRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || (@request.auth.role = 'lider' && vendor_id.cliente = @request.auth.cliente) || vendor_id = @request.auth.vendor_id)",
-      "viewRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || (@request.auth.role = 'lider' && vendor_id.cliente = @request.auth.cliente) || vendor_id = @request.auth.vendor_id)",
-      "createRule": "@request.auth.verified = true && (vendor_id = @request.auth.vendor_id || @request.auth.role = 'coordenador')",
-      "updateRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || @request.auth.role = 'lider')",
-      "deleteRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'"
+      "listRule": "@request.auth.verified = true && (@request.auth.role = \"coordenador\" && cliente = @request.auth.cliente || (@request.auth.role = \"lider\" && vendor_id.cliente = @request.auth.cliente) || vendor_id = @request.auth.vendor_id)",
+      "viewRule": "@request.auth.verified = true && (@request.auth.role = \"coordenador\" && cliente = @request.auth.cliente || (@request.auth.role = \"lider\" && vendor_id.cliente = @request.auth.cliente) || vendor_id = @request.auth.vendor_id)",
+      "createRule": "@request.auth.verified = true && (vendor_id = @request.auth.vendor_id || (@request.auth.role = \"coordenador\" && cliente = @request.auth.cliente))",
+      "updateRule": "@request.auth.verified = true && (@request.auth.role = \"coordenador\" && cliente = @request.auth.cliente || @request.auth.role = \"lider\" && cliente = @request.auth.cliente)",
+      "deleteRule": "@request.auth.verified = true && @request.auth.role = \"coordenador\" && cliente = @request.auth.cliente"
     },
     {
       "name": "produto_avaliacoes",
@@ -646,7 +653,7 @@
           "type": "relation",
           "required": true,
           "options": {
-            "collectionId": "produtos",
+            "collectionId": "pbc_1135311916",
             "cascadeDelete": true,
             "minSelect": 1,
             "maxSelect": 1,
@@ -658,7 +665,7 @@
           "type": "relation",
           "required": true,
           "options": {
-            "collectionId": "users",
+            "collectionId": "pbc_882525820",
             "cascadeDelete": true,
             "minSelect": 1,
             "maxSelect": 1,
@@ -670,7 +677,7 @@
           "type": "relation",
           "required": true,
           "options": {
-            "collectionId": "pedidos",
+            "collectionId": "pbc_4131763008",
             "cascadeDelete": true,
             "minSelect": 1,
             "maxSelect": 1,
@@ -732,7 +739,7 @@
           "type": "relation",
           "required": true,
           "options": {
-            "collectionId": "clientes",
+            "collectionId": "pbc_328821001",
             "cascadeDelete": true,
             "minSelect": 1,
             "maxSelect": 1,
@@ -747,8 +754,8 @@
       "listRule": "@request.auth.verified = true",
       "viewRule": "@request.auth.verified = true",
       "createRule": "@request.auth.verified = true && cliente_id = @request.auth.id",
-      "updateRule": "@request.auth.verified = true && (cliente_id = @request.auth.id || produto_id.vendor_id = @request.auth.vendor_id || @request.auth.role = 'coordenador')",
-      "deleteRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || cliente_id = @request.auth.id)"
+      "updateRule": "@request.auth.verified = true && (cliente_id = @request.auth.id || produto_id.vendor_id = @request.auth.vendor_id || (@request.auth.role = \"coordenador\" && cliente = @request.auth.cliente))",
+      "deleteRule": "@request.auth.verified = true && ((@request.auth.role = \"coordenador\" && cliente = @request.auth.cliente) || cliente_id = @request.auth.id)"
     },
     {
       "name": "vendor_analytics",
@@ -872,7 +879,7 @@
           "type": "relation",
           "required": true,
           "options": {
-            "collectionId": "clientes",
+            "collectionId": "pbc_328821001",
             "cascadeDelete": true,
             "minSelect": 1,
             "maxSelect": 1,
@@ -884,11 +891,11 @@
         "CREATE UNIQUE INDEX idx_analytics_vendor_periodo ON vendor_analytics (vendor_id, periodo)",
         "CREATE INDEX idx_analytics_cliente_periodo ON vendor_analytics (cliente, periodo)"
       ],
-      "listRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || (@request.auth.role = 'lider' && vendor_id.cliente = @request.auth.cliente) || vendor_id = @request.auth.vendor_id)",
-      "viewRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || (@request.auth.role = 'lider' && vendor_id.cliente = @request.auth.cliente) || vendor_id = @request.auth.vendor_id)",
-      "createRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'",
-      "updateRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'",
-      "deleteRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'"
+      "listRule": "@request.auth.verified = true && (@request.auth.role = \"coordenador\" && cliente = @request.auth.cliente || (@request.auth.role = \"lider\" && vendor_id.cliente = @request.auth.cliente) || vendor_id = @request.auth.vendor_id)",
+      "viewRule": "@request.auth.verified = true && (@request.auth.role = \"coordenador\" && cliente = @request.auth.cliente || (@request.auth.role = \"lider\" && vendor_id.cliente = @request.auth.cliente) || vendor_id = @request.auth.vendor_id)",
+      "createRule": "@request.auth.verified = true && @request.auth.role = \"coordenador\" && cliente = @request.auth.cliente",
+      "updateRule": "@request.auth.verified = true && @request.auth.role = \"coordenador\" && cliente = @request.auth.cliente",
+      "deleteRule": "@request.auth.verified = true && @request.auth.role = \"coordenador\" && cliente = @request.auth.cliente"
     },
     {
       "name": "vendor_notifications",
@@ -954,7 +961,7 @@
           "type": "relation",
           "required": true,
           "options": {
-            "collectionId": "clientes",
+            "collectionId": "pbc_328821001",
             "cascadeDelete": true,
             "minSelect": 1,
             "maxSelect": 1,
@@ -968,9 +975,9 @@
       ],
       "listRule": "@request.auth.verified = true && vendor_id = @request.auth.vendor_id",
       "viewRule": "@request.auth.verified = true && vendor_id = @request.auth.vendor_id",
-      "createRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'",
+      "createRule": "@request.auth.verified = true && @request.auth.role = \"coordenador\" && cliente = @request.auth.cliente",
       "updateRule": "@request.auth.verified = true && vendor_id = @request.auth.vendor_id",
-      "deleteRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || vendor_id = @request.auth.vendor_id)"
+      "deleteRule": "@request.auth.verified = true && ((@request.auth.role = \"coordenador\" && cliente = @request.auth.cliente) || vendor_id = @request.auth.vendor_id)"
     },
     {
       "name": "marketplace_config",
@@ -982,7 +989,7 @@
           "type": "relation",
           "required": true,
           "options": {
-            "collectionId": "clientes",
+            "collectionId": "pbc_328821001",
             "cascadeDelete": true,
             "minSelect": 1,
             "maxSelect": 1,
@@ -1077,15 +1084,15 @@
       "indexes": [
         "CREATE UNIQUE INDEX idx_marketplace_config_cliente ON marketplace_config (cliente)"
       ],
-      "listRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || @request.auth.role = 'lider')",
-      "viewRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || @request.auth.role = 'lider')",
-      "createRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'",
-      "updateRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'",
-      "deleteRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'"
+      "listRule": "@request.auth.verified = true && (@request.auth.role = \"coordenador\" && cliente = @request.auth.cliente || @request.auth.role = \"lider\" && cliente = @request.auth.cliente)",
+      "viewRule": "@request.auth.verified = true && (@request.auth.role = \"coordenador\" && cliente = @request.auth.cliente || @request.auth.role = \"lider\" && cliente = @request.auth.cliente)",
+      "createRule": "@request.auth.verified = true && @request.auth.role = \"coordenador\" && cliente = @request.auth.cliente",
+      "updateRule": "@request.auth.verified = true && @request.auth.role = \"coordenador\" && cliente = @request.auth.cliente",
+      "deleteRule": "@request.auth.verified = true && @request.auth.role = \"coordenador\" && cliente = @request.auth.cliente"
     }
   ],
   "modifications": {
-    "users": {
+    "usuarios": {
       "new_fields": [
         {
           "name": "vendor_id",
@@ -1103,16 +1110,6 @@
           "name": "vendor_approved",
           "type": "bool",
           "required": false
-        }
-      ],
-      "modify_fields": [
-        {
-          "name": "role",
-          "type": "select",
-          "required": true,
-          "options": {
-            "values": ["coordenador", "lider", "usuario", "fornecedor"]
-          }
         }
       ]
     },
@@ -1143,7 +1140,7 @@
           "type": "relation",
           "required": false,
           "options": {
-            "collectionId": "users",
+            "collectionId": "pbc_882525820",
             "cascadeDelete": false,
             "minSelect": null,
             "maxSelect": 1,
@@ -1167,16 +1164,11 @@
           }
         },
         {
-          "name": "aprovado",
-          "type": "bool",
-          "required": false
-        },
-        {
           "name": "aprovado_por",
           "type": "relation",
           "required": false,
           "options": {
-            "collectionId": "users",
+            "collectionId": "pbc_882525820",
             "cascadeDelete": false,
             "minSelect": null,
             "maxSelect": 1,
@@ -1270,9 +1262,9 @@
       ],
       "new_indexes": [
         "CREATE INDEX idx_produtos_vendor_moderacao ON produtos (vendor_id, moderacao_status)",
-        "CREATE INDEX idx_produtos_cliente_aprovado ON produtos (cliente, aprovado, ativo)",
-        "CREATE INDEX idx_produtos_created_by_moderacao ON produtos (created_by, moderacao_status)",
-        "CREATE INDEX idx_produtos_destaque_aprovado ON produtos (destaque, aprovado)"
+        "CREATE INDEX idx_produtos_cliente_aprovado ON produtos (cliente, requer_inscricao_aprovada, ativo)",
+        "CREATE INDEX idx_produtos_created_by_moderacao ON produtos (user_org, moderacao_status)",
+        "CREATE INDEX idx_produtos_destaque_aprovado ON produtos (destaque, requer_inscricao_aprovada)"
       ]
     },
     "pedidos": {
