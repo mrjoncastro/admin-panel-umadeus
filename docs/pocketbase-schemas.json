@@ -1,0 +1,1309 @@
+{
+  "collections": [
+    {
+      "name": "vendors",
+      "type": "base",
+      "system": false,
+      "schema": [
+        {
+          "name": "nome",
+          "type": "text",
+          "required": true,
+          "options": {
+            "min": 2,
+            "max": 100
+          }
+        },
+        {
+          "name": "nome_fantasia",
+          "type": "text",
+          "required": false,
+          "options": {
+            "min": 0,
+            "max": 100
+          }
+        },
+        {
+          "name": "documento",
+          "type": "text",
+          "required": true,
+          "options": {
+            "min": 11,
+            "max": 18,
+            "pattern": "^[0-9.-/]+$"
+          }
+        },
+        {
+          "name": "tipo_documento",
+          "type": "select",
+          "required": true,
+          "options": {
+            "values": ["cpf", "cnpj"]
+          }
+        },
+        {
+          "name": "email",
+          "type": "email",
+          "required": true
+        },
+        {
+          "name": "telefone",
+          "type": "text",
+          "required": true,
+          "options": {
+            "min": 10,
+            "max": 15
+          }
+        },
+        {
+          "name": "data_nascimento",
+          "type": "date",
+          "required": false
+        },
+        {
+          "name": "endereco_cep",
+          "type": "text",
+          "required": true,
+          "options": {
+            "min": 8,
+            "max": 9
+          }
+        },
+        {
+          "name": "endereco_rua",
+          "type": "text",
+          "required": true,
+          "options": {
+            "min": 5,
+            "max": 200
+          }
+        },
+        {
+          "name": "endereco_numero",
+          "type": "text",
+          "required": true,
+          "options": {
+            "min": 1,
+            "max": 10
+          }
+        },
+        {
+          "name": "endereco_complemento",
+          "type": "text",
+          "required": false,
+          "options": {
+            "max": 100
+          }
+        },
+        {
+          "name": "endereco_bairro",
+          "type": "text",
+          "required": true,
+          "options": {
+            "min": 2,
+            "max": 100
+          }
+        },
+        {
+          "name": "endereco_cidade",
+          "type": "text",
+          "required": true,
+          "options": {
+            "min": 2,
+            "max": 100
+          }
+        },
+        {
+          "name": "endereco_estado",
+          "type": "text",
+          "required": true,
+          "options": {
+            "min": 2,
+            "max": 2
+          }
+        },
+        {
+          "name": "endereco_pais",
+          "type": "text",
+          "required": true,
+          "options": {
+            "min": 2,
+            "max": 50
+          }
+        },
+        {
+          "name": "status",
+          "type": "select",
+          "required": true,
+          "options": {
+            "values": ["ativo", "suspenso", "pendente_aprovacao", "rejeitado"]
+          }
+        },
+        {
+          "name": "data_aprovacao",
+          "type": "date",
+          "required": false
+        },
+        {
+          "name": "aprovado_por",
+          "type": "relation",
+          "required": false,
+          "options": {
+            "collectionId": "users",
+            "cascadeDelete": false,
+            "minSelect": null,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        },
+        {
+          "name": "motivo_rejeicao",
+          "type": "editor",
+          "required": false
+        },
+        {
+          "name": "comissao_percentual",
+          "type": "number",
+          "required": true,
+          "options": {
+            "min": 0,
+            "max": 100
+          }
+        },
+        {
+          "name": "valor_minimo_saque",
+          "type": "number",
+          "required": true,
+          "options": {
+            "min": 1
+          }
+        },
+        {
+          "name": "banco",
+          "type": "text",
+          "required": true,
+          "options": {
+            "min": 3,
+            "max": 100
+          }
+        },
+        {
+          "name": "agencia",
+          "type": "text",
+          "required": true,
+          "options": {
+            "min": 4,
+            "max": 10
+          }
+        },
+        {
+          "name": "conta",
+          "type": "text",
+          "required": true,
+          "options": {
+            "min": 5,
+            "max": 15
+          }
+        },
+        {
+          "name": "tipo_conta",
+          "type": "select",
+          "required": true,
+          "options": {
+            "values": ["corrente", "poupanca"]
+          }
+        },
+        {
+          "name": "titular",
+          "type": "text",
+          "required": true,
+          "options": {
+            "min": 3,
+            "max": 100
+          }
+        },
+        {
+          "name": "documento_titular",
+          "type": "text",
+          "required": true,
+          "options": {
+            "min": 11,
+            "max": 18
+          }
+        },
+        {
+          "name": "auto_aprovar_produtos",
+          "type": "bool",
+          "required": false
+        },
+        {
+          "name": "notificar_vendas",
+          "type": "bool",
+          "required": false
+        },
+        {
+          "name": "notificar_comissoes",
+          "type": "bool",
+          "required": false
+        },
+        {
+          "name": "periodo_saque",
+          "type": "select",
+          "required": false,
+          "options": {
+            "values": ["semanal", "quinzenal", "mensal"]
+          }
+        },
+        {
+          "name": "logo_url",
+          "type": "file",
+          "required": false,
+          "options": {
+            "maxSelect": 1,
+            "maxSize": 5242880,
+            "mimeTypes": ["image/jpeg", "image/png", "image/webp"],
+            "thumbs": ["100x100"]
+          }
+        },
+        {
+          "name": "descricao",
+          "type": "editor",
+          "required": false
+        },
+        {
+          "name": "website",
+          "type": "url",
+          "required": false
+        },
+        {
+          "name": "instagram",
+          "type": "text",
+          "required": false,
+          "options": {
+            "max": 50
+          }
+        },
+        {
+          "name": "facebook",
+          "type": "text",
+          "required": false,
+          "options": {
+            "max": 50
+          }
+        },
+        {
+          "name": "whatsapp",
+          "type": "text",
+          "required": false,
+          "options": {
+            "max": 15
+          }
+        },
+        {
+          "name": "documentos_verificacao",
+          "type": "file",
+          "required": false,
+          "options": {
+            "maxSelect": 10,
+            "maxSize": 10485760,
+            "mimeTypes": ["image/jpeg", "image/png", "application/pdf"]
+          }
+        },
+        {
+          "name": "cliente",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "clientes",
+            "cascadeDelete": true,
+            "minSelect": 1,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        },
+        {
+          "name": "created_by",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "users",
+            "cascadeDelete": false,
+            "minSelect": 1,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        },
+        {
+          "name": "created_by_role",
+          "type": "select",
+          "required": true,
+          "options": {
+            "values": ["coordenador", "lider"]
+          }
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX idx_vendors_email_cliente ON vendors (email, cliente)",
+        "CREATE UNIQUE INDEX idx_vendors_documento_cliente ON vendors (documento, cliente)",
+        "CREATE INDEX idx_vendors_status_cliente ON vendors (status, cliente)",
+        "CREATE INDEX idx_vendors_created_by ON vendors (created_by)"
+      ],
+      "listRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || @request.auth.role = 'lider' || id = @request.auth.vendor_id)",
+      "viewRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || @request.auth.role = 'lider' || id = @request.auth.vendor_id)",
+      "createRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || @request.auth.role = 'lider')",
+      "updateRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || (@request.auth.role = 'lider' && status != 'ativo') || id = @request.auth.vendor_id)",
+      "deleteRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'"
+    },
+    {
+      "name": "comissoes",
+      "type": "base",
+      "system": false,
+      "schema": [
+        {
+          "name": "vendor_id",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "vendors",
+            "cascadeDelete": true,
+            "minSelect": 1,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        },
+        {
+          "name": "pedido_id",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "pedidos",
+            "cascadeDelete": true,
+            "minSelect": 1,
+            "maxSelect": 1,
+            "displayFields": ["id"]
+          }
+        },
+        {
+          "name": "produto_id",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "produtos",
+            "cascadeDelete": true,
+            "minSelect": 1,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        },
+        {
+          "name": "produto_nome",
+          "type": "text",
+          "required": true,
+          "options": {
+            "min": 1,
+            "max": 200
+          }
+        },
+        {
+          "name": "cliente_nome",
+          "type": "text",
+          "required": true,
+          "options": {
+            "min": 1,
+            "max": 100
+          }
+        },
+        {
+          "name": "valor_venda",
+          "type": "number",
+          "required": true,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "percentual_comissao",
+          "type": "number",
+          "required": true,
+          "options": {
+            "min": 0,
+            "max": 100
+          }
+        },
+        {
+          "name": "valor_comissao",
+          "type": "number",
+          "required": true,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "status",
+          "type": "select",
+          "required": true,
+          "options": {
+            "values": ["pendente", "liberada", "paga", "cancelada"]
+          }
+        },
+        {
+          "name": "data_venda",
+          "type": "date",
+          "required": true
+        },
+        {
+          "name": "data_liberacao",
+          "type": "date",
+          "required": false
+        },
+        {
+          "name": "data_pagamento",
+          "type": "date",
+          "required": false
+        },
+        {
+          "name": "forma_pagamento",
+          "type": "select",
+          "required": false,
+          "options": {
+            "values": ["pix", "ted", "doc"]
+          }
+        },
+        {
+          "name": "comprovante_pagamento",
+          "type": "file",
+          "required": false,
+          "options": {
+            "maxSelect": 1,
+            "maxSize": 5242880,
+            "mimeTypes": ["image/jpeg", "image/png", "application/pdf"]
+          }
+        },
+        {
+          "name": "observacoes",
+          "type": "editor",
+          "required": false
+        },
+        {
+          "name": "cliente",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "clientes",
+            "cascadeDelete": true,
+            "minSelect": 1,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_comissoes_vendor_status ON comissoes (vendor_id, status)",
+        "CREATE INDEX idx_comissoes_pedido ON comissoes (pedido_id)",
+        "CREATE INDEX idx_comissoes_cliente_data ON comissoes (cliente, data_venda)",
+        "CREATE INDEX idx_comissoes_status_liberacao ON comissoes (status, data_liberacao)"
+      ],
+      "listRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || (@request.auth.role = 'lider' && vendor_id.cliente = @request.auth.cliente) || vendor_id = @request.auth.vendor_id)",
+      "viewRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || (@request.auth.role = 'lider' && vendor_id.cliente = @request.auth.cliente) || vendor_id = @request.auth.vendor_id)",
+      "createRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'",
+      "updateRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'",
+      "deleteRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'"
+    },
+    {
+      "name": "saques_comissao",
+      "type": "base",
+      "system": false,
+      "schema": [
+        {
+          "name": "vendor_id",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "vendors",
+            "cascadeDelete": true,
+            "minSelect": 1,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        },
+        {
+          "name": "comissoes_ids",
+          "type": "json",
+          "required": true
+        },
+        {
+          "name": "valor_solicitado",
+          "type": "number",
+          "required": true,
+          "options": {
+            "min": 1
+          }
+        },
+        {
+          "name": "taxa_saque",
+          "type": "number",
+          "required": true,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "valor_liquido",
+          "type": "number",
+          "required": true,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "status",
+          "type": "select",
+          "required": true,
+          "options": {
+            "values": ["solicitado", "processando", "pago", "cancelado"]
+          }
+        },
+        {
+          "name": "data_solicitacao",
+          "type": "date",
+          "required": true
+        },
+        {
+          "name": "data_processamento",
+          "type": "date",
+          "required": false
+        },
+        {
+          "name": "data_pagamento",
+          "type": "date",
+          "required": false
+        },
+        {
+          "name": "processado_por",
+          "type": "relation",
+          "required": false,
+          "options": {
+            "collectionId": "users",
+            "cascadeDelete": false,
+            "minSelect": null,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        },
+        {
+          "name": "forma_pagamento",
+          "type": "select",
+          "required": false,
+          "options": {
+            "values": ["pix", "ted", "doc"]
+          }
+        },
+        {
+          "name": "comprovante",
+          "type": "file",
+          "required": false,
+          "options": {
+            "maxSelect": 1,
+            "maxSize": 5242880,
+            "mimeTypes": ["image/jpeg", "image/png", "application/pdf"]
+          }
+        },
+        {
+          "name": "observacoes",
+          "type": "editor",
+          "required": false
+        },
+        {
+          "name": "cliente",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "clientes",
+            "cascadeDelete": true,
+            "minSelect": 1,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_saques_vendor_status ON saques_comissao (vendor_id, status)",
+        "CREATE INDEX idx_saques_cliente_data ON saques_comissao (cliente, data_solicitacao)"
+      ],
+      "listRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || (@request.auth.role = 'lider' && vendor_id.cliente = @request.auth.cliente) || vendor_id = @request.auth.vendor_id)",
+      "viewRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || (@request.auth.role = 'lider' && vendor_id.cliente = @request.auth.cliente) || vendor_id = @request.auth.vendor_id)",
+      "createRule": "@request.auth.verified = true && (vendor_id = @request.auth.vendor_id || @request.auth.role = 'coordenador')",
+      "updateRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || @request.auth.role = 'lider')",
+      "deleteRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'"
+    },
+    {
+      "name": "produto_avaliacoes",
+      "type": "base",
+      "system": false,
+      "schema": [
+        {
+          "name": "produto_id",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "produtos",
+            "cascadeDelete": true,
+            "minSelect": 1,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        },
+        {
+          "name": "cliente_id",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "users",
+            "cascadeDelete": true,
+            "minSelect": 1,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        },
+        {
+          "name": "pedido_id",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "pedidos",
+            "cascadeDelete": true,
+            "minSelect": 1,
+            "maxSelect": 1,
+            "displayFields": ["id"]
+          }
+        },
+        {
+          "name": "nota",
+          "type": "number",
+          "required": true,
+          "options": {
+            "min": 1,
+            "max": 5
+          }
+        },
+        {
+          "name": "comentario",
+          "type": "editor",
+          "required": false
+        },
+        {
+          "name": "data_compra",
+          "type": "date",
+          "required": true
+        },
+        {
+          "name": "verificada",
+          "type": "bool",
+          "required": false
+        },
+        {
+          "name": "resposta_vendor",
+          "type": "editor",
+          "required": false
+        },
+        {
+          "name": "data_resposta",
+          "type": "date",
+          "required": false
+        },
+        {
+          "name": "status",
+          "type": "select",
+          "required": true,
+          "options": {
+            "values": ["ativa", "moderada", "removida"]
+          }
+        },
+        {
+          "name": "denuncias",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "cliente",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "clientes",
+            "cascadeDelete": true,
+            "minSelect": 1,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_avaliacoes_produto_status ON produto_avaliacoes (produto_id, status)",
+        "CREATE INDEX idx_avaliacoes_cliente_data ON produto_avaliacoes (cliente, created)"
+      ],
+      "listRule": "@request.auth.verified = true",
+      "viewRule": "@request.auth.verified = true",
+      "createRule": "@request.auth.verified = true && cliente_id = @request.auth.id",
+      "updateRule": "@request.auth.verified = true && (cliente_id = @request.auth.id || produto_id.vendor_id = @request.auth.vendor_id || @request.auth.role = 'coordenador')",
+      "deleteRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || cliente_id = @request.auth.id)"
+    },
+    {
+      "name": "vendor_analytics",
+      "type": "base",
+      "system": false,
+      "schema": [
+        {
+          "name": "vendor_id",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "vendors",
+            "cascadeDelete": true,
+            "minSelect": 1,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        },
+        {
+          "name": "periodo",
+          "type": "text",
+          "required": true,
+          "options": {
+            "min": 7,
+            "max": 7,
+            "pattern": "^\\d{4}-\\d{2}$"
+          }
+        },
+        {
+          "name": "vendas_quantidade",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "vendas_valor",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "comissao_valor",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "ticket_medio",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "produtos_cadastrados",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "produtos_aprovados",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "produtos_rejeitados",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "visualizacoes_produtos",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "avaliacoes_recebidas",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "nota_media",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0,
+            "max": 5
+          }
+        },
+        {
+          "name": "conversao_taxa",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0,
+            "max": 100
+          }
+        },
+        {
+          "name": "cliente",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "clientes",
+            "cascadeDelete": true,
+            "minSelect": 1,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX idx_analytics_vendor_periodo ON vendor_analytics (vendor_id, periodo)",
+        "CREATE INDEX idx_analytics_cliente_periodo ON vendor_analytics (cliente, periodo)"
+      ],
+      "listRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || (@request.auth.role = 'lider' && vendor_id.cliente = @request.auth.cliente) || vendor_id = @request.auth.vendor_id)",
+      "viewRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || (@request.auth.role = 'lider' && vendor_id.cliente = @request.auth.cliente) || vendor_id = @request.auth.vendor_id)",
+      "createRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'",
+      "updateRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'",
+      "deleteRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'"
+    },
+    {
+      "name": "vendor_notifications",
+      "type": "base",
+      "system": false,
+      "schema": [
+        {
+          "name": "vendor_id",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "vendors",
+            "cascadeDelete": true,
+            "minSelect": 1,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        },
+        {
+          "name": "tipo",
+          "type": "select",
+          "required": true,
+          "options": {
+            "values": ["nova_venda", "produto_aprovado", "produto_rejeitado", "comissao_liberada", "saque_processado"]
+          }
+        },
+        {
+          "name": "titulo",
+          "type": "text",
+          "required": true,
+          "options": {
+            "min": 1,
+            "max": 200
+          }
+        },
+        {
+          "name": "mensagem",
+          "type": "editor",
+          "required": true
+        },
+        {
+          "name": "link",
+          "type": "url",
+          "required": false
+        },
+        {
+          "name": "dados_extras",
+          "type": "json",
+          "required": false
+        },
+        {
+          "name": "lida",
+          "type": "bool",
+          "required": false
+        },
+        {
+          "name": "data_leitura",
+          "type": "date",
+          "required": false
+        },
+        {
+          "name": "cliente",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "clientes",
+            "cascadeDelete": true,
+            "minSelect": 1,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_notifications_vendor_lida ON vendor_notifications (vendor_id, lida)",
+        "CREATE INDEX idx_notifications_cliente_created ON vendor_notifications (cliente, created)"
+      ],
+      "listRule": "@request.auth.verified = true && vendor_id = @request.auth.vendor_id",
+      "viewRule": "@request.auth.verified = true && vendor_id = @request.auth.vendor_id",
+      "createRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'",
+      "updateRule": "@request.auth.verified = true && vendor_id = @request.auth.vendor_id",
+      "deleteRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || vendor_id = @request.auth.vendor_id)"
+    },
+    {
+      "name": "marketplace_config",
+      "type": "base",
+      "system": false,
+      "schema": [
+        {
+          "name": "cliente",
+          "type": "relation",
+          "required": true,
+          "options": {
+            "collectionId": "clientes",
+            "cascadeDelete": true,
+            "minSelect": 1,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        },
+        {
+          "name": "habilitado",
+          "type": "bool",
+          "required": false
+        },
+        {
+          "name": "comissao_padrao",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0,
+            "max": 100
+          }
+        },
+        {
+          "name": "valor_minimo_saque",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 1
+          }
+        },
+        {
+          "name": "taxa_saque",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "periodo_retencao_dias",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0,
+            "max": 365
+          }
+        },
+        {
+          "name": "moderacao_produtos",
+          "type": "bool",
+          "required": false
+        },
+        {
+          "name": "auto_aprovar_vendors",
+          "type": "bool",
+          "required": false
+        },
+        {
+          "name": "categorias_permitidas",
+          "type": "json",
+          "required": false
+        },
+        {
+          "name": "formas_pagamento_comissao",
+          "type": "json",
+          "required": false
+        },
+        {
+          "name": "notificar_novo_vendor",
+          "type": "bool",
+          "required": false
+        },
+        {
+          "name": "notificar_novo_produto",
+          "type": "bool",
+          "required": false
+        },
+        {
+          "name": "notificar_venda",
+          "type": "bool",
+          "required": false
+        },
+        {
+          "name": "termos_uso_vendor",
+          "type": "editor",
+          "required": false
+        },
+        {
+          "name": "politica_comissao",
+          "type": "editor",
+          "required": false
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX idx_marketplace_config_cliente ON marketplace_config (cliente)"
+      ],
+      "listRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || @request.auth.role = 'lider')",
+      "viewRule": "@request.auth.verified = true && (@request.auth.role = 'coordenador' || @request.auth.role = 'lider')",
+      "createRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'",
+      "updateRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'",
+      "deleteRule": "@request.auth.verified = true && @request.auth.role = 'coordenador'"
+    }
+  ],
+  "modifications": {
+    "users": {
+      "new_fields": [
+        {
+          "name": "vendor_id",
+          "type": "relation",
+          "required": false,
+          "options": {
+            "collectionId": "vendors",
+            "cascadeDelete": false,
+            "minSelect": null,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        },
+        {
+          "name": "vendor_approved",
+          "type": "bool",
+          "required": false
+        }
+      ],
+      "modify_fields": [
+        {
+          "name": "role",
+          "type": "select",
+          "required": true,
+          "options": {
+            "values": ["coordenador", "lider", "usuario", "fornecedor"]
+          }
+        }
+      ]
+    },
+    "produtos": {
+      "new_fields": [
+        {
+          "name": "vendor_id",
+          "type": "relation",
+          "required": false,
+          "options": {
+            "collectionId": "vendors",
+            "cascadeDelete": false,
+            "minSelect": null,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        },
+        {
+          "name": "origem",
+          "type": "select",
+          "required": false,
+          "options": {
+            "values": ["admin", "vendor"]
+          }
+        },
+        {
+          "name": "created_by",
+          "type": "relation",
+          "required": false,
+          "options": {
+            "collectionId": "users",
+            "cascadeDelete": false,
+            "minSelect": null,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        },
+        {
+          "name": "created_by_role",
+          "type": "select",
+          "required": false,
+          "options": {
+            "values": ["coordenador", "lider", "fornecedor"]
+          }
+        },
+        {
+          "name": "moderacao_status",
+          "type": "select",
+          "required": false,
+          "options": {
+            "values": ["pendente", "aprovado", "rejeitado", "revisao"]
+          }
+        },
+        {
+          "name": "aprovado",
+          "type": "bool",
+          "required": false
+        },
+        {
+          "name": "aprovado_por",
+          "type": "relation",
+          "required": false,
+          "options": {
+            "collectionId": "users",
+            "cascadeDelete": false,
+            "minSelect": null,
+            "maxSelect": 1,
+            "displayFields": ["nome"]
+          }
+        },
+        {
+          "name": "aprovado_por_role",
+          "type": "select",
+          "required": false,
+          "options": {
+            "values": ["coordenador", "lider"]
+          }
+        },
+        {
+          "name": "data_aprovacao",
+          "type": "date",
+          "required": false
+        },
+        {
+          "name": "motivo_rejeicao",
+          "type": "editor",
+          "required": false
+        },
+        {
+          "name": "observacoes_internas",
+          "type": "editor",
+          "required": false
+        },
+        {
+          "name": "destaque",
+          "type": "bool",
+          "required": false
+        },
+        {
+          "name": "vendas_totais",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "estoque_disponivel",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "estoque_minimo",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "peso",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "dimensoes_altura",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "dimensoes_largura",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        },
+        {
+          "name": "dimensoes_profundidade",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        }
+      ],
+      "new_indexes": [
+        "CREATE INDEX idx_produtos_vendor_moderacao ON produtos (vendor_id, moderacao_status)",
+        "CREATE INDEX idx_produtos_cliente_aprovado ON produtos (cliente, aprovado, ativo)",
+        "CREATE INDEX idx_produtos_created_by_moderacao ON produtos (created_by, moderacao_status)",
+        "CREATE INDEX idx_produtos_destaque_aprovado ON produtos (destaque, aprovado)"
+      ]
+    },
+    "pedidos": {
+      "new_fields": [
+        {
+          "name": "vendor_ids",
+          "type": "json",
+          "required": false
+        },
+        {
+          "name": "gera_comissao",
+          "type": "bool",
+          "required": false
+        },
+        {
+          "name": "comissao_calculada",
+          "type": "bool",
+          "required": false
+        },
+        {
+          "name": "comissao_valor_total",
+          "type": "number",
+          "required": false,
+          "options": {
+            "min": 0
+          }
+        }
+      ],
+      "new_indexes": [
+        "CREATE INDEX idx_pedidos_comissao_calculada ON pedidos (comissao_calculada, status)"
+      ]
+    }
+  }
+}
