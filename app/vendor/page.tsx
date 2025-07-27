@@ -11,22 +11,17 @@ import {
   AlertCircle,
   Calendar
 } from 'lucide-react'
-
-type VendorMetrics = {
-  totalProdutos: number
-  totalVendas: number
-  receitaTotal: number
-  comissaoPendente: number
-  avaliacaoMedia: number
-  totalAvaliacoes: number
-  produtosAprovados: number
-  produtosPendentes: number
-  vendasMes: number
-  crescimentoMes: number
-}
+import { VendorMetricas } from '../../types/marketplace'
+import { 
+  fetchVendorAnalytics,
+  fetchComissoes,
+  fetchProdutosMarketplace,
+  verificarVendorAuth 
+} from '../../lib/services/marketplace'
+import { createTenantPocketBase } from '../../lib/pocketbase'
 
 export default function VendorDashboard() {
-  const [metrics, setMetrics] = useState<VendorMetrics>({
+  const [metrics, setMetrics] = useState<VendorMetricas>({
     totalProdutos: 0,
     totalVendas: 0,
     receitaTotal: 0,
@@ -39,33 +34,113 @@ export default function VendorDashboard() {
     crescimentoMes: 0
   })
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [vendorId, setVendorId] = useState<string | null>(null)
+  const [tenantId, setTenantId] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchMetrics()
+    initializeDashboard()
   }, [])
 
-  const fetchMetrics = async () => {
+  const initializeDashboard = async () => {
     try {
       setLoading(true)
-      // Simular dados por enquanto
-      setTimeout(() => {
-        setMetrics({
-          totalProdutos: 15,
-          totalVendas: 234,
-          receitaTotal: 12450.80,
-          comissaoPendente: 1250.40,
-          avaliacaoMedia: 4.7,
-          totalAvaliacoes: 89,
-          produtosAprovados: 12,
-          produtosPendentes: 3,
-          vendasMes: 45,
-          crescimentoMes: 12.5
-        })
-        setLoading(false)
-      }, 1000)
+      setError(null)
+      
+      const pb = createTenantPocketBase()
+      
+      // Verificar se o usuário está autenticado
+      if (!pb.authStore.model?.id) {
+        setError('Usuário não autenticado')
+        return
+      }
+
+      const userId = pb.authStore.model.id
+      const clienteId = pb.authStore.model.cliente
+      
+      if (!clienteId) {
+        setError('Cliente não identificado')
+        return
+      }
+
+      setTenantId(clienteId)
+
+      // Verificar se o usuário é um vendor ativo
+      const vendor = await verificarVendorAuth(userId, clienteId, pb)
+      
+      if (!vendor) {
+        setError('Usuário não é um fornecedor ativo')
+        return
+      }
+
+      setVendorId(vendor.id)
+      
+      // Carregar métricas
+      await fetchMetrics(vendor.id, clienteId, pb)
+      
     } catch (error) {
-      console.error('Erro ao carregar métricas:', error)
+      console.error('Erro ao inicializar dashboard:', error)
+      setError('Erro ao carregar dados do dashboard')
+    } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchMetrics = async (vendorId: string, tenantId: string, pb: any) => {
+    try {
+      // Período atual (mês atual)
+      const now = new Date()
+      const periodoAtual = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`
+      const periodoAnterior = now.getMonth() === 0 
+        ? `${now.getFullYear() - 1}-12`
+        : `${now.getFullYear()}-${now.getMonth().toString().padStart(2, '0')}`
+
+      // Buscar produtos do vendor
+      const produtos = await fetchProdutosMarketplace(tenantId, { vendorId }, pb)
+      
+      // Buscar comissões
+      const comissoes = await fetchComissoes(tenantId, { vendorId }, pb)
+      const comissoesPendentes = comissoes.filter(c => c.status === 'pendente')
+      const comissoesPagas = comissoes.filter(c => c.status === 'paga' || c.status === 'liberada')
+      
+      // Buscar analytics do período atual
+      const analyticsAtual = await fetchVendorAnalytics(vendorId, tenantId, periodoAtual, pb)
+      const analyticsAnterior = await fetchVendorAnalytics(vendorId, tenantId, periodoAnterior, pb)
+      
+      const metricsAtual = analyticsAtual[0]
+      const metricsAnterior = analyticsAnterior[0]
+      
+      // Calcular crescimento
+      const vendasMesAtual = metricsAtual?.vendas_quantidade || 0
+      const vendasMesAnterior = metricsAnterior?.vendas_quantidade || 0
+      const crescimentoMes = vendasMesAnterior > 0 
+        ? ((vendasMesAtual - vendasMesAnterior) / vendasMesAnterior) * 100 
+        : 0
+
+      // Calcular métricas gerais
+      const totalVendas = comissoesPagas.length
+      const receitaTotal = comissoesPagas.reduce((sum, c) => sum + c.valor_venda, 0)
+      const comissaoPendente = comissoesPendentes.reduce((sum, c) => sum + c.valor_comissao, 0)
+      
+      const produtosAprovados = produtos.filter(p => p.moderacao_status === 'aprovado').length
+      const produtosPendentes = produtos.filter(p => p.moderacao_status === 'pendente').length
+
+      setMetrics({
+        totalProdutos: produtos.length,
+        totalVendas,
+        receitaTotal,
+        comissaoPendente,
+        avaliacaoMedia: metricsAtual?.nota_media || 0,
+        totalAvaliacoes: metricsAtual?.avaliacoes_recebidas || 0,
+        produtosAprovados,
+        produtosPendentes,
+        vendasMes: vendasMesAtual,
+        crescimentoMes
+      })
+      
+    } catch (error) {
+      console.error('Erro ao buscar métricas:', error)
+      throw error
     }
   }
 
@@ -106,11 +181,11 @@ export default function VendorDashboard() {
             <Icon className="h-6 w-6" />
           </div>
         </div>
-        {trend && (
+        {trend !== undefined && (
           <div className="mt-4 flex items-center">
             <TrendingUp className={`h-4 w-4 mr-1 ${trend > 0 ? 'text-green-500' : 'text-red-500'}`} />
             <span className={`text-sm font-medium ${trend > 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {trend > 0 ? '+' : ''}{trend}%
+              {trend > 0 ? '+' : ''}{trend.toFixed(1)}%
             </span>
             <span className="text-sm text-gray-500 ml-1">vs mês anterior</span>
           </div>
@@ -123,6 +198,24 @@ export default function VendorDashboard() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Erro ao carregar dashboard</h3>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={initializeDashboard}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Tentar novamente
+          </button>
+        </div>
       </div>
     )
   }
@@ -197,7 +290,7 @@ export default function VendorDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard
           title="Avaliação Média"
-          value={`${metrics.avaliacaoMedia}/5.0`}
+          value={metrics.avaliacaoMedia > 0 ? `${metrics.avaliacaoMedia.toFixed(1)}/5.0` : 'N/A'}
           icon={Star}
           color="green"
           subtitle={`${metrics.totalAvaliacoes} avaliações`}
@@ -224,22 +317,31 @@ export default function VendorDashboard() {
       <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Ações Rápidas</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
+          <button 
+            onClick={() => window.location.href = '/vendor/produtos/novo'}
+            className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
+          >
             <Package className="h-6 w-6 text-blue-600 mb-2" />
             <h3 className="font-medium text-gray-900">Adicionar Produto</h3>
             <p className="text-sm text-gray-600">Cadastre um novo produto</p>
           </button>
           
-          <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
+          <button 
+            onClick={() => window.location.href = '/vendor/produtos'}
+            className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
+          >
             <ShoppingCart className="h-6 w-6 text-green-600 mb-2" />
-            <h3 className="font-medium text-gray-900">Ver Pedidos</h3>
-            <p className="text-sm text-gray-600">Acompanhe suas vendas</p>
+            <h3 className="font-medium text-gray-900">Ver Produtos</h3>
+            <p className="text-sm text-gray-600">Gerencie seus produtos</p>
           </button>
           
-          <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left">
+          <button 
+            onClick={() => window.location.href = '/vendor/comissoes'}
+            className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-left"
+          >
             <DollarSign className="h-6 w-6 text-purple-600 mb-2" />
-            <h3 className="font-medium text-gray-900">Solicitar Saque</h3>
-            <p className="text-sm text-gray-600">Receba suas comissões</p>
+            <h3 className="font-medium text-gray-900">Ver Comissões</h3>
+            <p className="text-sm text-gray-600">Acompanhe suas comissões</p>
           </button>
         </div>
       </div>
@@ -248,32 +350,19 @@ export default function VendorDashboard() {
       <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Últimas Atividades</h2>
         <div className="space-y-3">
-          <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-            <Calendar className="h-5 w-5 text-gray-400" />
-            <div>
-              <p className="text-sm font-medium text-gray-900">Nova venda realizada</p>
-              <p className="text-sm text-gray-600">Kit Jovem - Tamanho M - R$ 45,00</p>
-              <p className="text-xs text-gray-500">há 2 horas</p>
+          {vendorId ? (
+            <div className="text-center text-gray-500 py-8">
+              <Calendar className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <p>Sistema de atividades será implementado em breve</p>
             </div>
-          </div>
-          
-          <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-            <Package className="h-5 w-5 text-green-500" />
-            <div>
-              <p className="text-sm font-medium text-gray-900">Produto aprovado</p>
-              <p className="text-sm text-gray-600">Camiseta Básica foi aprovada pela coordenação</p>
-              <p className="text-xs text-gray-500">há 1 dia</p>
+          ) : (
+            <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+              <AlertCircle className="h-5 w-5 text-gray-400" />
+              <div>
+                <p className="text-sm font-medium text-gray-900">Carregando atividades...</p>
+              </div>
             </div>
-          </div>
-          
-          <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-            <Star className="h-5 w-5 text-yellow-500" />
-            <div>
-              <p className="text-sm font-medium text-gray-900">Nova avaliação</p>
-              <p className="text-sm text-gray-600">5 estrelas no Kit Premium</p>
-              <p className="text-xs text-gray-500">há 2 dias</p>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
