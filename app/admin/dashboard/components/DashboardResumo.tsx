@@ -174,7 +174,7 @@ export default function DashboardResumo({
             <Tippy content="Exportar relatório completo com resumo, inscrições, pedidos e estatísticas">
               <button
                 onClick={handleExportComplete}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-200 font-medium"
+                className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200 font-medium"
               >
                 <Download className="w-4 h-4" />
                 Relatório Completo (XLSX)
@@ -183,7 +183,7 @@ export default function DashboardResumo({
             <Tippy content="Exportar apenas dados das inscrições">
               <button
                 onClick={handleExportInscricoes}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 font-medium"
+                className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-200 font-medium"
               >
                 <Download className="w-4 h-4" />
                 Inscrições (XLSX)
@@ -192,7 +192,7 @@ export default function DashboardResumo({
             <Tippy content="Exportar apenas dados dos pedidos">
               <button
                 onClick={handleExportPedidos}
-                className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors duration-200 font-medium"
+                className="flex items-center gap-2 px-4 py-2 bg-red-400 hover:bg-red-500 text-white rounded-lg transition-colors duration-200 font-medium"
               >
                 <Download className="w-4 h-4" />
                 Pedidos (XLSX)
@@ -201,7 +201,7 @@ export default function DashboardResumo({
             <Tippy content="Gerar relatório em formato PDF">
               <button
                 onClick={handleExportPDF}
-                className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200 font-medium"
+                className="flex items-center gap-2 px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg transition-colors duration-200 font-medium"
               >
                 <FileText className="w-4 h-4" />
                 Relatório (PDF)
