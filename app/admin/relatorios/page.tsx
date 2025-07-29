@@ -254,10 +254,8 @@ export default function RelatoriosPage() {
         }).then((r) => r.json())
         const produtos = Array.isArray(prodRes) ? prodRes : [prodRes]
 
-        // Filtrar apenas produtos ativos
-        const produtosAtivos = produtos.filter((p: Produto) => p.ativo === true)
-
-        console.log('Produtos carregados:', produtosAtivos) // Debug log
+        // Não filtrar por ativo, usar todos os produtos
+        console.log('Produtos carregados:', produtos) // Debug log
 
         // Fetch campos for filter options
         const camposRes = await fetch(`/api/campos?${params.toString()}`, {
@@ -334,12 +332,12 @@ export default function RelatoriosPage() {
         if (user.role === 'coordenador') {
           setInscricoes(allInscricoes)
           setPedidos(allPedidos)
-          setProdutos(produtosAtivos)
+          setProdutos(produtos)
           setCampos(campos)
         } else {
           setInscricoes(allInscricoes.filter((i) => i.campo === campoId))
           setPedidos(allPedidos.filter((p) => p.expand?.campo?.id === campoId))
-          setProdutos(produtosAtivos)
+          setProdutos(produtos)
           setCampos(campos.filter((c: { id: string }) => c.id === campoId))
         }
       } catch (err: unknown) {
@@ -398,6 +396,10 @@ export default function RelatoriosPage() {
       ? produtos.filter((p: Produto) => p.evento_id === filtros.evento)
       : produtos
 
+  console.log('Filtros atuais:', filtros)
+  console.log('Produtos filtrados:', produtosFiltrados)
+  console.log('Produtos totais:', produtos)
+
   return (
     <main className="min-h-screen p-4 md:p-6">
       {!authChecked || !user || loading ? (
@@ -441,7 +443,7 @@ export default function RelatoriosPage() {
                             className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
                           />
                           <span className="ml-2 text-sm text-gray-700 dark:text-gray-300 capitalize">
-                            {status}
+                            {status} ({filtros.status.includes(status) ? '✓' : '✗'})
                           </span>
                         </label>
                       ),
