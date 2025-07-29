@@ -17,7 +17,12 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    let baseFilter = `ativo = true && cliente='${tenantId}'`
+    // Para coordenadores e líderes, incluir produtos inativos (útil para relatórios pós-eventos)
+    const isAdmin = role === 'coordenador' || role === 'lider'
+    let baseFilter = isAdmin 
+      ? `cliente='${tenantId}'` 
+      : `ativo = true && cliente='${tenantId}'`
+    
     if (!role) {
       baseFilter += ' && exclusivo_user = false'
     }
@@ -33,7 +38,7 @@ export async function GET(req: NextRequest) {
     )
 
     // Aplica filtro extra (caso sua função faça algo a mais)
-    const ativos = filtrarProdutos(produtos, categoria, !!role)
+    const ativos = filtrarProdutos(produtos, categoria, !!role, isAdmin)
 
     // Monta URLs completas das imagens
     const comUrls = ativos.map((p) => ({

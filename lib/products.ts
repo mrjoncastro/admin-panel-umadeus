@@ -17,10 +17,11 @@ export function filtrarProdutos(
   produtos: ProdutoRecord[],
   categoria?: string,
   includeInternos = true,
+  includeInativos = false,
 ): ProdutoRecord[] {
   return produtos.filter(
     (p) =>
-      p.ativo === true &&
+      (includeInativos || p.ativo === true) &&
       (!categoria || p.categoria === categoria) &&
       (includeInternos || p.exclusivo_user !== true),
   )
