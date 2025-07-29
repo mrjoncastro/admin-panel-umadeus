@@ -17,8 +17,6 @@ const BarChart = dynamic(() => import('react-chartjs-2').then((m) => m.Bar), {
 
 // Enhanced filtering interface
 interface Filtros {
-  status: string[]
-  statusInscricoes: string[]
   produto: string[]
   campo: string[]
   periodo: string
@@ -39,13 +37,9 @@ export default function RelatoriosPage() {
   const [eventos, setEventos] = useState<{ id: string; titulo: string }[]>([])
   const [totalInscricoes, setTotalInscricoes] = useState(0)
   const [totalPedidos, setTotalPedidos] = useState(0)
-  const [filtroStatus, setFiltroStatus] = useState('todos')
-  const [filtroInscricoes, setFiltroInscricoes] = useState('todos')
 
   // Enhanced filters state
   const [filtros, setFiltros] = useState<Filtros>({
-    status: [],
-    statusInscricoes: [],
     produto: [],
     campo: [],
     periodo: 'todos',
@@ -72,12 +66,7 @@ export default function RelatoriosPage() {
     let inscricoesResult = [...inscricoes]
     let pedidosResult = [...pedidos]
 
-    // Filter inscricoes
-    if (filtros.statusInscricoes.length > 0) {
-      inscricoesResult = inscricoesResult.filter(
-        (i) => i.status && filtros.statusInscricoes.includes(i.status),
-      )
-    }
+
     if (filtros.produto.length > 0) {
       inscricoesResult = inscricoesResult.filter(
         (i) => i.produto && filtros.produto.includes(i.produto),
@@ -119,12 +108,7 @@ export default function RelatoriosPage() {
       }
     }
 
-    // Filter pedidos
-    if (filtros.status.length > 0) {
-      pedidosResult = pedidosResult.filter((p) =>
-        filtros.status.includes(p.status),
-      )
-    }
+
     if (filtros.produto.length > 0) {
       pedidosResult = pedidosResult.filter((p) => {
         if (Array.isArray(p.produto)) {
@@ -470,8 +454,6 @@ export default function RelatoriosPage() {
 
   const clearAllFilters = () => {
     setFiltros({
-      status: [],
-      statusInscricoes: [],
       produto: [],
       campo: [],
       periodo: 'todos',
@@ -482,30 +464,6 @@ export default function RelatoriosPage() {
   }
 
   // Funções para calcular opções dinâmicas baseadas nos filtros ativos
-  const getStatusOptions = () => {
-    const statusDisponiveis = new Set<string>()
-    pedidosFiltrados.forEach(p => {
-      if (p.status) statusDisponiveis.add(p.status)
-    })
-    return ['pendente', 'pago', 'vencido', 'cancelado'].filter(status => 
-      statusDisponiveis.has(status) || filtros.status.includes(status)
-    )
-  }
-
-  const getStatusInscricoesOptions = () => {
-    const statusDisponiveis = new Set<string>()
-    inscricoesFiltradas.forEach(i => {
-      if (i.status) statusDisponiveis.add(i.status)
-    })
-    return [
-      { value: 'pendente', label: 'Pendente' },
-      { value: 'aguardando_pagamento', label: 'Aguardando Pagamento' },
-      { value: 'confirmado', label: 'Confirmado' },
-      { value: 'cancelado', label: 'Cancelado' }
-    ].filter(status => 
-      statusDisponiveis.has(status.value) || filtros.statusInscricoes.includes(status.value)
-    )
-  }
 
   const getProdutoOptions = () => {
     // Retornar todos os produtos disponíveis, independentemente de estarem sendo usados
@@ -589,58 +547,6 @@ export default function RelatoriosPage() {
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-4">
-                {/* Status do Pedido */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                    Situação do Pedido
-                  </label>
-                  <div className="space-y-2">
-                    {getStatusOptions().map(
-                      (status) => (
-                        <label key={status} className="flex items-center">
-                          <input
-                            type="checkbox"
-                            checked={filtros.status.includes(status)}
-                            onChange={() =>
-                              handleFiltroChange('status', status)
-                            }
-                            className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                          />
-                          <span className="ml-2 text-sm text-gray-700 dark:text-gray-300 capitalize">
-                            {status}
-                          </span>
-                        </label>
-                      ),
-                    )}
-                  </div>
-                </div>
-
-                {/* Status da Inscrição */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                    Situação da Inscrição
-                  </label>
-                  <div className="space-y-2">
-                    {getStatusInscricoesOptions().map((status) => (
-                      <label key={status.value} className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={filtros.statusInscricoes.includes(
-                            status.value,
-                          )}
-                          onChange={() =>
-                            handleFiltroChange('statusInscricoes', status.value)
-                          }
-                          className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                        />
-                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
-                          {status.label}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
                 {/* Evento */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -803,10 +709,6 @@ export default function RelatoriosPage() {
           <DashboardResumo
             inscricoes={inscricoesFiltradas}
             pedidos={pedidosFiltrados}
-            filtroStatus={filtroStatus}
-            filtroInscricoes={filtroInscricoes}
-            setFiltroInscricoes={setFiltroInscricoes}
-            setFiltroStatus={setFiltroStatus}
             totalInscricoes={totalInscricoes}
             totalPedidos={totalPedidos}
           />
