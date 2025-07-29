@@ -87,6 +87,11 @@ export default function DashboardResumo({
         const isRelatorios = window.location.pathname.includes('/relatorios')
         const isLider = window.location.pathname.includes('/lider')
         
+        // Verificar se há filtro de evento ativo (para relatórios)
+        const urlParams = new URLSearchParams(window.location.search)
+        const eventoFiltro = urlParams.get('evento')
+        const eventoSelecionado = eventoFiltro && eventoFiltro !== 'todos' ? eventoFiltro : null
+        
         // PÁGINA 1 - CAPA
         doc.setFontSize(24)
         doc.setFont('helvetica', 'bold')
@@ -94,7 +99,11 @@ export default function DashboardResumo({
         
         if (isRelatorios) {
           doc.setFontSize(18)
-          doc.text('Análise de Dados Filtrados', pageWidth / 2, 60, { align: 'center' })
+          if (eventoSelecionado) {
+            doc.text('Análise de Dados por Evento', pageWidth / 2, 60, { align: 'center' })
+          } else {
+            doc.text('Análise de Dados Filtrados', pageWidth / 2, 60, { align: 'center' })
+          }
         } else {
           doc.setFontSize(18)
           doc.text('Dashboard Geral', pageWidth / 2, 60, { align: 'center' })

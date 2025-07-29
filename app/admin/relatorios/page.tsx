@@ -64,6 +64,26 @@ export default function RelatoriosPage() {
     let inscricoesResult = [...inscricoes]
     let pedidosResult = [...pedidos]
 
+    // FILTRO POR EVENTO - Isolamento crítico para evitar mistura de dados
+    if (filtros.evento !== 'todos') {
+      // Filtrar inscrições por evento (através do produto associado)
+      inscricoesResult = inscricoesResult.filter((i) => {
+        if (!i.produto) return false
+        
+        // Verificar se o produto da inscrição pertence ao evento selecionado
+        const produtoInscricao = produtos.find(p => p.id === i.produto)
+        return produtoInscricao?.evento_id === filtros.evento
+      })
+
+      // Filtrar pedidos por evento (através do produto associado)
+      pedidosResult = pedidosResult.filter((p) => {
+        // p.produto é sempre string[] no tipo Pedido
+        return p.produto.some(prodId => {
+          const produto = produtos.find(prod => prod.id === prodId)
+          return produto?.evento_id === filtros.evento
+        })
+      })
+    }
 
     if (filtros.produto.length > 0) {
       inscricoesResult = inscricoesResult.filter(
@@ -168,7 +188,7 @@ export default function RelatoriosPage() {
 
     setInscricoesFiltradas(inscricoesResult)
     setPedidosFiltrados(pedidosResult)
-  }, [inscricoes, pedidos, filtros])
+  }, [inscricoes, pedidos, filtros, produtos])
 
   const sortPedidos = useCallback(
     (lista: Pedido[]) => {
@@ -461,7 +481,7 @@ export default function RelatoriosPage() {
   // Funções para calcular opções dinâmicas baseadas nos filtros ativos
 
   const getProdutoOptions = () => {
-    // Retornar todos os produtos disponíveis, independentemente de estarem sendo usados
+    // Retornar produtos filtrados por evento para evitar mistura de dados
     return produtosFiltrados
   }
 
@@ -532,6 +552,18 @@ export default function RelatoriosPage() {
             <p className="text-sm text-gray-700 mt-1 dark:text-gray-100">
               Análise completa com filtros avançados e gráficos.
             </p>
+            {filtros.evento !== 'todos' && (
+              <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-900/20 dark:border-blue-700">
+                <p className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                  📊 Analisando evento: <span className="font-bold">
+                    {eventos.find(e => e.id === filtros.evento)?.titulo || 'Evento selecionado'}
+                  </span>
+                </p>
+                <p className="text-xs text-blue-600 dark:text-blue-300 mt-1">
+                  Dados isolados por evento para evitar mistura entre diferentes eventos
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Enhanced Filters Section */}
