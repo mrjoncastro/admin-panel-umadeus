@@ -17,8 +17,6 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-  const [filtroStatus, setFiltroStatus] = useState('pago')
-  const [filtroInscricoes, setFiltroInscricoes] = useState('pendente')
   const [error, setError] = useState<string | null>(null)
   const isMounted = useRef(true)
 
