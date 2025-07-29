@@ -13,15 +13,27 @@ import {
 interface DashboardResumoProps {
   inscricoes: Inscricao[]
   pedidos: Pedido[]
+  filtroStatus?: string
+  filtroInscricoes?: string
+  setFiltroInscricoes?: (status: string) => void
+  setFiltroStatus?: (status: string) => void
+  totalInscricoes?: number
+  totalPedidos?: number
 }
 
 export default function DashboardResumo({
   inscricoes,
   pedidos,
+  filtroStatus,
+  filtroInscricoes,
+  setFiltroInscricoes,
+  setFiltroStatus,
+  totalInscricoes,
+  totalPedidos,
 }: DashboardResumoProps) {
-  // Calcular totais com base nos dados filtrados
-  const totalInscricoesFiltradas = inscricoes.length
-  const totalPedidosFiltrados = pedidos.length
+  // Calcular totais com base nos dados filtrados ou usar props se fornecidas
+  const totalInscricoesFiltradas = totalInscricoes || inscricoes.length
+  const totalPedidosFiltrados = totalPedidos || pedidos.length
   
   const valorTotalConfirmado = inscricoes.reduce((total, i) => {
     const pedido = i.expand?.pedido
