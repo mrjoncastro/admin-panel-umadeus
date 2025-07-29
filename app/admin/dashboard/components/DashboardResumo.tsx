@@ -277,39 +277,46 @@ export default function DashboardResumo({
         doc.text('Página 4 de 6', pageWidth / 2, pageHeight - 20, { align: 'center' })
         doc.text('Desenvolvido por M24', pageWidth - margin, pageHeight - 20, { align: 'right' })
         
-        // PÁGINA 5 - TABELAS DE ANÁLISE
+        // PÁGINA 5 - TABELAS DE ANÁLISE (TODOS OS DADOS)
         doc.addPage()
         doc.setFontSize(18)
         doc.setFont('helvetica', 'bold')
         doc.text('Tabelas de Análise', margin, 40)
         
+        // Informação sobre inclusão completa de dados
+        doc.setFontSize(10)
+        doc.setFont('helvetica', 'italic')
+        doc.text('* Todas as inscrições e pedidos serão incluídos para conferência completa', margin, 55)
+        
         // Tabela de Inscrições Detalhadas com paginação automática
         doc.setFontSize(14)
         doc.setFont('helvetica', 'bold')
-        doc.text('Inscrições Detalhadas', margin, 70)
+        doc.text('Inscrições Detalhadas', margin, 75)
         
         // Cabeçalho da tabela
         doc.setFontSize(10)
         doc.setFont('helvetica', 'bold')
-        doc.text('CPF', margin, 90)
-        doc.text('Nome', margin + 35, 90)
-        doc.text('Email', margin + 90, 90)
-        doc.text('Status', margin + 150, 90)
-        doc.text('Data', margin + 190, 90)
+        doc.text('CPF', margin, 95)
+        doc.text('Nome', margin + 35, 95)
+        doc.text('Email', margin + 90, 95)
+        doc.text('Status', margin + 150, 95)
+        doc.text('Data', margin + 190, 95)
         
         // Linha separadora
-        doc.line(margin, 95, pageWidth - margin, 95)
+        doc.line(margin, 100, pageWidth - margin, 100)
         
-        // Dados das inscrições com paginação automática
+        // Dados das inscrições com paginação automática - TODOS OS DADOS
         doc.setFontSize(9)
         doc.setFont('helvetica', 'normal')
-        let yInscricoes = 105
+        let yInscricoes = 110
         let currentPage = 5
-        let itemsPerPage = Math.floor((pageHeight - 120) / 10) // Calcular quantos itens cabem por página
+        // Calcular quantos itens cabem por página (espaço para cabeçalho + margem)
+        let itemsPerPage = Math.floor((pageHeight - 140) / 10) // Margem maior para garantir espaço
         
+        // IMPORTANTE: Incluir TODAS as inscrições sem limitação
         inscricoes.forEach((inscricao, index) => {
-          // Verificar se precisa de nova página
-          if (yInscricoes > pageHeight - 40) {
+          // Verificar se precisa de nova página (margem de segurança)
+          if (yInscricoes > pageHeight - 50) {
             // Adicionar rodapé da página atual
             doc.setFontSize(9)
             doc.text(`Página ${currentPage}`, pageWidth / 2, pageHeight - 20, { align: 'center' })
@@ -319,7 +326,7 @@ export default function DashboardResumo({
             doc.addPage()
             currentPage++
             
-            // Repetir cabeçalho na nova página
+            // Repetir cabeçalho na nova página (continuação)
             doc.setFontSize(14)
             doc.setFont('helvetica', 'bold')
             doc.text('Inscrições Detalhadas (continuação)', margin, 40)
@@ -358,38 +365,46 @@ export default function DashboardResumo({
         doc.text(`Página ${currentPage}`, pageWidth / 2, pageHeight - 20, { align: 'center' })
         doc.text('Desenvolvido por M24', pageWidth - margin, pageHeight - 20, { align: 'right' })
         
-        // PÁGINA 6 - TABELAS DE PEDIDOS
+        // PÁGINA 6 - TABELAS DE PEDIDOS (TODOS OS DADOS)
         doc.addPage()
         doc.setFontSize(18)
         doc.setFont('helvetica', 'bold')
         doc.text('Tabelas de Pedidos', margin, 40)
         
+        // Informação sobre inclusão completa de dados
+        doc.setFontSize(10)
+        doc.setFont('helvetica', 'italic')
+        doc.text('* Todos os pedidos serão incluídos para conferência completa', margin, 55)
+        
         // Tabela de Pedidos Detalhados com paginação automática
         doc.setFontSize(14)
         doc.setFont('helvetica', 'bold')
-        doc.text('Pedidos Detalhados', margin, 70)
+        doc.text('Pedidos Detalhados', margin, 75)
         
         // Cabeçalho da tabela
         doc.setFontSize(10)
         doc.setFont('helvetica', 'bold')
-        doc.text('CPF', margin, 90)
-        doc.text('Produto', margin + 50, 90)
-        doc.text('Status', margin + 120, 90)
-        doc.text('Valor', margin + 160, 90)
-        doc.text('Data', margin + 200, 90)
+        doc.text('CPF', margin, 95)
+        doc.text('Produto', margin + 50, 95)
+        doc.text('Status', margin + 120, 95)
+        doc.text('Valor', margin + 160, 95)
+        doc.text('Data', margin + 200, 95)
         
         // Linha separadora
-        doc.line(margin, 95, pageWidth - margin, 95)
+        doc.line(margin, 100, pageWidth - margin, 100)
         
-        // Dados dos pedidos com paginação automática
+        // Dados dos pedidos com paginação automática - TODOS OS DADOS
         doc.setFontSize(9)
         doc.setFont('helvetica', 'normal')
-        let yPedidos = 105
+        let yPedidos = 110
         let currentPagePedidos = currentPage + 1
+        // Calcular quantos itens cabem por página (espaço para cabeçalho + margem)
+        let itemsPerPagePedidos = Math.floor((pageHeight - 140) / 10) // Margem maior para garantir espaço
         
+        // IMPORTANTE: Incluir TODOS os pedidos sem limitação
         pedidos.forEach((pedido, index) => {
-          // Verificar se precisa de nova página
-          if (yPedidos > pageHeight - 40) {
+          // Verificar se precisa de nova página (margem de segurança)
+          if (yPedidos > pageHeight - 50) {
             // Adicionar rodapé da página atual
             doc.setFontSize(9)
             doc.text(`Página ${currentPagePedidos}`, pageWidth / 2, pageHeight - 20, { align: 'center' })
@@ -399,7 +414,7 @@ export default function DashboardResumo({
             doc.addPage()
             currentPagePedidos++
             
-            // Repetir cabeçalho na nova página
+            // Repetir cabeçalho na nova página (continuação)
             doc.setFontSize(14)
             doc.setFont('helvetica', 'bold')
             doc.text('Pedidos Detalhados (continuação)', margin, 40)
