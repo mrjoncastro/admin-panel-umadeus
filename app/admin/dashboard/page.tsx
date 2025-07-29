@@ -2,7 +2,7 @@
 
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import { useEffect, useRef, useState } from 'react'
-import type { Inscricao, Pedido } from '@/types'
+import type { Inscricao, Pedido, Produto } from '@/types'
 import DashboardResumo from './components/DashboardResumo'
 import DashboardAnalytics from '../components/DashboardAnalytics'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
@@ -12,6 +12,7 @@ export default function DashboardPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [pedidos, setPedidos] = useState<Pedido[]>([])
+  const [produtos, setProdutos] = useState<Produto[]>([])
   const [totalInscricoes, setTotalInscricoes] = useState(0)
   const [totalPedidos, setTotalPedidos] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -91,6 +92,13 @@ export default function DashboardPage() {
           ),
         )
 
+        // Fetch produtos para informações detalhadas
+        const prodRes = await fetch(`/api/produtos`, {
+          credentials: 'include',
+          signal,
+        }).then((r) => r.json())
+        const produtos = Array.isArray(prodRes) ? prodRes : [prodRes]
+
         if (insRes.totalPages && pedRes.totalPages) {
           setTotalPages(Math.max(insRes.totalPages, pedRes.totalPages))
         }
@@ -150,9 +158,11 @@ export default function DashboardPage() {
         if (user.role === 'coordenador') {
           setInscricoes(allInscricoes)
           setPedidos(allPedidos)
+          setProdutos(produtos)
         } else {
           setInscricoes(allInscricoes.filter((i) => i.campo === campoId))
           setPedidos(allPedidos.filter((p) => p.expand?.campo?.id === campoId))
+          setProdutos(produtos)
         }
       } catch (err: unknown) {
         if (err instanceof Error) {
@@ -194,6 +204,7 @@ export default function DashboardPage() {
           <DashboardResumo
             inscricoes={inscricoes}
             pedidos={pedidos}
+            produtos={produtos}
             totalInscricoes={totalInscricoes}
             totalPedidos={totalPedidos}
           />

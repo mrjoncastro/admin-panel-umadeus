@@ -736,6 +736,7 @@ export default function RelatoriosPage() {
           <DashboardResumo
             inscricoes={inscricoesFiltradas}
             pedidos={pedidosFiltrados}
+            produtos={produtos}
           />
 
           {/* Unified Chart */}

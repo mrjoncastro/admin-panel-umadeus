@@ -3,7 +3,7 @@
 import { Info, Download, FileSpreadsheet, FileText } from 'lucide-react'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
-import type { Inscricao, Pedido } from '@/types'
+import type { Inscricao, Pedido, Produto } from '@/types'
 import {
   exportToExcel,
   exportInscricoesToExcel,
@@ -13,6 +13,7 @@ import {
 interface DashboardResumoProps {
   inscricoes: Inscricao[]
   pedidos: Pedido[]
+  produtos?: Produto[]
   totalInscricoes?: number
   totalPedidos?: number
 }
@@ -20,6 +21,7 @@ interface DashboardResumoProps {
 export default function DashboardResumo({
   inscricoes,
   pedidos,
+  produtos = [],
   totalInscricoes,
   totalPedidos,
 }: DashboardResumoProps) {
@@ -207,64 +209,96 @@ export default function DashboardResumo({
         // Criar gráfico de barras horizontais para inscrições
         const inscricoesData = Object.entries(statusInscricoes)
         const maxInscricoes = Math.max(...inscricoesData.map(([, count]) => count), 1)
-        const barHeight = 15
-        const barSpacing = 20
+        const barHeight = 12
+        const barSpacing = 18
         let yInscricoesChart = 90
         
+        // Cores da paleta do sistema (tons de vermelho/azul)
+        const inscricoesColors = [
+          [220, 38, 38],   // Vermelho principal
+          [239, 68, 68],   // Vermelho mais claro
+          [185, 28, 28],   // Vermelho mais escuro
+          [59, 130, 246],  // Azul
+          [37, 99, 235]    // Azul mais escuro
+        ]
+        
         inscricoesData.forEach(([status, count], index) => {
-          const barWidth = (count / maxInscricoes) * 120 // Largura máxima da barra
+          const barWidth = (count / maxInscricoes) * 100 // Largura reduzida para evitar corte
           const barY = yInscricoesChart + (index * barSpacing)
           
-          // Texto do status
-          doc.setFontSize(10)
-          doc.setFont('helvetica', 'normal')
-          doc.text(`${status.charAt(0).toUpperCase() + status.slice(1)}: ${count}`, margin, barY + 5)
+          // Verificar se há espaço suficiente na página
+          if (barY > pageHeight - 80) {
+            // Adicionar nova página para gráficos
+            doc.addPage()
+            doc.setFontSize(18)
+            doc.setFont('helvetica', 'bold')
+            doc.text('Panorama Geral (continuação)', margin, 40)
+            yInscricoesChart = 60
+          }
           
-          // Barra do gráfico
-          doc.setFillColor(100 + (index * 40), 100 + (index * 40), 100 + (index * 40))
-          doc.rect(margin + 80, barY, barWidth, barHeight, 'F')
+          // Texto do status
+          doc.setFontSize(9)
+          doc.setFont('helvetica', 'normal')
+          doc.text(`${status.charAt(0).toUpperCase() + status.slice(1)}: ${count}`, margin, barY + 3)
+          
+          // Barra do gráfico com cores da paleta
+          const color = inscricoesColors[index % inscricoesColors.length]
+          doc.setFillColor(color[0], color[1], color[2])
+          doc.rect(margin + 70, barY, barWidth, barHeight, 'F')
           
           // Borda da barra
           doc.setDrawColor(0)
-          doc.setLineWidth(0.5)
-          doc.rect(margin + 80, barY, barWidth, barHeight)
+          doc.setLineWidth(0.3)
+          doc.rect(margin + 70, barY, barWidth, barHeight)
         })
         
         // Gráfico de Status dos Pedidos
         doc.setFontSize(14)
         doc.setFont('helvetica', 'bold')
-        doc.text('Status dos Pedidos', margin, yInscricoesChart + 100)
+        doc.text('Status dos Pedidos', margin, yInscricoesChart + 80)
         
         // Criar gráfico de barras horizontais para pedidos
         const pedidosData = Object.entries(statusPedidos)
         const maxPedidos = Math.max(...pedidosData.map(([, count]) => count), 1)
-        let yPedidosChart = yInscricoesChart + 120
+        let yPedidosChart = yInscricoesChart + 100
+        
+        // Cores da paleta do sistema (tons de verde/amarelo)
+        const pedidosColors = [
+          [34, 197, 94],   // Verde principal
+          [22, 163, 74],   // Verde mais escuro
+          [234, 179, 8],   // Amarelo
+          [202, 138, 4],   // Amarelo mais escuro
+          [16, 185, 129]   // Verde azulado
+        ]
         
         pedidosData.forEach(([status, count], index) => {
-          const barWidth = (count / maxPedidos) * 120 // Largura máxima da barra
+          const barWidth = (count / maxPedidos) * 100 // Largura reduzida para evitar corte
           const barY = yPedidosChart + (index * barSpacing)
           
-          // Texto do status
-          doc.setFontSize(10)
-          doc.setFont('helvetica', 'normal')
-          doc.text(`${status.charAt(0).toUpperCase() + status.slice(1)}: ${count}`, margin, barY + 5)
+          // Verificar se há espaço suficiente na página
+          if (barY > pageHeight - 80) {
+            // Adicionar nova página para gráficos
+            doc.addPage()
+            doc.setFontSize(18)
+            doc.setFont('helvetica', 'bold')
+            doc.text('Panorama Geral (continuação)', margin, 40)
+            yPedidosChart = 60
+          }
           
-          // Barra do gráfico com cores diferentes
-          const colors = [
-            [255, 99, 132],   // Vermelho
-            [54, 162, 235],   // Azul
-            [255, 205, 86],   // Amarelo
-            [75, 192, 192],   // Verde
-            [153, 102, 255]   // Roxo
-          ]
-          const color = colors[index % colors.length]
+          // Texto do status
+          doc.setFontSize(9)
+          doc.setFont('helvetica', 'normal')
+          doc.text(`${status.charAt(0).toUpperCase() + status.slice(1)}: ${count}`, margin, barY + 3)
+          
+          // Barra do gráfico com cores da paleta
+          const color = pedidosColors[index % pedidosColors.length]
           doc.setFillColor(color[0], color[1], color[2])
-          doc.rect(margin + 80, barY, barWidth, barHeight, 'F')
+          doc.rect(margin + 70, barY, barWidth, barHeight, 'F')
           
           // Borda da barra
           doc.setDrawColor(0)
-          doc.setLineWidth(0.5)
-          doc.rect(margin + 80, barY, barWidth, barHeight)
+          doc.setLineWidth(0.3)
+          doc.rect(margin + 70, barY, barWidth, barHeight)
         })
         
         // Legenda dos gráficos
@@ -293,14 +327,14 @@ export default function DashboardResumo({
         doc.setFont('helvetica', 'bold')
         doc.text('Inscrições Detalhadas', margin, 75)
         
-        // Cabeçalho da tabela
+        // Cabeçalho da tabela - Layout otimizado
         doc.setFontSize(10)
         doc.setFont('helvetica', 'bold')
         doc.text('CPF', margin, 95)
-        doc.text('Nome', margin + 35, 95)
-        doc.text('Email', margin + 90, 95)
-        doc.text('Status', margin + 150, 95)
-        doc.text('Data', margin + 190, 95)
+        doc.text('Nome', margin + 40, 95)
+        doc.text('Email', margin + 110, 95)
+        doc.text('Status', margin + 170, 95)
+        doc.text('Data', margin + 210, 95)
         
         // Linha separadora
         doc.line(margin, 100, pageWidth - margin, 100)
@@ -334,10 +368,10 @@ export default function DashboardResumo({
             doc.setFontSize(10)
             doc.setFont('helvetica', 'bold')
             doc.text('CPF', margin, 60)
-            doc.text('Nome', margin + 35, 60)
-            doc.text('Email', margin + 90, 60)
-            doc.text('Status', margin + 150, 60)
-            doc.text('Data', margin + 190, 60)
+            doc.text('Nome', margin + 40, 60)
+            doc.text('Email', margin + 110, 60)
+            doc.text('Status', margin + 170, 60)
+            doc.text('Data', margin + 210, 60)
             
             doc.line(margin, 65, pageWidth - margin, 65)
             
@@ -350,13 +384,29 @@ export default function DashboardResumo({
             doc.rect(margin, yInscricoes - 3, pageWidth - 2 * margin, 8, 'F')
           }
           
-          // CPF (ou ID se não tiver CPF)
+          // CPF - Priorizar CPF real, se não tiver, usar ID como fallback
           const cpf = inscricao.cpf || inscricao.id
           doc.text(cpf?.substring(0, 14) || '', margin, yInscricoes)
-          doc.text(inscricao.nome?.substring(0, 20) || '', margin + 35, yInscricoes)
-          doc.text(inscricao.email?.substring(0, 25) || '', margin + 90, yInscricoes)
-          doc.text(inscricao.status || '', margin + 150, yInscricoes)
-          doc.text(inscricao.created ? new Date(inscricao.created).toLocaleDateString('pt-BR') : '', margin + 190, yInscricoes)
+          
+          // Nome - Mais espaço para evitar corte
+          const nome = inscricao.nome || ''
+          if (!nome) {
+            console.log('Nome não encontrado para inscrição:', inscricao.id)
+          }
+          doc.text(nome.substring(0, 30) || 'N/A', margin + 40, yInscricoes)
+          
+          // Email - Garantir que seja exibido (com debug)
+          const email = inscricao.email || ''
+          if (!email) {
+            console.log('Email não encontrado para inscrição:', inscricao.id, inscricao.nome)
+          }
+          doc.text(email.substring(0, 25) || 'N/A', margin + 110, yInscricoes)
+          
+          // Status
+          doc.text(inscricao.status || '', margin + 170, yInscricoes)
+          
+          // Data
+          doc.text(inscricao.created ? new Date(inscricao.created).toLocaleDateString('pt-BR') : '', margin + 210, yInscricoes)
           yInscricoes += 10
         })
         
@@ -443,7 +493,19 @@ export default function DashboardResumo({
           const cpfCliente = inscricaoCliente?.cpf || inscricaoCliente?.id || pedido.id_inscricao
           
           doc.text(cpfCliente?.substring(0, 14) || '', margin, yPedidos)
-          doc.text(Array.isArray(pedido.produto) ? pedido.produto.join(', ').substring(0, 20) : (pedido.produto as string)?.substring(0, 20) || '', margin + 50, yPedidos)
+          
+          // Buscar informações dos produtos (nome e tamanho)
+          let produtoInfo = ''
+          // pedido.produto é sempre string[] no tipo Pedido
+          produtoInfo = pedido.produto.map(prodId => {
+            const produto = produtos.find(p => p.id === prodId)
+            if (produto) {
+              const tamanho = pedido.tamanho ? ` (${pedido.tamanho})` : ''
+              return `${produto.nome}${tamanho}`
+            }
+            return prodId
+          }).join(', ')
+          doc.text(produtoInfo.substring(0, 25) || '', margin + 50, yPedidos)
           doc.text(pedido.status || '', margin + 120, yPedidos)
           // Tratar valor do pedido de forma mais robusta
           let valorFormatado = '0.00'
