@@ -101,8 +101,6 @@ export async function POST(req: NextRequest) {
     // 8) converte base64 em Blob (Node18+)
     const [, base64Data] = qrCodeBase64.split(',')
     const buffer = Buffer.from(base64Data, 'base64')
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore Node 18+
     const blob = new Blob([buffer], { type: 'image/png' })
 
     // 9) upsert + upload em um só passo

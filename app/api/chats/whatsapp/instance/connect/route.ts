@@ -71,8 +71,6 @@ export async function POST(req: NextRequest) {
 
   // 4) faz upload do novo QR no PB
   const [, base64Data] = dataUri.split(',')
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore Node 18+
   const blob = new Blob([Buffer.from(base64Data, 'base64')], {
     type: 'image/png',
   })

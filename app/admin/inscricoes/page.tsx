@@ -410,8 +410,7 @@ export default function ListaInscricoesPage() {
         }),
       })
       const result = await asaasRes.json()
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { url, vencimento } = result
+      const { url } = result
 
       if (!asaasRes.ok || !url) {
         const msg =
