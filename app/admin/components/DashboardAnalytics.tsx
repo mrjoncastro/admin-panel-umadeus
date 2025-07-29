@@ -139,20 +139,22 @@ export default function DashboardAnalytics({
     }
   })
 
-  const tamanhosLabels = ['PP', 'P', 'M', 'G', 'GG'].filter(t => tamanhosCount[t] > 0)
+  const tamanhosLabels = ['PP', 'P', 'M', 'G', 'GG'].filter(
+    (t) => tamanhosCount[t] > 0,
+  )
   const tamanhosChart = {
     labels: tamanhosLabels,
     datasets: [
       {
         label: 'Inscrições',
-        data: tamanhosLabels.map(t => tamanhosInscricoes[t] || 0),
+        data: tamanhosLabels.map((t) => tamanhosInscricoes[t] || 0),
         backgroundColor: twColors.primary600,
       },
       {
         label: 'Pedidos',
-        data: tamanhosLabels.map(t => tamanhosPedidos[t] || 0),
+        data: tamanhosLabels.map((t) => tamanhosPedidos[t] || 0),
         backgroundColor: twColors.blue500,
-      }
+      },
     ],
   }
 
@@ -174,9 +176,10 @@ export default function DashboardAnalytics({
       arrecadacao: mostrarFinanceiro
         ? arrecadacaoRef.current?.toBase64Image()
         : undefined,
-      tamanhos: tamanhosLabels.length > 0
-        ? tamanhosRef.current?.toBase64Image()
-        : undefined,
+      tamanhos:
+        tamanhosLabels.length > 0
+          ? tamanhosRef.current?.toBase64Image()
+          : undefined,
     }
 
     const metrics = {
@@ -321,17 +324,17 @@ export default function DashboardAnalytics({
               <BarChart
                 ref={tamanhosRef}
                 data={tamanhosChart}
-                options={{ 
-                  responsive: true, 
+                options={{
+                  responsive: true,
                   maintainAspectRatio: false,
                   scales: {
                     y: {
                       beginAtZero: true,
                       ticks: {
-                        stepSize: 1
-                      }
-                    }
-                  }
+                        stepSize: 1,
+                      },
+                    },
+                  },
                 }}
               />
             </div>

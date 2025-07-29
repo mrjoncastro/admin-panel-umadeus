@@ -51,7 +51,7 @@ export default function RelatorioPage() {
     campo: 'todos',
     periodo: 'todos',
     canal: 'todos',
-    tamanho: 'todos'
+    tamanho: 'todos',
   })
 
   // Filtered pedidos based on active filters
@@ -63,17 +63,19 @@ export default function RelatorioPage() {
 
     // Apply filters
     if (filtros.status !== 'todos') {
-      pedidosResult = pedidosResult.filter(p => p.status === filtros.status)
+      pedidosResult = pedidosResult.filter((p) => p.status === filtros.status)
     }
     if (filtros.produto !== 'todos') {
-      pedidosResult = pedidosResult.filter(p => {
+      pedidosResult = pedidosResult.filter((p) => {
         if (Array.isArray(p.produto)) {
           return p.produto.includes(filtros.produto)
         }
         // Check expanded produto
         if (p.expand?.produto) {
           if (Array.isArray(p.expand.produto)) {
-            return p.expand.produto.some((prod: Produto) => prod.id === filtros.produto)
+            return p.expand.produto.some(
+              (prod: Produto) => prod.id === filtros.produto,
+            )
           } else {
             return p.expand.produto.id === filtros.produto
           }
@@ -82,18 +84,18 @@ export default function RelatorioPage() {
       })
     }
     if (filtros.campo !== 'todos') {
-      pedidosResult = pedidosResult.filter(p => p.campo === filtros.campo)
+      pedidosResult = pedidosResult.filter((p) => p.campo === filtros.campo)
     }
     if (filtros.tamanho !== 'todos') {
-      pedidosResult = pedidosResult.filter(p => p.tamanho === filtros.tamanho)
+      pedidosResult = pedidosResult.filter((p) => p.tamanho === filtros.tamanho)
     }
     if (filtros.canal !== 'todos') {
-      pedidosResult = pedidosResult.filter(p => p.canal === filtros.canal)
+      pedidosResult = pedidosResult.filter((p) => p.canal === filtros.canal)
     }
     if (filtros.periodo !== 'todos') {
       const now = new Date()
       const filterDate = new Date()
-      
+
       switch (filtros.periodo) {
         case 'ultima_semana':
           filterDate.setDate(now.getDate() - 7)
@@ -108,10 +110,10 @@ export default function RelatorioPage() {
           filterDate.setFullYear(now.getFullYear() - 1)
           break
       }
-      
+
       if (filtros.periodo !== 'todos') {
-        pedidosResult = pedidosResult.filter(p => 
-          p.created && new Date(p.created) >= filterDate
+        pedidosResult = pedidosResult.filter(
+          (p) => p.created && new Date(p.created) >= filterDate,
         )
       }
     }
@@ -174,11 +176,14 @@ export default function RelatorioPage() {
         )
 
         // Fetch produtos for filter options
-        const prodRes = await fetch(`/api/produtos?${params.toString()}`, {
+        const prodRes = await fetch(`/api/produtos`, {
           credentials: 'include',
           signal,
         }).then((r) => r.json())
-        const produtos = Array.isArray(prodRes.items) ? prodRes.items : prodRes
+        const produtos = Array.isArray(prodRes) ? prodRes : [prodRes]
+
+        // Filtrar apenas produtos ativos
+        const produtosAtivos = produtos.filter((p: any) => p.ativo === true)
 
         // Fetch campos for filter options
         const camposRes = await fetch(`/api/campos?${params.toString()}`, {
@@ -199,7 +204,7 @@ export default function RelatorioPage() {
         }
 
         setPedidos(lista)
-        setProdutos(produtos)
+        setProdutos(produtosAtivos)
       } catch (err) {
         console.error('Erro ao carregar pedidos', err)
         showError('Erro ao carregar pedidos')
@@ -350,7 +355,7 @@ export default function RelatorioPage() {
       campo: 'todos',
       periodo: 'todos',
       canal: 'todos',
-      tamanho: 'todos'
+      tamanho: 'todos',
     })
   }
 
@@ -362,7 +367,7 @@ export default function RelatorioPage() {
       <div className="card">
         <div className="p-6">
           <h2 className="text-xl font-semibold mb-4 dark:text-gray-100">
-            Filtros Avançados
+            Filtros
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
@@ -376,7 +381,6 @@ export default function RelatorioPage() {
                 onChange={(e) => handleFiltroChange('status', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
               >
-                <option value="todos">Todas as situações</option>
                 <option value="pendente">Pendente</option>
                 <option value="pago">Pago</option>
                 <option value="vencido">Vencido</option>
@@ -394,12 +398,17 @@ export default function RelatorioPage() {
                 onChange={(e) => handleFiltroChange('produto', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
               >
-                <option value="todos">Todos os produtos</option>
-                {produtos.map((produto) => (
-                  <option key={produto.id} value={produto.id}>
-                    {produto.nome}
+                {produtos.length > 0 ? (
+                  produtos.map((produto) => (
+                    <option key={produto.id} value={produto.id}>
+                      {produto.nome}
+                    </option>
+                  ))
+                ) : (
+                  <option value="" disabled>
+                    Nenhum produto disponível
                   </option>
-                ))}
+                )}
               </select>
             </div>
 
@@ -491,106 +500,21 @@ export default function RelatorioPage() {
         </div>
       </div>
 
-      <section>
-        <h2 className="text-2xl font-semibold mt-4">Análises</h2>
-        <div className="flex flex-wrap items-center gap-2 mt-2">
-          <select
-            value={analysis}
-            onChange={(e) =>
-              setAnalysis(
-                e.target.value as 'produtoCampo' | 'produtoCanalCampo',
-              )
-            }
-            className="border rounded px-2 py-1"
-          >
-            <option value="produtoCampo">Produto x Campo</option>
-            <option value="produtoCanalCampo">Produto x Canal x Campo</option>
-          </select>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="border rounded px-2 py-1"
-          >
-            <option value="todos">Todos</option>
-            <option value="pago">Pago</option>
-            <option value="pendente">Pendente</option>
-            <option value="vencido">Vencido</option>
-            <option value="cancelado">Cancelado</option>
-          </select>
-          <select
-            value={orderBy}
-            onChange={(e) => setOrderBy(e.target.value as 'campo' | 'data')}
-            className="border rounded px-2 py-1"
-          >
-            <option value="campo">Ordem A-Z do campo</option>
-            <option value="data">Ordem por data</option>
-          </select>
-          <button
-            onClick={async () => {
-              try {
-                const filteredForDetails =
-                  statusFilter === 'todos'
-                    ? pedidosFiltrados
-                    : pedidosFiltrados.filter((p) => p.status === statusFilter)
-                const orderedDetails = sortPedidos(filteredForDetails)
-                const detailRows = orderedDetails.map((p) => [
-                  Array.isArray(p.expand?.produto)
-                    ? p.expand.produto
-                        .map((prod: Produto) => prod.nome)
-                        .join(', ')
-                    : (p.expand?.produto as Produto | undefined)?.nome ||
-                      (Array.isArray(p.produto)
-                        ? p.produto.join(', ')
-                        : (p.produto ?? '')),
-                  p.expand?.id_inscricao?.nome ||
-                    p.expand?.responsavel?.nome ||
-                    '',
-                  p.tamanho || '',
-                  p.expand?.campo?.nome || '',
-                  (p as unknown as { formaPagamento?: string })
-                    .formaPagamento || '',
-                  p.created?.split('T')[0] || '',
-                ])
-
-                await generateAnalisePdf(
-                  analysis === 'produtoCampo'
-                    ? 'Análise Produto x Campo'
-                    : 'Análise Produto x Canal x Campo',
-                  analysis === 'produtoCampo'
-                    ? ['Campo', 'Produto', 'Total']
-                    : ['Campo', 'Produto', 'Canal', 'Total'],
-                  rows,
-                  detailRows,
-                  chartRef.current?.toBase64Image(),
-                  totals,
-                )
-                showSuccess('PDF gerado com sucesso.')
-              } catch (err) {
-                console.error('Erro ao gerar PDF', err)
-                const message =
-                  err instanceof Error && err.message.includes('Tempo')
-                    ? 'Tempo esgotado ao gerar PDF.'
-                    : 'Não foi possível gerar o PDF. Tente novamente.'
-                showError(message)
-              }
-            }}
-            className="btn btn-primary px-3 py-1"
-          >
-            Gerar PDF
-          </button>
-        </div>
-        <div className="mt-4 aspect-video">
-          <BarChart
-            ref={chartRef}
-            data={chartData}
-            options={{
-              responsive: true,
-              maintainAspectRatio: false,
-              scales: { x: { stacked: true }, y: { stacked: true } },
-            }}
-          />
-        </div>
-      </section>
+      {/* Remova o bloco <section> de Análises e o select de análise */}
+      {/* No filtro de status, remova a opção 'Todos' */}
+      {/* No filtro de produto, remova a opção 'Todos' */}
+      {/* Após o bloco de filtros, exiba apenas o gráfico principal (BarChart) */}
+      <div className="mt-4 aspect-video">
+        <BarChart
+          ref={chartRef}
+          data={chartData}
+          options={{
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { x: { stacked: true }, y: { stacked: true } },
+          }}
+        />
+      </div>
     </div>
   )
 }

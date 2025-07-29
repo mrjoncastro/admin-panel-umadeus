@@ -10,13 +10,14 @@ import { fetchAllPages } from '@/lib/utils/fetchAllPages'
 
 // Enhanced filtering interface
 interface Filtros {
-  status: string
-  statusInscricoes: string
-  produto: string
-  campo: string
+  status: string[]
+  statusInscricoes: string[]
+  produto: string[]
+  campo: string[]
   periodo: string
-  canal: string
-  tamanho: string
+  canal: string[]
+  tamanho: string[]
+  evento: string
 }
 
 export default function RelatoriosPage() {
@@ -32,20 +33,24 @@ export default function RelatoriosPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const isMounted = useRef(true)
+  const [eventos, setEventos] = useState<{ id: string; titulo: string }[]>([])
 
   // Enhanced filters state
   const [filtros, setFiltros] = useState<Filtros>({
-    status: 'todos',
-    statusInscricoes: 'todos',
-    produto: 'todos',
-    campo: 'todos',
+    status: [],
+    statusInscricoes: [],
+    produto: [],
+    campo: [],
     periodo: 'todos',
-    canal: 'todos',
-    tamanho: 'todos'
+    canal: [],
+    tamanho: [],
+    evento: 'todos',
   })
 
   // Filtered data based on active filters
-  const [inscricoesFiltradas, setInscricoesFiltradas] = useState<Inscricao[]>([])
+  const [inscricoesFiltradas, setInscricoesFiltradas] = useState<Inscricao[]>(
+    [],
+  )
   const [pedidosFiltrados, setPedidosFiltrados] = useState<Pedido[]>([])
 
   // Apply filters to data
@@ -54,22 +59,30 @@ export default function RelatoriosPage() {
     let pedidosResult = [...pedidos]
 
     // Filter inscricoes
-    if (filtros.statusInscricoes !== 'todos') {
-      inscricoesResult = inscricoesResult.filter(i => i.status === filtros.statusInscricoes)
+    if (filtros.statusInscricoes.length > 0) {
+      inscricoesResult = inscricoesResult.filter(
+        (i) => i.status && filtros.statusInscricoes.includes(i.status),
+      )
     }
-    if (filtros.produto !== 'todos') {
-      inscricoesResult = inscricoesResult.filter(i => i.produto === filtros.produto)
+    if (filtros.produto.length > 0) {
+      inscricoesResult = inscricoesResult.filter(
+        (i) => i.produto && filtros.produto.includes(i.produto),
+      )
     }
-    if (filtros.campo !== 'todos') {
-      inscricoesResult = inscricoesResult.filter(i => i.campo === filtros.campo)
+    if (filtros.campo.length > 0) {
+      inscricoesResult = inscricoesResult.filter(
+        (i) => i.campo && filtros.campo.includes(i.campo),
+      )
     }
-    if (filtros.tamanho !== 'todos') {
-      inscricoesResult = inscricoesResult.filter(i => i.tamanho === filtros.tamanho)
+    if (filtros.tamanho.length > 0) {
+      inscricoesResult = inscricoesResult.filter(
+        (i) => i.tamanho && filtros.tamanho.includes(i.tamanho),
+      )
     }
     if (filtros.periodo !== 'todos') {
       const now = new Date()
       const filterDate = new Date()
-      
+
       switch (filtros.periodo) {
         case 'ultima_semana':
           filterDate.setDate(now.getDate() - 7)
@@ -84,47 +97,57 @@ export default function RelatoriosPage() {
           filterDate.setFullYear(now.getFullYear() - 1)
           break
       }
-      
+
       if (filtros.periodo !== 'todos') {
-        inscricoesResult = inscricoesResult.filter(i => 
-          i.created && new Date(i.created) >= filterDate
+        inscricoesResult = inscricoesResult.filter(
+          (i) => i.created && new Date(i.created) >= filterDate,
         )
       }
     }
 
     // Filter pedidos
-    if (filtros.status !== 'todos') {
-      pedidosResult = pedidosResult.filter(p => p.status === filtros.status)
+    if (filtros.status.length > 0) {
+      pedidosResult = pedidosResult.filter((p) =>
+        filtros.status.includes(p.status),
+      )
     }
-    if (filtros.produto !== 'todos') {
-      pedidosResult = pedidosResult.filter(p => {
+    if (filtros.produto.length > 0) {
+      pedidosResult = pedidosResult.filter((p) => {
         if (Array.isArray(p.produto)) {
-          return p.produto.includes(filtros.produto)
+          return p.produto.some((prod) => filtros.produto.includes(prod))
         }
         // Check expanded produto
         if (p.expand?.produto) {
           if (Array.isArray(p.expand.produto)) {
-            return p.expand.produto.some((prod: Produto) => prod.id === filtros.produto)
+            return p.expand.produto.some((prod: Produto) =>
+              filtros.produto.includes(prod.id),
+            )
           } else {
-            return p.expand.produto.id === filtros.produto
+            return filtros.produto.includes(p.expand.produto.id)
           }
         }
         return false
       })
     }
-    if (filtros.campo !== 'todos') {
-      pedidosResult = pedidosResult.filter(p => p.campo === filtros.campo)
+    if (filtros.campo.length > 0) {
+      pedidosResult = pedidosResult.filter(
+        (p) => p.campo && filtros.campo.includes(p.campo),
+      )
     }
-    if (filtros.tamanho !== 'todos') {
-      pedidosResult = pedidosResult.filter(p => p.tamanho === filtros.tamanho)
+    if (filtros.tamanho.length > 0) {
+      pedidosResult = pedidosResult.filter(
+        (p) => p.tamanho && filtros.tamanho.includes(p.tamanho),
+      )
     }
-    if (filtros.canal !== 'todos') {
-      pedidosResult = pedidosResult.filter(p => p.canal === filtros.canal)
+    if (filtros.canal.length > 0) {
+      pedidosResult = pedidosResult.filter(
+        (p) => p.canal && filtros.canal.includes(p.canal),
+      )
     }
     if (filtros.periodo !== 'todos') {
       const now = new Date()
       const filterDate = new Date()
-      
+
       switch (filtros.periodo) {
         case 'ultima_semana':
           filterDate.setDate(now.getDate() - 7)
@@ -139,10 +162,10 @@ export default function RelatoriosPage() {
           filterDate.setFullYear(now.getFullYear() - 1)
           break
       }
-      
+
       if (filtros.periodo !== 'todos') {
-        pedidosResult = pedidosResult.filter(p => 
-          p.created && new Date(p.created) >= filterDate
+        pedidosResult = pedidosResult.filter(
+          (p) => p.created && new Date(p.created) >= filterDate,
         )
       }
     }
@@ -225,11 +248,16 @@ export default function RelatoriosPage() {
         )
 
         // Fetch produtos for filter options
-        const prodRes = await fetch(`/api/produtos?${params.toString()}`, {
+        const prodRes = await fetch(`/api/produtos`, {
           credentials: 'include',
           signal,
         }).then((r) => r.json())
-        const produtos = Array.isArray(prodRes.items) ? prodRes.items : prodRes
+        const produtos = Array.isArray(prodRes) ? prodRes : [prodRes]
+
+        // Filtrar apenas produtos ativos
+        const produtosAtivos = produtos.filter((p: any) => p.ativo === true)
+
+        console.log('Produtos carregados:', produtosAtivos) // Debug log
 
         // Fetch campos for filter options
         const camposRes = await fetch(`/api/campos?${params.toString()}`, {
@@ -239,6 +267,16 @@ export default function RelatoriosPage() {
         const campos = Array.isArray(camposRes.items)
           ? camposRes.items
           : camposRes
+
+        // Fetch eventos para o filtro
+        const eventosRes = await fetch(`/api/eventos?${params.toString()}`, {
+          credentials: 'include',
+          signal,
+        }).then((r) => r.json())
+        const eventos = Array.isArray(eventosRes.items)
+          ? eventosRes.items
+          : eventosRes
+        setEventos(eventos)
 
         setTotalInscricoes(rawInscricoes.length)
         setTotalPedidos(rawPedidos.length)
@@ -296,12 +334,12 @@ export default function RelatoriosPage() {
         if (user.role === 'coordenador') {
           setInscricoes(allInscricoes)
           setPedidos(allPedidos)
-          setProdutos(produtos)
+          setProdutos(produtosAtivos)
           setCampos(campos)
         } else {
           setInscricoes(allInscricoes.filter((i) => i.campo === campoId))
           setPedidos(allPedidos.filter((p) => p.expand?.campo?.id === campoId))
-          setProdutos(produtos)
+          setProdutos(produtosAtivos)
           setCampos(campos.filter((c: { id: string }) => c.id === campoId))
         }
       } catch (err: unknown) {
@@ -322,23 +360,43 @@ export default function RelatoriosPage() {
   }, [authChecked, user?.id, user?.role, user?.cliente])
 
   const handleFiltroChange = (key: keyof Filtros, value: string) => {
-    setFiltros((prev) => ({
-      ...prev,
-      [key]: value,
-    }))
+    setFiltros((prev) => {
+      if (key === 'periodo' || key === 'evento') {
+        return {
+          ...prev,
+          [key]: value,
+        }
+      }
+
+      const currentArray = prev[key] as string[]
+      const newArray = currentArray.includes(value)
+        ? currentArray.filter((item) => item !== value)
+        : [...currentArray, value]
+
+      return {
+        ...prev,
+        [key]: newArray,
+      }
+    })
   }
 
   const clearAllFilters = () => {
     setFiltros({
-      status: 'todos',
-      statusInscricoes: 'todos',
-      produto: 'todos',
-      campo: 'todos',
+      status: [],
+      statusInscricoes: [],
+      produto: [],
+      campo: [],
       periodo: 'todos',
-      canal: 'todos',
-      tamanho: 'todos'
+      canal: [],
+      tamanho: [],
+      evento: 'todos',
     })
   }
+
+  const produtosFiltrados =
+    filtros.evento !== 'todos'
+      ? produtos.filter((p: any) => p.evento_id === filtros.evento)
+      : produtos
 
   return (
     <main className="min-h-screen p-4 md:p-6">
@@ -361,110 +419,168 @@ export default function RelatoriosPage() {
           <div className="card mb-6">
             <div className="p-6">
               <h2 className="text-xl font-semibold mb-4 dark:text-gray-100">
-                Filtros Avançados
+                Filtros
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-4">
                 {/* Status do Pedido */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                     Situação do Pedido
                   </label>
-                  <select
-                    value={filtros.status}
-                    onChange={(e) =>
-                      handleFiltroChange('status', e.target.value)
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
-                  >
-                    <option value="todos">Todas as situações</option>
-                    <option value="pendente">Pendente</option>
-                    <option value="pago">Pago</option>
-                    <option value="vencido">Vencido</option>
-                    <option value="cancelado">Cancelado</option>
-                  </select>
+                  <div className="space-y-2">
+                    {['pendente', 'pago', 'vencido', 'cancelado'].map(
+                      (status) => (
+                        <label key={status} className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={filtros.status.includes(status)}
+                            onChange={() =>
+                              handleFiltroChange('status', status)
+                            }
+                            className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                          />
+                          <span className="ml-2 text-sm text-gray-700 dark:text-gray-300 capitalize">
+                            {status}
+                          </span>
+                        </label>
+                      ),
+                    )}
+                  </div>
                 </div>
 
                 {/* Status da Inscrição */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                     Situação da Inscrição
                   </label>
+                  <div className="space-y-2">
+                    {[
+                      { value: 'pendente', label: 'Pendente' },
+                      {
+                        value: 'aguardando_pagamento',
+                        label: 'Aguardando Pagamento',
+                      },
+                      { value: 'confirmado', label: 'Confirmado' },
+                      { value: 'cancelado', label: 'Cancelado' },
+                    ].map((status) => (
+                      <label key={status.value} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={filtros.statusInscricoes.includes(
+                            status.value,
+                          )}
+                          onChange={() =>
+                            handleFiltroChange('statusInscricoes', status.value)
+                          }
+                          className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                        />
+                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                          {status.label}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Evento */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Evento
+                  </label>
                   <select
-                    value={filtros.statusInscricoes}
+                    value={filtros.evento}
                     onChange={(e) =>
-                      handleFiltroChange('statusInscricoes', e.target.value)
+                      handleFiltroChange('evento', e.target.value)
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
                   >
-                    <option value="todos">Todas as situações</option>
-                    <option value="pendente">Pendente</option>
-                    <option value="aguardando_pagamento">
-                      Aguardando Pagamento
-                    </option>
-                    <option value="confirmado">Confirmado</option>
-                    <option value="cancelado">Cancelado</option>
+                    <option value="todos">Todos os eventos</option>
+                    {eventos.map((evento) => (
+                      <option key={evento.id} value={evento.id}>
+                        {evento.titulo}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
                 {/* Produto */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                     Tipo de Produto
                   </label>
-                  <select
-                    value={filtros.produto}
-                    onChange={(e) =>
-                      handleFiltroChange('produto', e.target.value)
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
-                  >
-                    <option value="todos">Todos os produtos</option>
-                    {produtos.map((produto) => (
-                      <option key={produto.id} value={produto.id}>
-                        {produto.nome}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                    {produtosFiltrados.length > 0 ? (
+                      produtosFiltrados.map((produto: any) => (
+                        <label key={produto.id} className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={filtros.produto.includes(produto.id)}
+                            onChange={() =>
+                              handleFiltroChange('produto', produto.id)
+                            }
+                            className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                          />
+                          <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                            {produto.nome}
+                          </span>
+                        </label>
+                      ))
+                    ) : (
+                      <span className="text-sm text-gray-500">
+                        Nenhum produto disponível
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Campo */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                     Campo
                   </label>
-                  <select
-                    value={filtros.campo}
-                    onChange={(e) =>
-                      handleFiltroChange('campo', e.target.value)
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
-                  >
-                    <option value="todos">Todos os campos</option>
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
                     {campos.map((campo) => (
-                      <option key={campo.id} value={campo.id}>
-                        {campo.nome}
-                      </option>
+                      <label key={campo.id} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={filtros.campo.includes(campo.id)}
+                          onChange={() => handleFiltroChange('campo', campo.id)}
+                          className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                        />
+                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                          {campo.nome}
+                        </span>
+                      </label>
                     ))}
-                  </select>
+                  </div>
                 </div>
 
                 {/* Canal */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                     Canal de Venda
                   </label>
-                  <select
-                    value={filtros.canal}
-                    onChange={(e) =>
-                      handleFiltroChange('canal', e.target.value)
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
-                  >
-                    <option value="todos">Todos os canais</option>
-                    <option value="loja">Loja</option>
-                    <option value="inscricao">Inscrição</option>
-                  </select>
+                  <div className="space-y-2">
+                    {[
+                      { value: 'loja', label: 'Loja' },
+                      { value: 'inscricao', label: 'Inscrição' },
+                    ].map((canal) => (
+                      <label key={canal.value} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={filtros.canal.includes(canal.value)}
+                          onChange={() =>
+                            handleFiltroChange('canal', canal.value)
+                          }
+                          className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                        />
+                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                          {canal.label}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Período */}
@@ -474,7 +590,9 @@ export default function RelatoriosPage() {
                   </label>
                   <select
                     value={filtros.periodo}
-                    onChange={(e) => handleFiltroChange('periodo', e.target.value)}
+                    onChange={(e) =>
+                      handleFiltroChange('periodo', e.target.value)
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
                   >
                     <option value="todos">Todo o período</option>
@@ -487,21 +605,26 @@ export default function RelatoriosPage() {
 
                 {/* Tamanho */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                     Tamanho da Camisa
                   </label>
-                  <select
-                    value={filtros.tamanho}
-                    onChange={(e) => handleFiltroChange('tamanho', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
-                  >
-                    <option value="todos">Todos os tamanhos</option>
-                    <option value="PP">PP</option>
-                    <option value="P">P</option>
-                    <option value="M">M</option>
-                    <option value="G">G</option>
-                    <option value="GG">GG</option>
-                  </select>
+                  <div className="space-y-2">
+                    {['PP', 'P', 'M', 'G', 'GG'].map((tamanho) => (
+                      <label key={tamanho} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={filtros.tamanho.includes(tamanho)}
+                          onChange={() =>
+                            handleFiltroChange('tamanho', tamanho)
+                          }
+                          className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                        />
+                        <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                          {tamanho}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
               </div>
 
