@@ -220,7 +220,109 @@ export default function DashboardResumo({
         doc.text('Página 4 de 5', pageWidth / 2, pageHeight - 20, { align: 'center' })
         doc.text('Desenvolvido por M24', pageWidth - margin, pageHeight - 20, { align: 'right' })
         
-        // PÁGINA 5 - METODOLOGIA
+        // PÁGINA 5 - TABELAS DE ANÁLISE
+        doc.addPage()
+        doc.setFontSize(18)
+        doc.setFont('helvetica', 'bold')
+        doc.text('Tabelas de Análise', margin, 40)
+        
+        // Tabela de Inscrições Detalhadas
+        doc.setFontSize(14)
+        doc.setFont('helvetica', 'bold')
+        doc.text('Inscrições Detalhadas', margin, 70)
+        
+        // Cabeçalho da tabela
+        doc.setFontSize(10)
+        doc.setFont('helvetica', 'bold')
+        doc.text('ID', margin, 90)
+        doc.text('Nome', margin + 25, 90)
+        doc.text('Email', margin + 80, 90)
+        doc.text('Status', margin + 140, 90)
+        doc.text('Data', margin + 180, 90)
+        
+        // Linha separadora
+        doc.line(margin, 95, pageWidth - margin, 95)
+        
+        // Dados das inscrições (limitado a 15 para caber na página)
+        doc.setFontSize(9)
+        doc.setFont('helvetica', 'normal')
+        let yInscricoes = 105
+        inscricoes.slice(0, 15).forEach((inscricao, index) => {
+          // Zebra-striping (fundo cinza em linhas pares)
+          if (index % 2 === 1) {
+            doc.setFillColor(242, 242, 242)
+            doc.rect(margin, yInscricoes - 3, pageWidth - 2 * margin, 8, 'F')
+          }
+          
+          doc.text(inscricao.id.toString(), margin, yInscricoes)
+          doc.text(inscricao.nome?.substring(0, 20) || '', margin + 25, yInscricoes)
+          doc.text(inscricao.email?.substring(0, 25) || '', margin + 80, yInscricoes)
+          doc.text(inscricao.status || '', margin + 140, yInscricoes)
+          doc.text(inscricao.created ? new Date(inscricao.created).toLocaleDateString('pt-BR') : '', margin + 180, yInscricoes)
+          yInscricoes += 10
+        })
+        
+        if (inscricoes.length > 15) {
+          doc.setFontSize(8)
+          doc.setFont('helvetica', 'italic')
+          doc.text(`* Mostrando 15 de ${inscricoes.length} inscrições`, margin, yInscricoes + 5)
+        }
+        
+        // PÁGINA 6 - TABELAS DE PEDIDOS
+        doc.addPage()
+        doc.setFontSize(18)
+        doc.setFont('helvetica', 'bold')
+        doc.text('Tabelas de Pedidos', margin, 40)
+        
+        // Tabela de Pedidos Detalhados
+        doc.setFontSize(14)
+        doc.setFont('helvetica', 'bold')
+        doc.text('Pedidos Detalhados', margin, 70)
+        
+        // Cabeçalho da tabela
+        doc.setFontSize(10)
+        doc.setFont('helvetica', 'bold')
+        doc.text('ID', margin, 90)
+        doc.text('Cliente', margin + 25, 90)
+        doc.text('Produto', margin + 80, 90)
+        doc.text('Status', margin + 140, 90)
+        doc.text('Valor', margin + 180, 90)
+        
+        // Linha separadora
+        doc.line(margin, 95, pageWidth - margin, 95)
+        
+        // Dados dos pedidos (limitado a 15 para caber na página)
+        doc.setFontSize(9)
+        doc.setFont('helvetica', 'normal')
+        let yPedidos = 105
+        pedidos.slice(0, 15).forEach((pedido, index) => {
+          // Zebra-striping (fundo cinza em linhas pares)
+          if (index % 2 === 1) {
+            doc.setFillColor(242, 242, 242)
+            doc.rect(margin, yPedidos - 3, pageWidth - 2 * margin, 8, 'F')
+          }
+          
+          doc.text(pedido.id.toString(), margin, yPedidos)
+          doc.text(pedido.id_inscricao?.substring(0, 20) || '', margin + 25, yPedidos)
+          doc.text(Array.isArray(pedido.produto) ? pedido.produto.join(', ').substring(0, 25) : (pedido.produto as string)?.substring(0, 25) || '', margin + 80, yPedidos)
+          doc.text(pedido.status || '', margin + 140, yPedidos)
+          doc.text(`R$ ${typeof pedido.valor === 'string' ? parseFloat(pedido.valor).toFixed(2) : '0.00'}`, margin + 180, yPedidos)
+          yPedidos += 10
+        })
+        
+        if (pedidos.length > 15) {
+          doc.setFontSize(8)
+          doc.setFont('helvetica', 'italic')
+          doc.text(`* Mostrando 15 de ${pedidos.length} pedidos`, margin, yPedidos + 5)
+        }
+        
+        if (pedidos.length > 15) {
+          doc.setFontSize(8)
+          doc.setFont('helvetica', 'italic')
+          doc.text(`* Mostrando 15 de ${pedidos.length} pedidos`, margin, y + 5)
+        }
+        
+        // PÁGINA 7 - METODOLOGIA
         doc.addPage()
         doc.setFontSize(18)
         doc.setFont('helvetica', 'bold')
@@ -233,17 +335,18 @@ export default function DashboardResumo({
         doc.text('• Valor total considera apenas pedidos com status "pago"', margin, 100)
         doc.text('• Inscrições confirmadas incluem aprovação por líder', margin, 115)
         doc.text('• Relatório gerado automaticamente pelo sistema', margin, 130)
+        doc.text('• Tabelas limitadas a 15 registros por página para legibilidade', margin, 145)
         
         // Nota de confidencialidade para líderes
         if (isLider) {
           doc.setFontSize(10)
           doc.setFont('helvetica', 'italic')
-          doc.text('* Relatório restrito à liderança - dados agregados sem detalhes operacionais', margin, 160)
+          doc.text('* Relatório restrito à liderança - dados agregados sem detalhes operacionais', margin, 170)
         }
         
         // Rodapé
         doc.setFontSize(9)
-        doc.text('Página 5 de 5', pageWidth / 2, pageHeight - 20, { align: 'center' })
+        doc.text('Página 7 de 7', pageWidth / 2, pageHeight - 20, { align: 'center' })
         doc.text('Desenvolvido por M24', pageWidth - margin, pageHeight - 20, { align: 'right' })
         
         // Nome do arquivo baseado no contexto
