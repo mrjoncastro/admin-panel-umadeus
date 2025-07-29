@@ -198,12 +198,128 @@ export default function DashboardAnalytics({
         charts,
       )
     } catch (err) {
-      console.error('Erro ao gerar PDF', err)
-      const message =
-        err instanceof Error && err.message.includes('Tempo')
-          ? 'Tempo esgotado ao gerar PDF.'
-          : 'Não foi possível gerar o PDF. Tente novamente.'
-      showError(message)
+      console.error('Erro ao gerar PDF:', err)
+      showError('Erro ao gerar PDF')
+    }
+  }
+
+  // Nova função para gerar PDF específico para camisaria
+  const handleExportCamisariaPDF = async () => {
+    try {
+      // Agrupar pedidos por campo e tamanho
+      const pacotesPorCampo: Record<string, Record<string, number>> = {}
+      
+      pedidos.forEach((pedido) => {
+        const campo = pedido.expand?.campo?.nome || 'Sem campo'
+        const tamanho = pedido.tamanho || 'Sem tamanho'
+        
+        if (!pacotesPorCampo[campo]) {
+          pacotesPorCampo[campo] = {}
+        }
+        
+        pacotesPorCampo[campo][tamanho] = (pacotesPorCampo[campo][tamanho] || 0) + 1
+      })
+
+      // Criar PDF específico para camisaria
+      const { jsPDF } = await import('jspdf')
+      const doc = new jsPDF()
+      
+      // Título
+      doc.setFontSize(20)
+      doc.setFont('helvetica', 'bold')
+      doc.text('RELATÓRIO DE PACOTES - CAMISARIA', 105, 20, { align: 'center' })
+      
+      // Data
+      doc.setFontSize(12)
+      doc.setFont('helvetica', 'normal')
+      doc.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')}`, 105, 30, { align: 'center' })
+      
+      let yPosition = 50
+      
+      // Para cada campo, criar uma seção
+      Object.entries(pacotesPorCampo).forEach(([campo, tamanhos], index) => {
+        // Título do campo
+        doc.setFontSize(16)
+        doc.setFont('helvetica', 'bold')
+        doc.text(`CAMPO: ${campo.toUpperCase()}`, 20, yPosition)
+        yPosition += 10
+        
+        // Tabela de tamanhos
+        const tamanhosOrdenados = ['PP', 'P', 'M', 'G', 'GG']
+        const dadosTabela = tamanhosOrdenados.map(tamanho => [
+          tamanho,
+          tamanhos[tamanho] || 0
+        ]).filter(row => (row[1] as number) > 0) // Só incluir tamanhos com quantidade > 0
+        
+        if (dadosTabela.length > 0) {
+          // Cabeçalho da tabela
+          doc.setFontSize(12)
+          doc.setFont('helvetica', 'bold')
+          doc.text('Tamanho', 30, yPosition)
+          doc.text('Quantidade', 100, yPosition)
+          yPosition += 8
+          
+                     // Dados da tabela
+           doc.setFont('helvetica', 'normal')
+           dadosTabela.forEach(([tamanho, quantidade]) => {
+             doc.text(tamanho as string, 30, yPosition)
+             doc.text((quantidade as number).toString(), 100, yPosition)
+             yPosition += 6
+           })
+          
+          // Total do campo
+          const totalCampo = Object.values(tamanhos).reduce((sum, qty) => sum + qty, 0)
+          doc.setFont('helvetica', 'bold')
+          doc.text(`TOTAL: ${totalCampo} camisetas`, 30, yPosition)
+          yPosition += 15
+        }
+        
+        // Quebra de página se necessário
+        if (yPosition > 250 && index < Object.keys(pacotesPorCampo).length - 1) {
+          doc.addPage()
+          yPosition = 20
+        }
+      })
+      
+      // Resumo geral
+      doc.addPage()
+      doc.setFontSize(16)
+      doc.setFont('helvetica', 'bold')
+      doc.text('RESUMO GERAL', 105, 20, { align: 'center' })
+      
+      const totalGeral = pedidos.length
+      const totalPorTamanho: Record<string, number> = {}
+      
+      pedidos.forEach(pedido => {
+        const tamanho = pedido.tamanho || 'Sem tamanho'
+        totalPorTamanho[tamanho] = (totalPorTamanho[tamanho] || 0) + 1
+      })
+      
+      yPosition = 40
+      doc.setFontSize(12)
+      doc.setFont('helvetica', 'bold')
+      doc.text('TOTAL GERAL POR TAMANHO:', 20, yPosition)
+      yPosition += 10
+      
+             doc.setFont('helvetica', 'normal')
+       const tamanhosOrdenadosResumo = ['PP', 'P', 'M', 'G', 'GG']
+       tamanhosOrdenadosResumo.forEach((tamanho: string) => {
+         const quantidade = totalPorTamanho[tamanho] || 0
+         if (quantidade > 0) {
+           doc.text(`${tamanho}: ${quantidade}`, 30, yPosition)
+           yPosition += 6
+         }
+       })
+      
+      yPosition += 10
+      doc.setFont('helvetica', 'bold')
+      doc.text(`TOTAL GERAL: ${totalGeral} camisetas`, 20, yPosition)
+      
+      // Salvar PDF
+      doc.save('relatorio-camisaria-pacotes.pdf')
+    } catch (err) {
+      console.error('Erro ao gerar PDF da camisaria:', err)
+      showError('Erro ao gerar PDF da camisaria')
     }
   }
 
@@ -253,7 +369,13 @@ export default function DashboardAnalytics({
           />
         </div>
         <button onClick={handleExportPDF} className="btn btn-primary px-3 py-1">
-          PDF
+          PDF Geral
+        </button>
+        <button 
+          onClick={handleExportCamisariaPDF} 
+          className="btn btn-secondary px-3 py-1"
+        >
+          PDF Camisas
         </button>
         <button
           onClick={handleExportXLSX}

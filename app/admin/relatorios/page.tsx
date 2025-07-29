@@ -1,12 +1,20 @@
 'use client'
 
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
-import { useEffect, useRef, useState } from 'react'
+import { useToast } from '@/lib/context/ToastContext'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import type { Inscricao, Pedido, Produto } from '@/types'
-import DashboardAnalytics from '../components/DashboardAnalytics'
-import DashboardResumo from '../dashboard/components/DashboardResumo'
-import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import { fetchAllPages } from '@/lib/utils/fetchAllPages'
+import dynamic from 'next/dynamic'
+import { setupCharts } from '@/lib/chartSetup'
+import { createPattern, PatternType } from '@/utils/chartPatterns'
+import type { Chart, ChartData } from 'chart.js'
+import LoadingOverlay from '@/components/organisms/LoadingOverlay'
+import DashboardResumo from '../dashboard/components/DashboardResumo'
+
+const BarChart = dynamic(() => import('react-chartjs-2').then((m) => m.Bar), {
+  ssr: false,
+})
 
 // Enhanced filtering interface
 interface Filtros {
@@ -22,18 +30,18 @@ interface Filtros {
 
 export default function RelatoriosPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
+  const { showError } = useToast()
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [pedidos, setPedidos] = useState<Pedido[]>([])
   const [produtos, setProdutos] = useState<Produto[]>([])
   const [campos, setCampos] = useState<{ id: string; nome: string }[]>([])
+  const [eventos, setEventos] = useState<{ id: string; titulo: string }[]>([])
   const [totalInscricoes, setTotalInscricoes] = useState(0)
   const [totalPedidos, setTotalPedidos] = useState(0)
-  const [filtroStatus, setFiltroStatus] = useState('pago')
-  const [filtroInscricoes, setFiltroInscricoes] = useState('pendente')
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const isMounted = useRef(true)
-  const [eventos, setEventos] = useState<{ id: string; titulo: string }[]>([])
+  const [filtroStatus, setFiltroStatus] = useState('todos')
+  const [filtroInscricoes, setFiltroInscricoes] = useState('todos')
 
   // Enhanced filters state
   const [filtros, setFiltros] = useState<Filtros>({
@@ -52,6 +60,13 @@ export default function RelatoriosPage() {
     [],
   )
   const [pedidosFiltrados, setPedidosFiltrados] = useState<Pedido[]>([])
+
+  // Chart data for the unified report
+  const [chartData, setChartData] = useState<ChartData<'bar'>>({
+    labels: [],
+    datasets: [],
+  })
+  const chartRef = useRef<Chart<'bar'> | null>(null)
 
   // Apply filters to data
   useEffect(() => {
@@ -174,10 +189,86 @@ export default function RelatoriosPage() {
     setPedidosFiltrados(pedidosResult)
   }, [inscricoes, pedidos, filtros])
 
+  // Generate chart data from filtered pedidos
+  useEffect(() => {
+    const ordered = sortPedidos(pedidosFiltrados)
+    const rowsCalc: (string | number)[][] = []
+    const totalsCalc: Record<string, number> = {}
+    let labels: string[] = []
+    let datasets: ChartData<'bar'>['datasets'] = []
+
+    // Simple produtoCampo analysis
+    const count: Record<string, Record<string, number>> = {}
+    ordered.forEach((p) => {
+      const campo = p.expand?.campo?.nome || 'Sem campo'
+      const produtosData = Array.isArray(p.expand?.produto)
+        ? (p.expand?.produto as Produto[])
+        : p.expand?.produto
+          ? [p.expand.produto as Produto]
+          : []
+      if (produtosData.length === 0) {
+        count[campo] = count[campo] || {}
+        count[campo]['Sem produto'] = (count[campo]['Sem produto'] || 0) + 1
+        totalsCalc['Sem produto'] = (totalsCalc['Sem produto'] || 0) + 1
+      } else {
+        produtosData.forEach((pr: Produto) => {
+          const nome = pr?.nome || 'Sem produto'
+          count[campo] = count[campo] || {}
+          count[campo][nome] = (count[campo][nome] || 0) + 1
+          totalsCalc[nome] = (totalsCalc[nome] || 0) + 1
+        })
+      }
+    })
+    labels = Object.keys(count)
+    const produtos = Array.from(
+      new Set(labels.flatMap((c) => Object.keys(count[c]))),
+    )
+    const patterns: PatternType[] = [
+      'diagonal',
+      'dots',
+      'cross',
+      'reverseDiagonal',
+    ]
+    datasets = produtos.map((prod, idx) => {
+      labels.forEach((campo) => {
+        const total = count[campo][prod]
+        if (total !== undefined) rowsCalc.push([campo, prod, total])
+      })
+      return {
+        label: prod,
+        data: labels.map((c) => count[c][prod] || 0),
+        backgroundColor: createPattern(
+          patterns[idx % patterns.length],
+          '#666',
+        ),
+        borderColor: '#000',
+        stack: 'stack',
+      }
+    })
+
+    setChartData({ labels, datasets })
+  }, [pedidosFiltrados])
+
+  const sortPedidos = useCallback(
+    (lista: Pedido[]) => {
+      return [...lista].sort((a, b) => {
+        const campoA = a.expand?.campo?.nome || ''
+        const campoB = b.expand?.campo?.nome || ''
+        return campoA.localeCompare(campoB)
+      })
+    },
+    [],
+  )
+
+  useEffect(() => {
+    setupCharts()
+  }, [])
+
   useEffect(() => {
     if (!authChecked || !user?.id || !user?.role) return
     const controller = new AbortController()
     const signal = controller.signal
+    const isMounted = { current: true }
 
     const fetchData = async () => {
       try {
@@ -391,6 +482,102 @@ export default function RelatoriosPage() {
     })
   }
 
+  // Funções para calcular opções dinâmicas baseadas nos filtros ativos
+  const getStatusOptions = () => {
+    const statusDisponiveis = new Set<string>()
+    pedidosFiltrados.forEach(p => {
+      if (p.status) statusDisponiveis.add(p.status)
+    })
+    return ['pendente', 'pago', 'vencido', 'cancelado'].filter(status => 
+      statusDisponiveis.has(status) || filtros.status.includes(status)
+    )
+  }
+
+  const getStatusInscricoesOptions = () => {
+    const statusDisponiveis = new Set<string>()
+    inscricoesFiltradas.forEach(i => {
+      if (i.status) statusDisponiveis.add(i.status)
+    })
+    return [
+      { value: 'pendente', label: 'Pendente' },
+      { value: 'aguardando_pagamento', label: 'Aguardando Pagamento' },
+      { value: 'confirmado', label: 'Confirmado' },
+      { value: 'cancelado', label: 'Cancelado' }
+    ].filter(status => 
+      statusDisponiveis.has(status.value) || filtros.statusInscricoes.includes(status.value)
+    )
+  }
+
+  const getProdutoOptions = () => {
+    const produtosDisponiveis = new Set<string>()
+    const pedidosComProdutos = [...pedidosFiltrados, ...inscricoesFiltradas]
+    
+    pedidosComProdutos.forEach(item => {
+      if (item.produto) {
+        if (Array.isArray(item.produto)) {
+          item.produto.forEach(prod => produtosDisponiveis.add(prod))
+        } else {
+          produtosDisponiveis.add(item.produto)
+        }
+      }
+      // Verificar produtos expandidos
+      if ('expand' in item && item.expand?.produto) {
+        if (Array.isArray(item.expand.produto)) {
+          item.expand.produto.forEach((prod: Produto) => produtosDisponiveis.add(prod.id))
+        } else {
+          produtosDisponiveis.add(item.expand.produto.id)
+        }
+      }
+    })
+
+    return produtos.filter(produto => 
+      produtosDisponiveis.has(produto.id) || filtros.produto.includes(produto.id)
+    )
+  }
+
+  const getCampoOptions = () => {
+    const camposDisponiveis = new Set<string>()
+    const pedidosComCampos = [...pedidosFiltrados, ...inscricoesFiltradas]
+    
+    pedidosComCampos.forEach(item => {
+      if (item.campo) camposDisponiveis.add(item.campo)
+      if ('expand' in item && item.expand?.campo?.id) {
+        camposDisponiveis.add(item.expand.campo.id)
+      }
+    })
+
+    return campos.filter(campo => 
+      camposDisponiveis.has(campo.id) || filtros.campo.includes(campo.id)
+    )
+  }
+
+  const getCanalOptions = () => {
+    const canaisDisponiveis = new Set<string>()
+    pedidosFiltrados.forEach(p => {
+      if (p.canal) canaisDisponiveis.add(p.canal)
+    })
+    
+    return [
+      { value: 'loja', label: 'Loja' },
+      { value: 'inscricao', label: 'Inscrição' }
+    ].filter(canal => 
+      canaisDisponiveis.has(canal.value) || filtros.canal.includes(canal.value)
+    )
+  }
+
+  const getTamanhoOptions = () => {
+    const tamanhosDisponiveis = new Set<string>()
+    const pedidosComTamanhos = [...pedidosFiltrados, ...inscricoesFiltradas]
+    
+    pedidosComTamanhos.forEach(item => {
+      if (item.tamanho) tamanhosDisponiveis.add(item.tamanho)
+    })
+
+    return ['PP', 'P', 'M', 'G', 'GG'].filter(tamanho => 
+      tamanhosDisponiveis.has(tamanho) || filtros.tamanho.includes(tamanho)
+    )
+  }
+
   const produtosFiltrados =
     filtros.evento !== 'todos'
       ? produtos.filter((p: Produto) => p.evento_id === filtros.evento)
@@ -411,9 +598,9 @@ export default function RelatoriosPage() {
       ) : (
         <>
           <div className="mb-6 text-center dark:text-gray-100">
-            <h1 className="heading">Relatório Geral</h1>
+            <h1 className="heading">Relatório Unificado</h1>
             <p className="text-sm text-gray-700 mt-1 dark:text-gray-100">
-              Exporte o resumo e métricas gerais em PDF ou XLSX.
+              Análise completa com filtros avançados e gráfico de produtos por campo.
             </p>
           </div>
 
@@ -431,7 +618,7 @@ export default function RelatoriosPage() {
                     Situação do Pedido
                   </label>
                   <div className="space-y-2">
-                    {['pendente', 'pago', 'vencido', 'cancelado'].map(
+                    {getStatusOptions().map(
                       (status) => (
                         <label key={status} className="flex items-center">
                           <input
@@ -443,7 +630,7 @@ export default function RelatoriosPage() {
                             className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
                           />
                           <span className="ml-2 text-sm text-gray-700 dark:text-gray-300 capitalize">
-                            {status} ({filtros.status.includes(status) ? '✓' : '✗'})
+                            {status}
                           </span>
                         </label>
                       ),
@@ -457,15 +644,7 @@ export default function RelatoriosPage() {
                     Situação da Inscrição
                   </label>
                   <div className="space-y-2">
-                    {[
-                      { value: 'pendente', label: 'Pendente' },
-                      {
-                        value: 'aguardando_pagamento',
-                        label: 'Aguardando Pagamento',
-                      },
-                      { value: 'confirmado', label: 'Confirmado' },
-                      { value: 'cancelado', label: 'Cancelado' },
-                    ].map((status) => (
+                    {getStatusInscricoesOptions().map((status) => (
                       <label key={status.value} className="flex items-center">
                         <input
                           type="checkbox"
@@ -512,8 +691,8 @@ export default function RelatoriosPage() {
                     Tipo de Produto
                   </label>
                   <div className="space-y-2 max-h-32 overflow-y-auto">
-                                          {produtosFiltrados.length > 0 ? (
-                        produtosFiltrados.map((produto: Produto) => (
+                    {getProdutoOptions().length > 0 ? (
+                      getProdutoOptions().map((produto: Produto) => (
                         <label key={produto.id} className="flex items-center">
                           <input
                             type="checkbox"
@@ -542,7 +721,7 @@ export default function RelatoriosPage() {
                     Campo
                   </label>
                   <div className="space-y-2 max-h-32 overflow-y-auto">
-                    {campos.map((campo) => (
+                    {getCampoOptions().map((campo) => (
                       <label key={campo.id} className="flex items-center">
                         <input
                           type="checkbox"
@@ -564,10 +743,7 @@ export default function RelatoriosPage() {
                     Canal de Venda
                   </label>
                   <div className="space-y-2">
-                    {[
-                      { value: 'loja', label: 'Loja' },
-                      { value: 'inscricao', label: 'Inscrição' },
-                    ].map((canal) => (
+                    {getCanalOptions().map((canal) => (
                       <label key={canal.value} className="flex items-center">
                         <input
                           type="checkbox"
@@ -611,7 +787,7 @@ export default function RelatoriosPage() {
                     Tamanho da Camisa
                   </label>
                   <div className="space-y-2">
-                    {['PP', 'P', 'M', 'G', 'GG'].map((tamanho) => (
+                    {getTamanhoOptions().map((tamanho) => (
                       <label key={tamanho} className="flex items-center">
                         <input
                           type="checkbox"
@@ -646,6 +822,7 @@ export default function RelatoriosPage() {
             </div>
           </div>
 
+          {/* Dashboard Resumo */}
           <DashboardResumo
             inscricoes={inscricoesFiltradas}
             pedidos={pedidosFiltrados}
@@ -656,10 +833,40 @@ export default function RelatoriosPage() {
             totalInscricoes={totalInscricoes}
             totalPedidos={totalPedidos}
           />
-          <DashboardAnalytics
-            inscricoes={inscricoesFiltradas}
-            pedidos={pedidosFiltrados}
-          />
+
+          {/* Unified Chart */}
+          <div className="card mb-8">
+            <h3 className="text-lg font-semibold mb-4 dark:text-gray-100">
+              Produtos por Campo
+            </h3>
+            <div className="aspect-video">
+              <BarChart
+                ref={chartRef}
+                data={chartData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: 'top' as const,
+                    },
+                    title: {
+                      display: true,
+                      text: 'Distribuição de Produtos por Campo',
+                    },
+                  },
+                  scales: {
+                    x: {
+                      stacked: true,
+                    },
+                    y: {
+                      stacked: true,
+                    },
+                  },
+                }}
+              />
+            </div>
+          </div>
         </>
       )}
     </main>

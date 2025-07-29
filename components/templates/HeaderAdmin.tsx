@@ -65,7 +65,7 @@ export default function Header() {
   ]
 
   const relatoriosLinks = [
-    { href: '/admin/relatorio', label: 'Relatório Geral' },
+    { href: '/admin/relatorios', label: 'Relatórios' },
   ]
 
   const gerenciamentoLinks =
