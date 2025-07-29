@@ -138,11 +138,10 @@ export default function DashboardResumo({
         doc.text('4. Status dos Pedidos', margin, 115)
         doc.text('5. Tabelas de Análise', margin, 130)
         doc.text('6. Tabelas de Pedidos', margin, 145)
-        doc.text('7. Metodologia', margin, 160)
         
         // Rodapé
         doc.setFontSize(9)
-        doc.text('Página 2 de 5', pageWidth / 2, pageHeight - 20, { align: 'center' })
+        doc.text('Página 2 de 6', pageWidth / 2, pageHeight - 20, { align: 'center' })
         doc.text('Desenvolvido por M24', pageWidth - margin, pageHeight - 20, { align: 'right' })
         
         // PÁGINA 3 - VISÃO ESTRATÉGICA
@@ -191,44 +190,91 @@ export default function DashboardResumo({
         
         // Rodapé
         doc.setFontSize(9)
-        doc.text('Página 3 de 5', pageWidth / 2, pageHeight - 20, { align: 'center' })
+        doc.text('Página 3 de 6', pageWidth / 2, pageHeight - 20, { align: 'center' })
         doc.text('Desenvolvido por M24', pageWidth - margin, pageHeight - 20, { align: 'right' })
         
-        // PÁGINA 4 - PANORAMA GERAL
+        // PÁGINA 4 - PANORAMA GERAL COM GRÁFICOS
         doc.addPage()
         doc.setFontSize(18)
         doc.setFont('helvetica', 'bold')
         doc.text('Panorama Geral', margin, 40)
         
-        // Tabela de Status das Inscrições
+        // Gráfico de Status das Inscrições
         doc.setFontSize(14)
         doc.setFont('helvetica', 'bold')
         doc.text('Status das Inscrições', margin, 70)
         
-        doc.setFontSize(11)
-        doc.setFont('helvetica', 'normal')
-        let y = 90
-        Object.entries(statusInscricoes).forEach(([status, count]) => {
-          doc.text(`${status.charAt(0).toUpperCase() + status.slice(1)}: ${count}`, margin, y)
-          y += 15
+        // Criar gráfico de barras horizontais para inscrições
+        const inscricoesData = Object.entries(statusInscricoes)
+        const maxInscricoes = Math.max(...inscricoesData.map(([, count]) => count), 1)
+        const barHeight = 15
+        const barSpacing = 20
+        let yInscricoesChart = 90
+        
+        inscricoesData.forEach(([status, count], index) => {
+          const barWidth = (count / maxInscricoes) * 120 // Largura máxima da barra
+          const barY = yInscricoesChart + (index * barSpacing)
+          
+          // Texto do status
+          doc.setFontSize(10)
+          doc.setFont('helvetica', 'normal')
+          doc.text(`${status.charAt(0).toUpperCase() + status.slice(1)}: ${count}`, margin, barY + 5)
+          
+          // Barra do gráfico
+          doc.setFillColor(100 + (index * 40), 100 + (index * 40), 100 + (index * 40))
+          doc.rect(margin + 80, barY, barWidth, barHeight, 'F')
+          
+          // Borda da barra
+          doc.setDrawColor(0)
+          doc.setLineWidth(0.5)
+          doc.rect(margin + 80, barY, barWidth, barHeight)
         })
         
-        // Tabela de Status dos Pedidos
+        // Gráfico de Status dos Pedidos
         doc.setFontSize(14)
         doc.setFont('helvetica', 'bold')
-        doc.text('Status dos Pedidos', margin, y + 20)
+        doc.text('Status dos Pedidos', margin, yInscricoesChart + 100)
         
-        doc.setFontSize(11)
-        doc.setFont('helvetica', 'normal')
-        y += 40
-        Object.entries(statusPedidos).forEach(([status, count]) => {
-          doc.text(`${status.charAt(0).toUpperCase() + status.slice(1)}: ${count}`, margin, y)
-          y += 15
+        // Criar gráfico de barras horizontais para pedidos
+        const pedidosData = Object.entries(statusPedidos)
+        const maxPedidos = Math.max(...pedidosData.map(([, count]) => count), 1)
+        let yPedidosChart = yInscricoesChart + 120
+        
+        pedidosData.forEach(([status, count], index) => {
+          const barWidth = (count / maxPedidos) * 120 // Largura máxima da barra
+          const barY = yPedidosChart + (index * barSpacing)
+          
+          // Texto do status
+          doc.setFontSize(10)
+          doc.setFont('helvetica', 'normal')
+          doc.text(`${status.charAt(0).toUpperCase() + status.slice(1)}: ${count}`, margin, barY + 5)
+          
+          // Barra do gráfico com cores diferentes
+          const colors = [
+            [255, 99, 132],   // Vermelho
+            [54, 162, 235],   // Azul
+            [255, 205, 86],   // Amarelo
+            [75, 192, 192],   // Verde
+            [153, 102, 255]   // Roxo
+          ]
+          const color = colors[index % colors.length]
+          doc.setFillColor(color[0], color[1], color[2])
+          doc.rect(margin + 80, barY, barWidth, barHeight, 'F')
+          
+          // Borda da barra
+          doc.setDrawColor(0)
+          doc.setLineWidth(0.5)
+          doc.rect(margin + 80, barY, barWidth, barHeight)
         })
+        
+        // Legenda dos gráficos
+        doc.setFontSize(9)
+        doc.setFont('helvetica', 'italic')
+        doc.text('* Gráficos de barras horizontais representando a distribuição por status', margin, pageHeight - 40)
         
         // Rodapé
         doc.setFontSize(9)
-        doc.text('Página 4 de 5', pageWidth / 2, pageHeight - 20, { align: 'center' })
+        doc.text('Página 4 de 6', pageWidth / 2, pageHeight - 20, { align: 'center' })
         doc.text('Desenvolvido por M24', pageWidth - margin, pageHeight - 20, { align: 'right' })
         
         // PÁGINA 5 - TABELAS DE ANÁLISE
@@ -237,7 +283,7 @@ export default function DashboardResumo({
         doc.setFont('helvetica', 'bold')
         doc.text('Tabelas de Análise', margin, 40)
         
-        // Tabela de Inscrições Detalhadas
+        // Tabela de Inscrições Detalhadas com paginação automática
         doc.setFontSize(14)
         doc.setFont('helvetica', 'bold')
         doc.text('Inscrições Detalhadas', margin, 70)
@@ -245,39 +291,72 @@ export default function DashboardResumo({
         // Cabeçalho da tabela
         doc.setFontSize(10)
         doc.setFont('helvetica', 'bold')
-        doc.text('ID', margin, 90)
-        doc.text('Nome', margin + 25, 90)
-        doc.text('Email', margin + 80, 90)
-        doc.text('Status', margin + 140, 90)
-        doc.text('Data', margin + 180, 90)
+        doc.text('CPF', margin, 90)
+        doc.text('Nome', margin + 35, 90)
+        doc.text('Email', margin + 90, 90)
+        doc.text('Status', margin + 150, 90)
+        doc.text('Data', margin + 190, 90)
         
         // Linha separadora
         doc.line(margin, 95, pageWidth - margin, 95)
         
-        // Dados das inscrições (limitado a 15 para caber na página)
+        // Dados das inscrições com paginação automática
         doc.setFontSize(9)
         doc.setFont('helvetica', 'normal')
         let yInscricoes = 105
-        inscricoes.slice(0, 15).forEach((inscricao, index) => {
+        let currentPage = 5
+        let itemsPerPage = Math.floor((pageHeight - 120) / 10) // Calcular quantos itens cabem por página
+        
+        inscricoes.forEach((inscricao, index) => {
+          // Verificar se precisa de nova página
+          if (yInscricoes > pageHeight - 40) {
+            // Adicionar rodapé da página atual
+            doc.setFontSize(9)
+            doc.text(`Página ${currentPage}`, pageWidth / 2, pageHeight - 20, { align: 'center' })
+            doc.text('Desenvolvido por M24', pageWidth - margin, pageHeight - 20, { align: 'right' })
+            
+            // Nova página
+            doc.addPage()
+            currentPage++
+            
+            // Repetir cabeçalho na nova página
+            doc.setFontSize(14)
+            doc.setFont('helvetica', 'bold')
+            doc.text('Inscrições Detalhadas (continuação)', margin, 40)
+            
+            doc.setFontSize(10)
+            doc.setFont('helvetica', 'bold')
+            doc.text('CPF', margin, 60)
+            doc.text('Nome', margin + 35, 60)
+            doc.text('Email', margin + 90, 60)
+            doc.text('Status', margin + 150, 60)
+            doc.text('Data', margin + 190, 60)
+            
+            doc.line(margin, 65, pageWidth - margin, 65)
+            
+            yInscricoes = 75
+          }
+          
           // Zebra-striping (fundo cinza em linhas pares)
           if (index % 2 === 1) {
             doc.setFillColor(242, 242, 242)
             doc.rect(margin, yInscricoes - 3, pageWidth - 2 * margin, 8, 'F')
           }
           
-          doc.text(inscricao.id.toString(), margin, yInscricoes)
-          doc.text(inscricao.nome?.substring(0, 20) || '', margin + 25, yInscricoes)
-          doc.text(inscricao.email?.substring(0, 25) || '', margin + 80, yInscricoes)
-          doc.text(inscricao.status || '', margin + 140, yInscricoes)
-          doc.text(inscricao.created ? new Date(inscricao.created).toLocaleDateString('pt-BR') : '', margin + 180, yInscricoes)
+          // CPF (ou ID se não tiver CPF)
+          const cpf = inscricao.cpf || inscricao.id
+          doc.text(cpf?.substring(0, 14) || '', margin, yInscricoes)
+          doc.text(inscricao.nome?.substring(0, 20) || '', margin + 35, yInscricoes)
+          doc.text(inscricao.email?.substring(0, 25) || '', margin + 90, yInscricoes)
+          doc.text(inscricao.status || '', margin + 150, yInscricoes)
+          doc.text(inscricao.created ? new Date(inscricao.created).toLocaleDateString('pt-BR') : '', margin + 190, yInscricoes)
           yInscricoes += 10
         })
         
-        if (inscricoes.length > 15) {
-          doc.setFontSize(8)
-          doc.setFont('helvetica', 'italic')
-          doc.text(`* Mostrando 15 de ${inscricoes.length} inscrições`, margin, yInscricoes + 5)
-        }
+        // Rodapé da última página de inscrições
+        doc.setFontSize(9)
+        doc.text(`Página ${currentPage}`, pageWidth / 2, pageHeight - 20, { align: 'center' })
+        doc.text('Desenvolvido por M24', pageWidth - margin, pageHeight - 20, { align: 'right' })
         
         // PÁGINA 6 - TABELAS DE PEDIDOS
         doc.addPage()
@@ -285,7 +364,7 @@ export default function DashboardResumo({
         doc.setFont('helvetica', 'bold')
         doc.text('Tabelas de Pedidos', margin, 40)
         
-        // Tabela de Pedidos Detalhados
+        // Tabela de Pedidos Detalhados com paginação automática
         doc.setFontSize(14)
         doc.setFont('helvetica', 'bold')
         doc.text('Pedidos Detalhados', margin, 70)
@@ -293,72 +372,96 @@ export default function DashboardResumo({
         // Cabeçalho da tabela
         doc.setFontSize(10)
         doc.setFont('helvetica', 'bold')
-        doc.text('ID', margin, 90)
-        doc.text('Cliente', margin + 25, 90)
-        doc.text('Produto', margin + 80, 90)
-        doc.text('Status', margin + 140, 90)
-        doc.text('Valor', margin + 180, 90)
+        doc.text('CPF', margin, 90)
+        doc.text('Produto', margin + 50, 90)
+        doc.text('Status', margin + 120, 90)
+        doc.text('Valor', margin + 160, 90)
+        doc.text('Data', margin + 200, 90)
         
         // Linha separadora
         doc.line(margin, 95, pageWidth - margin, 95)
         
-        // Dados dos pedidos (limitado a 15 para caber na página)
+        // Dados dos pedidos com paginação automática
         doc.setFontSize(9)
         doc.setFont('helvetica', 'normal')
         let yPedidos = 105
-        pedidos.slice(0, 15).forEach((pedido, index) => {
+        let currentPagePedidos = currentPage + 1
+        
+        pedidos.forEach((pedido, index) => {
+          // Verificar se precisa de nova página
+          if (yPedidos > pageHeight - 40) {
+            // Adicionar rodapé da página atual
+            doc.setFontSize(9)
+            doc.text(`Página ${currentPagePedidos}`, pageWidth / 2, pageHeight - 20, { align: 'center' })
+            doc.text('Desenvolvido por M24', pageWidth - margin, pageHeight - 20, { align: 'right' })
+            
+            // Nova página
+            doc.addPage()
+            currentPagePedidos++
+            
+            // Repetir cabeçalho na nova página
+            doc.setFontSize(14)
+            doc.setFont('helvetica', 'bold')
+            doc.text('Pedidos Detalhados (continuação)', margin, 40)
+            
+            doc.setFontSize(10)
+            doc.setFont('helvetica', 'bold')
+            doc.text('CPF', margin, 60)
+            doc.text('Produto', margin + 50, 60)
+            doc.text('Status', margin + 120, 60)
+            doc.text('Valor', margin + 160, 60)
+            doc.text('Data', margin + 200, 60)
+            
+            doc.line(margin, 65, pageWidth - margin, 65)
+            
+            yPedidos = 75
+          }
+          
           // Zebra-striping (fundo cinza em linhas pares)
           if (index % 2 === 1) {
             doc.setFillColor(242, 242, 242)
             doc.rect(margin, yPedidos - 3, pageWidth - 2 * margin, 8, 'F')
           }
           
-          doc.text(pedido.id.toString(), margin, yPedidos)
-          doc.text(pedido.id_inscricao?.substring(0, 20) || '', margin + 25, yPedidos)
-          doc.text(Array.isArray(pedido.produto) ? pedido.produto.join(', ').substring(0, 25) : (pedido.produto as string)?.substring(0, 25) || '', margin + 80, yPedidos)
-          doc.text(pedido.status || '', margin + 140, yPedidos)
-          doc.text(`R$ ${typeof pedido.valor === 'string' ? parseFloat(pedido.valor).toFixed(2) : '0.00'}`, margin + 180, yPedidos)
+          // Buscar CPF através da inscrição
+          const inscricaoCliente = inscricoes.find(i => i.id === pedido.id_inscricao)
+          const cpfCliente = inscricaoCliente?.cpf || inscricaoCliente?.id || pedido.id_inscricao
+          
+          doc.text(cpfCliente?.substring(0, 14) || '', margin, yPedidos)
+          doc.text(Array.isArray(pedido.produto) ? pedido.produto.join(', ').substring(0, 20) : (pedido.produto as string)?.substring(0, 20) || '', margin + 50, yPedidos)
+          doc.text(pedido.status || '', margin + 120, yPedidos)
+          // Tratar valor do pedido de forma mais robusta
+          let valorFormatado = '0.00'
+          
+          // Tentar obter valor do expand primeiro, depois do campo direto
+          const valorPedido = pedido.expand?.pedido?.valor || pedido.valor
+          
+          if (valorPedido) {
+            if (typeof valorPedido === 'string') {
+              const valorNumerico = parseFloat(valorPedido)
+              if (!isNaN(valorNumerico)) {
+                valorFormatado = valorNumerico.toFixed(2)
+              } else {
+                console.warn('Valor inválido encontrado:', valorPedido, 'para pedido ID:', pedido.id)
+              }
+            } else if (typeof valorPedido === 'number') {
+              valorFormatado = valorPedido.toFixed(2)
+            }
+          } else {
+            console.warn('Valor nulo/undefined para pedido ID:', pedido.id)
+          }
+          doc.text(`R$ ${valorFormatado}`, margin + 160, yPedidos)
+          doc.text(pedido.created ? new Date(pedido.created).toLocaleDateString('pt-BR') : '', margin + 200, yPedidos)
           yPedidos += 10
         })
         
-        if (pedidos.length > 15) {
-          doc.setFontSize(8)
-          doc.setFont('helvetica', 'italic')
-          doc.text(`* Mostrando 15 de ${pedidos.length} pedidos`, margin, yPedidos + 5)
-        }
-        
-        if (pedidos.length > 15) {
-          doc.setFontSize(8)
-          doc.setFont('helvetica', 'italic')
-          doc.text(`* Mostrando 15 de ${pedidos.length} pedidos`, margin, y + 5)
-        }
-        
-        // PÁGINA 7 - METODOLOGIA
-        doc.addPage()
-        doc.setFontSize(18)
-        doc.setFont('helvetica', 'bold')
-        doc.text('Metodologia', margin, 40)
-        
-        doc.setFontSize(11)
-        doc.setFont('helvetica', 'normal')
-        doc.text('• Dados extraídos do sistema de gestão', margin, 70)
-        doc.text('• Filtros aplicados conforme critérios selecionados', margin, 85)
-        doc.text('• Valor total considera apenas pedidos com status "pago"', margin, 100)
-        doc.text('• Inscrições confirmadas incluem aprovação por líder', margin, 115)
-        doc.text('• Relatório gerado automaticamente pelo sistema', margin, 130)
-        doc.text('• Tabelas limitadas a 15 registros por página para legibilidade', margin, 145)
-        
-        // Nota de confidencialidade para líderes
-        if (isLider) {
-          doc.setFontSize(10)
-          doc.setFont('helvetica', 'italic')
-          doc.text('* Relatório restrito à liderança - dados agregados sem detalhes operacionais', margin, 170)
-        }
-        
-        // Rodapé
+        // Rodapé da última página de pedidos
         doc.setFontSize(9)
-        doc.text('Página 7 de 7', pageWidth / 2, pageHeight - 20, { align: 'center' })
+        doc.text(`Página ${currentPagePedidos}`, pageWidth / 2, pageHeight - 20, { align: 'center' })
         doc.text('Desenvolvido por M24', pageWidth - margin, pageHeight - 20, { align: 'right' })
+        
+        // Calcular número total de páginas (sem metodologia)
+        const totalPages = currentPagePedidos
         
         // Nome do arquivo baseado no contexto
         let fileName = 'relatorio-executivo.pdf'

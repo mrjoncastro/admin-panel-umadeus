@@ -90,7 +90,7 @@ Este documento define as diretrizes para criação de relatórios em PDF estáti
 | 3      | Visão Geral               | Cards de KPI (Total geral, Média diária, Crescimento)          |
 | 4      | Comparativo por Região    | Gráfico de barras + tabela de dados brutos                     |
 | 5–n    | Detalhamento de Dados     | Tabelas detalhadas por campo/produto                           |
-| n+1    | Anexos e Metodologia      | Fontes de dados, data e horário de extração, responsáveis      |
+| n+1    | Anexos e Metodologia      | Fontes de dados, data e horário de extração      |
 
 ---
 
@@ -106,7 +106,7 @@ Este documento define as diretrizes para criação de relatórios em PDF estáti
 
 - Descrição dos cálculos.
 - Data e horário de extração (horário de Brasília, UTC-3).
-- Responsáveis pela análise.
+
 
 ---
 
