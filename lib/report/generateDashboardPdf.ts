@@ -40,6 +40,7 @@ export interface DashboardMetrics {
   pedidos: number[]
   mediaValor: number
   arrecadacao: Record<string, number>
+  tamanhos?: Record<string, number>
 }
 
 export interface Periodo {
@@ -52,6 +53,7 @@ export interface ChartImages {
   pedidos?: string
   campoProduto?: string
   arrecadacao?: string
+  tamanhos?: string
 }
 
 function formatPeriod({ start, end }: Periodo) {
@@ -132,6 +134,12 @@ export async function generateDashboardPdf(
 
       if (charts.arrecadacao) {
         const img = await toGrayscale(charts.arrecadacao)
+        doc.addImage(img, 'PNG', margin.left, y, contentWidth, 220)
+        y += 240
+      }
+
+      if (charts.tamanhos) {
+        const img = await toGrayscale(charts.tamanhos)
         doc.addImage(img, 'PNG', margin.left, y, contentWidth, 220)
         y += 240
       }

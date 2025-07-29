@@ -120,11 +120,48 @@ export default function DashboardAnalytics({
     ],
   }
 
+  // Análise de tamanhos
+  const tamanhosCount: Record<string, number> = {}
+  const tamanhosInscricoes: Record<string, number> = {}
+  const tamanhosPedidos: Record<string, number> = {}
+
+  inscricoes.forEach((i) => {
+    if (i.tamanho) {
+      tamanhosInscricoes[i.tamanho] = (tamanhosInscricoes[i.tamanho] || 0) + 1
+      tamanhosCount[i.tamanho] = (tamanhosCount[i.tamanho] || 0) + 1
+    }
+  })
+
+  pedidos.forEach((p) => {
+    if (p.tamanho) {
+      tamanhosPedidos[p.tamanho] = (tamanhosPedidos[p.tamanho] || 0) + 1
+      tamanhosCount[p.tamanho] = (tamanhosCount[p.tamanho] || 0) + 1
+    }
+  })
+
+  const tamanhosLabels = ['PP', 'P', 'M', 'G', 'GG'].filter(t => tamanhosCount[t] > 0)
+  const tamanhosChart = {
+    labels: tamanhosLabels,
+    datasets: [
+      {
+        label: 'Inscrições',
+        data: tamanhosLabels.map(t => tamanhosInscricoes[t] || 0),
+        backgroundColor: twColors.primary600,
+      },
+      {
+        label: 'Pedidos',
+        data: tamanhosLabels.map(t => tamanhosPedidos[t] || 0),
+        backgroundColor: twColors.blue500,
+      }
+    ],
+  }
+
   const { showError } = useToast()
 
   const inscricoesRef = useRef<Chart<'line'> | null>(null)
   const pedidosRef = useRef<Chart<'line'> | null>(null)
   const arrecadacaoRef = useRef<Chart<'bar'> | null>(null)
+  const tamanhosRef = useRef<Chart<'bar'> | null>(null)
 
   const handleExportPDF = async () => {
     const campoProdutoCanvas = document.getElementById(
@@ -137,6 +174,9 @@ export default function DashboardAnalytics({
       arrecadacao: mostrarFinanceiro
         ? arrecadacaoRef.current?.toBase64Image()
         : undefined,
+      tamanhos: tamanhosLabels.length > 0
+        ? tamanhosRef.current?.toBase64Image()
+        : undefined,
     }
 
     const metrics = {
@@ -145,6 +185,7 @@ export default function DashboardAnalytics({
       pedidos: pedidosData.data,
       mediaValor,
       arrecadacao: arrecadacaoCampo,
+      tamanhos: tamanhosCount,
     }
 
     try {
@@ -263,6 +304,35 @@ export default function DashboardAnalytics({
                 ref={arrecadacaoRef}
                 data={arrecadacaoChart}
                 options={{ responsive: true, maintainAspectRatio: false }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Análise de Tamanhos */}
+      {tamanhosLabels.length > 0 && (
+        <div className="mt-6">
+          <h4 className="font-medium mb-4 dark:text-gray-100">
+            Distribuição por Tamanho
+          </h4>
+          <div className="card p-4">
+            <div className="aspect-video">
+              <BarChart
+                ref={tamanhosRef}
+                data={tamanhosChart}
+                options={{ 
+                  responsive: true, 
+                  maintainAspectRatio: false,
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      ticks: {
+                        stepSize: 1
+                      }
+                    }
+                  }
+                }}
               />
             </div>
           </div>

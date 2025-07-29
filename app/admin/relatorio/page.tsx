@@ -22,6 +22,7 @@ interface FiltrosRelatorio {
   campo: string
   periodo: string
   canal: string
+  tamanho: string
 }
 
 export default function RelatorioPage() {
@@ -50,6 +51,7 @@ export default function RelatorioPage() {
     campo: 'todos',
     periodo: 'todos',
     canal: 'todos',
+    tamanho: 'todos'
   })
 
   // Filtered pedidos based on active filters
@@ -61,19 +63,17 @@ export default function RelatorioPage() {
 
     // Apply filters
     if (filtros.status !== 'todos') {
-      pedidosResult = pedidosResult.filter((p) => p.status === filtros.status)
+      pedidosResult = pedidosResult.filter(p => p.status === filtros.status)
     }
     if (filtros.produto !== 'todos') {
-      pedidosResult = pedidosResult.filter((p) => {
+      pedidosResult = pedidosResult.filter(p => {
         if (Array.isArray(p.produto)) {
           return p.produto.includes(filtros.produto)
         }
         // Check expanded produto
         if (p.expand?.produto) {
           if (Array.isArray(p.expand.produto)) {
-            return p.expand.produto.some(
-              (prod: Produto) => prod.id === filtros.produto,
-            )
+            return p.expand.produto.some((prod: Produto) => prod.id === filtros.produto)
           } else {
             return p.expand.produto.id === filtros.produto
           }
@@ -82,15 +82,18 @@ export default function RelatorioPage() {
       })
     }
     if (filtros.campo !== 'todos') {
-      pedidosResult = pedidosResult.filter((p) => p.campo === filtros.campo)
+      pedidosResult = pedidosResult.filter(p => p.campo === filtros.campo)
+    }
+    if (filtros.tamanho !== 'todos') {
+      pedidosResult = pedidosResult.filter(p => p.tamanho === filtros.tamanho)
     }
     if (filtros.canal !== 'todos') {
-      pedidosResult = pedidosResult.filter((p) => p.canal === filtros.canal)
+      pedidosResult = pedidosResult.filter(p => p.canal === filtros.canal)
     }
     if (filtros.periodo !== 'todos') {
       const now = new Date()
       const filterDate = new Date()
-
+      
       switch (filtros.periodo) {
         case 'ultima_semana':
           filterDate.setDate(now.getDate() - 7)
@@ -105,10 +108,10 @@ export default function RelatorioPage() {
           filterDate.setFullYear(now.getFullYear() - 1)
           break
       }
-
+      
       if (filtros.periodo !== 'todos') {
-        pedidosResult = pedidosResult.filter(
-          (p) => p.created && new Date(p.created) >= filterDate,
+        pedidosResult = pedidosResult.filter(p => 
+          p.created && new Date(p.created) >= filterDate
         )
       }
     }
@@ -347,6 +350,7 @@ export default function RelatorioPage() {
       campo: 'todos',
       periodo: 'todos',
       canal: 'todos',
+      tamanho: 'todos'
     })
   }
 
@@ -449,6 +453,25 @@ export default function RelatorioPage() {
                 <option value="ultimo_mes">Último mês</option>
                 <option value="ultimos_3_meses">Últimos 3 meses</option>
                 <option value="ultimo_ano">Último ano</option>
+              </select>
+            </div>
+
+            {/* Tamanho */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Tamanho da Camisa
+              </label>
+              <select
+                value={filtros.tamanho}
+                onChange={(e) => handleFiltroChange('tamanho', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
+              >
+                <option value="todos">Todos os tamanhos</option>
+                <option value="PP">PP</option>
+                <option value="P">P</option>
+                <option value="M">M</option>
+                <option value="G">G</option>
+                <option value="GG">GG</option>
               </select>
             </div>
           </div>
