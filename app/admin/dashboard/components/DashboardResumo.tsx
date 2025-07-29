@@ -66,41 +66,60 @@ export default function DashboardResumo({
       return
     }
 
+    // Mostrar feedback visual
+    const button = document.querySelector('[data-pdf-button]') as HTMLButtonElement
+    let originalText = ''
+    if (button) {
+      originalText = button.innerHTML
+      button.innerHTML = '<span>Gerando PDF...</span>'
+      button.disabled = true
+    }
+
     // Importação dinâmica do jsPDF
     import('jspdf')
       .then(({ default: jsPDF }) => {
         const doc = new jsPDF()
         
+        // Determinar o título baseado no contexto
+        const isRelatorios = window.location.pathname.includes('/relatorios')
+        const title = isRelatorios ? 'Relatório de Análise' : 'Relatório de Dashboard'
+        
         // Título
         doc.setFontSize(20)
         doc.setFont('helvetica', 'bold')
-        doc.text('Relatório de Dashboard', 105, 20, { align: 'center' })
+        doc.text(title, 105, 20, { align: 'center' })
         
-        // Data
+        // Data e hora
         doc.setFontSize(12)
         doc.setFont('helvetica', 'normal')
         const dataAtual = new Date().toLocaleDateString('pt-BR')
-        doc.text(`Data: ${dataAtual}`, 20, 40)
+        const horaAtual = new Date().toLocaleTimeString('pt-BR')
+        doc.text(`Data: ${dataAtual} às ${horaAtual}`, 20, 40)
+        
+        // Contexto (se aplicável)
+        if (isRelatorios) {
+          doc.text('Contexto: Dados filtrados conforme critérios aplicados', 20, 55)
+        }
         
         // Resumos
         doc.setFontSize(16)
         doc.setFont('helvetica', 'bold')
-        doc.text('Resumo Geral', 20, 60)
+        doc.text('Resumo Geral', 20, 75)
         
         doc.setFontSize(12)
         doc.setFont('helvetica', 'normal')
-        doc.text(`Total de Inscrições: ${totalInscricoesFiltradas}`, 20, 80)
-        doc.text(`Total de Pedidos: ${totalPedidosFiltrados}`, 20, 95)
-        doc.text(`Valor Total: R$ ${valorTotalConfirmado.toFixed(2)}`, 20, 110)
+        doc.text(`Total de Inscrições: ${totalInscricoesFiltradas}`, 20, 95)
+        doc.text(`Total de Pedidos: ${totalPedidosFiltrados}`, 20, 110)
+        doc.text(`Valor Total: R$ ${valorTotalConfirmado.toFixed(2)}`, 20, 125)
         
         // Status das Inscrições
         doc.setFontSize(14)
         doc.setFont('helvetica', 'bold')
-        doc.text('Status das Inscrições', 20, 140)
+        doc.text('Status das Inscrições', 20, 155)
         
         doc.setFontSize(12)
         doc.setFont('helvetica', 'normal')
-        let y = 160
+        let y = 175
         Object.entries(statusInscricoes).forEach(([status, count]) => {
           doc.text(`${status.charAt(0).toUpperCase() + status.slice(1)}: ${count}`, 20, y)
           y += 15
@@ -119,12 +138,40 @@ export default function DashboardResumo({
           y += 15
         })
         
+        // Informações adicionais
+        if (y < 250) {
+          doc.setFontSize(14)
+          doc.setFont('helvetica', 'bold')
+          doc.text('Informações Adicionais', 20, y + 20)
+          
+          doc.setFontSize(12)
+          doc.setFont('helvetica', 'normal')
+          doc.text(`• Relatório gerado automaticamente`, 20, y + 40)
+          doc.text(`• Dados baseados em filtros aplicados`, 20, y + 55)
+          doc.text(`• Valor total considera apenas pedidos pagos`, 20, y + 70)
+        }
+        
+        // Nome do arquivo baseado no contexto
+        const fileName = isRelatorios ? 'relatorio-analise.pdf' : 'dashboard-resumo.pdf'
+        
         // Salvar o PDF
-        doc.save('dashboard-resumo.pdf')
+        doc.save(fileName)
+        
+        // Restaurar botão
+        if (button) {
+          button.innerHTML = originalText
+          button.disabled = false
+        }
       })
       .catch((error) => {
         console.error('Erro ao gerar PDF:', error)
         alert('Erro ao gerar PDF. Verifique o console para mais detalhes.')
+        
+        // Restaurar botão em caso de erro
+        if (button) {
+          button.innerHTML = originalText
+          button.disabled = false
+        }
       })
   }
 
@@ -264,6 +311,7 @@ export default function DashboardResumo({
             <Tippy content="Gerar relatório em formato PDF">
               <button
                 onClick={handleExportPDF}
+                data-pdf-button
                 className="flex items-center gap-2 px-4 py-2 bg-red-700 hover:bg-red-800 text-white rounded-lg transition-colors duration-200 font-medium"
               >
                 <FileText className="w-4 h-4" />
