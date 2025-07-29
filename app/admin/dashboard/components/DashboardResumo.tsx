@@ -60,9 +60,72 @@ export default function DashboardResumo({
   }
 
   const handleExportPDF = () => {
-    // Função para gerar PDF - será implementada posteriormente
-    console.log('Gerando PDF...')
-    // TODO: Implementar geração de PDF
+    // Verificar se estamos no navegador
+    if (typeof window === 'undefined') {
+      console.error('PDF só pode ser gerado no navegador')
+      return
+    }
+
+    // Importação dinâmica do jsPDF
+    import('jspdf')
+      .then(({ default: jsPDF }) => {
+        const doc = new jsPDF()
+        
+        // Título
+        doc.setFontSize(20)
+        doc.setFont('helvetica', 'bold')
+        doc.text('Relatório de Dashboard', 105, 20, { align: 'center' })
+        
+        // Data
+        doc.setFontSize(12)
+        doc.setFont('helvetica', 'normal')
+        const dataAtual = new Date().toLocaleDateString('pt-BR')
+        doc.text(`Data: ${dataAtual}`, 20, 40)
+        
+        // Resumos
+        doc.setFontSize(16)
+        doc.setFont('helvetica', 'bold')
+        doc.text('Resumo Geral', 20, 60)
+        
+        doc.setFontSize(12)
+        doc.setFont('helvetica', 'normal')
+        doc.text(`Total de Inscrições: ${totalInscricoesFiltradas}`, 20, 80)
+        doc.text(`Total de Pedidos: ${totalPedidosFiltrados}`, 20, 95)
+        doc.text(`Valor Total: R$ ${valorTotalConfirmado.toFixed(2)}`, 20, 110)
+        
+        // Status das Inscrições
+        doc.setFontSize(14)
+        doc.setFont('helvetica', 'bold')
+        doc.text('Status das Inscrições', 20, 140)
+        
+        doc.setFontSize(12)
+        doc.setFont('helvetica', 'normal')
+        let y = 160
+        Object.entries(statusInscricoes).forEach(([status, count]) => {
+          doc.text(`${status.charAt(0).toUpperCase() + status.slice(1)}: ${count}`, 20, y)
+          y += 15
+        })
+        
+        // Status dos Pedidos
+        doc.setFontSize(14)
+        doc.setFont('helvetica', 'bold')
+        doc.text('Status dos Pedidos', 20, y + 10)
+        
+        doc.setFontSize(12)
+        doc.setFont('helvetica', 'normal')
+        y += 30
+        Object.entries(statusPedidos).forEach(([status, count]) => {
+          doc.text(`${status.charAt(0).toUpperCase() + status.slice(1)}: ${count}`, 20, y)
+          y += 15
+        })
+        
+        // Salvar o PDF
+        doc.save('dashboard-resumo.pdf')
+      })
+      .catch((error) => {
+        console.error('Erro ao gerar PDF:', error)
+        alert('Erro ao gerar PDF. Verifique o console para mais detalhes.')
+      })
   }
 
   const statusInscricoes = inscricoes.reduce<Record<string, number>>(
