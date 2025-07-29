@@ -15,10 +15,21 @@ const BarChart = dynamic(() => import('react-chartjs-2').then((m) => m.Bar), {
   ssr: false,
 })
 
+// Enhanced filtering interface
+interface FiltrosRelatorio {
+  status: string
+  produto: string
+  campo: string
+  periodo: string
+  canal: string
+}
+
 export default function RelatorioPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
   const { showError, showSuccess } = useToast()
   const [pedidos, setPedidos] = useState<Pedido[]>([])
+  const [produtos, setProdutos] = useState<Produto[]>([])
+  const [campos, setCampos] = useState<{ id: string; nome: string }[]>([])
   const [analysis, setAnalysis] = useState<
     'produtoCampo' | 'produtoCanalCampo'
   >('produtoCampo')
@@ -31,6 +42,77 @@ export default function RelatorioPage() {
     datasets: [],
   })
   const chartRef = useRef<Chart<'bar'> | null>(null)
+
+  // Enhanced filters state
+  const [filtros, setFiltros] = useState<FiltrosRelatorio>({
+    status: 'todos',
+    produto: 'todos',
+    campo: 'todos',
+    periodo: 'todos',
+    canal: 'todos'
+  })
+
+  // Filtered pedidos based on active filters
+  const [pedidosFiltrados, setPedidosFiltrados] = useState<Pedido[]>([])
+
+  // Apply filters to data
+  useEffect(() => {
+    let pedidosResult = [...pedidos]
+
+    // Apply filters
+    if (filtros.status !== 'todos') {
+      pedidosResult = pedidosResult.filter(p => p.status === filtros.status)
+    }
+    if (filtros.produto !== 'todos') {
+      pedidosResult = pedidosResult.filter(p => {
+        if (Array.isArray(p.produto)) {
+          return p.produto.includes(filtros.produto)
+        }
+        // Check expanded produto
+        if (p.expand?.produto) {
+          if (Array.isArray(p.expand.produto)) {
+            return p.expand.produto.some((prod: Produto) => prod.id === filtros.produto)
+          } else {
+            return p.expand.produto.id === filtros.produto
+          }
+        }
+        return false
+      })
+    }
+    if (filtros.campo !== 'todos') {
+      pedidosResult = pedidosResult.filter(p => p.campo === filtros.campo)
+    }
+    if (filtros.canal !== 'todos') {
+      pedidosResult = pedidosResult.filter(p => p.canal === filtros.canal)
+    }
+    if (filtros.periodo !== 'todos') {
+      const now = new Date()
+      const filterDate = new Date()
+      
+      switch (filtros.periodo) {
+        case 'ultima_semana':
+          filterDate.setDate(now.getDate() - 7)
+          break
+        case 'ultimo_mes':
+          filterDate.setMonth(now.getMonth() - 1)
+          break
+        case 'ultimos_3_meses':
+          filterDate.setMonth(now.getMonth() - 3)
+          break
+        case 'ultimo_ano':
+          filterDate.setFullYear(now.getFullYear() - 1)
+          break
+      }
+      
+      if (filtros.periodo !== 'todos') {
+        pedidosResult = pedidosResult.filter(p => 
+          p.created && new Date(p.created) >= filterDate
+        )
+      }
+    }
+
+    setPedidosFiltrados(pedidosResult)
+  }, [pedidos, filtros])
 
   const sortPedidos = useCallback(
     (lista: Pedido[]) => {
@@ -64,6 +146,8 @@ export default function RelatorioPage() {
           perPage: '50',
           expand: 'campo,produto,id_inscricao,responsavel',
         })
+        
+        // Fetch pedidos
         const baseUrl = `/api/pedidos?${params.toString()}`
         const res = await fetch(baseUrl, { credentials: 'include', signal })
         if (!res.ok) throw new Error('Erro ao obter pedidos')
@@ -83,12 +167,32 @@ export default function RelatorioPage() {
               : (r as Pedido),
           ),
         )
+
+        // Fetch produtos for filter options
+        const prodRes = await fetch(`/api/produtos?${params.toString()}`, {
+          credentials: 'include',
+          signal,
+        }).then((r) => r.json())
+        const produtos = Array.isArray(prodRes.items) ? prodRes.items : prodRes
+
+        // Fetch campos for filter options
+        const camposRes = await fetch(`/api/campos?${params.toString()}`, {
+          credentials: 'include',
+          signal,
+        }).then((r) => r.json())
+        const campos = Array.isArray(camposRes.items) ? camposRes.items : camposRes
+
         if (user.role === 'lider') {
           lista = lista.filter(
             (p: Pedido) => p.expand?.campo?.id === user.campo,
           )
+          setCampos(campos.filter((c: { id: string }) => c.id === user.campo))
+        } else {
+          setCampos(campos)
         }
+        
         setPedidos(lista)
+        setProdutos(produtos)
       } catch (err) {
         console.error('Erro ao carregar pedidos', err)
         showError('Erro ao carregar pedidos')
@@ -99,10 +203,9 @@ export default function RelatorioPage() {
   }, [authChecked, user, showError])
 
   useEffect(() => {
-    const filtered =
-      statusFilter === 'todos'
-        ? pedidos
-        : pedidos.filter((p) => p.status === statusFilter)
+    const filtered = statusFilter === 'todos'
+        ? pedidosFiltrados
+        : pedidosFiltrados.filter((p) => p.status === statusFilter)
     const ordered = sortPedidos(filtered)
     const rowsCalc: (string | number)[][] = []
     const totalsCalc: Record<string, number> = {}
@@ -223,11 +326,140 @@ export default function RelatorioPage() {
     setRows(rowsCalc)
     setTotals(totalsCalc)
     setChartData({ labels, datasets })
-  }, [analysis, pedidos, statusFilter, orderBy, sortPedidos])
+  }, [analysis, pedidosFiltrados, statusFilter, orderBy, sortPedidos])
+
+  const handleFiltroChange = (key: keyof FiltrosRelatorio, value: string) => {
+    setFiltros(prev => ({
+      ...prev,
+      [key]: value
+    }))
+  }
+
+  const clearAllFilters = () => {
+    setFiltros({
+      status: 'todos',
+      produto: 'todos',
+      campo: 'todos',
+      periodo: 'todos',
+      canal: 'todos'
+    })
+  }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10 space-y-6">
-      <h1 className="text-3xl font-bold">Relatório</h1>
+    <div className="max-w-6xl mx-auto px-6 py-10 space-y-6">
+      <h1 className="text-3xl font-bold">Relatório Detalhado</h1>
+
+      {/* Enhanced Filters Section */}
+      <div className="card">
+        <div className="p-6">
+          <h2 className="text-xl font-semibold mb-4 dark:text-gray-100">Filtros Avançados</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+            {/* Status */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Situação
+              </label>
+              <select
+                value={filtros.status}
+                onChange={(e) => handleFiltroChange('status', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
+              >
+                <option value="todos">Todas as situações</option>
+                <option value="pendente">Pendente</option>
+                <option value="pago">Pago</option>
+                <option value="vencido">Vencido</option>
+                <option value="cancelado">Cancelado</option>
+              </select>
+            </div>
+
+            {/* Produto */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Tipo de Produto
+              </label>
+              <select
+                value={filtros.produto}
+                onChange={(e) => handleFiltroChange('produto', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
+              >
+                <option value="todos">Todos os produtos</option>
+                {produtos.map((produto) => (
+                  <option key={produto.id} value={produto.id}>
+                    {produto.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Campo */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Campo
+              </label>
+              <select
+                value={filtros.campo}
+                onChange={(e) => handleFiltroChange('campo', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
+              >
+                <option value="todos">Todos os campos</option>
+                {campos.map((campo) => (
+                  <option key={campo.id} value={campo.id}>
+                    {campo.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Canal */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Canal de Venda
+              </label>
+              <select
+                value={filtros.canal}
+                onChange={(e) => handleFiltroChange('canal', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
+              >
+                <option value="todos">Todos os canais</option>
+                <option value="loja">Loja</option>
+                <option value="inscricao">Inscrição</option>
+              </select>
+            </div>
+
+            {/* Período */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Período
+              </label>
+              <select
+                value={filtros.periodo}
+                onChange={(e) => handleFiltroChange('periodo', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
+              >
+                <option value="todos">Todo o período</option>
+                <option value="ultima_semana">Última semana</option>
+                <option value="ultimo_mes">Último mês</option>
+                <option value="ultimos_3_meses">Últimos 3 meses</option>
+                <option value="ultimo_ano">Último ano</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Filter actions */}
+          <div className="flex justify-between items-center">
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              Mostrando {pedidosFiltrados.length} pedidos filtrados
+            </div>
+            <button
+              onClick={clearAllFilters}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+            >
+              Limpar Filtros
+            </button>
+          </div>
+        </div>
+      </div>
 
       <section>
         <h2 className="text-2xl font-semibold mt-4">Análises</h2>
@@ -268,8 +500,8 @@ export default function RelatorioPage() {
               try {
                 const filteredForDetails =
                   statusFilter === 'todos'
-                    ? pedidos
-                    : pedidos.filter((p) => p.status === statusFilter)
+                    ? pedidosFiltrados
+                    : pedidosFiltrados.filter((p) => p.status === statusFilter)
                 const orderedDetails = sortPedidos(filteredForDetails)
                 const detailRows = orderedDetails.map((p) => [
                   Array.isArray(p.expand?.produto)
