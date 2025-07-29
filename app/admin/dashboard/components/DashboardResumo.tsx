@@ -13,15 +13,11 @@ import {
 interface DashboardResumoProps {
   inscricoes: Inscricao[]
   pedidos: Pedido[]
-  totalInscricoes: number
-  totalPedidos: number
 }
 
 export default function DashboardResumo({
   inscricoes,
   pedidos,
-  totalInscricoes,
-  totalPedidos,
 }: DashboardResumoProps) {
   // Calcular totais com base nos dados filtrados
   const totalInscricoesFiltradas = inscricoes.length
