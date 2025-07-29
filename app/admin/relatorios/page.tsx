@@ -39,11 +39,13 @@ export default function RelatoriosPage() {
     produto: 'todos',
     campo: 'todos',
     periodo: 'todos',
-    canal: 'todos'
+    canal: 'todos',
   })
 
   // Filtered data based on active filters
-  const [inscricoesFiltradas, setInscricoesFiltradas] = useState<Inscricao[]>([])
+  const [inscricoesFiltradas, setInscricoesFiltradas] = useState<Inscricao[]>(
+    [],
+  )
   const [pedidosFiltrados, setPedidosFiltrados] = useState<Pedido[]>([])
 
   // Apply filters to data
@@ -53,18 +55,24 @@ export default function RelatoriosPage() {
 
     // Filter inscricoes
     if (filtros.statusInscricoes !== 'todos') {
-      inscricoesResult = inscricoesResult.filter(i => i.status === filtros.statusInscricoes)
+      inscricoesResult = inscricoesResult.filter(
+        (i) => i.status === filtros.statusInscricoes,
+      )
     }
     if (filtros.produto !== 'todos') {
-      inscricoesResult = inscricoesResult.filter(i => i.produto === filtros.produto)
+      inscricoesResult = inscricoesResult.filter(
+        (i) => i.produto === filtros.produto,
+      )
     }
     if (filtros.campo !== 'todos') {
-      inscricoesResult = inscricoesResult.filter(i => i.campo === filtros.campo)
+      inscricoesResult = inscricoesResult.filter(
+        (i) => i.campo === filtros.campo,
+      )
     }
     if (filtros.periodo !== 'todos') {
       const now = new Date()
       const filterDate = new Date()
-      
+
       switch (filtros.periodo) {
         case 'ultima_semana':
           filterDate.setDate(now.getDate() - 7)
@@ -79,27 +87,29 @@ export default function RelatoriosPage() {
           filterDate.setFullYear(now.getFullYear() - 1)
           break
       }
-      
+
       if (filtros.periodo !== 'todos') {
-        inscricoesResult = inscricoesResult.filter(i => 
-          i.created && new Date(i.created) >= filterDate
+        inscricoesResult = inscricoesResult.filter(
+          (i) => i.created && new Date(i.created) >= filterDate,
         )
       }
     }
 
     // Filter pedidos
     if (filtros.status !== 'todos') {
-      pedidosResult = pedidosResult.filter(p => p.status === filtros.status)
+      pedidosResult = pedidosResult.filter((p) => p.status === filtros.status)
     }
     if (filtros.produto !== 'todos') {
-      pedidosResult = pedidosResult.filter(p => {
+      pedidosResult = pedidosResult.filter((p) => {
         if (Array.isArray(p.produto)) {
           return p.produto.includes(filtros.produto)
         }
         // Check expanded produto
         if (p.expand?.produto) {
           if (Array.isArray(p.expand.produto)) {
-            return p.expand.produto.some((prod: Produto) => prod.id === filtros.produto)
+            return p.expand.produto.some(
+              (prod: Produto) => prod.id === filtros.produto,
+            )
           } else {
             return p.expand.produto.id === filtros.produto
           }
@@ -108,15 +118,15 @@ export default function RelatoriosPage() {
       })
     }
     if (filtros.campo !== 'todos') {
-      pedidosResult = pedidosResult.filter(p => p.campo === filtros.campo)
+      pedidosResult = pedidosResult.filter((p) => p.campo === filtros.campo)
     }
     if (filtros.canal !== 'todos') {
-      pedidosResult = pedidosResult.filter(p => p.canal === filtros.canal)
+      pedidosResult = pedidosResult.filter((p) => p.canal === filtros.canal)
     }
     if (filtros.periodo !== 'todos') {
       const now = new Date()
       const filterDate = new Date()
-      
+
       switch (filtros.periodo) {
         case 'ultima_semana':
           filterDate.setDate(now.getDate() - 7)
@@ -131,10 +141,10 @@ export default function RelatoriosPage() {
           filterDate.setFullYear(now.getFullYear() - 1)
           break
       }
-      
+
       if (filtros.periodo !== 'todos') {
-        pedidosResult = pedidosResult.filter(p => 
-          p.created && new Date(p.created) >= filterDate
+        pedidosResult = pedidosResult.filter(
+          (p) => p.created && new Date(p.created) >= filterDate,
         )
       }
     }
@@ -228,7 +238,9 @@ export default function RelatoriosPage() {
           credentials: 'include',
           signal,
         }).then((r) => r.json())
-        const campos = Array.isArray(camposRes.items) ? camposRes.items : camposRes
+        const campos = Array.isArray(camposRes.items)
+          ? camposRes.items
+          : camposRes
 
         setTotalInscricoes(rawInscricoes.length)
         setTotalPedidos(rawPedidos.length)
@@ -312,9 +324,9 @@ export default function RelatoriosPage() {
   }, [authChecked, user?.id, user?.role, user?.cliente])
 
   const handleFiltroChange = (key: keyof Filtros, value: string) => {
-    setFiltros(prev => ({
+    setFiltros((prev) => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }))
   }
 
@@ -325,7 +337,7 @@ export default function RelatoriosPage() {
       produto: 'todos',
       campo: 'todos',
       periodo: 'todos',
-      canal: 'todos'
+      canal: 'todos',
     })
   }
 
@@ -349,8 +361,10 @@ export default function RelatoriosPage() {
           {/* Enhanced Filters Section */}
           <div className="card mb-6">
             <div className="p-6">
-              <h2 className="text-xl font-semibold mb-4 dark:text-gray-100">Filtros Avançados</h2>
-              
+              <h2 className="text-xl font-semibold mb-4 dark:text-gray-100">
+                Filtros Avançados
+              </h2>
+
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                 {/* Status do Pedido */}
                 <div>
@@ -359,7 +373,9 @@ export default function RelatoriosPage() {
                   </label>
                   <select
                     value={filtros.status}
-                    onChange={(e) => handleFiltroChange('status', e.target.value)}
+                    onChange={(e) =>
+                      handleFiltroChange('status', e.target.value)
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
                   >
                     <option value="todos">Todas as situações</option>
@@ -377,12 +393,16 @@ export default function RelatoriosPage() {
                   </label>
                   <select
                     value={filtros.statusInscricoes}
-                    onChange={(e) => handleFiltroChange('statusInscricoes', e.target.value)}
+                    onChange={(e) =>
+                      handleFiltroChange('statusInscricoes', e.target.value)
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
                   >
                     <option value="todos">Todas as situações</option>
                     <option value="pendente">Pendente</option>
-                    <option value="aguardando_pagamento">Aguardando Pagamento</option>
+                    <option value="aguardando_pagamento">
+                      Aguardando Pagamento
+                    </option>
                     <option value="confirmado">Confirmado</option>
                     <option value="cancelado">Cancelado</option>
                   </select>
@@ -395,7 +415,9 @@ export default function RelatoriosPage() {
                   </label>
                   <select
                     value={filtros.produto}
-                    onChange={(e) => handleFiltroChange('produto', e.target.value)}
+                    onChange={(e) =>
+                      handleFiltroChange('produto', e.target.value)
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
                   >
                     <option value="todos">Todos os produtos</option>
@@ -414,7 +436,9 @@ export default function RelatoriosPage() {
                   </label>
                   <select
                     value={filtros.campo}
-                    onChange={(e) => handleFiltroChange('campo', e.target.value)}
+                    onChange={(e) =>
+                      handleFiltroChange('campo', e.target.value)
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
                   >
                     <option value="todos">Todos os campos</option>
@@ -433,7 +457,9 @@ export default function RelatoriosPage() {
                   </label>
                   <select
                     value={filtros.canal}
-                    onChange={(e) => handleFiltroChange('canal', e.target.value)}
+                    onChange={(e) =>
+                      handleFiltroChange('canal', e.target.value)
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
                   >
                     <option value="todos">Todos os canais</option>
@@ -449,7 +475,9 @@ export default function RelatoriosPage() {
                   </label>
                   <select
                     value={filtros.periodo}
-                    onChange={(e) => handleFiltroChange('periodo', e.target.value)}
+                    onChange={(e) =>
+                      handleFiltroChange('periodo', e.target.value)
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
                   >
                     <option value="todos">Todo o período</option>
@@ -464,7 +492,8 @@ export default function RelatoriosPage() {
               {/* Filter actions */}
               <div className="flex justify-between items-center">
                 <div className="text-sm text-gray-600 dark:text-gray-400">
-                  Mostrando {inscricoesFiltradas.length} inscrições e {pedidosFiltrados.length} pedidos
+                  Mostrando {inscricoesFiltradas.length} inscrições e{' '}
+                  {pedidosFiltrados.length} pedidos
                 </div>
                 <button
                   onClick={clearAllFilters}
@@ -486,7 +515,10 @@ export default function RelatoriosPage() {
             totalInscricoes={totalInscricoes}
             totalPedidos={totalPedidos}
           />
-          <DashboardAnalytics inscricoes={inscricoesFiltradas} pedidos={pedidosFiltrados} />
+          <DashboardAnalytics
+            inscricoes={inscricoesFiltradas}
+            pedidos={pedidosFiltrados}
+          />
         </>
       )}
     </main>

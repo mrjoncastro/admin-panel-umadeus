@@ -49,7 +49,7 @@ export default function RelatorioPage() {
     produto: 'todos',
     campo: 'todos',
     periodo: 'todos',
-    canal: 'todos'
+    canal: 'todos',
   })
 
   // Filtered pedidos based on active filters
@@ -61,17 +61,19 @@ export default function RelatorioPage() {
 
     // Apply filters
     if (filtros.status !== 'todos') {
-      pedidosResult = pedidosResult.filter(p => p.status === filtros.status)
+      pedidosResult = pedidosResult.filter((p) => p.status === filtros.status)
     }
     if (filtros.produto !== 'todos') {
-      pedidosResult = pedidosResult.filter(p => {
+      pedidosResult = pedidosResult.filter((p) => {
         if (Array.isArray(p.produto)) {
           return p.produto.includes(filtros.produto)
         }
         // Check expanded produto
         if (p.expand?.produto) {
           if (Array.isArray(p.expand.produto)) {
-            return p.expand.produto.some((prod: Produto) => prod.id === filtros.produto)
+            return p.expand.produto.some(
+              (prod: Produto) => prod.id === filtros.produto,
+            )
           } else {
             return p.expand.produto.id === filtros.produto
           }
@@ -80,15 +82,15 @@ export default function RelatorioPage() {
       })
     }
     if (filtros.campo !== 'todos') {
-      pedidosResult = pedidosResult.filter(p => p.campo === filtros.campo)
+      pedidosResult = pedidosResult.filter((p) => p.campo === filtros.campo)
     }
     if (filtros.canal !== 'todos') {
-      pedidosResult = pedidosResult.filter(p => p.canal === filtros.canal)
+      pedidosResult = pedidosResult.filter((p) => p.canal === filtros.canal)
     }
     if (filtros.periodo !== 'todos') {
       const now = new Date()
       const filterDate = new Date()
-      
+
       switch (filtros.periodo) {
         case 'ultima_semana':
           filterDate.setDate(now.getDate() - 7)
@@ -103,10 +105,10 @@ export default function RelatorioPage() {
           filterDate.setFullYear(now.getFullYear() - 1)
           break
       }
-      
+
       if (filtros.periodo !== 'todos') {
-        pedidosResult = pedidosResult.filter(p => 
-          p.created && new Date(p.created) >= filterDate
+        pedidosResult = pedidosResult.filter(
+          (p) => p.created && new Date(p.created) >= filterDate,
         )
       }
     }
@@ -146,7 +148,7 @@ export default function RelatorioPage() {
           perPage: '50',
           expand: 'campo,produto,id_inscricao,responsavel',
         })
-        
+
         // Fetch pedidos
         const baseUrl = `/api/pedidos?${params.toString()}`
         const res = await fetch(baseUrl, { credentials: 'include', signal })
@@ -180,7 +182,9 @@ export default function RelatorioPage() {
           credentials: 'include',
           signal,
         }).then((r) => r.json())
-        const campos = Array.isArray(camposRes.items) ? camposRes.items : camposRes
+        const campos = Array.isArray(camposRes.items)
+          ? camposRes.items
+          : camposRes
 
         if (user.role === 'lider') {
           lista = lista.filter(
@@ -190,7 +194,7 @@ export default function RelatorioPage() {
         } else {
           setCampos(campos)
         }
-        
+
         setPedidos(lista)
         setProdutos(produtos)
       } catch (err) {
@@ -203,7 +207,8 @@ export default function RelatorioPage() {
   }, [authChecked, user, showError])
 
   useEffect(() => {
-    const filtered = statusFilter === 'todos'
+    const filtered =
+      statusFilter === 'todos'
         ? pedidosFiltrados
         : pedidosFiltrados.filter((p) => p.status === statusFilter)
     const ordered = sortPedidos(filtered)
@@ -329,9 +334,9 @@ export default function RelatorioPage() {
   }, [analysis, pedidosFiltrados, statusFilter, orderBy, sortPedidos])
 
   const handleFiltroChange = (key: keyof FiltrosRelatorio, value: string) => {
-    setFiltros(prev => ({
+    setFiltros((prev) => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }))
   }
 
@@ -341,7 +346,7 @@ export default function RelatorioPage() {
       produto: 'todos',
       campo: 'todos',
       periodo: 'todos',
-      canal: 'todos'
+      canal: 'todos',
     })
   }
 
@@ -352,8 +357,10 @@ export default function RelatorioPage() {
       {/* Enhanced Filters Section */}
       <div className="card">
         <div className="p-6">
-          <h2 className="text-xl font-semibold mb-4 dark:text-gray-100">Filtros Avançados</h2>
-          
+          <h2 className="text-xl font-semibold mb-4 dark:text-gray-100">
+            Filtros Avançados
+          </h2>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
             {/* Status */}
             <div>
