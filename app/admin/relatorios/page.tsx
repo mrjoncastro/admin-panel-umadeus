@@ -30,7 +30,7 @@ interface Filtros {
 
 export default function RelatoriosPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
-  const { showError } = useToast()
+
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
@@ -189,6 +189,17 @@ export default function RelatoriosPage() {
     setPedidosFiltrados(pedidosResult)
   }, [inscricoes, pedidos, filtros])
 
+  const sortPedidos = useCallback(
+    (lista: Pedido[]) => {
+      return [...lista].sort((a, b) => {
+        const campoA = a.expand?.campo?.nome || ''
+        const campoB = b.expand?.campo?.nome || ''
+        return campoA.localeCompare(campoB)
+      })
+    },
+    [],
+  )
+
   // Generate chart data from filtered pedidos
   useEffect(() => {
     const ordered = sortPedidos(pedidosFiltrados)
@@ -247,18 +258,7 @@ export default function RelatoriosPage() {
     })
 
     setChartData({ labels, datasets })
-  }, [pedidosFiltrados])
-
-  const sortPedidos = useCallback(
-    (lista: Pedido[]) => {
-      return [...lista].sort((a, b) => {
-        const campoA = a.expand?.campo?.nome || ''
-        const campoB = b.expand?.campo?.nome || ''
-        return campoA.localeCompare(campoB)
-      })
-    },
-    [],
-  )
+  }, [pedidosFiltrados, sortPedidos])
 
   useEffect(() => {
     setupCharts()
