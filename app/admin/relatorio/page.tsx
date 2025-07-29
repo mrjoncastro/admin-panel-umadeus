@@ -1,7 +1,7 @@
 'use client'
 
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
-import { generateAnalisePdf } from '@/lib/report/generateAnalisePdf'
+
 import { useToast } from '@/lib/context/ToastContext'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import type { Pedido, Produto } from '@/types'
@@ -27,17 +27,11 @@ interface FiltrosRelatorio {
 
 export default function RelatorioPage() {
   const { user, authChecked } = useAuthGuard(['coordenador', 'lider'])
-  const { showError, showSuccess } = useToast()
+  const { showError } = useToast()
   const [pedidos, setPedidos] = useState<Pedido[]>([])
   const [produtos, setProdutos] = useState<Produto[]>([])
   const [campos, setCampos] = useState<{ id: string; nome: string }[]>([])
-  const [analysis, setAnalysis] = useState<
-    'produtoCampo' | 'produtoCanalCampo'
-  >('produtoCampo')
-  const [statusFilter, setStatusFilter] = useState('todos')
-  const [orderBy, setOrderBy] = useState<'campo' | 'data'>('campo')
-  const [rows, setRows] = useState<(string | number)[][]>([])
-  const [totals, setTotals] = useState<Record<string, number>>({})
+
   const [chartData, setChartData] = useState<ChartData<'bar'>>({
     labels: [],
     datasets: [],
@@ -124,18 +118,12 @@ export default function RelatorioPage() {
   const sortPedidos = useCallback(
     (lista: Pedido[]) => {
       return [...lista].sort((a, b) => {
-        if (orderBy === 'data') {
-          return (
-            new Date(a.created || '').getTime() -
-            new Date(b.created || '').getTime()
-          )
-        }
         const campoA = a.expand?.campo?.nome || ''
         const campoB = b.expand?.campo?.nome || ''
         return campoA.localeCompare(campoB)
       })
     },
-    [orderBy],
+    [],
   )
 
   useEffect(() => {
@@ -183,7 +171,7 @@ export default function RelatorioPage() {
         const produtos = Array.isArray(prodRes) ? prodRes : [prodRes]
 
         // Filtrar apenas produtos ativos
-        const produtosAtivos = produtos.filter((p: any) => p.ativo === true)
+        const produtosAtivos = produtos.filter((p: Produto) => p.ativo === true)
 
         // Fetch campos for filter options
         const camposRes = await fetch(`/api/campos?${params.toString()}`, {
@@ -214,132 +202,64 @@ export default function RelatorioPage() {
     return () => controller.abort()
   }, [authChecked, user, showError])
 
-  useEffect(() => {
-    const filtered =
-      statusFilter === 'todos'
-        ? pedidosFiltrados
-        : pedidosFiltrados.filter((p) => p.status === statusFilter)
-    const ordered = sortPedidos(filtered)
+    useEffect(() => {
+    const ordered = sortPedidos(pedidosFiltrados)
     const rowsCalc: (string | number)[][] = []
     const totalsCalc: Record<string, number> = {}
     let labels: string[] = []
     let datasets: ChartData<'bar'>['datasets'] = []
 
-    if (analysis === 'produtoCampo') {
-      const count: Record<string, Record<string, number>> = {}
-      ordered.forEach((p) => {
-        const campo = p.expand?.campo?.nome || 'Sem campo'
-        const produtosData = Array.isArray(p.expand?.produto)
-          ? (p.expand?.produto as Produto[])
-          : p.expand?.produto
-            ? [p.expand.produto as Produto]
-            : []
-        if (produtosData.length === 0) {
+    // Simple produtoCampo analysis
+    const count: Record<string, Record<string, number>> = {}
+    ordered.forEach((p) => {
+      const campo = p.expand?.campo?.nome || 'Sem campo'
+      const produtosData = Array.isArray(p.expand?.produto)
+        ? (p.expand?.produto as Produto[])
+        : p.expand?.produto
+          ? [p.expand.produto as Produto]
+          : []
+      if (produtosData.length === 0) {
+        count[campo] = count[campo] || {}
+        count[campo]['Sem produto'] = (count[campo]['Sem produto'] || 0) + 1
+        totalsCalc['Sem produto'] = (totalsCalc['Sem produto'] || 0) + 1
+      } else {
+        produtosData.forEach((pr: Produto) => {
+          const nome = pr?.nome || 'Sem produto'
           count[campo] = count[campo] || {}
-          count[campo]['Sem produto'] = (count[campo]['Sem produto'] || 0) + 1
-          totalsCalc['Sem produto'] = (totalsCalc['Sem produto'] || 0) + 1
-        } else {
-          produtosData.forEach((pr: Produto) => {
-            const nome = pr?.nome || 'Sem produto'
-            count[campo] = count[campo] || {}
-            count[campo][nome] = (count[campo][nome] || 0) + 1
-            totalsCalc[nome] = (totalsCalc[nome] || 0) + 1
-          })
-        }
-      })
-      labels = Object.keys(count)
-      const produtos = Array.from(
-        new Set(labels.flatMap((c) => Object.keys(count[c]))),
-      )
-      const patterns: PatternType[] = [
-        'diagonal',
-        'dots',
-        'cross',
-        'reverseDiagonal',
-      ]
-      datasets = produtos.map((prod, idx) => {
-        labels.forEach((campo) => {
-          const total = count[campo][prod]
-          if (total !== undefined) rowsCalc.push([campo, prod, total])
+          count[campo][nome] = (count[campo][nome] || 0) + 1
+          totalsCalc[nome] = (totalsCalc[nome] || 0) + 1
         })
-        return {
-          label: prod,
-          data: labels.map((c) => count[c][prod] || 0),
-          backgroundColor: createPattern(
-            patterns[idx % patterns.length],
-            '#666',
-          ),
-          borderColor: '#000',
-          stack: 'stack',
-        }
+      }
+    })
+    labels = Object.keys(count)
+    const produtos = Array.from(
+      new Set(labels.flatMap((c) => Object.keys(count[c]))),
+    )
+    const patterns: PatternType[] = [
+      'diagonal',
+      'dots',
+      'cross',
+      'reverseDiagonal',
+    ]
+    datasets = produtos.map((prod, idx) => {
+      labels.forEach((campo) => {
+        const total = count[campo][prod]
+        if (total !== undefined) rowsCalc.push([campo, prod, total])
       })
-    } else {
-      const count: Record<string, Record<string, Record<string, number>>> = {}
-      ordered.forEach((p) => {
-        const campo = p.expand?.campo?.nome || 'Sem campo'
-        const canal = p.canal || 'indefinido'
-        const produtosData = Array.isArray(p.expand?.produto)
-          ? (p.expand?.produto as Produto[])
-          : p.expand?.produto
-            ? [p.expand.produto as Produto]
-            : []
-        if (produtosData.length === 0) {
-          count[campo] = count[campo] || {}
-          count[campo]['Sem produto'] = count[campo]['Sem produto'] || {}
-          count[campo]['Sem produto'][canal] =
-            (count[campo]['Sem produto'][canal] || 0) + 1
-          totalsCalc['Sem produto'] = (totalsCalc['Sem produto'] || 0) + 1
-        } else {
-          produtosData.forEach((pr: Produto) => {
-            const nome = pr?.nome || 'Sem produto'
-            count[campo] = count[campo] || {}
-            count[campo][nome] = count[campo][nome] || {}
-            count[campo][nome][canal] = (count[campo][nome][canal] || 0) + 1
-            totalsCalc[nome] = (totalsCalc[nome] || 0) + 1
-          })
-        }
-      })
-      labels = Object.keys(count)
-      const combos = Array.from(
-        new Set(
-          labels.flatMap((c) =>
-            Object.keys(count[c]).flatMap((prod) =>
-              Object.keys(count[c][prod]).map((canal) => `${prod} (${canal})`),
-            ),
-          ),
+      return {
+        label: prod,
+        data: labels.map((c) => count[c][prod] || 0),
+        backgroundColor: createPattern(
+          patterns[idx % patterns.length],
+          '#666',
         ),
-      )
-      const patterns: PatternType[] = [
-        'diagonal',
-        'dots',
-        'cross',
-        'reverseDiagonal',
-      ]
-      datasets = combos.map((combo, idx) => {
-        const match = combo.match(/^(.*) \((.*)\)$/)
-        const prod = match?.[1] || ''
-        const canal = match?.[2] || ''
-        labels.forEach((campo) => {
-          const total = count[campo][prod]?.[canal]
-          if (total !== undefined) rowsCalc.push([campo, prod, canal, total])
-        })
-        return {
-          label: combo,
-          data: labels.map((c) => count[c][prod]?.[canal] || 0),
-          backgroundColor: createPattern(
-            patterns[idx % patterns.length],
-            '#666',
-          ),
-          borderColor: '#000',
-          stack: prod,
-        }
-      })
-    }
+        borderColor: '#000',
+        stack: 'stack',
+      }
+    })
 
-    setRows(rowsCalc)
-    setTotals(totalsCalc)
     setChartData({ labels, datasets })
-  }, [analysis, pedidosFiltrados, statusFilter, orderBy, sortPedidos])
+  }, [pedidosFiltrados, sortPedidos])
 
   const handleFiltroChange = (key: keyof FiltrosRelatorio, value: string) => {
     setFiltros((prev) => ({

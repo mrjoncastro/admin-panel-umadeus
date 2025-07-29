@@ -255,7 +255,7 @@ export default function RelatoriosPage() {
         const produtos = Array.isArray(prodRes) ? prodRes : [prodRes]
 
         // Filtrar apenas produtos ativos
-        const produtosAtivos = produtos.filter((p: any) => p.ativo === true)
+        const produtosAtivos = produtos.filter((p: Produto) => p.ativo === true)
 
         console.log('Produtos carregados:', produtosAtivos) // Debug log
 
@@ -395,7 +395,7 @@ export default function RelatoriosPage() {
 
   const produtosFiltrados =
     filtros.evento !== 'todos'
-      ? produtos.filter((p: any) => p.evento_id === filtros.evento)
+      ? produtos.filter((p: Produto) => p.evento_id === filtros.evento)
       : produtos
 
   return (
@@ -510,8 +510,8 @@ export default function RelatoriosPage() {
                     Tipo de Produto
                   </label>
                   <div className="space-y-2 max-h-32 overflow-y-auto">
-                    {produtosFiltrados.length > 0 ? (
-                      produtosFiltrados.map((produto: any) => (
+                                          {produtosFiltrados.length > 0 ? (
+                        produtosFiltrados.map((produto: Produto) => (
                         <label key={produto.id} className="flex items-center">
                           <input
                             type="checkbox"
