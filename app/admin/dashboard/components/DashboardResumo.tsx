@@ -127,7 +127,9 @@ export default function DashboardResumo({
         doc.text('2. Panorama Geral', margin, 85)
         doc.text('3. Status das Inscrições', margin, 100)
         doc.text('4. Status dos Pedidos', margin, 115)
-        doc.text('5. Metodologia', margin, 130)
+        doc.text('5. Tabelas de Análise', margin, 130)
+        doc.text('6. Tabelas de Pedidos', margin, 145)
+        doc.text('7. Metodologia', margin, 160)
         
         // Rodapé
         doc.setFontSize(9)
