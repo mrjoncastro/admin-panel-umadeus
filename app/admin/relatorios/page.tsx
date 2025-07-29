@@ -508,30 +508,8 @@ export default function RelatoriosPage() {
   }
 
   const getProdutoOptions = () => {
-    const produtosDisponiveis = new Set<string>()
-    const pedidosComProdutos = [...pedidosFiltrados, ...inscricoesFiltradas]
-    
-    pedidosComProdutos.forEach(item => {
-      if (item.produto) {
-        if (Array.isArray(item.produto)) {
-          item.produto.forEach(prod => produtosDisponiveis.add(prod))
-        } else {
-          produtosDisponiveis.add(item.produto)
-        }
-      }
-      // Verificar produtos expandidos
-      if ('expand' in item && item.expand?.produto) {
-        if (Array.isArray(item.expand.produto)) {
-          item.expand.produto.forEach((prod: Produto) => produtosDisponiveis.add(prod.id))
-        } else {
-          produtosDisponiveis.add(item.expand.produto.id)
-        }
-      }
-    })
-
-    return produtos.filter(produto => 
-      produtosDisponiveis.has(produto.id) || filtros.produto.includes(produto.id)
-    )
+    // Retornar todos os produtos disponíveis, independentemente de estarem sendo usados
+    return produtosFiltrados
   }
 
   const getCampoOptions = () => {
@@ -597,9 +575,9 @@ export default function RelatoriosPage() {
       ) : (
         <>
           <div className="mb-6 text-center dark:text-gray-100">
-            <h1 className="heading">Relatório Unificado</h1>
+            <h1 className="heading">Relatórios</h1>
             <p className="text-sm text-gray-700 mt-1 dark:text-gray-100">
-              Análise completa com filtros avançados e gráfico de produtos por campo.
+              Análise completa com filtros avançados e gráficos.
             </p>
           </div>
 
