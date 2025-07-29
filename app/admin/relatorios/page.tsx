@@ -1,7 +1,6 @@
 'use client'
 
 import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
-import { useToast } from '@/lib/context/ToastContext'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import type { Inscricao, Pedido, Produto } from '@/types'
 import { fetchAllPages } from '@/lib/utils/fetchAllPages'
