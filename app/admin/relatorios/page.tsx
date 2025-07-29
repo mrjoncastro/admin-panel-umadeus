@@ -35,8 +35,6 @@ export default function RelatoriosPage() {
   const [produtos, setProdutos] = useState<Produto[]>([])
   const [campos, setCampos] = useState<{ id: string; nome: string }[]>([])
   const [eventos, setEventos] = useState<{ id: string; titulo: string }[]>([])
-  const [totalInscricoes, setTotalInscricoes] = useState(0)
-  const [totalPedidos, setTotalPedidos] = useState(0)
 
   // Enhanced filters state
   const [filtros, setFiltros] = useState<Filtros>({
@@ -349,9 +347,6 @@ export default function RelatoriosPage() {
           ? eventosRes.items
           : eventosRes
         setEventos(eventos)
-
-        setTotalInscricoes(rawInscricoes.length)
-        setTotalPedidos(rawPedidos.length)
 
         if (!isMounted.current) return
 

@@ -13,10 +13,6 @@ import {
 interface DashboardResumoProps {
   inscricoes: Inscricao[]
   pedidos: Pedido[]
-  filtroStatus?: string
-  filtroInscricoes?: string
-  setFiltroInscricoes?: (status: string) => void
-  setFiltroStatus?: (status: string) => void
   totalInscricoes?: number
   totalPedidos?: number
 }
@@ -24,10 +20,6 @@ interface DashboardResumoProps {
 export default function DashboardResumo({
   inscricoes,
   pedidos,
-  filtroStatus,
-  filtroInscricoes,
-  setFiltroInscricoes,
-  setFiltroStatus,
   totalInscricoes,
   totalPedidos,
 }: DashboardResumoProps) {

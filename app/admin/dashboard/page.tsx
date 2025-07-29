@@ -196,10 +196,6 @@ export default function DashboardPage() {
           <DashboardResumo
             inscricoes={inscricoes}
             pedidos={pedidos}
-            filtroStatus={filtroStatus}
-            filtroInscricoes={filtroInscricoes}
-            setFiltroInscricoes={setFiltroInscricoes}
-            setFiltroStatus={setFiltroStatus}
             totalInscricoes={totalInscricoes}
             totalPedidos={totalPedidos}
           />
