@@ -327,14 +327,17 @@ export default function DashboardResumo({
         doc.setFont('helvetica', 'bold')
         doc.text('Inscrições Detalhadas', margin, 75)
         
-        // Cabeçalho da tabela - Layout otimizado
+        // Cabeçalho da tabela - Modelo completo (referência admin/inscricoes)
         doc.setFontSize(10)
         doc.setFont('helvetica', 'bold')
-        doc.text('CPF', margin, 95)
-        doc.text('Nome', margin + 40, 95)
-        doc.text('Email', margin + 110, 95)
-        doc.text('Status', margin + 170, 95)
-        doc.text('Data', margin + 210, 95)
+        doc.text('Nome', margin, 95)
+        doc.text('Telefone', margin + 60, 95)
+        doc.text('CPF', margin + 120, 95)
+        doc.text('Evento', margin + 160, 95)
+        doc.text('Status', margin + 200, 95)
+        doc.text('Campo', margin + 240, 95)
+        doc.text('Produto', margin + 280, 95)
+        doc.text('Criado em', margin + 320, 95)
         
         // Linha separadora
         doc.line(margin, 100, pageWidth - margin, 100)
@@ -367,11 +370,14 @@ export default function DashboardResumo({
             
             doc.setFontSize(10)
             doc.setFont('helvetica', 'bold')
-            doc.text('CPF', margin, 60)
-            doc.text('Nome', margin + 40, 60)
-            doc.text('Email', margin + 110, 60)
-            doc.text('Status', margin + 170, 60)
-            doc.text('Data', margin + 210, 60)
+            doc.text('Nome', margin, 60)
+            doc.text('Telefone', margin + 60, 60)
+            doc.text('CPF', margin + 120, 60)
+            doc.text('Evento', margin + 160, 60)
+            doc.text('Status', margin + 200, 60)
+            doc.text('Campo', margin + 240, 60)
+            doc.text('Produto', margin + 280, 60)
+            doc.text('Criado em', margin + 320, 60)
             
             doc.line(margin, 65, pageWidth - margin, 65)
             
@@ -384,29 +390,52 @@ export default function DashboardResumo({
             doc.rect(margin, yInscricoes - 3, pageWidth - 2 * margin, 8, 'F')
           }
           
-          // CPF - Priorizar CPF real, se não tiver, usar ID como fallback
-          const cpf = inscricao.cpf || inscricao.id
-          doc.text(cpf?.substring(0, 14) || '', margin, yInscricoes)
-          
-          // Nome - Mais espaço para evitar corte
+          // Nome
           const nome = inscricao.nome || ''
           if (!nome) {
             console.log('Nome não encontrado para inscrição:', inscricao.id)
           }
-          doc.text(nome.substring(0, 30) || 'N/A', margin + 40, yInscricoes)
+          doc.text(nome.substring(0, 25) || 'N/A', margin, yInscricoes)
           
-          // Email - Garantir que seja exibido (com debug)
-          const email = inscricao.email || ''
-          if (!email) {
-            console.log('Email não encontrado para inscrição:', inscricao.id, inscricao.nome)
+          // Telefone
+          const telefone = inscricao.telefone || ''
+          doc.text(telefone.substring(0, 15) || 'N/A', margin + 60, yInscricoes)
+          
+          // CPF - Priorizar CPF real, se não tiver, usar ID como fallback
+          const cpf = inscricao.cpf || inscricao.id
+          doc.text(cpf?.substring(0, 14) || 'N/A', margin + 120, yInscricoes)
+          
+          // Evento (buscar através do produto)
+          let eventoNome = 'N/A'
+          if (inscricao.produto) {
+            const produto = produtos.find(p => p.id === inscricao.produto)
+            if (produto?.evento_id) {
+              // Aqui precisaríamos buscar o evento, mas por enquanto usamos o ID
+              eventoNome = produto.evento_id.substring(0, 15)
+            }
           }
-          doc.text(email.substring(0, 25) || 'N/A', margin + 110, yInscricoes)
+          doc.text(eventoNome, margin + 160, yInscricoes)
           
           // Status
-          doc.text(inscricao.status || '', margin + 170, yInscricoes)
+          doc.text(inscricao.status || 'N/A', margin + 200, yInscricoes)
           
-          // Data
-          doc.text(inscricao.created ? new Date(inscricao.created).toLocaleDateString('pt-BR') : '', margin + 210, yInscricoes)
+          // Campo
+          const campo = inscricao.campo || 'N/A'
+          doc.text(campo.substring(0, 15) || 'N/A', margin + 240, yInscricoes)
+          
+          // Produto (nome + tamanho)
+          let produtoInfo = 'N/A'
+          if (inscricao.produto) {
+            const produto = produtos.find(p => p.id === inscricao.produto)
+            if (produto) {
+              const tamanho = inscricao.tamanho ? ` - ${inscricao.tamanho}` : ''
+              produtoInfo = `${produto.nome}${tamanho}`
+            }
+          }
+          doc.text(produtoInfo.substring(0, 20) || 'N/A', margin + 280, yInscricoes)
+          
+          // Data de criação
+          doc.text(inscricao.created ? new Date(inscricao.created).toLocaleDateString('pt-BR') : 'N/A', margin + 320, yInscricoes)
           yInscricoes += 10
         })
         
@@ -431,14 +460,17 @@ export default function DashboardResumo({
         doc.setFont('helvetica', 'bold')
         doc.text('Pedidos Detalhados', margin, 75)
         
-        // Cabeçalho da tabela
+        // Cabeçalho da tabela - Modelo completo (referência admin/pedidos)
         doc.setFontSize(10)
         doc.setFont('helvetica', 'bold')
-        doc.text('CPF', margin, 95)
-        doc.text('Produto', margin + 50, 95)
-        doc.text('Status', margin + 120, 95)
-        doc.text('Valor', margin + 160, 95)
-        doc.text('Data', margin + 200, 95)
+        doc.text('Produto', margin, 95)
+        doc.text('Nome', margin + 60, 95)
+        doc.text('Email', margin + 120, 95)
+        doc.text('Tamanho', margin + 160, 95)
+        doc.text('Status', margin + 200, 95)
+        doc.text('Campo', margin + 240, 95)
+        doc.text('Canal', margin + 280, 95)
+        doc.text('Data', margin + 320, 95)
         
         // Linha separadora
         doc.line(margin, 100, pageWidth - margin, 100)
@@ -471,11 +503,14 @@ export default function DashboardResumo({
             
             doc.setFontSize(10)
             doc.setFont('helvetica', 'bold')
-            doc.text('CPF', margin, 60)
-            doc.text('Produto', margin + 50, 60)
-            doc.text('Status', margin + 120, 60)
-            doc.text('Valor', margin + 160, 60)
-            doc.text('Data', margin + 200, 60)
+            doc.text('Produto', margin, 60)
+            doc.text('Nome', margin + 60, 60)
+            doc.text('Email', margin + 120, 60)
+            doc.text('Tamanho', margin + 160, 60)
+            doc.text('Status', margin + 200, 60)
+            doc.text('Campo', margin + 240, 60)
+            doc.text('Canal', margin + 280, 60)
+            doc.text('Data', margin + 320, 60)
             
             doc.line(margin, 65, pageWidth - margin, 65)
             
@@ -488,47 +523,44 @@ export default function DashboardResumo({
             doc.rect(margin, yPedidos - 3, pageWidth - 2 * margin, 8, 'F')
           }
           
-          // Buscar CPF através da inscrição
-          const inscricaoCliente = inscricoes.find(i => i.id === pedido.id_inscricao)
-          const cpfCliente = inscricaoCliente?.cpf || inscricaoCliente?.id || pedido.id_inscricao
-          
-          doc.text(cpfCliente?.substring(0, 14) || '', margin, yPedidos)
-          
-          // Buscar informações dos produtos (nome e tamanho)
+          // Produto (nome + tamanho)
           let produtoInfo = ''
           // pedido.produto é sempre string[] no tipo Pedido
           produtoInfo = pedido.produto.map(prodId => {
             const produto = produtos.find(p => p.id === prodId)
             if (produto) {
-              const tamanho = pedido.tamanho ? ` (${pedido.tamanho})` : ''
-              return `${produto.nome}${tamanho}`
+              return produto.nome
             }
             return prodId
           }).join(', ')
-          doc.text(produtoInfo.substring(0, 25) || '', margin + 50, yPedidos)
-          doc.text(pedido.status || '', margin + 120, yPedidos)
-          // Tratar valor do pedido de forma mais robusta
-          let valorFormatado = '0.00'
+          doc.text(produtoInfo.substring(0, 25) || 'N/A', margin, yPedidos)
           
-          // Tentar obter valor do expand primeiro, depois do campo direto
-          const valorPedido = pedido.expand?.pedido?.valor || pedido.valor
-          
-          if (valorPedido) {
-            if (typeof valorPedido === 'string') {
-              const valorNumerico = parseFloat(valorPedido)
-              if (!isNaN(valorNumerico)) {
-                valorFormatado = valorNumerico.toFixed(2)
-              } else {
-                console.warn('Valor inválido encontrado:', valorPedido, 'para pedido ID:', pedido.id)
-              }
-            } else if (typeof valorPedido === 'number') {
-              valorFormatado = valorPedido.toFixed(2)
-            }
+          // Nome do cliente (usando função getNomeCliente)
+          let nomeCliente = 'N/A'
+          if (pedido.canal === 'loja') {
+            nomeCliente = pedido.expand?.responsavel?.nome || ''
           } else {
-            console.warn('Valor nulo/undefined para pedido ID:', pedido.id)
+            nomeCliente = pedido.expand?.id_inscricao?.nome || ''
           }
-          doc.text(`R$ ${valorFormatado}`, margin + 160, yPedidos)
-          doc.text(pedido.created ? new Date(pedido.created).toLocaleDateString('pt-BR') : '', margin + 200, yPedidos)
+          doc.text(nomeCliente.substring(0, 20) || 'N/A', margin + 60, yPedidos)
+          
+          // Email
+          doc.text(pedido.email?.substring(0, 25) || 'N/A', margin + 120, yPedidos)
+          
+          // Tamanho
+          doc.text(pedido.tamanho || 'N/A', margin + 160, yPedidos)
+          
+          // Status
+          doc.text(pedido.status || 'N/A', margin + 200, yPedidos)
+          // Campo
+          const campo = pedido.expand?.campo?.nome || pedido.campo || 'N/A'
+          doc.text(campo.substring(0, 15) || 'N/A', margin + 240, yPedidos)
+          
+          // Canal
+          doc.text(pedido.canal || 'N/A', margin + 280, yPedidos)
+          
+          // Data
+          doc.text(pedido.created ? new Date(pedido.created).toLocaleDateString('pt-BR') : 'N/A', margin + 320, yPedidos)
           yPedidos += 10
         })
         
