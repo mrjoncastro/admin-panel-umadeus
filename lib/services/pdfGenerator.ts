@@ -56,7 +56,7 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.FOOTER)
     this.doc.text(`Gerado em: ${currentDate}`, this.pageWidth / 2, 80, { align: 'center' })
 
-    this.addFooter(1, totalPages)
+    this.addFooter(this.doc.getNumberOfPages(), totalPages)
   }
 
   // Página 2 - Sumário
@@ -73,7 +73,7 @@ export class PDFGenerator {
     this.doc.text('4. Tabelas de Análise', this.margin, 120)
     this.doc.text('5. Tabelas de Pedidos', this.margin, 140)
 
-    this.addFooter(2, totalPages)
+    this.addFooter(this.doc.getNumberOfPages(), totalPages)
   }
 
   // Página 3 - Resumo Executivo
@@ -112,7 +112,7 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text(`Valor Total: R$ ${valorTotal.toFixed(2)}`, this.margin, y + 20)
 
-    this.addFooter(3, totalPages)
+    this.addFooter(this.doc.getNumberOfPages(), totalPages)
   }
 
   // Página 4 - Panorama Geral Pedidos
@@ -166,7 +166,7 @@ export class PDFGenerator {
     // Gráficos
     this.generateCharts(resumoPorTamanho, statusPedidos, yResumo + 20)
 
-    this.addFooter(4, totalPages)
+    this.addFooter(this.doc.getNumberOfPages(), totalPages)
   }
 
   // Página 5 - Panorama Geral Inscrições
@@ -221,7 +221,7 @@ export class PDFGenerator {
     // Gráficos
     this.generateInscricoesCharts(resumoPorTamanhoInscricoes, statusInscricoes, resumoPorCampo, yResumo + 20)
 
-    this.addFooter(5, totalPages)
+    this.addFooter(this.doc.getNumberOfPages(), totalPages)
   }
 
   // Página 6 - Tabelas de Inscrições
@@ -258,8 +258,6 @@ export class PDFGenerator {
       normalizeDate(inscricao.created),
     ])
 
-    const startPage = this.doc.getNumberOfPages()
-
     autoTable(this.doc, {
       startY: 100,
       head: [headers],
@@ -281,8 +279,7 @@ export class PDFGenerator {
       },
       columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } },
       didDrawPage: data => {
-        const pageNumber = startPage - 1 + data.pageNumber
-        this.addFooter(pageNumber, totalPages)
+        this.addFooter(this.doc.getNumberOfPages(), totalPages)
       },
     })
   }
@@ -321,8 +318,6 @@ export class PDFGenerator {
       normalizeDate(pedido.created),
     ])
 
-    const startPage = this.doc.getNumberOfPages()
-
     autoTable(this.doc, {
       startY: 100,
       head: [headers],
@@ -344,8 +339,7 @@ export class PDFGenerator {
       },
       columnStyles: { 2: { halign: 'right' } },
       didDrawPage: data => {
-        const pageNumber = startPage - 1 + data.pageNumber
-        this.addFooter(pageNumber, totalPages)
+        this.addFooter(this.doc.getNumberOfPages(), totalPages)
       },
     })
   }
@@ -552,20 +546,96 @@ export class PDFGenerator {
     this.doc.text('Desenvolvido por M24', this.pageWidth - this.margin, this.pageHeight - 20, { align: 'right' })
   }
 
-  public calculateTotalPages(inscricoes: Inscricao[], pedidos: Pedido[]): number {
+  public calculateTotalPages(
+    inscricoes: Inscricao[],
+    pedidos: Pedido[],
+    produtos: Produto[]
+  ): number {
+    const jsPDFConstructor = this.doc.constructor as typeof import('jspdf').jsPDF
+
     // Páginas fixas: Capa, Sumário, Resumo Executivo, Panorama Pedidos, Panorama Inscrições
     let totalPages = 5
-    
-    // Calcular páginas para tabela de inscrições
-    const itemsPerPageInscricoes = Math.floor((this.pageHeight - 140) / 8)
-    const pagesInscricoes = Math.ceil(inscricoes.length / itemsPerPageInscricoes)
-    totalPages += pagesInscricoes
-    
-    // Calcular páginas para tabela de pedidos
-    const itemsPerPagePedidos = Math.floor((this.pageHeight - 140) / 8)
-    const pagesPedidos = Math.ceil(pedidos.length / itemsPerPagePedidos)
-    totalPages += pagesPedidos
-    
+
+    // ----------- Inscricoes Table -------------
+    const tempDocInscricoes = new jsPDFConstructor({ format: 'a4', unit: 'mm' })
+    const inscricoesHeaders = [
+      'Nome',
+      'Telefone',
+      'CPF',
+      'Email',
+      'Evento',
+      'Status',
+      'Campo',
+      'Produto',
+      'Criado em',
+    ]
+    const inscricoesRows = inscricoes.map(inscricao => [
+      inscricao.nome || 'Não informado',
+      inscricao.telefone || 'Não informado',
+      formatCpf(inscricao.cpf || inscricao.id),
+      inscricao.email || 'Não informado',
+      getEventoNome(inscricao.produto || '', produtos),
+      inscricao.status || 'Não informado',
+      inscricao.campo || 'Não informado',
+      getProdutoInfo(inscricao.produto || '', produtos),
+      normalizeDate(inscricao.created),
+    ])
+    autoTable(tempDocInscricoes, {
+      startY: 100,
+      head: [inscricoesHeaders],
+      body: inscricoesRows,
+      theme: 'grid',
+      margin: { left: this.margin, right: this.margin },
+      styles: {
+        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
+        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
+        overflow: 'linebreak',
+        minCellHeight: PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT,
+      },
+      columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } },
+    })
+    totalPages += tempDocInscricoes.getNumberOfPages()
+
+    // ----------- Pedidos Table -------------
+    const tempDocPedidos = new jsPDFConstructor({ format: 'a4', unit: 'mm' })
+    const pedidosHeaders = [
+      'Produto',
+      'Nome',
+      'CPF',
+      'Email',
+      'Tamanho',
+      'Status',
+      'Campo',
+      'Canal',
+      'Data',
+    ]
+    const pedidosRows = pedidos.map(pedido => [
+      pedido.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', '),
+      getNomeCliente(pedido),
+      formatCpf(getCpfCliente(pedido)),
+      pedido.email || 'Não informado',
+      pedido.tamanho || 'Não informado',
+      pedido.status || 'Não informado',
+      pedido.expand?.campo?.nome || pedido.campo || 'Não informado',
+      pedido.canal || 'Não informado',
+      normalizeDate(pedido.created),
+    ])
+    autoTable(tempDocPedidos, {
+      startY: 100,
+      head: [pedidosHeaders],
+      body: pedidosRows,
+      theme: 'grid',
+      margin: { left: this.margin, right: this.margin },
+      styles: {
+        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
+        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
+        overflow: 'linebreak',
+        minCellHeight: PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT,
+      },
+      columnStyles: { 2: { halign: 'right' } },
+    })
+    totalPages += tempDocPedidos.getNumberOfPages()
+
     return totalPages
   }
 }
@@ -577,7 +647,7 @@ export async function generatePDF(
   valorTotal: number
 ) {
   const { default: jsPDF } = await import('jspdf')
-  const doc = new jsPDF()
+  const doc = new jsPDF({ format: 'a4', unit: 'mm' })
   const generator = new PDFGenerator(doc)
 
   // Determinar o contexto
@@ -587,7 +657,7 @@ export async function generatePDF(
   const eventoSelecionado = eventoFiltro && eventoFiltro !== 'todos' ? eventoFiltro : null
 
   // Calcular número total de páginas
-  const totalPages = generator.calculateTotalPages(inscricoes, pedidos)
+  const totalPages = generator.calculateTotalPages(inscricoes, pedidos, produtos)
 
   // Gerar páginas
   generator.generateCoverPage(isRelatorios, eventoSelecionado, totalPages)
