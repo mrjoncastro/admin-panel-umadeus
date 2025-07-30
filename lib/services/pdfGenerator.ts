@@ -133,38 +133,43 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Resumo por Tamanho/Itens', this.margin, 70)
 
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.TABLE_HEADER)
-    this.doc.setFont('helvetica', 'bold')
-    this.doc.text('Tamanho', this.margin, 95)
-    this.doc.text('Quantidade', this.margin + 80, 95)
-    this.doc.text('Produtos', this.margin + 140, 95)
+    const resumoRows = Object.entries(resumoPorTamanho).map(([tamanho, dados]) => [
+      tamanho.substring(0, 15),
+      dados.quantidade,
+      Array.from(dados.produtos).join(', '),
+    ])
 
-    this.doc.line(this.margin, 100, this.pageWidth - this.margin, 100)
-
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.TABLE_DATA)
-    this.doc.setFont('helvetica', 'normal')
-    let yResumo = 110
-
-    Object.entries(resumoPorTamanho).forEach(([tamanho, dados], idx) => {
-      const yLinha = yResumo + idx * 12
-      
-      // Aplicar zebra striping
-      if (idx % 2 === 1) {
-        this.doc.setFillColor(PDF_CONSTANTS.COLORS.ROW_ALT_BG[0], PDF_CONSTANTS.COLORS.ROW_ALT_BG[1], PDF_CONSTANTS.COLORS.ROW_ALT_BG[2])
-        this.doc.rect(this.margin, yLinha - 4, this.pageWidth - 2 * this.margin, 12, 'F')
-      }
-      
-      const produtosList = Array.from(dados.produtos).join(', ')
-      this.doc.text(tamanho.substring(0, 15), this.margin, yLinha)
-      // Alinhar quantidade à direita
-      this.doc.text(dados.quantidade.toString(), this.margin + 80, yLinha, { align: 'right' })
-      // Usar quebra de texto para produtos
-      const wrapped = this.doc.splitTextToSize(produtosList, 40)
-      this.doc.text(wrapped, this.margin + 140, yLinha)
+    autoTable(this.doc, {
+      startY: 90,
+      head: [['Tamanho', 'Quantidade', 'Produtos']],
+      body: resumoRows,
+      theme: 'grid',
+      margin: { left: this.margin, right: this.margin },
+      headStyles: {
+        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+        fontStyle: 'bold',
+        halign: 'center',
+        lineColor: PDF_CONSTANTS.COLORS.BORDER as [number, number, number],
+        lineWidth: 0.1,
+      },
+      styles: {
+        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
+        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
+        overflow: 'linebreak',
+        minCellHeight: PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT,
+      },
+      columnStyles: { 1: { halign: 'right' } },
+      didDrawPage: () => {
+        this.addFooter(this.doc.getNumberOfPages(), totalPages)
+      },
     })
 
+    const lastY =
+      (this.doc as unknown as { lastAutoTable?: { finalY?: number } }).lastAutoTable?.finalY ??
+      90
+
     // Gráficos
-    this.generateCharts(resumoPorTamanho, statusPedidos, yResumo + 20)
+    this.generateCharts(resumoPorTamanho, statusPedidos, lastY + 20)
 
     this.addFooter(this.doc.getNumberOfPages(), totalPages)
   }
@@ -188,38 +193,50 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Resumo por Tamanho/Itens - Inscrições', this.margin, 70)
 
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.TABLE_HEADER)
-    this.doc.setFont('helvetica', 'bold')
-    this.doc.text('Tamanho', this.margin, 95)
-    this.doc.text('Quantidade', this.margin + 80, 95)
-    this.doc.text('Produtos', this.margin + 140, 95)
+    const resumoRowsInscr = Object.entries(resumoPorTamanhoInscricoes).map(
+      ([tamanho, dados]) => [
+        tamanho.substring(0, 15),
+        dados.quantidade,
+        Array.from(dados.produtos).join(', '),
+      ],
+    )
 
-    this.doc.line(this.margin, 100, this.pageWidth - this.margin, 100)
-
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.TABLE_DATA)
-    this.doc.setFont('helvetica', 'normal')
-    let yResumo = 110
-
-    Object.entries(resumoPorTamanhoInscricoes).forEach(([tamanho, dados], idx) => {
-      const yLinha = yResumo + idx * 12
-      
-      // Aplicar zebra striping
-      if (idx % 2 === 1) {
-        this.doc.setFillColor(PDF_CONSTANTS.COLORS.ROW_ALT_BG[0], PDF_CONSTANTS.COLORS.ROW_ALT_BG[1], PDF_CONSTANTS.COLORS.ROW_ALT_BG[2])
-        this.doc.rect(this.margin, yLinha - 4, this.pageWidth - 2 * this.margin, 12, 'F')
-      }
-      
-      const produtosList = Array.from(dados.produtos).join(', ')
-      this.doc.text(tamanho.substring(0, 15), this.margin, yLinha)
-      // Alinhar quantidade à direita
-      this.doc.text(dados.quantidade.toString(), this.margin + 80, yLinha, { align: 'right' })
-      // Usar quebra de texto para produtos
-      const wrapped = this.doc.splitTextToSize(produtosList, 40)
-      this.doc.text(wrapped, this.margin + 140, yLinha)
+    autoTable(this.doc, {
+      startY: 90,
+      head: [['Tamanho', 'Quantidade', 'Produtos']],
+      body: resumoRowsInscr,
+      theme: 'grid',
+      margin: { left: this.margin, right: this.margin },
+      headStyles: {
+        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+        fontStyle: 'bold',
+        halign: 'center',
+        lineColor: PDF_CONSTANTS.COLORS.BORDER as [number, number, number],
+        lineWidth: 0.1,
+      },
+      styles: {
+        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
+        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
+        overflow: 'linebreak',
+        minCellHeight: PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT,
+      },
+      columnStyles: { 1: { halign: 'right' } },
+      didDrawPage: () => {
+        this.addFooter(this.doc.getNumberOfPages(), totalPages)
+      },
     })
 
+    const lastYInscr =
+      (this.doc as unknown as { lastAutoTable?: { finalY?: number } }).lastAutoTable?.finalY ??
+      90
+
     // Gráficos
-    this.generateInscricoesCharts(resumoPorTamanhoInscricoes, statusInscricoes, resumoPorCampo, yResumo + 20)
+    this.generateInscricoesCharts(
+      resumoPorTamanhoInscricoes,
+      statusInscricoes,
+      resumoPorCampo,
+      lastYInscr + 20,
+    )
 
     this.addFooter(this.doc.getNumberOfPages(), totalPages)
   }
