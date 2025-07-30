@@ -274,18 +274,22 @@ export default function RelatoriosPage() {
     const fetchData = async () => {
       try {
         setError(null)
-        const userRes = await fetch(`/admin/api/usuarios/${user.id}`, {
-          credentials: 'include',
-          signal,
-        })
-        if (!userRes.ok) {
-          if (userRes.status === 401 || userRes.status === 403) {
-            setError('403 - Acesso negado')
-            return
+        let expandedUser: { expand?: { campo?: { id?: string } } } | null = null
+
+        if (user.role !== 'lider') {
+          const userRes = await fetch(`/admin/api/usuarios/${user.id}`, {
+            credentials: 'include',
+            signal,
+          })
+          if (!userRes.ok) {
+            if (userRes.status === 401 || userRes.status === 403) {
+              setError('403 - Acesso negado')
+              return
+            }
+            throw new Error('Erro ao obter usuário')
           }
-          throw new Error('Erro ao obter usuário')
+          expandedUser = await userRes.json()
         }
-        const expandedUser = await userRes.json()
 
         const perPage = 50
         const filtroCliente = `cliente='${user.cliente}'`
@@ -373,7 +377,7 @@ export default function RelatoriosPage() {
 
         if (!isMounted.current) return
 
-        const campoId = expandedUser.expand?.campo?.id
+        const campoId = expandedUser?.expand?.campo?.id || user.campo
 
         const allInscricoes: Inscricao[] = rawInscricoes.map(
           (r: Inscricao) => ({
@@ -447,7 +451,7 @@ export default function RelatoriosPage() {
       isMounted.current = false
       controller.abort()
     }
-  }, [authChecked, user?.id, user?.role, user?.cliente])
+  }, [authChecked, user?.id, user?.role, user?.cliente, user?.campo])
 
   const handleFiltroChange = (key: keyof Filtros, value: string) => {
     setFiltros((prev) => {
