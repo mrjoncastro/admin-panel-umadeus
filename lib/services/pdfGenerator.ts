@@ -229,14 +229,11 @@ export class PDFGenerator {
   ) {
     const headers = [
       'Nome',
-      'Telefone',
       'CPF',
-      'Email',
       'Evento',
-      'Status',
       'Campo',
       'Produto',
-      'Criado em',
+      'Status',
     ]
 
     const orientation = headers.length > 8 ? 'landscape' : 'portrait'
@@ -252,14 +249,76 @@ export class PDFGenerator {
 
     const rows = inscricoes.map(inscricao => [
       inscricao.nome || 'Não informado',
-      inscricao.telefone || 'Não informado',
       formatCpf(inscricao.cpf || inscricao.id),
-      inscricao.email || 'Não informado',
       getEventoNome(inscricao.produto || '', produtos),
-      inscricao.status || 'Não informado',
       inscricao.campo || 'Não informado',
       getProdutoInfo(inscricao.produto || '', produtos),
-      normalizeDate(inscricao.created),
+      inscricao.status || 'Não informado',
+    ])
+
+    autoTable(this.doc, {
+      startY: 100,
+      head: [headers],
+      body: rows,
+      theme: 'grid',
+      margin: { left: this.margin, right: this.margin },
+      headStyles: {
+        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+        halign: 'center',
+        fontStyle: 'bold',
+        lineColor: PDF_CONSTANTS.COLORS.BORDER as [number, number, number],
+        lineWidth: 0.1,
+      },
+      styles: {
+        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
+        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
+        minCellHeight: PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT,
+      },
+      columnStyles: {
+        0: { cellWidth: 40, overflow: 'linebreak' },
+        1: { cellWidth: 25, halign: 'right' },
+        2: { cellWidth: 28, overflow: 'linebreak' },
+        3: { cellWidth: 25 },
+        4: { cellWidth: 30, overflow: 'linebreak' },
+        5: { cellWidth: 22 },
+      },
+    })
+  }
+
+  // Página 7 - Tabelas de Pedidos
+  generatePedidosTable(
+    pedidos: Pedido[],
+    produtos: Produto[],
+  ) {
+    const headers = [
+      'Nome',
+      'CPF',
+      'Campo',
+      'Produto',
+      'Tamanho',
+      'Canal',
+      'Status',
+    ]
+
+    const orientation = headers.length > 8 ? 'landscape' : 'portrait'
+    this.doc.addPage(orientation === 'landscape' ? 'l' : 'p')
+    this.pageWidth = this.doc.internal.pageSize.getWidth()
+    this.pageHeight = this.doc.internal.pageSize.getHeight()
+    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.SUBTITLE)
+    this.doc.setFont('helvetica', 'bold')
+    this.doc.text('Tabelas de Pedidos', this.margin, 40)
+
+    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
+    this.doc.text('Pedidos Detalhados', this.margin, 75)
+
+    const rows = pedidos.map(pedido => [
+      getNomeCliente(pedido),
+      formatCpf(getCpfCliente(pedido)),
+      pedido.expand?.campo?.nome || pedido.campo || 'Não informado',
+      pedido.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', '),
+      pedido.tamanho || 'Não informado',
+      pedido.canal || 'Não informado',
+      pedido.status || 'Não informado',
     ])
 
     autoTable(this.doc, {
@@ -282,86 +341,12 @@ export class PDFGenerator {
       },
       columnStyles: {
         0: { cellWidth: 35, overflow: 'linebreak' },
-        1: { cellWidth: 25, halign: 'right' },
-        2: { cellWidth: 22, halign: 'right' },
-        3: { cellWidth: 40, overflow: 'linebreak' },
-        4: { cellWidth: 25, overflow: 'linebreak' },
-        5: { cellWidth: 18 },
-        6: { cellWidth: 20 },
-        7: { cellWidth: 30, overflow: 'linebreak' },
-        8: { cellWidth: 22 },
-      },
-    })
-  }
-
-  // Página 7 - Tabelas de Pedidos
-  generatePedidosTable(
-    pedidos: Pedido[],
-    produtos: Produto[],
-  ) {
-    const headers = [
-      'Produto',
-      'Nome',
-      'CPF',
-      'Email',
-      'Tamanho',
-      'Status',
-      'Campo',
-      'Canal',
-      'Data',
-    ]
-
-    const orientation = headers.length > 8 ? 'landscape' : 'portrait'
-    this.doc.addPage(orientation === 'landscape' ? 'l' : 'p')
-    this.pageWidth = this.doc.internal.pageSize.getWidth()
-    this.pageHeight = this.doc.internal.pageSize.getHeight()
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.SUBTITLE)
-    this.doc.setFont('helvetica', 'bold')
-    this.doc.text('Tabelas de Pedidos', this.margin, 40)
-
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
-    this.doc.text('Pedidos Detalhados', this.margin, 75)
-
-    const rows = pedidos.map(pedido => [
-      pedido.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', '),
-      getNomeCliente(pedido),
-      formatCpf(getCpfCliente(pedido)),
-      pedido.email || 'Não informado',
-      pedido.tamanho || 'Não informado',
-      pedido.status || 'Não informado',
-      pedido.expand?.campo?.nome || pedido.campo || 'Não informado',
-      pedido.canal || 'Não informado',
-      normalizeDate(pedido.created),
-    ])
-
-    autoTable(this.doc, {
-      startY: 100,
-      head: [headers],
-      body: rows,
-      theme: 'grid',
-      margin: { left: this.margin, right: this.margin },
-      headStyles: {
-        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
-        halign: 'center',
-        fontStyle: 'bold',
-        lineColor: PDF_CONSTANTS.COLORS.BORDER as [number, number, number],
-        lineWidth: 0.1,
-      },
-      styles: {
-        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
-        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
-        minCellHeight: PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT,
-      },
-      columnStyles: {
-        0: { cellWidth: 30, overflow: 'linebreak' },
-        1: { cellWidth: 30, overflow: 'linebreak' },
-        2: { cellWidth: 22, halign: 'right' },
-        3: { cellWidth: 40, overflow: 'linebreak' },
-        4: { cellWidth: 18 },
-        5: { cellWidth: 20 },
-        6: { cellWidth: 25, overflow: 'linebreak' },
-        7: { cellWidth: 20 },
-        8: { cellWidth: 20 },
+        1: { cellWidth: 22, halign: 'right' },
+        2: { cellWidth: 25, overflow: 'linebreak' },
+        3: { cellWidth: 30, overflow: 'linebreak' },
+        4: { cellWidth: 16 },
+        5: { cellWidth: 24 },
+        6: { cellWidth: 18 },
       },
     })
   }
