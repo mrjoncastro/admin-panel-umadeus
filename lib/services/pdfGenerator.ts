@@ -647,9 +647,18 @@ export class PDFGenerator {
 
   private generateCanalPieChart(canais: Record<string, number>, startY: number) {
     const total = Object.values(canais).reduce((a, b) => a + b, 0)
-    const centerX = this.margin + 60
-    const centerY = startY + 30
+    const width = 120
+    const height = 60
     const radius = 25
+    const centerX = width / 2
+    const centerY = height / 2
+
+    // Cria canvas para desenho do gráfico
+    const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
 
     let startAngle = 0
     const colors = [
@@ -664,21 +673,31 @@ export class PDFGenerator {
       const endAngle = startAngle + angle
       const color = colors[idx % colors.length]
 
-      const ctx = (this.doc as any).getContext('2d')
       ctx.beginPath()
       ctx.moveTo(centerX, centerY)
-      ctx.arc(centerX, centerY, radius, startAngle, endAngle, false)
+      ctx.arc(centerX, centerY, radius, startAngle, endAngle)
       ctx.closePath()
       ctx.fillStyle = `rgb(${color[0]},${color[1]},${color[2]})`
       ctx.fill()
 
-      this.doc.setFontSize(6)
+      startAngle = endAngle
+    })
+
+    const imgData = canvas.toDataURL('image/png')
+    this.doc.addImage(imgData, 'PNG', this.margin, startY, width, height)
+
+    // Desenha legendas sobre o PDF
+    startAngle = 0
+    Object.entries(canais).forEach(([canal, valor]) => {
+      const angle = (valor / Math.max(total, 1)) * Math.PI * 2
       const midAngle = startAngle + angle / 2
-      const labelX = centerX + (radius + 10) * Math.cos(midAngle)
-      const labelY = centerY + (radius + 10) * Math.sin(midAngle)
+      const labelX = this.margin + centerX + (radius + 10) * Math.cos(midAngle)
+      const labelY = startY + centerY + (radius + 10) * Math.sin(midAngle)
+
+      this.doc.setFontSize(6)
       this.doc.text(`${canal} (${valor})`, labelX, labelY)
 
-      startAngle = endAngle
+      startAngle += angle
     })
   }
 
