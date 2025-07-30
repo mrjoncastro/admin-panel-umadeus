@@ -5,6 +5,7 @@ import { useAuthGuard } from '@/lib/hooks/useAuthGuard'
 import DashboardAnalytics from '../components/DashboardAnalytics'
 import type { Inscricao, Pedido } from '@/types'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
+import { fetchAllPages } from '@/lib/utils/fetchAllPages'
 
 export default function LiderDashboardPage() {
   const { user, authChecked } = useAuthGuard(['lider'])
@@ -17,8 +18,6 @@ export default function LiderDashboardPage() {
   })
 
   const [loading, setLoading] = useState(true)
-  const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
   const isMounted = useRef(true)
 
   useEffect(() => {
@@ -32,27 +31,59 @@ export default function LiderDashboardPage() {
 
         const perPage = 50
         const params = new URLSearchParams({
-          page: String(page),
+          page: '1',
           perPage: String(perPage),
           filter: `campo="${campoId}" && cliente='${user?.cliente}'`,
         })
-        const [insRes, pedRes] = await Promise.all([
-          fetch(`/api/inscricoes?${params.toString()}`, {
+
+        // Buscar primeira página de inscrições
+        const insRes = await fetch(`/api/inscricoes?${params.toString()}`, {
+          credentials: 'include',
+          signal,
+        }).then((r) => r.json())
+
+        // Buscar todas as páginas restantes de inscrições
+        const insRest = await fetchAllPages<{ items?: Inscricao[] } | Inscricao>(
+          `/api/inscricoes?${params.toString()}`,
+          insRes.totalPages ?? 1,
+          signal,
+        )
+
+        // Combinar primeira página com as demais páginas de inscrições
+        let rawInscricoes = Array.isArray(insRes.items) ? insRes.items : insRes
+        rawInscricoes = rawInscricoes.concat(
+          insRest.flatMap((r) =>
+            Array.isArray((r as { items?: Inscricao[] }).items)
+              ? (r as { items: Inscricao[] }).items
+              : (r as Inscricao),
+          ),
+        )
+
+        // Buscar primeira página de pedidos
+        const pedRes = await fetch(
+          `/api/pedidos?${params.toString()}&expand=campo,produto`,
+          {
             credentials: 'include',
             signal,
-          }).then((r) => r.json()),
-          fetch(`/api/pedidos?${params.toString()}&expand=campo,produto`, {
-            credentials: 'include',
-            signal,
-          }).then((r) => r.json()),
-        ])
-        const rawInscricoes = Array.isArray(insRes.items)
-          ? insRes.items
-          : insRes
-        const rawPedidos = Array.isArray(pedRes.items) ? pedRes.items : pedRes
-        if (insRes.totalPages && pedRes.totalPages) {
-          setTotalPages(Math.max(insRes.totalPages, pedRes.totalPages))
-        }
+          },
+        ).then((r) => r.json())
+
+        // Buscar todas as páginas restantes de pedidos
+        const pedRest = await fetchAllPages<{ items?: Pedido[] } | Pedido>(
+          `/api/pedidos?${params.toString()}&expand=campo,produto`,
+          pedRes.totalPages ?? 1,
+          signal,
+        )
+
+        // Combinar primeira página com as demais páginas de pedidos
+        let rawPedidos = Array.isArray(pedRes.items) ? pedRes.items : pedRes
+        rawPedidos = rawPedidos.concat(
+          pedRest.flatMap((r) =>
+            Array.isArray((r as { items?: Pedido[] }).items)
+              ? (r as { items: Pedido[] }).items
+              : (r as Pedido),
+          ),
+        )
 
         if (!isMounted.current) return
 
@@ -135,7 +166,7 @@ export default function LiderDashboardPage() {
       isMounted.current = false
       controller.abort()
     }
-  }, [authChecked, user, page])
+  }, [authChecked, user])
 
   if (loading) {
     return <LoadingOverlay show={true} text="Carregando dashboard..." />
@@ -152,6 +183,9 @@ export default function LiderDashboardPage() {
           <p>Pendentes: {totais.inscricoes.pendente}</p>
           <p>Confirmadas: {totais.inscricoes.confirmado}</p>
           <p>Canceladas: {totais.inscricoes.cancelado}</p>
+          <p className="text-sm text-gray-600 mt-2">
+            Total: {inscricoes.length} inscrições
+          </p>
         </div>
 
         <div className="card p-6 text-center">
@@ -159,34 +193,24 @@ export default function LiderDashboardPage() {
           <p>Pendentes: {totais.pedidos.pendente}</p>
           <p>Pagos: {totais.pedidos.pago}</p>
           <p>Cancelados: {totais.pedidos.cancelado}</p>
+          <p className="text-sm text-gray-600 mt-2">
+            Total: {pedidos.length} pedidos
+          </p>
         </div>
 
-        {/* Removido card de Total Arrecadado */}
+        <div className="card p-6 text-center">
+          <h3 className="text-lg font-semibold mb-2">Total Arrecadado</h3>
+          <p className="text-2xl font-bold text-green-600">
+            R$ {totais.pedidos.valorTotal.toFixed(2)}
+          </p>
+        </div>
       </div>
+      
       <DashboardAnalytics
         inscricoes={inscricoes}
         pedidos={pedidos}
         mostrarFinanceiro={false}
       />
-      <div className="flex justify-center items-center gap-4 mt-4">
-        <button
-          className="btn btn-primary px-3 py-1"
-          disabled={page === 1}
-          onClick={() => setPage((p) => Math.max(1, p - 1))}
-        >
-          Anterior
-        </button>
-        <span className="text-sm">
-          Página {page} de {totalPages}
-        </span>
-        <button
-          className="btn btn-primary px-3 py-1"
-          disabled={page === totalPages}
-          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-        >
-          Próxima
-        </button>
-      </div>
     </main>
   )
 }
