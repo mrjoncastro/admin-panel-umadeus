@@ -127,13 +127,16 @@ export class PDFGenerator {
     this.doc.setFont('helvetica', 'normal')
     let yResumo = 110
 
-    Object.entries(resumoPorTamanho).forEach(([tamanho, dados]) => {
-      const produtosList = Array.from(dados.produtos).join(', ')
-      this.doc.text(tamanho.substring(0, 15), this.margin, yResumo)
-      this.doc.text(dados.quantidade.toString(), this.margin + 80, yResumo)
-      this.doc.text(produtosList.substring(0, 40), this.margin + 140, yResumo)
-      yResumo += 12
-    })
+         Object.entries(resumoPorTamanho).forEach(([tamanho, dados]) => {
+       const produtosList = Array.from(dados.produtos).join(', ')
+       this.doc.text(tamanho.substring(0, 15), this.margin, yResumo)
+       // Alinhar quantidade à direita
+       this.doc.text(dados.quantidade.toString(), this.margin + 80, yResumo, { align: 'right' })
+       // Usar quebra de texto para produtos
+       const wrapped = this.doc.splitTextToSize(produtosList, 40)
+       this.doc.text(wrapped, this.margin + 140, yResumo)
+       yResumo += 12
+     })
 
     // Gráficos
     this.generateCharts(resumoPorTamanho, statusPedidos, yResumo + 20)
@@ -168,13 +171,16 @@ export class PDFGenerator {
     this.doc.setFont('helvetica', 'normal')
     let yResumo = 110
 
-    Object.entries(resumoPorTamanhoInscricoes).forEach(([tamanho, dados]) => {
-      const produtosList = Array.from(dados.produtos).join(', ')
-      this.doc.text(tamanho.substring(0, 15), this.margin, yResumo)
-      this.doc.text(dados.quantidade.toString(), this.margin + 80, yResumo)
-      this.doc.text(produtosList.substring(0, 40), this.margin + 140, yResumo)
-      yResumo += 12
-    })
+         Object.entries(resumoPorTamanhoInscricoes).forEach(([tamanho, dados]) => {
+       const produtosList = Array.from(dados.produtos).join(', ')
+       this.doc.text(tamanho.substring(0, 15), this.margin, yResumo)
+       // Alinhar quantidade à direita
+       this.doc.text(dados.quantidade.toString(), this.margin + 80, yResumo, { align: 'right' })
+       // Usar quebra de texto para produtos
+       const wrapped = this.doc.splitTextToSize(produtosList, 40)
+       this.doc.text(wrapped, this.margin + 140, yResumo)
+       yResumo += 12
+     })
 
     // Gráficos
     this.generateInscricoesCharts(resumoPorTamanhoInscricoes, statusInscricoes, resumoPorCampo, yResumo + 20)
@@ -183,7 +189,7 @@ export class PDFGenerator {
   }
 
   // Página 6 - Tabelas de Inscrições
-  generateInscricoesTable(inscricoes: Inscricao[], produtos: Produto[]) {
+  generateInscricoesTable(inscricoes: Inscricao[], produtos: Produto[], totalPages: number) {
     this.doc.addPage()
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.SUBTITLE)
     this.doc.setFont('helvetica', 'bold')
@@ -192,17 +198,22 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Inscrições Detalhadas', this.margin, 75)
 
-    // Cabeçalho
+    // Cabeçalho com estilo
+    this.doc.setFillColor(240, 240, 240) // Light gray background
+    this.doc.rect(this.margin, 90, this.pageWidth - 2 * this.margin, 12, 'F')
+    this.doc.setDrawColor(200, 200, 200) // Border color
+    this.doc.setLineWidth(0.5)
+    this.doc.rect(this.margin, 90, this.pageWidth - 2 * this.margin, 12)
+    
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.TABLE_HEADER)
     this.doc.setFont('helvetica', 'bold')
+    this.doc.setTextColor(0, 0, 0)
     const headers = ['Nome', 'Telefone', 'CPF', 'Email', 'Evento', 'Status', 'Campo', 'Produto', 'Criado em']
     const positions = [0, 35, 65, 95, 125, 155, 185, 215, 245]
     
     headers.forEach((header, index) => {
-      this.doc.text(header, this.margin + positions[index], 95)
+      this.doc.text(header, this.margin + positions[index], 98)
     })
-
-    this.doc.line(this.margin, 100, this.pageWidth - this.margin, 100)
 
     // Dados
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.TABLE_DATA)
@@ -212,17 +223,25 @@ export class PDFGenerator {
 
     inscricoes.forEach((inscricao, index) => {
       if (y > this.pageHeight - 50) {
-        this.addFooter(currentPage, 7)
+        this.addFooter(currentPage, totalPages)
         this.doc.addPage()
         currentPage++
         this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
         this.doc.text('Inscrições Detalhadas (continuação)', this.margin, 40)
         
+        // Cabeçalho com estilo para continuação
+        this.doc.setFillColor(240, 240, 240)
+        this.doc.rect(this.margin, 55, this.pageWidth - 2 * this.margin, 12, 'F')
+        this.doc.setDrawColor(200, 200, 200)
+        this.doc.setLineWidth(0.5)
+        this.doc.rect(this.margin, 55, this.pageWidth - 2 * this.margin, 12)
+        
         this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.TABLE_HEADER)
+        this.doc.setFont('helvetica', 'bold')
+        this.doc.setTextColor(0, 0, 0)
         headers.forEach((header, idx) => {
-          this.doc.text(header, this.margin + positions[idx], 60)
+          this.doc.text(header, this.margin + positions[idx], 63)
         })
-        this.doc.line(this.margin, 65, this.pageWidth - this.margin, 65)
         y = 75
       }
 
@@ -240,23 +259,29 @@ export class PDFGenerator {
       const status = inscricao.status || 'N/A'
       const campo = inscricao.campo || 'N/A'
       const produtoInfo = getProdutoInfo(inscricao.produto || '', produtos)
-      const criadoEm = inscricao.created ? new Date(inscricao.created).toLocaleDateString('pt-BR') : 'N/A'
+             const criadoEm = inscricao.created ? new Date(inscricao.created).toLocaleDateString('pt-BR', {
+         day: '2-digit',
+         month: '2-digit',
+         year: 'numeric'
+       }) : 'N/A'
 
-      const data = [nome, telefone, cpf, email, eventoNome, status, campo, produtoInfo, criadoEm]
-      const limits = [20, 12, 14, 20, 15, 8, 12, 15, 8]
+       const data = [nome, telefone, cpf, email, eventoNome, status, campo, produtoInfo, criadoEm]
+       const limits = [20, 12, 14, 20, 15, 8, 12, 15, 8]
 
-      data.forEach((item, idx) => {
-        this.doc.text(item.substring(0, limits[idx]) || 'N/A', this.margin + positions[idx], y)
-      })
+       data.forEach((item, idx) => {
+         // Usar quebra de texto em vez de substring
+         const wrapped = this.doc.splitTextToSize(item || 'N/A', limits[idx] * 3)
+         this.doc.text(wrapped, this.margin + positions[idx], y)
+       })
 
       y += PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT
     })
 
-    this.addFooter(currentPage, 7)
+    this.addFooter(currentPage, totalPages)
   }
 
   // Página 7 - Tabelas de Pedidos
-  generatePedidosTable(pedidos: Pedido[], produtos: Produto[]) {
+  generatePedidosTable(pedidos: Pedido[], produtos: Produto[], totalPages: number) {
     this.doc.addPage()
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.SUBTITLE)
     this.doc.setFont('helvetica', 'bold')
@@ -265,17 +290,22 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Pedidos Detalhados', this.margin, 75)
 
-    // Cabeçalho
+    // Cabeçalho com estilo
+    this.doc.setFillColor(240, 240, 240) // Light gray background
+    this.doc.rect(this.margin, 90, this.pageWidth - 2 * this.margin, 12, 'F')
+    this.doc.setDrawColor(200, 200, 200) // Border color
+    this.doc.setLineWidth(0.5)
+    this.doc.rect(this.margin, 90, this.pageWidth - 2 * this.margin, 12)
+    
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.TABLE_HEADER)
     this.doc.setFont('helvetica', 'bold')
+    this.doc.setTextColor(0, 0, 0)
     const headers = ['Produto', 'Nome', 'CPF', 'Email', 'Tamanho', 'Status', 'Campo', 'Canal', 'Data']
     const positions = [0, 30, 60, 90, 120, 150, 180, 210, 240]
     
     headers.forEach((header, index) => {
-      this.doc.text(header, this.margin + positions[index], 95)
+      this.doc.text(header, this.margin + positions[index], 98)
     })
-
-    this.doc.line(this.margin, 100, this.pageWidth - this.margin, 100)
 
     // Dados
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.TABLE_DATA)
@@ -285,17 +315,25 @@ export class PDFGenerator {
 
     pedidos.forEach((pedido, index) => {
       if (y > this.pageHeight - 50) {
-        this.addFooter(currentPage, 7)
+        this.addFooter(currentPage, totalPages)
         this.doc.addPage()
         currentPage++
         this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
         this.doc.text('Pedidos Detalhados (continuação)', this.margin, 40)
         
+        // Cabeçalho com estilo para continuação
+        this.doc.setFillColor(240, 240, 240)
+        this.doc.rect(this.margin, 55, this.pageWidth - 2 * this.margin, 12, 'F')
+        this.doc.setDrawColor(200, 200, 200)
+        this.doc.setLineWidth(0.5)
+        this.doc.rect(this.margin, 55, this.pageWidth - 2 * this.margin, 12)
+        
         this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.TABLE_HEADER)
+        this.doc.setFont('helvetica', 'bold')
+        this.doc.setTextColor(0, 0, 0)
         headers.forEach((header, idx) => {
-          this.doc.text(header, this.margin + positions[idx], 60)
+          this.doc.text(header, this.margin + positions[idx], 63)
         })
-        this.doc.line(this.margin, 65, this.pageWidth - this.margin, 65)
         y = 75
       }
 
@@ -313,19 +351,25 @@ export class PDFGenerator {
       const status = pedido.status || 'N/A'
       const campo = pedido.expand?.campo?.nome || pedido.campo || 'N/A'
       const canal = pedido.canal || 'N/A'
-      const data = pedido.created ? new Date(pedido.created).toLocaleDateString('pt-BR') : 'N/A'
+      const data = pedido.created ? new Date(pedido.created).toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      }) : 'N/A'
 
       const dataArray = [produtoInfo, nomeCliente, cpfCliente, email, tamanho, status, campo, canal, data]
       const limits = [18, 12, 14, 18, 8, 8, 10, 8, 8]
 
       dataArray.forEach((item, idx) => {
-        this.doc.text(item.substring(0, limits[idx]) || 'N/A', this.margin + positions[idx], y)
+        // Usar quebra de texto em vez de substring
+        const wrapped = this.doc.splitTextToSize(item || 'N/A', limits[idx] * 3)
+        this.doc.text(wrapped, this.margin + positions[idx], y)
       })
 
       y += PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT
     })
 
-    this.addFooter(currentPage, 7)
+    this.addFooter(currentPage, totalPages)
   }
 
   private calculateInscricoesPorTamanho(inscricoes: Inscricao[], produtos: Produto[]) {
@@ -516,6 +560,23 @@ export class PDFGenerator {
     this.doc.text(`Página ${pageNumber} de ${totalPages}`, this.pageWidth / 2, this.pageHeight - 20, { align: 'center' })
     this.doc.text('Desenvolvido por M24', this.pageWidth - this.margin, this.pageHeight - 20, { align: 'right' })
   }
+
+  public calculateTotalPages(inscricoes: Inscricao[], pedidos: Pedido[]): number {
+    // Páginas fixas: Capa, Sumário, Resumo Executivo, Panorama Pedidos, Panorama Inscrições
+    let totalPages = 5
+    
+    // Calcular páginas para tabela de inscrições
+    const itemsPerPageInscricoes = Math.floor((this.pageHeight - 140) / 8)
+    const pagesInscricoes = Math.ceil(inscricoes.length / itemsPerPageInscricoes)
+    totalPages += pagesInscricoes
+    
+    // Calcular páginas para tabela de pedidos
+    const itemsPerPagePedidos = Math.floor((this.pageHeight - 140) / 8)
+    const pagesPedidos = Math.ceil(pedidos.length / itemsPerPagePedidos)
+    totalPages += pagesPedidos
+    
+    return totalPages
+  }
 }
 
 export async function generatePDF(
@@ -534,14 +595,17 @@ export async function generatePDF(
   const eventoFiltro = urlParams.get('evento')
   const eventoSelecionado = eventoFiltro && eventoFiltro !== 'todos' ? eventoFiltro : null
 
+  // Calcular número total de páginas
+  const totalPages = generator.calculateTotalPages(inscricoes, pedidos)
+
   // Gerar páginas
   generator.generateCoverPage(isRelatorios, eventoSelecionado)
   generator.generateSummaryPage()
   generator.generateExecutiveSummary(inscricoes, pedidos, valorTotal)
   generator.generatePedidosOverview(pedidos, produtos)
   generator.generateInscricoesOverview(inscricoes, produtos)
-  generator.generateInscricoesTable(inscricoes, produtos)
-  generator.generatePedidosTable(pedidos, produtos)
+  generator.generateInscricoesTable(inscricoes, produtos, totalPages)
+  generator.generatePedidosTable(pedidos, produtos, totalPages)
 
   // Salvar PDF
   const fileName = isRelatorios 
