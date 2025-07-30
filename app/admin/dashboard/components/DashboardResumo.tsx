@@ -61,7 +61,7 @@ export default function DashboardResumo({
     exportPedidosToExcel(pedidos)
   }
 
-  const handleExportPDF = () => {
+  const handleExportPDF = async () => {
     // Verificar se estamos no navegador
     if (typeof window === 'undefined') {
       console.error('PDF só pode ser gerado no navegador')
@@ -75,8 +75,11 @@ export default function DashboardResumo({
       button.disabled = true
     }
 
-    // Gerar PDF usando o serviço
-    generatePDF(inscricoes, pedidos, produtos, valorTotalConfirmado)
+    try {
+      await generatePDF(inscricoes, pedidos, produtos, valorTotalConfirmado)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   // Verificar se há dados para exibir

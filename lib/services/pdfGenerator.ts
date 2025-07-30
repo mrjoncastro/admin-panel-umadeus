@@ -1,6 +1,7 @@
 import type { Inscricao, Pedido, Produto } from '@/types'
 import type { jsPDF } from 'jspdf'
-import autoTable from 'jspdf-autotable'
+
+let autoTable: any
 import {
   PDF_CONSTANTS,
   formatCpf,
@@ -576,6 +577,7 @@ export async function generatePDF(
   valorTotal: number
 ) {
   const { default: jsPDF } = await import('jspdf')
+  autoTable = (await import('jspdf-autotable')).default
   const doc = new jsPDF({ format: 'a4', unit: 'mm' })
   const generator = new PDFGenerator(doc)
 
