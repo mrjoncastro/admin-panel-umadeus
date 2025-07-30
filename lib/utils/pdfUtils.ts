@@ -183,3 +183,43 @@ export function calculateProdutoTamanhoCross(
     return acc
   }, {} as Record<string, Record<string, number>>)
 }
+
+// Resumo de inscrições por tamanho
+export function calculateInscricoesPorTamanho(
+  inscricoes: Inscricao[],
+  produtos: Produto[],
+) {
+  return inscricoes.reduce((acc, inscricao) => {
+    const tamanho = inscricao.tamanho || 'Sem tamanho'
+    if (!acc[tamanho]) {
+      acc[tamanho] = {
+        quantidade: 0,
+        produtos: new Set<string>(),
+      }
+    }
+    acc[tamanho].quantidade += 1
+
+    if (inscricao.produto) {
+      const produto = produtos.find(p => p.id === inscricao.produto)
+      if (produto) {
+        acc[tamanho].produtos.add(produto.nome)
+      }
+    }
+    return acc
+  }, {} as Record<string, { quantidade: number; produtos: Set<string> }>)
+}
+
+// Tabela cruzada Produto x Tamanho para inscrições
+export function calculateInscricoesProdutoTamanhoCross(
+  inscricoes: Inscricao[],
+  produtos: Produto[],
+) {
+  return inscricoes.reduce((acc, inscricao) => {
+    const tamanho = inscricao.tamanho || 'Sem tamanho'
+    if (!inscricao.produto) return acc
+    const nome = produtos.find(p => p.id === inscricao.produto)?.nome || 'N/A'
+    acc[nome] = acc[nome] || {}
+    acc[nome][tamanho] = (acc[nome][tamanho] || 0) + 1
+    return acc
+  }, {} as Record<string, Record<string, number>>)
+}

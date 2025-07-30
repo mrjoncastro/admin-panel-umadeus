@@ -9,8 +9,10 @@ import {
   calculatePedidosStatus,
   calculateResumoPorTamanho,
   calculateResumoPorCampo,
+  calculateInscricoesPorTamanho,
   calculateProdutosPorCanal,
   calculateProdutoTamanhoCross,
+  calculateInscricoesProdutoTamanhoCross,
   getNomeCliente,
   getProdutoInfo,
   getEventoNome,
@@ -215,9 +217,13 @@ export class PDFGenerator {
     this.doc.setFont('helvetica', 'bold')
     this.doc.text('Panorama Geral - Inscrições', this.margin, 40)
 
-    const resumoPorTamanhoInscricoes = this.calculateInscricoesPorTamanho(inscricoes, produtos)
+    const resumoPorTamanhoInscricoes = calculateInscricoesPorTamanho(
+      inscricoes,
+      produtos,
+    )
     const statusInscricoes = calculateInscricoesStatus(inscricoes)
     const resumoPorCampo = calculateResumoPorCampo(inscricoes)
+    const crossData = calculateInscricoesProdutoTamanhoCross(inscricoes, produtos)
 
     // Tabela de resumo
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
@@ -257,12 +263,50 @@ export class PDFGenerator {
       (this.doc as unknown as { lastAutoTable?: { finalY?: number } }).lastAutoTable?.finalY ??
       90
 
+    // Tabela cruzada Produto x Tamanho
+    const tamanhosInscr = Array.from(
+      new Set(Object.values(crossData).flatMap(obj => Object.keys(obj))),
+    )
+    const crossRowsInscr = Object.entries(crossData).map(([produto, valores]) => [
+      produto.substring(0, 15),
+      ...tamanhosInscr.map(t => valores[t] || 0),
+    ])
+    const crossHeadInscr = ['Produto', ...tamanhosInscr]
+
+    autoTable(this.doc, {
+      startY: lastYInscr + 20,
+      head: [crossHeadInscr],
+      body: crossRowsInscr,
+      theme: 'grid',
+      margin: { left: this.margin, right: this.margin },
+      headStyles: {
+        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+        fontStyle: 'bold',
+        halign: 'center',
+        lineColor: PDF_CONSTANTS.COLORS.BORDER as [number, number, number],
+        lineWidth: 0.1,
+      },
+      styles: {
+        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
+        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
+        overflow: 'linebreak',
+        minCellHeight: PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT,
+      },
+      columnStyles: Object.fromEntries(
+        crossHeadInscr.map((_, idx) => (idx === 0 ? [idx, {}] : [idx, { halign: 'right' }])),
+      ),
+    })
+
+    const afterCrossInscr =
+      (this.doc as unknown as { lastAutoTable?: { finalY?: number } }).lastAutoTable?.finalY ??
+      lastYInscr + 20
+
     // Gráficos
     this.generateInscricoesCharts(
       resumoPorTamanhoInscricoes,
       statusInscricoes,
       resumoPorCampo,
-      lastYInscr + 20,
+      afterCrossInscr + 20,
     )
   }
 
@@ -395,26 +439,6 @@ export class PDFGenerator {
     })
   }
 
-  private calculateInscricoesPorTamanho(inscricoes: Inscricao[], produtos: Produto[]) {
-    return inscricoes.reduce((acc, inscricao) => {
-      const tamanho = inscricao.tamanho || 'Sem tamanho'
-      if (!acc[tamanho]) {
-        acc[tamanho] = {
-          quantidade: 0,
-          produtos: new Set()
-        }
-      }
-      acc[tamanho].quantidade += 1
-      
-      if (inscricao.produto) {
-        const produto = produtos.find(p => p.id === inscricao.produto)
-        if (produto) {
-          acc[tamanho].produtos.add(produto.nome)
-        }
-      }
-      return acc
-    }, {} as Record<string, { quantidade: number; produtos: Set<string> }>)
-  }
 
   private generateCharts(
     resumoPorTamanho: Record<string, { quantidade: number; produtos: Set<string> }>,
