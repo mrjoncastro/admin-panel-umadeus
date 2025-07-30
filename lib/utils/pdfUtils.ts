@@ -156,3 +156,30 @@ export function normalizeDate(dateString: string | null | undefined): string {
     return 'Data inválida'
   }
 }
+
+// Total de produtos por canal
+export function calculateProdutosPorCanal(pedidos: Pedido[]) {
+  return pedidos.reduce((acc, pedido) => {
+    const canal = pedido.canal || 'outros'
+    const quantidade = Array.isArray(pedido.produto) ? pedido.produto.length : 1
+    acc[canal] = (acc[canal] || 0) + quantidade
+    return acc
+  }, {} as Record<string, number>)
+}
+
+// Tabela cruzada Produto x Tamanho
+export function calculateProdutoTamanhoCross(
+  pedidos: Pedido[],
+  produtos: Produto[],
+) {
+  return pedidos.reduce((acc, pedido) => {
+    const tamanho = pedido.tamanho || 'Sem tamanho'
+    const ids = Array.isArray(pedido.produto) ? pedido.produto : [pedido.produto]
+    ids.forEach(id => {
+      const nome = produtos.find(p => p.id === id)?.nome || 'N/A'
+      acc[nome] = acc[nome] || {}
+      acc[nome][tamanho] = (acc[nome][tamanho] || 0) + 1
+    })
+    return acc
+  }, {} as Record<string, Record<string, number>>)
+}
