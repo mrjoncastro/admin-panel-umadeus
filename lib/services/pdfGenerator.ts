@@ -242,15 +242,11 @@ export class PDFGenerator {
   }
 
   // Página 6 - Tabelas de Inscrições
-  generateInscricoesTable(inscricoes: Inscricao[], produtos: Produto[], totalPages: number) {
-    this.doc.addPage()
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.SUBTITLE)
-    this.doc.setFont('helvetica', 'bold')
-    this.doc.text('Tabelas de Inscrições Detalhadas', this.margin, 40)
-
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
-    this.doc.text('Inscrições Detalhadas', this.margin, 75)
-
+  generateInscricoesTable(
+    inscricoes: Inscricao[],
+    produtos: Produto[],
+    totalPages: number,
+  ) {
     const headers = [
       'Nome',
       'Telefone',
@@ -262,6 +258,17 @@ export class PDFGenerator {
       'Produto',
       'Criado em',
     ]
+
+    const orientation = headers.length > 8 ? 'landscape' : 'portrait'
+    this.doc.addPage(orientation === 'landscape' ? 'l' : 'p')
+    this.pageWidth = this.doc.internal.pageSize.getWidth()
+    this.pageHeight = this.doc.internal.pageSize.getHeight()
+    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.SUBTITLE)
+    this.doc.setFont('helvetica', 'bold')
+    this.doc.text('Tabelas de Inscrições Detalhadas', this.margin, 40)
+
+    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
+    this.doc.text('Inscrições Detalhadas', this.margin, 75)
 
     const rows = inscricoes.map(inscricao => [
       inscricao.nome || 'Não informado',
@@ -291,26 +298,31 @@ export class PDFGenerator {
       styles: {
         fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
         cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
-        overflow: 'linebreak',
         minCellHeight: PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT,
       },
-      columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } },
-      didDrawPage: data => {
+      columnStyles: {
+        0: { cellWidth: 35, overflow: 'linebreak' },
+        1: { cellWidth: 25, halign: 'right' },
+        2: { cellWidth: 22, halign: 'right' },
+        3: { cellWidth: 40, overflow: 'linebreak' },
+        4: { cellWidth: 25, overflow: 'linebreak' },
+        5: { cellWidth: 18 },
+        6: { cellWidth: 20 },
+        7: { cellWidth: 30, overflow: 'linebreak' },
+        8: { cellWidth: 22 },
+      },
+      didDrawPage: () => {
         this.addFooter(this.doc.getNumberOfPages(), totalPages)
       },
     })
   }
 
   // Página 7 - Tabelas de Pedidos
-  generatePedidosTable(pedidos: Pedido[], produtos: Produto[], totalPages: number) {
-    this.doc.addPage()
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.SUBTITLE)
-    this.doc.setFont('helvetica', 'bold')
-    this.doc.text('Tabelas de Pedidos', this.margin, 40)
-
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
-    this.doc.text('Pedidos Detalhados', this.margin, 75)
-
+  generatePedidosTable(
+    pedidos: Pedido[],
+    produtos: Produto[],
+    totalPages: number,
+  ) {
     const headers = [
       'Produto',
       'Nome',
@@ -322,6 +334,17 @@ export class PDFGenerator {
       'Canal',
       'Data',
     ]
+
+    const orientation = headers.length > 8 ? 'landscape' : 'portrait'
+    this.doc.addPage(orientation === 'landscape' ? 'l' : 'p')
+    this.pageWidth = this.doc.internal.pageSize.getWidth()
+    this.pageHeight = this.doc.internal.pageSize.getHeight()
+    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.SUBTITLE)
+    this.doc.setFont('helvetica', 'bold')
+    this.doc.text('Tabelas de Pedidos', this.margin, 40)
+
+    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
+    this.doc.text('Pedidos Detalhados', this.margin, 75)
 
     const rows = pedidos.map(pedido => [
       pedido.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', '),
@@ -351,11 +374,20 @@ export class PDFGenerator {
       styles: {
         fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
         cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
-        overflow: 'linebreak',
         minCellHeight: PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT,
       },
-      columnStyles: { 2: { halign: 'right' } },
-      didDrawPage: data => {
+      columnStyles: {
+        0: { cellWidth: 30, overflow: 'linebreak' },
+        1: { cellWidth: 30, overflow: 'linebreak' },
+        2: { cellWidth: 22, halign: 'right' },
+        3: { cellWidth: 40, overflow: 'linebreak' },
+        4: { cellWidth: 18 },
+        5: { cellWidth: 20 },
+        6: { cellWidth: 25, overflow: 'linebreak' },
+        7: { cellWidth: 20 },
+        8: { cellWidth: 20 },
+      },
+      didDrawPage: () => {
         this.addFooter(this.doc.getNumberOfPages(), totalPages)
       },
     })
@@ -574,7 +606,6 @@ export class PDFGenerator {
     let totalPages = 5
 
     // ----------- Inscricoes Table -------------
-    const tempDocInscricoes = new jsPDFConstructor({ format: 'a4', unit: 'mm' })
     const inscricoesHeaders = [
       'Nome',
       'Telefone',
@@ -586,6 +617,11 @@ export class PDFGenerator {
       'Produto',
       'Criado em',
     ]
+    const tempDocInscricoes = new jsPDFConstructor({
+      format: 'a4',
+      unit: 'mm',
+      orientation: inscricoesHeaders.length > 8 ? 'landscape' : 'portrait',
+    })
     const inscricoesRows = inscricoes.map(inscricao => [
       inscricao.nome || 'Não informado',
       inscricao.telefone || 'Não informado',
@@ -606,15 +642,23 @@ export class PDFGenerator {
       styles: {
         fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
         cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
-        overflow: 'linebreak',
         minCellHeight: PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT,
       },
-      columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } },
+      columnStyles: {
+        0: { cellWidth: 35, overflow: 'linebreak' },
+        1: { cellWidth: 25, halign: 'right' },
+        2: { cellWidth: 22, halign: 'right' },
+        3: { cellWidth: 40, overflow: 'linebreak' },
+        4: { cellWidth: 25, overflow: 'linebreak' },
+        5: { cellWidth: 18 },
+        6: { cellWidth: 20 },
+        7: { cellWidth: 30, overflow: 'linebreak' },
+        8: { cellWidth: 22 },
+      },
     })
     totalPages += tempDocInscricoes.getNumberOfPages()
 
     // ----------- Pedidos Table -------------
-    const tempDocPedidos = new jsPDFConstructor({ format: 'a4', unit: 'mm' })
     const pedidosHeaders = [
       'Produto',
       'Nome',
@@ -626,6 +670,11 @@ export class PDFGenerator {
       'Canal',
       'Data',
     ]
+    const tempDocPedidos = new jsPDFConstructor({
+      format: 'a4',
+      unit: 'mm',
+      orientation: pedidosHeaders.length > 8 ? 'landscape' : 'portrait',
+    })
     const pedidosRows = pedidos.map(pedido => [
       pedido.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', '),
       getNomeCliente(pedido),
@@ -646,10 +695,19 @@ export class PDFGenerator {
       styles: {
         fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
         cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
-        overflow: 'linebreak',
         minCellHeight: PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT,
       },
-      columnStyles: { 2: { halign: 'right' } },
+      columnStyles: {
+        0: { cellWidth: 30, overflow: 'linebreak' },
+        1: { cellWidth: 30, overflow: 'linebreak' },
+        2: { cellWidth: 22, halign: 'right' },
+        3: { cellWidth: 40, overflow: 'linebreak' },
+        4: { cellWidth: 18 },
+        5: { cellWidth: 20 },
+        6: { cellWidth: 25, overflow: 'linebreak' },
+        7: { cellWidth: 20 },
+        8: { cellWidth: 20 },
+      },
     })
     totalPages += tempDocPedidos.getNumberOfPages()
 
