@@ -27,7 +27,11 @@ export class PDFGenerator {
   }
 
   // Página 1 - Capa
-  generateCoverPage(isRelatorios: boolean, eventoSelecionado: string | null) {
+  generateCoverPage(
+    isRelatorios: boolean,
+    eventoSelecionado: string | null,
+    totalPages: number
+  ) {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.TITLE)
     this.doc.setFont('helvetica', 'bold')
     this.doc.text('Relatório Executivo', this.pageWidth / 2, 40, { align: 'center' })
@@ -48,11 +52,11 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.FOOTER)
     this.doc.text(`Gerado em: ${currentDate}`, this.pageWidth / 2, 80, { align: 'center' })
 
-    this.addFooter(1, 7)
+    this.addFooter(1, totalPages)
   }
 
   // Página 2 - Sumário
-  generateSummaryPage() {
+  generateSummaryPage(totalPages: number) {
     this.doc.addPage()
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.SUBTITLE)
     this.doc.setFont('helvetica', 'bold')
@@ -65,11 +69,16 @@ export class PDFGenerator {
     this.doc.text('4. Tabelas de Análise', this.margin, 120)
     this.doc.text('5. Tabelas de Pedidos', this.margin, 140)
 
-    this.addFooter(2, 7)
+    this.addFooter(2, totalPages)
   }
 
   // Página 3 - Resumo Executivo
-  generateExecutiveSummary(inscricoes: Inscricao[], pedidos: Pedido[], valorTotal: number) {
+  generateExecutiveSummary(
+    inscricoes: Inscricao[],
+    pedidos: Pedido[],
+    valorTotal: number,
+    totalPages: number
+  ) {
     this.doc.addPage()
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.SUBTITLE)
     this.doc.setFont('helvetica', 'bold')
@@ -99,11 +108,15 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text(`Valor Total: R$ ${valorTotal.toFixed(2)}`, this.margin, y + 20)
 
-    this.addFooter(3, 7)
+    this.addFooter(3, totalPages)
   }
 
   // Página 4 - Panorama Geral Pedidos
-  generatePedidosOverview(pedidos: Pedido[], produtos: Produto[]) {
+  generatePedidosOverview(
+    pedidos: Pedido[],
+    produtos: Produto[],
+    totalPages: number
+  ) {
     this.doc.addPage()
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.SUBTITLE)
     this.doc.setFont('helvetica', 'bold')
@@ -142,11 +155,15 @@ export class PDFGenerator {
     // Gráficos
     this.generateCharts(resumoPorTamanho, statusPedidos, yResumo + 20)
 
-    this.addFooter(4, 7)
+    this.addFooter(4, totalPages)
   }
 
   // Página 5 - Panorama Geral Inscrições
-  generateInscricoesOverview(inscricoes: Inscricao[], produtos: Produto[]) {
+  generateInscricoesOverview(
+    inscricoes: Inscricao[],
+    produtos: Produto[],
+    totalPages: number
+  ) {
     this.doc.addPage()
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.SUBTITLE)
     this.doc.setFont('helvetica', 'bold')
@@ -186,7 +203,7 @@ export class PDFGenerator {
     // Gráficos
     this.generateInscricoesCharts(resumoPorTamanhoInscricoes, statusInscricoes, resumoPorCampo, yResumo + 20)
 
-    this.addFooter(5, 7)
+    this.addFooter(5, totalPages)
   }
 
   // Página 6 - Tabelas de Inscrições
@@ -613,11 +630,11 @@ export async function generatePDF(
   const totalPages = generator.calculateTotalPages(inscricoes, pedidos)
 
   // Gerar páginas
-  generator.generateCoverPage(isRelatorios, eventoSelecionado)
-  generator.generateSummaryPage()
-  generator.generateExecutiveSummary(inscricoes, pedidos, valorTotal)
-  generator.generatePedidosOverview(pedidos, produtos)
-  generator.generateInscricoesOverview(inscricoes, produtos)
+  generator.generateCoverPage(isRelatorios, eventoSelecionado, totalPages)
+  generator.generateSummaryPage(totalPages)
+  generator.generateExecutiveSummary(inscricoes, pedidos, valorTotal, totalPages)
+  generator.generatePedidosOverview(pedidos, produtos, totalPages)
+  generator.generateInscricoesOverview(inscricoes, produtos, totalPages)
   generator.generateInscricoesTable(inscricoes, produtos, totalPages)
   generator.generatePedidosTable(pedidos, produtos, totalPages)
 
