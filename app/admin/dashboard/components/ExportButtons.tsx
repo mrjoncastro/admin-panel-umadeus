@@ -38,7 +38,7 @@ export default function ExportButtons({
         
         <div
           id="export-dropdown"
-          className="hidden absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
+          className="hidden absolute left-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
         >
           <div className="py-2">
             <Tippy content="Relatório completo com todos os dados e estatísticas">
