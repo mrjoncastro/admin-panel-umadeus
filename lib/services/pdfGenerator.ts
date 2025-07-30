@@ -1,4 +1,5 @@
 import type { Inscricao, Pedido, Produto } from '@/types'
+import type { jsPDF } from 'jspdf'
 import {
   PDF_CONSTANTS,
   formatCpf,
@@ -13,12 +14,12 @@ import {
 } from '@/lib/utils/pdfUtils'
 
 export class PDFGenerator {
-  private doc: any
+  private doc: jsPDF
   private pageWidth: number
   private pageHeight: number
   private margin: number
 
-  constructor(doc: any) {
+  constructor(doc: jsPDF) {
     this.doc = doc
     this.pageWidth = doc.internal.pageSize.getWidth()
     this.pageHeight = doc.internal.pageSize.getHeight()
@@ -393,16 +394,20 @@ export class PDFGenerator {
     }, {} as Record<string, { quantidade: number; produtos: Set<string> }>)
   }
 
-  private generateCharts(resumoPorTamanho: any, statusPedidos: any, startY: number) {
+  private generateCharts(
+    resumoPorTamanho: Record<string, { quantidade: number; produtos: Set<string> }>,
+    statusPedidos: Record<string, number>,
+    startY: number
+  ) {
     // Gráfico por tamanho
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Distribuição por Tamanho', this.margin, startY)
 
-    const tamanhosData = Object.entries(resumoPorTamanho)
-    const maxTamanhos = Math.max(...tamanhosData.map(([, dados]: any) => dados.quantidade), 1)
+    const tamanhosData = Object.entries(resumoPorTamanho) as [string, { quantidade: number; produtos: Set<string> }][]
+    const maxTamanhos = Math.max(...tamanhosData.map(([, dados]) => dados.quantidade), 1)
     let yChart = startY + 20
 
-    tamanhosData.forEach(([tamanho, dados]: any, index) => {
+    tamanhosData.forEach(([tamanho, dados], index) => {
       const barWidth = (dados.quantidade / maxTamanhos) * 80
       const barY = yChart + (index * PDF_CONSTANTS.SPACING.CHART_BAR_SPACING)
       
@@ -424,16 +429,21 @@ export class PDFGenerator {
     this.generateStatusCharts(statusPedidos, yChart + 120)
   }
 
-  private generateInscricoesCharts(resumoPorTamanho: any, statusInscricoes: any, resumoPorCampo: any, startY: number) {
+  private generateInscricoesCharts(
+    resumoPorTamanho: Record<string, { quantidade: number; produtos: Set<string> }>,
+    statusInscricoes: Record<string, number>,
+    resumoPorCampo: Record<string, number>,
+    startY: number
+  ) {
     // Gráfico por tamanho
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Distribuição por Tamanho - Inscrições', this.margin, startY)
 
-    const tamanhosData = Object.entries(resumoPorTamanho)
-    const maxTamanhos = Math.max(...tamanhosData.map(([, dados]: any) => dados.quantidade), 1)
+    const tamanhosData = Object.entries(resumoPorTamanho) as [string, { quantidade: number; produtos: Set<string> }][]
+    const maxTamanhos = Math.max(...tamanhosData.map(([, dados]) => dados.quantidade), 1)
     let yChart = startY + 20
 
-    tamanhosData.forEach(([tamanho, dados]: any, index) => {
+    tamanhosData.forEach(([tamanho, dados], index) => {
       const barWidth = (dados.quantidade / maxTamanhos) * 80
       const barY = yChart + (index * PDF_CONSTANTS.SPACING.CHART_BAR_SPACING)
       
@@ -455,16 +465,16 @@ export class PDFGenerator {
     this.generateInscricoesStatusCharts(statusInscricoes, resumoPorCampo, yChart + 120)
   }
 
-  private generateStatusCharts(statusData: any, startY: number) {
+  private generateStatusCharts(statusData: Record<string, number>, startY: number) {
     // Status das inscrições
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Status das Inscrições', this.margin, startY)
 
-    const inscricoesData = Object.entries(statusData)
+    const inscricoesData = Object.entries(statusData) as [string, number][]
     let yChart = startY + 20
 
-    inscricoesData.forEach(([status, count]: any, index) => {
-      const barWidth = (count / Math.max(...inscricoesData.map(([, c]: any) => c), 1)) * 60
+    inscricoesData.forEach(([status, count], index) => {
+      const barWidth = (count / Math.max(...inscricoesData.map(([, c]) => c), 1)) * 60
       const barY = yChart + (index * 12)
       
       if (barY > this.pageHeight - 60) return
@@ -484,11 +494,11 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Status dos Pedidos', this.margin, yChart + 60)
 
-    const pedidosData = Object.entries(statusData)
+    const pedidosData = Object.entries(statusData) as [string, number][]
     yChart += 80
 
-    pedidosData.forEach(([status, count]: any, index) => {
-      const barWidth = (count / Math.max(...pedidosData.map(([, c]: any) => c), 1)) * 60
+    pedidosData.forEach(([status, count], index) => {
+      const barWidth = (count / Math.max(...pedidosData.map(([, c]) => c), 1)) * 60
       const barY = yChart + (index * 12)
       
       if (barY > this.pageHeight - 60) return
@@ -505,16 +515,20 @@ export class PDFGenerator {
     })
   }
 
-  private generateInscricoesStatusCharts(statusInscricoes: any, resumoPorCampo: any, startY: number) {
+  private generateInscricoesStatusCharts(
+    statusInscricoes: Record<string, number>,
+    resumoPorCampo: Record<string, number>,
+    startY: number
+  ) {
     // Status das inscrições
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Status das Inscrições', this.margin, startY)
 
-    const inscricoesData = Object.entries(statusInscricoes)
+    const inscricoesData = Object.entries(statusInscricoes) as [string, number][]
     let yChart = startY + 20
 
-    inscricoesData.forEach(([status, count]: any, index) => {
-      const barWidth = (count / Math.max(...inscricoesData.map(([, c]: any) => c), 1)) * 60
+    inscricoesData.forEach(([status, count], index) => {
+      const barWidth = (count / Math.max(...inscricoesData.map(([, c]) => c), 1)) * 60
       const barY = yChart + (index * 12)
       
       if (barY > this.pageHeight - 60) return
@@ -534,11 +548,11 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Distribuição por Campo', this.margin, yChart + 60)
 
-    const camposData = Object.entries(resumoPorCampo)
+    const camposData = Object.entries(resumoPorCampo) as [string, number][]
     yChart += 80
 
-    camposData.forEach(([campo, count]: any, index) => {
-      const barWidth = (count / Math.max(...camposData.map(([, c]: any) => c), 1)) * 60
+    camposData.forEach(([campo, count], index) => {
+      const barWidth = (count / Math.max(...camposData.map(([, c]) => c), 1)) * 60
       const barY = yChart + (index * 12)
       
       if (barY > this.pageHeight - 60) return
