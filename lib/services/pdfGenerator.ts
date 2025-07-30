@@ -1,5 +1,6 @@
 import type { Inscricao, Pedido, Produto } from '@/types'
 import type { jsPDF } from 'jspdf'
+import autoTable from 'jspdf-autotable'
 import {
   PDF_CONSTANTS,
   formatCpf,
@@ -27,42 +28,7 @@ export class PDFGenerator {
     this.margin = PDF_CONSTANTS.MARGIN
   }
 
-  // Método para renderizar cabeçalho de tabela com estilo
-  private renderTableHeader(headers: string[], positions: number[], y: number) {
-    const tableWidth = this.pageWidth - 2 * this.margin
-    
-    // Fundo do cabeçalho
-    this.doc.setFillColor(PDF_CONSTANTS.COLORS.HEADER_BG[0], PDF_CONSTANTS.COLORS.HEADER_BG[1], PDF_CONSTANTS.COLORS.HEADER_BG[2])
-    this.doc.rect(this.margin, y - 8, tableWidth, PDF_CONSTANTS.DIMENSIONS.HEADER_HEIGHT, 'F')
-    
-    // Borda do cabeçalho
-    this.doc.setDrawColor(PDF_CONSTANTS.COLORS.BORDER[0], PDF_CONSTANTS.COLORS.BORDER[1], PDF_CONSTANTS.COLORS.BORDER[2])
-    this.doc.setLineWidth(0.5)
-    this.doc.rect(this.margin, y - 8, tableWidth, PDF_CONSTANTS.DIMENSIONS.HEADER_HEIGHT)
-    
-    // Texto do cabeçalho
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.TABLE_HEADER)
-    this.doc.setFont('helvetica', 'bold')
-    this.doc.setTextColor(0, 0, 0)
-    
-    headers.forEach((header, i) => {
-      this.doc.text(header, this.margin + positions[i], y)
-    })
-  }
-
-  // Método para calcular posições dinâmicas das colunas
-  private calculateColumnPositions(columnCount: number): number[] {
-    const colWidth = (this.pageWidth - 2 * this.margin) / columnCount
-    return Array.from({ length: columnCount }, (_, i) => i * colWidth)
-  }
-
-  // Método para aplicar zebra striping
-  private applyZebraStriping(y: number, index: number) {
-    if (index % 2 === 1) {
-      this.doc.setFillColor(PDF_CONSTANTS.COLORS.ROW_ALT_BG[0], PDF_CONSTANTS.COLORS.ROW_ALT_BG[1], PDF_CONSTANTS.COLORS.ROW_ALT_BG[2])
-      this.doc.rect(this.margin, y - 4, this.pageWidth - 2 * this.margin, PDF_CONSTANTS.DIMENSIONS.ROW_HEIGHT, 'F')
-    }
-  }
+  // Não são mais necessários métodos de cabeçalho manual ou zebra striping, já que o autoTable gerencia essas tarefas
 
   // Página 1 - Capa
   generateCoverPage(
@@ -268,60 +234,57 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Inscrições Detalhadas', this.margin, 75)
 
-    const headers = ['Nome', 'Telefone', 'CPF', 'Email', 'Evento', 'Status', 'Campo', 'Produto', 'Criado em']
-    const positions = this.calculateColumnPositions(headers.length)
-    
-    // Renderizar cabeçalho usando o novo método
-    this.renderTableHeader(headers, positions, 98)
+    const headers = [
+      'Nome',
+      'Telefone',
+      'CPF',
+      'Email',
+      'Evento',
+      'Status',
+      'Campo',
+      'Produto',
+      'Criado em',
+    ]
 
-    // Dados
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.TABLE_DATA)
-    this.doc.setFont('helvetica', 'normal')
-    let y = 110
-    let currentPage = 6
+    const rows = inscricoes.map(inscricao => [
+      inscricao.nome || 'Não informado',
+      inscricao.telefone || 'Não informado',
+      formatCpf(inscricao.cpf || inscricao.id),
+      inscricao.email || 'Não informado',
+      getEventoNome(inscricao.produto || '', produtos),
+      inscricao.status || 'Não informado',
+      inscricao.campo || 'Não informado',
+      getProdutoInfo(inscricao.produto || '', produtos),
+      normalizeDate(inscricao.created),
+    ])
 
-    inscricoes.forEach((inscricao, index) => {
-      if (y > this.pageHeight - 50) {
-        this.addFooter(currentPage, totalPages)
-        this.doc.addPage()
-        currentPage++
-        this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
-        this.doc.text('Inscrições Detalhadas (continuação)', this.margin, 40)
-        
-        // Renderizar cabeçalho usando o novo método
-        this.renderTableHeader(headers, positions, 63)
-        y = 75
-      }
+    const startPage = this.doc.getNumberOfPages()
 
-      // Zebra-striping
-      if (index % 2 === 1) {
-        this.doc.setFillColor(242, 242, 242)
-        this.doc.rect(this.margin, y - 3, this.pageWidth - 2 * this.margin, 8, 'F')
-      }
-
-      const nome = inscricao.nome || 'Não informado'
-      const telefone = inscricao.telefone || 'Não informado'
-      const cpf = formatCpf(inscricao.cpf || inscricao.id)
-      const email = inscricao.email || 'Não informado'
-      const eventoNome = getEventoNome(inscricao.produto || '', produtos)
-      const status = inscricao.status || 'Não informado'
-      const campo = inscricao.campo || 'Não informado'
-      const produtoInfo = getProdutoInfo(inscricao.produto || '', produtos)
-      const criadoEm = normalizeDate(inscricao.created)
-
-      const data = [nome, telefone, cpf, email, eventoNome, status, campo, produtoInfo, criadoEm]
-      const colWidth = (this.pageWidth - 2 * this.margin) / headers.length
-
-      data.forEach((item, idx) => {
-        const maxWidth = colWidth - PDF_CONSTANTS.DIMENSIONS.CELL_PADDING
-        const wrapped = this.doc.splitTextToSize(item, maxWidth)
-        this.doc.text(wrapped, this.margin + positions[idx], y)
-      })
-
-      y += PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT
+    autoTable(this.doc, {
+      startY: 100,
+      head: [headers],
+      body: rows,
+      theme: 'grid',
+      margin: { left: this.margin, right: this.margin },
+      headStyles: {
+        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+        halign: 'center',
+        fontStyle: 'bold',
+        lineColor: PDF_CONSTANTS.COLORS.BORDER as [number, number, number],
+        lineWidth: 0.1,
+      },
+      styles: {
+        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
+        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
+        overflow: 'linebreak',
+        minCellHeight: PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT,
+      },
+      columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } },
+      didDrawPage: data => {
+        const pageNumber = startPage - 1 + data.pageNumber
+        this.addFooter(pageNumber, totalPages)
+      },
     })
-
-    this.addFooter(currentPage, totalPages)
   }
 
   // Página 7 - Tabelas de Pedidos
@@ -334,60 +297,57 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Pedidos Detalhados', this.margin, 75)
 
-    const headers = ['Produto', 'Nome', 'CPF', 'Email', 'Tamanho', 'Status', 'Campo', 'Canal', 'Data']
-    const positions = this.calculateColumnPositions(headers.length)
-    
-    // Renderizar cabeçalho usando o novo método
-    this.renderTableHeader(headers, positions, 98)
+    const headers = [
+      'Produto',
+      'Nome',
+      'CPF',
+      'Email',
+      'Tamanho',
+      'Status',
+      'Campo',
+      'Canal',
+      'Data',
+    ]
 
-    // Dados
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.TABLE_DATA)
-    this.doc.setFont('helvetica', 'normal')
-    let y = 110
-    let currentPage = 7
+    const rows = pedidos.map(pedido => [
+      pedido.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', '),
+      getNomeCliente(pedido),
+      formatCpf(getCpfCliente(pedido)),
+      pedido.email || 'Não informado',
+      pedido.tamanho || 'Não informado',
+      pedido.status || 'Não informado',
+      pedido.expand?.campo?.nome || pedido.campo || 'Não informado',
+      pedido.canal || 'Não informado',
+      normalizeDate(pedido.created),
+    ])
 
-    pedidos.forEach((pedido, index) => {
-      if (y > this.pageHeight - 50) {
-        this.addFooter(currentPage, totalPages)
-        this.doc.addPage()
-        currentPage++
-        this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
-        this.doc.text('Pedidos Detalhados (continuação)', this.margin, 40)
-        
-        // Renderizar cabeçalho usando o novo método
-        this.renderTableHeader(headers, positions, 63)
-        y = 75
-      }
+    const startPage = this.doc.getNumberOfPages()
 
-      // Zebra-striping
-      if (index % 2 === 1) {
-        this.doc.setFillColor(242, 242, 242)
-        this.doc.rect(this.margin, y - 3, this.pageWidth - 2 * this.margin, 8, 'F')
-      }
-
-      const produtoInfo = pedido.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
-      const nomeCliente = getNomeCliente(pedido)
-      const cpfCliente = formatCpf(getCpfCliente(pedido))
-      const email = pedido.email || 'Não informado'
-      const tamanho = pedido.tamanho || 'Não informado'
-      const status = pedido.status || 'Não informado'
-      const campo = pedido.expand?.campo?.nome || pedido.campo || 'Não informado'
-      const canal = pedido.canal || 'Não informado'
-      const data = normalizeDate(pedido.created)
-
-      const dataArray = [produtoInfo, nomeCliente, cpfCliente, email, tamanho, status, campo, canal, data]
-      const colWidth = (this.pageWidth - 2 * this.margin) / headers.length
-
-      dataArray.forEach((item, idx) => {
-        const maxWidth = colWidth - PDF_CONSTANTS.DIMENSIONS.CELL_PADDING
-        const wrapped = this.doc.splitTextToSize(item, maxWidth)
-        this.doc.text(wrapped, this.margin + positions[idx], y)
-      })
-
-      y += PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT
+    autoTable(this.doc, {
+      startY: 100,
+      head: [headers],
+      body: rows,
+      theme: 'grid',
+      margin: { left: this.margin, right: this.margin },
+      headStyles: {
+        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+        halign: 'center',
+        fontStyle: 'bold',
+        lineColor: PDF_CONSTANTS.COLORS.BORDER as [number, number, number],
+        lineWidth: 0.1,
+      },
+      styles: {
+        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
+        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
+        overflow: 'linebreak',
+        minCellHeight: PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT,
+      },
+      columnStyles: { 2: { halign: 'right' } },
+      didDrawPage: data => {
+        const pageNumber = startPage - 1 + data.pageNumber
+        this.addFooter(pageNumber, totalPages)
+      },
     })
-
-    this.addFooter(currentPage, totalPages)
   }
 
   private calculateInscricoesPorTamanho(inscricoes: Inscricao[], produtos: Produto[]) {
