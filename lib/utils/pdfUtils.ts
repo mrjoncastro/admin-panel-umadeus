@@ -146,18 +146,17 @@ export function getCpfCliente(pedido: Pedido): string {
 // Função para normalizar datas de forma segura
 export function normalizeDate(dateString: string | null | undefined): string {
   if (!dateString) return 'Não informado'
-  
+
   try {
     const date = new Date(dateString)
     if (isNaN(date.getTime())) {
       return 'Data inválida'
     }
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    })
+    const day = String(date.getDate()).padStart(2, '0')
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const year = date.getFullYear()
+    return `${day}/${month}/${year}`
   } catch {
     return 'Data inválida'
   }
-} 
+}
