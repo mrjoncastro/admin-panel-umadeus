@@ -295,15 +295,18 @@ export default function RelatoriosPage() {
           filter: filtroCliente,
         })
 
-        // Fetch inscricoes
-        const insRes = await fetch(`/api/inscricoes?${params.toString()}`, {
-          credentials: 'include',
-          signal,
-        }).then((r) => r.json())
+        // Fetch inscricoes com campos expandidos
+        const insRes = await fetch(
+          `/api/inscricoes?${params.toString()}&expand=produto,evento,campo`,
+          {
+            credentials: 'include',
+            signal,
+          },
+        ).then((r) => r.json())
         const insRest = await fetchAllPages<
           { items?: Inscricao[] } | Inscricao
         >(
-          `/api/inscricoes?${params.toString()}`,
+          `/api/inscricoes?${params.toString()}&expand=produto,evento,campo`,
           insRes.totalPages ?? 1,
           signal,
         )
@@ -319,14 +322,14 @@ export default function RelatoriosPage() {
         // Fetch pedidos
         params.set('page', '1')
         const pedRes = await fetch(
-          `/api/pedidos?${params.toString()}&expand=campo,produto`,
+          `/api/pedidos?${params.toString()}&expand=campo,produto,id_inscricao,responsavel`,
           {
             credentials: 'include',
             signal,
           },
         ).then((r) => r.json())
         const pedRest = await fetchAllPages<{ items?: Pedido[] } | Pedido>(
-          `/api/pedidos?${params.toString()}&expand=campo,produto`,
+          `/api/pedidos?${params.toString()}&expand=campo,produto,id_inscricao,responsavel`,
           pedRes.totalPages ?? 1,
           signal,
         )
