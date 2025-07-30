@@ -20,12 +20,21 @@ export const PDF_CONSTANTS = {
     PURPLE: [168, 85, 247],    // Roxo
     PINK: [236, 72, 153],      // Rosa
     LIGHT_BLUE: [14, 165, 233], // Azul claro
+    // Cores para tabelas
+    HEADER_BG: [240, 240, 240], // Cinza claro para cabeçalhos
+    ROW_ALT_BG: [242, 242, 242], // Cinza mais claro para zebra striping
+    BORDER: [200, 200, 200],   // Cor da borda das tabelas
   },
   SPACING: {
     LINE_HEIGHT: 8,
     TABLE_ROW_HEIGHT: 8,
     CHART_BAR_HEIGHT: 10,
     CHART_BAR_SPACING: 15,
+  },
+  DIMENSIONS: {
+    HEADER_HEIGHT: 12,
+    ROW_HEIGHT: 8,
+    CELL_PADDING: 4,
   }
 }
 
@@ -132,4 +141,23 @@ export function getCpfCliente(pedido: Pedido): string {
   
   // Fallback: tentar buscar CPF da inscrição associada
   return pedido.expand?.id_inscricao?.cpf || 'N/A'
+}
+
+// Função para normalizar datas de forma segura
+export function normalizeDate(dateString: string | null | undefined): string {
+  if (!dateString) return 'Não informado'
+  
+  try {
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) {
+      return 'Data inválida'
+    }
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    })
+  } catch {
+    return 'Data inválida'
+  }
 } 
