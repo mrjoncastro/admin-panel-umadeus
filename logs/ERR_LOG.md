@@ -311,3 +311,4 @@
 ## [2025-08-25] Ajuste na rota /api/asaas para permitir pedidos avulsos sem inscricao quando produto nao requer inscricao. Dados do usuario usados para criar cliente - dev - 74680867
 
 ## [2025-07-22] Erro ao acessar searchParams sincronamente na rota /login; login falhava com aviso 'searchParams should be awaited'. Função atualizada para async e parâmetros aguardados. - dev - c203c6d
+## [2025-07-30] Erro "getFontSize" ao gerar PDF; carregamento dinamico do jspdf-autotable resolveu o problema - dev - a7f139bd
