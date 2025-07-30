@@ -251,7 +251,7 @@ export class PDFGenerator {
       inscricao.nome || 'Não informado',
       formatCpf(inscricao.cpf || inscricao.id),
       getEventoNome(inscricao.produto || '', produtos),
-      inscricao.campo || 'Não informado',
+      inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado',
       getProdutoInfo(inscricao.produto || '', produtos),
       inscricao.status || 'Não informado',
     ])
