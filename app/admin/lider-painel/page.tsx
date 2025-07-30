@@ -61,7 +61,7 @@ export default function LiderDashboardPage() {
 
         // Buscar primeira página de pedidos
         const pedRes = await fetch(
-          `/api/pedidos?${params.toString()}&expand=campo,produto`,
+          `/api/pedidos?${params.toString()}&expand=campo,produto,id_inscricao,responsavel`,
           {
             credentials: 'include',
             signal,
@@ -70,7 +70,7 @@ export default function LiderDashboardPage() {
 
         // Buscar todas as páginas restantes de pedidos
         const pedRest = await fetchAllPages<{ items?: Pedido[] } | Pedido>(
-          `/api/pedidos?${params.toString()}&expand=campo,produto`,
+          `/api/pedidos?${params.toString()}&expand=campo,produto,id_inscricao,responsavel`,
           pedRes.totalPages ?? 1,
           signal,
         )
@@ -130,6 +130,8 @@ export default function LiderDashboardPage() {
             campo: r.expand?.campo,
             criado_por: r.expand?.criado_por,
             produto: r.expand?.produto,
+            id_inscricao: r.expand?.id_inscricao,
+            responsavel: r.expand?.responsavel,
           },
         }))
 
