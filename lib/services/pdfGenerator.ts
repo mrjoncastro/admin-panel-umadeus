@@ -9,6 +9,8 @@ import {
   calculatePedidosStatus,
   calculateResumoPorTamanho,
   calculateResumoPorCampo,
+  calculateProdutosPorCanal,
+  calculateProdutoTamanhoCross,
   getNomeCliente,
   getProdutoInfo,
   getEventoNome,
@@ -120,6 +122,8 @@ export class PDFGenerator {
 
     const resumoPorTamanho = calculateResumoPorTamanho(pedidos, produtos)
     const statusPedidos = calculatePedidosStatus(pedidos)
+    const produtosPorCanal = calculateProdutosPorCanal(pedidos)
+    const crossData = calculateProdutoTamanhoCross(pedidos, produtos)
 
     // Tabela de resumo
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
@@ -157,8 +161,48 @@ export class PDFGenerator {
       (this.doc as unknown as { lastAutoTable?: { finalY?: number } }).lastAutoTable?.finalY ??
       90
 
+    // Tabela cruzada Produto x Tamanho
+    const tamanhos = Array.from(
+      new Set(
+        Object.values(crossData).flatMap(obj => Object.keys(obj)),
+      ),
+    )
+    const crossRows = Object.entries(crossData).map(([produto, valores]) => [
+      produto.substring(0, 15),
+      ...tamanhos.map(t => valores[t] || 0),
+    ])
+    const crossHead = ['Produto', ...tamanhos]
+
+    autoTable(this.doc, {
+      startY: lastY + 20,
+      head: [crossHead],
+      body: crossRows,
+      theme: 'grid',
+      margin: { left: this.margin, right: this.margin },
+      headStyles: {
+        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+        fontStyle: 'bold',
+        halign: 'center',
+        lineColor: PDF_CONSTANTS.COLORS.BORDER as [number, number, number],
+        lineWidth: 0.1,
+      },
+      styles: {
+        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
+        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
+        overflow: 'linebreak',
+        minCellHeight: PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT,
+      },
+      columnStyles: Object.fromEntries(
+        crossHead.map((_, idx) => (idx === 0 ? [idx, {}] : [idx, { halign: 'right' }])),
+      ),
+    })
+
+    const afterCross =
+      (this.doc as unknown as { lastAutoTable?: { finalY?: number } }).lastAutoTable?.finalY ??
+      lastY + 20
+
     // Gráficos
-    this.generateCharts(resumoPorTamanho, statusPedidos, lastY + 20)
+    this.generateCharts(resumoPorTamanho, statusPedidos, produtosPorCanal, afterCross + 20)
   }
 
   // Página 5 - Panorama Geral Inscrições
@@ -375,7 +419,8 @@ export class PDFGenerator {
   private generateCharts(
     resumoPorTamanho: Record<string, { quantidade: number; produtos: Set<string> }>,
     statusPedidos: Record<string, number>,
-    startY: number
+    produtosPorCanal: Record<string, number>,
+    startY: number,
   ) {
     // Gráfico por tamanho
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
@@ -403,8 +448,12 @@ export class PDFGenerator {
       this.doc.rect(this.margin + 60, barY, barWidth, PDF_CONSTANTS.SPACING.CHART_BAR_HEIGHT)
     })
 
-    // Gráficos de status compactos
-    this.generateStatusCharts(statusPedidos, yChart + 120)
+    // Gráfico de status dos pedidos
+    const afterBar = yChart + tamanhosData.length * PDF_CONSTANTS.SPACING.CHART_BAR_SPACING
+    this.generatePedidosStatusChart(statusPedidos, afterBar + 20)
+
+    // Gráfico de produtos por canal
+    this.generateCanalPieChart(produtosPorCanal, afterBar + 60)
   }
 
   private generateInscricoesCharts(
@@ -544,6 +593,68 @@ export class PDFGenerator {
       this.doc.setDrawColor(0)
       this.doc.setLineWidth(0.2)
       this.doc.rect(this.margin + 50, barY, barWidth, 8)
+    })
+  }
+
+  private generatePedidosStatusChart(statusData: Record<string, number>, startY: number) {
+    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
+    this.doc.text('Status dos Pedidos', this.margin, startY)
+
+    const data = Object.entries(statusData) as [string, number][]
+    let yChart = startY + 20
+
+    data.forEach(([status, count], index) => {
+      const barWidth = (count / Math.max(...data.map(([, c]) => c), 1)) * 60
+      const barY = yChart + (index * 12)
+
+      if (barY > this.pageHeight - 60) return
+
+      this.doc.setFontSize(7)
+      this.doc.text(`${status}: ${count}`, this.margin, barY + 1)
+
+      const color = PDF_CONSTANTS.COLORS.GREEN
+      this.doc.setFillColor(color[0], color[1], color[2])
+      this.doc.rect(this.margin + 50, barY, barWidth, 8, 'F')
+      this.doc.setDrawColor(0)
+      this.doc.setLineWidth(0.2)
+      this.doc.rect(this.margin + 50, barY, barWidth, 8)
+    })
+  }
+
+  private generateCanalPieChart(canais: Record<string, number>, startY: number) {
+    const total = Object.values(canais).reduce((a, b) => a + b, 0)
+    const centerX = this.margin + 60
+    const centerY = startY + 30
+    const radius = 25
+
+    let startAngle = 0
+    const colors = [
+      PDF_CONSTANTS.COLORS.PRIMARY,
+      PDF_CONSTANTS.COLORS.BLUE,
+      PDF_CONSTANTS.COLORS.YELLOW,
+      PDF_CONSTANTS.COLORS.PURPLE,
+    ]
+
+    Object.entries(canais).forEach(([canal, valor], idx) => {
+      const angle = (valor / Math.max(total, 1)) * Math.PI * 2
+      const endAngle = startAngle + angle
+      const color = colors[idx % colors.length]
+
+      const ctx = (this.doc as any).getContext('2d')
+      ctx.beginPath()
+      ctx.moveTo(centerX, centerY)
+      ctx.arc(centerX, centerY, radius, startAngle, endAngle, false)
+      ctx.closePath()
+      ctx.fillStyle = `rgb(${color[0]},${color[1]},${color[2]})`
+      ctx.fill()
+
+      this.doc.setFontSize(6)
+      const midAngle = startAngle + angle / 2
+      const labelX = centerX + (radius + 10) * Math.cos(midAngle)
+      const labelY = centerY + (radius + 10) * Math.sin(midAngle)
+      this.doc.text(`${canal} (${valor})`, labelX, labelY)
+
+      startAngle = endAngle
     })
   }
 
