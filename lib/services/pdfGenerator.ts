@@ -324,17 +324,23 @@ export class PDFGenerator {
        [campo, produto, status, count, (count / total) * 100]
      )
 
-          // Ordenar por nome do produto (ordem alfabética) e depois por status
+          // Ordenar por: Campo → Produto → Status
      return result.sort((a, b) => {
+       // 1. Ordem alfabética dos campos
+       const campoA = (a[0] as string).toLowerCase().trim()
+       const campoB = (b[0] as string).toLowerCase().trim()
+       if (campoA !== campoB) {
+         return campoA.localeCompare(campoB, 'pt-BR', { numeric: true })
+       }
+
+       // 2. Ordem alfabética dos produtos
        const produtoA = (a[1] as string).toLowerCase().trim()
        const produtoB = (b[1] as string).toLowerCase().trim()
-
-       // Primeiro critério: ordem alfabética do produto
        if (produtoA !== produtoB) {
          return produtoA.localeCompare(produtoB, 'pt-BR', { numeric: true })
        }
 
-       // Segundo critério: status (ordem alfabética)
+       // 3. Ordem alfabética dos status
        const statusA = (a[2] as string).toLowerCase().trim()
        const statusB = (b[2] as string).toLowerCase().trim()
        return statusA.localeCompare(statusB, 'pt-BR', { numeric: true })
@@ -367,20 +373,33 @@ export class PDFGenerator {
       [campo, produto, tamanho, status, count, (count / total) * 100]
     )
 
-              // Ordenar por nome do produto (ordem alfabética) e depois por tamanho
+              // Ordenar por: Campo → Produto → Tamanho → Status
      return result.sort((a, b) => {
+       // 1. Ordem alfabética dos campos
+       const campoA = (a[0] as string).toLowerCase().trim()
+       const campoB = (b[0] as string).toLowerCase().trim()
+       if (campoA !== campoB) {
+         return campoA.localeCompare(campoB, 'pt-BR', { numeric: true })
+       }
+
+       // 2. Ordem alfabética dos produtos
        const produtoA = (a[1] as string).toLowerCase().trim()
        const produtoB = (b[1] as string).toLowerCase().trim()
-
-       // Primeiro critério: ordem alfabética do produto
        if (produtoA !== produtoB) {
          return produtoA.localeCompare(produtoB, 'pt-BR', { numeric: true })
        }
 
-       // Segundo critério: tamanho (ordem alfabética)
+       // 3. Ordem alfabética dos tamanhos
        const tamanhoA = (a[2] as string).toLowerCase().trim()
        const tamanhoB = (b[2] as string).toLowerCase().trim()
-       return tamanhoA.localeCompare(tamanhoB, 'pt-BR', { numeric: true })
+       if (tamanhoA !== tamanhoB) {
+         return tamanhoA.localeCompare(tamanhoB, 'pt-BR', { numeric: true })
+       }
+
+       // 4. Ordem alfabética dos status
+       const statusA = (a[3] as string).toLowerCase().trim()
+       const statusB = (b[3] as string).toLowerCase().trim()
+       return statusA.localeCompare(statusB, 'pt-BR', { numeric: true })
      })
   }
 
@@ -415,30 +434,55 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Inscrições Detalhadas', this.margin, 75)
 
-    const sortedInscricoes = [...inscricoes].sort((a, b) =>
-      (a.nome || '').localeCompare(b.nome || '', 'pt-BR'),
-    )
+         const sortedInscricoes = [...inscricoes].sort((a, b) => {
+       // 1. Ordem alfabética dos campos
+       const campoA = (a.expand?.campo?.nome || a.campo || '').toLowerCase().trim()
+       const campoB = (b.expand?.campo?.nome || b.campo || '').toLowerCase().trim()
+       if (campoA !== campoB) {
+         return campoA.localeCompare(campoB, 'pt-BR', { numeric: true })
+       }
 
-         const rows = sortedInscricoes.map(inscricao => {
-       // Debug temporário para verificar o CPF
-       console.log('CPF debug:', {
-         cpf: inscricao.cpf,
-         id: inscricao.id,
-         nome: inscricao.nome,
-         expand: inscricao.expand
-       })
-       
-       return [
-         inscricao.nome || 'Não informado',
-         inscricao.cpf || inscricao.id || 'Não informado',
-         inscricao.expand?.evento?.titulo || 'Não informado',
-         inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado',
-         Array.isArray(inscricao.produto)
-           ? inscricao.produto.map((prodId: string) => getProdutoInfo(prodId, produtos)).join(', ')
-           : getProdutoInfo(inscricao.produto || '', produtos),
-         inscricao.status || 'Não informado',
-       ]
+       // 2. Ordem alfabética dos nomes
+       const nomeA = (a.nome || '').toLowerCase().trim()
+       const nomeB = (b.nome || '').toLowerCase().trim()
+       if (nomeA !== nomeB) {
+         return nomeA.localeCompare(nomeB, 'pt-BR', { numeric: true })
+       }
+
+       // 3. Ordem alfabética dos produtos
+       const produtoA = Array.isArray(a.produto) 
+         ? a.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
+         : getProdutoInfo(a.produto || '', produtos)
+       const produtoB = Array.isArray(b.produto) 
+         ? b.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
+         : getProdutoInfo(b.produto || '', produtos)
+       if (produtoA !== produtoB) {
+         return produtoA.toLowerCase().trim().localeCompare(produtoB.toLowerCase().trim(), 'pt-BR', { numeric: true })
+       }
+
+       // 4. Ordem alfabética dos tamanhos (se aplicável)
+       const tamanhoA = (a.tamanho || '').toLowerCase().trim()
+       const tamanhoB = (b.tamanho || '').toLowerCase().trim()
+       if (tamanhoA !== tamanhoB) {
+         return tamanhoA.localeCompare(tamanhoB, 'pt-BR', { numeric: true })
+       }
+
+       // 5. Ordem alfabética dos status
+       const statusA = (a.status || '').toLowerCase().trim()
+       const statusB = (b.status || '').toLowerCase().trim()
+       return statusA.localeCompare(statusB, 'pt-BR', { numeric: true })
      })
+
+         const rows = sortedInscricoes.map(inscricao => [
+       inscricao.nome || 'Não informado',
+               inscricao.cpf || 'Não informado',
+       inscricao.expand?.evento?.titulo || 'Não informado',
+       inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado',
+       Array.isArray(inscricao.produto)
+         ? inscricao.produto.map((prodId: string) => getProdutoInfo(prodId, produtos)).join(', ')
+         : getProdutoInfo(inscricao.produto || '', produtos),
+       inscricao.status || 'Não informado',
+     ])
 
     autoTable(this.doc, {
       startY: 100,
@@ -500,9 +544,40 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Pedidos Detalhados', this.margin, 75)
 
-    const sortedPedidos = [...pedidos].sort((a, b) =>
-      getNomeCliente(a).localeCompare(getNomeCliente(b), 'pt-BR'),
-    )
+         const sortedPedidos = [...pedidos].sort((a, b) => {
+       // 1. Ordem alfabética dos campos
+       const campoA = (a.expand?.campo?.nome || a.campo || '').toLowerCase().trim()
+       const campoB = (b.expand?.campo?.nome || b.campo || '').toLowerCase().trim()
+       if (campoA !== campoB) {
+         return campoA.localeCompare(campoB, 'pt-BR', { numeric: true })
+       }
+
+       // 2. Ordem alfabética dos nomes
+       const nomeA = getNomeCliente(a).toLowerCase().trim()
+       const nomeB = getNomeCliente(b).toLowerCase().trim()
+       if (nomeA !== nomeB) {
+         return nomeA.localeCompare(nomeB, 'pt-BR', { numeric: true })
+       }
+
+       // 3. Ordem alfabética dos produtos
+       const produtoA = a.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
+       const produtoB = b.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
+       if (produtoA !== produtoB) {
+         return produtoA.toLowerCase().trim().localeCompare(produtoB.toLowerCase().trim(), 'pt-BR', { numeric: true })
+       }
+
+       // 4. Ordem alfabética dos tamanhos
+       const tamanhoA = (a.tamanho || '').toLowerCase().trim()
+       const tamanhoB = (b.tamanho || '').toLowerCase().trim()
+       if (tamanhoA !== tamanhoB) {
+         return tamanhoA.localeCompare(tamanhoB, 'pt-BR', { numeric: true })
+       }
+
+       // 5. Ordem alfabética dos status
+       const statusA = (a.status || '').toLowerCase().trim()
+       const statusB = (b.status || '').toLowerCase().trim()
+       return statusA.localeCompare(statusB, 'pt-BR', { numeric: true })
+     })
 
     const rows = sortedPedidos.map(pedido => [
       getNomeCliente(pedido),

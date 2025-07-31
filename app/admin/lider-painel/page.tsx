@@ -95,6 +95,7 @@ export default function LiderDashboardPage() {
             id: r.id,
             nome: r.nome,
             telefone: r.telefone,
+            cpf: r.cpf,
             evento: r.expand?.evento?.titulo,
             status: r.status,
             created: r.created,
@@ -108,6 +109,7 @@ export default function LiderDashboardPage() {
               campo: r.expand?.campo,
               criado_por: r.expand?.criado_por,
               pedido: r.expand?.pedido,
+              evento: r.expand?.evento,
             },
           }),
         )
