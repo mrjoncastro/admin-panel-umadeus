@@ -21,7 +21,7 @@ export default function DashboardResumo({
   // Calcular totais com base nos dados filtrados ou usar props se fornecidas
   const totalInscricoesFiltradas = totalInscricoes || inscricoes.length
   const totalPedidosFiltrados = totalPedidos || pedidos.length
-  
+
   const valorTotalConfirmado = inscricoes.reduce((total, i) => {
     const pedido = i.expand?.pedido
     const confirmado =
@@ -35,8 +35,6 @@ export default function DashboardResumo({
 
     return total
   }, 0)
-
-
 
   // Verificar se há dados para exibir
   const hasData = inscricoes.length > 0 || pedidos.length > 0
@@ -59,17 +57,12 @@ export default function DashboardResumo({
     <div className="space-y-6">
       {/* Cards de Resumo */}
       <div>
-        <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-          📊 Resumo Geral
-        </h2>
         <ResumoCards
           totalInscricoes={totalInscricoesFiltradas}
           totalPedidos={totalPedidosFiltrados}
           valorTotal={valorTotalConfirmado}
         />
       </div>
-
-
     </div>
   )
 }

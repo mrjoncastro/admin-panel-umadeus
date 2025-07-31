@@ -595,7 +595,7 @@ export default function RelatoriosPage() {
               <div>
                 <h1 className="heading">Relatórios</h1>
                 <p className="text-sm text-gray-700 mt-1 dark:text-gray-100">
-                  Análise completa com filtros avançados e gráficos.
+                  Análise completa com filtros avançados.
                 </p>
               </div>
               
@@ -625,7 +625,7 @@ export default function RelatoriosPage() {
             {filtros.evento !== 'todos' && (
               <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-900/20 dark:border-blue-700">
                 <p className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                  📊 Analisando evento: <span className="font-bold">
+                  Analisando evento: <span className="font-bold">
                     {eventos.find(e => e.id === filtros.evento)?.titulo || 'Evento selecionado'}
                   </span>
                 </p>
