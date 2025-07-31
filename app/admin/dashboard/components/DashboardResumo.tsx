@@ -1,14 +1,7 @@
 'use client'
 
 import type { Inscricao, Pedido, Produto } from '@/types'
-import {
-  exportToExcel,
-  exportInscricoesToExcel,
-  exportPedidosToExcel,
-} from '@/lib/utils/excelExport'
-import { generatePDF } from '@/lib/services/pdfGenerator'
 import ResumoCards from './ResumoCards'
-import ExportButtons from './ExportButtons'
 
 interface DashboardResumoProps {
   inscricoes: Inscricao[]
@@ -43,45 +36,7 @@ export default function DashboardResumo({
     return total
   }, 0)
 
-  const handleExportComplete = () => {
-    exportToExcel({
-      inscricoes,
-      pedidos,
-      produtos,
-      totalInscricoes: totalInscricoesFiltradas,
-      totalPedidos: totalPedidosFiltrados,
-      valorTotal: valorTotalConfirmado,
-    })
-  }
 
-  const handleExportInscricoes = () => {
-    exportInscricoesToExcel(inscricoes, produtos)
-  }
-
-  const handleExportPedidos = () => {
-    exportPedidosToExcel(pedidos, produtos)
-  }
-
-  const handleExportPDF = async () => {
-    // Verificar se estamos no navegador
-    if (typeof window === 'undefined') {
-      console.error('PDF só pode ser gerado no navegador')
-      return
-    }
-
-    // Mostrar feedback visual
-    const button = document.querySelector('[data-pdf-button]') as HTMLButtonElement
-    if (button) {
-      button.innerHTML = '<span>Gerando PDF...</span>'
-      button.disabled = true
-    }
-
-    try {
-      await generatePDF(inscricoes, pedidos, produtos, valorTotalConfirmado)
-    } catch (error) {
-      console.error(error)
-    }
-  }
 
   // Verificar se há dados para exibir
   const hasData = inscricoes.length > 0 || pedidos.length > 0
@@ -114,13 +69,7 @@ export default function DashboardResumo({
         />
       </div>
 
-      {/* Botões de Exportação */}
-      <ExportButtons
-        onExportComplete={handleExportComplete}
-        onExportInscricoes={handleExportInscricoes}
-        onExportPedidos={handleExportPedidos}
-        onExportPDF={handleExportPDF}
-      />
+
     </div>
   )
 }

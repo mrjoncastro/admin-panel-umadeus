@@ -7,11 +7,13 @@ import type { Inscricao, Pedido } from '@/types'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import { fetchAllPages } from '@/lib/utils/fetchAllPages'
 
+
 export default function LiderDashboardPage() {
   const { user, authChecked } = useAuthGuard(['lider'])
 
   const [inscricoes, setInscricoes] = useState<Inscricao[]>([])
   const [pedidos, setPedidos] = useState<Pedido[]>([])
+
   const [totais, setTotais] = useState({
     inscricoes: { pendente: 0, confirmado: 0, cancelado: 0 },
     pedidos: { pendente: 0, pago: 0, cancelado: 0, valorTotal: 0 },
@@ -188,13 +190,18 @@ export default function LiderDashboardPage() {
     setTotais({ inscricoes: resumoInscricoes, pedidos: resumoPedidos })
   }, [inscricoes, pedidos, statusInscricao, statusPedido])
 
+
+
   if (loading) {
     return <LoadingOverlay show={true} text="Carregando dashboard..." />
   }
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="heading mb-6">Painel da Liderança</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="heading">Painel da Liderança</h1>
+
+      </div>
 
       {/* Cards Resumo */}
       <div className="grid gap-6 md:grid-cols-3 mb-10">

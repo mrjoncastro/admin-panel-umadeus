@@ -10,6 +10,8 @@ import { createPattern, PatternType } from '@/utils/chartPatterns'
 import type { Chart, ChartData } from 'chart.js'
 import LoadingOverlay from '@/components/organisms/LoadingOverlay'
 import DashboardResumo from '../dashboard/components/DashboardResumo'
+import { exportToExcelLikePDF } from '@/lib/utils/excelExport'
+import { generatePDF } from '@/lib/services/pdfGenerator'
 
 const BarChart = dynamic(() => import('react-chartjs-2').then((m) => m.Bar), {
   ssr: false,
@@ -540,6 +542,35 @@ export default function RelatoriosPage() {
     )
   }
 
+  // Funções de exportação
+  const handleExportExcel = () => {
+    const valorTotal = pedidosFiltrados
+      .filter((p) => p.status === 'pago')
+      .reduce((acc, p) => acc + Number(p.valor || 0), 0)
+
+    const exportData = {
+      inscricoes: inscricoesFiltradas,
+      pedidos: pedidosFiltrados,
+      produtos,
+      totalInscricoes: inscricoesFiltradas.length,
+      totalPedidos: pedidosFiltrados.length,
+      valorTotal,
+    }
+    exportToExcelLikePDF(exportData)
+  }
+
+  const handleExportPDF = async () => {
+    const valorTotal = pedidosFiltrados
+      .filter((p) => p.status === 'pago')
+      .reduce((acc, p) => acc + Number(p.valor || 0), 0)
+
+    try {
+      await generatePDF(inscricoesFiltradas, pedidosFiltrados, produtos, valorTotal)
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error)
+    }
+  }
+
   const produtosFiltrados =
     filtros.evento !== 'todos'
       ? produtos.filter((p: Produto) => p.evento_id === filtros.evento)
@@ -576,6 +607,28 @@ export default function RelatoriosPage() {
                 </p>
               </div>
             )}
+            
+            {/* Botões de Exportação */}
+            <div className="mt-4 flex justify-center gap-4">
+              <button
+                onClick={handleExportExcel}
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Exportar Excel
+              </button>
+              <button
+                onClick={handleExportPDF}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                Exportar PDF
+              </button>
+            </div>
           </div>
 
           {/* Enhanced Filters Section */}
