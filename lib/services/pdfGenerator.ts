@@ -9,6 +9,10 @@ import {
   calculatePedidosStatus,
   calculateResumoPorTamanho,
   calculateResumoPorCampo,
+  calculateInscricoesPorTamanho,
+  calculateProdutosPorCanal,
+  calculateProdutoTamanhoCross,
+  calculateInscricoesProdutoTamanhoCross,
   getNomeCliente,
   getProdutoInfo,
   getEventoNome,
@@ -85,6 +89,8 @@ export class PDFGenerator {
 
     const resumoPorTamanho = calculateResumoPorTamanho(pedidos, produtos)
     const statusPedidos = calculatePedidosStatus(pedidos)
+    const produtosPorCanal = calculateProdutosPorCanal(pedidos)
+    const crossData = calculateProdutoTamanhoCross(pedidos, produtos)
 
     // Tabela de resumo
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
@@ -122,8 +128,48 @@ export class PDFGenerator {
       (this.doc as unknown as { lastAutoTable?: { finalY?: number } }).lastAutoTable?.finalY ??
       90
 
+    // Tabela cruzada Produto x Tamanho
+    const tamanhos = Array.from(
+      new Set(
+        Object.values(crossData).flatMap(obj => Object.keys(obj)),
+      ),
+    )
+    const crossRows = Object.entries(crossData).map(([produto, valores]) => [
+      produto.substring(0, 15),
+      ...tamanhos.map(t => valores[t] || 0),
+    ])
+    const crossHead = ['Produto', ...tamanhos]
+
+    autoTable(this.doc, {
+      startY: lastY + 20,
+      head: [crossHead],
+      body: crossRows,
+      theme: 'grid',
+      margin: { left: this.margin, right: this.margin },
+      headStyles: {
+        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+        fontStyle: 'bold',
+        halign: 'center',
+        lineColor: PDF_CONSTANTS.COLORS.BORDER as [number, number, number],
+        lineWidth: 0.1,
+      },
+      styles: {
+        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
+        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
+        overflow: 'linebreak',
+        minCellHeight: PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT,
+      },
+      columnStyles: Object.fromEntries(
+        crossHead.map((_, idx) => (idx === 0 ? [idx, {}] : [idx, { halign: 'right' }])),
+      ),
+    })
+
+    const afterCross =
+      (this.doc as unknown as { lastAutoTable?: { finalY?: number } }).lastAutoTable?.finalY ??
+      lastY + 20
+
     // Gráficos
-    this.generateCharts(resumoPorTamanho, statusPedidos, lastY + 20)
+    this.generateCharts(resumoPorTamanho, statusPedidos, produtosPorCanal, afterCross + 20)
   }
 
   // Página 4 - Panorama Geral Inscrições
@@ -136,9 +182,13 @@ export class PDFGenerator {
     this.doc.setFont('helvetica', 'bold')
     this.doc.text('Panorama Geral - Inscrições', this.margin, 40)
 
-    const resumoPorTamanhoInscricoes = this.calculateInscricoesPorTamanho(inscricoes, produtos)
+    const resumoPorTamanhoInscricoes = calculateInscricoesPorTamanho(
+      inscricoes,
+      produtos,
+    )
     const statusInscricoes = calculateInscricoesStatus(inscricoes)
     const resumoPorCampo = calculateResumoPorCampo(inscricoes)
+    const crossData = calculateInscricoesProdutoTamanhoCross(inscricoes, produtos)
 
     // Tabela de resumo
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
@@ -178,12 +228,50 @@ export class PDFGenerator {
       (this.doc as unknown as { lastAutoTable?: { finalY?: number } }).lastAutoTable?.finalY ??
       90
 
+    // Tabela cruzada Produto x Tamanho
+    const tamanhosInscr = Array.from(
+      new Set(Object.values(crossData).flatMap(obj => Object.keys(obj))),
+    )
+    const crossRowsInscr = Object.entries(crossData).map(([produto, valores]) => [
+      produto.substring(0, 15),
+      ...tamanhosInscr.map(t => valores[t] || 0),
+    ])
+    const crossHeadInscr = ['Produto', ...tamanhosInscr]
+
+    autoTable(this.doc, {
+      startY: lastYInscr + 20,
+      head: [crossHeadInscr],
+      body: crossRowsInscr,
+      theme: 'grid',
+      margin: { left: this.margin, right: this.margin },
+      headStyles: {
+        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+        fontStyle: 'bold',
+        halign: 'center',
+        lineColor: PDF_CONSTANTS.COLORS.BORDER as [number, number, number],
+        lineWidth: 0.1,
+      },
+      styles: {
+        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
+        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
+        overflow: 'linebreak',
+        minCellHeight: PDF_CONSTANTS.SPACING.TABLE_ROW_HEIGHT,
+      },
+      columnStyles: Object.fromEntries(
+        crossHeadInscr.map((_, idx) => (idx === 0 ? [idx, {}] : [idx, { halign: 'right' }])),
+      ),
+    })
+
+    const afterCrossInscr =
+      (this.doc as unknown as { lastAutoTable?: { finalY?: number } }).lastAutoTable?.finalY ??
+      lastYInscr + 20
+
     // Gráficos
     this.generateInscricoesCharts(
       resumoPorTamanhoInscricoes,
       statusInscricoes,
       resumoPorCampo,
-      lastYInscr + 20,
+      afterCrossInscr + 20,
     )
   }
 
@@ -212,11 +300,15 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Inscrições Detalhadas', this.margin, 75)
 
-    const rows = inscricoes.map(inscricao => [
+    const sortedInscricoes = [...inscricoes].sort((a, b) =>
+      (a.nome || '').localeCompare(b.nome || '', 'pt-BR'),
+    )
+
+    const rows = sortedInscricoes.map(inscricao => [
       inscricao.nome || 'Não informado',
       formatCpf(inscricao.cpf || inscricao.id),
       getEventoNome(inscricao.produto || '', produtos),
-      inscricao.campo || 'Não informado',
+      inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado',
       getProdutoInfo(inscricao.produto || '', produtos),
       inscricao.status || 'Não informado',
     ])
@@ -276,7 +368,11 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Pedidos Detalhados', this.margin, 75)
 
-    const rows = pedidos.map(pedido => [
+    const sortedPedidos = [...pedidos].sort((a, b) =>
+      getNomeCliente(a).localeCompare(getNomeCliente(b), 'pt-BR'),
+    )
+
+    const rows = sortedPedidos.map(pedido => [
       getNomeCliente(pedido),
       formatCpf(getCpfCliente(pedido)),
       pedido.expand?.campo?.nome || pedido.campo || 'Não informado',
@@ -316,31 +412,12 @@ export class PDFGenerator {
     })
   }
 
-  private calculateInscricoesPorTamanho(inscricoes: Inscricao[], produtos: Produto[]) {
-    return inscricoes.reduce((acc, inscricao) => {
-      const tamanho = inscricao.tamanho || 'Sem tamanho'
-      if (!acc[tamanho]) {
-        acc[tamanho] = {
-          quantidade: 0,
-          produtos: new Set()
-        }
-      }
-      acc[tamanho].quantidade += 1
-      
-      if (inscricao.produto) {
-        const produto = produtos.find(p => p.id === inscricao.produto)
-        if (produto) {
-          acc[tamanho].produtos.add(produto.nome)
-        }
-      }
-      return acc
-    }, {} as Record<string, { quantidade: number; produtos: Set<string> }>)
-  }
 
   private generateCharts(
     resumoPorTamanho: Record<string, { quantidade: number; produtos: Set<string> }>,
     statusPedidos: Record<string, number>,
-    startY: number
+    produtosPorCanal: Record<string, number>,
+    startY: number,
   ) {
     // Gráfico por tamanho
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
@@ -368,8 +445,12 @@ export class PDFGenerator {
       this.doc.rect(this.margin + 60, barY, barWidth, PDF_CONSTANTS.SPACING.CHART_BAR_HEIGHT)
     })
 
-    // Gráficos de status compactos
-    this.generateStatusCharts(statusPedidos, yChart + 120)
+    // Gráfico de status dos pedidos
+    const afterBar = yChart + tamanhosData.length * PDF_CONSTANTS.SPACING.CHART_BAR_SPACING
+    this.generatePedidosStatusChart(statusPedidos, afterBar + 20)
+
+    // Gráfico de produtos por canal
+    this.generateCanalPieChart(produtosPorCanal, afterBar + 60)
   }
 
   private generateInscricoesCharts(
@@ -509,6 +590,87 @@ export class PDFGenerator {
       this.doc.setDrawColor(0)
       this.doc.setLineWidth(0.2)
       this.doc.rect(this.margin + 50, barY, barWidth, 8)
+    })
+  }
+
+  private generatePedidosStatusChart(statusData: Record<string, number>, startY: number) {
+    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
+    this.doc.text('Status dos Pedidos', this.margin, startY)
+
+    const data = Object.entries(statusData) as [string, number][]
+    let yChart = startY + 20
+
+    data.forEach(([status, count], index) => {
+      const barWidth = (count / Math.max(...data.map(([, c]) => c), 1)) * 60
+      const barY = yChart + (index * 12)
+
+      if (barY > this.pageHeight - 60) return
+
+      this.doc.setFontSize(7)
+      this.doc.text(`${status}: ${count}`, this.margin, barY + 1)
+
+      const color = PDF_CONSTANTS.COLORS.GREEN
+      this.doc.setFillColor(color[0], color[1], color[2])
+      this.doc.rect(this.margin + 50, barY, barWidth, 8, 'F')
+      this.doc.setDrawColor(0)
+      this.doc.setLineWidth(0.2)
+      this.doc.rect(this.margin + 50, barY, barWidth, 8)
+    })
+  }
+
+  private generateCanalPieChart(canais: Record<string, number>, startY: number) {
+    const total = Object.values(canais).reduce((a, b) => a + b, 0)
+    const width = 120
+    const height = 60
+    const radius = 25
+    const centerX = width / 2
+    const centerY = height / 2
+
+    // Cria canvas para desenho do gráfico
+    const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    let startAngle = 0
+    const colors = [
+      PDF_CONSTANTS.COLORS.PRIMARY,
+      PDF_CONSTANTS.COLORS.BLUE,
+      PDF_CONSTANTS.COLORS.YELLOW,
+      PDF_CONSTANTS.COLORS.PURPLE,
+    ]
+
+    Object.entries(canais).forEach(([canal, valor], idx) => {
+      const angle = (valor / Math.max(total, 1)) * Math.PI * 2
+      const endAngle = startAngle + angle
+      const color = colors[idx % colors.length]
+
+      ctx.beginPath()
+      ctx.moveTo(centerX, centerY)
+      ctx.arc(centerX, centerY, radius, startAngle, endAngle)
+      ctx.closePath()
+      ctx.fillStyle = `rgb(${color[0]},${color[1]},${color[2]})`
+      ctx.fill()
+
+      startAngle = endAngle
+    })
+
+    const imgData = canvas.toDataURL('image/png')
+    this.doc.addImage(imgData, 'PNG', this.margin, startY, width, height)
+
+    // Desenha legendas sobre o PDF
+    startAngle = 0
+    Object.entries(canais).forEach(([canal, valor]) => {
+      const angle = (valor / Math.max(total, 1)) * Math.PI * 2
+      const midAngle = startAngle + angle / 2
+      const labelX = this.margin + centerX + (radius + 10) * Math.cos(midAngle)
+      const labelY = startY + centerY + (radius + 10) * Math.sin(midAngle)
+
+      this.doc.setFontSize(6)
+      this.doc.text(`${canal} (${valor})`, labelX, labelY)
+
+      startAngle += angle
     })
   }
 

@@ -19,6 +19,8 @@ export default function DashboardPage() {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [error, setError] = useState<string | null>(null)
+  const [statusInscricao, setStatusInscricao] = useState<string>('')
+  const [statusPedido, setStatusPedido] = useState<string>('')
   const isMounted = useRef(true)
 
   useEffect(() => {
@@ -127,6 +129,8 @@ export default function DashboardPage() {
               campo: r.expand?.campo,
               criado_por: r.expand?.criado_por,
               pedido: r.expand?.pedido,
+              produto: r.expand?.produto,
+              evento: r.expand?.evento,
             },
           }),
         )
@@ -152,6 +156,8 @@ export default function DashboardPage() {
             campo: r.expand?.campo,
             criado_por: r.expand?.criado_por,
             produto: r.expand?.produto,
+            id_inscricao: r.expand?.id_inscricao,
+            responsavel: r.expand?.responsavel,
           },
         }))
 
@@ -208,7 +214,22 @@ export default function DashboardPage() {
             totalInscricoes={totalInscricoes}
             totalPedidos={totalPedidos}
           />
-          <DashboardAnalytics inscricoes={inscricoes} pedidos={pedidos} />
+          <DashboardAnalytics
+            inscricoes={
+              statusInscricao === ''
+                ? inscricoes
+                : inscricoes.filter((i) => i.status === statusInscricao)
+            }
+            pedidos={
+              statusPedido === ''
+                ? pedidos
+                : pedidos.filter((p) => p.status === statusPedido)
+            }
+            statusInscricao={statusInscricao}
+            onStatusInscricaoChange={setStatusInscricao}
+            statusPedido={statusPedido}
+            onStatusPedidoChange={setStatusPedido}
+          />
           <div className="flex justify-center items-center gap-4 mt-4">
             <button
               className="btn btn-primary px-3 py-1"

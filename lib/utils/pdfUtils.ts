@@ -119,19 +119,16 @@ export function getProdutoInfo(produtoId: string, produtos: Produto[]): string {
 // Função para obter nome do evento
 export function getEventoNome(produtoId: string, produtos: Produto[]): string {
   const produto = produtos.find(p => p.id === produtoId)
-  if (produto?.evento_id) {
-    // Aqui você pode buscar o evento real se necessário
-    return produto.evento_id.substring(0, 15)
-  }
-  return 'N/A'
+  return produto?.expand?.evento?.titulo || 'N/A'
 }
 
 // Função para obter CPF do cliente
 export function getCpfCliente(pedido: Pedido): string {
   // Se o pedido tem canal 'loja', buscar CPF do responsável
   if (pedido.canal === 'loja') {
-    // O responsável não tem CPF diretamente, mas podemos buscar através do id_inscricao
-    return pedido.expand?.id_inscricao?.cpf || 'N/A'
+    const responsavel = pedido.expand?.responsavel as { cpf?: string } | undefined
+    // Usar CPF do responsável se disponível, caso contrário verificar inscrição vinculada
+    return responsavel?.cpf || pedido.expand?.id_inscricao?.cpf || 'N/A'
   }
   
   // Se o pedido tem canal 'inscricao', buscar CPF da inscrição
@@ -159,4 +156,71 @@ export function normalizeDate(dateString: string | null | undefined): string {
   } catch {
     return 'Data inválida'
   }
+}
+
+// Total de produtos por canal
+export function calculateProdutosPorCanal(pedidos: Pedido[]) {
+  return pedidos.reduce((acc, pedido) => {
+    const canal = pedido.canal || 'outros'
+    const quantidade = Array.isArray(pedido.produto) ? pedido.produto.length : 1
+    acc[canal] = (acc[canal] || 0) + quantidade
+    return acc
+  }, {} as Record<string, number>)
+}
+
+// Tabela cruzada Produto x Tamanho
+export function calculateProdutoTamanhoCross(
+  pedidos: Pedido[],
+  produtos: Produto[],
+) {
+  return pedidos.reduce((acc, pedido) => {
+    const tamanho = pedido.tamanho || 'Sem tamanho'
+    const ids = Array.isArray(pedido.produto) ? pedido.produto : [pedido.produto]
+    ids.forEach(id => {
+      const nome = produtos.find(p => p.id === id)?.nome || 'N/A'
+      acc[nome] = acc[nome] || {}
+      acc[nome][tamanho] = (acc[nome][tamanho] || 0) + 1
+    })
+    return acc
+  }, {} as Record<string, Record<string, number>>)
+}
+
+// Resumo de inscrições por tamanho
+export function calculateInscricoesPorTamanho(
+  inscricoes: Inscricao[],
+  produtos: Produto[],
+) {
+  return inscricoes.reduce((acc, inscricao) => {
+    const tamanho = inscricao.tamanho || 'Sem tamanho'
+    if (!acc[tamanho]) {
+      acc[tamanho] = {
+        quantidade: 0,
+        produtos: new Set<string>(),
+      }
+    }
+    acc[tamanho].quantidade += 1
+
+    if (inscricao.produto) {
+      const produto = produtos.find(p => p.id === inscricao.produto)
+      if (produto) {
+        acc[tamanho].produtos.add(produto.nome)
+      }
+    }
+    return acc
+  }, {} as Record<string, { quantidade: number; produtos: Set<string> }>)
+}
+
+// Tabela cruzada Produto x Tamanho para inscrições
+export function calculateInscricoesProdutoTamanhoCross(
+  inscricoes: Inscricao[],
+  produtos: Produto[],
+) {
+  return inscricoes.reduce((acc, inscricao) => {
+    const tamanho = inscricao.tamanho || 'Sem tamanho'
+    if (!inscricao.produto) return acc
+    const nome = produtos.find(p => p.id === inscricao.produto)?.nome || 'N/A'
+    acc[nome] = acc[nome] || {}
+    acc[nome][tamanho] = (acc[nome][tamanho] || 0) + 1
+    return acc
+  }, {} as Record<string, Record<string, number>>)
 }
