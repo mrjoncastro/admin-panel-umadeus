@@ -148,206 +148,206 @@ export class PDFGenerator {
     ])
     pedRows.push(['Total', totalPedidos.toString(), '100%'])
 
-         // Tabela de Status Inscrições (lado esquerdo)
-     autoTable(this.doc, {
-       startY: cardStartY + cardHeight + 20,
-       margin: { left: 10, right: this.pageWidth / 2 + 5 },
-       head: [['Status', 'Qtd', '%']],
-       body: inscrRows,
-       theme: 'striped',
-       headStyles: {
-         fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
-         fontStyle: 'bold',
-         halign: 'center',
-       },
-       styles: {
-         fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
-         cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
-       },
-       columnStyles: {
-         1: { halign: 'right' },
-         2: { halign: 'right' }
-       },
-     })
+    // Tabela de Status Inscrições (lado esquerdo)
+    autoTable(this.doc, {
+      startY: cardStartY + cardHeight + 20,
+      margin: { left: 10, right: this.pageWidth / 2 + 5 },
+      head: [['Status', 'Qtd', '%']],
+      body: inscrRows,
+      theme: 'striped',
+      headStyles: {
+        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+        fontStyle: 'bold',
+        halign: 'center',
+      },
+      styles: {
+        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
+        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
+      },
+      columnStyles: {
+        1: { halign: 'right' },
+        2: { halign: 'right' }
+      },
+    })
 
-     // Tabela de Status Pedidos (lado direito)
-     autoTable(this.doc, {
-       startY: cardStartY + cardHeight + 20,
-       margin: { left: this.pageWidth / 2 + 5, right: 10 },
-       head: [['Status', 'Qtd', '%']],
-       body: pedRows,
-       theme: 'striped',
-       headStyles: {
-         fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
-         fontStyle: 'bold',
-         halign: 'center',
-       },
-       styles: {
-         fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
-         cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
-       },
-       columnStyles: {
-         1: { halign: 'right' },
-         2: { halign: 'right' }
-       },
-     })
+    // Tabela de Status Pedidos (lado direito)
+    autoTable(this.doc, {
+      startY: cardStartY + cardHeight + 20,
+      margin: { left: this.pageWidth / 2 + 5, right: 10 },
+      head: [['Status', 'Qtd', '%']],
+      body: pedRows,
+      theme: 'striped',
+      headStyles: {
+        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+        fontStyle: 'bold',
+        halign: 'center',
+      },
+      styles: {
+        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
+        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
+      },
+      columnStyles: {
+        1: { halign: 'right' },
+        2: { halign: 'right' }
+      },
+    })
 
     // Obter posição Y após as tabelas de status
     const lastAutoTable = (this.doc as any).lastAutoTable
     const statusTablesEndY = lastAutoTable ? lastAutoTable.finalY : cardStartY + cardHeight + 80
 
-         // Tabela de Totais por Produto (sem tamanho)
-     const totalsStartY = statusTablesEndY + 20
+    // Tabela de Totais por Produto (sem tamanho)
+    const totalsStartY = statusTablesEndY + 20
 
-     // Preparar dados de totais por produto
-     const pedTotalsData = this.calculatePedidosTotals(pedidos, produtos)
-     const pedTotalsRows = pedTotalsData.map(([campo, produto, status, count, percentage]) => [
-       campo,
-       produto,
-       status,
-       count.toString(),
-       `${Number(percentage).toFixed(1)}%`
-     ])
+    // Preparar dados de totais por produto
+    const pedTotalsData = this.calculatePedidosTotals(pedidos, produtos)
+    const pedTotalsRows = pedTotalsData.map(([campo, produto, status, count, percentage]) => [
+      campo,
+      produto,
+      status,
+      count.toString(),
+      `${Number(percentage).toFixed(1)}%`
+    ])
 
-     // Tabela de Totais por Produto (largura total)
-     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
-     this.doc.setFont('helvetica', 'bold')
-     this.doc.text('Totais por Produto', this.margin, totalsStartY - 10)
+    // Tabela de Totais por Produto (largura total)
+    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
+    this.doc.setFont('helvetica', 'bold')
+    this.doc.text('Totais por Produto', this.margin, totalsStartY - 10)
 
-     autoTable(this.doc, {
-       startY: totalsStartY,
-       margin: { left: 10, right: 10 },
-       head: [['Campo', 'Produto', 'Status', 'Total', '% do Total']],
-       body: pedTotalsRows,
-       theme: 'striped',
-       headStyles: {
-         fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
-         fontStyle: 'bold',
-         halign: 'center',
-       },
-       styles: {
-         fontSize: 8,
-         cellPadding: 2,
-         overflow: 'linebreak',
-       },
-       columnStyles: {
-         0: { cellWidth: 35 },
-         1: { cellWidth: 45 },
-         2: { cellWidth: 35 },
-         3: { halign: 'right', cellWidth: 25 },
-         4: { halign: 'right', cellWidth: 25 }
-       },
-     })
+    autoTable(this.doc, {
+      startY: totalsStartY,
+      margin: { left: 10, right: 10 },
+      head: [['Campo', 'Produto', 'Status', 'Total', '% do Total']],
+      body: pedTotalsRows,
+      theme: 'striped',
+      headStyles: {
+        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+        fontStyle: 'bold',
+        halign: 'center',
+      },
+      styles: {
+        fontSize: 8,
+        cellPadding: 2,
+        overflow: 'linebreak',
+      },
+      columnStyles: {
+        0: { cellWidth: 35 },
+        1: { cellWidth: 45 },
+        2: { cellWidth: 35 },
+        3: { halign: 'right', cellWidth: 25 },
+        4: { halign: 'right', cellWidth: 25 }
+      },
+    })
 
-     // Obter posição Y após a tabela de totais
-     const lastTotalsTable = (this.doc as any).lastAutoTable
-     const totalsTableEndY = lastTotalsTable ? lastTotalsTable.finalY : totalsStartY + 60
+    // Obter posição Y após a tabela de totais
+    const lastTotalsTable = (this.doc as any).lastAutoTable
+    const totalsTableEndY = lastTotalsTable ? lastTotalsTable.finalY : totalsStartY + 60
 
-     // Tabela Analítica de Pedidos será movida para nova página
-   }
-
-   // Página 4 - Análise de Pedidos
-   generatePedidosAnalyticsPage(
-     pedidos: Pedido[],
-     produtos: Produto[],
-   ) {
-     this.doc.addPage()
-
-     // Título da página
-     this.doc.setFont('helvetica', 'bold')
-     this.doc.setFontSize(16)
-     this.doc.text('Produtos x Tamanhos', this.margin, 40)
-
-     // Preparar dados analíticos de pedidos
-     const pedAnalyticData = this.calculatePedidosAnalytics(pedidos, produtos)
-     const pedAnalyticRows = pedAnalyticData.map(([campo, produto, tamanho, status, count, percentage]) => [
-       campo,
-       produto,
-       tamanho,
-       status,
-       count.toString(),
-       `${Number(percentage).toFixed(1)}%`
-     ])
-
-     autoTable(this.doc, {
-       startY: 60,
-       margin: { left: this.margin, right: this.margin },
-       head: [['Campo', 'Produto', 'Tamanho', 'Status', 'Total', '% do Total']],
-       body: pedAnalyticRows,
-       theme: 'striped',
-       headStyles: {
-         fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
-         fontStyle: 'bold',
-         halign: 'center',
-       },
-       styles: {
-         fontSize: 8,
-         cellPadding: 2,
-         overflow: 'linebreak',
-       },
-       columnStyles: {
-         0: { cellWidth: 25 },
-         1: { cellWidth: 30 },
-         2: { cellWidth: 20 },
-         3: { cellWidth: 25 },
-         4: { halign: 'right', cellWidth: 15 },
-         5: { halign: 'right', cellWidth: 15 }
-       },
-       pageBreak: 'auto'
-     })
+    // Tabela Analítica de Pedidos será movida para nova página
   }
 
-     // Métodos auxiliares para calcular dados analíticos
+  // Página 4 - Análise de Pedidos
+  generatePedidosAnalyticsPage(
+    pedidos: Pedido[],
+    produtos: Produto[],
+  ) {
+    this.doc.addPage()
 
-   private calculatePedidosTotals(pedidos: Pedido[], produtos: Produto[]) {
-     const analytics = new Map<string, [string, string, string, number, number]>()
+    // Título da página
+    this.doc.setFont('helvetica', 'bold')
+    this.doc.setFontSize(16)
+    this.doc.text('Produtos x Tamanhos', this.margin, 40)
 
-     pedidos.forEach(pedido => {
-       const campo = pedido.expand?.campo?.nome || 'N/A'
-       // Tratar produto que pode ser string ou array
-       const produtoId = Array.isArray(pedido.produto) ? pedido.produto[0] : pedido.produto
-       const produto = getProdutoInfo(produtoId || '', produtos)
-       const status = pedido.status || 'N/A'
-       const key = `${campo}-${produto}-${status}`
+    // Preparar dados analíticos de pedidos
+    const pedAnalyticData = this.calculatePedidosAnalytics(pedidos, produtos)
+    const pedAnalyticRows = pedAnalyticData.map(([campo, produto, tamanho, status, count, percentage]) => [
+      campo,
+      produto,
+      tamanho,
+      status,
+      count.toString(),
+      `${Number(percentage).toFixed(1)}%`
+    ])
 
-       if (analytics.has(key)) {
-         const [, , , count] = analytics.get(key)!
-         analytics.set(key, [campo, produto, status, count + 1, 0])
-       } else {
-         analytics.set(key, [campo, produto, status, 1, 0])
-       }
-     })
+    autoTable(this.doc, {
+      startY: 60,
+      margin: { left: this.margin, right: this.margin },
+      head: [['Campo', 'Produto', 'Tamanho', 'Status', 'Total', '% do Total']],
+      body: pedAnalyticRows,
+      theme: 'striped',
+      headStyles: {
+        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+        fontStyle: 'bold',
+        halign: 'center',
+      },
+      styles: {
+        fontSize: 8,
+        cellPadding: 2,
+        overflow: 'linebreak',
+      },
+      columnStyles: {
+        0: { cellWidth: 25 },
+        1: { cellWidth: 30 },
+        2: { cellWidth: 20 },
+        3: { cellWidth: 25 },
+        4: { halign: 'right', cellWidth: 15 },
+        5: { halign: 'right', cellWidth: 15 }
+      },
+      pageBreak: 'auto'
+    })
+  }
 
-     // Calcular percentuais
-     const total = pedidos.length
-     const result = Array.from(analytics.values()).map(([campo, produto, status, count]) =>
-       [campo, produto, status, count, (count / total) * 100]
-     )
+  // Métodos auxiliares para calcular dados analíticos
 
-          // Ordenar por: Campo → Produto → Status
-     return result.sort((a, b) => {
-       // 1. Ordem alfabética dos campos
-       const campoA = (a[0] as string).toLowerCase().trim()
-       const campoB = (b[0] as string).toLowerCase().trim()
-       if (campoA !== campoB) {
-         return campoA.localeCompare(campoB, 'pt-BR', { numeric: true })
-       }
+  private calculatePedidosTotals(pedidos: Pedido[], produtos: Produto[]) {
+    const analytics = new Map<string, [string, string, string, number, number]>()
 
-       // 2. Ordem alfabética dos produtos
-       const produtoA = (a[1] as string).toLowerCase().trim()
-       const produtoB = (b[1] as string).toLowerCase().trim()
-       if (produtoA !== produtoB) {
-         return produtoA.localeCompare(produtoB, 'pt-BR', { numeric: true })
-       }
+    pedidos.forEach(pedido => {
+      const campo = pedido.expand?.campo?.nome || 'N/A'
+      // Tratar produto que pode ser string ou array
+      const produtoId = Array.isArray(pedido.produto) ? pedido.produto[0] : pedido.produto
+      const produto = getProdutoInfo(produtoId || '', produtos)
+      const status = pedido.status || 'N/A'
+      const key = `${campo}-${produto}-${status}`
 
-       // 3. Ordem alfabética dos status
-       const statusA = (a[2] as string).toLowerCase().trim()
-       const statusB = (b[2] as string).toLowerCase().trim()
-       return statusA.localeCompare(statusB, 'pt-BR', { numeric: true })
-     })
-   }
+      if (analytics.has(key)) {
+        const [, , , count] = analytics.get(key)!
+        analytics.set(key, [campo, produto, status, count + 1, 0])
+      } else {
+        analytics.set(key, [campo, produto, status, 1, 0])
+      }
+    })
 
-   private calculatePedidosAnalytics(pedidos: Pedido[], produtos: Produto[]) {
+    // Calcular percentuais
+    const total = pedidos.length
+    const result = Array.from(analytics.values()).map(([campo, produto, status, count]) =>
+      [campo, produto, status, count, (count / total) * 100]
+    )
+
+    // Ordenar por: Campo → Produto → Status
+    return result.sort((a, b) => {
+      // 1. Ordem alfabética dos campos
+      const campoA = (a[0] as string).toLowerCase().trim()
+      const campoB = (b[0] as string).toLowerCase().trim()
+      if (campoA !== campoB) {
+        return campoA.localeCompare(campoB, 'pt-BR', { numeric: true })
+      }
+
+      // 2. Ordem alfabética dos produtos
+      const produtoA = (a[1] as string).toLowerCase().trim()
+      const produtoB = (b[1] as string).toLowerCase().trim()
+      if (produtoA !== produtoB) {
+        return produtoA.localeCompare(produtoB, 'pt-BR', { numeric: true })
+      }
+
+      // 3. Ordem alfabética dos status
+      const statusA = (a[2] as string).toLowerCase().trim()
+      const statusB = (b[2] as string).toLowerCase().trim()
+      return statusA.localeCompare(statusB, 'pt-BR', { numeric: true })
+    })
+  }
+
+  private calculatePedidosAnalytics(pedidos: Pedido[], produtos: Produto[]) {
     const analytics = new Map<string, [string, string, string, string, number, number]>()
 
     pedidos.forEach(pedido => {
@@ -373,34 +373,34 @@ export class PDFGenerator {
       [campo, produto, tamanho, status, count, (count / total) * 100]
     )
 
-              // Ordenar por: Campo → Produto → Tamanho → Status
-     return result.sort((a, b) => {
-       // 1. Ordem alfabética dos campos
-       const campoA = (a[0] as string).toLowerCase().trim()
-       const campoB = (b[0] as string).toLowerCase().trim()
-       if (campoA !== campoB) {
-         return campoA.localeCompare(campoB, 'pt-BR', { numeric: true })
-       }
+    // Ordenar por: Campo → Produto → Tamanho → Status
+    return result.sort((a, b) => {
+      // 1. Ordem alfabética dos campos
+      const campoA = (a[0] as string).toLowerCase().trim()
+      const campoB = (b[0] as string).toLowerCase().trim()
+      if (campoA !== campoB) {
+        return campoA.localeCompare(campoB, 'pt-BR', { numeric: true })
+      }
 
-       // 2. Ordem alfabética dos produtos
-       const produtoA = (a[1] as string).toLowerCase().trim()
-       const produtoB = (b[1] as string).toLowerCase().trim()
-       if (produtoA !== produtoB) {
-         return produtoA.localeCompare(produtoB, 'pt-BR', { numeric: true })
-       }
+      // 2. Ordem alfabética dos produtos
+      const produtoA = (a[1] as string).toLowerCase().trim()
+      const produtoB = (b[1] as string).toLowerCase().trim()
+      if (produtoA !== produtoB) {
+        return produtoA.localeCompare(produtoB, 'pt-BR', { numeric: true })
+      }
 
-       // 3. Ordem alfabética dos tamanhos
-       const tamanhoA = (a[2] as string).toLowerCase().trim()
-       const tamanhoB = (b[2] as string).toLowerCase().trim()
-       if (tamanhoA !== tamanhoB) {
-         return tamanhoA.localeCompare(tamanhoB, 'pt-BR', { numeric: true })
-       }
+      // 3. Ordem alfabética dos tamanhos
+      const tamanhoA = (a[2] as string).toLowerCase().trim()
+      const tamanhoB = (b[2] as string).toLowerCase().trim()
+      if (tamanhoA !== tamanhoB) {
+        return tamanhoA.localeCompare(tamanhoB, 'pt-BR', { numeric: true })
+      }
 
-       // 4. Ordem alfabética dos status
-       const statusA = (a[3] as string).toLowerCase().trim()
-       const statusB = (b[3] as string).toLowerCase().trim()
-       return statusA.localeCompare(statusB, 'pt-BR', { numeric: true })
-     })
+      // 4. Ordem alfabética dos status
+      const statusA = (a[3] as string).toLowerCase().trim()
+      const statusB = (b[3] as string).toLowerCase().trim()
+      return statusA.localeCompare(statusB, 'pt-BR', { numeric: true })
+    })
   }
 
 
@@ -434,62 +434,55 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Inscrições Detalhadas', this.margin, 75)
 
-         const sortedInscricoes = [...inscricoes].sort((a, b) => {
-       // 1. Ordem alfabética dos campos
-       const campoA = (a.expand?.campo?.nome || a.campo || '').toLowerCase().trim()
-       const campoB = (b.expand?.campo?.nome || b.campo || '').toLowerCase().trim()
-       if (campoA !== campoB) {
-         return campoA.localeCompare(campoB, 'pt-BR', { numeric: true })
-       }
+    const sortedInscricoes = [...inscricoes].sort((a, b) => {
+      // 1. Ordem alfabética dos campos
+      const campoA = (a.expand?.campo?.nome || a.campo || '').toLowerCase().trim()
+      const campoB = (b.expand?.campo?.nome || b.campo || '').toLowerCase().trim()
+      if (campoA !== campoB) {
+        return campoA.localeCompare(campoB, 'pt-BR', { numeric: true })
+      }
 
-       // 2. Ordem alfabética dos nomes
-       const nomeA = (a.nome || '').toLowerCase().trim()
-       const nomeB = (b.nome || '').toLowerCase().trim()
-       if (nomeA !== nomeB) {
-         return nomeA.localeCompare(nomeB, 'pt-BR', { numeric: true })
-       }
+      // 2. Ordem alfabética dos nomes
+      const nomeA = (a.nome || '').toLowerCase().trim()
+      const nomeB = (b.nome || '').toLowerCase().trim()
+      if (nomeA !== nomeB) {
+        return nomeA.localeCompare(nomeB, 'pt-BR', { numeric: true })
+      }
 
-       // 3. Ordem alfabética dos produtos
-       const produtoA = Array.isArray(a.produto) 
-         ? a.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
-         : getProdutoInfo(a.produto || '', produtos)
-       const produtoB = Array.isArray(b.produto) 
-         ? b.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
-         : getProdutoInfo(b.produto || '', produtos)
-       if (produtoA !== produtoB) {
-         return produtoA.toLowerCase().trim().localeCompare(produtoB.toLowerCase().trim(), 'pt-BR', { numeric: true })
-       }
+      // 3. Ordem alfabética dos produtos
+      const produtoA = Array.isArray(a.produto)
+        ? a.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
+        : getProdutoInfo(a.produto || '', produtos)
+      const produtoB = Array.isArray(b.produto)
+        ? b.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
+        : getProdutoInfo(b.produto || '', produtos)
+      if (produtoA !== produtoB) {
+        return produtoA.toLowerCase().trim().localeCompare(produtoB.toLowerCase().trim(), 'pt-BR', { numeric: true })
+      }
 
-       // 4. Ordem alfabética dos tamanhos (se aplicável)
-       const tamanhoA = (a.tamanho || '').toLowerCase().trim()
-       const tamanhoB = (b.tamanho || '').toLowerCase().trim()
-       if (tamanhoA !== tamanhoB) {
-         return tamanhoA.localeCompare(tamanhoB, 'pt-BR', { numeric: true })
-       }
+      // 4. Ordem alfabética dos tamanhos (se aplicável)
+      const tamanhoA = (a.tamanho || '').toLowerCase().trim()
+      const tamanhoB = (b.tamanho || '').toLowerCase().trim()
+      if (tamanhoA !== tamanhoB) {
+        return tamanhoA.localeCompare(tamanhoB, 'pt-BR', { numeric: true })
+      }
 
-       // 5. Ordem alfabética dos status
-       const statusA = (a.status || '').toLowerCase().trim()
-       const statusB = (b.status || '').toLowerCase().trim()
-       return statusA.localeCompare(statusB, 'pt-BR', { numeric: true })
-     })
+      // 5. Ordem alfabética dos status
+      const statusA = (a.status || '').toLowerCase().trim()
+      const statusB = (b.status || '').toLowerCase().trim()
+      return statusA.localeCompare(statusB, 'pt-BR', { numeric: true })
+    })
 
-         const rows = sortedInscricoes.map(inscricao => [
-       inscricao.nome || 'Não informado',
-               (() => {
-          console.log('CPF debug inscrição:', {
-            cpf: inscricao.cpf,
-            nome: inscricao.nome,
-            id: inscricao.id
-          })
-          return inscricao.cpf ? formatCpf(inscricao.cpf) : 'Não informado'
-        })(),
-       inscricao.expand?.evento?.titulo || 'Não informado',
-       inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado',
-       Array.isArray(inscricao.produto)
-         ? inscricao.produto.map((prodId: string) => getProdutoInfo(prodId, produtos)).join(', ')
-         : getProdutoInfo(inscricao.produto || '', produtos),
-       inscricao.status || 'Não informado',
-     ])
+    const rows = sortedInscricoes.map(inscricao => [
+      inscricao.nome || 'Não informado',
+      inscricao.cpf ? formatCpf(inscricao.cpf) : 'Não informado',
+      inscricao.expand?.evento?.titulo || 'Não informado',
+      inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado',
+      Array.isArray(inscricao.produto)
+        ? inscricao.produto.map((prodId: string) => getProdutoInfo(prodId, produtos)).join(', ')
+        : getProdutoInfo(inscricao.produto || '', produtos),
+      inscricao.status || 'Não informado',
+    ])
 
     autoTable(this.doc, {
       startY: 100,
@@ -551,40 +544,40 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Pedidos Detalhados', this.margin, 75)
 
-         const sortedPedidos = [...pedidos].sort((a, b) => {
-       // 1. Ordem alfabética dos campos
-       const campoA = (a.expand?.campo?.nome || a.campo || '').toLowerCase().trim()
-       const campoB = (b.expand?.campo?.nome || b.campo || '').toLowerCase().trim()
-       if (campoA !== campoB) {
-         return campoA.localeCompare(campoB, 'pt-BR', { numeric: true })
-       }
+    const sortedPedidos = [...pedidos].sort((a, b) => {
+      // 1. Ordem alfabética dos campos
+      const campoA = (a.expand?.campo?.nome || a.campo || '').toLowerCase().trim()
+      const campoB = (b.expand?.campo?.nome || b.campo || '').toLowerCase().trim()
+      if (campoA !== campoB) {
+        return campoA.localeCompare(campoB, 'pt-BR', { numeric: true })
+      }
 
-       // 2. Ordem alfabética dos nomes
-       const nomeA = getNomeCliente(a).toLowerCase().trim()
-       const nomeB = getNomeCliente(b).toLowerCase().trim()
-       if (nomeA !== nomeB) {
-         return nomeA.localeCompare(nomeB, 'pt-BR', { numeric: true })
-       }
+      // 2. Ordem alfabética dos nomes
+      const nomeA = getNomeCliente(a).toLowerCase().trim()
+      const nomeB = getNomeCliente(b).toLowerCase().trim()
+      if (nomeA !== nomeB) {
+        return nomeA.localeCompare(nomeB, 'pt-BR', { numeric: true })
+      }
 
-       // 3. Ordem alfabética dos produtos
-       const produtoA = a.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
-       const produtoB = b.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
-       if (produtoA !== produtoB) {
-         return produtoA.toLowerCase().trim().localeCompare(produtoB.toLowerCase().trim(), 'pt-BR', { numeric: true })
-       }
+      // 3. Ordem alfabética dos produtos
+      const produtoA = a.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
+      const produtoB = b.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
+      if (produtoA !== produtoB) {
+        return produtoA.toLowerCase().trim().localeCompare(produtoB.toLowerCase().trim(), 'pt-BR', { numeric: true })
+      }
 
-       // 4. Ordem alfabética dos tamanhos
-       const tamanhoA = (a.tamanho || '').toLowerCase().trim()
-       const tamanhoB = (b.tamanho || '').toLowerCase().trim()
-       if (tamanhoA !== tamanhoB) {
-         return tamanhoA.localeCompare(tamanhoB, 'pt-BR', { numeric: true })
-       }
+      // 4. Ordem alfabética dos tamanhos
+      const tamanhoA = (a.tamanho || '').toLowerCase().trim()
+      const tamanhoB = (b.tamanho || '').toLowerCase().trim()
+      if (tamanhoA !== tamanhoB) {
+        return tamanhoA.localeCompare(tamanhoB, 'pt-BR', { numeric: true })
+      }
 
-       // 5. Ordem alfabética dos status
-       const statusA = (a.status || '').toLowerCase().trim()
-       const statusB = (b.status || '').toLowerCase().trim()
-       return statusA.localeCompare(statusB, 'pt-BR', { numeric: true })
-     })
+      // 5. Ordem alfabética dos status
+      const statusA = (a.status || '').toLowerCase().trim()
+      const statusB = (b.status || '').toLowerCase().trim()
+      return statusA.localeCompare(statusB, 'pt-BR', { numeric: true })
+    })
 
     const rows = sortedPedidos.map(pedido => [
       getNomeCliente(pedido),
@@ -667,11 +660,11 @@ export async function generatePDF(
   generator.generateInscricoesTable(inscricoes, produtos)
   generator.generatePedidosTable(pedidos, produtos)
 
-     const totalPages = doc.getNumberOfPages()
-   for (let i = 1; i <= totalPages; i++) {
-     doc.setPage(i)
-     generator.addFooter(i, totalPages)
-   }
+  const totalPages = doc.getNumberOfPages()
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i)
+    generator.addFooter(i, totalPages)
+  }
 
   // Salvar PDF
   const fileName = isRelatorios

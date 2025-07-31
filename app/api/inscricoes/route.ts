@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
     const sortParam = req.nextUrl.searchParams.get('sort') || '-created'
     const result = await pb.collection('inscricoes').getList(page, perPage, {
       filter: filtro,
-      expand: 'evento,campo,pedido,produto',
+      expand: 'evento,campo,pedido,produto,criado_por',
       sort: sortParam,
     })
     return NextResponse.json(result, { status: 200 })
