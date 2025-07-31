@@ -316,7 +316,7 @@ export const exportToExcelLikePDF = (data: ExportData, filename?: string) => {
   XLSX.utils.book_append_sheet(workbook, visaoGeralSheet, 'Visão Geral Executiva')
 
   // 2. PRODUTOS X TAMANHOS
-  const produtosTamanhosData = [
+  const produtosTamanhosData: (string | number)[][] = [
     ['PRODUTOS X TAMANHOS'],
     [''],
     ['Campo', 'Produto', 'Tamanho', 'Status', 'Total', '% do Total'],
