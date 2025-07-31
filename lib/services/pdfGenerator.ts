@@ -195,60 +195,60 @@ export class PDFGenerator {
     const lastAutoTable = (this.doc as any).lastAutoTable
     const statusTablesEndY = lastAutoTable ? lastAutoTable.finalY : cardStartY + cardHeight + 80
 
-         // Tabela Analítica de Pedidos
-     const analyticsStartY = statusTablesEndY + 20
+    // Tabela Analítica de Pedidos
+    const analyticsStartY = statusTablesEndY + 20
 
-     // Preparar dados analíticos de pedidos
-     const pedAnalyticData = this.calculatePedidosAnalytics(pedidos, produtos)
-     const pedAnalyticRows = pedAnalyticData.map(([campo, produto, tamanho, status, count, percentage]) => [
-       campo,
-       produto,
-       tamanho,
-       status,
-       count.toString(),
-       `${Number(percentage).toFixed(1)}%`
-     ])
+    // Preparar dados analíticos de pedidos
+    const pedAnalyticData = this.calculatePedidosAnalytics(pedidos, produtos)
+    const pedAnalyticRows = pedAnalyticData.map(([campo, produto, tamanho, status, count, percentage]) => [
+      campo,
+      produto,
+      tamanho,
+      status,
+      count.toString(),
+      `${Number(percentage).toFixed(1)}%`
+    ])
 
-     // Tabela Analítica de Pedidos (largura total)
-     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
-     this.doc.setFont('helvetica', 'bold')
-     this.doc.text('Análise de Pedidos', this.margin, analyticsStartY - 10)
+    // Tabela Analítica de Pedidos (largura total)
+    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
+    this.doc.setFont('helvetica', 'bold')
+    this.doc.text('Análise de Pedidos', this.margin, analyticsStartY - 10)
 
-           autoTable(this.doc, {
-        startY: analyticsStartY,
-        margin: { left: this.margin, right: this.margin },
-        head: [['Campo', 'Produto', 'Tamanho', 'Status', 'Total', '% do Total']],
-        body: pedAnalyticRows,
-        theme: 'striped',
-        headStyles: {
-          fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
-          fontStyle: 'bold',
-          halign: 'center',
-        },
-        styles: {
-          fontSize: 8,
-          cellPadding: 2,
-          overflow: 'linebreak',
-        },
-        columnStyles: {
-          0: { cellWidth: 25 },
-          1: { cellWidth: 30 },
-          2: { cellWidth: 20 },
-          3: { cellWidth: 25 },
-          4: { halign: 'right', cellWidth: 15 },
-          5: { halign: 'right', cellWidth: 15 }
-        },
-        pageBreak: 'auto',
-                 didDrawPage: (data: any) => {
-           // Adicionar footer em cada página da tabela
-           const pageNumber = data.pageNumber
-           const totalPages = data.pageCount
-           this.addFooter(pageNumber, totalPages)
-         }
-      })
+    autoTable(this.doc, {
+      startY: analyticsStartY,
+      margin: { left: this.margin, right: this.margin },
+      head: [['Campo', 'Produto', 'Tamanho', 'Status', 'Total', '% do Total']],
+      body: pedAnalyticRows,
+      theme: 'striped',
+      headStyles: {
+        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+        fontStyle: 'bold',
+        halign: 'center',
+      },
+      styles: {
+        fontSize: 8,
+        cellPadding: 2,
+        overflow: 'linebreak',
+      },
+      columnStyles: {
+        0: { cellWidth: 25 },
+        1: { cellWidth: 30 },
+        2: { cellWidth: 20 },
+        3: { cellWidth: 25 },
+        4: { halign: 'right', cellWidth: 15 },
+        5: { halign: 'right', cellWidth: 15 }
+      },
+      pageBreak: 'auto',
+      didDrawPage: (data: any) => {
+        // Adicionar footer em cada página da tabela
+        const pageNumber = data.pageNumber
+        const totalPages = data.pageCount
+        this.addFooter(pageNumber, totalPages)
+      }
+    })
   }
 
-     // Métodos auxiliares para calcular dados analíticos
+  // Métodos auxiliares para calcular dados analíticos
 
   private calculatePedidosAnalytics(pedidos: Pedido[], produtos: Produto[]) {
     const analytics = new Map<string, [string, string, string, string, number, number]>()
@@ -270,27 +270,27 @@ export class PDFGenerator {
       }
     })
 
-         // Calcular percentuais
-     const total = pedidos.length
-     const result = Array.from(analytics.values()).map(([campo, produto, tamanho, status, count]) =>
-       [campo, produto, tamanho, status, count, (count / total) * 100]
-     )
+    // Calcular percentuais
+    const total = pedidos.length
+    const result = Array.from(analytics.values()).map(([campo, produto, tamanho, status, count]) =>
+      [campo, produto, tamanho, status, count, (count / total) * 100]
+    )
 
-     // Ordenar por nome do produto (ordem alfabética) e depois por tamanho
-     return result.sort((a, b) => {
-       const produtoA = (a[1] as string).toLowerCase()
-       const produtoB = (b[1] as string).toLowerCase()
-       
-       // Primeiro critério: ordem alfabética do produto
-       if (produtoA !== produtoB) {
-         return produtoA.localeCompare(produtoB, 'pt-BR')
-       }
-       
-       // Segundo critério: tamanho (se houver)
-       const tamanhoA = (a[2] as string).toLowerCase()
-       const tamanhoB = (b[2] as string).toLowerCase()
-       return tamanhoA.localeCompare(tamanhoB, 'pt-BR')
-     })
+    // Ordenar por nome do produto (ordem alfabética) e depois por tamanho
+    return result.sort((a, b) => {
+      const produtoA = (a[1] as string).toLowerCase()
+      const produtoB = (b[1] as string).toLowerCase()
+
+      // Primeiro critério: ordem alfabética do produto
+      if (produtoA !== produtoB) {
+        return produtoA.localeCompare(produtoB, 'pt-BR')
+      }
+
+      // Segundo critério: tamanho (se houver)
+      const tamanhoA = (a[2] as string).toLowerCase()
+      const tamanhoB = (b[2] as string).toLowerCase()
+      return tamanhoA.localeCompare(tamanhoB, 'pt-BR')
+    })
   }
 
 
@@ -328,12 +328,14 @@ export class PDFGenerator {
       (a.nome || '').localeCompare(b.nome || '', 'pt-BR'),
     )
 
-    const rows = sortedInscricoes.map(inscricao => [
-      inscricao.nome || 'Não informado', formatCpf(inscricao.cpf || 'Não informado'), inscricao.expand?.evento?.titulo || 'Não informado',
-      inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado',
-      getProdutoInfo(inscricao.produto || '', produtos),
-      inscricao.status || 'Não informado',
-    ])
+         const rows = sortedInscricoes.map(inscricao => [
+       inscricao.nome || 'Não informado', 
+       formatCpf(inscricao.cpf || inscricao.id || 'Não informado'), 
+       inscricao.expand?.evento?.titulo || 'Não informado',
+       inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado', 
+       inscricao.expand?.produto?.nome || '',
+       inscricao.status || 'Não informado',
+     ])
 
     autoTable(this.doc, {
       startY: 100,
