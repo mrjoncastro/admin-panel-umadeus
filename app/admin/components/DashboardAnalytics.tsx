@@ -21,6 +21,10 @@ const BarChart = dynamic(() => import('react-chartjs-2').then((m) => m.Bar), {
 interface DashboardAnalyticsProps {
   inscricoes: Inscricao[]
   pedidos: Pedido[]
+  statusInscricao: string
+  statusPedido: string
+  onStatusInscricaoChange: (status: string) => void
+  onStatusPedidoChange: (status: string) => void
   mostrarFinanceiro?: boolean
 }
 
@@ -48,6 +52,10 @@ function groupByDate(
 export default function DashboardAnalytics({
   inscricoes,
   pedidos,
+  statusInscricao,
+  statusPedido,
+  onStatusInscricaoChange,
+  onStatusPedidoChange,
   mostrarFinanceiro = true,
 }: DashboardAnalyticsProps) {
   const [startDate, setStartDate] = useState<string>('')
@@ -367,6 +375,40 @@ export default function DashboardAnalytics({
             onChange={(e) => setEndDate(e.target.value)}
             className="border rounded px-2 py-1"
           />
+        </div>
+        <div className="flex items-center gap-2">
+          <label className="text-sm dark:text-gray-100" htmlFor="statusInscricao">
+            Status Inscrição:
+          </label>
+          <select
+            id="statusInscricao"
+            value={statusInscricao}
+            onChange={(e) => onStatusInscricaoChange(e.target.value)}
+            className="border rounded px-2 py-1 bg-white"
+          >
+            <option value="">Todos</option>
+            <option value="pendente">Pendente</option>
+            <option value="aguardando_pagamento">Aguardando Pagamento</option>
+            <option value="confirmado">Confirmado</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+        </div>
+        <div className="flex items-center gap-2">
+          <label className="text-sm dark:text-gray-100" htmlFor="statusPedido">
+            Status Pedido:
+          </label>
+          <select
+            id="statusPedido"
+            value={statusPedido}
+            onChange={(e) => onStatusPedidoChange(e.target.value)}
+            className="border rounded px-2 py-1 bg-white"
+          >
+            <option value="">Todos</option>
+            <option value="pendente">Pendente</option>
+            <option value="pago">Pago</option>
+            <option value="vencido">Vencido</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
         </div>
         <button onClick={handleExportPDF} className="btn btn-primary px-3 py-1">
           PDF Geral

@@ -17,6 +17,9 @@ export default function LiderDashboardPage() {
     pedidos: { pendente: 0, pago: 0, cancelado: 0, valorTotal: 0 },
   })
 
+  const [statusInscricao, setStatusInscricao] = useState<string>('')
+  const [statusPedido, setStatusPedido] = useState<string>('')
+
   const [loading, setLoading] = useState(true)
   const isMounted = useRef(true)
 
@@ -138,24 +141,7 @@ export default function LiderDashboardPage() {
         setInscricoes(allInscricoes)
         setPedidos(allPedidos)
 
-        const resumoPedidos = {
-          pendente: allPedidos.filter((p) => p.status === 'pendente').length,
-          pago: allPedidos.filter((p) => p.status === 'pago').length,
-          cancelado: allPedidos.filter((p) => p.status === 'cancelado').length,
-          valorTotal: allPedidos
-            .filter((p) => p.status === 'pago')
-            .reduce((acc, p) => acc + Number(p.valor || 0), 0),
-        }
-
-        const resumoInscricoes = {
-          pendente: allInscricoes.filter((i) => i.status === 'pendente').length,
-          confirmado: allInscricoes.filter((i) => i.status === 'confirmado')
-            .length,
-          cancelado: allInscricoes.filter((i) => i.status === 'cancelado')
-            .length,
-        }
-
-        setTotais({ inscricoes: resumoInscricoes, pedidos: resumoPedidos })
+        // Totais serão calculados separadamente após o carregamento
       } catch (err) {
         console.error('Erro ao carregar dados:', err)
       } finally {
@@ -169,6 +155,36 @@ export default function LiderDashboardPage() {
       controller.abort()
     }
   }, [authChecked, user])
+
+  useEffect(() => {
+    const inscricoesFiltradas =
+      statusInscricao === ''
+        ? inscricoes
+        : inscricoes.filter((i) => i.status === statusInscricao)
+    const pedidosFiltrados =
+      statusPedido === ''
+        ? pedidos
+        : pedidos.filter((p) => p.status === statusPedido)
+
+    const resumoPedidos = {
+      pendente: pedidosFiltrados.filter((p) => p.status === 'pendente').length,
+      pago: pedidosFiltrados.filter((p) => p.status === 'pago').length,
+      cancelado: pedidosFiltrados.filter((p) => p.status === 'cancelado').length,
+      valorTotal: pedidosFiltrados
+        .filter((p) => p.status === 'pago')
+        .reduce((acc, p) => acc + Number(p.valor || 0), 0),
+    }
+
+    const resumoInscricoes = {
+      pendente: inscricoesFiltradas.filter((i) => i.status === 'pendente').length,
+      confirmado: inscricoesFiltradas.filter((i) => i.status === 'confirmado')
+        .length,
+      cancelado: inscricoesFiltradas.filter((i) => i.status === 'cancelado')
+        .length,
+    }
+
+    setTotais({ inscricoes: resumoInscricoes, pedidos: resumoPedidos })
+  }, [inscricoes, pedidos, statusInscricao, statusPedido])
 
   if (loading) {
     return <LoadingOverlay show={true} text="Carregando dashboard..." />
@@ -209,8 +225,20 @@ export default function LiderDashboardPage() {
       </div>
       
       <DashboardAnalytics
-        inscricoes={inscricoes}
-        pedidos={pedidos}
+        inscricoes={
+          statusInscricao === ''
+            ? inscricoes
+            : inscricoes.filter((i) => i.status === statusInscricao)
+        }
+        pedidos={
+          statusPedido === ''
+            ? pedidos
+            : pedidos.filter((p) => p.status === statusPedido)
+        }
+        statusInscricao={statusInscricao}
+        onStatusInscricaoChange={setStatusInscricao}
+        statusPedido={statusPedido}
+        onStatusPedidoChange={setStatusPedido}
         mostrarFinanceiro={false}
       />
     </main>
