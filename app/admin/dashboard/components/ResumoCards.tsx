@@ -60,7 +60,7 @@ export default function ResumoCards({
           <h3 className="text-sm font-bold text-gray-700 dark:text-gray-200">
             Valor Total
           </h3>
-          <Tippy content="Soma dos pedidos pagos com inscrições confirmadas, filtrados conforme os critérios aplicados.">
+          <Tippy content="Soma dos pedidos pagos, filtrados conforme os critérios aplicados.">
             <span>
               <Info className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
             </span>
