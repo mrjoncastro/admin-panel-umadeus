@@ -129,6 +129,8 @@ export default function DashboardPage() {
               campo: r.expand?.campo,
               criado_por: r.expand?.criado_por,
               pedido: r.expand?.pedido,
+              produto: r.expand?.produto,
+              evento: r.expand?.evento,
             },
           }),
         )
