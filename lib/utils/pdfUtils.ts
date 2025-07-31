@@ -113,13 +113,21 @@ export function getNomeCliente(pedido: Pedido): string {
 // Função para obter informações do produto
 export function getProdutoInfo(produtoId: string, produtos: Produto[]): string {
   const produto = produtos.find(p => p.id === produtoId)
-  return produto ? produto.nome : 'N/A'
+  if (!produto) {
+    console.warn(`Produto não encontrado: ${produtoId}`)
+    return 'N/A'
+  }
+  return produto.nome
 }
 
 // Função para obter nome do evento
 export function getEventoNome(produtoId: string, produtos: Produto[]): string {
   const produto = produtos.find(p => p.id === produtoId)
-  return produto?.expand?.evento?.titulo || 'N/A'
+  if (!produto) {
+    console.warn(`Produto não encontrado: ${produtoId}`)
+    return 'N/A'
+  }
+  return produto.expand?.evento?.titulo || 'N/A'
 }
 
 // Função para obter CPF do cliente
