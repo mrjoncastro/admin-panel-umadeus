@@ -475,7 +475,7 @@ export class PDFGenerator {
 
          const rows = sortedInscricoes.map(inscricao => [
        inscricao.nome || 'Não informado',
-               inscricao.cpf || 'Não informado',
+               inscricao.cpf ? formatCpf(inscricao.cpf) : 'Não informado',
        inscricao.expand?.evento?.titulo || 'Não informado',
        inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado',
        Array.isArray(inscricao.produto)
