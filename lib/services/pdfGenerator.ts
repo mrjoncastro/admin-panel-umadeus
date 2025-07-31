@@ -73,7 +73,6 @@ export class PDFGenerator {
     this.doc.text('  1.1. KPIs e Resumo', this.margin, 75)
     this.doc.text('  1.2. Inscrições por Status', this.margin, 90)
     this.doc.text('  1.3. Pedidos por Status', this.margin, 105)
-    this.doc.text('  1.4. Totais por Produto', this.margin, 120)
     this.doc.text('2. Pedidos x Tamanhos', this.margin, 140)
     this.doc.text('3. Inscrições por Status', this.margin, 160)
     this.doc.text('  3.1. Inscrições Pendentes', this.margin, 175)
@@ -171,53 +170,6 @@ export class PDFGenerator {
     // Obter posição Y após as tabelas de pedidos
     const lastAutoTable2 = (this.doc as any).lastAutoTable
     const pedidosEndY = lastAutoTable2 ? lastAutoTable2.finalY : pedidosStartY + 100
-
-    // Tabela de Totais por Produto (sem tamanho)
-    const totalsStartY = pedidosEndY + 20
-
-    // Preparar dados de totais por produto
-    const pedTotalsData = this.calculatePedidosTotals(pedidos, produtos)
-    const pedTotalsRows = pedTotalsData.map(([campo, produto, status, count, percentage]) => [
-      campo,
-      produto,
-      status,
-      count.toString(),
-      `${Number(percentage).toFixed(1)}%`
-    ])
-
-    // Tabela de Totais por Produto (largura total)
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
-    this.doc.setFont('helvetica', 'bold')
-    this.doc.text('Totais por Produto', this.margin, totalsStartY - 10)
-
-    autoTable(this.doc, {
-      startY: totalsStartY,
-      margin: { left: 10, right: 10 },
-      head: [['Campo', 'Produto', 'Status', 'Total', '% do Total']],
-      body: pedTotalsRows,
-      theme: 'striped',
-      headStyles: {
-        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
-        fontStyle: 'bold',
-        halign: 'center',
-      },
-      styles: {
-        fontSize: 8,
-        cellPadding: 2,
-        overflow: 'linebreak',
-      },
-      columnStyles: {
-        0: { cellWidth: 35 },
-        1: { cellWidth: 45 },
-        2: { cellWidth: 35 },
-        3: { halign: 'right', cellWidth: 25 },
-        4: { halign: 'right', cellWidth: 25 }
-      },
-    })
-
-    // Obter posição Y após a tabela de totais
-    const lastTotalsTable = (this.doc as any).lastAutoTable
-    const totalsTableEndY = lastTotalsTable ? lastTotalsTable.finalY : totalsStartY + 60
 
     // Tabela Analítica de Pedidos será movida para nova página
   }
