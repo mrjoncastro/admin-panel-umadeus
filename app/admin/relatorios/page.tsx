@@ -61,6 +61,28 @@ export default function RelatoriosPage() {
   })
   const chartRef = useRef<Chart<'bar'> | null>(null)
 
+  // Dropdown state
+  const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false)
+  const exportDropdownRef = useRef<HTMLDivElement>(null)
+  const [isExporting, setIsExporting] = useState(false)
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        exportDropdownRef.current &&
+        !exportDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsExportDropdownOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
   // Apply filters to data
   useEffect(() => {
     let inscricoesResult = [...inscricoes]
@@ -71,17 +93,17 @@ export default function RelatoriosPage() {
       // Filtrar inscrições por evento (através do produto associado)
       inscricoesResult = inscricoesResult.filter((i) => {
         if (!i.produto) return false
-        
+
         // Verificar se o produto da inscrição pertence ao evento selecionado
-        const produtoInscricao = produtos.find(p => p.id === i.produto)
+        const produtoInscricao = produtos.find((p) => p.id === i.produto)
         return produtoInscricao?.evento_id === filtros.evento
       })
 
       // Filtrar pedidos por evento (através do produto associado)
       pedidosResult = pedidosResult.filter((p) => {
         // p.produto é sempre string[] no tipo Pedido
-        return p.produto.some(prodId => {
-          const produto = produtos.find(prod => prod.id === prodId)
+        return p.produto.some((prodId) => {
+          const produto = produtos.find((prod) => prod.id === prodId)
           return produto?.evento_id === filtros.evento
         })
       })
@@ -127,7 +149,6 @@ export default function RelatoriosPage() {
         )
       }
     }
-
 
     if (filtros.produto.length > 0) {
       pedidosResult = pedidosResult.filter((p) => {
@@ -192,16 +213,13 @@ export default function RelatoriosPage() {
     setPedidosFiltrados(pedidosResult)
   }, [inscricoes, pedidos, filtros, produtos])
 
-  const sortPedidos = useCallback(
-    (lista: Pedido[]) => {
-      return [...lista].sort((a, b) => {
-        const campoA = a.expand?.campo?.nome || ''
-        const campoB = b.expand?.campo?.nome || ''
-        return campoA.localeCompare(campoB)
-      })
-    },
-    [],
-  )
+  const sortPedidos = useCallback((lista: Pedido[]) => {
+    return [...lista].sort((a, b) => {
+      const campoA = a.expand?.campo?.nome || ''
+      const campoB = b.expand?.campo?.nome || ''
+      return campoA.localeCompare(campoB)
+    })
+  }, [])
 
   // Generate chart data from filtered pedidos
   useEffect(() => {
@@ -251,10 +269,7 @@ export default function RelatoriosPage() {
       return {
         label: prod,
         data: labels.map((c) => count[c][prod] || 0),
-        backgroundColor: createPattern(
-          patterns[idx % patterns.length],
-          '#666',
-        ),
+        backgroundColor: createPattern(patterns[idx % patterns.length], '#666'),
         borderColor: '#000',
         stack: 'stack',
       }
@@ -382,11 +397,25 @@ export default function RelatoriosPage() {
 
         const campoId = expandedUser?.expand?.campo?.id || user.campo
 
+        // DEBUG COMPLETO - DADOS BRUTOS DA API
+        console.log('=== DEBUG API - DADOS BRUTOS ===')
+        console.log('Raw inscrições:', rawInscricoes.length)
+        console.log('Primeiras 3 raw inscrições:', rawInscricoes.slice(0, 3).map((r: any) => ({
+          id: r.id,
+          nome: r.nome,
+          cpf: r.cpf,
+          cpfType: typeof r.cpf,
+          expand: r.expand,
+          criado_por: r.criado_por
+        })))
+        console.log('=== DEBUG API - FIM DADOS BRUTOS ===')
+
         const allInscricoes: Inscricao[] = rawInscricoes.map(
           (r: Inscricao) => ({
             id: r.id,
             nome: r.nome,
             telefone: r.telefone,
+            cpf: r.cpf, // DEBUG: Garantir que CPF está sendo mapeado
             evento: r.expand?.evento?.titulo,
             status: r.status,
             created: r.created,
@@ -405,6 +434,19 @@ export default function RelatoriosPage() {
             },
           }),
         )
+
+        // DEBUG COMPLETO - DADOS MAPEADOS
+        console.log('=== DEBUG API - DADOS MAPEADOS ===')
+        console.log('All inscrições:', allInscricoes.length)
+        console.log('Primeiras 3 all inscrições:', allInscricoes.slice(0, 3).map(inscricao => ({
+          id: inscricao.id,
+          nome: inscricao.nome,
+          cpf: inscricao.cpf,
+          cpfType: typeof inscricao.cpf,
+          expand: inscricao.expand,
+          criado_por: inscricao.criado_por
+        })))
+        console.log('=== DEBUG API - FIM DADOS MAPEADOS ===')
 
         const allPedidos: Pedido[] = rawPedidos.map((r: Pedido) => ({
           id: r.id,
@@ -502,72 +544,110 @@ export default function RelatoriosPage() {
   const getCampoOptions = () => {
     const camposDisponiveis = new Set<string>()
     const pedidosComCampos = [...pedidosFiltrados, ...inscricoesFiltradas]
-    
-    pedidosComCampos.forEach(item => {
+
+    pedidosComCampos.forEach((item) => {
       if (item.campo) camposDisponiveis.add(item.campo)
       if ('expand' in item && item.expand?.campo?.id) {
         camposDisponiveis.add(item.expand.campo.id)
       }
     })
 
-    return campos.filter(campo => 
-      camposDisponiveis.has(campo.id) || filtros.campo.includes(campo.id)
+    return campos.filter(
+      (campo) =>
+        camposDisponiveis.has(campo.id) || filtros.campo.includes(campo.id),
     )
   }
 
   const getCanalOptions = () => {
     const canaisDisponiveis = new Set<string>()
-    pedidosFiltrados.forEach(p => {
+    pedidosFiltrados.forEach((p) => {
       if (p.canal) canaisDisponiveis.add(p.canal)
     })
-    
+
     return [
       { value: 'loja', label: 'Loja' },
-      { value: 'inscricao', label: 'Inscrição' }
-    ].filter(canal => 
-      canaisDisponiveis.has(canal.value) || filtros.canal.includes(canal.value)
+      { value: 'inscricao', label: 'Inscrição' },
+    ].filter(
+      (canal) =>
+        canaisDisponiveis.has(canal.value) ||
+        filtros.canal.includes(canal.value),
     )
   }
 
   const getTamanhoOptions = () => {
     const tamanhosDisponiveis = new Set<string>()
     const pedidosComTamanhos = [...pedidosFiltrados, ...inscricoesFiltradas]
-    
-    pedidosComTamanhos.forEach(item => {
+
+    pedidosComTamanhos.forEach((item) => {
       if (item.tamanho) tamanhosDisponiveis.add(item.tamanho)
     })
 
-    return ['PP', 'P', 'M', 'G', 'GG'].filter(tamanho => 
-      tamanhosDisponiveis.has(tamanho) || filtros.tamanho.includes(tamanho)
+    return ['PP', 'P', 'M', 'G', 'GG'].filter(
+      (tamanho) =>
+        tamanhosDisponiveis.has(tamanho) || filtros.tamanho.includes(tamanho),
     )
   }
 
   // Funções de exportação
-  const handleExportExcel = () => {
-    const valorTotal = pedidosFiltrados
-      .filter((p) => p.status === 'pago')
-      .reduce((acc, p) => acc + Number(p.valor || 0), 0)
+  const handleExportExcel = async () => {
+    if (isExporting) return
 
-    const exportData = {
-      inscricoes: inscricoesFiltradas,
-      pedidos: pedidosFiltrados,
-      produtos,
-      totalInscricoes: inscricoesFiltradas.length,
-      totalPedidos: pedidosFiltrados.length,
-      valorTotal,
+    setIsExporting(true)
+    try {
+      const valorTotal = pedidosFiltrados
+        .filter((p) => p.status === 'pago')
+        .reduce((acc, p) => acc + Number(p.valor || 0), 0)
+
+      const exportData = {
+        inscricoes: inscricoesFiltradas,
+        pedidos: pedidosFiltrados,
+        produtos,
+        totalInscricoes: inscricoesFiltradas.length,
+        totalPedidos: pedidosFiltrados.length,
+        valorTotal,
+      }
+      await exportToExcelLikePDF(exportData)
+    } catch (error) {
+      console.error('Erro ao exportar Excel:', error)
+    } finally {
+      setIsExporting(false)
+      setIsExportDropdownOpen(false)
     }
-    exportToExcelLikePDF(exportData)
   }
 
   const handleExportPDF = async () => {
-    const valorTotal = pedidosFiltrados
-      .filter((p) => p.status === 'pago')
-      .reduce((acc, p) => acc + Number(p.valor || 0), 0)
+    if (isExporting) return
 
+    setIsExporting(true)
     try {
-      await generatePDF(inscricoesFiltradas, pedidosFiltrados, produtos, valorTotal)
+      const valorTotal = pedidosFiltrados
+        .filter((p) => p.status === 'pago')
+        .reduce((acc, p) => acc + Number(p.valor || 0), 0)
+
+      // DEBUG COMPLETO - ANTES DE ENVIAR PARA PDF
+      console.log('=== DEBUG RELATÓRIOS - ANTES DE ENVIAR PARA PDF ===')
+      console.log('Inscrições filtradas:', inscricoesFiltradas.length)
+      console.log('Primeiras 3 inscrições filtradas:', inscricoesFiltradas.slice(0, 3).map(inscricao => ({
+        id: inscricao.id,
+        nome: inscricao.nome,
+        cpf: inscricao.cpf,
+        cpfType: typeof inscricao.cpf,
+        expand: inscricao.expand,
+        criado_por: inscricao.criado_por
+      })))
+      console.log('=== DEBUG RELATÓRIOS - FIM ===')
+
+      await generatePDF(
+        inscricoesFiltradas,
+        pedidosFiltrados,
+        produtos,
+        valorTotal,
+      )
     } catch (error) {
       console.error('Erro ao gerar PDF:', error)
+    } finally {
+      setIsExporting(false)
+      setIsExportDropdownOpen(false)
     }
   }
 
@@ -575,10 +655,6 @@ export default function RelatoriosPage() {
     filtros.evento !== 'todos'
       ? produtos.filter((p: Produto) => p.evento_id === filtros.evento)
       : produtos
-
-  console.log('Filtros atuais:', filtros)
-  console.log('Produtos filtrados:', produtosFiltrados)
-  console.log('Produtos totais:', produtos)
 
   return (
     <main className="min-h-screen p-4 md:p-6">
@@ -591,46 +667,161 @@ export default function RelatoriosPage() {
       ) : (
         <>
           <div className="mb-6 dark:text-gray-100">
-            <div className="flex justify-between items-center mb-2">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-2">
               <div>
                 <h1 className="heading">Relatórios</h1>
                 <p className="text-sm text-gray-700 mt-1 dark:text-gray-100">
                   Análise completa com filtros avançados.
                 </p>
               </div>
-              
-              {/* Botões de Exportação */}
-              <div className="flex gap-2">
+
+              {/* Dropdown de Exportação */}
+              <div className="relative" ref={exportDropdownRef}>
                 <button
-                  onClick={handleExportExcel}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                  onClick={() => !isExporting && setIsExportDropdownOpen(!isExportDropdownOpen)}
+                  disabled={isExporting}
+                  className={`px-3 sm:px-4 py-2 rounded-lg flex items-center gap-2 transition-colors w-full sm:w-auto justify-center sm:justify-start ${
+                    isExporting 
+                      ? 'bg-gray-400 cursor-not-allowed text-white' 
+                      : 'bg-gray-600 hover:bg-gray-700 text-white'
+                  }`}
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  Exportar Excel
+                  {isExporting ? (
+                    <>
+                      <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span className="hidden sm:inline">Gerando...</span>
+                      <span className="sm:hidden">Gerando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                      <span className="hidden sm:inline">Exportar</span>
+                      <span className="sm:hidden">Exportar</span>
+                      <svg
+                        className={`w-4 h-4 transition-transform duration-200 ${isExportDropdownOpen ? 'rotate-180' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </>
+                  )}
                 </button>
-                <button
-                  onClick={handleExportPDF}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
-                  Exportar PDF
-                </button>
+
+                {isExportDropdownOpen && !isExporting && (
+                  <div className="absolute right-0 sm:right-0 left-0 sm:left-auto mt-2 w-full sm:w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg z-50 border border-gray-200 dark:border-gray-700">
+                    <div className="py-1">
+                      <button
+                        onClick={handleExportExcel}
+                        disabled={isExporting}
+                        className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 transition-colors ${
+                          isExporting
+                            ? 'text-gray-400 cursor-not-allowed'
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        {isExporting ? (
+                          <>
+                            <svg className="animate-spin w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Gerando Excel...
+                          </>
+                        ) : (
+                          <>
+                            <svg
+                              className="w-4 h-4 text-green-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                              />
+                            </svg>
+                            Exportar Excel
+                          </>
+                        )}
+                      </button>
+                      <button
+                        onClick={handleExportPDF}
+                        disabled={isExporting}
+                        className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 transition-colors ${
+                          isExporting
+                            ? 'text-gray-400 cursor-not-allowed'
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        {isExporting ? (
+                          <>
+                            <svg className="animate-spin w-4 h-4 text-red-600" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Gerando PDF...
+                          </>
+                        ) : (
+                          <>
+                            <svg
+                              className="w-4 h-4 text-red-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                              />
+                            </svg>
+                            Exportar PDF
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
-            
+
             {filtros.evento !== 'todos' && (
               <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-900/20 dark:border-blue-700">
                 <p className="text-sm font-medium text-blue-800 dark:text-blue-200">
-                  Analisando evento: <span className="font-bold">
-                    {eventos.find(e => e.id === filtros.evento)?.titulo || 'Evento selecionado'}
+                  Analisando evento:{' '}
+                  <span className="font-bold">
+                    {eventos.find((e) => e.id === filtros.evento)?.titulo ||
+                      'Evento selecionado'}
                   </span>
                 </p>
                 <p className="text-xs text-blue-600 dark:text-blue-300 mt-1">
-                  Dados isolados por evento para evitar mistura entre diferentes eventos
+                  Dados isolados por evento para evitar mistura entre diferentes
+                  eventos
                 </p>
               </div>
             )}
