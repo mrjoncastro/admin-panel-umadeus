@@ -47,6 +47,7 @@ export default function DashboardResumo({
     exportToExcel({
       inscricoes,
       pedidos,
+      produtos,
       totalInscricoes: totalInscricoesFiltradas,
       totalPedidos: totalPedidosFiltrados,
       valorTotal: valorTotalConfirmado,
@@ -54,11 +55,11 @@ export default function DashboardResumo({
   }
 
   const handleExportInscricoes = () => {
-    exportInscricoesToExcel(inscricoes)
+    exportInscricoesToExcel(inscricoes, produtos)
   }
 
   const handleExportPedidos = () => {
-    exportPedidosToExcel(pedidos)
+    exportPedidosToExcel(pedidos, produtos)
   }
 
   const handleExportPDF = async () => {
