@@ -351,8 +351,8 @@ export class PDFGenerator {
       'Status',
     ]
 
-    const orientation = headers.length > 8 ? 'landscape' : 'portrait'
-    this.doc.addPage(orientation === 'landscape' ? 'l' : 'p')
+    const orientation = 'landscape'
+    this.doc.addPage('l')
     this.pageWidth = this.doc.internal.pageSize.getWidth()
     this.pageHeight = this.doc.internal.pageSize.getHeight()
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.SUBTITLE)
@@ -393,7 +393,7 @@ export class PDFGenerator {
       },
       columnStyles: {
         0: { cellWidth: 40, overflow: 'linebreak' },
-        1: { cellWidth: 25, halign: 'right' },
+        1: { cellWidth: 32, halign: 'right' },
         2: { cellWidth: 28, overflow: 'linebreak' },
         3: { cellWidth: 25 },
         4: { cellWidth: 30, overflow: 'linebreak' },
@@ -417,8 +417,8 @@ export class PDFGenerator {
       'Status',
     ]
 
-    const orientation = headers.length > 8 ? 'landscape' : 'portrait'
-    this.doc.addPage(orientation === 'landscape' ? 'l' : 'p')
+    const orientation = 'landscape'
+    this.doc.addPage('l')
     this.pageWidth = this.doc.internal.pageSize.getWidth()
     this.pageHeight = this.doc.internal.pageSize.getHeight()
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.SUBTITLE)
@@ -462,10 +462,10 @@ export class PDFGenerator {
       },
       columnStyles: {
         0: { cellWidth: 35, overflow: 'linebreak' },
-        1: { cellWidth: 22, halign: 'right' },
+        1: { cellWidth: 30, halign: 'right' },
         2: { cellWidth: 25, overflow: 'linebreak' },
         3: { cellWidth: 30, overflow: 'linebreak' },
-        4: { cellWidth: 16 },
+        4: { cellWidth: 20 },
         5: { cellWidth: 24 },
         6: { cellWidth: 18 },
       },
