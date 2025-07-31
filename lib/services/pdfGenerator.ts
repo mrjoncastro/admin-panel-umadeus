@@ -330,7 +330,7 @@ export class PDFGenerator {
 
          const rows = sortedInscricoes.map(inscricao => [
        inscricao.nome || 'Não informado', 
-       formatCpf(inscricao.cpf || inscricao.id || 'Não informado'), 
+       formatCpf(inscricao.cpf ||'Não informado'), 
        inscricao.expand?.evento?.titulo || 'Não informado',
        inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado', 
        inscricao.expand?.produto?.nome || '',
