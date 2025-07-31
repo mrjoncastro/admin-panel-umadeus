@@ -70,7 +70,7 @@ export class PDFGenerator {
 
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('1. Visão Geral Executiva', this.margin, 60)
-    this.doc.text('2. Análise de Pedidos', this.margin, 80)
+    this.doc.text('2. Pedidos x Tamanhos', this.margin, 80)
     this.doc.text('3. Tabelas de Inscrições', this.margin, 100)
     this.doc.text('4. Tabelas de Pedidos', this.margin, 120)
   }
@@ -256,7 +256,7 @@ export class PDFGenerator {
      // Título da página
      this.doc.setFont('helvetica', 'bold')
      this.doc.setFontSize(16)
-     this.doc.text('Análise de Pedidos', this.margin, 40)
+     this.doc.text('Produtos x Tamanhos', this.margin, 40)
 
      // Preparar dados analíticos de pedidos
      const pedAnalyticData = this.calculatePedidosAnalytics(pedidos, produtos)
@@ -324,20 +324,20 @@ export class PDFGenerator {
        [campo, produto, status, count, (count / total) * 100]
      )
 
-     // Ordenar por nome do produto (ordem alfabética) e depois por status
+          // Ordenar por nome do produto (ordem alfabética) e depois por status
      return result.sort((a, b) => {
-       const produtoA = (a[1] as string).toLowerCase()
-       const produtoB = (b[1] as string).toLowerCase()
+       const produtoA = (a[1] as string).toLowerCase().trim()
+       const produtoB = (b[1] as string).toLowerCase().trim()
 
        // Primeiro critério: ordem alfabética do produto
        if (produtoA !== produtoB) {
-         return produtoA.localeCompare(produtoB, 'pt-BR')
+         return produtoA.localeCompare(produtoB, 'pt-BR', { numeric: true })
        }
 
        // Segundo critério: status (ordem alfabética)
-       const statusA = (a[2] as string).toLowerCase()
-       const statusB = (b[2] as string).toLowerCase()
-       return statusA.localeCompare(statusB, 'pt-BR')
+       const statusA = (a[2] as string).toLowerCase().trim()
+       const statusB = (b[2] as string).toLowerCase().trim()
+       return statusA.localeCompare(statusB, 'pt-BR', { numeric: true })
      })
    }
 
@@ -367,20 +367,20 @@ export class PDFGenerator {
       [campo, produto, tamanho, status, count, (count / total) * 100]
     )
 
-         // Ordenar por nome do produto (ordem alfabética) e depois por tamanho
+              // Ordenar por nome do produto (ordem alfabética) e depois por tamanho
      return result.sort((a, b) => {
-       const produtoA = (a[1] as string).toLowerCase()
-       const produtoB = (b[1] as string).toLowerCase()
+       const produtoA = (a[1] as string).toLowerCase().trim()
+       const produtoB = (b[1] as string).toLowerCase().trim()
 
        // Primeiro critério: ordem alfabética do produto
        if (produtoA !== produtoB) {
-         return produtoA.localeCompare(produtoB, 'pt-BR')
+         return produtoA.localeCompare(produtoB, 'pt-BR', { numeric: true })
        }
 
        // Segundo critério: tamanho (ordem alfabética)
-       const tamanhoA = (a[2] as string).toLowerCase()
-       const tamanhoB = (b[2] as string).toLowerCase()
-       return tamanhoA.localeCompare(tamanhoB, 'pt-BR')
+       const tamanhoA = (a[2] as string).toLowerCase().trim()
+       const tamanhoB = (b[2] as string).toLowerCase().trim()
+       return tamanhoA.localeCompare(tamanhoB, 'pt-BR', { numeric: true })
      })
   }
 
@@ -419,16 +419,26 @@ export class PDFGenerator {
       (a.nome || '').localeCompare(b.nome || '', 'pt-BR'),
     )
 
-    const rows = sortedInscricoes.map(inscricao => [
-      inscricao.nome || 'Não informado',
-      inscricao.cpf || inscricao.id || 'Não informado',
-      inscricao.expand?.evento?.titulo || 'Não informado',
-      inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado',
-      Array.isArray(inscricao.produto)
-        ? inscricao.produto.map((prodId: string) => getProdutoInfo(prodId, produtos)).join(', ')
-        : getProdutoInfo(inscricao.produto || '', produtos),
-      inscricao.status || 'Não informado',
-    ])
+         const rows = sortedInscricoes.map(inscricao => {
+       // Debug temporário para verificar o CPF
+       console.log('CPF debug:', {
+         cpf: inscricao.cpf,
+         id: inscricao.id,
+         nome: inscricao.nome,
+         expand: inscricao.expand
+       })
+       
+       return [
+         inscricao.nome || 'Não informado',
+         inscricao.cpf || inscricao.id || 'Não informado',
+         inscricao.expand?.evento?.titulo || 'Não informado',
+         inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado',
+         Array.isArray(inscricao.produto)
+           ? inscricao.produto.map((prodId: string) => getProdutoInfo(prodId, produtos)).join(', ')
+           : getProdutoInfo(inscricao.produto || '', produtos),
+         inscricao.status || 'Não informado',
+       ]
+     })
 
     autoTable(this.doc, {
       startY: 100,
