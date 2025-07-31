@@ -44,7 +44,7 @@ export class PDFGenerator {
     this.doc.setFont('helvetica', 'bold')
     this.doc.text('Relatório Executivo', this.pageWidth / 2, 40, { align: 'center' })
 
-    const subtitle = isRelatorios 
+    const subtitle = isRelatorios
       ? (eventoSelecionado ? 'Análise de Dados por Evento' : 'Análise Geral de Dados')
       : 'Dashboard Executivo'
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.SUBTITLE)
@@ -82,7 +82,7 @@ export class PDFGenerator {
     valorTotal: number,
   ) {
     this.doc.addPage()
-    
+
     // Título da página
     this.doc.setFont('helvetica', 'bold')
     this.doc.setFontSize(16)
@@ -125,9 +125,9 @@ export class PDFGenerator {
         fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
         cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
       },
-      columnStyles: { 
-        1: { halign: 'right' }, 
-        2: { halign: 'right' } 
+      columnStyles: {
+        1: { halign: 'right' },
+        2: { halign: 'right' }
       },
     })
 
@@ -147,9 +147,9 @@ export class PDFGenerator {
         fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
         cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
       },
-      columnStyles: { 
-        1: { halign: 'right' }, 
-        2: { halign: 'right' } 
+      columnStyles: {
+        1: { halign: 'right' },
+        2: { halign: 'right' }
       },
     })
 
@@ -240,9 +240,9 @@ export class PDFGenerator {
         cellPadding: 2,
         overflow: 'linebreak',
       },
-      columnStyles: { 
-        3: { halign: 'right' }, 
-        4: { halign: 'right' } 
+      columnStyles: {
+        3: { halign: 'right' },
+        4: { halign: 'right' }
       },
     })
 
@@ -267,9 +267,9 @@ export class PDFGenerator {
         cellPadding: 2,
         overflow: 'linebreak',
       },
-      columnStyles: { 
-        4: { halign: 'right' }, 
-        5: { halign: 'right' } 
+      columnStyles: {
+        4: { halign: 'right' },
+        5: { halign: 'right' }
       },
     })
   }
@@ -277,14 +277,14 @@ export class PDFGenerator {
   // Métodos auxiliares para calcular dados analíticos
   private calculateInscricoesAnalytics(inscricoes: Inscricao[], produtos: Produto[]) {
     const analytics = new Map<string, [string, string, string, number, number]>()
-    
+
     inscricoes.forEach(inscricao => {
       // Para inscrições, usar o campo diretamente
-      const campo = inscricao.campo || 'N/A'
-      const evento = getEventoNome(inscricao.produto || '', produtos)
+      const campo = inscricao.expand?.campo?.nome || 'N/A'
+      const evento = inscricao.expand?.evento?.titulo || ''
       const status = inscricao.status || 'N/A'
       const key = `${campo}-${evento}-${status}`
-      
+
       if (analytics.has(key)) {
         const [, , , count] = analytics.get(key)!
         analytics.set(key, [campo, evento, status, count + 1, 0])
@@ -295,7 +295,7 @@ export class PDFGenerator {
 
     // Calcular percentuais
     const total = inscricoes.length
-    const result = Array.from(analytics.values()).map(([campo, evento, status, count]) => 
+    const result = Array.from(analytics.values()).map(([campo, evento, status, count]) =>
       [campo, evento, status, count, (count / total) * 100]
     )
 
@@ -304,16 +304,16 @@ export class PDFGenerator {
 
   private calculatePedidosAnalytics(pedidos: Pedido[], produtos: Produto[]) {
     const analytics = new Map<string, [string, string, string, string, number, number]>()
-    
+
     pedidos.forEach(pedido => {
-      const campo = getNomeCliente(pedido)
+      const campo = pedido.expand?.campo?.nome || 'N/A'
       // Tratar produto que pode ser string ou array
       const produtoId = Array.isArray(pedido.produto) ? pedido.produto[0] : pedido.produto
       const produto = getProdutoInfo(produtoId || '', produtos)
       const tamanho = pedido.tamanho || 'N/A'
       const status = pedido.status || 'N/A'
       const key = `${campo}-${produto}-${tamanho}-${status}`
-      
+
       if (analytics.has(key)) {
         const [, , , , count] = analytics.get(key)!
         analytics.set(key, [campo, produto, tamanho, status, count + 1, 0])
@@ -324,7 +324,7 @@ export class PDFGenerator {
 
     // Calcular percentuais
     const total = pedidos.length
-    const result = Array.from(analytics.values()).map(([campo, produto, tamanho, status, count]) => 
+    const result = Array.from(analytics.values()).map(([campo, produto, tamanho, status, count]) =>
       [campo, produto, tamanho, status, count, (count / total) * 100]
     )
 
@@ -367,9 +367,7 @@ export class PDFGenerator {
     )
 
     const rows = sortedInscricoes.map(inscricao => [
-      inscricao.nome || 'Não informado',
-      formatCpf(inscricao.cpf || inscricao.id),
-      getEventoNome(inscricao.produto || '', produtos),
+      inscricao.nome || 'Não informado', inscricao.cpf || 'Não informado', inscricao.expand?.evento?.titulo || 'Não informado',
       inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado',
       getProdutoInfo(inscricao.produto || '', produtos),
       inscricao.status || 'Não informado',
@@ -516,10 +514,10 @@ export async function generatePDF(
   }
 
   // Salvar PDF
-  const fileName = isRelatorios 
+  const fileName = isRelatorios
     ? (eventoSelecionado ? `relatorio_evento_${eventoSelecionado}` : 'relatorio_geral')
     : 'dashboard_executivo'
-  
+
   doc.save(`${fileName}_${new Date().toISOString().split('T')[0]}.pdf`)
 
   // Restaurar botão
