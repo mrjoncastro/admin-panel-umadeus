@@ -70,8 +70,9 @@ export class PDFGenerator {
 
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('1. Visão Geral Executiva', this.margin, 60)
-    this.doc.text('2. Tabelas de Análise', this.margin, 80)
-    this.doc.text('3. Tabelas de Pedidos', this.margin, 100)
+    this.doc.text('2. Análise de Pedidos', this.margin, 80)
+    this.doc.text('3. Tabelas de Inscrições', this.margin, 100)
+    this.doc.text('4. Tabelas de Pedidos', this.margin, 120)
   }
 
   // Página 3 - Visão Geral Executiva 
@@ -147,49 +148,49 @@ export class PDFGenerator {
     ])
     pedRows.push(['Total', totalPedidos.toString(), '100%'])
 
-    // Tabela de Status Inscrições (lado esquerdo)
-    autoTable(this.doc, {
-      startY: cardStartY + cardHeight + 20,
-      margin: { left: this.margin, right: this.pageWidth / 2 + 5 },
-      head: [['Status', 'Qtd', '%']],
-      body: inscrRows,
-      theme: 'striped',
-      headStyles: {
-        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
-        fontStyle: 'bold',
-        halign: 'center',
-      },
-      styles: {
-        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
-        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
-      },
-      columnStyles: {
-        1: { halign: 'right' },
-        2: { halign: 'right' }
-      },
-    })
+         // Tabela de Status Inscrições (lado esquerdo)
+     autoTable(this.doc, {
+       startY: cardStartY + cardHeight + 20,
+       margin: { left: 10, right: this.pageWidth / 2 + 5 },
+       head: [['Status', 'Qtd', '%']],
+       body: inscrRows,
+       theme: 'striped',
+       headStyles: {
+         fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+         fontStyle: 'bold',
+         halign: 'center',
+       },
+       styles: {
+         fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
+         cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
+       },
+       columnStyles: {
+         1: { halign: 'right' },
+         2: { halign: 'right' }
+       },
+     })
 
-    // Tabela de Status Pedidos (lado direito)
-    autoTable(this.doc, {
-      startY: cardStartY + cardHeight + 20,
-      margin: { left: this.pageWidth / 2 + 5, right: this.margin },
-      head: [['Status', 'Qtd', '%']],
-      body: pedRows,
-      theme: 'striped',
-      headStyles: {
-        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
-        fontStyle: 'bold',
-        halign: 'center',
-      },
-      styles: {
-        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
-        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
-      },
-      columnStyles: {
-        1: { halign: 'right' },
-        2: { halign: 'right' }
-      },
-    })
+     // Tabela de Status Pedidos (lado direito)
+     autoTable(this.doc, {
+       startY: cardStartY + cardHeight + 20,
+       margin: { left: this.pageWidth / 2 + 5, right: 10 },
+       head: [['Status', 'Qtd', '%']],
+       body: pedRows,
+       theme: 'striped',
+       headStyles: {
+         fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+         fontStyle: 'bold',
+         halign: 'center',
+       },
+       styles: {
+         fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
+         cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
+       },
+       columnStyles: {
+         1: { halign: 'right' },
+         2: { halign: 'right' }
+       },
+     })
 
     // Obter posição Y após as tabelas de status
     const lastAutoTable = (this.doc as any).lastAutoTable
@@ -215,7 +216,7 @@ export class PDFGenerator {
 
      autoTable(this.doc, {
        startY: totalsStartY,
-       margin: { left: this.margin, right: this.margin },
+       margin: { left: 10, right: 10 },
        head: [['Campo', 'Produto', 'Status', 'Total', '% do Total']],
        body: pedTotalsRows,
        theme: 'striped',
@@ -225,16 +226,16 @@ export class PDFGenerator {
          halign: 'center',
        },
        styles: {
-         fontSize: 9,
-         cellPadding: 3,
+         fontSize: 8,
+         cellPadding: 2,
          overflow: 'linebreak',
        },
        columnStyles: {
-         0: { cellWidth: 30 },
-         1: { cellWidth: 40 },
-         2: { cellWidth: 30 },
-         3: { halign: 'right', cellWidth: 20 },
-         4: { halign: 'right', cellWidth: 20 }
+         0: { cellWidth: 35 },
+         1: { cellWidth: 45 },
+         2: { cellWidth: 35 },
+         3: { halign: 'right', cellWidth: 25 },
+         4: { halign: 'right', cellWidth: 25 }
        },
      })
 
@@ -242,8 +243,20 @@ export class PDFGenerator {
      const lastTotalsTable = (this.doc as any).lastAutoTable
      const totalsTableEndY = lastTotalsTable ? lastTotalsTable.finalY : totalsStartY + 60
 
-     // Tabela Analítica de Pedidos
-     const analyticsStartY = totalsTableEndY + 20
+     // Tabela Analítica de Pedidos será movida para nova página
+   }
+
+   // Página 4 - Análise de Pedidos
+   generatePedidosAnalyticsPage(
+     pedidos: Pedido[],
+     produtos: Produto[],
+   ) {
+     this.doc.addPage()
+
+     // Título da página
+     this.doc.setFont('helvetica', 'bold')
+     this.doc.setFontSize(16)
+     this.doc.text('Análise de Pedidos', this.margin, 40)
 
      // Preparar dados analíticos de pedidos
      const pedAnalyticData = this.calculatePedidosAnalytics(pedidos, produtos)
@@ -256,37 +269,32 @@ export class PDFGenerator {
        `${Number(percentage).toFixed(1)}%`
      ])
 
-     // Tabela Analítica de Pedidos (largura total)
-     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
-     this.doc.setFont('helvetica', 'bold')
-     this.doc.text('Análise de Pedidos', this.margin, analyticsStartY - 10)
-
-    autoTable(this.doc, {
-      startY: analyticsStartY,
-      margin: { left: this.margin, right: this.margin },
-      head: [['Campo', 'Produto', 'Tamanho', 'Status', 'Total', '% do Total']],
-      body: pedAnalyticRows,
-      theme: 'striped',
-      headStyles: {
-        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
-        fontStyle: 'bold',
-        halign: 'center',
-      },
-      styles: {
-        fontSize: 8,
-        cellPadding: 2,
-        overflow: 'linebreak',
-      },
-      columnStyles: {
-        0: { cellWidth: 25 },
-        1: { cellWidth: 30 },
-        2: { cellWidth: 20 },
-        3: { cellWidth: 25 },
-        4: { halign: 'right', cellWidth: 15 },
-        5: { halign: 'right', cellWidth: 15 }
-      },
-             pageBreak: 'auto'
-    })
+     autoTable(this.doc, {
+       startY: 60,
+       margin: { left: this.margin, right: this.margin },
+       head: [['Campo', 'Produto', 'Tamanho', 'Status', 'Total', '% do Total']],
+       body: pedAnalyticRows,
+       theme: 'striped',
+       headStyles: {
+         fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+         fontStyle: 'bold',
+         halign: 'center',
+       },
+       styles: {
+         fontSize: 8,
+         cellPadding: 2,
+         overflow: 'linebreak',
+       },
+       columnStyles: {
+         0: { cellWidth: 25 },
+         1: { cellWidth: 30 },
+         2: { cellWidth: 20 },
+         3: { cellWidth: 25 },
+         4: { halign: 'right', cellWidth: 15 },
+         5: { halign: 'right', cellWidth: 15 }
+       },
+       pageBreak: 'auto'
+     })
   }
 
      // Métodos auxiliares para calcular dados analíticos
@@ -382,7 +390,7 @@ export class PDFGenerator {
 
 
 
-  // Página 4 - Tabelas de Inscrições
+  // Página 5 - Tabelas de Inscrições
   generateInscricoesTable(
     inscricoes: Inscricao[],
     produtos: Produto[],
@@ -456,7 +464,7 @@ export class PDFGenerator {
     })
   }
 
-  // Página 5 - Tabelas de Pedidos
+  // Página 6 - Tabelas de Pedidos
   generatePedidosTable(
     pedidos: Pedido[],
     produtos: Produto[],
@@ -563,6 +571,7 @@ export async function generatePDF(
   generator.generateCoverPage(isRelatorios, eventoSelecionado)
   generator.generateSummaryPage()
   generator.generateOverviewPage(inscricoes, pedidos, produtos, valorTotal)
+  generator.generatePedidosAnalyticsPage(pedidos, produtos)
   generator.generateInscricoesTable(inscricoes, produtos)
   generator.generatePedidosTable(pedidos, produtos)
 
