@@ -590,11 +590,38 @@ export default function RelatoriosPage() {
         </div>
       ) : (
         <>
-          <div className="mb-6 text-center dark:text-gray-100">
-            <h1 className="heading">Relatórios</h1>
-            <p className="text-sm text-gray-700 mt-1 dark:text-gray-100">
-              Análise completa com filtros avançados e gráficos.
-            </p>
+          <div className="mb-6 dark:text-gray-100">
+            <div className="flex justify-between items-center mb-2">
+              <div>
+                <h1 className="heading">Relatórios</h1>
+                <p className="text-sm text-gray-700 mt-1 dark:text-gray-100">
+                  Análise completa com filtros avançados e gráficos.
+                </p>
+              </div>
+              
+              {/* Botões de Exportação */}
+              <div className="flex gap-2">
+                <button
+                  onClick={handleExportExcel}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Exportar Excel
+                </button>
+                <button
+                  onClick={handleExportPDF}
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                  Exportar PDF
+                </button>
+              </div>
+            </div>
+            
             {filtros.evento !== 'todos' && (
               <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg dark:bg-blue-900/20 dark:border-blue-700">
                 <p className="text-sm font-medium text-blue-800 dark:text-blue-200">
@@ -607,28 +634,6 @@ export default function RelatoriosPage() {
                 </p>
               </div>
             )}
-            
-            {/* Botões de Exportação */}
-            <div className="mt-4 flex justify-center gap-4">
-              <button
-                onClick={handleExportExcel}
-                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Exportar Excel
-              </button>
-              <button
-                onClick={handleExportPDF}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                </svg>
-                Exportar PDF
-              </button>
-            </div>
           </div>
 
           {/* Enhanced Filters Section */}
