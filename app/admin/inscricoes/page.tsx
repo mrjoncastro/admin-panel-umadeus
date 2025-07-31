@@ -149,7 +149,7 @@ export default function ListaInscricoesPage() {
           ),
         )
 
-        const lista = todos.map((r) => {
+        const lista: Inscricao[] = todos.map((r) => {
           const produtoExpand = (
             r.expand as { produto?: Produto | Produto[] } | undefined
           )?.produto
