@@ -126,8 +126,9 @@ export function getEventoNome(produtoId: string, produtos: Produto[]): string {
 export function getCpfCliente(pedido: Pedido): string {
   // Se o pedido tem canal 'loja', buscar CPF do responsável
   if (pedido.canal === 'loja') {
-    // O responsável não tem CPF diretamente, mas podemos buscar através do id_inscricao
-    return pedido.expand?.id_inscricao?.cpf || 'N/A'
+    const responsavel = pedido.expand?.responsavel as { cpf?: string } | undefined
+    // Usar CPF do responsável se disponível, caso contrário verificar inscrição vinculada
+    return responsavel?.cpf || pedido.expand?.id_inscricao?.cpf || 'N/A'
   }
   
   // Se o pedido tem canal 'inscricao', buscar CPF da inscrição
