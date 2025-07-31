@@ -22,14 +22,11 @@ export default function DashboardResumo({
   const totalInscricoesFiltradas = totalInscricoes || inscricoes.length
   const totalPedidosFiltrados = totalPedidos || pedidos.length
 
-  const valorTotalConfirmado = inscricoes.reduce((total, i) => {
-    const pedido = i.expand?.pedido
-    const confirmado =
-      i.status === 'confirmado' || i.confirmado_por_lider === true
-    const pago = pedido?.status === 'pago'
-    const valor = Number(pedido?.valor ?? 0)
+  const valorTotalPago = pedidos.reduce((total, pedido) => {
+    const pago = pedido.status === 'pago'
+    const valor = Number(pedido.valor ?? 0)
 
-    if (confirmado && pago && !isNaN(valor)) {
+    if (pago && !isNaN(valor)) {
       return total + valor
     }
 
@@ -60,7 +57,7 @@ export default function DashboardResumo({
         <ResumoCards
           totalInscricoes={totalInscricoesFiltradas}
           totalPedidos={totalPedidosFiltrados}
-          valorTotal={valorTotalConfirmado}
+          valorTotal={valorTotalPago}
         />
       </div>
     </div>
