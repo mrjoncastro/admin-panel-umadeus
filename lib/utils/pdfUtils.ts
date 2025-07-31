@@ -7,8 +7,8 @@ export const PDF_CONSTANTS = {
     TITLE: 24,
     SUBTITLE: 18,
     HEADER: 14,
-    TABLE_HEADER: 8,
-    TABLE_DATA: 6,
+    TABLE_HEADER: 9,
+    TABLE_DATA: 7,
     FOOTER: 9,
   },
   COLORS: {
@@ -21,7 +21,7 @@ export const PDF_CONSTANTS = {
     PINK: [236, 72, 153],      // Rosa
     LIGHT_BLUE: [14, 165, 233], // Azul claro
     // Cores para tabelas
-    HEADER_BG: [240, 240, 240], // Cinza claro para cabeçalhos
+    HEADER_BG: [200, 200, 200], // Cinza claro para cabeçalhos
     ROW_ALT_BG: [242, 242, 242], // Cinza mais claro para zebra striping
     BORDER: [200, 200, 200],   // Cor da borda das tabelas
   },
