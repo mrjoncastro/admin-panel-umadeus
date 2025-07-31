@@ -249,53 +249,72 @@ export class PDFGenerator {
       this.doc.setFont('helvetica', 'bold')
       this.doc.text(`Inscrições ${label} (${filteredInscricoes.length})`, this.margin, currentY)
 
-      // Ordenar inscrições
-      const sortedInscricoes = [...filteredInscricoes].sort((a, b) => {
-        const campoA = (a.expand?.campo?.nome || a.campo || '').toLowerCase().trim()
-        const campoB = (b.expand?.campo?.nome || b.campo || '').toLowerCase().trim()
-        if (campoA !== campoB) {
-          return campoA.localeCompare(campoB, 'pt-BR', { numeric: true })
+      // Agrupar inscrições por campo e produto
+      const groupedData = new Map<string, Map<string, number>>()
+      
+      filteredInscricoes.forEach(inscricao => {
+        const campo = inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado'
+        
+        if (Array.isArray(inscricao.produto)) {
+          inscricao.produto.forEach(prodId => {
+            const produto = getProdutoInfo(prodId, produtos)
+            const key = `${campo}|${produto}`
+            
+            if (!groupedData.has(campo)) {
+              groupedData.set(campo, new Map())
+            }
+            
+            const campoMap = groupedData.get(campo)!
+            campoMap.set(produto, (campoMap.get(produto) || 0) + 1)
+          })
+        } else {
+          const produto = getProdutoInfo(inscricao.produto || '', produtos)
+          const key = `${campo}|${produto}`
+          
+          if (!groupedData.has(campo)) {
+            groupedData.set(campo, new Map())
+          }
+          
+          const campoMap = groupedData.get(campo)!
+          campoMap.set(produto, (campoMap.get(produto) || 0) + 1)
         }
-
-        const nomeA = (a.nome || '').toLowerCase().trim()
-        const nomeB = (b.nome || '').toLowerCase().trim()
-        if (nomeA !== nomeB) {
-          return nomeA.localeCompare(nomeB, 'pt-BR', { numeric: true })
-        }
-
-        const produtoA = Array.isArray(a.produto)
-          ? a.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
-          : getProdutoInfo(a.produto || '', produtos)
-        const produtoB = Array.isArray(b.produto)
-          ? b.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
-          : getProdutoInfo(b.produto || '', produtos)
-        if (produtoA !== produtoB) {
-          return produtoA.toLowerCase().trim().localeCompare(produtoB.toLowerCase().trim(), 'pt-BR', { numeric: true })
-        }
-
-        return 0
       })
 
-      // Preparar dados da tabela
-      const rows = sortedInscricoes.map(inscricao => {
-        const cpfValue = inscricao.cpf
-        const cpfFormatted = cpfValue ? formatCpf(cpfValue) : 'Não informado'
+      // Calcular totais e percentuais
+      const totalInscricoes = filteredInscricoes.length
+      const rows: string[][] = []
+      
+      // Ordenar campos alfabeticamente
+      const sortedCampos = Array.from(groupedData.keys()).sort((a, b) => 
+        a.toLowerCase().localeCompare(b.toLowerCase(), 'pt-BR', { numeric: true })
+      )
+      
+      sortedCampos.forEach(campo => {
+        const campoMap = groupedData.get(campo)!
         
-        return [
-          inscricao.nome || 'Não informado',
-          cpfFormatted,
-          inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado',
-          Array.isArray(inscricao.produto)
-            ? inscricao.produto.map((prodId: string) => getProdutoInfo(prodId, produtos)).join(', ')
-            : getProdutoInfo(inscricao.produto || '', produtos),
-        ]
+        // Ordenar produtos alfabeticamente
+        const sortedProdutos = Array.from(campoMap.keys()).sort((a, b) => 
+          a.toLowerCase().localeCompare(b.toLowerCase(), 'pt-BR', { numeric: true })
+        )
+        
+        sortedProdutos.forEach(produto => {
+          const total = campoMap.get(produto)!
+          const percentual = ((total / totalInscricoes) * 100).toFixed(1)
+          
+          rows.push([
+            campo,
+            produto,
+            total.toString(),
+            `${percentual}%`
+          ])
+        })
       })
 
       // Gerar tabela
       autoTable(this.doc, {
         startY: currentY + 5,
         margin: { left: this.margin, right: this.margin },
-        head: [['Nome', 'CPF', 'Campo', 'Produto']],
+        head: [['Campo', 'Produto', 'Total', '% do Total']],
         body: rows,
         theme: 'striped',
         headStyles: {
@@ -309,10 +328,10 @@ export class PDFGenerator {
           overflow: 'linebreak',
         },
         columnStyles: {
-          0: { cellWidth: 45, overflow: 'linebreak' },
-          1: { cellWidth: 30, halign: 'right' },
-          2: { cellWidth: 35, overflow: 'linebreak' },
-          3: { cellWidth: 45, overflow: 'linebreak' },
+          0: { cellWidth: 50, overflow: 'linebreak' },
+          1: { cellWidth: 50, overflow: 'linebreak' },
+          2: { cellWidth: 20, halign: 'center' },
+          3: { cellWidth: 25, halign: 'center' },
         },
       })
 
@@ -350,44 +369,70 @@ export class PDFGenerator {
       this.doc.setFont('helvetica', 'bold')
       this.doc.text(`Pedidos ${label} (${filteredPedidos.length})`, this.margin, currentY)
 
-      // Ordenar pedidos
-      const sortedPedidos = [...filteredPedidos].sort((a, b) => {
-        const campoA = (a.expand?.campo?.nome || a.campo || '').toLowerCase().trim()
-        const campoB = (b.expand?.campo?.nome || b.campo || '').toLowerCase().trim()
-        if (campoA !== campoB) {
-          return campoA.localeCompare(campoB, 'pt-BR', { numeric: true })
+      // Agrupar pedidos por campo e produto
+      const groupedData = new Map<string, Map<string, number>>()
+      
+      filteredPedidos.forEach(pedido => {
+        const campo = pedido.expand?.campo?.nome || pedido.campo || 'Não informado'
+        
+        if (Array.isArray(pedido.produto)) {
+          pedido.produto.forEach(prodId => {
+            const produto = getProdutoInfo(prodId, produtos)
+            
+            if (!groupedData.has(campo)) {
+              groupedData.set(campo, new Map())
+            }
+            
+            const campoMap = groupedData.get(campo)!
+            campoMap.set(produto, (campoMap.get(produto) || 0) + 1)
+          })
+        } else {
+          const produto = getProdutoInfo(pedido.produto || '', produtos)
+          
+          if (!groupedData.has(campo)) {
+            groupedData.set(campo, new Map())
+          }
+          
+          const campoMap = groupedData.get(campo)!
+          campoMap.set(produto, (campoMap.get(produto) || 0) + 1)
         }
-
-        const nomeA = getNomeCliente(a).toLowerCase().trim()
-        const nomeB = getNomeCliente(b).toLowerCase().trim()
-        if (nomeA !== nomeB) {
-          return nomeA.localeCompare(nomeB, 'pt-BR', { numeric: true })
-        }
-
-        const produtoA = a.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
-        const produtoB = b.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
-        if (produtoA !== produtoB) {
-          return produtoA.toLowerCase().trim().localeCompare(produtoB.toLowerCase().trim(), 'pt-BR', { numeric: true })
-        }
-
-        return 0
       })
 
-      // Preparar dados da tabela
-      const rows = sortedPedidos.map(pedido => [
-        getNomeCliente(pedido),
-        formatCpf(getCpfCliente(pedido)),
-        pedido.expand?.campo?.nome || pedido.campo || 'Não informado',
-        pedido.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', '),
-        pedido.tamanho || 'Não informado',
-        `R$ ${Number(pedido.valor || 0).toFixed(2)}`,
-      ])
+      // Calcular totais e percentuais
+      const totalPedidos = filteredPedidos.length
+      const rows: string[][] = []
+      
+      // Ordenar campos alfabeticamente
+      const sortedCampos = Array.from(groupedData.keys()).sort((a, b) => 
+        a.toLowerCase().localeCompare(b.toLowerCase(), 'pt-BR', { numeric: true })
+      )
+      
+      sortedCampos.forEach(campo => {
+        const campoMap = groupedData.get(campo)!
+        
+        // Ordenar produtos alfabeticamente
+        const sortedProdutos = Array.from(campoMap.keys()).sort((a, b) => 
+          a.toLowerCase().localeCompare(b.toLowerCase(), 'pt-BR', { numeric: true })
+        )
+        
+        sortedProdutos.forEach(produto => {
+          const total = campoMap.get(produto)!
+          const percentual = ((total / totalPedidos) * 100).toFixed(1)
+          
+          rows.push([
+            campo,
+            produto,
+            total.toString(),
+            `${percentual}%`
+          ])
+        })
+      })
 
       // Gerar tabela
       autoTable(this.doc, {
         startY: currentY + 5,
         margin: { left: this.margin, right: this.margin },
-        head: [['Nome', 'CPF', 'Campo', 'Produto', 'Tamanho', 'Valor']],
+        head: [['Campo', 'Produto', 'Total', '% do Total']],
         body: rows,
         theme: 'striped',
         headStyles: {
@@ -401,12 +446,10 @@ export class PDFGenerator {
           overflow: 'linebreak',
         },
         columnStyles: {
-          0: { cellWidth: 35, overflow: 'linebreak' },
-          1: { cellWidth: 25, halign: 'right' },
-          2: { cellWidth: 25, overflow: 'linebreak' },
-          3: { cellWidth: 30, overflow: 'linebreak' },
-          4: { cellWidth: 20, halign: 'center' },
-          5: { cellWidth: 25, halign: 'right' },
+          0: { cellWidth: 50, overflow: 'linebreak' },
+          1: { cellWidth: 50, overflow: 'linebreak' },
+          2: { cellWidth: 20, halign: 'center' },
+          3: { cellWidth: 25, halign: 'center' },
         },
       })
 
@@ -430,11 +473,10 @@ export class PDFGenerator {
 
     // Preparar dados analíticos de pedidos
     const pedAnalyticData = this.calculatePedidosAnalytics(pedidos, produtos)
-    const pedAnalyticRows = pedAnalyticData.map(([campo, produto, tamanho, status, count, percentage]) => [
+    const pedAnalyticRows = pedAnalyticData.map(([campo, produto, tamanho, count, percentage]) => [
       campo,
       produto,
       tamanho,
-      status,
       count.toString(),
       `${Number(percentage).toFixed(1)}%`
     ])
@@ -442,7 +484,7 @@ export class PDFGenerator {
     autoTable(this.doc, {
       startY: 60,
       margin: { left: this.margin, right: this.margin },
-      head: [['Campo', 'Produto', 'Tamanho', 'Status', 'Total', '% do Total']],
+      head: [['Campo', 'Produto', 'Tamanho', 'Total', '% do Total']],
       body: pedAnalyticRows,
       theme: 'striped',
       headStyles: {
@@ -456,12 +498,11 @@ export class PDFGenerator {
         overflow: 'linebreak',
       },
       columnStyles: {
-        0: { cellWidth: 25 },
-        1: { cellWidth: 30 },
-        2: { cellWidth: 20 },
-        3: { cellWidth: 25 },
-        4: { halign: 'right', cellWidth: 15 },
-        5: { halign: 'right', cellWidth: 15 }
+        0: { cellWidth: 30 },
+        1: { cellWidth: 35 },
+        2: { cellWidth: 25 },
+        3: { halign: 'center', cellWidth: 20 },
+        4: { halign: 'center', cellWidth: 25 }
       },
       pageBreak: 'auto'
     })
@@ -518,7 +559,7 @@ export class PDFGenerator {
   }
 
   private calculatePedidosAnalytics(pedidos: Pedido[], produtos: Produto[]) {
-    const analytics = new Map<string, [string, string, string, string, number, number]>()
+    const analytics = new Map<string, [string, string, string, number, number]>()
 
     pedidos.forEach(pedido => {
       const campo = pedido.expand?.campo?.nome || 'N/A'
@@ -526,24 +567,23 @@ export class PDFGenerator {
       const produtoId = Array.isArray(pedido.produto) ? pedido.produto[0] : pedido.produto
       const produto = getProdutoInfo(produtoId || '', produtos)
       const tamanho = pedido.tamanho || 'N/A'
-      const status = pedido.status || 'N/A'
-      const key = `${campo}-${produto}-${tamanho}-${status}`
+      const key = `${campo}-${produto}-${tamanho}`
 
       if (analytics.has(key)) {
-        const [, , , , count] = analytics.get(key)!
-        analytics.set(key, [campo, produto, tamanho, status, count + 1, 0])
+        const [, , , count] = analytics.get(key)!
+        analytics.set(key, [campo, produto, tamanho, count + 1, 0])
       } else {
-        analytics.set(key, [campo, produto, tamanho, status, 1, 0])
+        analytics.set(key, [campo, produto, tamanho, 1, 0])
       }
     })
 
     // Calcular percentuais
     const total = pedidos.length
-    const result = Array.from(analytics.values()).map(([campo, produto, tamanho, status, count]) =>
-      [campo, produto, tamanho, status, count, (count / total) * 100]
+    const result = Array.from(analytics.values()).map(([campo, produto, tamanho, count]) =>
+      [campo, produto, tamanho, count, (count / total) * 100]
     )
 
-    // Ordenar por: Campo → Produto → Tamanho → Status
+    // Ordenar por: Campo → Produto → Tamanho
     return result.sort((a, b) => {
       // 1. Ordem alfabética dos campos
       const campoA = (a[0] as string).toLowerCase().trim()
@@ -562,14 +602,7 @@ export class PDFGenerator {
       // 3. Ordem alfabética dos tamanhos
       const tamanhoA = (a[2] as string).toLowerCase().trim()
       const tamanhoB = (b[2] as string).toLowerCase().trim()
-      if (tamanhoA !== tamanhoB) {
-        return tamanhoA.localeCompare(tamanhoB, 'pt-BR', { numeric: true })
-      }
-
-      // 4. Ordem alfabética dos status
-      const statusA = (a[3] as string).toLowerCase().trim()
-      const statusB = (b[3] as string).toLowerCase().trim()
-      return statusA.localeCompare(statusB, 'pt-BR', { numeric: true })
+      return tamanhoA.localeCompare(tamanhoB, 'pt-BR', { numeric: true })
     })
   }
 
