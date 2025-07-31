@@ -65,6 +65,10 @@ export const Default: Story = {
       } as unknown as Pedido,
     ],
     mostrarFinanceiro: true,
+    statusInscricao: '',
+    statusPedido: '',
+    onStatusInscricaoChange: () => {},
+    onStatusPedidoChange: () => {},
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
@@ -90,5 +94,9 @@ export const SemFinanceiro: Story = {
       } as unknown as Pedido,
     ],
     mostrarFinanceiro: false,
+    statusInscricao: '',
+    statusPedido: '',
+    onStatusInscricaoChange: () => {},
+    onStatusPedidoChange: () => {},
   },
 }
