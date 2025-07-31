@@ -195,24 +195,71 @@ export class PDFGenerator {
     const lastAutoTable = (this.doc as any).lastAutoTable
     const statusTablesEndY = lastAutoTable ? lastAutoTable.finalY : cardStartY + cardHeight + 80
 
-    // Tabela Analítica de Pedidos
-    const analyticsStartY = statusTablesEndY + 20
+         // Tabela de Totais por Produto (sem tamanho)
+     const totalsStartY = statusTablesEndY + 20
 
-    // Preparar dados analíticos de pedidos
-    const pedAnalyticData = this.calculatePedidosAnalytics(pedidos, produtos)
-    const pedAnalyticRows = pedAnalyticData.map(([campo, produto, tamanho, status, count, percentage]) => [
-      campo,
-      produto,
-      tamanho,
-      status,
-      count.toString(),
-      `${Number(percentage).toFixed(1)}%`
-    ])
+     // Preparar dados de totais por produto
+     const pedTotalsData = this.calculatePedidosTotals(pedidos, produtos)
+     const pedTotalsRows = pedTotalsData.map(([campo, produto, status, count, percentage]) => [
+       campo,
+       produto,
+       status,
+       count.toString(),
+       `${Number(percentage).toFixed(1)}%`
+     ])
 
-    // Tabela Analítica de Pedidos (largura total)
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
-    this.doc.setFont('helvetica', 'bold')
-    this.doc.text('Análise de Pedidos', this.margin, analyticsStartY - 10)
+     // Tabela de Totais por Produto (largura total)
+     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
+     this.doc.setFont('helvetica', 'bold')
+     this.doc.text('Totais por Produto', this.margin, totalsStartY - 10)
+
+     autoTable(this.doc, {
+       startY: totalsStartY,
+       margin: { left: this.margin, right: this.margin },
+       head: [['Campo', 'Produto', 'Status', 'Total', '% do Total']],
+       body: pedTotalsRows,
+       theme: 'striped',
+       headStyles: {
+         fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+         fontStyle: 'bold',
+         halign: 'center',
+       },
+       styles: {
+         fontSize: 9,
+         cellPadding: 3,
+         overflow: 'linebreak',
+       },
+       columnStyles: {
+         0: { cellWidth: 30 },
+         1: { cellWidth: 40 },
+         2: { cellWidth: 30 },
+         3: { halign: 'right', cellWidth: 20 },
+         4: { halign: 'right', cellWidth: 20 }
+       },
+     })
+
+     // Obter posição Y após a tabela de totais
+     const lastTotalsTable = (this.doc as any).lastAutoTable
+     const totalsTableEndY = lastTotalsTable ? lastTotalsTable.finalY : totalsStartY + 60
+
+     // Tabela Analítica de Pedidos
+     const analyticsStartY = totalsTableEndY + 20
+
+     // Preparar dados analíticos de pedidos
+     const pedAnalyticData = this.calculatePedidosAnalytics(pedidos, produtos)
+     const pedAnalyticRows = pedAnalyticData.map(([campo, produto, tamanho, status, count, percentage]) => [
+       campo,
+       produto,
+       tamanho,
+       status,
+       count.toString(),
+       `${Number(percentage).toFixed(1)}%`
+     ])
+
+     // Tabela Analítica de Pedidos (largura total)
+     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
+     this.doc.setFont('helvetica', 'bold')
+     this.doc.text('Análise de Pedidos', this.margin, analyticsStartY - 10)
 
     autoTable(this.doc, {
       startY: analyticsStartY,
@@ -238,19 +285,55 @@ export class PDFGenerator {
         4: { halign: 'right', cellWidth: 15 },
         5: { halign: 'right', cellWidth: 15 }
       },
-      pageBreak: 'auto',
-      didDrawPage: (data: any) => {
-        // Adicionar footer em cada página da tabela
-        const pageNumber = data.pageNumber
-        const totalPages = data.pageCount
-        this.addFooter(pageNumber, totalPages)
-      }
+             pageBreak: 'auto'
     })
   }
 
-  // Métodos auxiliares para calcular dados analíticos
+     // Métodos auxiliares para calcular dados analíticos
 
-  private calculatePedidosAnalytics(pedidos: Pedido[], produtos: Produto[]) {
+   private calculatePedidosTotals(pedidos: Pedido[], produtos: Produto[]) {
+     const analytics = new Map<string, [string, string, string, number, number]>()
+
+     pedidos.forEach(pedido => {
+       const campo = pedido.expand?.campo?.nome || 'N/A'
+       // Tratar produto que pode ser string ou array
+       const produtoId = Array.isArray(pedido.produto) ? pedido.produto[0] : pedido.produto
+       const produto = getProdutoInfo(produtoId || '', produtos)
+       const status = pedido.status || 'N/A'
+       const key = `${campo}-${produto}-${status}`
+
+       if (analytics.has(key)) {
+         const [, , , count] = analytics.get(key)!
+         analytics.set(key, [campo, produto, status, count + 1, 0])
+       } else {
+         analytics.set(key, [campo, produto, status, 1, 0])
+       }
+     })
+
+     // Calcular percentuais
+     const total = pedidos.length
+     const result = Array.from(analytics.values()).map(([campo, produto, status, count]) =>
+       [campo, produto, status, count, (count / total) * 100]
+     )
+
+     // Ordenar por nome do produto (ordem alfabética) e depois por status
+     return result.sort((a, b) => {
+       const produtoA = (a[1] as string).toLowerCase()
+       const produtoB = (b[1] as string).toLowerCase()
+
+       // Primeiro critério: ordem alfabética do produto
+       if (produtoA !== produtoB) {
+         return produtoA.localeCompare(produtoB, 'pt-BR')
+       }
+
+       // Segundo critério: status (ordem alfabética)
+       const statusA = (a[2] as string).toLowerCase()
+       const statusB = (b[2] as string).toLowerCase()
+       return statusA.localeCompare(statusB, 'pt-BR')
+     })
+   }
+
+   private calculatePedidosAnalytics(pedidos: Pedido[], produtos: Produto[]) {
     const analytics = new Map<string, [string, string, string, string, number, number]>()
 
     pedidos.forEach(pedido => {
@@ -276,21 +359,21 @@ export class PDFGenerator {
       [campo, produto, tamanho, status, count, (count / total) * 100]
     )
 
-    // Ordenar por nome do produto (ordem alfabética) e depois por tamanho
-    return result.sort((a, b) => {
-      const produtoA = (a[1] as string).toLowerCase()
-      const produtoB = (b[1] as string).toLowerCase()
+         // Ordenar por nome do produto (ordem alfabética) e depois por tamanho
+     return result.sort((a, b) => {
+       const produtoA = (a[1] as string).toLowerCase()
+       const produtoB = (b[1] as string).toLowerCase()
 
-      // Primeiro critério: ordem alfabética do produto
-      if (produtoA !== produtoB) {
-        return produtoA.localeCompare(produtoB, 'pt-BR')
-      }
+       // Primeiro critério: ordem alfabética do produto
+       if (produtoA !== produtoB) {
+         return produtoA.localeCompare(produtoB, 'pt-BR')
+       }
 
-      // Segundo critério: tamanho (se houver)
-      const tamanhoA = (a[2] as string).toLowerCase()
-      const tamanhoB = (b[2] as string).toLowerCase()
-      return tamanhoA.localeCompare(tamanhoB, 'pt-BR')
-    })
+       // Segundo critério: tamanho (ordem alfabética)
+       const tamanhoA = (a[2] as string).toLowerCase()
+       const tamanhoB = (b[2] as string).toLowerCase()
+       return tamanhoA.localeCompare(tamanhoB, 'pt-BR')
+     })
   }
 
 
@@ -330,7 +413,7 @@ export class PDFGenerator {
 
     const rows = sortedInscricoes.map(inscricao => [
       inscricao.nome || 'Não informado',
-      inscricao.cpf || 'Não informado',
+      inscricao.cpf || inscricao.id || 'Não informado',
       inscricao.expand?.evento?.titulo || 'Não informado',
       inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado',
       Array.isArray(inscricao.produto)
@@ -483,14 +566,11 @@ export async function generatePDF(
   generator.generateInscricoesTable(inscricoes, produtos)
   generator.generatePedidosTable(pedidos, produtos)
 
-  const totalPages = doc.getNumberOfPages()
-  for (let i = 1; i <= totalPages; i++) {
-    doc.setPage(i)
-    // Adicionar footer apenas nas páginas que não têm tabelas com footer automático
-    if (i <= 3) { // Páginas 1, 2 e 3 (Capa, Sumário, Visão Geral)
-      generator.addFooter(i, totalPages)
-    }
-  }
+     const totalPages = doc.getNumberOfPages()
+   for (let i = 1; i <= totalPages; i++) {
+     doc.setPage(i)
+     generator.addFooter(i, totalPages)
+   }
 
   // Salvar PDF
   const fileName = isRelatorios
