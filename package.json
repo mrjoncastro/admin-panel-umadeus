@@ -6,6 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "render:build": "npm ci && npm run build",
     "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
     "test": "vitest",
     "test:ci": "vitest run",

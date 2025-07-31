@@ -49,6 +49,25 @@ Para saber mais sobre o Next.js consulte os recursos abaixo:
 
 Você também pode conferir o [repositório do Next.js no GitHub](https://github.com/vercel/next.js) para colaborar.
 
+## Deploy
+
+### Render.com
+
+Este projeto está configurado para deploy automático no Render.com. As configurações estão no arquivo `render.yaml`:
+
+**Configurações necessárias no Render:**
+- **Build Command**: `npm run render:build`
+- **Start Command**: `npm start`
+- **Environment**: Node.js
+- **Auto-Deploy**: Habilitado na branch `main`
+
+**Variáveis de ambiente no Render:**
+- `NODE_ENV=production`
+- `NEXT_TELEMETRY_DISABLED=1`
+- Configure suas variáveis do PocketBase (`POCKETBASE_URL`, etc.) conforme necessário
+
+O projeto usa PocketBase como backend, não PostgreSQL. Certifique-se de que não há configurações de banco PostgreSQL ou Sequelize nas configurações do Render.
+
 ## Deploy na Vercel
 
 A maneira mais simples de publicar a aplicação é utilizar a [Plataforma Vercel](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme), criada pelos desenvolvedores do Next.js.
