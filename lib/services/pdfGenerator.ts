@@ -335,7 +335,11 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Inscrições Detalhadas', this.margin, 75)
 
-    const rows = inscricoes.map(inscricao => [
+    const sortedInscricoes = [...inscricoes].sort((a, b) =>
+      (a.nome || '').localeCompare(b.nome || '', 'pt-BR'),
+    )
+
+    const rows = sortedInscricoes.map(inscricao => [
       inscricao.nome || 'Não informado',
       formatCpf(inscricao.cpf || inscricao.id),
       getEventoNome(inscricao.produto || '', produtos),
@@ -399,7 +403,11 @@ export class PDFGenerator {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('Pedidos Detalhados', this.margin, 75)
 
-    const rows = pedidos.map(pedido => [
+    const sortedPedidos = [...pedidos].sort((a, b) =>
+      getNomeCliente(a).localeCompare(getNomeCliente(b), 'pt-BR'),
+    )
+
+    const rows = sortedPedidos.map(pedido => [
       getNomeCliente(pedido),
       formatCpf(getCpfCliente(pedido)),
       pedido.expand?.campo?.nome || pedido.campo || 'Não informado',

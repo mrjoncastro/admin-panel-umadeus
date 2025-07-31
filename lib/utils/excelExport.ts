@@ -1,10 +1,18 @@
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
-import type { Inscricao, Pedido } from '../../types'
+import type { Inscricao, Pedido, Produto } from '../../types'
+import {
+  getNomeCliente,
+  getProdutoInfo,
+  getEventoNome,
+  formatCpf,
+  getCpfCliente,
+} from '@/lib/utils/pdfUtils'
 
 export interface ExportData {
   inscricoes: Inscricao[]
   pedidos: Pedido[]
+  produtos: Produto[]
   totalInscricoes: number
   totalPedidos: number
   valorTotal: number
@@ -26,33 +34,19 @@ export const exportToExcel = (data: ExportData, filename?: string) => {
   const resumoSheet = XLSX.utils.aoa_to_sheet(resumoData)
   XLSX.utils.book_append_sheet(workbook, resumoSheet, 'Resumo')
 
-  // Preparar dados das inscrições
+  const sortedInscricoes = [...data.inscricoes].sort((a, b) =>
+    (a.nome || '').localeCompare(b.nome || '', 'pt-BR'),
+  )
+
   const inscricoesData = [
-    [
-      'ID',
-      'Nome',
-      'Telefone',
-      'Status',
-      'Campo',
-      'Tamanho',
-      'Gênero',
-      'Data Nascimento',
-      'Data Criação',
-      'Criado Por',
-    ],
-    ...data.inscricoes.map((inscricao) => [
-      inscricao.id,
-      inscricao.nome,
-      inscricao.telefone,
-      inscricao.status,
-      inscricao.expand?.campo?.nome || 'N/A',
-      inscricao.tamanho || 'N/A',
-      inscricao.genero || 'N/A',
-      inscricao.data_nascimento || 'N/A',
-      inscricao.created
-        ? new Date(inscricao.created).toLocaleDateString('pt-BR')
-        : 'N/A',
-      inscricao.expand?.criado_por?.nome || 'N/A',
+    ['Nome', 'CPF', 'Evento', 'Campo', 'Produto', 'Status'],
+    ...sortedInscricoes.map(inscricao => [
+      inscricao.nome || 'Não informado',
+      formatCpf(inscricao.cpf || inscricao.id),
+      getEventoNome(inscricao.produto || '', data.produtos),
+      inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado',
+      getProdutoInfo(inscricao.produto || '', data.produtos),
+      inscricao.status || 'Não informado',
     ]),
   ]
 
@@ -61,38 +55,22 @@ export const exportToExcel = (data: ExportData, filename?: string) => {
   XLSX.utils.book_append_sheet(workbook, inscricoesSheet, 'Inscrições')
 
   // Preparar dados dos pedidos
+  const sortedPedidos = [...data.pedidos].sort((a, b) =>
+    getNomeCliente(a).localeCompare(getNomeCliente(b), 'pt-BR'),
+  )
+
   const pedidosData = [
-    [
-      'ID',
-      'ID Inscrição',
-      'Email',
-      'Status',
-      'Valor (R$)',
-      'Campo',
-      'Produto',
-      'Tamanho',
-      'Cor',
-      'Gênero',
-      'Canal',
-      'Data Criação',
-    ],
-    ...data.pedidos.map((pedido) => [
-      pedido.id,
-      pedido.id_inscricao,
-      pedido.email,
-      pedido.status,
-      Number(pedido.valor || 0).toFixed(2),
-      pedido.expand?.campo?.nome || 'N/A',
-      Array.isArray(pedido.expand?.produto)
-        ? pedido.expand?.produto[0]?.nome || 'N/A'
-        : pedido.expand?.produto?.nome || 'N/A',
-      pedido.tamanho || 'N/A',
-      pedido.cor || 'N/A',
-      pedido.genero || 'N/A',
-      pedido.canal || 'N/A',
-      pedido.created
-        ? new Date(pedido.created).toLocaleDateString('pt-BR')
-        : 'N/A',
+    ['Nome', 'CPF', 'Campo', 'Produto', 'Tamanho', 'Canal', 'Status'],
+    ...sortedPedidos.map(pedido => [
+      getNomeCliente(pedido),
+      formatCpf(getCpfCliente(pedido)),
+      pedido.expand?.campo?.nome || pedido.campo || 'Não informado',
+      pedido.produto
+        .map(prodId => getProdutoInfo(prodId, data.produtos))
+        .join(', '),
+      pedido.tamanho || 'Não informado',
+      pedido.canal || 'Não informado',
+      pedido.status || 'Não informado',
     ]),
   ]
 
@@ -151,36 +129,24 @@ export const exportToExcel = (data: ExportData, filename?: string) => {
 
 export const exportInscricoesToExcel = (
   inscricoes: Inscricao[],
+  produtos: Produto[],
   filename?: string,
 ) => {
   const workbook = XLSX.utils.book_new()
 
+  const sorted = [...inscricoes].sort((a, b) =>
+    (a.nome || '').localeCompare(b.nome || '', 'pt-BR'),
+  )
+
   const data = [
-    [
-      'ID',
-      'Nome',
-      'Telefone',
-      'Status',
-      'Campo',
-      'Tamanho',
-      'Gênero',
-      'Data Nascimento',
-      'Data Criação',
-      'Criado Por',
-    ],
-    ...inscricoes.map((inscricao) => [
-      inscricao.id,
-      inscricao.nome,
-      inscricao.telefone,
-      inscricao.status,
-      inscricao.expand?.campo?.nome || 'N/A',
-      inscricao.tamanho || 'N/A',
-      inscricao.genero || 'N/A',
-      inscricao.data_nascimento || 'N/A',
-      inscricao.created
-        ? new Date(inscricao.created).toLocaleDateString('pt-BR')
-        : 'N/A',
-      inscricao.expand?.criado_por?.nome || 'N/A',
+    ['Nome', 'CPF', 'Evento', 'Campo', 'Produto', 'Status'],
+    ...sorted.map(inscricao => [
+      inscricao.nome || 'Não informado',
+      formatCpf(inscricao.cpf || inscricao.id),
+      getEventoNome(inscricao.produto || '', produtos),
+      inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado',
+      getProdutoInfo(inscricao.produto || '', produtos),
+      inscricao.status || 'Não informado',
     ]),
   ]
 
@@ -197,41 +163,29 @@ export const exportInscricoesToExcel = (
   saveAs(blob, finalFilename)
 }
 
-export const exportPedidosToExcel = (pedidos: Pedido[], filename?: string) => {
+export const exportPedidosToExcel = (
+  pedidos: Pedido[],
+  produtos: Produto[],
+  filename?: string,
+) => {
   const workbook = XLSX.utils.book_new()
 
+  const sorted = [...pedidos].sort((a, b) =>
+    getNomeCliente(a).localeCompare(getNomeCliente(b), 'pt-BR'),
+  )
+
   const data = [
-    [
-      'ID',
-      'ID Inscrição',
-      'Email',
-      'Status',
-      'Valor (R$)',
-      'Campo',
-      'Produto',
-      'Tamanho',
-      'Cor',
-      'Gênero',
-      'Canal',
-      'Data Criação',
-    ],
-    ...pedidos.map((pedido) => [
-      pedido.id,
-      pedido.id_inscricao,
-      pedido.email,
-      pedido.status,
-      Number(pedido.valor || 0).toFixed(2),
-      pedido.expand?.campo?.nome || 'N/A',
-      Array.isArray(pedido.expand?.produto)
-        ? pedido.expand?.produto[0]?.nome || 'N/A'
-        : pedido.expand?.produto?.nome || 'N/A',
-      pedido.tamanho || 'N/A',
-      pedido.cor || 'N/A',
-      pedido.genero || 'N/A',
-      pedido.canal || 'N/A',
-      pedido.created
-        ? new Date(pedido.created).toLocaleDateString('pt-BR')
-        : 'N/A',
+    ['Nome', 'CPF', 'Campo', 'Produto', 'Tamanho', 'Canal', 'Status'],
+    ...sorted.map(pedido => [
+      getNomeCliente(pedido),
+      formatCpf(getCpfCliente(pedido)),
+      pedido.expand?.campo?.nome || pedido.campo || 'Não informado',
+      pedido.produto
+        .map(prodId => getProdutoInfo(prodId, produtos))
+        .join(', '),
+      pedido.tamanho || 'Não informado',
+      pedido.canal || 'Não informado',
+      pedido.status || 'Não informado',
     ]),
   ]
 
