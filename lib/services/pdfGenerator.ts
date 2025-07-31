@@ -65,50 +65,15 @@ export class PDFGenerator {
     this.doc.text('Sumário', this.margin, 40)
 
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
-    this.doc.text('1. Resumo Executivo', this.margin, 60)
-    this.doc.text('2. Panorama Geral - Pedidos', this.margin, 80)
-    this.doc.text('3. Panorama Geral - Inscrições', this.margin, 100)
-    this.doc.text('4. Tabelas de Análise', this.margin, 120)
-    this.doc.text('5. Tabelas de Pedidos', this.margin, 140)
+    this.doc.text('1. Panorama Geral - Pedidos', this.margin, 60)
+    this.doc.text('2. Panorama Geral - Inscrições', this.margin, 80)
+    this.doc.text('3. Tabelas de Análise', this.margin, 100)
+    this.doc.text('4. Tabelas de Pedidos', this.margin, 120)
   }
 
-  // Página 3 - Resumo Executivo
-  generateExecutiveSummary(
-    inscricoes: Inscricao[],
-    pedidos: Pedido[],
-    valorTotal: number,
-  ) {
-    this.doc.addPage()
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.SUBTITLE)
-    this.doc.setFont('helvetica', 'bold')
-    this.doc.text('Resumo Executivo', this.margin, 40)
 
-    const statusInscricoes = calculateInscricoesStatus(inscricoes)
-    const statusPedidos = calculatePedidosStatus(pedidos)
 
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
-    this.doc.text('Status das Inscrições:', this.margin, 70)
-    let y = 90
-    Object.entries(statusInscricoes).forEach(([status, count]) => {
-      this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.TABLE_DATA)
-      this.doc.text(`• ${status}: ${count}`, this.margin, y)
-      y += 10
-    })
-
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
-    this.doc.text('Status dos Pedidos:', this.margin, y + 20)
-    y += 40
-    Object.entries(statusPedidos).forEach(([status, count]) => {
-      this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.TABLE_DATA)
-      this.doc.text(`• ${status}: ${count}`, this.margin, y)
-      y += 10
-    })
-
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
-    this.doc.text(`Valor Total: R$ ${valorTotal.toFixed(2)}`, this.margin, y + 20)
-  }
-
-  // Página 4 - Panorama Geral Pedidos
+  // Página 3 - Panorama Geral Pedidos
   generatePedidosOverview(
     pedidos: Pedido[],
     produtos: Produto[],
@@ -161,7 +126,7 @@ export class PDFGenerator {
     this.generateCharts(resumoPorTamanho, statusPedidos, lastY + 20)
   }
 
-  // Página 5 - Panorama Geral Inscrições
+  // Página 4 - Panorama Geral Inscrições
   generateInscricoesOverview(
     inscricoes: Inscricao[],
     produtos: Produto[],
@@ -222,7 +187,7 @@ export class PDFGenerator {
     )
   }
 
-  // Página 6 - Tabelas de Inscrições
+  // Página 5 - Tabelas de Inscrições
   generateInscricoesTable(
     inscricoes: Inscricao[],
     produtos: Produto[],
@@ -285,7 +250,7 @@ export class PDFGenerator {
     })
   }
 
-  // Página 7 - Tabelas de Pedidos
+  // Página 6 - Tabelas de Pedidos
   generatePedidosTable(
     pedidos: Pedido[],
     produtos: Produto[],
@@ -575,7 +540,6 @@ export async function generatePDF(
   // Gerar páginas
   generator.generateCoverPage(isRelatorios, eventoSelecionado)
   generator.generateSummaryPage()
-  generator.generateExecutiveSummary(inscricoes, pedidos, valorTotal)
   generator.generatePedidosOverview(pedidos, produtos)
   generator.generateInscricoesOverview(inscricoes, produtos)
   generator.generateInscricoesTable(inscricoes, produtos)
