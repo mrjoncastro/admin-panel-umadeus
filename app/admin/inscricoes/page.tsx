@@ -52,7 +52,13 @@ type Inscricao = {
   data_nascimento?: string
   criado_por?: string
   pedido_id?: string | null
-  pedido_status?: 'pendente' | 'pago' | 'vencido' | 'cancelado' | null
+  pedido_status?:
+    | 'pendente'
+    | 'aguardando_pagamento'
+    | 'pago'
+    | 'vencido'
+    | 'cancelado'
+    | null
   pedido_vencimento?: string | null
   produto?: string
   produtoNome?: string
