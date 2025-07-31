@@ -29,7 +29,7 @@ export type Inscricao = {
     }
     pedido?: {
       id: string
-      status: 'pago' | 'pendente' | 'vencido' | 'cancelado'
+      status: 'pendente' | 'aguardando_pagamento' | 'pago' | 'vencido' | 'cancelado'
       valor: number | string
       vencimento?: string
     }
@@ -51,7 +51,7 @@ export type Pedido = {
   id_inscricao: string
   produto: string[]
   tamanho?: string
-  status: 'pendente' | 'pago' | 'vencido' | 'cancelado'
+  status: 'pendente' | 'aguardando_pagamento' | 'pago' | 'vencido' | 'cancelado'
   cor: string
   genero?: string
   data_nascimento?: string
@@ -78,7 +78,7 @@ export type Pedido = {
     }
     pedido?: {
       id: string
-      status: 'pago' | 'pendente' | 'vencido' | 'cancelado'
+      status: 'pendente' | 'aguardando_pagamento' | 'pago' | 'vencido' | 'cancelado'
       valor: number | string
     }
     id_inscricao?: {

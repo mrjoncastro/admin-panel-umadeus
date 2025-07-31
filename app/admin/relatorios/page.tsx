@@ -397,25 +397,12 @@ export default function RelatoriosPage() {
 
         const campoId = expandedUser?.expand?.campo?.id || user.campo
 
-        // DEBUG COMPLETO - DADOS BRUTOS DA API
-        console.log('=== DEBUG API - DADOS BRUTOS ===')
-        console.log('Raw inscrições:', rawInscricoes.length)
-        console.log('Primeiras 3 raw inscrições:', rawInscricoes.slice(0, 3).map((r: any) => ({
-          id: r.id,
-          nome: r.nome,
-          cpf: r.cpf,
-          cpfType: typeof r.cpf,
-          expand: r.expand,
-          criado_por: r.criado_por
-        })))
-        console.log('=== DEBUG API - FIM DADOS BRUTOS ===')
-
         const allInscricoes: Inscricao[] = rawInscricoes.map(
           (r: Inscricao) => ({
             id: r.id,
             nome: r.nome,
             telefone: r.telefone,
-            cpf: r.cpf, // DEBUG: Garantir que CPF está sendo mapeado
+            cpf: r.cpf,
             evento: r.expand?.evento?.titulo,
             status: r.status,
             created: r.created,
@@ -434,19 +421,6 @@ export default function RelatoriosPage() {
             },
           }),
         )
-
-        // DEBUG COMPLETO - DADOS MAPEADOS
-        console.log('=== DEBUG API - DADOS MAPEADOS ===')
-        console.log('All inscrições:', allInscricoes.length)
-        console.log('Primeiras 3 all inscrições:', allInscricoes.slice(0, 3).map(inscricao => ({
-          id: inscricao.id,
-          nome: inscricao.nome,
-          cpf: inscricao.cpf,
-          cpfType: typeof inscricao.cpf,
-          expand: inscricao.expand,
-          criado_por: inscricao.criado_por
-        })))
-        console.log('=== DEBUG API - FIM DADOS MAPEADOS ===')
 
         const allPedidos: Pedido[] = rawPedidos.map((r: Pedido) => ({
           id: r.id,
@@ -623,19 +597,6 @@ export default function RelatoriosPage() {
       const valorTotal = pedidosFiltrados
         .filter((p) => p.status === 'pago')
         .reduce((acc, p) => acc + Number(p.valor || 0), 0)
-
-      // DEBUG COMPLETO - ANTES DE ENVIAR PARA PDF
-      console.log('=== DEBUG RELATÓRIOS - ANTES DE ENVIAR PARA PDF ===')
-      console.log('Inscrições filtradas:', inscricoesFiltradas.length)
-      console.log('Primeiras 3 inscrições filtradas:', inscricoesFiltradas.slice(0, 3).map(inscricao => ({
-        id: inscricao.id,
-        nome: inscricao.nome,
-        cpf: inscricao.cpf,
-        cpfType: typeof inscricao.cpf,
-        expand: inscricao.expand,
-        criado_por: inscricao.criado_por
-      })))
-      console.log('=== DEBUG RELATÓRIOS - FIM ===')
 
       await generatePDF(
         inscricoesFiltradas,

@@ -40,24 +40,9 @@ export async function GET(req: NextRequest) {
     const sortParam = req.nextUrl.searchParams.get('sort') || '-created'
     const result = await pb.collection('inscricoes').getList(page, perPage, {
       filter: filtro,
-      expand: 'evento,campo,pedido,produto,criado_por.cpf',
+      expand: 'evento,campo,pedido,produto,criado_por',
       sort: sortParam,
     })
-    
-    // DEBUG COMPLETO - API INSCRIÇÕES
-    console.log('=== DEBUG API INSCRIÇÕES ===')
-    console.log('Total de inscrições retornadas:', result.items?.length || 0)
-    if (result.items && result.items.length > 0) {
-      console.log('Primeira inscrição:', {
-        id: result.items[0].id,
-        nome: result.items[0].nome,
-        cpf: result.items[0].cpf,
-        cpfType: typeof result.items[0].cpf,
-        expand: result.items[0].expand,
-        criado_por: result.items[0].criado_por
-      })
-    }
-    console.log('=== DEBUG API INSCRIÇÕES - FIM ===')
     
     return NextResponse.json(result, { status: 200 })
   } catch (err) {

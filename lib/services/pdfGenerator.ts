@@ -414,24 +414,6 @@ export class PDFGenerator {
     inscricoes: Inscricao[],
     produtos: Produto[],
   ) {
-    // DEBUG COMPLETO - CPF
-    console.log('=== DEBUG CPF - INÍCIO ===')
-    console.log('Total de inscrições:', inscricoes.length)
-    
-    inscricoes.forEach((inscricao, index) => {
-      console.log(`Inscrição ${index + 1}:`, {
-        id: inscricao.id,
-        nome: inscricao.nome,
-        cpf: inscricao.cpf,
-        cpfType: typeof inscricao.cpf,
-        cpfLength: inscricao.cpf ? inscricao.cpf.length : 'N/A',
-        expand: inscricao.expand,
-        criado_por: inscricao.criado_por,
-        expand_criado_por: inscricao.expand?.criado_por,
-      })
-    })
-    
-    console.log('=== DEBUG CPF - FIM ===')
     const headers = [
       'Nome',
       'CPF',
@@ -492,17 +474,8 @@ export class PDFGenerator {
     })
 
     const rows = sortedInscricoes.map(inscricao => {
-      // DEBUG CPF - PROCESSAMENTO
       const cpfValue = inscricao.cpf
       const cpfFormatted = cpfValue ? formatCpf(cpfValue) : 'Não informado'
-      
-      console.log('Processando CPF:', {
-        nome: inscricao.nome,
-        cpfOriginal: cpfValue,
-        cpfFormatted: cpfFormatted,
-        cpfType: typeof cpfValue,
-        cpfLength: cpfValue ? cpfValue.length : 'N/A'
-      })
       
       return [
         inscricao.nome || 'Não informado',
@@ -673,18 +646,6 @@ export async function generatePDF(
   produtos: Produto[],
   valorTotal: number
 ) {
-  // DEBUG COMPLETO - DADOS RECEBIDOS
-  console.log('=== DEBUG PDF - DADOS RECEBIDOS ===')
-  console.log('Inscrições recebidas:', inscricoes.length)
-  console.log('Primeiras 3 inscrições:', inscricoes.slice(0, 3).map(inscricao => ({
-    id: inscricao.id,
-    nome: inscricao.nome,
-    cpf: inscricao.cpf,
-    cpfType: typeof inscricao.cpf,
-    expand: inscricao.expand,
-    criado_por: inscricao.criado_por
-  })))
-  console.log('=== DEBUG PDF - FIM DADOS RECEBIDOS ===')
   const { default: jsPDF } = await import('jspdf')
   autoTable = (await import('jspdf-autotable')).default
   const doc = new jsPDF({ format: 'a4', unit: 'mm' })

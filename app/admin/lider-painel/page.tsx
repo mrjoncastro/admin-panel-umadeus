@@ -15,8 +15,8 @@ export default function LiderDashboardPage() {
   const [pedidos, setPedidos] = useState<Pedido[]>([])
 
   const [totais, setTotais] = useState({
-    inscricoes: { pendente: 0, confirmado: 0, cancelado: 0 },
-    pedidos: { pendente: 0, pago: 0, cancelado: 0, valorTotal: 0 },
+    inscricoes: { pendente: 0, aguardando_pagamento: 0, confirmado: 0, cancelado: 0 },
+    pedidos: { pendente: 0, aguardando_pagamento: 0, pago: 0, vencido: 0, cancelado: 0, valorTotal: 0 },
   })
 
   const [statusInscricao, setStatusInscricao] = useState<string>('')
@@ -172,7 +172,9 @@ export default function LiderDashboardPage() {
 
     const resumoPedidos = {
       pendente: pedidosFiltrados.filter((p) => p.status === 'pendente').length,
+      aguardando_pagamento: pedidosFiltrados.filter((p) => p.status === 'aguardando_pagamento').length,
       pago: pedidosFiltrados.filter((p) => p.status === 'pago').length,
+      vencido: pedidosFiltrados.filter((p) => p.status === 'vencido').length,
       cancelado: pedidosFiltrados.filter((p) => p.status === 'cancelado').length,
       valorTotal: pedidosFiltrados
         .filter((p) => p.status === 'pago')
@@ -181,6 +183,7 @@ export default function LiderDashboardPage() {
 
     const resumoInscricoes = {
       pendente: inscricoesFiltradas.filter((i) => i.status === 'pendente').length,
+      aguardando_pagamento: inscricoesFiltradas.filter((i) => i.status === 'aguardando_pagamento').length,
       confirmado: inscricoesFiltradas.filter((i) => i.status === 'confirmado')
         .length,
       cancelado: inscricoesFiltradas.filter((i) => i.status === 'cancelado')
@@ -208,6 +211,7 @@ export default function LiderDashboardPage() {
         <div className="card p-6 text-center">
           <h3 className="text-lg font-semibold mb-2">Inscrições</h3>
           <p>Pendentes: {totais.inscricoes.pendente}</p>
+          <p>Aguardando Pagamento: {totais.inscricoes.aguardando_pagamento}</p>
           <p>Confirmadas: {totais.inscricoes.confirmado}</p>
           <p>Canceladas: {totais.inscricoes.cancelado}</p>
           <p className="text-sm text-gray-600 mt-2">
@@ -218,7 +222,9 @@ export default function LiderDashboardPage() {
         <div className="card p-6 text-center">
           <h3 className="text-lg font-semibold mb-2">Pedidos</h3>
           <p>Pendentes: {totais.pedidos.pendente}</p>
+          <p>Aguardando Pagamento: {totais.pedidos.aguardando_pagamento}</p>
           <p>Pagos: {totais.pedidos.pago}</p>
+          <p>Vencidos: {totais.pedidos.vencido}</p>
           <p>Cancelados: {totais.pedidos.cancelado}</p>
           <p className="text-sm text-gray-600 mt-2">
             Total: {pedidos.length} pedidos

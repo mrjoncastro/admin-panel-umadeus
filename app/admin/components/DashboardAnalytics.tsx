@@ -199,6 +199,7 @@ export default function DashboardAnalytics({
           >
             <option value="">Todos</option>
             <option value="pendente">Pendente</option>
+            <option value="aguardando_pagamento">Aguardando Pagamento</option>
             <option value="pago">Pago</option>
             <option value="vencido">Vencido</option>
             <option value="cancelado">Cancelado</option>
