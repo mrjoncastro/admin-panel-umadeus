@@ -374,6 +374,7 @@ export default function RelatoriosPage() {
           ? eventosRes.items
           : eventosRes
         setEventos(eventos)
+        console.log('Eventos carregados:', eventos)
 
         if (!isMounted.current) return
 
