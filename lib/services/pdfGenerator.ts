@@ -214,31 +214,38 @@ export class PDFGenerator {
      this.doc.setFont('helvetica', 'bold')
      this.doc.text('Análise de Pedidos', this.margin, analyticsStartY - 10)
 
-     autoTable(this.doc, {
-       startY: analyticsStartY,
-       margin: { left: this.margin, right: this.margin },
-       head: [['Campo', 'Produto', 'Tamanho', 'Status', 'Total', '% do Total']],
-       body: pedAnalyticRows,
-       theme: 'striped',
-       headStyles: {
-         fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
-         fontStyle: 'bold',
-         halign: 'center',
-       },
-       styles: {
-         fontSize: 9,
-         cellPadding: 3,
-         overflow: 'linebreak',
-       },
-       columnStyles: {
-         0: { cellWidth: 25 },
-         1: { cellWidth: 30 },
-         2: { cellWidth: 20 },
-         3: { cellWidth: 25 },
-         4: { halign: 'right', cellWidth: 15 },
-         5: { halign: 'right', cellWidth: 15 }
-       },
-     })
+           autoTable(this.doc, {
+        startY: analyticsStartY,
+        margin: { left: this.margin, right: this.margin },
+        head: [['Campo', 'Produto', 'Tamanho', 'Status', 'Total', '% do Total']],
+        body: pedAnalyticRows,
+        theme: 'striped',
+        headStyles: {
+          fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+          fontStyle: 'bold',
+          halign: 'center',
+        },
+        styles: {
+          fontSize: 8,
+          cellPadding: 2,
+          overflow: 'linebreak',
+        },
+        columnStyles: {
+          0: { cellWidth: 25 },
+          1: { cellWidth: 30 },
+          2: { cellWidth: 20 },
+          3: { cellWidth: 25 },
+          4: { halign: 'right', cellWidth: 15 },
+          5: { halign: 'right', cellWidth: 15 }
+        },
+        pageBreak: 'auto',
+                 didDrawPage: (data: any) => {
+           // Adicionar footer em cada página da tabela
+           const pageNumber = data.pageNumber
+           const totalPages = data.pageCount
+           this.addFooter(pageNumber, totalPages)
+         }
+      })
   }
 
      // Métodos auxiliares para calcular dados analíticos
@@ -263,13 +270,27 @@ export class PDFGenerator {
       }
     })
 
-    // Calcular percentuais
-    const total = pedidos.length
-    const result = Array.from(analytics.values()).map(([campo, produto, tamanho, status, count]) =>
-      [campo, produto, tamanho, status, count, (count / total) * 100]
-    )
+         // Calcular percentuais
+     const total = pedidos.length
+     const result = Array.from(analytics.values()).map(([campo, produto, tamanho, status, count]) =>
+       [campo, produto, tamanho, status, count, (count / total) * 100]
+     )
 
-    return result.sort((a, b) => (b[4] as number) - (a[4] as number))
+     // Ordenar por nome do produto (ordem alfabética) e depois por tamanho
+     return result.sort((a, b) => {
+       const produtoA = (a[1] as string).toLowerCase()
+       const produtoB = (b[1] as string).toLowerCase()
+       
+       // Primeiro critério: ordem alfabética do produto
+       if (produtoA !== produtoB) {
+         return produtoA.localeCompare(produtoB, 'pt-BR')
+       }
+       
+       // Segundo critério: tamanho (se houver)
+       const tamanhoA = (a[2] as string).toLowerCase()
+       const tamanhoB = (b[2] as string).toLowerCase()
+       return tamanhoA.localeCompare(tamanhoB, 'pt-BR')
+     })
   }
 
 
@@ -461,7 +482,10 @@ export async function generatePDF(
   const totalPages = doc.getNumberOfPages()
   for (let i = 1; i <= totalPages; i++) {
     doc.setPage(i)
-    generator.addFooter(i, totalPages)
+    // Adicionar footer apenas nas páginas que não têm tabelas com footer automático
+    if (i <= 3) { // Páginas 1, 2 e 3 (Capa, Sumário, Visão Geral)
+      generator.addFooter(i, totalPages)
+    }
   }
 
   // Salvar PDF
