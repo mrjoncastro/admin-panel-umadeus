@@ -219,59 +219,70 @@ export class PDFGenerator {
       `${Number(percentage).toFixed(1)}%`
     ])
 
-    // Tabela Analítica de Inscrições (lado esquerdo)
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
-    this.doc.setFont('helvetica', 'bold')
-    this.doc.text('Inscritos', this.margin, analyticsStartY - 10)
+         // Tabela Analítica de Inscrições (largura total)
+     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
+     this.doc.setFont('helvetica', 'bold')
+     this.doc.text('Análise de Inscritos', this.margin, analyticsStartY - 10)
 
-    autoTable(this.doc, {
-      startY: analyticsStartY,
-      margin: { left: this.margin, right: this.pageWidth / 2 + 5 },
-      head: [['Campo', 'Evento', 'Status', 'Inscritos', '% do Total']],
-      body: inscAnalyticRows,
-      theme: 'striped',
-      headStyles: {
-        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
-        fontStyle: 'bold',
-        halign: 'center',
-      },
-      styles: {
-        fontSize: 8,
-        cellPadding: 2,
-        overflow: 'linebreak',
-      },
-      columnStyles: {
-        3: { halign: 'right' },
-        4: { halign: 'right' }
-      },
-    })
+     autoTable(this.doc, {
+       startY: analyticsStartY,
+       margin: { left: this.margin, right: this.margin },
+       head: [['Campo', 'Evento', 'Status', 'Inscritos', '% do Total']],
+       body: inscAnalyticRows,
+       theme: 'striped',
+       headStyles: {
+         fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+         fontStyle: 'bold',
+         halign: 'center',
+       },
+       styles: {
+         fontSize: 9,
+         cellPadding: 3,
+         overflow: 'linebreak',
+       },
+       columnStyles: {
+         0: { cellWidth: 30 },
+         1: { cellWidth: 35 },
+         2: { cellWidth: 25 },
+         3: { halign: 'right', cellWidth: 20 },
+         4: { halign: 'right', cellWidth: 20 }
+       },
+     })
 
-    // Tabela Analítica de Pedidos (lado direito)
-    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
-    this.doc.setFont('helvetica', 'bold')
-    this.doc.text('Pedidos', this.pageWidth / 2 + 5, analyticsStartY - 10)
+     // Obter posição Y após a primeira tabela analítica
+     const lastAutoTable1 = (this.doc as any).lastAutoTable
+     const firstAnalyticsEndY = lastAutoTable1 ? lastAutoTable1.finalY : analyticsStartY + 50
 
-    autoTable(this.doc, {
-      startY: analyticsStartY,
-      margin: { left: this.pageWidth / 2 + 5, right: this.margin },
-      head: [['Campo', 'Produto', 'Tamanho', 'Status', 'Total', '% do Total']],
-      body: pedAnalyticRows,
-      theme: 'striped',
-      headStyles: {
-        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
-        fontStyle: 'bold',
-        halign: 'center',
-      },
-      styles: {
-        fontSize: 8,
-        cellPadding: 2,
-        overflow: 'linebreak',
-      },
-      columnStyles: {
-        4: { halign: 'right' },
-        5: { halign: 'right' }
-      },
-    })
+     // Tabela Analítica de Pedidos (largura total, abaixo da primeira)
+     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
+     this.doc.setFont('helvetica', 'bold')
+     this.doc.text('Análise de Pedidos', this.margin, firstAnalyticsEndY + 10)
+
+     autoTable(this.doc, {
+       startY: firstAnalyticsEndY + 20,
+       margin: { left: this.margin, right: this.margin },
+       head: [['Campo', 'Produto', 'Tamanho', 'Status', 'Total', '% do Total']],
+       body: pedAnalyticRows,
+       theme: 'striped',
+       headStyles: {
+         fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+         fontStyle: 'bold',
+         halign: 'center',
+       },
+       styles: {
+         fontSize: 9,
+         cellPadding: 3,
+         overflow: 'linebreak',
+       },
+       columnStyles: {
+         0: { cellWidth: 25 },
+         1: { cellWidth: 30 },
+         2: { cellWidth: 20 },
+         3: { cellWidth: 25 },
+         4: { halign: 'right', cellWidth: 15 },
+         5: { halign: 'right', cellWidth: 15 }
+       },
+     })
   }
 
   // Métodos auxiliares para calcular dados analíticos
