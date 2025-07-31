@@ -70,9 +70,22 @@ export class PDFGenerator {
 
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
     this.doc.text('1. Visão Geral Executiva', this.margin, 60)
-    this.doc.text('2. Pedidos x Tamanhos', this.margin, 80)
-    this.doc.text('3. Tabelas de Inscrições', this.margin, 100)
-    this.doc.text('4. Tabelas de Pedidos', this.margin, 120)
+    this.doc.text('  1.1. KPIs e Resumo', this.margin, 75)
+    this.doc.text('  1.2. Inscrições por Status', this.margin, 90)
+    this.doc.text('  1.3. Pedidos por Status', this.margin, 105)
+    this.doc.text('  1.4. Totais por Produto', this.margin, 120)
+    this.doc.text('2. Pedidos x Tamanhos', this.margin, 140)
+    this.doc.text('3. Inscrições por Status', this.margin, 160)
+    this.doc.text('  3.1. Inscrições Pendentes', this.margin, 175)
+    this.doc.text('  3.2. Inscrições Aguardando Pagamento', this.margin, 190)
+    this.doc.text('  3.3. Inscrições Confirmadas', this.margin, 205)
+    this.doc.text('  3.4. Inscrições Canceladas', this.margin, 220)
+    this.doc.text('4. Pedidos por Status', this.margin, 240)
+    this.doc.text('  4.1. Pedidos Pendentes', this.margin, 255)
+    this.doc.text('  4.2. Pedidos Aguardando Pagamento', this.margin, 270)
+    this.doc.text('  4.3. Pedidos Pagos', this.margin, 285)
+    this.doc.text('  4.4. Pedidos Vencidos', this.margin, 300)
+    this.doc.text('  4.5. Pedidos Cancelados', this.margin, 315)
   }
 
   // Página 3 - Visão Geral Executiva 
@@ -133,71 +146,34 @@ export class PDFGenerator {
     // Resetar cor do texto
     this.doc.setTextColor(0, 0, 0)
 
-    // Preparar dados das tabelas de status com percentuais
-    const inscrRows = Object.entries(statusInscricoes).map(([status, count]) => [
-      status,
-      count.toString(),
-      `${((count / totalInscricoes) * 100).toFixed(1)}%`
-    ])
-    inscrRows.push(['Total', totalInscricoes.toString(), '100%'])
+    // Seção de Inscrições por Status
+    const inscricoesStartY = cardStartY + cardHeight + 20
+    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
+    this.doc.setFont('helvetica', 'bold')
+    this.doc.text('Inscrições por Status', this.margin, inscricoesStartY - 10)
 
-    const pedRows = Object.entries(statusPedidos).map(([status, count]) => [
-      status,
-      count.toString(),
-      `${((count / totalPedidos) * 100).toFixed(1)}%`
-    ])
-    pedRows.push(['Total', totalPedidos.toString(), '100%'])
+    // Gerar tabelas de inscrições por status na visão geral
+    this.generateOverviewInscricoesByStatus(inscricoes, produtos, inscricoesStartY)
 
-    // Tabela de Status Inscrições (lado esquerdo)
-    autoTable(this.doc, {
-      startY: cardStartY + cardHeight + 20,
-      margin: { left: 10, right: this.pageWidth / 2 + 5 },
-      head: [['Status', 'Qtd', '%']],
-      body: inscrRows,
-      theme: 'striped',
-      headStyles: {
-        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
-        fontStyle: 'bold',
-        halign: 'center',
-      },
-      styles: {
-        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
-        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
-      },
-      columnStyles: {
-        1: { halign: 'right' },
-        2: { halign: 'right' }
-      },
-    })
-
-    // Tabela de Status Pedidos (lado direito)
-    autoTable(this.doc, {
-      startY: cardStartY + cardHeight + 20,
-      margin: { left: this.pageWidth / 2 + 5, right: 10 },
-      head: [['Status', 'Qtd', '%']],
-      body: pedRows,
-      theme: 'striped',
-      headStyles: {
-        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
-        fontStyle: 'bold',
-        halign: 'center',
-      },
-      styles: {
-        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
-        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
-      },
-      columnStyles: {
-        1: { halign: 'right' },
-        2: { halign: 'right' }
-      },
-    })
-
-    // Obter posição Y após as tabelas de status
+    // Obter posição Y após as tabelas de inscrições
     const lastAutoTable = (this.doc as any).lastAutoTable
-    const statusTablesEndY = lastAutoTable ? lastAutoTable.finalY : cardStartY + cardHeight + 80
+    const inscricoesEndY = lastAutoTable ? lastAutoTable.finalY : inscricoesStartY + 100
+
+    // Seção de Pedidos por Status
+    const pedidosStartY = inscricoesEndY + 20
+    this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
+    this.doc.setFont('helvetica', 'bold')
+    this.doc.text('Pedidos por Status', this.margin, pedidosStartY - 10)
+
+    // Gerar tabelas de pedidos por status na visão geral
+    this.generateOverviewPedidosByStatus(pedidos, produtos, pedidosStartY)
+
+    // Obter posição Y após as tabelas de pedidos
+    const lastAutoTable2 = (this.doc as any).lastAutoTable
+    const pedidosEndY = lastAutoTable2 ? lastAutoTable2.finalY : pedidosStartY + 100
 
     // Tabela de Totais por Produto (sem tamanho)
-    const totalsStartY = statusTablesEndY + 20
+    const totalsStartY = pedidosEndY + 20
 
     // Preparar dados de totais por produto
     const pedTotalsData = this.calculatePedidosTotals(pedidos, produtos)
@@ -244,6 +220,200 @@ export class PDFGenerator {
     const totalsTableEndY = lastTotalsTable ? lastTotalsTable.finalY : totalsStartY + 60
 
     // Tabela Analítica de Pedidos será movida para nova página
+  }
+
+  // Função auxiliar para gerar tabelas de inscrições por status na visão geral
+  private generateOverviewInscricoesByStatus(
+    inscricoes: Inscricao[],
+    produtos: Produto[],
+    startY: number,
+  ) {
+    const statuses = [
+      { status: 'pendente', label: 'Pendentes' },
+      { status: 'aguardando_pagamento', label: 'Aguardando Pagamento' },
+      { status: 'confirmado', label: 'Confirmadas' },
+      { status: 'cancelado', label: 'Canceladas' },
+    ]
+
+    let currentY = startY
+
+    statuses.forEach(({ status, label }) => {
+      const filteredInscricoes = inscricoes.filter(i => i.status === status)
+      
+      if (filteredInscricoes.length === 0) {
+        return // Pular se não há inscrições com este status
+      }
+
+      // Título da subseção
+      this.doc.setFontSize(12)
+      this.doc.setFont('helvetica', 'bold')
+      this.doc.text(`Inscrições ${label} (${filteredInscricoes.length})`, this.margin, currentY)
+
+      // Ordenar inscrições
+      const sortedInscricoes = [...filteredInscricoes].sort((a, b) => {
+        const campoA = (a.expand?.campo?.nome || a.campo || '').toLowerCase().trim()
+        const campoB = (b.expand?.campo?.nome || b.campo || '').toLowerCase().trim()
+        if (campoA !== campoB) {
+          return campoA.localeCompare(campoB, 'pt-BR', { numeric: true })
+        }
+
+        const nomeA = (a.nome || '').toLowerCase().trim()
+        const nomeB = (b.nome || '').toLowerCase().trim()
+        if (nomeA !== nomeB) {
+          return nomeA.localeCompare(nomeB, 'pt-BR', { numeric: true })
+        }
+
+        const produtoA = Array.isArray(a.produto)
+          ? a.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
+          : getProdutoInfo(a.produto || '', produtos)
+        const produtoB = Array.isArray(b.produto)
+          ? b.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
+          : getProdutoInfo(b.produto || '', produtos)
+        if (produtoA !== produtoB) {
+          return produtoA.toLowerCase().trim().localeCompare(produtoB.toLowerCase().trim(), 'pt-BR', { numeric: true })
+        }
+
+        return 0
+      })
+
+      // Preparar dados da tabela
+      const rows = sortedInscricoes.map(inscricao => {
+        const cpfValue = inscricao.cpf
+        const cpfFormatted = cpfValue ? formatCpf(cpfValue) : 'Não informado'
+        
+        return [
+          inscricao.nome || 'Não informado',
+          cpfFormatted,
+          inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado',
+          Array.isArray(inscricao.produto)
+            ? inscricao.produto.map((prodId: string) => getProdutoInfo(prodId, produtos)).join(', ')
+            : getProdutoInfo(inscricao.produto || '', produtos),
+        ]
+      })
+
+      // Gerar tabela
+      autoTable(this.doc, {
+        startY: currentY + 5,
+        margin: { left: this.margin, right: this.margin },
+        head: [['Nome', 'CPF', 'Campo', 'Produto']],
+        body: rows,
+        theme: 'striped',
+        headStyles: {
+          fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+          fontStyle: 'bold',
+          halign: 'center',
+        },
+        styles: {
+          fontSize: 8,
+          cellPadding: 2,
+          overflow: 'linebreak',
+        },
+        columnStyles: {
+          0: { cellWidth: 45, overflow: 'linebreak' },
+          1: { cellWidth: 30, halign: 'right' },
+          2: { cellWidth: 35, overflow: 'linebreak' },
+          3: { cellWidth: 45, overflow: 'linebreak' },
+        },
+      })
+
+      // Atualizar posição Y para próxima tabela
+      const lastAutoTable = (this.doc as any).lastAutoTable
+      currentY = lastAutoTable ? lastAutoTable.finalY + 10 : currentY + 50
+    })
+  }
+
+  // Função auxiliar para gerar tabelas de pedidos por status na visão geral
+  private generateOverviewPedidosByStatus(
+    pedidos: Pedido[],
+    produtos: Produto[],
+    startY: number,
+  ) {
+    const statuses = [
+      { status: 'pendente', label: 'Pendentes' },
+      { status: 'aguardando_pagamento', label: 'Aguardando Pagamento' },
+      { status: 'pago', label: 'Pagos' },
+      { status: 'vencido', label: 'Vencidos' },
+      { status: 'cancelado', label: 'Cancelados' },
+    ]
+
+    let currentY = startY
+
+    statuses.forEach(({ status, label }) => {
+      const filteredPedidos = pedidos.filter(p => p.status === status)
+      
+      if (filteredPedidos.length === 0) {
+        return // Pular se não há pedidos com este status
+      }
+
+      // Título da subseção
+      this.doc.setFontSize(12)
+      this.doc.setFont('helvetica', 'bold')
+      this.doc.text(`Pedidos ${label} (${filteredPedidos.length})`, this.margin, currentY)
+
+      // Ordenar pedidos
+      const sortedPedidos = [...filteredPedidos].sort((a, b) => {
+        const campoA = (a.expand?.campo?.nome || a.campo || '').toLowerCase().trim()
+        const campoB = (b.expand?.campo?.nome || b.campo || '').toLowerCase().trim()
+        if (campoA !== campoB) {
+          return campoA.localeCompare(campoB, 'pt-BR', { numeric: true })
+        }
+
+        const nomeA = getNomeCliente(a).toLowerCase().trim()
+        const nomeB = getNomeCliente(b).toLowerCase().trim()
+        if (nomeA !== nomeB) {
+          return nomeA.localeCompare(nomeB, 'pt-BR', { numeric: true })
+        }
+
+        const produtoA = a.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
+        const produtoB = b.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', ')
+        if (produtoA !== produtoB) {
+          return produtoA.toLowerCase().trim().localeCompare(produtoB.toLowerCase().trim(), 'pt-BR', { numeric: true })
+        }
+
+        return 0
+      })
+
+      // Preparar dados da tabela
+      const rows = sortedPedidos.map(pedido => [
+        getNomeCliente(pedido),
+        formatCpf(getCpfCliente(pedido)),
+        pedido.expand?.campo?.nome || pedido.campo || 'Não informado',
+        pedido.produto.map(prodId => getProdutoInfo(prodId, produtos)).join(', '),
+        pedido.tamanho || 'Não informado',
+        `R$ ${Number(pedido.valor || 0).toFixed(2)}`,
+      ])
+
+      // Gerar tabela
+      autoTable(this.doc, {
+        startY: currentY + 5,
+        margin: { left: this.margin, right: this.margin },
+        head: [['Nome', 'CPF', 'Campo', 'Produto', 'Tamanho', 'Valor']],
+        body: rows,
+        theme: 'striped',
+        headStyles: {
+          fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+          fontStyle: 'bold',
+          halign: 'center',
+        },
+        styles: {
+          fontSize: 8,
+          cellPadding: 2,
+          overflow: 'linebreak',
+        },
+        columnStyles: {
+          0: { cellWidth: 35, overflow: 'linebreak' },
+          1: { cellWidth: 25, halign: 'right' },
+          2: { cellWidth: 25, overflow: 'linebreak' },
+          3: { cellWidth: 30, overflow: 'linebreak' },
+          4: { cellWidth: 20, halign: 'center' },
+          5: { cellWidth: 25, halign: 'right' },
+        },
+      })
+
+      // Atualizar posição Y para próxima tabela
+      const lastAutoTable = (this.doc as any).lastAutoTable
+      currentY = lastAutoTable ? lastAutoTable.finalY + 10 : currentY + 50
+    })
   }
 
   // Página 4 - Análise de Pedidos
@@ -410,10 +580,19 @@ export class PDFGenerator {
 
 
   // Página 5 - Tabelas de Inscrições
-  generateInscricoesTable(
+  // Função auxiliar para gerar tabela de inscrições por status
+  private generateInscricoesByStatus(
     inscricoes: Inscricao[],
     produtos: Produto[],
+    status: string,
+    statusLabel: string,
   ) {
+    const filteredInscricoes = inscricoes.filter(i => i.status === status)
+    
+    if (filteredInscricoes.length === 0) {
+      return // Não criar página se não há inscrições com este status
+    }
+
     const headers = [
       'Nome',
       'CPF',
@@ -423,18 +602,17 @@ export class PDFGenerator {
       'Status',
     ]
 
-    const orientation = 'landscape'
     this.doc.addPage('l')
     this.pageWidth = this.doc.internal.pageSize.getWidth()
     this.pageHeight = this.doc.internal.pageSize.getHeight()
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.SUBTITLE)
     this.doc.setFont('helvetica', 'bold')
-    this.doc.text('Tabelas de Inscrições Detalhadas', this.margin, 40)
+    this.doc.text('Inscrições por Status', this.margin, 40)
 
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
-    this.doc.text('Inscrições Detalhadas', this.margin, 75)
+    this.doc.text(`Inscrições ${statusLabel} (${filteredInscricoes.length})`, this.margin, 75)
 
-    const sortedInscricoes = [...inscricoes].sort((a, b) => {
+    const sortedInscricoes = [...filteredInscricoes].sort((a, b) => {
       // 1. Ordem alfabética dos campos
       const campoA = (a.expand?.campo?.nome || a.campo || '').toLowerCase().trim()
       const campoB = (b.expand?.campo?.nome || b.campo || '').toLowerCase().trim()
@@ -467,10 +645,7 @@ export class PDFGenerator {
         return tamanhoA.localeCompare(tamanhoB, 'pt-BR', { numeric: true })
       }
 
-      // 5. Ordem alfabética dos status
-      const statusA = (a.status || '').toLowerCase().trim()
-      const statusB = (b.status || '').toLowerCase().trim()
-      return statusA.localeCompare(statusB, 'pt-BR', { numeric: true })
+      return 0 // Mesmo status, então ordem alfabética já foi aplicada
     })
 
     const rows = sortedInscricoes.map(inscricao => {
@@ -523,11 +698,37 @@ export class PDFGenerator {
     })
   }
 
-  // Página 6 - Tabelas de Pedidos
-  generatePedidosTable(
-    pedidos: Pedido[],
+  // Gerar todas as tabelas de inscrições por status
+  generateInscricoesByStatusTables(
+    inscricoes: Inscricao[],
     produtos: Produto[],
   ) {
+    // Inscrições Pendentes
+    this.generateInscricoesByStatus(inscricoes, produtos, 'pendente', 'Pendentes')
+    
+    // Inscrições Aguardando Pagamento
+    this.generateInscricoesByStatus(inscricoes, produtos, 'aguardando_pagamento', 'Aguardando Pagamento')
+    
+    // Inscrições Confirmadas
+    this.generateInscricoesByStatus(inscricoes, produtos, 'confirmado', 'Confirmadas')
+    
+    // Inscrições Canceladas
+    this.generateInscricoesByStatus(inscricoes, produtos, 'cancelado', 'Canceladas')
+  }
+
+  // Função auxiliar para gerar tabela de pedidos por status
+  private generatePedidosByStatus(
+    pedidos: Pedido[],
+    produtos: Produto[],
+    status: string,
+    statusLabel: string,
+  ) {
+    const filteredPedidos = pedidos.filter(p => p.status === status)
+    
+    if (filteredPedidos.length === 0) {
+      return // Não criar página se não há pedidos com este status
+    }
+
     const headers = [
       'Nome',
       'CPF',
@@ -538,18 +739,17 @@ export class PDFGenerator {
       'Status',
     ]
 
-    const orientation = 'landscape'
     this.doc.addPage('l')
     this.pageWidth = this.doc.internal.pageSize.getWidth()
     this.pageHeight = this.doc.internal.pageSize.getHeight()
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.SUBTITLE)
     this.doc.setFont('helvetica', 'bold')
-    this.doc.text('Tabelas de Pedidos', this.margin, 40)
+    this.doc.text('Pedidos por Status', this.margin, 40)
 
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
-    this.doc.text('Pedidos Detalhados', this.margin, 75)
+    this.doc.text(`Pedidos ${statusLabel} (${filteredPedidos.length})`, this.margin, 75)
 
-    const sortedPedidos = [...pedidos].sort((a, b) => {
+    const sortedPedidos = [...filteredPedidos].sort((a, b) => {
       // 1. Ordem alfabética dos campos
       const campoA = (a.expand?.campo?.nome || a.campo || '').toLowerCase().trim()
       const campoB = (b.expand?.campo?.nome || b.campo || '').toLowerCase().trim()
@@ -578,10 +778,7 @@ export class PDFGenerator {
         return tamanhoA.localeCompare(tamanhoB, 'pt-BR', { numeric: true })
       }
 
-      // 5. Ordem alfabética dos status
-      const statusA = (a.status || '').toLowerCase().trim()
-      const statusB = (b.status || '').toLowerCase().trim()
-      return statusA.localeCompare(statusB, 'pt-BR', { numeric: true })
+      return 0 // Mesmo status, então ordem alfabética já foi aplicada
     })
 
     const rows = sortedPedidos.map(pedido => [
@@ -629,6 +826,27 @@ export class PDFGenerator {
     })
   }
 
+  // Gerar todas as tabelas de pedidos por status
+  generatePedidosByStatusTables(
+    pedidos: Pedido[],
+    produtos: Produto[],
+  ) {
+    // Pedidos Pendentes
+    this.generatePedidosByStatus(pedidos, produtos, 'pendente', 'Pendentes')
+    
+    // Pedidos Aguardando Pagamento
+    this.generatePedidosByStatus(pedidos, produtos, 'aguardando_pagamento', 'Aguardando Pagamento')
+    
+    // Pedidos Pagos
+    this.generatePedidosByStatus(pedidos, produtos, 'pago', 'Pagos')
+    
+    // Pedidos Vencidos
+    this.generatePedidosByStatus(pedidos, produtos, 'vencido', 'Vencidos')
+    
+    // Pedidos Cancelados
+    this.generatePedidosByStatus(pedidos, produtos, 'cancelado', 'Cancelados')
+  }
+
 
 
 
@@ -662,8 +880,8 @@ export async function generatePDF(
   generator.generateSummaryPage()
   generator.generateOverviewPage(inscricoes, pedidos, produtos, valorTotal)
   generator.generatePedidosAnalyticsPage(pedidos, produtos)
-  generator.generateInscricoesTable(inscricoes, produtos)
-  generator.generatePedidosTable(pedidos, produtos)
+  generator.generateInscricoesByStatusTables(inscricoes, produtos)
+  generator.generatePedidosByStatusTables(pedidos, produtos)
 
   const totalPages = doc.getNumberOfPages()
   for (let i = 1; i <= totalPages; i++) {
