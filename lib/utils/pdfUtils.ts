@@ -21,7 +21,7 @@ export const PDF_CONSTANTS = {
     PINK: [236, 72, 153],      // Rosa
     LIGHT_BLUE: [14, 165, 233], // Azul claro
     // Cores para tabelas
-    HEADER_BG: [200, 200, 200], // Cinza claro para cabeçalhos
+    HEADER_BG: [84, 22, 9], // Night
     ROW_ALT_BG: [242, 242, 242], // Cinza mais claro para zebra striping
     BORDER: [200, 200, 200],   // Cor da borda das tabelas
   },

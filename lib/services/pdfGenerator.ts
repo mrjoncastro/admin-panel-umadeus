@@ -195,71 +195,27 @@ export class PDFGenerator {
     const lastAutoTable = (this.doc as any).lastAutoTable
     const statusTablesEndY = lastAutoTable ? lastAutoTable.finalY : cardStartY + cardHeight + 80
 
-    // Tabelas Analíticas
-    const analyticsStartY = statusTablesEndY + 20
+         // Tabela Analítica de Pedidos
+     const analyticsStartY = statusTablesEndY + 20
 
-    // Preparar dados analíticos de inscrições
-    const inscAnalyticData = this.calculateInscricoesAnalytics(inscricoes, produtos)
-    const inscAnalyticRows = inscAnalyticData.map(([campo, evento, status, count, percentage]) => [
-      campo,
-      evento,
-      status,
-      count.toString(),
-      `${Number(percentage).toFixed(1)}%`
-    ])
+     // Preparar dados analíticos de pedidos
+     const pedAnalyticData = this.calculatePedidosAnalytics(pedidos, produtos)
+     const pedAnalyticRows = pedAnalyticData.map(([campo, produto, tamanho, status, count, percentage]) => [
+       campo,
+       produto,
+       tamanho,
+       status,
+       count.toString(),
+       `${Number(percentage).toFixed(1)}%`
+     ])
 
-    // Preparar dados analíticos de pedidos
-    const pedAnalyticData = this.calculatePedidosAnalytics(pedidos, produtos)
-    const pedAnalyticRows = pedAnalyticData.map(([campo, produto, tamanho, status, count, percentage]) => [
-      campo,
-      produto,
-      tamanho,
-      status,
-      count.toString(),
-      `${Number(percentage).toFixed(1)}%`
-    ])
-
-         // Tabela Analítica de Inscrições (largura total)
+     // Tabela Analítica de Pedidos (largura total)
      this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
      this.doc.setFont('helvetica', 'bold')
-     this.doc.text('Análise de Inscritos', this.margin, analyticsStartY - 10)
+     this.doc.text('Análise de Pedidos', this.margin, analyticsStartY - 10)
 
      autoTable(this.doc, {
        startY: analyticsStartY,
-       margin: { left: this.margin, right: this.margin },
-       head: [['Campo', 'Evento', 'Status', 'Inscritos', '% do Total']],
-       body: inscAnalyticRows,
-       theme: 'striped',
-       headStyles: {
-         fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
-         fontStyle: 'bold',
-         halign: 'center',
-       },
-       styles: {
-         fontSize: 9,
-         cellPadding: 3,
-         overflow: 'linebreak',
-       },
-       columnStyles: {
-         0: { cellWidth: 30 },
-         1: { cellWidth: 35 },
-         2: { cellWidth: 25 },
-         3: { halign: 'right', cellWidth: 20 },
-         4: { halign: 'right', cellWidth: 20 }
-       },
-     })
-
-     // Obter posição Y após a primeira tabela analítica
-     const lastAutoTable1 = (this.doc as any).lastAutoTable
-     const firstAnalyticsEndY = lastAutoTable1 ? lastAutoTable1.finalY : analyticsStartY + 50
-
-     // Tabela Analítica de Pedidos (largura total, abaixo da primeira)
-     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.HEADER)
-     this.doc.setFont('helvetica', 'bold')
-     this.doc.text('Análise de Pedidos', this.margin, firstAnalyticsEndY + 10)
-
-     autoTable(this.doc, {
-       startY: firstAnalyticsEndY + 20,
        margin: { left: this.margin, right: this.margin },
        head: [['Campo', 'Produto', 'Tamanho', 'Status', 'Total', '% do Total']],
        body: pedAnalyticRows,
@@ -285,33 +241,7 @@ export class PDFGenerator {
      })
   }
 
-  // Métodos auxiliares para calcular dados analíticos
-  private calculateInscricoesAnalytics(inscricoes: Inscricao[], produtos: Produto[]) {
-    const analytics = new Map<string, [string, string, string, number, number]>()
-
-    inscricoes.forEach(inscricao => {
-      // Para inscrições, usar o campo diretamente
-      const campo = inscricao.expand?.campo?.nome || 'N/A'
-      const evento = inscricao.expand?.evento?.titulo || ''
-      const status = inscricao.status || 'N/A'
-      const key = `${campo}-${evento}-${status}`
-
-      if (analytics.has(key)) {
-        const [, , , count] = analytics.get(key)!
-        analytics.set(key, [campo, evento, status, count + 1, 0])
-      } else {
-        analytics.set(key, [campo, evento, status, 1, 0])
-      }
-    })
-
-    // Calcular percentuais
-    const total = inscricoes.length
-    const result = Array.from(analytics.values()).map(([campo, evento, status, count]) =>
-      [campo, evento, status, count, (count / total) * 100]
-    )
-
-    return result.sort((a, b) => (b[3] as number) - (a[3] as number))
-  }
+     // Métodos auxiliares para calcular dados analíticos
 
   private calculatePedidosAnalytics(pedidos: Pedido[], produtos: Produto[]) {
     const analytics = new Map<string, [string, string, string, string, number, number]>()
@@ -498,8 +428,8 @@ export class PDFGenerator {
 
   public addFooter(pageNumber: number, totalPages: number) {
     this.doc.setFontSize(PDF_CONSTANTS.FONT_SIZES.FOOTER)
-    this.doc.text(`Página ${pageNumber} de ${totalPages}`, this.pageWidth / 2, this.pageHeight - 20, { align: 'center' })
-    this.doc.text('Desenvolvido por M24', this.pageWidth - this.margin, this.pageHeight - 20, { align: 'right' })
+    this.doc.text(`Página ${pageNumber} de ${totalPages}`, this.pageWidth / 2, this.pageHeight - 10, { align: 'center' })
+    this.doc.text('Desenvolvido por M24', this.pageWidth - this.margin, this.pageHeight - 10, { align: 'right' })
   }
 
 }
