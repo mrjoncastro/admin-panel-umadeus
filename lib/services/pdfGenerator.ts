@@ -417,8 +417,8 @@ export class PDFGenerator {
         2: { cellWidth: 25, overflow: 'linebreak' },
         3: { cellWidth: 30, overflow: 'linebreak' },
         4: { cellWidth: 20 },
-        5: { cellWidth: 24 },
-        6: { cellWidth: 18 },
+        5: { cellWidth: 24, halign: 'center' },
+        6: { cellWidth: 18, halign: 'center' },
       },
     })
   }
