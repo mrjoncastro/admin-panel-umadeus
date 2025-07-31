@@ -378,6 +378,11 @@ export class PDFGenerator {
       head: [headers],
       body: rows,
       theme: 'grid',
+      alternateRowStyles: {
+        fillColor: PDF_CONSTANTS.COLORS.ROW_ALT_BG as [number, number, number],
+      },
+      tableLineWidth: 0.1,
+      tableLineColor: PDF_CONSTANTS.COLORS.BORDER as [number, number, number],
       margin: { left: this.margin, right: this.margin },
       headStyles: {
         fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
@@ -447,6 +452,11 @@ export class PDFGenerator {
       head: [headers],
       body: rows,
       theme: 'grid',
+      alternateRowStyles: {
+        fillColor: PDF_CONSTANTS.COLORS.ROW_ALT_BG as [number, number, number],
+      },
+      tableLineWidth: 0.1,
+      tableLineColor: PDF_CONSTANTS.COLORS.BORDER as [number, number, number],
       margin: { left: this.margin, right: this.margin },
       headStyles: {
         fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
