@@ -328,14 +328,16 @@ export class PDFGenerator {
       (a.nome || '').localeCompare(b.nome || '', 'pt-BR'),
     )
 
-         const rows = sortedInscricoes.map(inscricao => [
-       inscricao.nome || 'Não informado', 
-       formatCpf(inscricao.cpf ||'Não informado'), 
-       inscricao.expand?.evento?.titulo || 'Não informado',
-       inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado', 
-       inscricao.expand?.produto?.nome || '',
-       inscricao.status || 'Não informado',
-     ])
+    const rows = sortedInscricoes.map(inscricao => [
+      inscricao.nome || 'Não informado',
+      inscricao.cpf || 'Não informado',
+      inscricao.expand?.evento?.titulo || 'Não informado',
+      inscricao.expand?.campo?.nome || inscricao.campo || 'Não informado',
+      Array.isArray(inscricao.produto)
+        ? inscricao.produto.map((prodId: string) => getProdutoInfo(prodId, produtos)).join(', ')
+        : getProdutoInfo(inscricao.produto || '', produtos),
+      inscricao.status || 'Não informado',
+    ])
 
     autoTable(this.doc, {
       startY: 100,
