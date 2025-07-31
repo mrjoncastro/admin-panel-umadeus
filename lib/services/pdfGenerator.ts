@@ -94,71 +94,8 @@ export class PDFGenerator {
     const totalInscricoes = inscricoes.length
     const totalPedidos = pedidos.length
 
-    // Preparar dados das tabelas de status com percentuais
-    const inscrRows = Object.entries(statusInscricoes).map(([status, count]) => [
-      status,
-      count.toString(),
-      `${((count / totalInscricoes) * 100).toFixed(1)}%`
-    ])
-    inscrRows.push(['Total', totalInscricoes.toString(), '100%'])
-
-    const pedRows = Object.entries(statusPedidos).map(([status, count]) => [
-      status,
-      count.toString(),
-      `${((count / totalPedidos) * 100).toFixed(1)}%`
-    ])
-    pedRows.push(['Total', totalPedidos.toString(), '100%'])
-
-    // Tabela de Status Inscrições (lado esquerdo)
-    autoTable(this.doc, {
-      startY: 50,
-      margin: { left: this.margin, right: this.pageWidth / 2 + 5 },
-      head: [['Status', 'Qtd', '%']],
-      body: inscrRows,
-      theme: 'striped',
-      headStyles: {
-        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
-        fontStyle: 'bold',
-        halign: 'center',
-      },
-      styles: {
-        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
-        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
-      },
-      columnStyles: {
-        1: { halign: 'right' },
-        2: { halign: 'right' }
-      },
-    })
-
-    // Tabela de Status Pedidos (lado direito)
-    autoTable(this.doc, {
-      startY: 50,
-      margin: { left: this.pageWidth / 2 + 5, right: this.margin },
-      head: [['Status', 'Qtd', '%']],
-      body: pedRows,
-      theme: 'striped',
-      headStyles: {
-        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
-        fontStyle: 'bold',
-        halign: 'center',
-      },
-      styles: {
-        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
-        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
-      },
-      columnStyles: {
-        1: { halign: 'right' },
-        2: { halign: 'right' }
-      },
-    })
-
-    // Obter posição Y após as tabelas de status
-    const lastAutoTable = (this.doc as any).lastAutoTable
-    const statusTablesEndY = lastAutoTable ? lastAutoTable.finalY : 120
-
-    // KPI Cards
-    const cardStartY = statusTablesEndY + 20
+    // KPI Cards - POSICIONADOS NO INÍCIO
+    const cardStartY = 60
     const cardWidth = (this.pageWidth - 2 * this.margin) / 3
     const cardHeight = 30
 
@@ -195,8 +132,71 @@ export class PDFGenerator {
     // Resetar cor do texto
     this.doc.setTextColor(0, 0, 0)
 
+    // Preparar dados das tabelas de status com percentuais
+    const inscrRows = Object.entries(statusInscricoes).map(([status, count]) => [
+      status,
+      count.toString(),
+      `${((count / totalInscricoes) * 100).toFixed(1)}%`
+    ])
+    inscrRows.push(['Total', totalInscricoes.toString(), '100%'])
+
+    const pedRows = Object.entries(statusPedidos).map(([status, count]) => [
+      status,
+      count.toString(),
+      `${((count / totalPedidos) * 100).toFixed(1)}%`
+    ])
+    pedRows.push(['Total', totalPedidos.toString(), '100%'])
+
+    // Tabela de Status Inscrições (lado esquerdo)
+    autoTable(this.doc, {
+      startY: cardStartY + cardHeight + 20,
+      margin: { left: this.margin, right: this.pageWidth / 2 + 5 },
+      head: [['Status', 'Qtd', '%']],
+      body: inscrRows,
+      theme: 'striped',
+      headStyles: {
+        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+        fontStyle: 'bold',
+        halign: 'center',
+      },
+      styles: {
+        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
+        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
+      },
+      columnStyles: {
+        1: { halign: 'right' },
+        2: { halign: 'right' }
+      },
+    })
+
+    // Tabela de Status Pedidos (lado direito)
+    autoTable(this.doc, {
+      startY: cardStartY + cardHeight + 20,
+      margin: { left: this.pageWidth / 2 + 5, right: this.margin },
+      head: [['Status', 'Qtd', '%']],
+      body: pedRows,
+      theme: 'striped',
+      headStyles: {
+        fillColor: PDF_CONSTANTS.COLORS.HEADER_BG as [number, number, number],
+        fontStyle: 'bold',
+        halign: 'center',
+      },
+      styles: {
+        fontSize: PDF_CONSTANTS.FONT_SIZES.TABLE_DATA,
+        cellPadding: PDF_CONSTANTS.DIMENSIONS.CELL_PADDING,
+      },
+      columnStyles: {
+        1: { halign: 'right' },
+        2: { halign: 'right' }
+      },
+    })
+
+    // Obter posição Y após as tabelas de status
+    const lastAutoTable = (this.doc as any).lastAutoTable
+    const statusTablesEndY = lastAutoTable ? lastAutoTable.finalY : cardStartY + cardHeight + 80
+
     // Tabelas Analíticas
-    const analyticsStartY = cardStartY + cardHeight + 30
+    const analyticsStartY = statusTablesEndY + 20
 
     // Preparar dados analíticos de inscrições
     const inscAnalyticData = this.calculateInscricoesAnalytics(inscricoes, produtos)
