@@ -152,6 +152,8 @@ export default function DashboardPage() {
             campo: r.expand?.campo,
             criado_por: r.expand?.criado_por,
             produto: r.expand?.produto,
+            id_inscricao: r.expand?.id_inscricao,
+            responsavel: r.expand?.responsavel,
           },
         }))
 
